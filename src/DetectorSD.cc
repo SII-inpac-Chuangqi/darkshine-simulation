@@ -67,8 +67,10 @@ DetectorSD::~DetectorSD()
 void DetectorSD::Initialize(G4HCofThisEvent*)
 {
     if ( fType != 0 ) {
-        for(int i=0; i<fCellID.x()*fCellID.y()*fCellID.z(); i++) 
+        for(int i=0; i<fCellID.x()*fCellID.y()*fCellID.z(); i++)
             fSimHitVec.push_back( new SimHit() );
+
+    std::cout<<fCellID.x()*fCellID.y()*fCellID.z()<<std::endl;
     }
 }
 

@@ -42,6 +42,7 @@ CALConstruct::CALConstruct(G4String CALName,
     fCALMaterial = NULL;
     fWrapMaterial = NULL;
 
+    ifAbsorber = false;
     fRecordLV = true;
 }
 
@@ -94,9 +95,10 @@ G4ThreeVector CALConstruct::Construct()
     // Placement of Calorimeter
     auto pos = G4ThreeVector(fPosX, fPosY, fPosZ);
 
-    auto box = new G4Box(fCALName+"_Box" , fSizeX, fSizeY, fSizeZ );
-    auto boxLV = new G4LogicalVolume(box, fCALMaterial, fCALName+"_LV", 0,0,0);
-    new G4PVPlacement(0, pos, boxLV, fCALName+"_PV", fMotherVolume, false, fCopyNo, fCheckOverlap);
+    auto fName = ifAbsorber ? fCALName+"Abs" : fCALName;
+    auto box = new G4Box(fName+"_Box" , fSizeX, fSizeY, fSizeZ );
+    auto boxLV = new G4LogicalVolume(box, fCALMaterial, fName+"_LV", 0,0,0);
+    new G4PVPlacement(0, pos, boxLV, fName+"_PV", fMotherVolume, false, fCopyNo, fCheckOverlap);
 
     if ( fRecordLV ) fCaloLVVector.push_back(boxLV);
 
@@ -347,6 +349,7 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
 
           if ( k%3 == 2 ) {
               Abs_No++;
+              ifAbsorber = true;
 
               fPosX = CentrePos.x();
               fPosY = CentrePos.y();
@@ -358,7 +361,8 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
               fVis = new G4VisAttributes(G4Colour(0.5,0.23,0.89));
               fRecordLV = false;
            } else {
-              
+              ifAbsorber = false;
+
               /* APD */
               double f1 = 1,f2 = 1;
               
@@ -384,7 +388,7 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
           fSizeZ = iSizeZ;
           fVis = iVis;
           fRecordLV = true;
-          fCopyNo++;
+          if( !ifAbsorber ) fCopyNo++;
         }
       }
     }

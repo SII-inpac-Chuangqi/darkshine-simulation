@@ -74,7 +74,8 @@ class CALConstruct
     G4bool fOptical; // 0: No optical photon, fast; 1: Full simulation with optical photon
     G4bool fCheckOverlap;
     G4bool fRecordLV;
-    
+    G4bool ifAbsorber;
+
     // For Inner part
     G4double fSizeX;
     G4double fSizeY;
