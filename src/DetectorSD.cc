@@ -40,7 +40,7 @@
 
 DetectorSD::DetectorSD(     G4int Type,
                             const G4String& name, 
-                            G4ThreeVector CellID,
+                            const G4ThreeVector& CellID,
                             RootManager* rootMng
                             )
  : G4VSensitiveDetector(name)
@@ -89,13 +89,13 @@ G4bool DetectorSD::ProcessHits(G4Step* step,
     
     if ( edep==0. && stepLength == 0. ) return false;      
     
-    G4TouchableHistory* touchable
+    auto* touchable
       = (G4TouchableHistory*)(step->GetPreStepPoint()->GetTouchable());
       
     // Get calorimeter cell id 
     G4int reNumber = touchable->GetReplicaNumber();
-    G4int xID = (int)fCellID.x();
-    G4int yID = (int)fCellID.y();
+    auto xID = (int)fCellID.x();
+    auto yID = (int)fCellID.y();
     //G4int zID = (int)fCellID.z();
     G4ThreeVector CellID(0,0,0);
     CellID.setZ( (int)(reNumber/(xID*yID)) + 1);

@@ -56,7 +56,7 @@ class DetectorSD : public G4VSensitiveDetector
   public:
     DetectorSD(      G4int,
                const G4String& name, 
-                     G4ThreeVector,
+                     const G4ThreeVector&,
                      RootManager*);
     virtual ~DetectorSD();
   

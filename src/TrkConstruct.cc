@@ -3,6 +3,7 @@
 #include "G4PVPlacement.hh"
 
 #include <iterator>
+#include <utility>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -11,7 +12,7 @@ TrkConstruct::TrkConstruct(G4String TrkName,
                            G4int CopyNo, 
                            G4bool CheckOverlap)
 {
-    fTrkName = TrkName;
+    fTrkName = std::move(TrkName);
     fMotherVolume = MotherVolume;
     fCopyNo = CopyNo;
     fCheckOverlap = CheckOverlap;
@@ -26,8 +27,8 @@ TrkConstruct::TrkConstruct(G4String TrkName,
     fAngle = 0.;
     fZMove = 0.;
 
-    fVis = NULL;
-    fTrkMaterial = NULL;
+    fVis = nullptr;
+    fTrkMaterial = nullptr;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -79,7 +80,7 @@ G4ThreeVector TrkConstruct::Construct()
     auto pos = G4ThreeVector(fPosX, fPosY, fPosZ + fZMove);
 
     auto box = new G4Box(fTrkName+"_Box" , fSizeX/2., fSizeY/2., fSizeZ/2. );
-    auto boxLV = new G4LogicalVolume(box, fTrkMaterial, fTrkName+"_LV", 0,0,0);
+    auto boxLV = new G4LogicalVolume(box, fTrkMaterial, fTrkName+"_LV", nullptr,nullptr,nullptr);
     new G4PVPlacement( HepRot, pos, boxLV, fTrkName+"_PV", fMotherVolume, false, fCopyNo, fCheckOverlap);
 
     fTrkLVVector.push_back(boxLV);

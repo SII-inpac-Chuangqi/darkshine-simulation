@@ -40,16 +40,11 @@
 #include "G4Material.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
-#include "G4Tubs.hh"
 #include "G4LogicalVolume.hh"
-#include "G4LogicalVolumeStore.hh"
-#include "G4PhysicalVolumeStore.hh"
-#include "G4SolidStore.hh"
 #include "G4PVPlacement.hh"
 #include "G4PVParameterised.hh"
 #include "G4RunManager.hh"
 #include "G4FieldManager.hh"
-#include "G4TransportationManager.hh"
 #include "G4SDManager.hh"
 #include "G4GeometryTolerance.hh"
 #include "G4GeometryManager.hh"
@@ -60,9 +55,7 @@
 #include "G4PhysicalConstants.hh"
 #include "G4ProductionCuts.hh"
 #include "G4LogicalSkinSurface.hh"
-#include "G4OpticalSurface.hh"
 
-#include <vector>
 #include <iterator>
 
 //#include "G4ios.hh"
@@ -74,7 +67,7 @@ DetectorConstruction::DetectorConstruction(RootManager* rootMng)
     fMessenger = new DetectorMessenger(this);
     fRootMng   = rootMng;
     fCheckOverlaps = false;
-    fStepLimit = NULL;
+    fStepLimit = nullptr;
 
     build_Target = true;
     build_TagTrk = true;
@@ -121,38 +114,38 @@ void DetectorConstruction::DefineMaterials()
     G4Element* elY  = nistManager->FindOrBuildElement("Y");
     
     // Vacuum
-    G4Material* Vacuum = new G4Material("vacuum", universe_mean_density, 2);
+    auto* Vacuum = new G4Material("vacuum", universe_mean_density, 2);
     Vacuum-> AddElement(elN, .7);
     Vacuum-> AddElement(elO, .3);
                         
     // Defining LYSO
-    G4Material* LSO = new G4Material("LSO", 7.4*g/cm3, 3);
+    auto* LSO = new G4Material("LSO", 7.4*g/cm3, 3);
     LSO->AddElement(elLu, 2);
     LSO->AddElement(elSi, 1);
     LSO->AddElement(elO,  5);
     
-    G4Material* YSO = new G4Material("YSO", 4.5*g/cm3, 3);
+    auto* YSO = new G4Material("YSO", 4.5*g/cm3, 3);
     YSO->AddElement(elY,  2);
     YSO->AddElement(elSi, 1);
     YSO->AddElement(elO,  5);
     
-    G4Material* LYSO = new G4Material("LYSO", 7.1*g/cm3, 2, kStateSolid);
+    auto* LYSO = new G4Material("LYSO", 7.1*g/cm3, 2, kStateSolid);
     LYSO->AddMaterial(LSO, 90*perCent);
     LYSO->AddMaterial(YSO, 10*perCent);
     
     // Defining Polystyrene
-    G4Material* PS = new G4Material("Polystyrene", 1.04*g/cm3, 2);
+    auto* PS = new G4Material("Polystyrene", 1.04*g/cm3, 2);
     PS->AddElement(elC, 8);
     PS->AddElement(elH, 8);
 
     // Define PWO4
-    G4Material* PWO4 = new G4Material("PWO4", 5.26*g/cm3, 3);
+    auto* PWO4 = new G4Material("PWO4", 5.26*g/cm3, 3);
     PWO4->AddElement(elP, 1);
     PWO4->AddElement(elW, 1);
     PWO4->AddElement(elO, 4);
     
     // Define Carbon Fiber
-    G4Material* CarbonFiber = new G4Material("CarbonFiber", 1.93*g/cm3, 1);
+    auto* CarbonFiber = new G4Material("CarbonFiber", 1.93*g/cm3, 1);
     CarbonFiber->AddElement(elC,1);
     
     // Build By Nist
@@ -175,7 +168,7 @@ void DetectorConstruction::DefineMaterials()
         G4double RefractionIdx[nEntries] = {1.9,1.9};
         G4double AbsorptionLength[nEntries] = {50.*cm,50.*cm};
 
-        G4MaterialPropertiesTable* MPT = new G4MaterialPropertiesTable();
+        auto* MPT = new G4MaterialPropertiesTable();
         MPT->AddProperty("RINDEX", photonEnergy, RefractionIdx, nEntries);
         MPT->AddProperty("ABSLENGTH", photonEnergy, AbsorptionLength, nEntries);
 
@@ -314,7 +307,7 @@ void DetectorConstruction::DefineParameters()
     HCAL_Wrap_Mat  = G4Material::GetMaterial("G4_Al");
     
     HCAL_Absorber_Thickness = 3*cm;
-    HCAL_Wrap_Size = G4ThreeVector( 0.3*mm, 0.3*mm, 0.3*mm );;
+    HCAL_Wrap_Size = G4ThreeVector( 0.3*mm, 0.3*mm, 0.3*mm );
     HCAL_Size_Dir = G4ThreeVector( 100*cm+ 19*HCAL_Wrap_Size.x(), 5*cm, 1*cm );
     //HCAL_Mod_No_Dir = G4ThreeVector( 1, 20, 2 );
     HCAL_Mod_No_Dir = G4ThreeVector( 1, 20, 120 );
@@ -382,7 +375,7 @@ void DetectorConstruction::DefineWorld()
     
     auto World_Box = new G4Box("World_Box", Size_World.x()/2, Size_World.y()/2, Size_World.z()/2);
     World_LV  = new G4LogicalVolume( World_Box, World_Mat, "World_LV");
-    World_PV  = new G4PVPlacement(0, G4ThreeVector(), World_LV, "World", 0, false, 0, fCheckOverlaps);
+    World_PV  = new G4PVPlacement(nullptr, G4ThreeVector(), World_LV, "World", nullptr, false, 0, fCheckOverlaps);
 
 }
 
@@ -417,8 +410,8 @@ void DetectorConstruction::DefineTagTracker()
     ////////////////////////////////////////////////////////////
 
     auto TagRegion_Box = new G4Box("TagTrk", Size_TagRegion.x()/2., Size_TagRegion.y()/2., Size_TagRegion.z()/2. );
-    TagRegion_LV  = new G4LogicalVolume( TagRegion_Box, TagRegion_Mat, "TAGTrK",0,0,0);  
-    new G4PVPlacement(0, Pos_TagRegion, TagRegion_LV, "TAGTRK", World_LV, false, 0, fCheckOverlaps); 
+    TagRegion_LV  = new G4LogicalVolume( TagRegion_Box, TagRegion_Mat, "TAGTrK",nullptr,nullptr,nullptr);
+    new G4PVPlacement(nullptr, Pos_TagRegion, TagRegion_LV, "TAGTRK", World_LV, false, 0, fCheckOverlaps);
     TagRegion_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
     
     auto TagTrk1 = new TrkConstruct("TagTrk1", TagRegion_LV, 0, fCheckOverlaps);
@@ -450,8 +443,8 @@ void DetectorConstruction::DefineRecTracker()
     ////////////////////////////////////////////////////////////
 
     auto RecRegion_Box = new G4Box("RecTrk", Size_RecRegion.x()/2., Size_RecRegion.y()/2., Size_RecRegion.z()/2. );
-    RecRegion_LV  = new G4LogicalVolume( RecRegion_Box, RecRegion_Mat, "RECTrK",0,0,0);  
-    new G4PVPlacement(0, Pos_RecRegion, RecRegion_LV, "RECTRK", World_LV, false, 0, fCheckOverlaps); 
+    RecRegion_LV  = new G4LogicalVolume( RecRegion_Box, RecRegion_Mat, "RECTrK",nullptr,nullptr,nullptr);
+    new G4PVPlacement(nullptr, Pos_RecRegion, RecRegion_LV, "RECTRK", World_LV, false, 0, fCheckOverlaps);
     RecRegion_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
     
     auto RecTrk1 = new TrkConstruct("RecTrk1", RecRegion_LV, 0, fCheckOverlaps);
@@ -483,15 +476,15 @@ void DetectorConstruction::DefineECAL()
     ////////////////////////////////////////////////////////////
 
     auto ECAL_Box = new G4Box("ecal", Size_ECALRegion.x()/2, Size_ECALRegion.y()/2, Size_ECALRegion.z()/2);
-    auto ECal_LV = new G4LogicalVolume( ECAL_Box, ECALRegion_Mat, "ECAL",0,0,0);  
-    new G4PVPlacement(0, Pos_ECALRegion, ECal_LV, "ECAL", World_LV, false, 0, fCheckOverlaps); 
+    auto ECal_LV = new G4LogicalVolume( ECAL_Box, ECALRegion_Mat, "ECAL",nullptr,nullptr,nullptr);
+    new G4PVPlacement(nullptr, Pos_ECALRegion, ECal_LV, "ECAL", World_LV, false, 0, fCheckOverlaps);
     //ECal_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
     
     /* Building Center Calorimeter with LYSO
      * Cell Size: 1*1*36 cm^3
      * Module No: 6*6 
      */
-    auto ECAL_Center = new CALConstruct("ECAL_Center", ECal_LV, 0, 1, 1, fRootMng->GetOptical(), fCheckOverlaps);
+    auto ECAL_Center = new CALConstruct("ECAL_Center", ECal_LV, 0, true, true, fRootMng->GetOptical(), fCheckOverlaps);
     ECAL_Center->SetSizeXYZ( ECAL_Center_Size.x()/2., ECAL_Center_Size.y()/2., ECAL_Center_Size.z()/2. );
     ECAL_Center->SetWrapSizeXYZ( ECAL_Center_Wrap_Size.x()/2., ECAL_Center_Wrap_Size.y()/2., ECAL_Center_Wrap_Size.z()/2. );
     ECAL_Center->SetCALMaterial(ECAL_Center_Mat);
@@ -512,7 +505,7 @@ void DetectorConstruction::DefineECAL()
     {
         double w1 = pow(-1,(ip%2))   * Size_ECALRegion.x()/4. ;
         double w2 = pow(-1,(ip-1)/2) * Size_ECALRegion.x()/4. ;
-        auto ECAL_Outer = new CALConstruct("ECAL_Outer_"+std::to_string(ip), ECal_LV, 0, 1, 1, fRootMng->GetOptical(), fCheckOverlaps);
+        auto ECAL_Outer = new CALConstruct("ECAL_Outer_"+std::to_string(ip), ECal_LV, 0, true, true, fRootMng->GetOptical(), fCheckOverlaps);
         ECAL_Outer->SetSizeXYZ( ECAL_Outer_Size_Dir.x()/2., ECAL_Outer_Size_Dir.y()/2., ECAL_Outer_Size_Dir.z()/2. );
         ECAL_Outer->SetWrapSizeXYZ( ECAL_Outer_Wrap_Size.x()/2., ECAL_Outer_Wrap_Size.y()/2., ECAL_Outer_Wrap_Size.z()/2. );
         ECAL_Outer->SetCALMaterial(ECAL_Outer_Mat);
@@ -551,8 +544,8 @@ void DetectorConstruction::DefineHCAL()
     ////////////////////////////////////////////////////////////
 
     auto HCAL_Box = new G4Box("hcal", Size_HCALRegion.x()/2, Size_HCALRegion.y()/2, Size_HCALRegion.z()/2);
-    auto HCAL_LV = new G4LogicalVolume( HCAL_Box, HCALRegion_Mat, "HCAL",0,0,0);  
-    new G4PVPlacement(0, Pos_HCALRegion, HCAL_LV, "HCAL", World_LV, false, 0, fCheckOverlaps); 
+    auto HCAL_LV = new G4LogicalVolume( HCAL_Box, HCALRegion_Mat, "HCAL",nullptr,nullptr,nullptr);
+    new G4PVPlacement(nullptr, Pos_HCALRegion, HCAL_LV, "HCAL", World_LV, false, 0, fCheckOverlaps);
     //HCAL_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
     
     /* Building Surrounding Calorimeter with Scintillator
@@ -565,7 +558,7 @@ void DetectorConstruction::DefineHCAL()
             double wx = -Size_HCALRegion.x()*0.5 + (Size_HCALRegion.x()/HCAL_Module_No.x()*(0.5+ix) );
             double wy = -Size_HCALRegion.y()*0.5 + (Size_HCALRegion.y()/HCAL_Module_No.y()*(0.5+iy) ); 
 
-            auto HCAL = new CALConstruct("HCAL_"+std::to_string( (int)(ix + iy*HCAL_Module_No.x()) ), HCAL_LV, 0, 1, 1, fRootMng->GetOptical(), fCheckOverlaps);
+            auto HCAL = new CALConstruct("HCAL_"+std::to_string( (int)(ix + iy*HCAL_Module_No.x()) ), HCAL_LV, 0, true, true, fRootMng->GetOptical(), fCheckOverlaps);
             HCAL->SetSizeXYZ( HCAL_Size_Dir.x()/2., HCAL_Size_Dir.y()/2., HCAL_Size_Dir.z()/2. );
             HCAL->SetWrapSizeXYZ( HCAL_Wrap_Size.x()/2., HCAL_Wrap_Size.y()/2., HCAL_Wrap_Size.z()/2. );
             HCAL->SetCALMaterial(HCAL_Mat);
@@ -594,7 +587,7 @@ void DetectorConstruction::ConstructSDandField()
     // Tagging Tracker
     if ( build_TagTrk ) {
         G4MagneticField* TagTrkMagField = new G4UniformMagField(G4ThreeVector( TagTrk_MagField_x, 0., 0.));
-        G4FieldManager* TagTrkFieldMng = new G4FieldManager();
+        auto* TagTrkFieldMng = new G4FieldManager();
         TagTrkFieldMng->SetDetectorField(TagTrkMagField);
         TagTrkFieldMng->CreateChordFinder(TagTrkMagField);
 
@@ -603,7 +596,7 @@ void DetectorConstruction::ConstructSDandField()
     // Recoil Tracker
     if ( build_RecTrk ) {
         G4MagneticField* RecTrkMagField = new G4UniformMagField(G4ThreeVector( RecTrk_MagField_x, 0., 0.));
-        G4FieldManager* RecTrkFieldMng = new G4FieldManager();
+        auto* RecTrkFieldMng = new G4FieldManager();
         RecTrkFieldMng->SetDetectorField(RecTrkMagField);
         RecTrkFieldMng->CreateChordFinder(RecTrkMagField);
 
@@ -614,31 +607,31 @@ void DetectorConstruction::ConstructSDandField()
     /*                              */
 
     if ( build_TagTrk ) {
-        DetectorSD* TagTrkSD1 = new DetectorSD( 0, "TagTrk1", G4ThreeVector( 1, 1, No_TagTrk ), fRootMng);
+        auto* TagTrkSD1 = new DetectorSD( 0, "TagTrk1", G4ThreeVector( 1, 1, No_TagTrk ), fRootMng);
         G4SDManager::GetSDMpointer()->AddNewDetector( TagTrkSD1 );
         for ( itr_LV = TagTrk_LV1.begin(); itr_LV != TagTrk_LV1.end(); itr_LV++ )
             (*itr_LV)->SetSensitiveDetector( TagTrkSD1 );
 
-        DetectorSD* TagTrkSD2 = new DetectorSD( 0, "TagTrk2", G4ThreeVector( 1, 1, No_TagTrk ), fRootMng);
+        auto* TagTrkSD2 = new DetectorSD( 0, "TagTrk2", G4ThreeVector( 1, 1, No_TagTrk ), fRootMng);
         G4SDManager::GetSDMpointer()->AddNewDetector( TagTrkSD2 );
         for ( itr_LV = TagTrk_LV1.begin(); itr_LV != TagTrk_LV1.end(); itr_LV++ )
             (*itr_LV)->SetSensitiveDetector( TagTrkSD2 );
     }
 
     if ( build_RecTrk ) {
-        DetectorSD* RecTrkSD1 = new DetectorSD( 0, "RecTrk1", G4ThreeVector( 1, 1, No_RecTrk ), fRootMng);
+        auto* RecTrkSD1 = new DetectorSD( 0, "RecTrk1", G4ThreeVector( 1, 1, No_RecTrk ), fRootMng);
         G4SDManager::GetSDMpointer()->AddNewDetector( RecTrkSD1 );
         for ( itr_LV = RecTrk_LV1.begin(); itr_LV != RecTrk_LV1.end(); itr_LV++ )
             (*itr_LV)->SetSensitiveDetector( RecTrkSD1 );
 
-        DetectorSD* RecTrkSD2 = new DetectorSD( 0, "RecTrk2", G4ThreeVector( 1, 1, No_RecTrk ), fRootMng);
+        auto* RecTrkSD2 = new DetectorSD( 0, "RecTrk2", G4ThreeVector( 1, 1, No_RecTrk ), fRootMng);
         G4SDManager::GetSDMpointer()->AddNewDetector( RecTrkSD2 );
         for ( itr_LV = RecTrk_LV1.begin(); itr_LV != RecTrk_LV1.end(); itr_LV++ )
             (*itr_LV)->SetSensitiveDetector( RecTrkSD2 );
     }
 
     if ( build_ECAL ) {
-        DetectorSD* ECalSD = new DetectorSD( 1, "ECAL_Center", ECAL_Center_Module_No , fRootMng);
+        auto* ECalSD = new DetectorSD( 1, "ECAL_Center", ECAL_Center_Module_No , fRootMng);
         G4SDManager::GetSDMpointer()->AddNewDetector( ECalSD );
         for ( itr_LV = ECAL_Center_LV.begin(); itr_LV != ECAL_Center_LV.end(); itr_LV++ )
             (*itr_LV)->SetSensitiveDetector( ECalSD );
@@ -725,7 +718,7 @@ void DetectorConstruction::SetTagTrkMagField(G4double in)
     G4bool allLocal = false;
     // Tagging Tracker
     G4MagneticField* TagTrkMagField = new G4UniformMagField(G4ThreeVector( 0., TagTrk_MagField_x, 0.));
-    G4FieldManager* TagTrkFieldMng = new G4FieldManager();
+    auto* TagTrkFieldMng = new G4FieldManager();
     TagTrkFieldMng->SetDetectorField(TagTrkMagField);
     TagTrkFieldMng->CreateChordFinder(TagTrkMagField);
 
@@ -743,7 +736,7 @@ void DetectorConstruction::SetRecTrkMagField(G4double in)
     G4bool allLocal = false;
     // Recging Tracker
     G4MagneticField* RecTrkMagField = new G4UniformMagField(G4ThreeVector( 0., RecTrk_MagField_x, 0.));
-    G4FieldManager* RecTrkFieldMng = new G4FieldManager();
+    auto* RecTrkFieldMng = new G4FieldManager();
     RecTrkFieldMng->SetDetectorField(RecTrkMagField);
     RecTrkFieldMng->CreateChordFinder(RecTrkMagField);
 

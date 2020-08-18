@@ -110,11 +110,11 @@ int main(int argc,char** argv)
   
   // Construct the root manager
   
-  RootManager * rootMng = new RootManager;
+  auto * rootMng = new RootManager;
 
   // Construct the default run manager
   
-  G4RunManager * runManager = new G4RunManager;
+  auto * runManager = new G4RunManager;
 
   // Set mandatory initialization classes
 
@@ -123,7 +123,7 @@ int main(int argc,char** argv)
   G4VModularPhysicsList* physicsList = new FTFP_BERT;
   physicsList->RegisterPhysics(new G4StepLimiterPhysics());
   physicsList->RegisterPhysics( new GammaPhysics() );
-  G4GenericBiasingPhysics* biasingPhysics = new G4GenericBiasingPhysics();
+  auto* biasingPhysics = new G4GenericBiasingPhysics();
   biasingPhysics->Bias("e-");
   biasingPhysics->Bias("gamma");
   physicsList->RegisterPhysics(biasingPhysics);
@@ -136,22 +136,22 @@ int main(int argc,char** argv)
 
   runManager->SetUserInitialization(physicsList);
     
-  if ( OpticalMacro.size() )   // batch mode
+  if ( !OpticalMacro.empty() )   // batch mode
     {
       G4String command = "/control/execute ";
       UImanager->ApplyCommand(command+OpticalMacro);
     }
 
   // Set user action classes
-  RunAction* run_action = new RunAction(rootMng);
+  auto* run_action = new RunAction(rootMng);
   runManager->SetUserAction( run_action );
 
-  EventAction* event_action = new EventAction(rootMng);
+  auto* event_action = new EventAction(rootMng);
   runManager->SetUserAction(event_action);
 
   runManager->SetUserAction(new PrimaryGeneratorAction());
   runManager->SetUserAction(new TrackingAction(rootMng));
-  SteppingAction* stepping_action = new SteppingAction(rootMng);
+  auto* stepping_action = new SteppingAction(rootMng);
   runManager->SetUserAction(stepping_action);
   
   // Initialize G4 kernel
@@ -166,16 +166,16 @@ int main(int argc,char** argv)
 //#endif
 
 
-  if ( macro.size() )   // batch mode
+  if ( !macro.empty() )   // batch mode
     {
       G4String command = "/control/execute ";
       UImanager->ApplyCommand(command+macro);
     }
-  else if ( !OpticalMacro.size() )
+  else if ( OpticalMacro.empty() )
     {  // interactive mode : define UI session
         std::cout<<macro.size()<<", "<<OpticalMacro.size()<<std::endl;
 //#ifdef G4UI_USE
-      G4UIExecutive* ui = new G4UIExecutive(argc, argv);
+      auto* ui = new G4UIExecutive(argc, argv);
 //#ifdef G4VIS_USE
         UImanager->ApplyCommand("/control/execute init_vis.mac");
 //#else
