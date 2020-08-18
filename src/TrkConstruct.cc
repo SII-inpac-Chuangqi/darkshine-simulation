@@ -73,7 +73,7 @@ G4ThreeVector TrkConstruct::Construct()
     //HepRot->set( CLHEP::Hep3Vector ( 1., 0., 1.), fAngle );
     HepRot->rotateZ( fAngle );
 
-    G4cout<<"Angle: "<<fAngle<<", "<<   HepRot->thetaZ () <<G4endl;
+    //G4cout<<"Angle: "<<fAngle<<", "<<   HepRot->thetaZ () <<G4endl;
 
     // Placement of Tracker
     auto pos = G4ThreeVector(fPosX, fPosY, fPosZ + fZMove);

@@ -35,15 +35,15 @@ class TrkConstruct
     void SetPosY(G4double in)           { fPosY  = in; };
     void SetPosZ(G4double in)           { fPosZ  = in; };
     void SetCopyNo(G4int in)            { fCopyNo = in; };
-    void SetTrkName(G4String in)        { fTrkName = in; };
+    void SetTrkName(const G4String &in)        { fTrkName = in; };
     void SetVis(G4VisAttributes* in)    { fVis = in; };
     void SetMotherVolume(G4LogicalVolume* in)   { fMotherVolume = in; };
     void SetTrkMaterial(G4Material* in)         { fTrkMaterial = in; };
 
     void SetRotation(double in)         { fAngle = in; };
     void SetZMove(double in)            { fZMove = in; };
-    void SetSizeXYZ(G4ThreeVector in)   { fSizeX = in.x(); fSizeY = in.y(); fSizeZ = in.z(); };
-    void SetPosXYZ(G4ThreeVector in)    { fPosX = in.x();  fPosY = in.y();  fPosZ = in.z();  };
+    void SetSizeXYZ(const G4ThreeVector &in)   { fSizeX = in.x(); fSizeY = in.y(); fSizeZ = in.z(); };
+    void SetPosXYZ(const G4ThreeVector &in)    { fPosX = in.x();  fPosY = in.y();  fPosZ = in.z();  };
 
     std::vector<G4LogicalVolume*> GetTrkLVVector() { return fTrkLVVector; };
 
