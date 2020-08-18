@@ -201,4 +201,6 @@ int main(int argc,char** argv)
   return 0;
 }
 
+/* test on CLion */
+/* test on Git */
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.....
