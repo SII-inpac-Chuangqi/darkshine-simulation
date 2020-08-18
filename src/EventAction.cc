@@ -35,16 +35,12 @@
 #include "G4SDManager.hh"
 #include "G4EventManager.hh"
 #include "G4RunManager.hh"
-#include "G4TrajectoryContainer.hh"
 #include "G4Trajectory.hh"
-#include "G4HCofThisEvent.hh"
 #include "G4ios.hh"
 #include "G4THitsCollection.hh"
 #include "G4UnitsTable.hh"
 
 #include <iostream>
-#include <fstream>
-#include <iterator>
 
 using namespace std;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -62,8 +58,7 @@ EventAction::EventAction(RootManager* rootMng)
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 EventAction::~EventAction()
-{
-}
+= default;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -98,7 +93,7 @@ void EventAction::EndOfEventAction(const G4Event* event)
     }
 
     G4RunManager* fRunManager = G4RunManager::GetRunManager();
-    G4String RndmS = fRunManager->GetRandomNumberStatusForThisEvent();
+    const G4String& RndmS = fRunManager->GetRandomNumberStatusForThisEvent();
     const char* rn = RndmS.data();
     
     long double r1 = 0;

@@ -26,6 +26,8 @@
 /// \file /src/BOptrChangeCrossSection.cc
 /// \brief Implementation of the BOptrChangeCrossSection class
 //
+#include <utility>
+
 #include "BOptrChangeCrossSection.hh"
 #include "G4BiasingProcessInterface.hh"
 #include "G4BOptnChangeCrossSection.hh"
@@ -41,20 +43,20 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-BOptrChangeCrossSection::BOptrChangeCrossSection(G4String particleName, G4double BF, 
+BOptrChangeCrossSection::BOptrChangeCrossSection(const G4String& particleName, G4double BF,
                                                  G4double Em, G4String BP,
                                                  G4String         name)
-  : G4VBiasingOperator(name),
+  : G4VBiasingOperator(std::move(name)),
     fSetup(true),
     BiasFactor(BF),
     Emin(Em),
-    BiasProcess(BP)
+    BiasProcess(std::move(BP))
 {
   fMessenger = new BiasingMessenger(this);
 
   fParticleToBias = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
   
-  if ( fParticleToBias == 0 )
+  if ( fParticleToBias == nullptr )
     {
       G4ExceptionDescription ed;
       ed << "Particle `" << particleName << "' not found !" << G4endl;
@@ -69,10 +71,7 @@ BOptrChangeCrossSection::BOptrChangeCrossSection(G4String particleName, G4double
 
 BOptrChangeCrossSection::~BOptrChangeCrossSection()
 {
-  for ( std::map< const G4BiasingProcessInterface*, G4BOptnChangeCrossSection* >::iterator 
-          it = fChangeCrossSectionOperations.begin() ;
-        it != fChangeCrossSectionOperations.end() ;
-        it++ ) delete (*it).second;
+  for (auto & fChangeCrossSectionOperation : fChangeCrossSectionOperations) delete fChangeCrossSectionOperation.second;
 
   delete fMessenger;
 }
@@ -95,11 +94,9 @@ void BOptrChangeCrossSection::StartRun()
       if ( sharedData ) // -- sharedData tested, as is can happen a user attaches an operator to a
                         // -- volume but without defined BiasingProcessInterface processes.
         {
-          for ( size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++ )
+          for (auto wrapperProcess : sharedData->GetPhysicsBiasingProcessInterfaces())
             {
-              const G4BiasingProcessInterface* wrapperProcess =
-                (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
-              G4String operationName = "XSchange-" + 
+              G4String operationName = "XSchange-" +
                 wrapperProcess->GetWrappedProcess()->GetProcessName();
 
               G4cout<<"Process: "<<operationName<<G4endl;
@@ -124,13 +121,13 @@ BOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track*        
   // -----------------------------------------------------
   // -- Check if current particle type is the one to bias:
   // -----------------------------------------------------
-  if ( track->GetDefinition() != fParticleToBias ) return 0;
+  if ( track->GetDefinition() != fParticleToBias ) return nullptr;
 
   //if ( track->GetParentID() > 1 ) return 0;
 
-  if ( callingProcess->GetWrappedProcess()->GetProcessName() != BiasProcess ) return 0;
+  if ( callingProcess->GetWrappedProcess()->GetProcessName() != BiasProcess ) return nullptr;
 
-  if ( track->GetTotalEnergy() <= Emin ) return 0;
+  if ( track->GetTotalEnergy() <= Emin ) return nullptr;
 
   //G4cout<<"==> Biasing "<<BiasProcess<<", Emin = "<<Emin<<", with Factor of "<<BiasFactor<<" ..."<<G4endl;
   // ---------------------------------------------------------------------
@@ -141,7 +138,7 @@ BOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track*        
   // -- length. Nothing is done in this case (ie, let analog process to deal with the case)
   G4double analogInteractionLength =  
     callingProcess->GetWrappedProcess()->GetCurrentInteractionLength();
-  if ( analogInteractionLength > DBL_MAX/10. ) return 0;
+  if ( analogInteractionLength > DBL_MAX/10. ) return nullptr;
 
   // -- Analog cross-section is well-defined:
   G4double analogXS = 1./analogInteractionLength;
@@ -167,7 +164,7 @@ BOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track*        
   // -- only on the first time the operation is proposed, or if the interaction
   // -- occured. If the interaction did not occur for the process in the previous,
   // -- we update the number of interaction length instead of resampling.
-  if ( previousOperation == 0 )
+  if ( previousOperation == nullptr )
     {
       operation->SetBiasedCrossSection( XStransformation * analogXS );
       operation->Sample();
@@ -185,7 +182,7 @@ BOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track*        
                       "ex.02",
                       JustWarning,
                       ed);
-          return 0;
+          return nullptr;
         }
       if ( operation->GetInteractionOccured() )
         {

@@ -59,7 +59,7 @@ public:
   // ------------------------------------------------------------
   // -- Constructor: takes the name of the particle type to bias:
   // ------------------------------------------------------------
-  BOptrChangeCrossSection(G4String particleToBias, G4double BF, G4double Em, G4String BP, G4String name = "ChangeXS");
+  BOptrChangeCrossSection(const G4String& particleToBias, G4double BF, G4double Em, G4String BP, G4String name = "ChangeXS");
   virtual ~BOptrChangeCrossSection();
   
   // -- method called at beginning of run:
@@ -109,7 +109,7 @@ private:
   const G4ParticleDefinition*    fParticleToBias;
   
   BiasingMessenger* fMessenger;
-  G4int nBias;
+  G4int nBias{};
   G4double BiasFactor;
   G4double Emin;
   G4String BiasProcess;

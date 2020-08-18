@@ -448,7 +448,7 @@ void DetectorConstruction::DefineRecTracker()
     RecRegion_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
     
     auto RecTrk1 = new TrkConstruct("RecTrk1", RecRegion_LV, 0, fCheckOverlaps);
-    RecTrk1->SetRotation( Rec_Angle );
+    RecTrk1->SetRotation( 0 );
     RecTrk1->SetTrkMaterial( RecTrk_Mat );
     RecTrk1->SetVis(new G4VisAttributes(G4Colour(0.5,0.5,.0)));
     RecTrk1->LinearPlacement( No_RecTrk, Size_RecTrk, Pos_RecTrk);

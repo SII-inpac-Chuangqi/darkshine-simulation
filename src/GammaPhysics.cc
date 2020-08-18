@@ -29,7 +29,7 @@ void GammaPhysics::ConstructProcess() {
         
         G4ParticleDefinition* particle = aParticleIterator->value();
         G4ProcessManager* pmanager = particle->GetProcessManager();
-        G4String particleName = particle->GetParticleName();
+        const G4String& particleName = particle->GetParticleName();
 
         pmanager->SetVerboseLevel(2);
         
