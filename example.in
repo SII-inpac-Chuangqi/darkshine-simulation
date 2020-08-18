@@ -1,6 +1,6 @@
 ########## Pre_Init ############
-/DP/det/setTBxField                 -1.5 tesla
-/DP/det/setRBxField                 -0.5 tesla
+/DP/det/setTByField                 -1.5 tesla
+/DP/det/setRByField                 -0.5 tesla
 
 ########## Biasing ############
 /DP/Bias/Process                    GammaToMuPair

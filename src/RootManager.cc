@@ -30,7 +30,7 @@ RootManager::RootManager()
 
 void RootManager::initialize()
 {
-    if_Optical = true;
+    if_Optical = false;
     // Initialization
     EventID	            =0;
     for(int i=0;i<4;i++) Rndm[i]    = 0 ;

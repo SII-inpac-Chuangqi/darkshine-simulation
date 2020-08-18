@@ -76,11 +76,11 @@ DetectorConstruction::DetectorConstruction(RootManager* rootMng)
     fCheckOverlaps = false;
     fStepLimit = NULL;
 
-    build_Target = false; 
-    build_TagTrk = false; 
-    build_RecTrk = false; 
+    build_Target = true;
+    build_TagTrk = true;
+    build_RecTrk = true;
     build_ECAL = true; 
-    build_HCAL = false; 
+    build_HCAL = true;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -291,7 +291,7 @@ void DetectorConstruction::DefineParameters()
 
     ECAL_Outer_Wrap_Size = ECAL_Center_Wrap_Size;
     ECAL_Outer_Size_Dir = G4ThreeVector( 20*cm+ 19*ECAL_Outer_Wrap_Size.x(), 1*cm, 1*cm );
-    ECAL_Outer_Mod_No_Dir = G4ThreeVector( 1, 20, 2 );
+    ECAL_Outer_Mod_No_Dir = G4ThreeVector( 1, 20, 36 );
     ECAL_Outer_Module_No = G4ThreeVector( 2, 2, 1 );
     ECAL_Module_Gap = 0.5*mm;
 
@@ -724,7 +724,7 @@ void DetectorConstruction::SetTagTrkMagField(G4double in)
 
     G4bool allLocal = false;
     // Tagging Tracker
-    G4MagneticField* TagTrkMagField = new G4UniformMagField(G4ThreeVector( TagTrk_MagField_x, 0., 0.));
+    G4MagneticField* TagTrkMagField = new G4UniformMagField(G4ThreeVector( 0., TagTrk_MagField_x, 0.));
     G4FieldManager* TagTrkFieldMng = new G4FieldManager();
     TagTrkFieldMng->SetDetectorField(TagTrkMagField);
     TagTrkFieldMng->CreateChordFinder(TagTrkMagField);
@@ -742,7 +742,7 @@ void DetectorConstruction::SetRecTrkMagField(G4double in)
 
     G4bool allLocal = false;
     // Recging Tracker
-    G4MagneticField* RecTrkMagField = new G4UniformMagField(G4ThreeVector( RecTrk_MagField_x, 0., 0.));
+    G4MagneticField* RecTrkMagField = new G4UniformMagField(G4ThreeVector( 0., RecTrk_MagField_x, 0.));
     G4FieldManager* RecTrkFieldMng = new G4FieldManager();
     RecTrkFieldMng->SetDetectorField(RecTrkMagField);
     RecTrkFieldMng->CreateChordFinder(RecTrkMagField);

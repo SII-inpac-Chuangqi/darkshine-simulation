@@ -51,15 +51,15 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fDetDirectory = new G4UIdirectory("/DP/det/");
     fDetDirectory->SetGuidance("Detector construction control");
     
-    fSetTBxCmd = new G4UIcmdWithADoubleAndUnit("/DP/det/setTBxField",this);
-    fSetTBxCmd->SetGuidance("Define tagging tracker x-direction magnetic field.");
-    fSetTBxCmd->SetGuidance("Magnetic field will be in X direction.");
+    fSetTBxCmd = new G4UIcmdWithADoubleAndUnit("/DP/det/setTByField",this);
+    fSetTBxCmd->SetGuidance("Define tagging tracker y-direction magnetic field.");
+    fSetTBxCmd->SetGuidance("Magnetic field will be in Y direction.");
     fSetTBxCmd->SetParameterName("tBx",false);
     fSetTBxCmd->SetUnitCategory("Magnetic flux density");
     fSetTBxCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     
-    fSetRBxCmd = new G4UIcmdWithADoubleAndUnit("/DP/det/setRBxField",this);
-    fSetRBxCmd->SetGuidance("Define recoil tracker x-direction magnetic field.");
+    fSetRBxCmd = new G4UIcmdWithADoubleAndUnit("/DP/det/setRByField",this);
+    fSetRBxCmd->SetGuidance("Define recoil tracker y-direction magnetic field.");
     fSetRBxCmd->SetGuidance("Magnetic field will be in y direction.");
     fSetRBxCmd->SetParameterName("rBy",false);
     fSetRBxCmd->SetUnitCategory("Magnetic flux density");
