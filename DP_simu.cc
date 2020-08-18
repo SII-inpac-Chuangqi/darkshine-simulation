@@ -50,13 +50,13 @@
 
 #include "Randomize.hh"
 
-#ifdef G4VIS_USE
+//#ifdef G4VIS_USE
 #include "G4VisExecutive.hh"
-#endif
+//#endif
 
-#ifdef G4UI_USE
+//#ifdef G4UI_USE
 #include "G4UIExecutive.hh"
-#endif
+//#endif
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -157,13 +157,14 @@ int main(int argc,char** argv)
   // Initialize G4 kernel
   runManager->Initialize();
 
-#ifdef G4VIS_USE
+//#ifdef G4VIS_USE
   // Initialize visualization
   G4VisManager* visManager = new G4VisExecutive;
   // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
   // G4VisManager* visManager = new G4VisExecutive("Quiet");
   visManager->Initialize();
-#endif
+//#endif
+
 
   if ( macro.size() )   // batch mode
     {
@@ -172,18 +173,19 @@ int main(int argc,char** argv)
     }
   else if ( !OpticalMacro.size() )
     {  // interactive mode : define UI session
-#ifdef G4UI_USE
+        std::cout<<macro.size()<<", "<<OpticalMacro.size()<<std::endl;
+//#ifdef G4UI_USE
       G4UIExecutive* ui = new G4UIExecutive(argc, argv);
-#ifdef G4VIS_USE
+//#ifdef G4VIS_USE
         UImanager->ApplyCommand("/control/execute init_vis.mac");
-#else
+//#else
         UImanager->ApplyCommand("/control/execute init.mac");
-#endif
+//#endif
       if (ui->IsGUI())
          UImanager->ApplyCommand("/control/execute gui.mac");
       ui->SessionStart();
       delete ui;
-#endif
+//#endif
     }
 
 
@@ -192,9 +194,9 @@ int main(int argc,char** argv)
   // owned and deleted by the run manager, so they should not be deleted
   // in the main() program !
 
-#ifdef G4VIS_USE
+//#ifdef G4VIS_USE
   delete visManager;
-#endif
+//#endif
   delete rootMng;
   delete runManager;
 
