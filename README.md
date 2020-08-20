@@ -1,5 +1,5 @@
 # Dark_Photon
-The first version of dark shine simulation. :v:
+The second version of dark shine simulation. :v:
 
 [[_TOC_]]
 
