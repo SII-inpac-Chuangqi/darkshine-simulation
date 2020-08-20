@@ -1,4 +1,4 @@
-# Dark_Photon
+# Dark_Shine Simulation: {+ DSimu +}
 The second version of dark shine simulation. :v:
 
 [[_TOC_]]
@@ -86,3 +86,11 @@ For detector type,
 
 ## Detector ID
 For detector ID, DetectorID and (DetectorID_x, DetectorID_y, DetectorID_z) are the same. Analyzer can either use DetectorID or (DetectorID_x, DetectorID_y, DetectorID_z). The later one is calculated by splitting the former one according to corresponding cell number along x, y and z. 
+
+# To do list
+- [x] Basic software framework
+- [x] Biasing modules
+- [x] Filter modules 
+- [ ] Optical material properties both for ECAL and HCAL
+- [ ] Optimization (running time estimation for each function)  
+
