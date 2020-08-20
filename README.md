@@ -3,6 +3,11 @@ The second version of dark shine simulation. :v:
 
 [[_TOC_]]
 
+# Get Started
+## Installation
+## Running {+ DSimu +} with macro
+
+
 # Data Recoding
 ## Output Data format (ROOT file)
 |     Variables    |     Definition    |
@@ -92,5 +97,6 @@ For detector ID, DetectorID and (DetectorID_x, DetectorID_y, DetectorID_z) are t
 - [x] Biasing modules
 - [x] Filter modules 
 - [ ] Optical material properties both for ECAL and HCAL
+- [ ] Digitization simulation
 - [ ] Optimization (running time estimation for each function)  
 
