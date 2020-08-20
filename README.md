@@ -79,6 +79,7 @@ MC particles satisfied any one of the following conditions will be recorded in T
 
 ## Detector Type
 For detector type,
+
 0. Tracker
 1. ECAL_Center
 2. ECAL_Outer
