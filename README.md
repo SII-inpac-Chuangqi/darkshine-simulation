@@ -65,7 +65,7 @@ There are totally 8 detector modules:
 7.	ECAL outer bottom right (ECAL_Outer_4)
 8.	HCAL ( 3*3 = 9 submodules)
 
-## MC truth particle criteria
+## MC truth particle selection criteria
 MC particles satisfied any one of the following conditions will be recorded in TRUTH_MC:
 - Initial particle (Track ID == 1)
 - Momentum > 1 GeV
