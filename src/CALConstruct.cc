@@ -137,23 +137,23 @@ G4ThreeVector CALConstruct::Construct()
         {
             /* Set Optical Porperties for boundary surface */
             G4OpticalSurface* WrapSurface = new G4OpticalSurface( fCALName+"WrapSurface" );
-            WrapSurface->SetType(dielectric_LUT);
-            WrapSurface->SetFinish(polishedtyvekair);
-            WrapSurface->SetModel(LUT);
+            WrapSurface->SetType(dielectric_dielectric);
+            WrapSurface->SetFinish(polished);
+            WrapSurface->SetModel(glisur);
 
             new G4LogicalSkinSurface( fCALName+"WrapSurface", WrapLV, WrapSurface );
 
             // test
-            //const G4int num = 2;
-            //G4double ephoton[num] = {2.273*eV, 3.064*eV};
-            //G4double reflectivity[num] = {1., 1.};
-            //G4double efficiency[num]   = {1.0, 1.0};
+            const G4int num = 2;
+            G4double ephoton[num] = {2.273*eV, 3.064*eV};
+            G4double reflectivity[num] = {1., 1.};
+            G4double efficiency[num]   = {1.0, 1.0};
             
-            //G4MaterialPropertiesTable *myST2 = new G4MaterialPropertiesTable();
-            //myST2->AddProperty("REFLECTIVITY", ephoton, reflectivity, num);
-            //myST2->AddProperty("EFFICIENCY",   ephoton, efficiency,   num);
+            G4MaterialPropertiesTable *myST2 = new G4MaterialPropertiesTable();
+            myST2->AddProperty("REFLECTIVITY", ephoton, reflectivity, num);
+            myST2->AddProperty("EFFICIENCY",   ephoton, efficiency,   num);
 
-            //WrapSurface->SetMaterialPropertiesTable(myST2);
+            WrapSurface->SetMaterialPropertiesTable(myST2);
 
             /* Placement of APD */
             auto abox = new G4Box(fCALName+"_APDWorld_Box" , wSizeX, wSizeY, wSizeZ );
