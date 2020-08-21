@@ -161,12 +161,12 @@ void DetectorConstruction::DefineMaterials()
     // ------------ Generate & Add Material Properties Table ------------
     //
       
-        G4double photonEnergy[] = { 1.034*eV, 7.068*eV};
+        G4double photonEnergy[] = { 2.273*eV, 3.064*eV };
             
         const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
 
-        G4double RefractionIdx[nEntries] = {1.9,1.9};
-        G4double AbsorptionLength[nEntries] = {50.*cm,50.*cm};
+        G4double RefractionIdx[nEntries] = {1.806,1.833};
+        G4double AbsorptionLength[nEntries] = {100.*cm,100.*cm};
 
         auto* MPT = new G4MaterialPropertiesTable();
         MPT->AddProperty("RINDEX", photonEnergy, RefractionIdx, nEntries);
@@ -177,7 +177,7 @@ void DetectorConstruction::DefineMaterials()
 
         MPT->AddProperty("FASTCOMPONENT",ScintEnergy,ScintFast,nEntries);
 
-        MPT->AddConstProperty("SCINTILLATIONYIELD",20./MeV);
+        MPT->AddConstProperty("SCINTILLATIONYIELD",30./MeV);
         MPT->AddConstProperty("RESOLUTIONSCALE",1.);
         MPT->AddConstProperty("FASTTIMECONSTANT",30.*ns);
         MPT->AddConstProperty("YIELDRATIO",1.);
