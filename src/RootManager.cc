@@ -9,6 +9,8 @@
 #include "TRandom.h"
 #include "TInterpreter.h"
 
+#include "G4TouchableHistory.hh"
+
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
@@ -116,7 +118,18 @@ void RootManager::initialize()
     for(itr_double = Optical_Time.begin(); itr_double != Optical_Time.end(); itr_double++ ) {
         for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
     }
-
+    for(itr_int = Optical_DetID.begin(); itr_int != Optical_DetID.end(); itr_int++ ) {
+        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+    }
+    for(itr_int = Optical_DetID_x.begin(); itr_int != Optical_DetID_x.end(); itr_int++ ) {
+        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+    }
+    for(itr_int = Optical_DetID_y.begin(); itr_int != Optical_DetID_y.end(); itr_int++ ) {
+        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+    }
+    for(itr_int = Optical_DetID_z.begin(); itr_int != Optical_DetID_z.end(); itr_int++ ) {
+        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+    }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -207,7 +220,10 @@ void RootManager::bookCollection(G4String cIn) {
 
     Optical_No.insert( std::pair<G4String, int>(cIn, 0) );
     Optical_Time.insert( std::pair<G4String, double*>(cIn, new double [MaxHitsE]) );
-
+    Optical_DetID.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
+    Optical_DetID_x.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
+    Optical_DetID_y.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
+    Optical_DetID_z.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
 
     tr->Branch( (cIn + "_No").data() , &Hit_No[cIn], (cIn + "_No/I").data() );
     tr->Branch( (cIn + "_Eleak_Wrapper").data() , &Hit_Eleak_Wrapper[cIn], (cIn + "_Eleak_Wrapper/D").data() );
@@ -228,6 +244,11 @@ void RootManager::bookCollection(G4String cIn) {
 
     tr->Branch( (cIn + "_Optical_No").data() , &Optical_No[cIn], (cIn + "_Optical_No/I").data() );
     tr->Branch( (cIn + "_Optical_Time").data() , Optical_Time[cIn], (cIn + "_Optical_Time["+cIn+"_Optical_No]/D").data() );
+    tr->Branch( (cIn + "_Optical_DetID").data() , Optical_DetID[cIn], (cIn + "_Optical_DetID["+cIn+"_Optical_No]/I").data() );
+    tr->Branch( (cIn + "_Optical_DetID_x").data() , Optical_DetID_x[cIn], (cIn + "_Optical_DetID_x["+cIn+"_Optical_No]/I").data() );
+    tr->Branch( (cIn + "_Optical_DetID_y").data() , Optical_DetID_y[cIn], (cIn + "_Optical_DetID_y["+cIn+"_Optical_No]/I").data() );
+    tr->Branch( (cIn + "_Optical_DetID_z").data() , Optical_DetID_z[cIn], (cIn + "_Optical_DetID_z["+cIn+"_Optical_No]/I").data() );
+
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
@@ -355,7 +376,10 @@ bool RootManager::FillOptical( const G4Step* in, G4String type)
     bool flag = false;
     if ( type.contains("_APDWorld_PV") ) {
         auto cin = type.remove( type.index("_APDWorld_PV") );
-    
+        auto* touchable = (G4TouchableHistory*)(in->GetPreStepPoint()->GetTouchable());
+        G4int reNumber = touchable->GetReplicaNumber();
+        Optical_DetID[cin][ Optical_No[cin] ] = reNumber;
+
         Optical_Time[cin][ Optical_No[cin] ] = in->GetPostStepPoint()->GetGlobalTime();  
         Optical_No[cin] ++;
 

@@ -166,7 +166,7 @@ void DetectorConstruction::DefineMaterials()
         const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
 
         G4double RefractionIdx[nEntries] = {1.806,1.833};
-        G4double AbsorptionLength[nEntries] = {100.*cm,100.*cm};
+        G4double AbsorptionLength[nEntries] = {35.*cm,35.*cm};
 
         auto* MPT = new G4MaterialPropertiesTable();
         MPT->AddProperty("RINDEX", photonEnergy, RefractionIdx, nEntries);

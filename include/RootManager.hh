@@ -209,6 +209,10 @@ class RootManager {
 
         std::map<G4String, int > Optical_No;
         std::map<G4String, double* > Optical_Time;
+        std::map<G4String, int* > Optical_DetID;
+        std::map<G4String, int* > Optical_DetID_x;
+        std::map<G4String, int* > Optical_DetID_y;
+        std::map<G4String, int* > Optical_DetID_z;
 
         std::map<G4String, double > Hit_Eleak_Wrapper;
 
