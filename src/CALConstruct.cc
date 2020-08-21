@@ -145,9 +145,9 @@ G4ThreeVector CALConstruct::Construct()
 
             // test
             const G4int num = 2;
-            G4double ephoton[num] = {2.034*eV, 4.136*eV};
-            G4double reflectivity[num] = {1.3, 1.5};
-            G4double efficiency[num]   = {0.8, 1.0};
+            G4double ephoton[num] = {0.62*eV, 1.24*eV};
+            G4double reflectivity[num] = {1.4358, 2.3493};
+            G4double efficiency[num]   = {1.0, 1.0};
             
             G4MaterialPropertiesTable *myST2 = new G4MaterialPropertiesTable();
             myST2->AddProperty("REFLECTIVITY", ephoton, reflectivity, num);

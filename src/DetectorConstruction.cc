@@ -179,7 +179,7 @@ void DetectorConstruction::DefineMaterials()
 
         MPT->AddConstProperty("SCINTILLATIONYIELD",20./MeV);
         MPT->AddConstProperty("RESOLUTIONSCALE",1.);
-        MPT->AddConstProperty("FASTTIMECONSTANT",20.*ns);
+        MPT->AddConstProperty("FASTTIMECONSTANT",30.*ns);
         MPT->AddConstProperty("YIELDRATIO",1.);
 
         LYSO->SetMaterialPropertiesTable(MPT);
@@ -478,7 +478,7 @@ void DetectorConstruction::DefineECAL()
     auto ECAL_Box = new G4Box("ecal", Size_ECALRegion.x()/2, Size_ECALRegion.y()/2, Size_ECALRegion.z()/2);
     auto ECal_LV = new G4LogicalVolume( ECAL_Box, ECALRegion_Mat, "ECAL",nullptr,nullptr,nullptr);
     new G4PVPlacement(nullptr, Pos_ECALRegion, ECal_LV, "ECAL", World_LV, false, 0, fCheckOverlaps);
-    //ECal_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
+    ECal_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
     
     /* Building Center Calorimeter with LYSO
      * Cell Size: 1*1*36 cm^3
@@ -500,8 +500,8 @@ void DetectorConstruction::DefineECAL()
      * Cell Size: 1*20*1 cm^3 or 20*1*1 cm^3
      * Totally 4 modules
      */
-    
-    for (int ip = 1; ip <= 4; ip++) 
+    int nECAL_Outer = ECAL_Outer_Module_No.x()*ECAL_Outer_Module_No.y()*ECAL_Outer_Module_No.z();
+    for (int ip = 1; ip <= nECAL_Outer; ip++)
     {
         double w1 = pow(-1,(ip%2))   * Size_ECALRegion.x()/4. ;
         double w2 = pow(-1,(ip-1)/2) * Size_ECALRegion.x()/4. ;
@@ -636,8 +636,9 @@ void DetectorConstruction::ConstructSDandField()
         for ( itr_LV = ECAL_Center_LV.begin(); itr_LV != ECAL_Center_LV.end(); itr_LV++ )
             (*itr_LV)->SetSensitiveDetector( ECalSD );
 
-        DetectorSD* ECalOutSD[4];
-        for (int i=1; i<=4; i++)
+        const int nECAL_Outer = ECAL_Outer_Module_No.x()*ECAL_Outer_Module_No.y()*ECAL_Outer_Module_No.z();
+        DetectorSD* ECalOutSD[nECAL_Outer];
+        for (int i=1; i<=nECAL_Outer; i++)
         {
             ECalOutSD[i-1] = new DetectorSD( 2, "ECAL_Outer_"+std::to_string(i), ECAL_Outer_Mod_No_Dir, fRootMng);
             G4SDManager::GetSDMpointer()->AddNewDetector( ECalOutSD[i-1] );
