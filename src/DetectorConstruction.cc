@@ -56,6 +56,8 @@
 #include "G4ProductionCuts.hh"
 #include "G4LogicalSkinSurface.hh"
 
+#include "G4GDMLParser.hh"
+
 #include <iterator>
 
 //#include "G4ios.hh"
@@ -241,7 +243,7 @@ void DetectorConstruction::DefineParameters()
     Pos_TagTrk[5] = G4ThreeVector( 0*cm, 0*cm,  20.*cm);
     Pos_TagTrk[6] = G4ThreeVector( 0*cm, 0*cm,  30.*cm);
 
-    Size_TagRegion = G4ThreeVector( Target_Size.x(), Target_Size.y(), 60*cm + Size_TagTrk[0].z() );
+    Size_TagRegion = G4ThreeVector( 2.0*Size_TagTrk[0].x(), 2.0*Size_TagTrk[0].y(), 60*cm + 2*No_TagTrk*Size_TagTrk[0].z() );
     Pos_TagRegion  = G4ThreeVector(  0*cm,  0*cm, -30*cm - Trk_Tar_Dis - (Size_TagTrk[0].z() + Target_Size.z())/2 );
 
     /////////////////////////
@@ -267,7 +269,7 @@ void DetectorConstruction::DefineParameters()
     Pos_RecTrk[4] = G4ThreeVector( 0*cm, 0*cm,  -4.25*mm);
     Pos_RecTrk[5] = G4ThreeVector( 0*cm, 0*cm,  86.25*mm);
 
-    Size_RecRegion = G4ThreeVector( Size_RecTrk[5].x(), Size_RecTrk[5].y(), 17.25*cm + 0.1*mm );
+    Size_RecRegion = G4ThreeVector( 2.0*Size_RecTrk[5].x(), 2.0*Size_RecTrk[5].y(), 17.25*cm + 2*No_TagTrk*0.1*mm );
     Pos_RecRegion  = G4ThreeVector(  0*cm,  0*cm, 0.5*Size_RecRegion.z() + 7.5*mm  + 0.5*350*um );
 
     /////////////////////////
@@ -354,6 +356,9 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
 
     //SetBiasLayer();
 
+    //G4GDMLParser parser;
+    //parser.Write("g4test.gdml", World_PV);
+
     return World_PV;
 }
 
@@ -412,7 +417,7 @@ void DetectorConstruction::DefineTagTracker()
     auto TagRegion_Box = new G4Box("TagTrk", Size_TagRegion.x()/2., Size_TagRegion.y()/2., Size_TagRegion.z()/2. );
     TagRegion_LV  = new G4LogicalVolume( TagRegion_Box, TagRegion_Mat, "TAGTrK",nullptr,nullptr,nullptr);
     new G4PVPlacement(nullptr, Pos_TagRegion, TagRegion_LV, "TAGTRK", World_LV, false, 0, fCheckOverlaps);
-    TagRegion_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
+    //TagRegion_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
     
     auto TagTrk1 = new TrkConstruct("TagTrk1", TagRegion_LV, 0, fCheckOverlaps);
     TagTrk1->SetRotation( 0. );
@@ -445,7 +450,7 @@ void DetectorConstruction::DefineRecTracker()
     auto RecRegion_Box = new G4Box("RecTrk", Size_RecRegion.x()/2., Size_RecRegion.y()/2., Size_RecRegion.z()/2. );
     RecRegion_LV  = new G4LogicalVolume( RecRegion_Box, RecRegion_Mat, "RECTrK",nullptr,nullptr,nullptr);
     new G4PVPlacement(nullptr, Pos_RecRegion, RecRegion_LV, "RECTRK", World_LV, false, 0, fCheckOverlaps);
-    RecRegion_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
+    //RecRegion_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
     
     auto RecTrk1 = new TrkConstruct("RecTrk1", RecRegion_LV, 0, fCheckOverlaps);
     RecTrk1->SetRotation( 0 );
