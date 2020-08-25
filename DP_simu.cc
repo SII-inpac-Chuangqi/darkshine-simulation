@@ -112,6 +112,11 @@ int main(int argc,char** argv)
   
   auto * rootMng = new RootManager;
 
+    if ( !OpticalMacro.empty() )   // batch mode
+    {
+        G4String command = "/control/execute ";
+        UImanager->ApplyCommand(command+OpticalMacro);
+    }
   // Construct the default run manager
   
   auto * runManager = new G4RunManager;
@@ -121,26 +126,25 @@ int main(int argc,char** argv)
   runManager->SetUserInitialization(new DetectorConstruction(rootMng));
 
   G4VModularPhysicsList* physicsList = new FTFP_BERT;
+  physicsList->SetVerboseLevel(0);
+    if ( rootMng->GetOptical() ) {
+        physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
+        auto *opticalPhysics = new G4OpticalPhysics();
+        physicsList->RegisterPhysics(opticalPhysics);
+    }
   physicsList->RegisterPhysics(new G4StepLimiterPhysics());
   physicsList->RegisterPhysics( new GammaPhysics() );
   auto* biasingPhysics = new G4GenericBiasingPhysics();
   biasingPhysics->Bias("e-");
   biasingPhysics->Bias("gamma");
   physicsList->RegisterPhysics(biasingPhysics);
-    
-  //physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());    
-  //G4OpticalPhysics* opticalPhysics = new G4OpticalPhysics();
-  //physicsList->RegisterPhysics(opticalPhysics);
 
-  physicsList->RegisterPhysics( new OpticalPhysics( rootMng ) );
+
+  //physicsList->RegisterPhysics( new OpticalPhysics( rootMng ) );
 
   runManager->SetUserInitialization(physicsList);
     
-  if ( !OpticalMacro.empty() )   // batch mode
-    {
-      G4String command = "/control/execute ";
-      UImanager->ApplyCommand(command+OpticalMacro);
-    }
+
 
   // Set user action classes
   auto* run_action = new RunAction(rootMng);

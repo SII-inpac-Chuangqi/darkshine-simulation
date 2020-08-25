@@ -30,7 +30,7 @@ class TTree;
 class TRandom3;
 class RootMessenger;
 
-const int MaxHitsE = 3000;
+const int MaxHitsE = 5000;
 const int MaxMCPs = 500;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

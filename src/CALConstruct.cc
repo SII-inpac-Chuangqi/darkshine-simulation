@@ -4,7 +4,7 @@
 #include "G4SubtractionSolid.hh"
 #include "G4LogicalSkinSurface.hh"
 #include "G4OpticalSurface.hh"
-
+#include "G4LogicalBorderSurface.hh"
 #include <iterator>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -98,7 +98,7 @@ G4ThreeVector CALConstruct::Construct()
     auto fName = ifAbsorber ? fCALName+"Abs" : fCALName;
     auto box = new G4Box(fName+"_Box" , fSizeX, fSizeY, fSizeZ );
     auto boxLV = new G4LogicalVolume(box, fCALMaterial, fName+"_LV", 0,0,0);
-    new G4PVPlacement(0, pos, boxLV, fName+"_PV", fMotherVolume, false, fCopyNo, fCheckOverlap);
+    auto boxPV = new G4PVPlacement(0, pos, boxLV, fName+"_PV", fMotherVolume, false, fCopyNo, fCheckOverlap);
 
     if ( fRecordLV ) fCaloLVVector.push_back(boxLV);
 
@@ -120,7 +120,7 @@ G4ThreeVector CALConstruct::Construct()
                                                  fSizeZ+fWrapSizeZ);
         auto WrapBox = new G4SubtractionSolid(fCALName+"_BoxW", boxL, box);
         auto WrapLV = new G4LogicalVolume(WrapBox, fWrapMaterial, fCALName+"_LVW", 0,0,0);
-        new G4PVPlacement(0, pos, WrapLV, fCALName+"_PVW", fMotherVolume, false, fCopyNo, fCheckOverlap);
+        auto WrapPV = new G4PVPlacement(0, pos, WrapLV, fCALName+"_PVW", fMotherVolume, false, fCopyNo, fCheckOverlap);
         
         if ( fWrapVis ) 
         {
@@ -136,31 +136,35 @@ G4ThreeVector CALConstruct::Construct()
         if ( fOptical ) 
         {
             /* Set Optical Porperties for boundary surface */
-            G4OpticalSurface* WrapSurface = new G4OpticalSurface( fCALName+"WrapSurface" );
-            WrapSurface->SetType(dielectric_dielectric);
-            WrapSurface->SetFinish(polished);
-            WrapSurface->SetModel(glisur);
+            auto* WrapSurface = new G4OpticalSurface( fCALName+"WrapSurface" );
+            //WrapSurface->SetType(dielectric_dielectric);
+            //WrapSurface->SetFinish(polished);
+            //WrapSurface->SetModel(glisur);
 
-            new G4LogicalSkinSurface( fCALName+"WrapSurface", WrapLV, WrapSurface );
+            WrapSurface->SetType(dielectric_LUT);
+            WrapSurface->SetFinish(polishedtyvekair);
+            WrapSurface->SetModel(LUT);
+            //new G4LogicalSkinSurface( fCALName+"WrapSurface", WrapLV, WrapSurface );
+            new G4LogicalBorderSurface( fCALName+"WrapSurface", boxPV, WrapPV, WrapSurface);
 
             // test
             const G4int num = 2;
-            G4double ephoton[num] = {2.273*eV, 3.064*eV};
-            G4double reflectivity[num] = {1., 1.};
+            G4double ephoton[num] = {1*eV, 7*eV};
+            G4double reflectivity[num] = {1.0, 1.0};
             G4double efficiency[num]   = {1.0, 1.0};
             
-            G4MaterialPropertiesTable *myST2 = new G4MaterialPropertiesTable();
+            auto *myST2 = new G4MaterialPropertiesTable();
             myST2->AddProperty("REFLECTIVITY", ephoton, reflectivity, num);
             myST2->AddProperty("EFFICIENCY",   ephoton, efficiency,   num);
 
-            WrapSurface->SetMaterialPropertiesTable(myST2);
+            //WrapSurface->SetMaterialPropertiesTable(myST2);
 
             /* Placement of APD */
             auto abox = new G4Box(fCALName+"_APDWorld_Box" , wSizeX, wSizeY, wSizeZ );
             auto aboxLV = new G4LogicalVolume(abox, G4Material::GetMaterial("vacuum"), fCALName+"_APDWorld_LV", 0,0,0);
             new G4PVPlacement( 0, G4ThreeVector(wPosX, wPosY, wPosZ), aboxLV, fCALName+"_APDWorld_PV", boxLV, false, fCopyNo, fCheckOverlap);
 
-            G4VisAttributes* wVis = new G4VisAttributes(G4Colour(0.5,0.5,.0));
+            auto* wVis = new G4VisAttributes(G4Colour(0.5,0.5,.0));
             wVis->SetVisibility(true);
             aboxLV->SetVisAttributes(wVis);
 

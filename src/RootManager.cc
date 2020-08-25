@@ -27,12 +27,11 @@ RootManager::RootManager()
     fMessenger = new RootMessenger(this);
     outfilename = "dp_out.root";
     initialize();
-
+    if_Optical = false;
 }
 
 void RootManager::initialize()
 {
-    if_Optical = false;
     // Initialization
     EventID	            =0;
     for(int i=0;i<4;i++) Rndm[i]    = 0 ;
@@ -375,6 +374,7 @@ bool RootManager::FillOptical( const G4Step* in, G4String type)
 {
     bool flag = false;
     if ( type.contains("_APDWorld_PV") ) {
+        //G4cout << "==>Optical Photon Detected in APD." << G4endl;
         auto cin = type.remove( type.index("_APDWorld_PV") );
         auto* touchable = (G4TouchableHistory*)(in->GetPreStepPoint()->GetTouchable());
         G4int reNumber = touchable->GetReplicaNumber();
