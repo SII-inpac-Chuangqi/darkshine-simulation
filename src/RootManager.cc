@@ -19,7 +19,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 RootManager::RootManager()
-:rootFile(0), tr(0), tmc(0),fStart(0),fEvtNb(100000), if_clean(false)
+:rootFile(nullptr), tr(nullptr), tmc(nullptr),fStart(0),fEvtNb(100000), if_clean(false)
 {
     //gInterpreter->GenerateDictionary("vector<double*>","vector");
     //gInterpreter->GenerateDictionary("vector<TVector3>","vector");
@@ -34,7 +34,7 @@ void RootManager::initialize()
 {
     // Initialization
     EventID	            =0;
-    for(int i=0;i<4;i++) Rndm[i]    = 0 ;
+    for(double & i : Rndm) i    = 0 ;
 
     // truth 
     for(int i=0; i<3; i++) {
@@ -115,19 +115,19 @@ void RootManager::initialize()
 
     for(itr_i = Optical_No.begin(); itr_i != Optical_No.end(); itr_i++ ) itr_i->second = 0;
     for(itr_double = Optical_Time.begin(); itr_double != Optical_Time.end(); itr_double++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+        for(int i=0; i<MaxOptPhoton; i++) (itr_double->second)[i] = 0;
     }
     for(itr_int = Optical_DetID.begin(); itr_int != Optical_DetID.end(); itr_int++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+        for(int i=0; i<MaxOptPhoton; i++) (itr_int->second)[i] = 0;
     }
     for(itr_int = Optical_DetID_x.begin(); itr_int != Optical_DetID_x.end(); itr_int++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+        for(int i=0; i<MaxOptPhoton; i++) (itr_int->second)[i] = 0;
     }
     for(itr_int = Optical_DetID_y.begin(); itr_int != Optical_DetID_y.end(); itr_int++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+        for(int i=0; i<MaxOptPhoton; i++) (itr_int->second)[i] = 0;
     }
     for(itr_int = Optical_DetID_z.begin(); itr_int != Optical_DetID_z.end(); itr_int++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+        for(int i=0; i<MaxOptPhoton; i++) (itr_int->second)[i] = 0;
     }
 }
 
@@ -136,7 +136,7 @@ void RootManager::initialize()
 RootManager::~RootManager()
 {
     delete fMessenger;
-    if(rootFile) delete rootFile;
+    delete rootFile;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -218,11 +218,11 @@ void RootManager::bookCollection(G4String cIn) {
     Hit_Z.insert( std::pair<G4String, double*>(cIn, new double [MaxHitsE]) );
 
     Optical_No.insert( std::pair<G4String, int>(cIn, 0) );
-    Optical_Time.insert( std::pair<G4String, double*>(cIn, new double [MaxHitsE]) );
-    Optical_DetID.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
-    Optical_DetID_x.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
-    Optical_DetID_y.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
-    Optical_DetID_z.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
+    Optical_Time.insert( std::pair<G4String, double*>(cIn, new double [MaxOptPhoton]) );
+    Optical_DetID.insert( std::pair<G4String, int*>(cIn, new int [MaxOptPhoton]) );
+    Optical_DetID_x.insert( std::pair<G4String, int*>(cIn, new int [MaxOptPhoton]) );
+    Optical_DetID_y.insert( std::pair<G4String, int*>(cIn, new int [MaxOptPhoton]) );
+    Optical_DetID_z.insert( std::pair<G4String, int*>(cIn, new int [MaxOptPhoton]) );
 
     tr->Branch( (cIn + "_No").data() , &Hit_No[cIn], (cIn + "_No/I").data() );
     tr->Branch( (cIn + "_Eleak_Wrapper").data() , &Hit_Eleak_Wrapper[cIn], (cIn + "_Eleak_Wrapper/D").data() );
@@ -317,7 +317,7 @@ void RootManager::FillMC( MCParticle* mc, G4double Eremain) {
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 
-void RootManager::FillSim(Int_t    eventID, Double_t* Rnd) 
+void RootManager::FillSim(Int_t    eventID, const Double_t* Rnd)
 {
 
     EventID     = eventID + fEvtNb*fStart ;
@@ -333,7 +333,7 @@ void RootManager::FillSim(Int_t    eventID, Double_t* Rnd)
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 
-void RootManager::FillSimHit( G4String cIn, SimHit* hit )
+void RootManager::FillSimHit( const G4String& cIn, SimHit* hit )
 {
     
     Hit_Type[cIn][ Hit_No[cIn] ] = hit->GetType();

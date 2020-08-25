@@ -31,6 +31,7 @@ class TRandom3;
 class RootMessenger;
 
 const int MaxHitsE = 5000;
+const int MaxOptPhoton = 50000;
 const int MaxMCPs = 500;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -96,8 +97,8 @@ class RootManager {
         G4bool GetFilter_Process_Result() { return Filter_Process_Result; };
 
         /* fill methods */
-        void FillSim(Int_t    EventID, Double_t* Rndm);
-        void FillSimHit(G4String, SimHit* );
+        void FillSim(Int_t    EventID, const Double_t* Rndm);
+        void FillSimHit(const G4String&, SimHit* );
 
         void FillMC( MCParticle* , G4double );
         void FillE1( MCParticle* );
