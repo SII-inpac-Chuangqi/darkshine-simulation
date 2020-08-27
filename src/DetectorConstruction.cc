@@ -74,7 +74,8 @@ DetectorConstruction::DetectorConstruction(RootManager* rootMng)
     build_Target = true;
     build_TagTrk = true;
     build_RecTrk = true;
-    build_ECAL = true; 
+    build_ECAL_Center = false;
+    build_ECAL_Outer = true;
     build_HCAL = false;
 }
 
@@ -342,7 +343,7 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
     if ( build_Target ) DefineTarget();     // Build Target
     if ( build_TagTrk ) DefineTagTracker(); // Build Tagging Tracker
     if ( build_RecTrk ) DefineRecTracker(); // Build Recoil Tracker
-    if ( build_ECAL   ) DefineECAL();       // Build ECal
+    if ( build_ECAL_Center || build_ECAL_Outer  ) DefineECAL();       // Build ECal
     if ( build_HCAL   ) DefineHCAL();       // Build HCal
 
     // Set User Limit 
@@ -489,42 +490,51 @@ void DetectorConstruction::DefineECAL()
      * Cell Size: 1*1*36 cm^3
      * Module No: 6*6 
      */
-    auto ECAL_Center = new CALConstruct("ECAL_Center", ECal_LV, 0, true, true, fRootMng->GetOptical(), fCheckOverlaps);
-    ECAL_Center->SetSizeXYZ( ECAL_Center_Size.x()/2., ECAL_Center_Size.y()/2., ECAL_Center_Size.z()/2. );
-    ECAL_Center->SetWrapSizeXYZ( ECAL_Center_Wrap_Size.x()/2., ECAL_Center_Wrap_Size.y()/2., ECAL_Center_Wrap_Size.z()/2. );
-    ECAL_Center->SetCALMaterial(ECAL_Center_Mat);
-    ECAL_Center->SetWrapMaterial( ECAL_Wrap_Mat );
-    ECAL_Center->SetVis(new G4VisAttributes(G4Colour(0.5,0.5,.0)));
-    ECAL_Center->SetAPDSize(APD_Size, Glue_Size);
-    ECAL_Center->SetAPDMat(APD_Mat, Glue_Mat);
-    ECAL_Center->MatrixPlacement(ECAL_Center_Module_No.x(),ECAL_Center_Module_No.y(),ECAL_Center_Module_No.z(),G4ThreeVector(0,0,0));
-    
-    ECAL_Center_LV = ECAL_Center->GetCaloLVVector();
+    if ( build_ECAL_Center ) {
+        auto ECAL_Center = new CALConstruct("ECAL_Center", ECal_LV, 0, true, true, fRootMng->GetOptical(),
+                                            fCheckOverlaps);
+        ECAL_Center->SetSizeXYZ(ECAL_Center_Size.x() / 2., ECAL_Center_Size.y() / 2., ECAL_Center_Size.z() / 2.);
+        ECAL_Center->SetWrapSizeXYZ(ECAL_Center_Wrap_Size.x() / 2., ECAL_Center_Wrap_Size.y() / 2.,
+                                    ECAL_Center_Wrap_Size.z() / 2.);
+        ECAL_Center->SetCALMaterial(ECAL_Center_Mat);
+        ECAL_Center->SetWrapMaterial(ECAL_Wrap_Mat);
+        ECAL_Center->SetVis(new G4VisAttributes(G4Colour(0.5, 0.5, .0)));
+        ECAL_Center->SetAPDSize(APD_Size, Glue_Size);
+        ECAL_Center->SetAPDMat(APD_Mat, Glue_Mat);
+        ECAL_Center->MatrixPlacement(ECAL_Center_Module_No.x(), ECAL_Center_Module_No.y(), ECAL_Center_Module_No.z(),
+                                     G4ThreeVector(0, 0, 0));
+
+        ECAL_Center_LV = ECAL_Center->GetCaloLVVector();
+    }
 
     /* Building Surrounding Calorimeter with PWO4
      * Cell Size: 1*20*1 cm^3 or 20*1*1 cm^3
      * Totally 4 modules
      */
-    int nECAL_Outer = ECAL_Outer_Module_No.x()*ECAL_Outer_Module_No.y()*ECAL_Outer_Module_No.z();
-    for (int ip = 1; ip <= nECAL_Outer; ip++)
-    {
-        double w1 = pow(-1,(ip%2))   * Size_ECALRegion.x()/4. ;
-        double w2 = pow(-1,(ip-1)/2) * Size_ECALRegion.x()/4. ;
-        auto ECAL_Outer = new CALConstruct("ECAL_Outer_"+std::to_string(ip), ECal_LV, 0, true, true, fRootMng->GetOptical(), fCheckOverlaps);
-        ECAL_Outer->SetSizeXYZ( ECAL_Outer_Size_Dir.x()/2., ECAL_Outer_Size_Dir.y()/2., ECAL_Outer_Size_Dir.z()/2. );
-        ECAL_Outer->SetWrapSizeXYZ( ECAL_Outer_Wrap_Size.x()/2., ECAL_Outer_Wrap_Size.y()/2., ECAL_Outer_Wrap_Size.z()/2. );
-        ECAL_Outer->SetCALMaterial(ECAL_Outer_Mat);
-        ECAL_Outer->SetWrapMaterial( ECAL_Wrap_Mat );
-        ECAL_Outer->SetVis(new G4VisAttributes(G4Colour(0.4,0.57,0.6)));
-        ECAL_Outer->SetAPDSize(APD_Size, Glue_Size);
-        ECAL_Outer->SetAPDMat(APD_Mat, Glue_Mat);
-        ECAL_Outer->MatrixPlacementXYRemoved(ECAL_Outer_Mod_No_Dir.x(),ECAL_Outer_Mod_No_Dir.y(),ECAL_Outer_Mod_No_Dir.z(),G4ThreeVector( w1, w2 ,0), 3, ip);
+    if ( build_ECAL_Outer ) {
+        int nECAL_Outer = ECAL_Outer_Module_No.x() * ECAL_Outer_Module_No.y() * ECAL_Outer_Module_No.z();
+        for (int ip = 1; ip <= nECAL_Outer; ip++) {
+            double w1 = pow(-1, (ip % 2)) * Size_ECALRegion.x() / 4.;
+            double w2 = pow(-1, (ip - 1) / 2) * Size_ECALRegion.x() / 4.;
+            auto ECAL_Outer = new CALConstruct("ECAL_Outer_" + std::to_string(ip), ECal_LV, 0, true, true,
+                                               fRootMng->GetOptical(), fCheckOverlaps);
+            ECAL_Outer->SetSizeXYZ(ECAL_Outer_Size_Dir.x() / 2., ECAL_Outer_Size_Dir.y() / 2.,
+                                   ECAL_Outer_Size_Dir.z() / 2.);
+            ECAL_Outer->SetWrapSizeXYZ(ECAL_Outer_Wrap_Size.x() / 2., ECAL_Outer_Wrap_Size.y() / 2.,
+                                       ECAL_Outer_Wrap_Size.z() / 2.);
+            ECAL_Outer->SetCALMaterial(ECAL_Outer_Mat);
+            ECAL_Outer->SetWrapMaterial(ECAL_Wrap_Mat);
+            ECAL_Outer->SetVis(new G4VisAttributes(G4Colour(0.4, 0.57, 0.6)));
+            ECAL_Outer->SetAPDSize(APD_Size, Glue_Size);
+            ECAL_Outer->SetAPDMat(APD_Mat, Glue_Mat);
+            ECAL_Outer->MatrixPlacementXYRemoved(ECAL_Outer_Mod_No_Dir.x(), ECAL_Outer_Mod_No_Dir.y(),
+                                                 ECAL_Outer_Mod_No_Dir.z(), G4ThreeVector(w1, w2, 0), 3, ip);
 
-        auto tmp_LV = ECAL_Outer->GetCaloLVVector();
-        //ECAL_Outer_LV.insert( ECAL_Outer_LV.end(), tmp_LV.begin(), tmp_LV.end() );
-        ECAL_Outer_LV[ip-1] = ECAL_Outer->GetCaloLVVector();
+            auto tmp_LV = ECAL_Outer->GetCaloLVVector();
+            //ECAL_Outer_LV.insert( ECAL_Outer_LV.end(), tmp_LV.begin(), tmp_LV.end() );
+            ECAL_Outer_LV[ip - 1] = ECAL_Outer->GetCaloLVVector();
+        }
     }
-
 
     // Production Cut
     //G4Region* emCal = new G4Region("EMCal");
@@ -635,20 +645,22 @@ void DetectorConstruction::ConstructSDandField()
             (*itr_LV)->SetSensitiveDetector( RecTrkSD2 );
     }
 
-    if ( build_ECAL ) {
-        auto* ECalSD = new DetectorSD( 1, "ECAL_Center", ECAL_Center_Module_No , fRootMng);
-        G4SDManager::GetSDMpointer()->AddNewDetector( ECalSD );
-        for ( itr_LV = ECAL_Center_LV.begin(); itr_LV != ECAL_Center_LV.end(); itr_LV++ )
-            (*itr_LV)->SetSensitiveDetector( ECalSD );
+    if ( build_ECAL_Center ) {
+        auto *ECalSD = new DetectorSD(1, "ECAL_Center", ECAL_Center_Module_No, fRootMng);
+        G4SDManager::GetSDMpointer()->AddNewDetector(ECalSD);
+        for (itr_LV = ECAL_Center_LV.begin(); itr_LV != ECAL_Center_LV.end(); itr_LV++)
+            (*itr_LV)->SetSensitiveDetector(ECalSD);
 
-        const int nECAL_Outer = ECAL_Outer_Module_No.x()*ECAL_Outer_Module_No.y()*ECAL_Outer_Module_No.z();
-        DetectorSD* ECalOutSD[nECAL_Outer];
-        for (int i=1; i<=nECAL_Outer; i++)
-        {
-            ECalOutSD[i-1] = new DetectorSD( 2, "ECAL_Outer_"+std::to_string(i), ECAL_Outer_Mod_No_Dir, fRootMng);
-            G4SDManager::GetSDMpointer()->AddNewDetector( ECalOutSD[i-1] );
-            for ( itr_LV = (ECAL_Outer_LV[i-1]).begin(); itr_LV != (ECAL_Outer_LV[i-1]).end(); itr_LV++ )
-                (*itr_LV)->SetSensitiveDetector( ECalOutSD[i-1] );
+    }
+    if ( build_ECAL_Outer ) {
+        const int nECAL_Outer = ECAL_Outer_Module_No.x() * ECAL_Outer_Module_No.y() * ECAL_Outer_Module_No.z();
+        DetectorSD *ECalOutSD[nECAL_Outer];
+        for (int i = 1; i <= nECAL_Outer; i++) {
+            ECalOutSD[i - 1] = new DetectorSD(2, "ECAL_Outer_" + std::to_string(i), ECAL_Outer_Mod_No_Dir,
+                                              fRootMng);
+            G4SDManager::GetSDMpointer()->AddNewDetector(ECalOutSD[i - 1]);
+            for (itr_LV = (ECAL_Outer_LV[i - 1]).begin(); itr_LV != (ECAL_Outer_LV[i - 1]).end(); itr_LV++)
+                (*itr_LV)->SetSensitiveDetector(ECalOutSD[i - 1]);
         }
     }
 

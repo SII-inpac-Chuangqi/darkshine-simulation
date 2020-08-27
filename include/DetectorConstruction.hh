@@ -108,7 +108,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4bool build_Target;
     G4bool build_TagTrk;
     G4bool build_RecTrk;
-    G4bool build_ECAL;
+    G4bool build_ECAL_Center;
+    G4bool build_ECAL_Outer;
     G4bool build_HCAL;
     /////////////////////////
     //  EM Field
