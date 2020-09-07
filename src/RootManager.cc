@@ -117,6 +117,9 @@ void RootManager::initialize()
     for(itr_double = Optical_Time.begin(); itr_double != Optical_Time.end(); itr_double++ ) {
         for(int i=0; i<MaxOptPhoton; i++) (itr_double->second)[i] = 0;
     }
+    for(itr_double = Optical_E.begin(); itr_double != Optical_E.end(); itr_double++ ) {
+        for(int i=0; i<MaxOptPhoton; i++) (itr_double->second)[i] = 0;
+    }
     for(itr_int = Optical_DetID.begin(); itr_int != Optical_DetID.end(); itr_int++ ) {
         for(int i=0; i<MaxOptPhoton; i++) (itr_int->second)[i] = 0;
     }
@@ -219,6 +222,7 @@ void RootManager::bookCollection(G4String cIn) {
 
     Optical_No.insert( std::pair<G4String, int>(cIn, 0) );
     Optical_Time.insert( std::pair<G4String, double*>(cIn, new double [MaxOptPhoton]) );
+    Optical_E.insert( std::pair<G4String, double*>(cIn, new double [MaxOptPhoton]) );
     Optical_DetID.insert( std::pair<G4String, int*>(cIn, new int [MaxOptPhoton]) );
     Optical_DetID_x.insert( std::pair<G4String, int*>(cIn, new int [MaxOptPhoton]) );
     Optical_DetID_y.insert( std::pair<G4String, int*>(cIn, new int [MaxOptPhoton]) );
@@ -243,6 +247,7 @@ void RootManager::bookCollection(G4String cIn) {
 
     tr->Branch( (cIn + "_Optical_No").data() , &Optical_No[cIn], (cIn + "_Optical_No/I").data() );
     tr->Branch( (cIn + "_Optical_Time").data() , Optical_Time[cIn], (cIn + "_Optical_Time["+cIn+"_Optical_No]/D").data() );
+    tr->Branch( (cIn + "_Optical_E").data() , Optical_E[cIn], (cIn + "_Optical_E["+cIn+"_Optical_No]/D").data() );
     tr->Branch( (cIn + "_Optical_DetID").data() , Optical_DetID[cIn], (cIn + "_Optical_DetID["+cIn+"_Optical_No]/I").data() );
     tr->Branch( (cIn + "_Optical_DetID_x").data() , Optical_DetID_x[cIn], (cIn + "_Optical_DetID_x["+cIn+"_Optical_No]/I").data() );
     tr->Branch( (cIn + "_Optical_DetID_y").data() , Optical_DetID_y[cIn], (cIn + "_Optical_DetID_y["+cIn+"_Optical_No]/I").data() );
@@ -380,7 +385,9 @@ bool RootManager::FillOptical( const G4Step* in, G4String type)
         G4int reNumber = touchable->GetReplicaNumber();
         Optical_DetID[cin][ Optical_No[cin] ] = reNumber;
 
-        Optical_Time[cin][ Optical_No[cin] ] = in->GetPostStepPoint()->GetGlobalTime();  
+        Optical_Time[cin][ Optical_No[cin] ] = in->GetPostStepPoint()->GetGlobalTime(); // ns
+        Optical_E[cin][ Optical_No[cin] ] = in->GetPostStepPoint()->GetTotalEnergy()/eV; // optical photon in eV unit
+
         Optical_No[cin] ++;
 
         flag = true;

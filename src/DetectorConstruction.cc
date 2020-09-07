@@ -74,8 +74,8 @@ DetectorConstruction::DetectorConstruction(RootManager* rootMng)
     build_Target = true;
     build_TagTrk = true;
     build_RecTrk = true;
-    build_ECAL_Center = false;
-    build_ECAL_Outer = true;
+    build_ECAL_Center = true;
+    build_ECAL_Outer = false;
     build_HCAL = false;
 }
 
@@ -180,9 +180,9 @@ void DetectorConstruction::DefineMaterials()
 
         MPT->AddProperty("FASTCOMPONENT",ScintEnergy,ScintFast,nEntries);
 
-        MPT->AddConstProperty("SCINTILLATIONYIELD",30./MeV);
+        MPT->AddConstProperty("SCINTILLATIONYIELD",20./MeV);
         MPT->AddConstProperty("RESOLUTIONSCALE",1.);
-        MPT->AddConstProperty("FASTTIMECONSTANT",30.*ns);
+        MPT->AddConstProperty("FASTTIMECONSTANT",3.*ns);
         MPT->AddConstProperty("YIELDRATIO",1.);
 
         LYSO->SetMaterialPropertiesTable(MPT);
@@ -629,7 +629,7 @@ void DetectorConstruction::ConstructSDandField()
 
         auto* TagTrkSD2 = new DetectorSD( 0, "TagTrk2", G4ThreeVector( 1, 1, No_TagTrk ), fRootMng);
         G4SDManager::GetSDMpointer()->AddNewDetector( TagTrkSD2 );
-        for ( itr_LV = TagTrk_LV1.begin(); itr_LV != TagTrk_LV1.end(); itr_LV++ )
+        for ( itr_LV = TagTrk_LV2.begin(); itr_LV != TagTrk_LV2.end(); itr_LV++ )
             (*itr_LV)->SetSensitiveDetector( TagTrkSD2 );
     }
 
@@ -641,7 +641,7 @@ void DetectorConstruction::ConstructSDandField()
 
         auto* RecTrkSD2 = new DetectorSD( 0, "RecTrk2", G4ThreeVector( 1, 1, No_RecTrk ), fRootMng);
         G4SDManager::GetSDMpointer()->AddNewDetector( RecTrkSD2 );
-        for ( itr_LV = RecTrk_LV1.begin(); itr_LV != RecTrk_LV1.end(); itr_LV++ )
+        for ( itr_LV = RecTrk_LV2.begin(); itr_LV != RecTrk_LV2.end(); itr_LV++ )
             (*itr_LV)->SetSensitiveDetector( RecTrkSD2 );
     }
 

@@ -31,7 +31,7 @@ class TRandom3;
 class RootMessenger;
 
 const int MaxHitsE = 5000;
-const int MaxOptPhoton = 50000;
+const int MaxOptPhoton = 5000000;
 const int MaxMCPs = 500;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -210,6 +210,7 @@ class RootManager {
 
         std::map<G4String, int > Optical_No;
         std::map<G4String, double* > Optical_Time;
+        std::map<G4String, double* > Optical_E;
         std::map<G4String, int* > Optical_DetID;
         std::map<G4String, int* > Optical_DetID_x;
         std::map<G4String, int* > Optical_DetID_y;
