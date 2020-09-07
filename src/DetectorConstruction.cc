@@ -75,8 +75,8 @@ DetectorConstruction::DetectorConstruction(RootManager* rootMng)
     build_TagTrk = true;
     build_RecTrk = true;
     build_ECAL_Center = true;
-    build_ECAL_Outer = false;
-    build_HCAL = false;
+    build_ECAL_Outer = true;
+    build_HCAL = true;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
