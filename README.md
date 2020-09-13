@@ -1,11 +1,16 @@
-# Dark_Shine Simulation: {+ DSimu +}
+# Dark_Shine Simulation: {+DSimu+}
 The second version of dark shine simulation. :v:
 
 [[_TOC_]]
 
 # Get Started
 ## Installation
-## Running {+ DSimu +} with macro
+## Running {+DSimu+} with macro
+Without any arguments, {+DSimu+} will run in graphic mode, which is highly not recommended unless it is running on a computer with great graphic card.
+Batch Mode: {+DSimu+} [ -m config.file ] [ -o optical.file ] 
+The config file after '-m' is the normal configuration, e.g. biasing paramter, gun energy, etc. The details of how to write config file will be included in later chapter. 
+The config file after '-o' is the optical simulation configuration, which will control whether to switch on the simulation of optical photon.
+
 
 
 # Data Recoding
