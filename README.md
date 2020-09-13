@@ -7,11 +7,33 @@ The second version of dark shine simulation. :v:
 ## Installation
 ## Running {+DSimu+} with macro
 Without any arguments, {+DSimu+} will run in graphic mode, which is highly not recommended unless it is running on a computer with great graphic card.
-Batch Mode: {+DSimu+} [ -m config.file ] [ -o optical.file ] 
-The config file after '-m' is the normal configuration, e.g. biasing paramter, gun energy, etc. The details of how to write config file will be included in later chapter. 
-The config file after '-o' is the optical simulation configuration, which will control whether to switch on the simulation of optical photon.
 
+**Batch Mode**: _{-  DSimu [ -m config.file ] [ -o optical.file ]  -}_
 
+- The config file after '-m' is the normal configuration, e.g. biasing paramter, gun energy, etc. The details of how to write config file will be included in later chapter. 
+- The config file after '-o' is the optical simulation configuration, which will control whether to switch on the simulation of optical photon.
+
+## Writing config file
+
+| Command                            | Detail                                                             | Example          |
+|------------------------------------|--------------------------------------------------------------------|------------------|
+|**Biasing**|
+| /DP/setifBias                      | If bias the corresponding physics process                          | 1(true)/0(false) |
+| /DP/Bias/Process                   | Name of the biased physics process in Geant4                       | GammaToMuPair    |
+| /DP/Bias/Factor                    | Enlarge the cross section of the process by a factor               | 1e6              |
+| /DP/Bias/Emin                      | The minimal energy required for the particle to be biased          | 1 GeV            |
+| /DP/Bias/if_bias_target            | Biased region                                                      | 1(true)/0(false) |
+| /DP/Bias/if_bias_ecal              | Biased region                                                      | 1(true)/0(false) |
+|**Gamma Filter**|
+| /DP/Filter/if_filter_HardBrem      | Only select the event with the corresponding hard-brem ¦Ã          | 1(true)/0(false) |
+| /DP/Filter/HardBrem_GammaEmin      | The minimal energy required to pass the hard-brem selection        | 1 GeV            |
+| /DP/Filter/HardBrem_ScanDistance   | Only scan hard-brem ¦Ã before the distance along z-axis            | 1 mm             |
+|**Process Filter**|
+| /DP/Filter/if_filter_Process       | Only select the event including the corresponding physics process  | 1(true)/0(false) |
+| /DP/Filter/Process_Name            | Name of the selected physics process in Geant4                     | GammaToMuPair    |
+| /DP/Filter/Process_Emin            | The minimal energy required for the parent particle in the process | 1 GeV            |
+| /DP/Filter/Process_MinScanDistance | Only scan the region with z large than this value                  | -1 mm            |
+| /DP/Filter/Process_MaxScanDistance | Only scan the region with z less than this value                   | 100 mm           |
 
 # Data Recoding
 ## Output Data format (ROOT file)
