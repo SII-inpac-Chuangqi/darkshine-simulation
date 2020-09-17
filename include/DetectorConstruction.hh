@@ -114,8 +114,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     /////////////////////////
     //  EM Field
     /////////////////////////
-    G4double TagTrk_MagField_x{};
-    G4double RecTrk_MagField_x{};
+    G4double TagTrk_MagField_y{};
+    G4double RecTrk_MagField_y{};
 
     /////////////////////////
     //  APD stuff

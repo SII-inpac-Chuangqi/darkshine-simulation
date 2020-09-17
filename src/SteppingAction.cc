@@ -103,6 +103,12 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
                 froot->FillE2( p2 );
                 p2->Initialize();
         }
+
+
+        /* Record all steps for certain particle */
+        if ( froot->GetRecordStep() )
+            froot->FillParticleStep(aStep);
+
     }
 
     if ( aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding() == 22 ) {
@@ -123,6 +129,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
             froot->FillPNE(EMax1, EMax2);
         }
     }
+
+
 
     /* Optical Photon Detection: APD region */
     if ( froot->GetOptical() && aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "opticalphoton" ) {

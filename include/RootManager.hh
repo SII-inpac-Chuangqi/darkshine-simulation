@@ -11,6 +11,7 @@
 #include "TVector3.h"
 #include "TLorentzVector.h"
 #include "TRandom3.h"
+#include "TArrayD.h"
 
 #include "G4Step.hh"
 #include "G4Track.hh"
@@ -23,6 +24,8 @@
 #include <vector>
 #include <map>
 
+#include "RootGlobal.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class TFile;
@@ -31,8 +34,10 @@ class TRandom3;
 class RootMessenger;
 
 const int MaxHitsE = 5000;
-const int MaxOptPhoton = 5000000;
+const int MaxOptPhoton = 50000000;
 const int MaxMCPs = 500;
+const int MaxSteps = 5000;
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class RootManager {
@@ -53,6 +58,7 @@ class RootManager {
         void SetFilter(bool id) { if_filter = id; };
         void SetEndEvt(bool id) { if_EndEvt = id; };
         void SetOptical(bool id) { if_Optical = id; G4cout<<"Optical Process: "<<if_Optical<<G4endl;};
+        void SetRecordStep(bool id) { if_record_ip = id; };
 
         void SetifBias    (  G4bool   in )  { ifBias      = in; };
         void SetBiasProcess( G4String in )  { BiasProcess = in; };
@@ -67,6 +73,7 @@ class RootManager {
         /* get methods */
         bool GetFilter() { return if_filter; };
         bool GetOptical() { return if_Optical; };
+        bool GetRecordStep() { return if_record_ip; };
         int  GetNbEvent() { return fEvtNb; };
         G4String GetOutFileName() { return outfilename; };
 
@@ -106,6 +113,7 @@ class RootManager {
         void FillPNE( G4double E1, G4double E2 );
         void FillEleak( const G4Step*, G4String );
         bool FillOptical( const G4Step*, G4String );
+        void FillParticleStep( const G4Step* );
 
     private:
         /*                   */
@@ -149,8 +157,6 @@ class RootManager {
         G4String    outfilename;
         TFile*      rootFile;
         TTree*      tr;
-        TTree*      tmc;
-        TTree*      te;
 
         Int_t       fStart;
         Int_t       fEvtNb;
@@ -184,7 +190,16 @@ class RootManager {
         Int_t           t_mc_ProcessType[MaxMCPs];
         Int_t           t_mc_ProcessSubType[MaxMCPs];
 
-        // Max PN energy
+        // Initial Particle Movement
+        bool            if_record_ip;
+
+        std::vector<TArrayD> ip_Pos;
+        std::vector<TArrayD> ip_Mom;
+        std::vector<double> ip_Energy;
+        std::vector<TString> ip_PVName;
+        std::vector<TString> ip_ProcessName;
+
+    // Max PN energy
         Double_t        t_mc_PNEnergy_Tar;
         Double_t        t_mc_PNEnergy_ECal;
 
@@ -209,12 +224,12 @@ class RootManager {
         std::map<G4String, double* > Hit_Z;        
 
         std::map<G4String, int > Optical_No;
-        std::map<G4String, double* > Optical_Time;
-        std::map<G4String, double* > Optical_E;
-        std::map<G4String, int* > Optical_DetID;
-        std::map<G4String, int* > Optical_DetID_x;
-        std::map<G4String, int* > Optical_DetID_y;
-        std::map<G4String, int* > Optical_DetID_z;
+        std::map<G4String, std::vector<double >* > Optical_Time;
+        std::map<G4String, std::vector<double >* > Optical_E;
+        std::map<G4String, std::vector<int >* > Optical_DetID;
+        //std::map<G4String, int* > Optical_DetID_x;
+        //std::map<G4String, int* > Optical_DetID_y;
+        //std::map<G4String, int* > Optical_DetID_z;
 
         std::map<G4String, double > Hit_Eleak_Wrapper;
 
@@ -223,6 +238,8 @@ class RootManager {
         std::map<G4String, double >::iterator itr_d;
         std::map<G4String, int* >::iterator itr_int;
         std::map<G4String, double* >::iterator itr_double;
+        std::map<G4String, std::vector<int >* >::iterator itrvec_int;
+        std::map<G4String, std::vector<double >* >::iterator itrvec_double;
 
 
         // Clean Mode

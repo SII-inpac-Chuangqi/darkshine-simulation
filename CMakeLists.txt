@@ -62,7 +62,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(DSimu DP_simu.cc ${sources} ${headers})
+add_executable(DSimu DP_simu.cc ${sources} ${headers} include/RootGlobal.hh include/RootGlobal.hh)
 #target_link_libraries(DP_simu ${Geant4_LIBRARIES}
 #                      ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES}
 #                      ${PYTHIA6_LIBRARIES} gfortran)

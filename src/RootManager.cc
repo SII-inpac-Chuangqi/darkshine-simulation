@@ -19,7 +19,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 RootManager::RootManager()
-:rootFile(nullptr), tr(nullptr), tmc(nullptr),fStart(0),fEvtNb(100000), if_clean(false)
+:rootFile(nullptr), tr(nullptr), fStart(0),fEvtNb(100000), if_clean(false)
 {
     //gInterpreter->GenerateDictionary("vector<double*>","vector");
     //gInterpreter->GenerateDictionary("vector<TVector3>","vector");
@@ -28,6 +28,8 @@ RootManager::RootManager()
     outfilename = "dp_out.root";
     initialize();
     if_Optical = false;
+    if_record_ip = true;
+
 }
 
 void RootManager::initialize()
@@ -68,69 +70,96 @@ void RootManager::initialize()
         t_mc_ProcessSubType[i] = 0 ;
     }
 
+    if (if_record_ip)
+    {
+        ip_Pos.clear();
+        ip_Mom.clear();
+        ip_Energy.clear();
+        ip_PVName.clear();
+        ip_ProcessName.clear();
+    }
+
+
     for(itr_i = Hit_No.begin(); itr_i != Hit_No.end(); itr_i++ ) itr_i->second = 0;
     for(itr_d = Hit_Eleak_Wrapper.begin(); itr_d != Hit_Eleak_Wrapper.end(); itr_d++ ) itr_d->second = 0.;
     for(itr_int = Hit_Type.begin(); itr_int != Hit_Type.end(); itr_int++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+        std::fill(itr_int->second,itr_int->second+MaxHitsE,0);
+        //for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
     }
     for(itr_int = Hit_ID.begin(); itr_int != Hit_ID.end(); itr_int++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+        std::fill(itr_int->second,itr_int->second+MaxHitsE,0);
+        //for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
     }
     for(itr_int = Hit_PDG.begin(); itr_int != Hit_PDG.end(); itr_int++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+        std::fill(itr_int->second,itr_int->second+MaxHitsE,0);
+        //for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
     }
     for(itr_int = Hit_DetectorID.begin(); itr_int != Hit_DetectorID.end(); itr_int++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+        std::fill(itr_int->second,itr_int->second+MaxHitsE,0);
+        //for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
     }
     for(itr_int = Hit_DetectorID_x.begin(); itr_int != Hit_DetectorID_x.end(); itr_int++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+        std::fill(itr_int->second,itr_int->second+MaxHitsE,0);
+        //for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
     }
     for(itr_int = Hit_DetectorID_y.begin(); itr_int != Hit_DetectorID_y.end(); itr_int++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+        std::fill(itr_int->second,itr_int->second+MaxHitsE,0);
+        //for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
     }
     for(itr_int = Hit_DetectorID_z.begin(); itr_int != Hit_DetectorID_z.end(); itr_int++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+        std::fill(itr_int->second,itr_int->second+MaxHitsE,0);
+        //for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
     }
     for(itr_double = Hit_Time.begin(); itr_double != Hit_Time.end(); itr_double++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+        std::fill(itr_double->second,itr_double->second+MaxHitsE,0.);
+        //for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
     }
     for(itr_double = Hit_Edep.begin(); itr_double != Hit_Edep.end(); itr_double++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+        std::fill(itr_double->second,itr_double->second+MaxHitsE,0.);
+        //for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
     }
     for(itr_double = Hit_EdepEM.begin(); itr_double != Hit_EdepEM.end(); itr_double++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+        std::fill(itr_double->second,itr_double->second+MaxHitsE,0.);
+        //for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
     }
     for(itr_double = Hit_EdepHad.begin(); itr_double != Hit_EdepHad.end(); itr_double++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+        std::fill(itr_double->second,itr_double->second+MaxHitsE,0.);
+        //for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
     }
     for(itr_double = Hit_X.begin(); itr_double != Hit_X.end(); itr_double++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+        std::fill(itr_double->second,itr_double->second+MaxHitsE,0.);
+        //for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
     }
     for(itr_double = Hit_Y.begin(); itr_double != Hit_Y.end(); itr_double++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+        std::fill(itr_double->second,itr_double->second+MaxHitsE,0.);
+        //for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
     }
     for(itr_double = Hit_Z.begin(); itr_double != Hit_Z.end(); itr_double++ ) {
-        for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+        std::fill(itr_double->second,itr_double->second+MaxHitsE,0.);
+        //for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
     }
+    if (if_Optical) {
+        for (itr_i = Optical_No.begin(); itr_i != Optical_No.end(); itr_i++) itr_i->second = 0;
+        for (itrvec_double = Optical_Time.begin(); itrvec_double != Optical_Time.end(); itrvec_double++)
+            itrvec_double->second->clear();
 
-    for(itr_i = Optical_No.begin(); itr_i != Optical_No.end(); itr_i++ ) itr_i->second = 0;
-    for(itr_double = Optical_Time.begin(); itr_double != Optical_Time.end(); itr_double++ ) {
-        for(int i=0; i<MaxOptPhoton; i++) (itr_double->second)[i] = 0;
-    }
-    for(itr_double = Optical_E.begin(); itr_double != Optical_E.end(); itr_double++ ) {
-        for(int i=0; i<MaxOptPhoton; i++) (itr_double->second)[i] = 0;
-    }
-    for(itr_int = Optical_DetID.begin(); itr_int != Optical_DetID.end(); itr_int++ ) {
-        for(int i=0; i<MaxOptPhoton; i++) (itr_int->second)[i] = 0;
-    }
-    for(itr_int = Optical_DetID_x.begin(); itr_int != Optical_DetID_x.end(); itr_int++ ) {
-        for(int i=0; i<MaxOptPhoton; i++) (itr_int->second)[i] = 0;
-    }
-    for(itr_int = Optical_DetID_y.begin(); itr_int != Optical_DetID_y.end(); itr_int++ ) {
-        for(int i=0; i<MaxOptPhoton; i++) (itr_int->second)[i] = 0;
-    }
-    for(itr_int = Optical_DetID_z.begin(); itr_int != Optical_DetID_z.end(); itr_int++ ) {
-        for(int i=0; i<MaxOptPhoton; i++) (itr_int->second)[i] = 0;
+        for (itrvec_double = Optical_E.begin(); itrvec_double != Optical_E.end(); itrvec_double++)
+            itrvec_double->second->clear();
+
+        for (itrvec_int = Optical_DetID.begin(); itrvec_int != Optical_DetID.end(); itrvec_int++)
+            itrvec_int->second->clear();
+        //for (itr_int = Optical_DetID_x.begin(); itr_int != Optical_DetID_x.end(); itr_int++) {
+        //    std::fill(itr_int->second,itr_int->second+MaxOptPhoton,0);
+            //for (int i = 0; i < MaxOptPhoton; i++) (itr_int->second)[i] = 0;
+        //}
+        //for (itr_int = Optical_DetID_y.begin(); itr_int != Optical_DetID_y.end(); itr_int++) {
+        //    std::fill(itr_int->second,itr_int->second+MaxOptPhoton,0);
+            //for (int i = 0; i < MaxOptPhoton; i++) (itr_int->second)[i] = 0;
+        //}
+        //for (itr_int = Optical_DetID_z.begin(); itr_int != Optical_DetID_z.end(); itr_int++) {
+        //    std::fill(itr_int->second,itr_int->second+MaxOptPhoton,0);
+            //for (int i = 0; i < MaxOptPhoton; i++) (itr_int->second)[i] = 0;
+        //}
     }
 }
 
@@ -192,6 +221,15 @@ void RootManager::book()
         tr->Branch("TRUTH_MC_PNEnergy_Tar"      ,&t_mc_PNEnergy_Tar     , "TRUTH_MC_PNEnergy_Tar/D");
         tr->Branch("TRUTH_MC_PNEnergy_ECal"     ,&t_mc_PNEnergy_ECal    , "TRUTH_MC_PNEnergy_ECal/D");
         tr->Branch("TRUTH_MC_Eleak_ECAL"        ,&t_mc_Eleak_ECAL       , "TRUTH_MC_Eleak_ECAL/D");
+
+        if (if_record_ip)
+        {
+            tr->Branch("ip_Pos", &ip_Pos );
+            tr->Branch("ip_Momentum", &ip_Mom );
+            tr->Branch("ip_Energy", &ip_Energy );
+            tr->Branch("ip_PVName", &ip_PVName );
+            tr->Branch("ip_ProcessName", &ip_ProcessName );
+        }
     }
 
     G4cout << "===> ROOT file is opened in " << fileName << G4endl;
@@ -200,6 +238,7 @@ void RootManager::book()
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 
 void RootManager::bookCollection(G4String cIn) {
+
     G4cout<<"[Root Manager] ==> Booking tree for "<<cIn<<" ..." <<G4endl;     
     
     Hit_Eleak_Wrapper.insert( std::pair<G4String, double>(cIn, 0) );
@@ -220,13 +259,15 @@ void RootManager::bookCollection(G4String cIn) {
     Hit_Y.insert( std::pair<G4String, double*>(cIn, new double [MaxHitsE]) );
     Hit_Z.insert( std::pair<G4String, double*>(cIn, new double [MaxHitsE]) );
 
-    Optical_No.insert( std::pair<G4String, int>(cIn, 0) );
-    Optical_Time.insert( std::pair<G4String, double*>(cIn, new double [MaxOptPhoton]) );
-    Optical_E.insert( std::pair<G4String, double*>(cIn, new double [MaxOptPhoton]) );
-    Optical_DetID.insert( std::pair<G4String, int*>(cIn, new int [MaxOptPhoton]) );
-    Optical_DetID_x.insert( std::pair<G4String, int*>(cIn, new int [MaxOptPhoton]) );
-    Optical_DetID_y.insert( std::pair<G4String, int*>(cIn, new int [MaxOptPhoton]) );
-    Optical_DetID_z.insert( std::pair<G4String, int*>(cIn, new int [MaxOptPhoton]) );
+    if (if_Optical) {
+        Optical_No.insert(std::pair<G4String, int>(cIn, 0));
+        Optical_Time.insert(std::pair<G4String, std::vector<double >* >(cIn, new std::vector<double >));
+        Optical_E.insert(std::pair<G4String, std::vector<double >* >(cIn, new std::vector<double >));
+        Optical_DetID.insert(std::pair<G4String, std::vector<int >* >(cIn, new std::vector<int >));
+        //Optical_DetID_x.insert(std::pair<G4String, int *>(cIn, new int[MaxOptPhoton]));
+        //Optical_DetID_y.insert(std::pair<G4String, int *>(cIn, new int[MaxOptPhoton]));
+        //Optical_DetID_z.insert(std::pair<G4String, int *>(cIn, new int[MaxOptPhoton]));
+    }
 
     tr->Branch( (cIn + "_No").data() , &Hit_No[cIn], (cIn + "_No/I").data() );
     tr->Branch( (cIn + "_Eleak_Wrapper").data() , &Hit_Eleak_Wrapper[cIn], (cIn + "_Eleak_Wrapper/D").data() );
@@ -245,14 +286,18 @@ void RootManager::bookCollection(G4String cIn) {
     tr->Branch( (cIn + "_Y").data() , Hit_Y[cIn], (cIn + "_Y["+cIn+"_No]/D").data() );
     tr->Branch( (cIn + "_Z").data() , Hit_Z[cIn], (cIn + "_Z["+cIn+"_No]/D").data() );
 
-    tr->Branch( (cIn + "_Optical_No").data() , &Optical_No[cIn], (cIn + "_Optical_No/I").data() );
-    tr->Branch( (cIn + "_Optical_Time").data() , Optical_Time[cIn], (cIn + "_Optical_Time["+cIn+"_Optical_No]/D").data() );
-    tr->Branch( (cIn + "_Optical_E").data() , Optical_E[cIn], (cIn + "_Optical_E["+cIn+"_Optical_No]/D").data() );
-    tr->Branch( (cIn + "_Optical_DetID").data() , Optical_DetID[cIn], (cIn + "_Optical_DetID["+cIn+"_Optical_No]/I").data() );
-    tr->Branch( (cIn + "_Optical_DetID_x").data() , Optical_DetID_x[cIn], (cIn + "_Optical_DetID_x["+cIn+"_Optical_No]/I").data() );
-    tr->Branch( (cIn + "_Optical_DetID_y").data() , Optical_DetID_y[cIn], (cIn + "_Optical_DetID_y["+cIn+"_Optical_No]/I").data() );
-    tr->Branch( (cIn + "_Optical_DetID_z").data() , Optical_DetID_z[cIn], (cIn + "_Optical_DetID_z["+cIn+"_Optical_No]/I").data() );
-
+    if (if_Optical) {
+        tr->Branch((cIn + "_Optical_No").data(), &Optical_No[cIn], (cIn + "_Optical_No/I").data());
+        tr->Branch((cIn + "_Optical_Time").data(), Optical_Time[cIn] );
+        tr->Branch((cIn + "_Optical_E").data(), Optical_E[cIn] );
+        tr->Branch((cIn + "_Optical_DetID").data(), Optical_DetID[cIn] );
+        //tr->Branch((cIn + "_Optical_DetID_x").data(), Optical_DetID_x[cIn],
+        //           (cIn + "_Optical_DetID_x[" + cIn + "_Optical_No]/I").data());
+        //tr->Branch((cIn + "_Optical_DetID_y").data(), Optical_DetID_y[cIn],
+        //           (cIn + "_Optical_DetID_y[" + cIn + "_Optical_No]/I").data());
+        //tr->Branch((cIn + "_Optical_DetID_z").data(), Optical_DetID_z[cIn],
+        //           (cIn + "_Optical_DetID_z[" + cIn + "_Optical_No]/I").data());
+    }
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
@@ -383,10 +428,10 @@ bool RootManager::FillOptical( const G4Step* in, G4String type)
         auto cin = type.remove( type.index("_APDWorld_PV") );
         auto* touchable = (G4TouchableHistory*)(in->GetPreStepPoint()->GetTouchable());
         G4int reNumber = touchable->GetReplicaNumber();
-        Optical_DetID[cin][ Optical_No[cin] ] = reNumber;
+        Optical_DetID[cin]->emplace_back(reNumber);
 
-        Optical_Time[cin][ Optical_No[cin] ] = in->GetPostStepPoint()->GetGlobalTime(); // ns
-        Optical_E[cin][ Optical_No[cin] ] = in->GetPostStepPoint()->GetTotalEnergy()/eV; // optical photon in eV unit
+        Optical_Time[cin]->emplace_back(in->GetPostStepPoint()->GetGlobalTime()); // ns
+        Optical_E[cin]->emplace_back(in->GetPostStepPoint()->GetTotalEnergy()/eV); // optical photon in eV unit
 
         Optical_No[cin] ++;
 
@@ -396,3 +441,43 @@ bool RootManager::FillOptical( const G4Step* in, G4String type)
     return flag;
 }
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
+void RootManager::FillParticleStep(const G4Step * aStep)
+{
+    G4StepPoint* prev = aStep->GetPreStepPoint();
+    G4StepPoint* post = aStep->GetPostStepPoint();
+    if ( ip_Pos.size() == 0 )
+    {
+
+        ip_Energy.emplace_back(prev->GetTotalEnergy());
+
+        double posD[] = {prev->GetPosition()[0],prev->GetPosition()[1],prev->GetPosition()[2]};
+        ip_Pos.emplace_back(TArrayD(3,posD));
+
+        double MomD[] = {prev->GetMomentum()[0],prev->GetMomentum()[1],prev->GetMomentum()[2]};
+        ip_Mom.emplace_back(TArrayD(3,MomD));
+
+        auto tmp1 = prev->GetPhysicalVolume()->GetName().data();
+        ip_PVName.emplace_back(TString(tmp1));
+        ip_ProcessName.emplace_back(TString("Initial Step"));
+
+    }
+    ip_Energy.emplace_back(post->GetTotalEnergy());
+
+    double posD[] = {post->GetPosition()[0],post->GetPosition()[1],post->GetPosition()[2]};
+    ip_Pos.emplace_back(TArrayD(3,posD));
+
+    double MomD[] = {post->GetMomentum()[0],post->GetMomentum()[1],post->GetMomentum()[2]};
+    ip_Mom.emplace_back(TArrayD(3,MomD));
+
+    auto tmp1 = post->GetPhysicalVolume()->GetName().data();
+    ip_PVName.emplace_back(TString(tmp1));
+    auto tmp2 = post->GetProcessDefinedStep()->GetProcessName();
+    const char* tmp3;
+    if ( tmp2.contains("biasWrapper") )
+        tmp3 = tmp2( tmp2.index("(") + 1, tmp2.index(")") - tmp2.index("(") - 1 ).data();
+    else
+        tmp3 = tmp2.data();
+    ip_ProcessName.emplace_back(TString(tmp3));
+
+
+}

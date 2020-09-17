@@ -75,8 +75,8 @@ DetectorConstruction::DetectorConstruction(RootManager* rootMng)
     build_TagTrk = true;
     build_RecTrk = true;
     build_ECAL_Center = true;
-    build_ECAL_Outer = true;
-    build_HCAL = true;
+    build_ECAL_Outer = false;
+    build_HCAL = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -164,25 +164,25 @@ void DetectorConstruction::DefineMaterials()
     // ------------ Generate & Add Material Properties Table ------------
     //
       
-        G4double photonEnergy[] = { 2.273*eV, 3.064*eV };
+        G4double photonEnergy[] = { 0.1*eV, 2.21*eV, 2.58*eV, 2.82*eV, 2.95*eV, 3.10*eV, 4.00*eV };
             
         const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
 
-        G4double RefractionIdx[nEntries] = {1.806,1.833};
-        G4double AbsorptionLength[nEntries] = {35.*cm,35.*cm};
+        G4double RefractionIdx[nEntries] = {1.85, 1.833, 1.821, 1.813, 1.809, 1.804, 1.79};
+        G4double AbsorptionLength[nEntries] = {40.*cm,40.*cm,40.*cm,40.*cm,40.*cm,40.*cm,40.*cm};
 
         auto* MPT = new G4MaterialPropertiesTable();
         MPT->AddProperty("RINDEX", photonEnergy, RefractionIdx, nEntries);
         MPT->AddProperty("ABSLENGTH", photonEnergy, AbsorptionLength, nEntries);
 
-        G4double ScintEnergy[nEntries] = {3.26*eV, 3.44*eV};
-        G4double ScintFast[nEntries] = {1.0, 1.0};
+        G4double ScintEnergy[nEntries] = {0.1*eV, 2.21*eV, 2.58*eV, 2.82*eV, 2.95*eV, 3.10*eV, 4.00*eV};
+        G4double ScintFast[nEntries] = {0.0, 0.23, 0.85, 1.93, 2.15, 1.08, 0.0};
 
         MPT->AddProperty("FASTCOMPONENT",ScintEnergy,ScintFast,nEntries);
 
-        MPT->AddConstProperty("SCINTILLATIONYIELD",20./MeV);
-        MPT->AddConstProperty("RESOLUTIONSCALE",1.);
-        MPT->AddConstProperty("FASTTIMECONSTANT",3.*ns);
+        MPT->AddConstProperty("SCINTILLATIONYIELD",200./MeV);
+        MPT->AddConstProperty("RESOLUTIONSCALE",1.0);
+        MPT->AddConstProperty("FASTTIMECONSTANT",40.*ns);
         MPT->AddConstProperty("YIELDRATIO",1.);
 
         LYSO->SetMaterialPropertiesTable(MPT);
@@ -209,8 +209,8 @@ void DetectorConstruction::DefineParameters()
     /////////////////////////
     //  EM Field
     /////////////////////////
-    TagTrk_MagField_x = -1.5*tesla;
-    RecTrk_MagField_x = -0.5*tesla;
+    TagTrk_MagField_y = -1.5 * tesla;
+    RecTrk_MagField_y = -0.5 * tesla;
     /////////////////////////
     //  Target
     /////////////////////////
@@ -512,7 +512,8 @@ void DetectorConstruction::DefineECAL()
      * Totally 4 modules
      */
     if ( build_ECAL_Outer ) {
-        int nECAL_Outer = ECAL_Outer_Module_No.x() * ECAL_Outer_Module_No.y() * ECAL_Outer_Module_No.z();
+        int nECAL_Outer;
+        nECAL_Outer = ECAL_Outer_Module_No.x() * ECAL_Outer_Module_No.y() * ECAL_Outer_Module_No.z();
         for (int ip = 1; ip <= nECAL_Outer; ip++) {
             double w1 = pow(-1, (ip % 2)) * Size_ECALRegion.x() / 4.;
             double w2 = pow(-1, (ip - 1) / 2) * Size_ECALRegion.x() / 4.;
@@ -601,7 +602,8 @@ void DetectorConstruction::ConstructSDandField()
     G4bool allLocal = true;
     // Tagging Tracker
     if ( build_TagTrk ) {
-        G4MagneticField* TagTrkMagField = new G4UniformMagField(G4ThreeVector( TagTrk_MagField_x, 0., 0.));
+        G4MagneticField *TagTrkMagField;
+        TagTrkMagField = new G4UniformMagField(G4ThreeVector(TagTrk_MagField_y, 0., 0.));
         auto* TagTrkFieldMng = new G4FieldManager();
         TagTrkFieldMng->SetDetectorField(TagTrkMagField);
         TagTrkFieldMng->CreateChordFinder(TagTrkMagField);
@@ -610,7 +612,8 @@ void DetectorConstruction::ConstructSDandField()
     }
     // Recoil Tracker
     if ( build_RecTrk ) {
-        G4MagneticField* RecTrkMagField = new G4UniformMagField(G4ThreeVector( RecTrk_MagField_x, 0., 0.));
+        G4MagneticField *RecTrkMagField;
+        RecTrkMagField = new G4UniformMagField(G4ThreeVector(RecTrk_MagField_y, 0., 0.));
         auto* RecTrkFieldMng = new G4FieldManager();
         RecTrkFieldMng->SetDetectorField(RecTrkMagField);
         RecTrkFieldMng->CreateChordFinder(RecTrkMagField);
@@ -731,11 +734,11 @@ void DetectorConstruction::SetBiasLayer()
 
 void DetectorConstruction::SetTagTrkMagField(G4double in) 
 {
-    TagTrk_MagField_x = in; 
+    TagTrk_MagField_y = in;
 
     G4bool allLocal = false;
     // Tagging Tracker
-    G4MagneticField* TagTrkMagField = new G4UniformMagField(G4ThreeVector( 0., TagTrk_MagField_x, 0.));
+    G4MagneticField* TagTrkMagField = new G4UniformMagField(G4ThreeVector(0., TagTrk_MagField_y, 0.));
     auto* TagTrkFieldMng = new G4FieldManager();
     TagTrkFieldMng->SetDetectorField(TagTrkMagField);
     TagTrkFieldMng->CreateChordFinder(TagTrkMagField);
@@ -749,11 +752,11 @@ void DetectorConstruction::SetTagTrkMagField(G4double in)
 
 void DetectorConstruction::SetRecTrkMagField(G4double in) 
 {
-    RecTrk_MagField_x = in; 
+    RecTrk_MagField_y = in;
 
     G4bool allLocal = false;
     // Recging Tracker
-    G4MagneticField* RecTrkMagField = new G4UniformMagField(G4ThreeVector( 0., RecTrk_MagField_x, 0.));
+    G4MagneticField* RecTrkMagField = new G4UniformMagField(G4ThreeVector(0., RecTrk_MagField_y, 0.));
     auto* RecTrkFieldMng = new G4FieldManager();
     RecTrkFieldMng->SetDetectorField(RecTrkMagField);
     RecTrkFieldMng->CreateChordFinder(RecTrkMagField);
