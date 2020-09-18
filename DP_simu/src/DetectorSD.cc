@@ -28,8 +28,8 @@
 /// \file DetectorSD.cc
 /// \brief Implementation of the DetectorSD class
 
-#include "RootManager.hh"
-#include "DetectorSD.hh"
+#include "DP_simu/RootManager.hh"
+#include "DP_simu/DetectorSD.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"

@@ -23,71 +23,103 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file eventgenerator/HepMC/HepMCEx01/src/HepMCG4AsciiReaderMessenger.cc
-/// \brief Implementation of the HepMCG4AsciiReaderMessenger class
+// $Id$
 //
-//
-#include "G4UIdirectory.hh"
-#include "G4UIcmdWithoutParameter.hh"
-#include "G4UIcmdWithAString.hh"
-#include "G4UIcmdWithAnInteger.hh"
-#include "HepMCG4AsciiReaderMessenger.hh"
-#include "HepMCG4AsciiReader.hh"
+/// \file SimHit.cc
+/// \brief Implementation of the SimHit class
 
+#include "DP_simu/SimHit.hh"
+#include "G4UnitsTable.hh"
+#include "G4VVisManager.hh"
+#include "G4Circle.hh"
+#include "G4Colour.hh"
+#include "G4VisAttributes.hh"
+
+#include <iomanip>
+
+G4Allocator<SimHit> SimHitAllocator;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-HepMCG4AsciiReaderMessenger::HepMCG4AsciiReaderMessenger
-                             (HepMCG4AsciiReader* agen)
-  : gen(agen)
+
+SimHit::SimHit()
+ : G4VHit(),
+   fEdep(0.),
+   fEdepEM(0.),
+   fEdepHad(0.),
+   fTrackLength(0.),
+   ft(0.),
+   fx(0.0),
+   fy(0.0),
+   fz(0.0),
+   fID(-1),
+   fPDG(0),
+   fDetectorID( G4ThreeVector() ),
+   fDetectorRepNo(0)
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+SimHit::~SimHit() {}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+SimHit::SimHit(const SimHit& right)
+  : G4VHit()
 {
-  dir= new G4UIdirectory("/generator/hepmcAscii/");
-  dir-> SetGuidance("Reading HepMC event from an Ascii file");
+  fEdep        = right.fEdep;
+  fTrackLength = right.fTrackLength;
+  ft           = right.ft;
+  fx           = right.fx;
+  fy           = right.fy;
+  fz           = right.fz;
 
-  verbose=
-    new G4UIcmdWithAnInteger("/generator/hepmcAscii/verbose", this);
-  verbose-> SetGuidance("Set verbose level");
-  verbose-> SetParameterName("verboseLevel", false, false);
-  verbose-> SetRange("verboseLevel>=0 && verboseLevel<=1");
+  fEdepEM      = right.fEdepEM;
+  fEdepHad     = right.fEdepHad;
+  fID          = right.fID;
+  fPDG         = right.fPDG;
+  fDetectorID  = right.fDetectorID;
+  fDetectorRepNo = right.fDetectorRepNo;
 
-  open= new G4UIcmdWithAString("/generator/hepmcAscii/open", this);
-  open-> SetGuidance("(re)open data file (HepMC Ascii format)");
-  open-> SetParameterName("input ascii file", true, true);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-HepMCG4AsciiReaderMessenger::~HepMCG4AsciiReaderMessenger()
-{
-  delete verbose;
-  delete open;
 
-  delete dir;
+const SimHit& SimHit::operator=(const SimHit& right)
+{
+  fEdep        = right.fEdep;
+  fTrackLength = right.fTrackLength;
+  ft           = right.ft;
+  fx           = right.fx;
+  fy           = right.fy;
+  fz           = right.fz;
+
+  fEdepEM      = right.fEdepEM;
+  fEdepHad     = right.fEdepHad;
+  fID          = right.fID;
+  fPDG         = right.fPDG;
+  fDetectorID  = right.fDetectorID;
+  fDetectorRepNo = right.fDetectorRepNo;
+
+  return *this;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void HepMCG4AsciiReaderMessenger::SetNewValue(G4UIcommand* command,
-                                              G4String newValues)
-{
-  if (command==verbose) {
-    int level= verbose-> GetNewIntValue(newValues);
-    gen-> SetVerboseLevel(level);
-  } else if (command==open) {
-    gen-> SetFileName(newValues);
-    G4cout << "HepMC Ascii inputfile: "
-           << gen-> GetFileName() << G4endl;
-    gen-> Initialize();
-  }
-}
 
+G4int SimHit::operator==(const SimHit& right) const
+{
+  return ( this == &right ) ? 1 : 0;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-G4String HepMCG4AsciiReaderMessenger::GetCurrentValue(G4UIcommand* command)
-{
-  G4String cv;
 
-  if (command == verbose) {
-    cv= verbose-> ConvertToString(gen-> GetVerboseLevel());
-  } else  if (command == open) {
-    cv= gen-> GetFileName();
-  }
-  return cv;
+void SimHit::Print()
+{
+  G4cout
+     << "Edep: " 
+     << std::setw(7) << G4BestUnit(fEdep,"Energy")
+     << " track length: " 
+     << std::setw(7) << G4BestUnit( fTrackLength,"Length")
+     << G4endl;
 }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

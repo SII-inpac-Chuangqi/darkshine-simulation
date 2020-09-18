@@ -28,14 +28,14 @@
 /// \file TrackingAction.cc
 /// \brief Implementation of the TrackingAction class
 
-#include "TrackingAction.hh"
+#include "DP_simu/TrackingAction.hh"
 
 #include "G4Track.hh"
 #include "G4TrackingManager.hh"
 #include "G4EventManager.hh"
 #include "G4Event.hh"
-#include "MCParticle.hh"
-#include "RootManager.hh"
+#include "DP_simu/MCParticle.hh"
+#include "DP_simu/RootManager.hh"
 #include "G4SystemOfUnits.hh"
 
 class MCParticle;

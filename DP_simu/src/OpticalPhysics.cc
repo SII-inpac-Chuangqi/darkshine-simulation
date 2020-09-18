@@ -7,7 +7,7 @@
 #include "G4PhysicsListHelper.hh"
 #include "G4ProcessManager.hh"
 
-#include "OpticalPhysics.h"
+#include "DP_simu/OpticalPhysics.h"
 
 
 OpticalPhysics::OpticalPhysics(RootManager* rootMng): G4VPhysicsConstructor("OpticalPhysics")

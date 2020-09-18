@@ -23,67 +23,71 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// $Id$
+/// \file eventgenerator/HepMC/HepMCEx01/src/HepMCG4AsciiReaderMessenger.cc
+/// \brief Implementation of the HepMCG4AsciiReaderMessenger class
 //
-/// \file MagneticField.cc
-/// \brief Implementation of the MagneticField class
+//
+#include "G4UIdirectory.hh"
+#include "G4UIcmdWithoutParameter.hh"
+#include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithAnInteger.hh"
+#include "DP_simu/HepMCG4AsciiReaderMessenger.hh"
+#include "DP_simu/HepMCG4AsciiReader.hh"
 
-#include "MagneticField.hh"
-
-#include "G4FieldManager.hh"
-#include "G4TransportationManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-MagneticField::MagneticField()
-  : G4UniformMagField(G4ThreeVector())
+HepMCG4AsciiReaderMessenger::HepMCG4AsciiReaderMessenger
+                             (HepMCG4AsciiReader* agen)
+  : gen(agen)
 {
-  GetGlobalFieldManager()->SetDetectorField(NULL);
+  dir= new G4UIdirectory("/generator/hepmcAscii/");
+  dir-> SetGuidance("Reading HepMC event from an Ascii file");
+
+  verbose=
+    new G4UIcmdWithAnInteger("/generator/hepmcAscii/verbose", this);
+  verbose-> SetGuidance("Set verbose level");
+  verbose-> SetParameterName("verboseLevel", false, false);
+  verbose-> SetRange("verboseLevel>=0 && verboseLevel<=1");
+
+  open= new G4UIcmdWithAString("/generator/hepmcAscii/open", this);
+  open-> SetGuidance("(re)open data file (HepMC Ascii format)");
+  open-> SetParameterName("input ascii file", true, true);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-MagneticField::MagneticField(G4ThreeVector fieldVector)
-  : G4UniformMagField(fieldVector)
+HepMCG4AsciiReaderMessenger::~HepMCG4AsciiReaderMessenger()
 {
-  GetGlobalFieldManager()->SetDetectorField(this);    
-  GetGlobalFieldManager()->CreateChordFinder(this);
+  delete verbose;
+  delete open;
+
+  delete dir;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-MagneticField::~MagneticField()
-{}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-// Set the value of the Global Field to fieldValue along X
-
-void MagneticField::SetMagFieldValue(G4double fieldValue)
+void HepMCG4AsciiReaderMessenger::SetNewValue(G4UIcommand* command,
+                                              G4String newValues)
 {
-   SetMagFieldValue(G4ThreeVector(fieldValue,0,0));
+  if (command==verbose) {
+    int level= verbose-> GetNewIntValue(newValues);
+    gen-> SetVerboseLevel(level);
+  } else if (command==open) {
+    gen-> SetFileName(newValues);
+    G4cout << "HepMC Ascii inputfile: "
+           << gen-> GetFileName() << G4endl;
+    gen-> Initialize();
+  }
 }
 
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-// Set the value of the Global Field
-
-void MagneticField::SetMagFieldValue(G4ThreeVector fieldVector)
+G4String HepMCG4AsciiReaderMessenger::GetCurrentValue(G4UIcommand* command)
 {
-  if( fieldVector != G4ThreeVector(0.,0.,0.) )
-  {
-    SetFieldValue(fieldVector);
-    GetGlobalFieldManager()->SetDetectorField(this);
-    GetGlobalFieldManager()->CreateChordFinder(this);
-  } else
-    GetGlobalFieldManager()->SetDetectorField(NULL);
+  G4String cv;
+
+  if (command == verbose) {
+    cv= verbose-> ConvertToString(gen-> GetVerboseLevel());
+  } else  if (command == open) {
+    cv= gen-> GetFileName();
+  }
+  return cv;
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-G4FieldManager*  MagneticField::GetGlobalFieldManager()
-{
-  return G4TransportationManager::GetTransportationManager()->GetFieldManager();
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

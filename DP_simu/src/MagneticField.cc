@@ -25,101 +25,65 @@
 //
 // $Id$
 //
-/// \file SimHit.cc
-/// \brief Implementation of the SimHit class
+/// \file MagneticField.cc
+/// \brief Implementation of the MagneticField class
 
-#include "SimHit.hh"
-#include "G4UnitsTable.hh"
-#include "G4VVisManager.hh"
-#include "G4Circle.hh"
-#include "G4Colour.hh"
-#include "G4VisAttributes.hh"
+#include "DP_simu/MagneticField.hh"
 
-#include <iomanip>
-
-G4Allocator<SimHit> SimHitAllocator;
+#include "G4FieldManager.hh"
+#include "G4TransportationManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-SimHit::SimHit()
- : G4VHit(),
-   fEdep(0.),
-   fEdepEM(0.),
-   fEdepHad(0.),
-   fTrackLength(0.),
-   ft(0.),
-   fx(0.0),
-   fy(0.0),
-   fz(0.0),
-   fID(-1),
-   fPDG(0),
-   fDetectorID( G4ThreeVector() ),
-   fDetectorRepNo(0)
+MagneticField::MagneticField()
+  : G4UniformMagField(G4ThreeVector())
+{
+  GetGlobalFieldManager()->SetDetectorField(NULL);
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+MagneticField::MagneticField(G4ThreeVector fieldVector)
+  : G4UniformMagField(fieldVector)
+{
+  GetGlobalFieldManager()->SetDetectorField(this);    
+  GetGlobalFieldManager()->CreateChordFinder(this);
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+MagneticField::~MagneticField()
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-SimHit::~SimHit() {}
+// Set the value of the Global Field to fieldValue along X
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-SimHit::SimHit(const SimHit& right)
-  : G4VHit()
+void MagneticField::SetMagFieldValue(G4double fieldValue)
 {
-  fEdep        = right.fEdep;
-  fTrackLength = right.fTrackLength;
-  ft           = right.ft;
-  fx           = right.fx;
-  fy           = right.fy;
-  fz           = right.fz;
-
-  fEdepEM      = right.fEdepEM;
-  fEdepHad     = right.fEdepHad;
-  fID          = right.fID;
-  fPDG         = right.fPDG;
-  fDetectorID  = right.fDetectorID;
-  fDetectorRepNo = right.fDetectorRepNo;
-
+   SetMagFieldValue(G4ThreeVector(fieldValue,0,0));
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-const SimHit& SimHit::operator=(const SimHit& right)
+// Set the value of the Global Field
+
+void MagneticField::SetMagFieldValue(G4ThreeVector fieldVector)
 {
-  fEdep        = right.fEdep;
-  fTrackLength = right.fTrackLength;
-  ft           = right.ft;
-  fx           = right.fx;
-  fy           = right.fy;
-  fz           = right.fz;
-
-  fEdepEM      = right.fEdepEM;
-  fEdepHad     = right.fEdepHad;
-  fID          = right.fID;
-  fPDG         = right.fPDG;
-  fDetectorID  = right.fDetectorID;
-  fDetectorRepNo = right.fDetectorRepNo;
-
-  return *this;
+  if( fieldVector != G4ThreeVector(0.,0.,0.) )
+  {
+    SetFieldValue(fieldVector);
+    GetGlobalFieldManager()->SetDetectorField(this);
+    GetGlobalFieldManager()->CreateChordFinder(this);
+  } else
+    GetGlobalFieldManager()->SetDetectorField(NULL);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4int SimHit::operator==(const SimHit& right) const
+G4FieldManager*  MagneticField::GetGlobalFieldManager()
 {
-  return ( this == &right ) ? 1 : 0;
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void SimHit::Print()
-{
-  G4cout
-     << "Edep: " 
-     << std::setw(7) << G4BestUnit(fEdep,"Energy")
-     << " track length: " 
-     << std::setw(7) << G4BestUnit( fTrackLength,"Length")
-     << G4endl;
+  return G4TransportationManager::GetTransportationManager()->GetFieldManager();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

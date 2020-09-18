@@ -28,14 +28,14 @@
 /// \file DetectorConstruction.cc
 /// \brief Implementation of the DetectorConstruction class
  
-#include "DetectorConstruction.hh"
-#include "DetectorMessenger.hh"
-#include "DetectorSD.hh"
-#include "RootManager.hh"
-#include "BOptrChangeCrossSection.hh"
-#include "BOptrMultiParticleChangeCrossSection.hh"
-#include "CALConstruct.hh"
-#include "TrkConstruct.hh"
+#include "DP_simu/DetectorConstruction.hh"
+#include "DP_simu/DetectorMessenger.hh"
+#include "DP_simu/DetectorSD.hh"
+#include "DP_simu/RootManager.hh"
+#include "DP_simu/BOptrChangeCrossSection.hh"
+#include "DP_simu/BOptrMultiParticleChangeCrossSection.hh"
+#include "DP_simu/CALConstruct.hh"
+#include "DP_simu/TrkConstruct.hh"
 
 #include "G4Material.hh"
 #include "G4NistManager.hh"

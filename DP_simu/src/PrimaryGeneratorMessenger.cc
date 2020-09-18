@@ -35,8 +35,8 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIdirectory.hh"
 #include "G4UIparameter.hh"
-#include "PrimaryGeneratorMessenger.hh"
-#include "PrimaryGeneratorAction.hh"
+#include "DP_simu/PrimaryGeneratorMessenger.hh"
+#include "DP_simu/PrimaryGeneratorAction.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 PrimaryGeneratorMessenger::PrimaryGeneratorMessenger

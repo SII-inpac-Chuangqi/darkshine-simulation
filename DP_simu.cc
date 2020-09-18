@@ -28,19 +28,19 @@
 /// \file example.cc
 /// \brief Main program of the  example
 
-#include "DetectorConstruction.hh"
-#include "PrimaryGeneratorAction.hh"
-#include "RunAction.hh"
-#include "EventAction.hh"
-#include "TrackingAction.hh"
-#include "SteppingAction.hh"
-#include "RootManager.hh"
+#include "DP_simu/DetectorConstruction.hh"
+#include "DP_simu/PrimaryGeneratorAction.hh"
+#include "DP_simu/RunAction.hh"
+#include "DP_simu/EventAction.hh"
+#include "DP_simu/TrackingAction.hh"
+#include "DP_simu/SteppingAction.hh"
+#include "DP_simu/RootManager.hh"
 
 //#include "G4StepLimiterBuilder.hh"  // Geant4.9
 #include "G4StepLimiterPhysics.hh"  // Geant4.10
 #include "G4GenericBiasingPhysics.hh"
-#include "GammaPhysics.h"
-#include "OpticalPhysics.h"
+#include "DP_simu/GammaPhysics.h"
+#include "DP_simu/OpticalPhysics.h"
 #include "G4OpticalPhysics.hh"
 #include "G4EmStandardPhysics_option4.hh"
 

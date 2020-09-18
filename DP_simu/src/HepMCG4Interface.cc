@@ -28,7 +28,7 @@
 //
 //
 
-#include "HepMCG4Interface.hh"
+#include "DP_simu/HepMCG4Interface.hh"
 
 #include "G4RunManager.hh"
 #include "G4LorentzVector.hh"

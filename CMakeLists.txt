@@ -53,16 +53,16 @@ endif()
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 #
-include_directories(${PROJECT_SOURCE_DIR}/include 
+include_directories(DP_simu/include
                     ${Geant4_INCLUDE_DIR}
                     ${HEPMC_INCLUDE_DIR})
-file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
-file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+file(GLOB sources DP_simu/src/*.cc)
+file(GLOB headers DP_simu/include/*.hh)
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(DSimu DP_simu.cc ${sources} ${headers} include/RootGlobal.hh include/RootGlobal.hh)
+add_executable(DSimu DP_simu.cc ${sources} ${headers} DP_simu/include/DP_simu/RootGlobal.hh DP_simu/include/DP_simu/RootGlobal.hh)
 #target_link_libraries(DP_simu ${Geant4_LIBRARIES}
 #                      ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES}
 #                      ${PYTHIA6_LIBRARIES} gfortran)

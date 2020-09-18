@@ -23,48 +23,76 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file eventgenerator/HepMC/HepMCEx01/src/HepMCG4AsciiReader.cc
-/// \brief Implementation of the HepMCG4AsciiReader class
+/// \file eventgenerator/HepMC/HepMCEx01/src/ExN04PrimaryGeneratorAction.cc
+/// \brief Implementation of the ExN04PrimaryGeneratorAction class
 //
 //
 
-#include "HepMCG4AsciiReader.hh"
-#include "HepMCG4AsciiReaderMessenger.hh"
+#include "DP_simu/PrimaryGeneratorAction.hh"
+#include "DP_simu/PrimaryGeneratorMessenger.hh"
 
-#include <iostream>
-#include <fstream>
+#include "G4Event.hh"
+#include "G4ParticleGun.hh"
+#include "G4GeneralParticleSource.hh"
+#include "DP_simu/HepMCG4AsciiReader.hh"
+#include "DP_simu/HepMCG4PythiaInterface.hh"
+#include "TRandom.h"
+#include "TRandom3.h"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-HepMCG4AsciiReader::HepMCG4AsciiReader()
-  :  filename("xxx.dat"), verbose(0)
+PrimaryGeneratorAction::PrimaryGeneratorAction()
+ : G4VUserPrimaryGeneratorAction()
 {
-  asciiInput= new HepMC::IO_GenEvent(filename.c_str(), std::ios::in);
+  // default generator is particle gun.
+  fCurrentGenerator = fGPS = new G4GeneralParticleSource();
+  fCurrentGeneratorName = "fParticleGun";
 
-  messenger= new HepMCG4AsciiReaderMessenger(this);
+  fParticleGun = new G4ParticleGun();
+  fHepmcAscii = new HepMCG4AsciiReader();
+#ifdef G4LIB_USE_PYTHIA
+  fPythiaGen = new HepMCG4PythiaInterface();
+#else
+  fPythiaGen = 0;
+#endif
+  fGentypeMap["particleGun"] = fParticleGun;
+  fGentypeMap["GPS"] = fGPS;
+  fGentypeMap["hepmcAscii"] = fHepmcAscii;
+  fGentypeMap["pythia"] = fPythiaGen;
+
+  fMessenger= new PrimaryGeneratorMessenger(this);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-HepMCG4AsciiReader::~HepMCG4AsciiReader()
+PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
-  delete asciiInput;
-  delete messenger;
+  delete fMessenger;
+  delete fCurrentGenerator;
+  delete fPythiaGen;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void HepMCG4AsciiReader::Initialize()
+void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-  delete asciiInput;
+  if(fCurrentGeneratorName == "particleGun" && fDist) {
+    double px, py, pz;
+    fDist->GetRandom3(px,py,pz);
 
-  asciiInput= new HepMC::IO_GenEvent(filename.c_str(), std::ios::in);
+    fParticleGun->SetParticleMomentum(G4ParticleMomentum(px,py,pz));
+  }
+
+  if(fCurrentGenerator)
+    fCurrentGenerator-> GeneratePrimaryVertex(anEvent);
+  else
+    G4Exception("PrimaryGeneratorAction::GeneratePrimaries",
+                "PrimaryGeneratorAction001", FatalException,
+                "generator is not instanciated." );
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-HepMC::GenEvent* HepMCG4AsciiReader::GenerateHepMCEvent()
-{
-  HepMC::GenEvent* evt= asciiInput-> read_next_event();
-  if(!evt) return 0; // no more event
+void PrimaryGeneratorAction::SetHist(G4String a) {
+    //gRandom->SetSeed(0);
 
-  if(verbose>0) evt-> print();
+    G4cout<<"Reading distribution from file: "<<filename<<G4endl;
+    fRootFile = new TFile( filename );
 
-  return evt;
+    fDist = (TH3D*)fRootFile->Get(a);
 }

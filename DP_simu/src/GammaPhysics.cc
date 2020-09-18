@@ -5,7 +5,7 @@
  * @author Omar Moreno, SLAC National Accelerator Laboratory
  */
 
-#include "GammaPhysics.h"
+#include "DP_simu/GammaPhysics.h"
 
 
 GammaPhysics::GammaPhysics(const G4String& name) :

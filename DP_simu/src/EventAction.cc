@@ -28,8 +28,8 @@
 /// \file EventAction.cc
 /// \brief Implementation of the EventAction class
 
-#include "EventAction.hh"
-#include "RootManager.hh"
+#include "DP_simu/EventAction.hh"
+#include "DP_simu/RootManager.hh"
 
 #include "G4Event.hh"
 #include "G4SDManager.hh"

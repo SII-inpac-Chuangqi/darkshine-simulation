@@ -28,7 +28,7 @@
 //
 #include <utility>
 
-#include "BOptrChangeCrossSection.hh"
+#include "DP_simu/BOptrChangeCrossSection.hh"
 #include "G4BiasingProcessInterface.hh"
 #include "G4BOptnChangeCrossSection.hh"
 

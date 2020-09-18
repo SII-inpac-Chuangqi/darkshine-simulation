@@ -28,8 +28,8 @@
 /// \file DetectorMessenger.cc
 /// \brief Implementation of the DetectorMessenger class
 
-#include "DetectorMessenger.hh"
-#include "DetectorConstruction.hh"
+#include "DP_simu/DetectorMessenger.hh"
+#include "DP_simu/DetectorConstruction.hh"
 #include "Randomize.hh"
 
 #include "G4UIdirectory.hh"

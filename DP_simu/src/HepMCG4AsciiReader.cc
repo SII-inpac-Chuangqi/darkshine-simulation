@@ -23,44 +23,48 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// $Id$
+/// \file eventgenerator/HepMC/HepMCEx01/src/HepMCG4AsciiReader.cc
+/// \brief Implementation of the HepMCG4AsciiReader class
 //
-/// \file RunAction.cc
-/// \brief Implementation of the RunAction class
+//
 
-#include "RunAction.hh"
-#include "RootManager.hh"
+#include "DP_simu/HepMCG4AsciiReader.hh"
+#include "DP_simu/HepMCG4AsciiReaderMessenger.hh"
 
-#include "G4Run.hh"
-#include "G4RunManager.hh"
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-RunAction::RunAction(RootManager* rootMng)
- : G4UserRunAction(), frootMng(rootMng)
-{}
+#include <iostream>
+#include <fstream>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-RunAction::~RunAction()
-{}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void RunAction::BeginOfRunAction(const G4Run* aRun)
-{ 
-    G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
-    
-    //inform the runManager to save random number seed
-    
-    G4RunManager::GetRunManager()->SetRandomNumberStore(true);
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void RunAction::EndOfRunAction(const G4Run* )
+HepMCG4AsciiReader::HepMCG4AsciiReader()
+  :  filename("xxx.dat"), verbose(0)
 {
-    frootMng->save();
+  asciiInput= new HepMC::IO_GenEvent(filename.c_str(), std::ios::in);
+
+  messenger= new HepMCG4AsciiReaderMessenger(this);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+HepMCG4AsciiReader::~HepMCG4AsciiReader()
+{
+  delete asciiInput;
+  delete messenger;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void HepMCG4AsciiReader::Initialize()
+{
+  delete asciiInput;
+
+  asciiInput= new HepMC::IO_GenEvent(filename.c_str(), std::ios::in);
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+HepMC::GenEvent* HepMCG4AsciiReader::GenerateHepMCEvent()
+{
+  HepMC::GenEvent* evt= asciiInput-> read_next_event();
+  if(!evt) return 0; // no more event
+
+  if(verbose>0) evt-> print();
+
+  return evt;
+}

@@ -28,9 +28,9 @@
 /// \file SteppingAction.cc
 /// \brief Implementation of the SteppingAction class
 
-#include "SteppingAction.hh"
-#include "RootManager.hh"
-#include "MCParticle.hh"
+#include "DP_simu/SteppingAction.hh"
+#include "DP_simu/RootManager.hh"
+#include "DP_simu/MCParticle.hh"
 
 #include "G4Step.hh"
 #include "G4Track.hh"
