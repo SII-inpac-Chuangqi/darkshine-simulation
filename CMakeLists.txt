@@ -81,11 +81,11 @@ target_link_libraries(DSimu ${Geant4_LIBRARIES}
 # relies on these scripts being in the current working directory.
 #
 set(DP_simu_SCRIPTS
-  example.in
-  gui.mac
-  init.mac
-  init_vis.mac
-  vis.mac
+        DP_simu/scripts/example.in
+        DP_simu/scripts/gui.mac
+        DP_simu/scripts/init.mac
+        DP_simu/scripts/init_vis.mac
+        DP_simu/scripts/vis.mac
   )
 
 
