@@ -54,15 +54,23 @@ endif()
 # Locate sources and headers for this project
 #
 include_directories(DP_simu/include
+                    DP_ana/include
+                    Utility/include
                     ${Geant4_INCLUDE_DIR}
                     ${HEPMC_INCLUDE_DIR})
-file(GLOB sources DP_simu/src/*.cc)
-file(GLOB headers DP_simu/include/*.hh)
 
+file(GLOB Simu_sources DP_simu/src/*.cc )
+file(GLOB Simu_headers DP_simu/include/* )
+
+file(GLOB Ana_sources DP_ana/src/*.cpp)
+file(GLOB Ana_headers DP_ana/include/*)
+
+file(GLOB Util_sources Utility/src/*.cpp)
+file(GLOB Util_headers Utility/include/*)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(DSimu DP_simu.cc ${sources} ${headers} DP_simu/include/DP_simu/RootGlobal.hh DP_simu/include/DP_simu/RootGlobal.hh)
+add_executable(DSimu DP_simu.cc ${Simu_sources} ${Simu_headers} )
 #target_link_libraries(DP_simu ${Geant4_LIBRARIES}
 #                      ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES}
 #                      ${PYTHIA6_LIBRARIES} gfortran)
@@ -70,8 +78,8 @@ target_link_libraries(DSimu ${Geant4_LIBRARIES}
                       ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES}
                       ${PYTHIA6_LIBRARIES})
 
-add_executable(DAna DP_ana.cpp)
-
+add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers} ${Util_sources} ${Util_headers} )
+#target_link_libraries(DAna  )
 # if pythia is compiled with g77, link with -lg2c instead.
 #target_link_libraries(DP_simu ${Geant4_LIBRARIES}
 #                      ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES}
