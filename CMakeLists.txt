@@ -70,6 +70,8 @@ target_link_libraries(DSimu ${Geant4_LIBRARIES}
                       ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES}
                       ${PYTHIA6_LIBRARIES})
 
+add_executable(DAna DP_ana.cpp)
+
 # if pythia is compiled with g77, link with -lg2c instead.
 #target_link_libraries(DP_simu ${Geant4_LIBRARIES}
 #                      ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES}
@@ -101,4 +103,5 @@ endforeach()
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
 install(TARGETS DSimu DESTINATION bin)
+install(TARGETS DAna DESTINATION bin)
 
