@@ -51,7 +51,6 @@ int main (int argc,char** argv)
     std::cout<<"password:"<<password<<std::endl;
 
 
-
     auto c = new ExampleProcessor(std::string("std"));
     c->RegisterIntParameter("p1","p1 description",port,port);
     c->RegisterStringParameter("p2","p2 description",ipAddress,ipAddress);
@@ -62,7 +61,7 @@ int main (int argc,char** argv)
 
     control->setEvtReader(new EventReader);
     control->setAlgo(d);
-    control->setEventNumber(10);
+    control->setEventNumber(-1);
     control->run();
 
     return 1;

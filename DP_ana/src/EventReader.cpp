@@ -4,25 +4,6 @@
 
 #include "Core/EventReader.h"
 
-Int_t EventReader::GetEntry(Long64_t entry) const
-{
-// Read contents of entry.
-    if (!fChain) return 0;
-    return fChain->GetEntry(entry);
-}
-
-Long64_t EventReader::LoadTree(Long64_t entry)
-{
-// Set the environment to read one entry
-    if (!fChain) return -5;
-    Long64_t centry = fChain->LoadTree(entry);
-    if (centry < 0) return centry;
-    if (fChain->GetTreeNumber() != fCurrent) {
-        fCurrent = fChain->GetTreeNumber();
-    }
-    return centry;
-}
-
 Int_t EventReader::ReadFile(const std::string& filename) {
     std::cout<<"[READFILE] ==> Read in file: "+filename<<std::endl;
     auto tree = new TTree;
@@ -50,6 +31,14 @@ void EventReader::Convert()
 /*                     */
 /* From ROOT MakeClass */
 /*                     */
+
+Int_t EventReader::GetEntry(Long64_t entry) const
+{
+// Read contents of entry.
+    if (!fChain) return 0;
+    return fChain->GetEntry(entry);
+}
+
 void EventReader::Init(TTree *tree)
 {
     // The Init() function is called when the selector needs to initialize

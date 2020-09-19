@@ -25,7 +25,7 @@ void ControlManager::run() {
     std::cout<<"[READFILE] ==> Skip First "+to_string(SkipNumber)<<" event(s)."<<std::endl;
 
     if (EventNumber == -1 )
-        nentries = (nentries >= SkipNumber) ? SkipNumber : nentries ;
+        nentries = (nentries >= SkipNumber) ? nentries : SkipNumber ;
     else
         nentries = (nentries >= EventNumber+SkipNumber) ? EventNumber+SkipNumber : nentries ;
     for (int i = SkipNumber; i < nentries; ++i) {

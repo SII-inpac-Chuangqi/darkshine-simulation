@@ -16,9 +16,8 @@ using namespace std;
 class EventReader {
 public:
     EventReader() : evt(nullptr), fChain(nullptr) {};
-    ~EventReader();
+    ~EventReader() = default;
 
-    bool ReadEvt(int evtNumber, int SkipNumber) const;
     void Convert();
 
     DEvent *getEvt() const {
@@ -42,8 +41,6 @@ private:
 public:
     Int_t GetEntry(Long64_t entry) const;
     Int_t ReadFile(const std::string& filename);
-
-    virtual Long64_t LoadTree(Long64_t entry);
     virtual void     Init(TTree *tree);
 
 public :
