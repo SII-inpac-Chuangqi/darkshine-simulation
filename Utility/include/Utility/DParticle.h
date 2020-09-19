@@ -175,23 +175,23 @@ public:
 
 protected:
     // internal debug only
-    int id;
+    int id{0};
 
     // internal String
-    std::string Name;
+    std::string Name = "";
 
-    int PDG;
-    double Mass;
-    double Energy;
-    double Px;
-    double Py;
-    double Pz;
-    double VertexX;
-    double VertexY;
-    double VertexZ;
-    double EndPointX;
-    double EndPointY;
-    double EndPointZ;
+    int PDG{0};
+    double Mass{0.};
+    double Energy{0.};
+    double Px{0.};
+    double Py{0.};
+    double Pz{0.};
+    double VertexX{0.};
+    double VertexY{0.};
+    double VertexZ{0.};
+    double EndPointX{0.};
+    double EndPointY{0.};
+    double EndPointZ{0.};
 };
 
 

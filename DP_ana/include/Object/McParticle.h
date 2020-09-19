@@ -32,6 +32,10 @@ public:
 
     const SimulatedHitVec &getSimHits() const;
 
+    const MCParticleVec &getParents() const;
+
+    const MCParticleVec &getChildren() const;
+
     // Set Methods
     void setERemain(double eRemain);
 
@@ -39,9 +43,17 @@ public:
 
     void setSimHits(const SimulatedHitVec &simHits);
 
+    void setParents(const MCParticleVec &parents);
+
+    void setChildren(const MCParticleVec &children);
+
 private:
+
     // the remaining energy while leaving the world
-    double ERemain{};
+    double ERemain{0.};
+
+    MCParticleVec Parents;
+    MCParticleVec Children;
 
     RecParticleVec RecParticles;
     SimulatedHitVec SimHits;

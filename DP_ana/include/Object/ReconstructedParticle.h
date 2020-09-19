@@ -18,7 +18,6 @@ public:
     ReconstructedParticle(const ReconstructedParticle&);
     virtual ~ReconstructedParticle();
 
-    // Operators
     bool operator==(const ReconstructedParticle &rhs) const;
 
     bool operator!=(const ReconstructedParticle &rhs) const;
@@ -30,12 +29,23 @@ public:
 
     const CalorimeterHitVec &getCaloHits() const;
 
+    const RecParticleVec &getParents() const;
+
+    const RecParticleVec &getChildren() const;
+
     // Set Methods
     void setMcParticles(const MCParticleVec &mcParticles);
 
     void setCaloHits(const CalorimeterHitVec &caloHits);
 
+    void setParents(const RecParticleVec &parents);
+
+    void setChildren(const RecParticleVec &children);
+
 private:
+    RecParticleVec Parents;
+    RecParticleVec Children;
+
     MCParticleVec MCParticles;
     CalorimeterHitVec CaloHits;
 

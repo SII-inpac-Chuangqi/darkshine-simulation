@@ -44,8 +44,8 @@ public:
     void setCaloHits(const CalorimeterHitVec &caloHits);
 
 private:
-    double EdepEm{};
-    double EdepHad{};
+    double EdepEm{0.};
+    double EdepHad{0.};
 
     // the corresponding MC particle contributing to this hit
     MCParticleVec PContribution;

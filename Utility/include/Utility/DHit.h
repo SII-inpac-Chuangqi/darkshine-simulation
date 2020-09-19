@@ -5,27 +5,23 @@
 #ifndef DSIMU_DHIT_H
 #define DSIMU_DHIT_H
 
+enum DetectorType {TagTrk, RecTrk, ECAL_Center, ECAL_Outer, HCAL};
+
 class DHit {
 public:
     // Constructor and Destructor
     DHit() = default;
 
     DHit(const DHit &rhs) {
-        id = rhs.id ;
-        CellID = rhs.CellID ;
-        X = rhs.X ;
-        Y = rhs.Y ;
-        Z = rhs.Z ;
-        T = rhs.T ;
-        E = rhs.E ;
+        *this = rhs;
     }
 
     virtual ~DHit() = default;
 
-    // Operators
     bool operator==(const DHit &rhs) const {
         return id == rhs.id &&
                CellID == rhs.CellID &&
+               Detector == rhs.Detector &&
                X == rhs.X &&
                Y == rhs.Y &&
                Z == rhs.Z &&
@@ -41,6 +37,7 @@ public:
         if (&rhs == this) { return *this; }
         id = rhs.id ;
         CellID = rhs.CellID ;
+        Detector = rhs.Detector;
         X = rhs.X ;
         Y = rhs.Y ;
         Z = rhs.Z ;
@@ -78,6 +75,10 @@ public:
         return E;
     }
 
+    DetectorType getDetector() const {
+        return Detector;
+    }
+
     // Set Methods
     void setId(int ID) {
         DHit::id = ID;
@@ -107,15 +108,21 @@ public:
         E = e;
     }
 
-protected:
-    int id;
-    int CellID;
+    void setDetector(DetectorType detector) {
+        Detector = detector;
+    }
 
-    double X;
-    double Y;
-    double Z;
-    double T;
-    double E;
+protected:
+    int id{0};
+    int CellID{0};
+
+    DetectorType Detector;
+
+    double X{0.};
+    double Y{0.};
+    double Z{0.};
+    double T{0.};
+    double E{0.};
 };
 
 #endif //DSIMU_DHIT_H

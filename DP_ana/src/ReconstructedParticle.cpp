@@ -17,6 +17,8 @@ ReconstructedParticle::~ReconstructedParticle() {}
 
 bool ReconstructedParticle::operator==(const ReconstructedParticle &rhs) const {
     return static_cast<const DParticle &>(*this) == static_cast<const DParticle &>(rhs) &&
+           Parents == rhs.Parents &&
+           Children == rhs.Children &&
            MCParticles == rhs.MCParticles &&
            CaloHits == rhs.CaloHits;
 }
@@ -30,6 +32,8 @@ ReconstructedParticle &ReconstructedParticle::operator=(const ReconstructedParti
     DParticle::operator=(rhs);
     MCParticles = rhs.MCParticles;
     CaloHits = rhs.CaloHits;
+    Parents = rhs.Parents;
+    Children = rhs.Children;
     return *this;
 }
 
@@ -41,12 +45,28 @@ const CalorimeterHitVec &ReconstructedParticle::getCaloHits() const {
     return CaloHits;
 }
 
+const RecParticleVec &ReconstructedParticle::getParents() const {
+    return Parents;
+}
+
+const RecParticleVec &ReconstructedParticle::getChildren() const {
+    return Children;
+}
+
 void ReconstructedParticle::setMcParticles(const MCParticleVec &mcParticles) {
     MCParticles = mcParticles;
 }
 
 void ReconstructedParticle::setCaloHits(const CalorimeterHitVec &caloHits) {
     CaloHits = caloHits;
+}
+
+void ReconstructedParticle::setParents(const RecParticleVec &parents) {
+    Parents = parents;
+}
+
+void ReconstructedParticle::setChildren(const RecParticleVec &children) {
+    Children = children;
 }
 
 
