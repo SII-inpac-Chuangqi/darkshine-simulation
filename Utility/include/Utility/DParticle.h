@@ -4,6 +4,7 @@
 
 #ifndef DSIMU_DPARTICLE_H
 #define DSIMU_DPARTICLE_H
+#include <string>
 
 class DParticle
 {
@@ -17,9 +18,9 @@ public:
 
     virtual ~DParticle() = default;
 
-    // Operators
     bool operator==(const DParticle &rhs) const {
         return id == rhs.id &&
+               Name == rhs.Name &&
                PDG == rhs.PDG &&
                Mass == rhs.Mass &&
                Energy == rhs.Energy &&
@@ -41,6 +42,7 @@ public:
     DParticle &operator=(const DParticle &rhs ) {
         if (&rhs == this) { return *this; }
         id = rhs.id ;
+        Name = rhs.Name;
         PDG = rhs.PDG ;
         Mass = rhs.Mass ;
         Energy = rhs.Energy ;
@@ -110,6 +112,10 @@ public:
         return EndPointZ;
     }
 
+    const std::string &getName() const {
+        return Name;
+    }
+
     // Set Methods
     void setId(int ID) {
         DParticle::id = ID;
@@ -163,9 +169,16 @@ public:
         EndPointZ = endPointZ;
     }
 
+    void setName(const std::string &name) {
+        Name = name;
+    }
+
 protected:
     // internal debug only
     int id;
+
+    // internal String
+    std::string Name;
 
     int PDG;
     double Mass;
