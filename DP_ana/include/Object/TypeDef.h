@@ -13,6 +13,7 @@ class McParticle;
 class ReconstructedParticle;
 class SimulatedHit;
 class CalorimeterHit;
+class AnaProcessor;
 
 typedef std::vector<McParticle* > MCParticleVec;
 typedef std::vector<McParticle* >::iterator MCParticleVecItr;
@@ -34,5 +35,7 @@ typedef std::vector<CalorimeterHit* >::iterator CalorimeterHitVecItr;
 typedef std::map<std::string, CalorimeterHitVec*> CalorimeterHitMap;
 typedef std::map<std::string, CalorimeterHitVec*>::iterator CalorimeterHitMapItr;
 
+typedef std::map<std::string, AnaProcessor*> AnaProcessorMap;
+typedef std::map<std::string, AnaProcessor*>::iterator AnaProcessorMapItr;
 
 #endif //DSIMU_TYPEDEF_H

@@ -50,25 +50,16 @@ void RootManager::initialize()
     t_mc_PNEnergy_Tar = 0;
     t_mc_PNEnergy_ECal = 0;
     t_mc_Eleak_ECAL = 0;
-    for(int i=0; i<MaxMCPs; i++) {
-        t_mc_id[i] = 0 ;
-        t_mc_PDG[i] = 0 ;
-        t_mc_ParentID[i] = 0 ;
-        t_mc_Px[i] = 0. ;
-        t_mc_Py[i] = 0. ;
-        t_mc_Pz[i] = 0. ;
-        t_mc_E[i] = 0. ;
-        t_mc_Eremain[i] = 0. ;
-        t_mc_VPosx[i] = 0. ;
-        t_mc_VPosy[i] = 0. ;
-        t_mc_VPosz[i] = 0. ;
-        t_mc_EPosx[i] = 0. ;
-        t_mc_EPosy[i] = 0. ;
-        t_mc_EPosz[i] = 0. ;
 
-        t_mc_ProcessType[i] = 0 ;
-        t_mc_ProcessSubType[i] = 0 ;
-    }
+    t_mc_id.clear();
+    t_mc_PDG.clear();
+    t_mc_ParentID.clear();
+    t_mc_Mom.clear();
+    t_mc_E.clear();
+    t_mc_Eremain.clear();
+    t_mc_VPos.clear();
+    t_mc_EPos.clear();
+    t_mc_ProcessName.clear();
 
     if (if_record_ip)
     {
@@ -82,61 +73,47 @@ void RootManager::initialize()
 
     for(itr_i = Hit_No.begin(); itr_i != Hit_No.end(); itr_i++ ) itr_i->second = 0;
     for(itr_d = Hit_Eleak_Wrapper.begin(); itr_d != Hit_Eleak_Wrapper.end(); itr_d++ ) itr_d->second = 0.;
-    for(itr_int = Hit_Type.begin(); itr_int != Hit_Type.end(); itr_int++ ) {
-        std::fill(itr_int->second,itr_int->second+MaxHitsE,0);
-        //for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+    for(itrvec_int = Hit_Type.begin(); itrvec_int != Hit_Type.end(); itrvec_int++ ) {
+        itrvec_int->second->clear();
     }
-    for(itr_int = Hit_ID.begin(); itr_int != Hit_ID.end(); itr_int++ ) {
-        std::fill(itr_int->second,itr_int->second+MaxHitsE,0);
-        //for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+    for(itrvec_int = Hit_ID.begin(); itrvec_int != Hit_ID.end(); itrvec_int++ ) {
+        itrvec_int->second->clear();
     }
-    for(itr_int = Hit_PDG.begin(); itr_int != Hit_PDG.end(); itr_int++ ) {
-        std::fill(itr_int->second,itr_int->second+MaxHitsE,0);
-        //for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+    for(itrvec_int = Hit_PDG.begin(); itrvec_int != Hit_PDG.end(); itrvec_int++ ) {
+        itrvec_int->second->clear();
     }
-    for(itr_int = Hit_DetectorID.begin(); itr_int != Hit_DetectorID.end(); itr_int++ ) {
-        std::fill(itr_int->second,itr_int->second+MaxHitsE,0);
-        //for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+    for(itrvec_int = Hit_DetectorID.begin(); itrvec_int != Hit_DetectorID.end(); itrvec_int++ ) {
+        itrvec_int->second->clear();
     }
-    for(itr_int = Hit_DetectorID_x.begin(); itr_int != Hit_DetectorID_x.end(); itr_int++ ) {
-        std::fill(itr_int->second,itr_int->second+MaxHitsE,0);
-        //for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+    for(itrvec_int = Hit_DetectorID_x.begin(); itrvec_int != Hit_DetectorID_x.end(); itrvec_int++ ) {
+        itrvec_int->second->clear();
     }
-    for(itr_int = Hit_DetectorID_y.begin(); itr_int != Hit_DetectorID_y.end(); itr_int++ ) {
-        std::fill(itr_int->second,itr_int->second+MaxHitsE,0);
-        //for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+    for(itrvec_int = Hit_DetectorID_y.begin(); itrvec_int != Hit_DetectorID_y.end(); itrvec_int++ ) {
+        itrvec_int->second->clear();
     }
-    for(itr_int = Hit_DetectorID_z.begin(); itr_int != Hit_DetectorID_z.end(); itr_int++ ) {
-        std::fill(itr_int->second,itr_int->second+MaxHitsE,0);
-        //for(int i=0; i<MaxHitsE; i++) (itr_int->second)[i] = 0;
+    for(itrvec_int = Hit_DetectorID_z.begin(); itrvec_int != Hit_DetectorID_z.end(); itrvec_int++ ) {
+        itrvec_int->second->clear();
     }
-    for(itr_double = Hit_Time.begin(); itr_double != Hit_Time.end(); itr_double++ ) {
-        std::fill(itr_double->second,itr_double->second+MaxHitsE,0.);
-        //for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+    for(itrvec_double = Hit_Time.begin(); itrvec_double != Hit_Time.end(); itrvec_double++ ) {
+        itrvec_double->second->clear();
     }
-    for(itr_double = Hit_Edep.begin(); itr_double != Hit_Edep.end(); itr_double++ ) {
-        std::fill(itr_double->second,itr_double->second+MaxHitsE,0.);
-        //for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+    for(itrvec_double = Hit_Edep.begin(); itrvec_double != Hit_Edep.end(); itrvec_double++ ) {
+        itrvec_double->second->clear();
     }
-    for(itr_double = Hit_EdepEM.begin(); itr_double != Hit_EdepEM.end(); itr_double++ ) {
-        std::fill(itr_double->second,itr_double->second+MaxHitsE,0.);
-        //for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+    for(itrvec_double = Hit_EdepEM.begin(); itrvec_double != Hit_EdepEM.end(); itrvec_double++ ) {
+        itrvec_double->second->clear();
     }
-    for(itr_double = Hit_EdepHad.begin(); itr_double != Hit_EdepHad.end(); itr_double++ ) {
-        std::fill(itr_double->second,itr_double->second+MaxHitsE,0.);
-        //for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+    for(itrvec_double = Hit_EdepHad.begin(); itrvec_double != Hit_EdepHad.end(); itrvec_double++ ) {
+        itrvec_double->second->clear();
     }
-    for(itr_double = Hit_X.begin(); itr_double != Hit_X.end(); itr_double++ ) {
-        std::fill(itr_double->second,itr_double->second+MaxHitsE,0.);
-        //for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+    for(itrvec_double = Hit_X.begin(); itrvec_double != Hit_X.end(); itrvec_double++ ) {
+        itrvec_double->second->clear();
     }
-    for(itr_double = Hit_Y.begin(); itr_double != Hit_Y.end(); itr_double++ ) {
-        std::fill(itr_double->second,itr_double->second+MaxHitsE,0.);
-        //for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+    for(itrvec_double = Hit_Y.begin(); itrvec_double != Hit_Y.end(); itrvec_double++ ) {
+        itrvec_double->second->clear();
     }
-    for(itr_double = Hit_Z.begin(); itr_double != Hit_Z.end(); itr_double++ ) {
-        std::fill(itr_double->second,itr_double->second+MaxHitsE,0.);
-        //for(int i=0; i<MaxHitsE; i++) (itr_double->second)[i] = 0;
+    for(itrvec_double = Hit_Z.begin(); itrvec_double != Hit_Z.end(); itrvec_double++ ) {
+        itrvec_double->second->clear();
     }
     if (if_Optical) {
         for (itr_i = Optical_No.begin(); itr_i != Optical_No.end(); itr_i++) itr_i->second = 0;
@@ -148,18 +125,6 @@ void RootManager::initialize()
 
         for (itrvec_int = Optical_DetID.begin(); itrvec_int != Optical_DetID.end(); itrvec_int++)
             itrvec_int->second->clear();
-        //for (itr_int = Optical_DetID_x.begin(); itr_int != Optical_DetID_x.end(); itr_int++) {
-        //    std::fill(itr_int->second,itr_int->second+MaxOptPhoton,0);
-            //for (int i = 0; i < MaxOptPhoton; i++) (itr_int->second)[i] = 0;
-        //}
-        //for (itr_int = Optical_DetID_y.begin(); itr_int != Optical_DetID_y.end(); itr_int++) {
-        //    std::fill(itr_int->second,itr_int->second+MaxOptPhoton,0);
-            //for (int i = 0; i < MaxOptPhoton; i++) (itr_int->second)[i] = 0;
-        //}
-        //for (itr_int = Optical_DetID_z.begin(); itr_int != Optical_DetID_z.end(); itr_int++) {
-        //    std::fill(itr_int->second,itr_int->second+MaxOptPhoton,0);
-            //for (int i = 0; i < MaxOptPhoton; i++) (itr_int->second)[i] = 0;
-        //}
     }
 }
 
@@ -201,23 +166,16 @@ void RootManager::book()
         tr->Branch("TRUTH_e2_VPos",        &t_e2_Pos      ,"t_e2_VPos[3]/D");
 
         tr->Branch("TRUTH_MC_Nb"               ,&t_mc_Nb           , "TRUTH_MC_Nb/I"          );
-        tr->Branch("TRUTH_MC_id"               ,&t_mc_id           , "TRUTH_MC_id[TRUTH_MC_Nb]/I"            );
-        tr->Branch("TRUTH_MC_PDG"              ,&t_mc_PDG          , "TRUTH_MC_PDG[TRUTH_MC_Nb]/I"           );
-        tr->Branch("TRUTH_MC_ParentID"         ,&t_mc_ParentID     , "TRUTH_MC_ParentID[TRUTH_MC_Nb]/I"      );
-        tr->Branch("TRUTH_MC_Px"               ,&t_mc_Px           , "TRUTH_MC_Px[TRUTH_MC_Nb]/D"            );
-        tr->Branch("TRUTH_MC_Py"               ,&t_mc_Py           , "TRUTH_MC_Py[TRUTH_MC_Nb]/D"            );
-        tr->Branch("TRUTH_MC_Pz"               ,&t_mc_Pz           , "TRUTH_MC_Pz[TRUTH_MC_Nb]/D"            );
-        tr->Branch("TRUTH_MC_E"                ,&t_mc_E            , "TRUTH_MC_E[TRUTH_MC_Nb]/D"            );
-        tr->Branch("TRUTH_MC_Eremain"          ,&t_mc_Eremain      , "TRUTH_MC_Eremain[TRUTH_MC_Nb]/D"            );
-        tr->Branch("TRUTH_MC_VPosx"            ,&t_mc_VPosx        , "TRUTH_MC_VPosx[TRUTH_MC_Nb]/D"            );
-        tr->Branch("TRUTH_MC_VPosy"            ,&t_mc_VPosy        , "TRUTH_MC_VPosy[TRUTH_MC_Nb]/D"            );
-        tr->Branch("TRUTH_MC_VPosz"            ,&t_mc_VPosz        , "TRUTH_MC_VPosz[TRUTH_MC_Nb]/D"            );
-        tr->Branch("TRUTH_MC_EPosx"            ,&t_mc_EPosx        , "TRUTH_MC_EPosx[TRUTH_MC_Nb]/D"            );
-        tr->Branch("TRUTH_MC_EPosy"            ,&t_mc_EPosy        , "TRUTH_MC_EPosy[TRUTH_MC_Nb]/D"            );
-        tr->Branch("TRUTH_MC_EPosz"            ,&t_mc_EPosz        , "TRUTH_MC_EPosz[TRUTH_MC_Nb]/D"            );
-        //tr->Branch("TRUTH_MC_CreProc"         ,t_mc_CreateProcess , "TRUTH_MC_CreProc[200]/C");  
-        tr->Branch("TRUTH_MC_ProcType"          ,&t_mc_ProcessType      , "Process_Type[TRUTH_MC_Nb]/I");  
-        tr->Branch("TRUTH_MC_ProcSubType"       ,&t_mc_ProcessSubType   , "Process_SubType[TRUTH_MC_Nb]/I");  
+        tr->Branch("TRUTH_MC_id"               ,&t_mc_id  );
+        tr->Branch("TRUTH_MC_PDG"              ,&t_mc_PDG  );
+        tr->Branch("TRUTH_MC_ParentID"         ,&t_mc_ParentID  );
+        tr->Branch("TRUTH_MC_Mom"              ,&t_mc_Mom  );
+        tr->Branch("TRUTH_MC_E"                ,&t_mc_E  );
+        tr->Branch("TRUTH_MC_Eremain"          ,&t_mc_Eremain );
+        tr->Branch("TRUTH_MC_VPos"             ,&t_mc_VPos );
+        tr->Branch("TRUTH_MC_EPos"             ,&t_mc_EPos );
+        tr->Branch("TRUTH_MC_ProcessName"      ,&t_mc_ProcessName );
+
         tr->Branch("TRUTH_MC_PNEnergy_Tar"      ,&t_mc_PNEnergy_Tar     , "TRUTH_MC_PNEnergy_Tar/D");
         tr->Branch("TRUTH_MC_PNEnergy_ECal"     ,&t_mc_PNEnergy_ECal    , "TRUTH_MC_PNEnergy_ECal/D");
         tr->Branch("TRUTH_MC_Eleak_ECAL"        ,&t_mc_Eleak_ECAL       , "TRUTH_MC_Eleak_ECAL/D");
@@ -244,20 +202,20 @@ void RootManager::bookCollection(G4String cIn) {
     Hit_Eleak_Wrapper.insert( std::pair<G4String, double>(cIn, 0) );
 
     Hit_No.insert( std::pair<G4String, int>(cIn, 0) );
-    Hit_Type.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
-    Hit_ID.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
-    Hit_PDG.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
-    Hit_DetectorID.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
-    Hit_DetectorID_x.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
-    Hit_DetectorID_y.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
-    Hit_DetectorID_z.insert( std::pair<G4String, int*>(cIn, new int [MaxHitsE]) );
-    Hit_Time.insert( std::pair<G4String, double*>(cIn, new double [MaxHitsE]) );
-    Hit_Edep.insert( std::pair<G4String, double*>(cIn, new double [MaxHitsE]) );
-    Hit_EdepEM.insert( std::pair<G4String, double*>(cIn, new double [MaxHitsE]) );
-    Hit_EdepHad.insert( std::pair<G4String, double*>(cIn, new double [MaxHitsE]) );
-    Hit_X.insert( std::pair<G4String, double*>(cIn, new double [MaxHitsE]) );
-    Hit_Y.insert( std::pair<G4String, double*>(cIn, new double [MaxHitsE]) );
-    Hit_Z.insert( std::pair<G4String, double*>(cIn, new double [MaxHitsE]) );
+    Hit_Type.insert( std::pair<G4String, std::vector<int >*>(cIn, new std::vector<int >) );
+    Hit_ID.insert( std::pair<G4String, std::vector<int >*>(cIn, new std::vector<int >) );
+    Hit_PDG.insert( std::pair<G4String, std::vector<int >*>(cIn, new std::vector<int >) );
+    Hit_DetectorID.insert( std::pair<G4String, std::vector<int >*>(cIn, new std::vector<int >) );
+    Hit_DetectorID_x.insert( std::pair<G4String, std::vector<int >*>(cIn, new std::vector<int >) );
+    Hit_DetectorID_y.insert( std::pair<G4String, std::vector<int >*>(cIn, new std::vector<int >) );
+    Hit_DetectorID_z.insert( std::pair<G4String, std::vector<int >*>(cIn, new std::vector<int >) );
+    Hit_Time.insert( std::pair<G4String, std::vector<double >*>(cIn, new std::vector<double >) );
+    Hit_Edep.insert( std::pair<G4String, std::vector<double >*>(cIn, new std::vector<double >) );
+    Hit_EdepEM.insert( std::pair<G4String, std::vector<double >*>(cIn, new std::vector<double >) );
+    Hit_EdepHad.insert( std::pair<G4String, std::vector<double >*>(cIn, new std::vector<double >) );
+    Hit_X.insert( std::pair<G4String, std::vector<double >*>(cIn, new std::vector<double >) );
+    Hit_Y.insert( std::pair<G4String, std::vector<double >*>(cIn, new std::vector<double >) );
+    Hit_Z.insert( std::pair<G4String, std::vector<double >*>(cIn, new std::vector<double >) );
 
     if (if_Optical) {
         Optical_No.insert(std::pair<G4String, int>(cIn, 0));
@@ -271,20 +229,18 @@ void RootManager::bookCollection(G4String cIn) {
 
     tr->Branch( (cIn + "_No").data() , &Hit_No[cIn], (cIn + "_No/I").data() );
     tr->Branch( (cIn + "_Eleak_Wrapper").data() , &Hit_Eleak_Wrapper[cIn], (cIn + "_Eleak_Wrapper/D").data() );
-    tr->Branch( (cIn + "_Type").data() , Hit_Type[cIn], (cIn + "_Type["+cIn+"_No]/I").data() );
-    //tr->Branch( (cIn + "_ID").data() , Hit_ID[cIn], (cIn + "_ID["+cIn+"_No]/I").data() );
-    //tr->Branch( (cIn + "_PDG").data() , Hit_PDG[cIn], (cIn + "_PDG["+cIn+"_No]/I").data() );
-    tr->Branch( (cIn + "_DetectorID").data() , Hit_DetectorID[cIn], (cIn + "_DetectorID["+cIn+"_No]/I").data() );
-    tr->Branch( (cIn + "_DetectorID_x").data() , Hit_DetectorID_x[cIn], (cIn + "_DetectorID_x["+cIn+"_No]/I").data() );
-    tr->Branch( (cIn + "_DetectorID_y").data() , Hit_DetectorID_y[cIn], (cIn + "_DetectorID_y["+cIn+"_No]/I").data() );
-    tr->Branch( (cIn + "_DetectorID_z").data() , Hit_DetectorID_z[cIn], (cIn + "_DetectorID_z["+cIn+"_No]/I").data() );
-    tr->Branch( (cIn + "_Time").data() , Hit_Time[cIn], (cIn + "_Time["+cIn+"_No]/D").data() );
-    tr->Branch( (cIn + "_Edep").data() , Hit_Edep[cIn], (cIn + "_Edep["+cIn+"_No]/D").data() );
-    tr->Branch( (cIn + "_EdepEM").data() , Hit_EdepEM[cIn], (cIn + "_EdepEM["+cIn+"_No]/D").data() );
-    tr->Branch( (cIn + "_EdepHad").data() , Hit_EdepHad[cIn], (cIn + "_EdepHad["+cIn+"_No]/D").data() );
-    tr->Branch( (cIn + "_X").data() , Hit_X[cIn], (cIn + "_X["+cIn+"_No]/D").data() );
-    tr->Branch( (cIn + "_Y").data() , Hit_Y[cIn], (cIn + "_Y["+cIn+"_No]/D").data() );
-    tr->Branch( (cIn + "_Z").data() , Hit_Z[cIn], (cIn + "_Z["+cIn+"_No]/D").data() );
+    tr->Branch( (cIn + "_Type").data() , Hit_Type[cIn] );
+    tr->Branch( (cIn + "_DetectorID").data() , Hit_DetectorID[cIn] );
+    tr->Branch( (cIn + "_DetectorID_x").data() , Hit_DetectorID_x[cIn]);
+    tr->Branch( (cIn + "_DetectorID_y").data() , Hit_DetectorID_y[cIn] );
+    tr->Branch( (cIn + "_DetectorID_z").data() , Hit_DetectorID_z[cIn] );
+    tr->Branch( (cIn + "_Time").data() , Hit_Time[cIn]);
+    tr->Branch( (cIn + "_Edep").data() , Hit_Edep[cIn] );
+    tr->Branch( (cIn + "_EdepEM").data() , Hit_EdepEM[cIn] );
+    tr->Branch( (cIn + "_EdepHad").data() , Hit_EdepHad[cIn] );
+    tr->Branch( (cIn + "_X").data() , Hit_X[cIn]);
+    tr->Branch( (cIn + "_Y").data() , Hit_Y[cIn]);
+    tr->Branch( (cIn + "_Z").data() , Hit_Z[cIn]);
 
     if (if_Optical) {
         tr->Branch((cIn + "_Optical_No").data(), &Optical_No[cIn], (cIn + "_Optical_No/I").data());
@@ -343,24 +299,20 @@ void RootManager::FillPNE( G4double E1, G4double E2 ) {
 void RootManager::FillMC( MCParticle* mc, G4double Eremain) {
     if(if_clean) return;
 
-    t_mc_id[t_mc_Nb] = mc->Getid() ;          
-    t_mc_PDG[t_mc_Nb] = mc->GetPDG() ;        
-    t_mc_ParentID[t_mc_Nb] = mc->GetParentID();    
-    t_mc_E[t_mc_Nb]      = mc->GetEnergy();
-    t_mc_Eremain[t_mc_Nb]= Eremain;
-    t_mc_Px[t_mc_Nb]     = mc->GetMomentum()[0]; 
-    t_mc_Py[t_mc_Nb]     = mc->GetMomentum()[1]; 
-    t_mc_Pz[t_mc_Nb]     = mc->GetMomentum()[2]; 
-    t_mc_VPosx[t_mc_Nb]  =  mc->GetVPos()[0];
-    t_mc_VPosy[t_mc_Nb]  =  mc->GetVPos()[1];
-    t_mc_VPosz[t_mc_Nb]  =  mc->GetVPos()[2];
-    t_mc_EPosx[t_mc_Nb]  =  mc->GetEPos()[0];
-    t_mc_EPosy[t_mc_Nb]  =  mc->GetEPos()[1];
-    t_mc_EPosz[t_mc_Nb]  =  mc->GetEPos()[2];
+    t_mc_id.emplace_back(mc->Getid());
+    t_mc_PDG.emplace_back(mc->GetPDG());
+    t_mc_ParentID.emplace_back(mc->GetParentID());
+    t_mc_E.emplace_back(mc->GetEnergy());
+    t_mc_Eremain.emplace_back(Eremain);
 
-    t_mc_ProcessType[t_mc_Nb]       = mc->GetProcessType();
-    t_mc_ProcessSubType[t_mc_Nb]    = mc->GetProcessSubType();
-    //strncpy(t_mc_CreateProcess[t_mc_Nb],mc->GetProcess().data(),20);
+    double tmp1[] = {mc->GetMomentum()[0],mc->GetMomentum()[1],mc->GetMomentum()[2]};
+    t_mc_Mom.emplace_back(TArrayD(3,tmp1));
+    double tmp2[] = {mc->GetVPos()[0],mc->GetVPos()[1],mc->GetVPos()[2]};
+    t_mc_VPos.emplace_back(TArrayD(3,tmp2));
+    double tmp3[] = {mc->GetEPos()[0],mc->GetEPos()[1],mc->GetEPos()[2]};
+    t_mc_EPos.emplace_back(TArrayD(3,tmp3));
+
+    t_mc_ProcessName.emplace_back(mc->GetProcess());
 
     t_mc_Nb++;
 }
@@ -385,21 +337,21 @@ void RootManager::FillSim(Int_t    eventID, const Double_t* Rnd)
 
 void RootManager::FillSimHit( const G4String& cIn, SimHit* hit )
 {
-    
-    Hit_Type[cIn][ Hit_No[cIn] ] = hit->GetType();
-    Hit_ID[cIn][ Hit_No[cIn] ] = hit->GetParticleID();
-    Hit_PDG[cIn][ Hit_No[cIn] ] = hit->GetPDG();
-    Hit_DetectorID[cIn][ Hit_No[cIn] ] = hit->GetDetectorRepNo();
-    Hit_DetectorID_x[cIn][ Hit_No[cIn] ] = hit->GetDetectorID().x();
-    Hit_DetectorID_y[cIn][ Hit_No[cIn] ] = hit->GetDetectorID().y();
-    Hit_DetectorID_z[cIn][ Hit_No[cIn] ] = hit->GetDetectorID().z();
-    Hit_Time[cIn][ Hit_No[cIn] ] = hit->GetTime();
-    Hit_Edep[cIn][ Hit_No[cIn] ] = hit->GetEdep();
-    Hit_EdepEM[cIn][ Hit_No[cIn] ] = hit->GetEdepEM();
-    Hit_EdepHad[cIn][ Hit_No[cIn] ] = hit->GetEdepHad();
-    Hit_X[cIn][ Hit_No[cIn] ] = hit->GetX();
-    Hit_Y[cIn][ Hit_No[cIn] ] = hit->GetY();
-    Hit_Z[cIn][ Hit_No[cIn] ] = hit->GetZ();
+    Hit_Type[cIn]->emplace_back(hit->GetType());
+    Hit_ID[cIn]->emplace_back(hit->GetParticleID());
+    Hit_PDG[cIn]->emplace_back(hit->GetPDG()) ;
+    Hit_DetectorID[cIn]->emplace_back(hit->GetDetectorRepNo());
+    Hit_DetectorID_x[cIn]->emplace_back(hit->GetDetectorID().x());
+    Hit_DetectorID_y[cIn]->emplace_back(hit->GetDetectorID().y());
+    Hit_DetectorID_z[cIn]->emplace_back(hit->GetDetectorID().z());
+
+    Hit_Time[cIn]->emplace_back(hit->GetTime());
+    Hit_Edep[cIn]->emplace_back(hit->GetEdep());
+    Hit_EdepEM[cIn]->emplace_back(hit->GetEdepEM());
+    Hit_EdepHad[cIn]->emplace_back(hit->GetEdepHad());
+    Hit_X[cIn]->emplace_back(hit->GetX());
+    Hit_Y[cIn]->emplace_back(hit->GetY());
+    Hit_Z[cIn]->emplace_back(hit->GetZ());
 
     Hit_No[cIn]++;
 }
@@ -445,7 +397,7 @@ void RootManager::FillParticleStep(const G4Step * aStep)
 {
     G4StepPoint* prev = aStep->GetPreStepPoint();
     G4StepPoint* post = aStep->GetPostStepPoint();
-    if ( ip_Pos.size() == 0 )
+    if ( ip_Pos.empty() )
     {
 
         ip_Energy.emplace_back(prev->GetTotalEnergy());

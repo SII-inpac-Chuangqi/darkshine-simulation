@@ -33,11 +33,6 @@ class TTree;
 class TRandom3;
 class RootMessenger;
 
-const int MaxHitsE = 5000;
-const int MaxOptPhoton = 50000000;
-const int MaxMCPs = 500;
-const int MaxSteps = 5000;
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class RootManager {
@@ -172,23 +167,16 @@ class RootManager {
         Double_t    t_e2_Pos[3]; // vertex position
 
         // MCParticle
-        Int_t           t_mc_Nb;
-        Int_t           t_mc_id[MaxMCPs];
-        Int_t           t_mc_PDG[MaxMCPs];
-        Int_t           t_mc_ParentID[MaxMCPs];
-        Double_t        t_mc_Px[MaxMCPs];
-        Double_t        t_mc_Py[MaxMCPs];
-        Double_t        t_mc_Pz[MaxMCPs];
-        Double_t        t_mc_E[MaxMCPs];
-        Double_t        t_mc_Eremain[MaxMCPs];
-        Double_t        t_mc_VPosx[MaxMCPs];
-        Double_t        t_mc_VPosy[MaxMCPs];
-        Double_t        t_mc_VPosz[MaxMCPs];
-        Double_t        t_mc_EPosx[MaxMCPs];
-        Double_t        t_mc_EPosy[MaxMCPs];
-        Double_t        t_mc_EPosz[MaxMCPs];
-        Int_t           t_mc_ProcessType[MaxMCPs];
-        Int_t           t_mc_ProcessSubType[MaxMCPs];
+        Int_t                      t_mc_Nb;
+        std::vector<int>           t_mc_id;
+        std::vector<int>           t_mc_PDG;
+        std::vector<int>           t_mc_ParentID;
+        std::vector<TArrayD>       t_mc_Mom;
+        std::vector<double>        t_mc_E;
+        std::vector<double>        t_mc_Eremain;
+        std::vector<TArrayD>       t_mc_VPos;
+        std::vector<TArrayD>       t_mc_EPos;
+        std::vector<TString>       t_mc_ProcessName;
 
         // Initial Particle Movement
         bool            if_record_ip;
@@ -208,20 +196,20 @@ class RootManager {
 
         // map template variable
         std::map<G4String, int > Hit_No;
-        std::map<G4String, int* > Hit_Type;
-        std::map<G4String, int* > Hit_ID;
-        std::map<G4String, int* > Hit_PDG;
-        std::map<G4String, int* > Hit_DetectorID;
-        std::map<G4String, int* > Hit_DetectorID_x;
-        std::map<G4String, int* > Hit_DetectorID_y;
-        std::map<G4String, int* > Hit_DetectorID_z;
-        std::map<G4String, double* > Hit_Time;
-        std::map<G4String, double* > Hit_Edep;
-        std::map<G4String, double* > Hit_EdepEM;
-        std::map<G4String, double* > Hit_EdepHad;
-        std::map<G4String, double* > Hit_X;
-        std::map<G4String, double* > Hit_Y;
-        std::map<G4String, double* > Hit_Z;        
+        std::map<G4String, std::vector<int >* > Hit_Type;
+        std::map<G4String, std::vector<int >* > Hit_ID;
+        std::map<G4String, std::vector<int >* > Hit_PDG;
+        std::map<G4String, std::vector<int >* > Hit_DetectorID;
+        std::map<G4String, std::vector<int >* > Hit_DetectorID_x;
+        std::map<G4String, std::vector<int >* > Hit_DetectorID_y;
+        std::map<G4String, std::vector<int >* > Hit_DetectorID_z;
+        std::map<G4String, std::vector<double >* > Hit_Time;
+        std::map<G4String, std::vector<double >* > Hit_Edep;
+        std::map<G4String, std::vector<double >* > Hit_EdepEM;
+        std::map<G4String, std::vector<double >* > Hit_EdepHad;
+        std::map<G4String, std::vector<double >* > Hit_X;
+        std::map<G4String, std::vector<double >* > Hit_Y;
+        std::map<G4String, std::vector<double >* > Hit_Z;
 
         std::map<G4String, int > Optical_No;
         std::map<G4String, std::vector<double >* > Optical_Time;

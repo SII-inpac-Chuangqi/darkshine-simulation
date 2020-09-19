@@ -21,10 +21,16 @@ endif()
 include(${Geant4_USE_FILE})
 
 #----------------------------------------------------------------------------
-# Find HepMC (required package)
+# Find required packages)
 #
 find_package(HepMC REQUIRED)
 
+#find_package(XercesC REQUIRED)
+#if (XercesC_FOUND)
+#    INCLUDE_DIRECTORIES( ${XercesC_INCLUDE_DIRS} )
+#    INCLUDE_DIRECTORIES( ${XercesC_LIBRARIES} )
+#    LINK_LIBRARIES( ${XercesC_LIBRARIES} )
+#endif ()
 
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
@@ -36,8 +42,6 @@ IF( ROOT_FOUND )
     LINK_LIBRARIES( ${ROOT_LIBRARIES} )
     LINK_DIRECTORIES( ${ROOT_LIBRARY_DIR} )
 ENDIF()
-
-MESSAGE( "${ROOT_INCLUDE_DIRS}")
 
 #----------------------------------------------------------------------------
 # Find Pythia6 (optional package)
@@ -56,6 +60,7 @@ endif()
 include_directories(DP_simu/include
                     DP_ana/include
                     Utility/include
+                    Algorithms/include
                     ${Geant4_INCLUDE_DIR}
                     ${HEPMC_INCLUDE_DIR})
 
@@ -67,6 +72,9 @@ file(GLOB Ana_headers DP_ana/include/*)
 
 file(GLOB Util_sources Utility/src/*.cpp)
 file(GLOB Util_headers Utility/include/*)
+
+file(GLOB Algo_sources Algorithms/src/*.cpp)
+file(GLOB Algo_headers Algorithms/include/*)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
@@ -78,7 +86,9 @@ target_link_libraries(DSimu ${Geant4_LIBRARIES}
                       ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES}
                       ${PYTHIA6_LIBRARIES})
 
-add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers} ${Util_sources} ${Util_headers} )
+add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
+                               ${Util_sources} ${Util_headers}
+                               ${Algo_sources} ${Algo_headers})
 #target_link_libraries(DAna  )
 # if pythia is compiled with g77, link with -lg2c instead.
 #target_link_libraries(DP_simu ${Geant4_LIBRARIES}
