@@ -16,12 +16,17 @@ void ControlManager::run() {
     ConfMgr->ReadConst();
     ConfMgr->ReadAlgoList();
 
+    setFileName(ConfMgr->getInputfile());
+    setOutName(ConfMgr->getOutputfile());
+    setRunNumber(ConfMgr->getRunNumber());
+    setEventNumber(ConfMgr->getEventNumber());
+    setSkipNumber(ConfMgr->getSkipNumber());
+
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
     algo->RegisterAnaProcessor(new ExampleProcessor("Example1") );
     algo->RegisterAnaProcessor(new ExampleProcessor("Example2") );
     algo->RegisterAnaProcessor(new ExampleProcessor("Example3") );
-
 
     algo->BeginAnaProcessors();
 
@@ -29,12 +34,6 @@ void ControlManager::run() {
      *  Readin Config File
      */
     ConfMgr->ReadAnaParameters();
-
-    setFileName(ConfMgr->getInputfile());
-    setOutName(ConfMgr->getOutputfile());
-    setRunNumber(ConfMgr->getRunNumber());
-    setEventNumber(ConfMgr->getEventNumber());
-    setSkipNumber(ConfMgr->getSkipNumber());
 
     /*
      *  Begin

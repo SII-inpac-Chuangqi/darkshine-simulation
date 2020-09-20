@@ -74,6 +74,11 @@ void AnaProcessor::setStringValue(const std::string& name, const std::string& va
         *(StringParameters.at(name).second) = value;
 }
 
+ostream &operator<<(ostream &os, const AnaProcessor &processor) {
+    os << "Name: " << processor.Name;
+    return os;
+}
+
 
 
 
