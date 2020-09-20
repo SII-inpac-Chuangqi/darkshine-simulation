@@ -6,6 +6,7 @@
 #include <sstream>
 #include <iomanip>
 #include <iostream>
+#include <ctime>
 
 void AlgoManager::RegisterAnaProcessor(AnaProcessor *AnaP) {
     if (AnaProcessors.count(AnaP->getName()) != 0)
@@ -15,6 +16,7 @@ void AlgoManager::RegisterAnaProcessor(AnaProcessor *AnaP) {
 }
 
 void AlgoManager::BeginAnaProcessors() {
+    Processed_Evt = 0;
 
     if (Verbose > 0) {
         cout << "----------------------------------------------------------------------" << endl;
@@ -30,7 +32,11 @@ void AlgoManager::BeginAnaProcessors() {
             itr = AnaProcessorList.erase(itr);
         }
 
+        // Initialize Processor
         AnaProcessors.at(*itr)->Begin();
+
+        // Initialize Timer
+        processing_avg_time.insert(std::pair<std::string, double>(*itr, 0.));
 
         if (Verbose > 0) {
             cout << right << setw(5) << " " << left;
@@ -45,8 +51,25 @@ void AlgoManager::BeginAnaProcessors() {
 }
 
 void AlgoManager::ProcessEvtAnaProcessors(DEvent *evt) {
-    for (const auto &itr : AnaProcessorList)
+    for (const auto &itr : AnaProcessorList) {
+
+        // record start time for each processor
+        start_processing = clock();
+
+        // process evt
         AnaProcessors.at(itr)->ProcessEvt(evt);
+
+        // record end time for each processor
+        end_processing = clock();
+
+        // calculate average processing time (second)
+        processing_avg_time.at(itr) = processing_avg_time.at(itr) * static_cast<double>(Processed_Evt) +
+                                      double(end_processing - start_processing) / CLOCKS_PER_SEC;
+
+        processing_avg_time.at(itr) /= static_cast<double>(Processed_Evt + 1);
+    }
+
+    Processed_Evt++;
 }
 
 void AlgoManager::CheckEvtAnaProcessors(DEvent *evt) {
@@ -57,6 +80,7 @@ void AlgoManager::CheckEvtAnaProcessors(DEvent *evt) {
 void AlgoManager::EndAnaProcessors() {
     for (const auto &itr : AnaProcessorList)
         AnaProcessors.at(itr)->End();
+
 }
 
 AnaProcessorVec *AlgoManager::getAllAnaProcessors() {
@@ -82,6 +106,26 @@ void AlgoManager::SetAnaProcessorsList(const std::string &ProcessorList) {
                 std::cerr << "[WARNING] ==> Duplicate Algo Processor Name." << std::endl;
         }
     } while (sin);
+}
 
+void AlgoManager::PrintRunLog() {
+    cout << "======================================================================" << endl;
+    cout << "---------------------------> Run Summary <----------------------------" << endl;
 
+    double total_time = 0.;
+
+    cout << setw(5) << " " << setw(35) << "Processor Name";
+    cout << setw(40) << "Exceution Time / Event [sec]" << endl;
+    cout << fixed << setprecision(8);
+    for (const auto &itr : AnaProcessorList) {
+
+        cout << setw(5) << " " << setw(40) << itr;
+        cout << setw(40) << processing_avg_time.at(itr) << endl;
+
+        total_time += processing_avg_time.at(itr);
+    }
+    cout << "----------------------------------------------------------------------" << endl;
+    cout << setw(5) << " " << setw(40) << "Total";
+    cout << setw(40) << total_time << endl;
+    cout << "======================================================================" << endl;
 }

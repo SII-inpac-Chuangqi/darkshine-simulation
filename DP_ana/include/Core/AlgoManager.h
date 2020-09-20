@@ -25,6 +25,14 @@ public:
         return Verbose;
     }
 
+    long long int getProcessedEvt() const {
+        return Processed_Evt;
+    }
+
+    const map<std::string, double> &getProcessingAvgTime() const {
+        return processing_avg_time;
+    }
+
     AnaProcessorVec* getAllAnaProcessors();
 
     // Set Methods
@@ -35,6 +43,13 @@ public:
     void setVerbose(int verbose) {
         Verbose = verbose;
     }
+
+    void setProcessedEvt(long long int processedEvt) {
+        Processed_Evt = processedEvt;
+    }
+
+    // Summary Log
+    void PrintRunLog();
 
     // Register Processors
     void SetAnaProcessorsList(const std::string& ProcessorList);
@@ -47,6 +62,12 @@ public:
     void EndAnaProcessors();
 
 private:
+    // Time and Event Log
+    long long Processed_Evt{0};
+    clock_t start_processing;
+    clock_t end_processing;
+    std::map<std::string, double> processing_avg_time;
+
     // Verbosity
     int Verbose{1};
 

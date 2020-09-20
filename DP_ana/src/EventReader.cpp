@@ -4,12 +4,14 @@
 
 #include "Core/EventReader.h"
 
+#include <iostream>
+#include <iomanip>
+
 Int_t EventReader::ReadFile(const std::string &filename) {
-    std::cout << "[READFILE] ==> Read in file: " + filename << std::endl;
     auto tree = new TTree;
     auto *f = new TFile(TString(filename));
     if (!f) {
-        std::cerr << "[READFILE] ==> File: " + filename + " does not exist." << std::endl;
+        std::cerr << "[READFILE ERROR] ==> File: " + filename + " does not exist." << std::endl;
         return -1;
     }
     f->GetObject("Dark_Photon", tree);
@@ -17,6 +19,24 @@ Int_t EventReader::ReadFile(const std::string &filename) {
     Init(tree);
 
     Entries = fChain->GetEntriesFast();
+
+    if (Verbose > -1) {
+        cout << "----------------------------------------------------------------------" << endl;
+        std::cout << "[READFILE] : " << std::endl;
+        std::cout << left;
+        std::cout << std::setw(5) << " " << std::setw(30);
+        std::cout << "==> Input File: " << std::setw(30) << filename << std::endl;
+
+        std::cout << std::setw(5) << " " << std::setw(30);
+        std::cout << "==> Total Event(s): " << std::setw(30) << Entries << std::endl;
+
+        std::cout << std::setw(5) << " " << std::setw(30);
+        std::cout << "==> Process Event(s): " << std::setw(30) << eventNumber << std::endl;
+
+        std::cout << std::setw(5) << " " << std::setw(30);
+        std::cout << "==> Skip Event(s): " << std::setw(30) << skipNumber << std::endl;
+
+    }
 
     return 1;
 }

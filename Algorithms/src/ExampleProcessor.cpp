@@ -21,10 +21,11 @@ void ExampleProcessor::Begin() {
 
 void ExampleProcessor::ProcessEvt(DEvent* evt) {
 
-    cout<<"p1: "<<intVar<<endl;
-    cout<<"p2: "<<doubleVar<<endl;
-    cout<<"p3: "<<strVar<<endl;
+    //cout<<"p1: "<<intVar<<endl;
+    //cout<<"p2: "<<doubleVar<<endl;
+    //cout<<"p3: "<<strVar<<endl;
 
+    //cout<<evt->getEventId()<<endl;
 /*
     for ( const auto& t : *evt->ListAllCollections() )
         std::cout<<t<<std::endl;
@@ -41,12 +42,12 @@ void ExampleProcessor::ProcessEvt(DEvent* evt) {
 }
 
 void ExampleProcessor::CheckEvt(DEvent* evt) {
-    cout<<"Check!"<<endl;
+    //cout<<"Check!"<<endl;
 
 }
 
 void ExampleProcessor::End() {
-    cout<<"End!"<<endl;
+    //cout<<"End!"<<endl;
 
 }
 

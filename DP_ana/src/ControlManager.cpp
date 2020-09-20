@@ -4,6 +4,8 @@
 
 #include "Core/ControlManager.h"
 
+// System
+
 // Processors
 #include "Algo/ExampleProcessor.h"
 
@@ -20,8 +22,13 @@ void ControlManager::run() {
     setEventNumber(ConfMgr->getEventNumber());
     setSkipNumber(ConfMgr->getSkipNumber());
 
+    EvtReader->setRunNumber(RunNumber);
+    EvtReader->setEventNumber(EventNumber);
+    EvtReader->setSkipNumber(SkipNumber);
+
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
+    /* DEFINE ALGO PROCESSOR HERE */
     algo->RegisterAnaProcessor(new ExampleProcessor("Example1"));
     algo->RegisterAnaProcessor(new ExampleProcessor("Example2VeryLongVeryLong"));
     algo->RegisterAnaProcessor(new ExampleProcessor("Example3"));
@@ -44,9 +51,7 @@ void ControlManager::run() {
      *  Processing
      */
     Long64_t nentries = EvtReader->getEntries();
-    std::cout << "[READFILE] ==> File with total " + to_string(nentries) + " event(s)." << std::endl;
-    std::cout << "[READFILE] ==> Skip First " + to_string(SkipNumber) << " event(s)." << std::endl;
-
+    Long64_t processed_evt = 0;
     if (EventNumber == -1)
         nentries = (nentries >= SkipNumber) ? nentries : SkipNumber;
     else
@@ -54,7 +59,7 @@ void ControlManager::run() {
     for (int i = SkipNumber; i < nentries; ++i) {
 
         cout << "--------------------------";
-        cout << " Process Event: " << evt->getEventId();
+        cout << " Process Event: " << i;
         cout << " --------------------------" << endl;
         // read the i-th event
         EvtReader->GetEntry(i);
@@ -68,8 +73,10 @@ void ControlManager::run() {
         // check algorithms
         algo->CheckEvtAnaProcessors(evt);
 
+        processed_evt++;
+
         cout << "--------------------------";
-        cout << " End of Event: " << evt->getEventId();
+        cout << " End of Event:  " << i;
         cout << " --------------------------" << endl;
 
     }
@@ -79,6 +86,7 @@ void ControlManager::run() {
      *  End
      */
     algo->EndAnaProcessors();
+    algo->PrintRunLog();
 
     delete evt;
 }

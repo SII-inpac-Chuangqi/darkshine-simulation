@@ -47,9 +47,37 @@ public:
         Verbose = verbose;
     }
 
+    int getRunNumber() const {
+        return runNumber;
+    }
+
+    void setRunNumber(int runnumber) {
+        runNumber = runnumber;
+    }
+
+    int getEventNumber() const {
+        return eventNumber;
+    }
+
+    void setEventNumber(int eventnumber) {
+        eventNumber = eventnumber;
+    }
+
+    int getSkipNumber() const {
+        return skipNumber;
+    }
+
+    void setSkipNumber(int skipnumber) {
+        skipNumber = skipnumber;
+    }
+
 private:
     DEvent* evt;
     Long64_t Entries;
+
+    int runNumber{0};
+    int eventNumber{-1};
+    int skipNumber{0};
 
     // Verbosity
     int Verbose{0};
