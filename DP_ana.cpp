@@ -22,7 +22,7 @@ int main (int argc,char** argv)
 {
     if ( argc > 3 || argc < 2 ) {
         PrintUsage();
-        //return 1;
+        return 1;
     }
 
     bool GenerateConfig = false;

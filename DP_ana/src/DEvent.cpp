@@ -46,7 +46,7 @@ DStepVec *DEvent::RegisterStepCollection(const std::string &str) {
     StepCollection.insert(std::pair<std::string, DStepVec*>(str, tmpVec) );
 
     if (Verbose > 1) {
-        std::cout << "[STEP REGISTER] ==> A new collection " + str +
+        std::cout << "[STEP REGISTER] : (Verbosity 2) ==> A new collection " + str +
                      " has been successfully added to MCParticle Collection." << std::endl;
     }
 
@@ -62,7 +62,7 @@ MCParticleVec* DEvent::RegisterMCParticleCollection(const std::string & str) {
     MCParticleCollection.insert(std::pair<std::string, MCParticleVec*>(str, tmpVec) );
 
     if (Verbose > 1) {
-        std::cout << "[MC REGISTER] ==> A new collection " + str +
+        std::cout << "[MC REGISTER] : (Verbosity 2) ==> A new collection " + str +
                      " has been successfully added to MCParticle Collection." << std::endl;
     }
 
@@ -79,7 +79,7 @@ RecParticleVec *DEvent::RegisterRecParticleCollection(const std::string & str) {
     RecParticleCollection.insert(std::pair<std::string, RecParticleVec*>(str, tmpVec) );
 
     if (Verbose > 1) {
-        std::cout << "[REC REGISTER] ==> A new collection " + str +
+        std::cout << "[REC REGISTER] : (Verbosity 2) ==> A new collection " + str +
                      " has been successfully added to RecParticle Collection." << std::endl;
     }
 
@@ -95,7 +95,7 @@ SimulatedHitVec *DEvent::RegisterSimulatedHitCollection(const std::string & str)
     SimulatedHitCollection.insert(std::pair<std::string, SimulatedHitVec*>(str, tmpVec) );
 
     if (Verbose > 1) {
-        std::cout << "[MC REGISTER] ==> A new collection " + str +
+        std::cout << "[MC REGISTER] : (Verbosity 2) ==> A new collection " + str +
                      " has been successfully added to SimulatedHit Collection." << std::endl;
     }
 
@@ -111,7 +111,7 @@ CalorimeterHitVec *DEvent::RegisterCalorimeterHitCollection(const std::string & 
     CalorimeterHitCollection.insert(std::pair<std::string, CalorimeterHitVec*>(str, tmpVec) );
 
     if (Verbose > 1) {
-        std::cout << "[REC REGISTER] ==> A new collection " + str +
+        std::cout << "[REC REGISTER] : (Verbosity 2) ==> A new collection " + str +
                      " has been successfully added to CalorimterHit Collection" << std::endl;
     }
 

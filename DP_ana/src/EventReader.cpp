@@ -22,7 +22,7 @@ Int_t EventReader::ReadFile(const std::string &filename) {
 
     if (Verbose > -1) {
         cout << "----------------------------------------------------------------------" << endl;
-        std::cout << "[ READ FILE ] : " << std::endl;
+        std::cout << "[ READ FILE ] : (Verbosity 0)" << std::endl;
         std::cout << left;
         std::cout << std::setw(5) << " " << std::setw(30);
         std::cout << "==> Input File: " << std::setw(30) << filename << std::endl;
@@ -43,8 +43,6 @@ Int_t EventReader::ReadFile(const std::string &filename) {
 
         std::cout << std::setw(5) << " " << std::setw(30);
         std::cout << "==> Process Event(s): " << std::setw(30) << Evt << std::endl;
-
-
     }
 
     return 1;
@@ -79,6 +77,17 @@ void EventReader::Convert() {
     ConvertECAL_Center();
     ConvertECAL_Outer();
     ConvertHCAL();
+
+    if (Verbose > 1) {
+        cout << "----------------------------------------------------------------------" << endl;
+        std::cout << "[ READ EVENT ] : Convert (Verbosity 2)" << std::endl;
+        std::cout << setw(0) << "These collections will be generated from this event" << std::endl;
+        std::cout << left;
+        auto list = evt->ListAllCollections();
+        for (const auto &l : *list) {
+            std::cout << setw(5) << " " << "- " << l << std::endl;
+        }
+    }
 }
 
 /*                     */

@@ -20,7 +20,7 @@ void AlgoManager::BeginAnaProcessors() {
 
     if (Verbose > 0) {
         cout << "----------------------------------------------------------------------" << endl;
-        cout << "[ ALGO PROCESS LIST ] : " << endl;
+        cout << "[ ALGO PROCESS LIST ] : (Verbosity 1)" << endl;
         cout << right;
         cout << setw(10) << "----" << setw(50) << "-----------" << endl;
         cout << setw(10) << "name" << setw(50) << "Description" << endl;
