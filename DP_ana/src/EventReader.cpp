@@ -22,7 +22,7 @@ Int_t EventReader::ReadFile(const std::string &filename) {
 
     if (Verbose > -1) {
         cout << "----------------------------------------------------------------------" << endl;
-        std::cout << "[READFILE] : " << std::endl;
+        std::cout << "[ READ FILE ] : " << std::endl;
         std::cout << left;
         std::cout << std::setw(5) << " " << std::setw(30);
         std::cout << "==> Input File: " << std::setw(30) << filename << std::endl;
@@ -31,10 +31,19 @@ Int_t EventReader::ReadFile(const std::string &filename) {
         std::cout << "==> Total Event(s): " << std::setw(30) << Entries << std::endl;
 
         std::cout << std::setw(5) << " " << std::setw(30);
-        std::cout << "==> Process Event(s): " << std::setw(30) << eventNumber << std::endl;
+        std::cout << "==> Skip Event(s): " << std::setw(30) << skipNumber << std::endl;
+
+        int Evt = 0;
+        if (eventNumber == -1)
+            Evt = (Entries >= skipNumber) ? static_cast<int>(Entries) - skipNumber : 0;
+        else if (Entries >= skipNumber)
+            Evt = (Entries >= skipNumber + eventNumber) ? eventNumber : static_cast<int>(Entries) - skipNumber;
+        else
+            Evt = 0;
 
         std::cout << std::setw(5) << " " << std::setw(30);
-        std::cout << "==> Skip Event(s): " << std::setw(30) << skipNumber << std::endl;
+        std::cout << "==> Process Event(s): " << std::setw(30) << Evt << std::endl;
+
 
     }
 

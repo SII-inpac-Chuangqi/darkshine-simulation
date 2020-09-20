@@ -20,7 +20,7 @@ void AlgoManager::BeginAnaProcessors() {
 
     if (Verbose > 0) {
         cout << "----------------------------------------------------------------------" << endl;
-        cout << "[ALGO PROCESS LIST] : " << endl;
+        cout << "[ ALGO PROCESS LIST ] : " << endl;
         cout << right;
         cout << setw(10) << "----" << setw(50) << "-----------" << endl;
         cout << setw(10) << "name" << setw(50) << "Description" << endl;
@@ -56,6 +56,9 @@ void AlgoManager::ProcessEvtAnaProcessors(DEvent *evt) {
         // record start time for each processor
         start_processing = clock();
 
+        if (Verbose > 2) {
+            cout << "[ PROCESSOR ] : "<< itr << endl;
+        }
         // process evt
         AnaProcessors.at(itr)->ProcessEvt(evt);
 
@@ -125,7 +128,7 @@ void AlgoManager::PrintRunLog() {
         total_time += processing_avg_time.at(itr);
     }
     cout << "----------------------------------------------------------------------" << endl;
-    cout << setw(5) << " " << setw(40) << "Total";
+    cout << setw(5) << " " << setw(26) << "Total Processed Event(s): "<< setw(14)<< Processed_Evt ;
     cout << setw(40) << total_time << endl;
     cout << "======================================================================" << endl;
 }

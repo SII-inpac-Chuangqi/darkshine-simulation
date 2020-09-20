@@ -19,6 +19,12 @@ void ConfigManager::ReadConst() {
     EventNumber = config->Read("EventNumber", -1);
     SkipNumber = config->Read("SkipNumber", 0);
 
+    // Read Verbosity
+     AlgoManager_Verbose    = config->Read("AlgoManager.Verbose", 0);
+     EventReader_Verbose    = config->Read("EventReader.Verbose", 0);
+     AnaProcessor_Verbose   = config->Read("Processor.Verbose", 0);
+     DEvent_Verbose         = config->Read("Event.Verbose", 0);
+
 }
 
 

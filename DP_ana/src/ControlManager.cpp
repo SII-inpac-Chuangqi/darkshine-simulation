@@ -11,6 +11,7 @@
 
 void ControlManager::run() {
 
+    auto *evt = new DEvent();
     /* Read in Basic Configuration */
     /* Read Algorithm Lists */
     ConfMgr->ReadConst();
@@ -25,6 +26,10 @@ void ControlManager::run() {
     EvtReader->setRunNumber(RunNumber);
     EvtReader->setEventNumber(EventNumber);
     EvtReader->setSkipNumber(SkipNumber);
+
+    EvtReader->setVerbose(ConfMgr->getEventReaderVerbose());
+    algo->setVerbose(ConfMgr->getAlgoManagerVerbose());
+    evt->setVerbose(ConfMgr->getDEventVerbose());
 
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
@@ -44,7 +49,6 @@ void ControlManager::run() {
      *  Begin
      */
     EvtReader->ReadFile(FileName);
-    auto *evt = new DEvent();
     EvtReader->setEvt(evt);
 
     /*
@@ -87,6 +91,9 @@ void ControlManager::run() {
      */
     algo->EndAnaProcessors();
     algo->PrintRunLog();
+
+
+    std::cout<<std::endl<<" ==> Done ..."<<std::endl;
 
     delete evt;
 }

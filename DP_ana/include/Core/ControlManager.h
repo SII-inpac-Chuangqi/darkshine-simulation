@@ -16,7 +16,11 @@ class ControlManager {
 public:
     ControlManager() = default;
 
-    ~ControlManager() = default;
+    ~ControlManager() {
+        delete algo;
+        delete EvtReader;
+        delete ConfMgr;
+    };
 
     void run();
 
