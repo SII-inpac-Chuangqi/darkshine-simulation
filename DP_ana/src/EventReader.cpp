@@ -31,7 +31,6 @@ void EventReader::Convert() {
     evt->setRunId(RunNumber);
     evt->setEventId(EventNumber);
 
-
     // register raw MC collection
     ConvertMC();
 

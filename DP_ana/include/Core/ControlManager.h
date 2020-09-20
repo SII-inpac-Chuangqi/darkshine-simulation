@@ -7,6 +7,7 @@
 
 #include "Core/AlgoManager.h"
 #include "Core/EventReader.h"
+#include "Core/ConfigManager.h"
 
 class ControlManager {
     /*
@@ -69,15 +70,33 @@ public:
         FileName = fileName;
     }
 
+    ConfigManager *getConfMgr() const {
+        return ConfMgr;
+    }
+
+    void setConfMgr(ConfigManager *confMgr) {
+        ConfMgr = confMgr;
+    }
+
+    const string &getOutName() const {
+        return OutName;
+    }
+
+    void setOutName(const string &outName) {
+        OutName = outName;
+    }
+
 private:
     int RunNumber{0};
     int EventNumber{-1};
     int SkipNumber{0};
 
     std::string FileName;
+    std::string OutName;
 
     AlgoManager* algo;
     EventReader* EvtReader;
+    ConfigManager* ConfMgr;
 };
 
 

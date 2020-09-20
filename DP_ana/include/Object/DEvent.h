@@ -82,6 +82,24 @@ protected:
     // event number
     int EventID{0};
 
+    /*
+     * Miscellaneous (truth)
+     */
+    // Random Number Seeds
+    double Rndm[4]{};
+    // Photon-Nuclear reaction Energy in Target/ECAL region
+    double PNEnergy_Target{0.};
+    double PNEnergy_ECAL{0.};
+    // Energy leakage in ECAL holder
+    double Eleak_ECAL{0.};
+
+    /*
+     * Miscellaneous (Reconstructed)
+     */
+    double TotalRecEnergy{0.};
+    double ECALRecEnergy{0.};
+    double HCALRecEnergy{0.};
+
     // Step Collection
     DStepMap StepCollection;
 

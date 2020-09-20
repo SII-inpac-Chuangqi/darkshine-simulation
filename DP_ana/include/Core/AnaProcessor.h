@@ -25,6 +25,7 @@ class AnaProcessor {
      */
 
 public:
+    AnaProcessor() = default;
     explicit AnaProcessor(string name) : Name(std::move(name)) {};
     virtual ~AnaProcessor() = default;
 
@@ -46,15 +47,15 @@ public:
         return Name;
     }
 
-    const std::map<std::string, std::pair<std::string, int>> &getIntParameters() const {
+    const std::map<std::string, std::pair<std::string, int*>> &getIntParameters() const {
         return IntParameters;
     }
 
-    const std::map<std::string, std::pair<std::string, double>> &getDoubleParameters() const {
+    const std::map<std::string, std::pair<std::string, double*>> &getDoubleParameters() const {
         return DoubleParameters;
     }
 
-    const std::map<std::string, std::pair<std::string, std::string>> &getStringParameters() const {
+    const std::map<std::string, std::pair<std::string, std::string*>> &getStringParameters() const {
         return StringParameters;
     }
 
@@ -71,12 +72,12 @@ public:
 
 
     // Register Parameters
-    void RegisterIntParameter(const std::string &name, const std::string &description, int &address, int default_value);
+    void RegisterIntParameter(const std::string &name, const std::string &description, int *address, int default_value);
 
-    void RegisterDoubleParameter(const std::string &name, const std::string &description, double &address,
+    void RegisterDoubleParameter(const std::string &name, const std::string &description, double *address,
                                  double default_value);
 
-    void RegisterStringParameter(const std::string &name, const std::string &description, std::string &address,
+    void RegisterStringParameter(const std::string &name, const std::string &description, std::string *address,
                                  std::string default_value);
 
 protected:
@@ -84,9 +85,9 @@ protected:
     string Name;
 
     // Parameter Name, Description, Value
-    std::map<std::string, std::pair<std::string, int> > IntParameters;
-    std::map<std::string, std::pair<std::string, double> > DoubleParameters;
-    std::map<std::string, std::pair<std::string, std::string> > StringParameters;
+    std::map<std::string, std::pair<std::string, int*> > IntParameters;
+    std::map<std::string, std::pair<std::string, double*> > DoubleParameters;
+    std::map<std::string, std::pair<std::string, std::string*> > StringParameters;
 
 };
 

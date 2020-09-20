@@ -21,12 +21,15 @@ public:
         return AnaProcessors;
     }
 
+    AnaProcessorVec* getAllAnaProcessors();
+
     // Set Methods
     void setAnaProcessors(const AnaProcessorMap &anaProcessors) {
         AnaProcessors = anaProcessors;
     }
 
     // Register Processors
+    void SetAnaProcessorsList(const std::string& ProcessorList);
     void RegisterAnaProcessor(AnaProcessor* AnaP);
 
     // Run AnaProcessor
@@ -37,6 +40,7 @@ public:
 
 private:
     AnaProcessorMap AnaProcessors;
+    vector<std::string> AnaProcessorList;
 };
 
 

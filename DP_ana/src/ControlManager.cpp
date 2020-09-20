@@ -4,9 +4,37 @@
 
 #include "Core/ControlManager.h"
 
+// Processors
+#include "Algo/ExampleProcessor.h"
+
 void ControlManager::run() {
 
     std::cout<<"Start!!"<<std::endl;
+
+    /* Read in Basic Configuration */
+    /* Read Algorithm Lists */
+    ConfMgr->ReadConst();
+    ConfMgr->ReadAlgoList();
+
+    /* Initialize and Select the AnaProcessors to use*/
+    /* Explicitly declare processors with name */
+    algo->RegisterAnaProcessor(new ExampleProcessor("Example1") );
+    algo->RegisterAnaProcessor(new ExampleProcessor("Example2") );
+    algo->RegisterAnaProcessor(new ExampleProcessor("Example3") );
+
+
+    algo->BeginAnaProcessors();
+
+    /*
+     *  Readin Config File
+     */
+    ConfMgr->ReadAnaParameters();
+
+    setFileName(ConfMgr->getInputfile());
+    setOutName(ConfMgr->getOutputfile());
+    setRunNumber(ConfMgr->getRunNumber());
+    setEventNumber(ConfMgr->getEventNumber());
+    setSkipNumber(ConfMgr->getSkipNumber());
 
     /*
      *  Begin
@@ -14,8 +42,6 @@ void ControlManager::run() {
     EvtReader->ReadFile(FileName);
     auto* evt = new DEvent();
     EvtReader->setEvt(evt);
-
-    algo->BeginAnaProcessors();
 
     /*
      *  Processing

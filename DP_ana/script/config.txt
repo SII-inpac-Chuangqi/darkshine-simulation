@@ -1,0 +1,25 @@
+############################
+###
+### Example Config File
+###
+############################
+
+### Basic Config
+InputFile       = dp_out.root
+OutputFile      = dp_ana.root
+RunNumber       = 0
+EventNumber     = 1
+SkipNumber      = 0
+
+### Algorithm Usage ###
+Algorithm.List = Example2 Example1
+
+### Algorithm Config ###
+###
+### Formate: [AlgoProcessor_Name].[Variable_Name] = [Value]
+###
+########################
+
+Example1.intVar      = 5
+Example1.DoubleVar   = 2.5
+Example1.StrVar      = example str

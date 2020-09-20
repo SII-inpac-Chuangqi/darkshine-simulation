@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <iterator>
 
 class DStep;
@@ -41,6 +42,8 @@ typedef std::vector<CalorimeterHit* >::iterator CalorimeterHitVecItr;
 typedef std::map<std::string, CalorimeterHitVec*> CalorimeterHitMap;
 typedef std::map<std::string, CalorimeterHitVec*>::iterator CalorimeterHitMapItr;
 
+typedef std::vector<AnaProcessor*> AnaProcessorVec;
+typedef std::vector<AnaProcessor*>::iterator AnaProcessorVecItr;
 typedef std::map<std::string, AnaProcessor*> AnaProcessorMap;
 typedef std::map<std::string, AnaProcessor*>::iterator AnaProcessorMapItr;
 

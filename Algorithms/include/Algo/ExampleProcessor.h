@@ -26,7 +26,9 @@ public:
     void End() override;
 
 private:
-
+    int intVar;
+    double doubleVar;
+    std::string strVar;
 };
 
 
