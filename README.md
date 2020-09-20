@@ -1,14 +1,42 @@
-# Dark_Shine Simulation: {+DSimu+}
+# Dark SHINE Software: DSimu && DAna
 The second version of dark shine simulation. :v:
 
 [[_TOC_]]
 
 # Get Started
-## Installation
-## Running {+DSimu+} with macro
-Without any arguments, {+DSimu+} will run in graphic mode, which is highly not recommended unless it is running on a computer with great graphic card.
+There are two parts of the Dark SHINE Software: **DSimu** and **DAna**.
 
-**Batch Mode**: _{-  DSimu [ -m config.file ] [ -o optical.file ]  -}_
+- **DSimu** is the simulation program based on Geant4 and ROOT, characterized by Dark SHINE detector.
+- **DAna** is a framework for the analysis and reconstruction tools. It requires the output ROOT file from **DSimu**.
+
+They could be executed separately, with totally different configuration file format. 
+## Installation
+Dark SHINE Software can be easily downloaded through GitLab.
+```c++
+    git clone git@gitlab.com:yulei_zhang/darkshine-simulation.git
+```
+Before installing, several dependencies need to be checked. 
+- Geant4 10.06 
+- ROOT 6
+- HepMC
+
+With everything needed, it's ready to install :v:
+```shell script
+cd darkshine-simulation   # <source-directory>
+mkdir build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=<some-directory> ../
+make -j100  # Just do it!
+make install
+```
+
+Now in your install directory, there should be two binary files: **DSimu** and **DAna**. 
+Now it's the time to have fun with them. :relaxed:
+
+## Running DSimu with macro
+Without any arguments, DSimu will run in graphic mode, which is highly not recommended unless it is running on a computer with great graphic card.
+
+**Batch Mode**: _DSimu [ -m config.file ] [ -o optical.file ]_
 
 - The config file after '-m' is the normal configuration, e.g. biasing paramter, gun energy, etc. The details of how to write config file will be included in later chapter. 
 - The config file after '-o' is the optical simulation configuration, which will control whether to switch on the simulation of optical photon.

@@ -8,18 +8,27 @@
 InputFile       = dp_out.root
 OutputFile      = dp_ana.root
 RunNumber       = 0
-EventNumber     = 1
+EventNumber     = -1
 SkipNumber      = 0
 
-### Algorithm Usage ###
-Algorithm.List = Example2 Example1
+### Verbosity
+AlgoManager.Verbose = 2
+EventReader.Verbose = 2
+Event.Verbose       = 0
 
-### Algorithm Config ###
+
+### Algorithm Usage
+Algorithm.List = Example2VeryLongVeryLong Example1
+
+### Algorithm Config
 ###
 ### Formate: [AlgoProcessor_Name].[Variable_Name] = [Value]
 ###
-########################
 
 Example1.intVar      = 5
 Example1.DoubleVar   = 2.5
 Example1.StrVar      = example str
+
+Example2.intVar      = 15
+Example2.DoubleVar   = -2.3
+Example2.StrVar      = something
