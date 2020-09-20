@@ -5,6 +5,14 @@
 #include "Algo/ExampleProcessor.h"
 
 void ExampleProcessor::Begin() {
+    /*
+     *
+     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
+     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
+     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
+     *
+     */
+
     // Add description for this AnaProcessor
     Description = "Just an Example Processor.";
 
