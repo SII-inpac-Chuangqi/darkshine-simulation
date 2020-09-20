@@ -18,7 +18,6 @@ public:
     SimulatedHit(const SimulatedHit&);
     ~SimulatedHit() override;
 
-    // Operators
     bool operator==(const SimulatedHit &rhs) const;
 
     bool operator!=(const SimulatedHit &rhs) const;
@@ -34,6 +33,8 @@ public:
 
     const CalorimeterHitVec &getCaloHits() const;
 
+    double getELeakWrapper() const;
+
     // Set Methods
     void setEdepEm(double edepEm);
 
@@ -43,7 +44,10 @@ public:
 
     void setCaloHits(const CalorimeterHitVec &caloHits);
 
+    void setELeakWrapper(double eLeakWrapper);
+
 private:
+    double ELeak_Wrapper{0.};
     double EdepEm{0.};
     double EdepHad{0.};
 

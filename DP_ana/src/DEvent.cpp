@@ -10,18 +10,42 @@ void DEvent::Initialization() {
         itr.second->clear();
         itr.second->shrink_to_fit();
     }
+    MCParticleCollection.clear();
+
     for (auto itr : RecParticleCollection ) {
         itr.second->clear();
         itr.second->shrink_to_fit();
     }
+    RecParticleCollection.clear();
+
     for (auto itr : SimulatedHitCollection ) {
         itr.second->clear();
         itr.second->shrink_to_fit();
     }
+    SimulatedHitCollection.clear();
+
     for (auto itr : CalorimeterHitCollection ) {
         itr.second->clear();
         itr.second->shrink_to_fit();
     }
+    CalorimeterHitCollection.clear();
+
+    for (auto itr : StepCollection ) {
+        itr.second->clear();
+        itr.second->shrink_to_fit();
+    }
+    StepCollection.clear();
+}
+
+DStepVec *DEvent::RegisterStepCollection(const std::string &str) {
+    if (StepCollection.count(str) != 0) {
+        std::cerr<<"[WARNING] ==> Key already exists. Return the existing Key value."<<std::endl;
+        return StepCollection.at(str);
+    }
+    auto tmpVec = new DStepVec;
+    StepCollection.insert(std::pair<std::string, DStepVec*>(str, tmpVec) );
+    std::cout<<"[STEP REGISTER] ==> A new collection "+str+" has been successfully added to MCParticle Collection."<<std::endl;
+    return tmpVec;
 }
 
 MCParticleVec* DEvent::RegisterMCParticleCollection(const std::string & str) {
@@ -72,7 +96,10 @@ CalorimeterHitVec *DEvent::RegisterCalorimeterHitCollection(const std::string & 
 std::vector<std::string> *DEvent::ListAllCollections() {
     auto tmp = new std::vector<std::string>;
 
-    auto s = ListCollections(MCParticleCollection);
+    auto s = ListCollections(StepCollection);
+    tmp->insert(tmp->end(), s->begin(), s->end());
+
+    s = ListCollections(MCParticleCollection);
     tmp->insert(tmp->end(), s->begin(), s->end());
 
     s = ListCollections(RecParticleCollection);
@@ -84,6 +111,8 @@ std::vector<std::string> *DEvent::ListAllCollections() {
     s = ListCollections(CalorimeterHitCollection);
     tmp->insert(tmp->end(), s->begin(), s->end());
 
+
+
     return tmp;
 }
 
@@ -92,6 +121,7 @@ void DEvent::DeleteCollection(const std::string & str) {
     auto itr2 = RecParticleCollection.find(str);
     auto itr3 = SimulatedHitCollection.find(str);
     auto itr4 = CalorimeterHitCollection.find(str);
+    auto itr5 = StepCollection.find(str);
 
     if (itr1 != MCParticleCollection.end() ) {
         MCParticleCollection.erase(itr1);
@@ -109,9 +139,15 @@ void DEvent::DeleteCollection(const std::string & str) {
         CalorimeterHitCollection.erase(itr4);
         std::cout<<"[MC DELETE] ==> Collection "+str+" has been successfully removed."<<std::endl;
     }
+    else if (itr5 != StepCollection.end() ) {
+        StepCollection.erase(itr5);
+        std::cout<<"[STEP DELETE] ==> Collection "+str+" has been successfully removed."<<std::endl;
+    }
     else
         std::cerr<<"[WARNING] ==> No Key named "+str+"."<<std::endl;
 }
+
+
 
 
 

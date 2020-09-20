@@ -13,6 +13,7 @@
 #include "Object/McParticle.h"
 #include "Object/ReconstructedParticle.h"
 #include "Object/SimulatedHit.h"
+#include "Utility/DStep.h"
 
 class DEvent
 {
@@ -60,6 +61,7 @@ public:
     void Initialization();
 
     // Register Collections
+    DStepVec* RegisterStepCollection(const std::string& );
     MCParticleVec* RegisterMCParticleCollection(const std::string& );
     RecParticleVec* RegisterRecParticleCollection(const std::string& );
     SimulatedHitVec* RegisterSimulatedHitCollection(const std::string& );
@@ -79,6 +81,9 @@ protected:
 
     // event number
     int EventID{0};
+
+    // Step Collection
+    DStepMap StepCollection;
 
     // Event Physics Quantities
     MCParticleMap MCParticleCollection;

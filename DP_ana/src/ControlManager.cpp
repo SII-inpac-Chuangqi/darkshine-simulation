@@ -11,7 +11,7 @@ void ControlManager::run() {
     /*
      *  Begin
      */
-    EvtReader->ReadFile("dp_out.root");
+    EvtReader->ReadFile(FileName);
     auto* evt = new DEvent();
     EvtReader->setEvt(evt);
 
@@ -48,4 +48,6 @@ void ControlManager::run() {
      *  End
      */
     algo->EndAnaProcessors();
+
+    delete evt;
 }

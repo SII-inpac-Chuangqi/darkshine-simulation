@@ -59,6 +59,7 @@ int main (int argc,char** argv)
     auto d = new AlgoManager();
     d->RegisterAnaProcessor(c);
 
+    control->setFileName("dp_out.root");
     control->setEvtReader(new EventReader);
     control->setAlgo(d);
     control->setEventNumber(-1);

@@ -19,6 +19,13 @@ public:
     ~EventReader() = default;
 
     void Convert();
+    void ConvertMC();
+    void ConvertStep();
+    void ConvertTagTrk();
+    void ConvertRecTrk();
+    void ConvertECAL_Center();
+    void ConvertECAL_Outer();
+    void ConvertHCAL();
 
     DEvent *getEvt() const {
         return evt;

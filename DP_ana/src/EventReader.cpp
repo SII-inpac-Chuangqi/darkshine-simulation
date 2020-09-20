@@ -4,8 +4,8 @@
 
 #include "Core/EventReader.h"
 
-Int_t EventReader::ReadFile(const std::string& filename) {
-    std::cout<<"[READFILE] ==> Read in file: "+filename<<std::endl;
+Int_t EventReader::ReadFile(const std::string &filename) {
+    std::cout << "[READFILE] ==> Read in file: " + filename << std::endl;
     auto tree = new TTree;
     auto *f = new TFile(TString(filename));
     if (!f) {
@@ -21,26 +21,49 @@ Int_t EventReader::ReadFile(const std::string& filename) {
     return 1;
 }
 
-void EventReader::Convert()
-{
+void EventReader::Convert() {
+    // Initialization
+    evt->Initialization();
+
+    // Convert Input root to DEvent format
+
+    // Other Variables
     evt->setRunId(RunNumber);
     evt->setEventId(EventNumber);
-    std::cout<<evt->getEventId()<<std::endl;
+
+
+    // register raw MC collection
+    ConvertMC();
+
+    // Register Step Collection
+    ConvertStep();
+
+    /*
+     * Register Calorimeter Collections
+     *      Tagging Tracker 1 & 2
+     *      Recoiled Tracker 1 & 2
+     *      ECAL_Center
+     *      ECAL_Outer 1 & 2 & 3 & 4
+     *      HCAL 0 to 8
+     */
+    ConvertTagTrk();
+    ConvertRecTrk();
+    ConvertECAL_Center();
+    ConvertECAL_Outer();
+    ConvertHCAL();
 }
 
 /*                     */
 /* From ROOT MakeClass */
 /*                     */
 
-Int_t EventReader::GetEntry(Long64_t entry) const
-{
+Int_t EventReader::GetEntry(Long64_t entry) const {
 // Read contents of entry.
     if (!fChain) return 0;
     return fChain->GetEntry(entry);
 }
 
-void EventReader::Init(TTree *tree)
-{
+void EventReader::Init(TTree *tree) {
     // The Init() function is called when the selector needs to initialize
     // a new tree or chain. Typically here the branch addresses and branch
     // pointers of the tree will be set.
@@ -55,231 +78,231 @@ void EventReader::Init(TTree *tree)
     TRUTH_MC_ParentID = nullptr;
     TRUTH_MC_Mom = nullptr;
     TRUTH_MC_E = nullptr;
-    TRUTH_MC_Eremain = 0;
-    TRUTH_MC_VPos = 0;
-    TRUTH_MC_EPos = 0;
-    TRUTH_MC_ProcessName = 0;
-    ip_Pos = 0;
-    ip_Momentum = 0;
-    ip_Energy = 0;
-    ip_PVName = 0;
-    ip_ProcessName = 0;
-    TagTrk1_Type = 0;
-    TagTrk1_DetectorID = 0;
-    TagTrk1_DetectorID_x = 0;
-    TagTrk1_DetectorID_y = 0;
-    TagTrk1_DetectorID_z = 0;
-    TagTrk1_Time = 0;
-    TagTrk1_Edep = 0;
-    TagTrk1_EdepEM = 0;
-    TagTrk1_EdepHad = 0;
-    TagTrk1_X = 0;
-    TagTrk1_Y = 0;
-    TagTrk1_Z = 0;
-    TagTrk2_Type = 0;
-    TagTrk2_DetectorID = 0;
-    TagTrk2_DetectorID_x = 0;
-    TagTrk2_DetectorID_y = 0;
-    TagTrk2_DetectorID_z = 0;
-    TagTrk2_Time = 0;
-    TagTrk2_Edep = 0;
-    TagTrk2_EdepEM = 0;
-    TagTrk2_EdepHad = 0;
-    TagTrk2_X = 0;
-    TagTrk2_Y = 0;
-    TagTrk2_Z = 0;
-    RecTrk1_Type = 0;
-    RecTrk1_DetectorID = 0;
-    RecTrk1_DetectorID_x = 0;
-    RecTrk1_DetectorID_y = 0;
-    RecTrk1_DetectorID_z = 0;
-    RecTrk1_Time = 0;
-    RecTrk1_Edep = 0;
-    RecTrk1_EdepEM = 0;
-    RecTrk1_EdepHad = 0;
-    RecTrk1_X = 0;
-    RecTrk1_Y = 0;
-    RecTrk1_Z = 0;
-    RecTrk2_Type = 0;
-    RecTrk2_DetectorID = 0;
-    RecTrk2_DetectorID_x = 0;
-    RecTrk2_DetectorID_y = 0;
-    RecTrk2_DetectorID_z = 0;
-    RecTrk2_Time = 0;
-    RecTrk2_Edep = 0;
-    RecTrk2_EdepEM = 0;
-    RecTrk2_EdepHad = 0;
-    RecTrk2_X = 0;
-    RecTrk2_Y = 0;
-    RecTrk2_Z = 0;
-    ECAL_Center_Type = 0;
-    ECAL_Center_DetectorID = 0;
-    ECAL_Center_DetectorID_x = 0;
-    ECAL_Center_DetectorID_y = 0;
-    ECAL_Center_DetectorID_z = 0;
-    ECAL_Center_Time = 0;
-    ECAL_Center_Edep = 0;
-    ECAL_Center_EdepEM = 0;
-    ECAL_Center_EdepHad = 0;
-    ECAL_Center_X = 0;
-    ECAL_Center_Y = 0;
-    ECAL_Center_Z = 0;
-    ECAL_Outer_1_Type = 0;
-    ECAL_Outer_1_DetectorID = 0;
-    ECAL_Outer_1_DetectorID_x = 0;
-    ECAL_Outer_1_DetectorID_y = 0;
-    ECAL_Outer_1_DetectorID_z = 0;
-    ECAL_Outer_1_Time = 0;
-    ECAL_Outer_1_Edep = 0;
-    ECAL_Outer_1_EdepEM = 0;
-    ECAL_Outer_1_EdepHad = 0;
-    ECAL_Outer_1_X = 0;
-    ECAL_Outer_1_Y = 0;
-    ECAL_Outer_1_Z = 0;
-    ECAL_Outer_2_Type = 0;
-    ECAL_Outer_2_DetectorID = 0;
-    ECAL_Outer_2_DetectorID_x = 0;
-    ECAL_Outer_2_DetectorID_y = 0;
-    ECAL_Outer_2_DetectorID_z = 0;
-    ECAL_Outer_2_Time = 0;
-    ECAL_Outer_2_Edep = 0;
-    ECAL_Outer_2_EdepEM = 0;
-    ECAL_Outer_2_EdepHad = 0;
-    ECAL_Outer_2_X = 0;
-    ECAL_Outer_2_Y = 0;
-    ECAL_Outer_2_Z = 0;
-    ECAL_Outer_3_Type = 0;
-    ECAL_Outer_3_DetectorID = 0;
-    ECAL_Outer_3_DetectorID_x = 0;
-    ECAL_Outer_3_DetectorID_y = 0;
-    ECAL_Outer_3_DetectorID_z = 0;
-    ECAL_Outer_3_Time = 0;
-    ECAL_Outer_3_Edep = 0;
-    ECAL_Outer_3_EdepEM = 0;
-    ECAL_Outer_3_EdepHad = 0;
-    ECAL_Outer_3_X = 0;
-    ECAL_Outer_3_Y = 0;
-    ECAL_Outer_3_Z = 0;
-    ECAL_Outer_4_Type = 0;
-    ECAL_Outer_4_DetectorID = 0;
-    ECAL_Outer_4_DetectorID_x = 0;
-    ECAL_Outer_4_DetectorID_y = 0;
-    ECAL_Outer_4_DetectorID_z = 0;
-    ECAL_Outer_4_Time = 0;
-    ECAL_Outer_4_Edep = 0;
-    ECAL_Outer_4_EdepEM = 0;
-    ECAL_Outer_4_EdepHad = 0;
-    ECAL_Outer_4_X = 0;
-    ECAL_Outer_4_Y = 0;
-    ECAL_Outer_4_Z = 0;
-    HCAL_0_Type = 0;
-    HCAL_0_DetectorID = 0;
-    HCAL_0_DetectorID_x = 0;
-    HCAL_0_DetectorID_y = 0;
-    HCAL_0_DetectorID_z = 0;
-    HCAL_0_Time = 0;
-    HCAL_0_Edep = 0;
-    HCAL_0_EdepEM = 0;
-    HCAL_0_EdepHad = 0;
-    HCAL_0_X = 0;
-    HCAL_0_Y = 0;
-    HCAL_0_Z = 0;
-    HCAL_1_Type = 0;
-    HCAL_1_DetectorID = 0;
-    HCAL_1_DetectorID_x = 0;
-    HCAL_1_DetectorID_y = 0;
-    HCAL_1_DetectorID_z = 0;
-    HCAL_1_Time = 0;
-    HCAL_1_Edep = 0;
-    HCAL_1_EdepEM = 0;
-    HCAL_1_EdepHad = 0;
-    HCAL_1_X = 0;
-    HCAL_1_Y = 0;
-    HCAL_1_Z = 0;
-    HCAL_2_Type = 0;
-    HCAL_2_DetectorID = 0;
-    HCAL_2_DetectorID_x = 0;
-    HCAL_2_DetectorID_y = 0;
-    HCAL_2_DetectorID_z = 0;
-    HCAL_2_Time = 0;
-    HCAL_2_Edep = 0;
-    HCAL_2_EdepEM = 0;
-    HCAL_2_EdepHad = 0;
-    HCAL_2_X = 0;
-    HCAL_2_Y = 0;
-    HCAL_2_Z = 0;
-    HCAL_3_Type = 0;
-    HCAL_3_DetectorID = 0;
-    HCAL_3_DetectorID_x = 0;
-    HCAL_3_DetectorID_y = 0;
-    HCAL_3_DetectorID_z = 0;
-    HCAL_3_Time = 0;
-    HCAL_3_Edep = 0;
-    HCAL_3_EdepEM = 0;
-    HCAL_3_EdepHad = 0;
-    HCAL_3_X = 0;
-    HCAL_3_Y = 0;
-    HCAL_3_Z = 0;
-    HCAL_4_Type = 0;
-    HCAL_4_DetectorID = 0;
-    HCAL_4_DetectorID_x = 0;
-    HCAL_4_DetectorID_y = 0;
-    HCAL_4_DetectorID_z = 0;
-    HCAL_4_Time = 0;
-    HCAL_4_Edep = 0;
-    HCAL_4_EdepEM = 0;
-    HCAL_4_EdepHad = 0;
-    HCAL_4_X = 0;
-    HCAL_4_Y = 0;
-    HCAL_4_Z = 0;
-    HCAL_5_Type = 0;
-    HCAL_5_DetectorID = 0;
-    HCAL_5_DetectorID_x = 0;
-    HCAL_5_DetectorID_y = 0;
-    HCAL_5_DetectorID_z = 0;
-    HCAL_5_Time = 0;
-    HCAL_5_Edep = 0;
-    HCAL_5_EdepEM = 0;
-    HCAL_5_EdepHad = 0;
-    HCAL_5_X = 0;
-    HCAL_5_Y = 0;
-    HCAL_5_Z = 0;
-    HCAL_6_Type = 0;
-    HCAL_6_DetectorID = 0;
-    HCAL_6_DetectorID_x = 0;
-    HCAL_6_DetectorID_y = 0;
-    HCAL_6_DetectorID_z = 0;
-    HCAL_6_Time = 0;
-    HCAL_6_Edep = 0;
-    HCAL_6_EdepEM = 0;
-    HCAL_6_EdepHad = 0;
-    HCAL_6_X = 0;
-    HCAL_6_Y = 0;
-    HCAL_6_Z = 0;
-    HCAL_7_Type = 0;
-    HCAL_7_DetectorID = 0;
-    HCAL_7_DetectorID_x = 0;
-    HCAL_7_DetectorID_y = 0;
-    HCAL_7_DetectorID_z = 0;
-    HCAL_7_Time = 0;
-    HCAL_7_Edep = 0;
-    HCAL_7_EdepEM = 0;
-    HCAL_7_EdepHad = 0;
-    HCAL_7_X = 0;
-    HCAL_7_Y = 0;
-    HCAL_7_Z = 0;
-    HCAL_8_Type = 0;
-    HCAL_8_DetectorID = 0;
-    HCAL_8_DetectorID_x = 0;
-    HCAL_8_DetectorID_y = 0;
-    HCAL_8_DetectorID_z = 0;
-    HCAL_8_Time = 0;
-    HCAL_8_Edep = 0;
-    HCAL_8_EdepEM = 0;
-    HCAL_8_EdepHad = 0;
-    HCAL_8_X = 0;
-    HCAL_8_Y = 0;
-    HCAL_8_Z = 0;
+    TRUTH_MC_Eremain = nullptr;
+    TRUTH_MC_VPos = nullptr;
+    TRUTH_MC_EPos = nullptr;
+    TRUTH_MC_ProcessName = nullptr;
+    ip_Pos = nullptr;
+    ip_Momentum = nullptr;
+    ip_Energy = nullptr;
+    ip_PVName = nullptr;
+    ip_ProcessName = nullptr;
+    TagTrk1_Type = nullptr;
+    TagTrk1_DetectorID = nullptr;
+    TagTrk1_DetectorID_x = nullptr;
+    TagTrk1_DetectorID_y = nullptr;
+    TagTrk1_DetectorID_z = nullptr;
+    TagTrk1_Time = nullptr;
+    TagTrk1_Edep = nullptr;
+    TagTrk1_EdepEM = nullptr;
+    TagTrk1_EdepHad = nullptr;
+    TagTrk1_X = nullptr;
+    TagTrk1_Y = nullptr;
+    TagTrk1_Z = nullptr;
+    TagTrk2_Type = nullptr;
+    TagTrk2_DetectorID = nullptr;
+    TagTrk2_DetectorID_x = nullptr;
+    TagTrk2_DetectorID_y = nullptr;
+    TagTrk2_DetectorID_z = nullptr;
+    TagTrk2_Time = nullptr;
+    TagTrk2_Edep = nullptr;
+    TagTrk2_EdepEM = nullptr;
+    TagTrk2_EdepHad = nullptr;
+    TagTrk2_X = nullptr;
+    TagTrk2_Y = nullptr;
+    TagTrk2_Z = nullptr;
+    RecTrk1_Type = nullptr;
+    RecTrk1_DetectorID = nullptr;
+    RecTrk1_DetectorID_x = nullptr;
+    RecTrk1_DetectorID_y = nullptr;
+    RecTrk1_DetectorID_z = nullptr;
+    RecTrk1_Time = nullptr;
+    RecTrk1_Edep = nullptr;
+    RecTrk1_EdepEM = nullptr;
+    RecTrk1_EdepHad = nullptr;
+    RecTrk1_X = nullptr;
+    RecTrk1_Y = nullptr;
+    RecTrk1_Z = nullptr;
+    RecTrk2_Type = nullptr;
+    RecTrk2_DetectorID = nullptr;
+    RecTrk2_DetectorID_x = nullptr;
+    RecTrk2_DetectorID_y = nullptr;
+    RecTrk2_DetectorID_z = nullptr;
+    RecTrk2_Time = nullptr;
+    RecTrk2_Edep = nullptr;
+    RecTrk2_EdepEM = nullptr;
+    RecTrk2_EdepHad = nullptr;
+    RecTrk2_X = nullptr;
+    RecTrk2_Y = nullptr;
+    RecTrk2_Z = nullptr;
+    ECAL_Center_Type = nullptr;
+    ECAL_Center_DetectorID = nullptr;
+    ECAL_Center_DetectorID_x = nullptr;
+    ECAL_Center_DetectorID_y = nullptr;
+    ECAL_Center_DetectorID_z = nullptr;
+    ECAL_Center_Time = nullptr;
+    ECAL_Center_Edep = nullptr;
+    ECAL_Center_EdepEM = nullptr;
+    ECAL_Center_EdepHad = nullptr;
+    ECAL_Center_X = nullptr;
+    ECAL_Center_Y = nullptr;
+    ECAL_Center_Z = nullptr;
+    ECAL_Outer_1_Type = nullptr;
+    ECAL_Outer_1_DetectorID = nullptr;
+    ECAL_Outer_1_DetectorID_x = nullptr;
+    ECAL_Outer_1_DetectorID_y = nullptr;
+    ECAL_Outer_1_DetectorID_z = nullptr;
+    ECAL_Outer_1_Time = nullptr;
+    ECAL_Outer_1_Edep = nullptr;
+    ECAL_Outer_1_EdepEM = nullptr;
+    ECAL_Outer_1_EdepHad = nullptr;
+    ECAL_Outer_1_X = nullptr;
+    ECAL_Outer_1_Y = nullptr;
+    ECAL_Outer_1_Z = nullptr;
+    ECAL_Outer_2_Type = nullptr;
+    ECAL_Outer_2_DetectorID = nullptr;
+    ECAL_Outer_2_DetectorID_x = nullptr;
+    ECAL_Outer_2_DetectorID_y = nullptr;
+    ECAL_Outer_2_DetectorID_z = nullptr;
+    ECAL_Outer_2_Time = nullptr;
+    ECAL_Outer_2_Edep = nullptr;
+    ECAL_Outer_2_EdepEM = nullptr;
+    ECAL_Outer_2_EdepHad = nullptr;
+    ECAL_Outer_2_X = nullptr;
+    ECAL_Outer_2_Y = nullptr;
+    ECAL_Outer_2_Z = nullptr;
+    ECAL_Outer_3_Type = nullptr;
+    ECAL_Outer_3_DetectorID = nullptr;
+    ECAL_Outer_3_DetectorID_x = nullptr;
+    ECAL_Outer_3_DetectorID_y = nullptr;
+    ECAL_Outer_3_DetectorID_z = nullptr;
+    ECAL_Outer_3_Time = nullptr;
+    ECAL_Outer_3_Edep = nullptr;
+    ECAL_Outer_3_EdepEM = nullptr;
+    ECAL_Outer_3_EdepHad = nullptr;
+    ECAL_Outer_3_X = nullptr;
+    ECAL_Outer_3_Y = nullptr;
+    ECAL_Outer_3_Z = nullptr;
+    ECAL_Outer_4_Type = nullptr;
+    ECAL_Outer_4_DetectorID = nullptr;
+    ECAL_Outer_4_DetectorID_x = nullptr;
+    ECAL_Outer_4_DetectorID_y = nullptr;
+    ECAL_Outer_4_DetectorID_z = nullptr;
+    ECAL_Outer_4_Time = nullptr;
+    ECAL_Outer_4_Edep = nullptr;
+    ECAL_Outer_4_EdepEM = nullptr;
+    ECAL_Outer_4_EdepHad = nullptr;
+    ECAL_Outer_4_X = nullptr;
+    ECAL_Outer_4_Y = nullptr;
+    ECAL_Outer_4_Z = nullptr;
+    HCAL_0_Type = nullptr;
+    HCAL_0_DetectorID = nullptr;
+    HCAL_0_DetectorID_x = nullptr;
+    HCAL_0_DetectorID_y = nullptr;
+    HCAL_0_DetectorID_z = nullptr;
+    HCAL_0_Time = nullptr;
+    HCAL_0_Edep = nullptr;
+    HCAL_0_EdepEM = nullptr;
+    HCAL_0_EdepHad = nullptr;
+    HCAL_0_X = nullptr;
+    HCAL_0_Y = nullptr;
+    HCAL_0_Z = nullptr;
+    HCAL_1_Type = nullptr;
+    HCAL_1_DetectorID = nullptr;
+    HCAL_1_DetectorID_x = nullptr;
+    HCAL_1_DetectorID_y = nullptr;
+    HCAL_1_DetectorID_z = nullptr;
+    HCAL_1_Time = nullptr;
+    HCAL_1_Edep = nullptr;
+    HCAL_1_EdepEM = nullptr;
+    HCAL_1_EdepHad = nullptr;
+    HCAL_1_X = nullptr;
+    HCAL_1_Y = nullptr;
+    HCAL_1_Z = nullptr;
+    HCAL_2_Type = nullptr;
+    HCAL_2_DetectorID = nullptr;
+    HCAL_2_DetectorID_x = nullptr;
+    HCAL_2_DetectorID_y = nullptr;
+    HCAL_2_DetectorID_z = nullptr;
+    HCAL_2_Time = nullptr;
+    HCAL_2_Edep = nullptr;
+    HCAL_2_EdepEM = nullptr;
+    HCAL_2_EdepHad = nullptr;
+    HCAL_2_X = nullptr;
+    HCAL_2_Y = nullptr;
+    HCAL_2_Z = nullptr;
+    HCAL_3_Type = nullptr;
+    HCAL_3_DetectorID = nullptr;
+    HCAL_3_DetectorID_x = nullptr;
+    HCAL_3_DetectorID_y = nullptr;
+    HCAL_3_DetectorID_z = nullptr;
+    HCAL_3_Time = nullptr;
+    HCAL_3_Edep = nullptr;
+    HCAL_3_EdepEM = nullptr;
+    HCAL_3_EdepHad = nullptr;
+    HCAL_3_X = nullptr;
+    HCAL_3_Y = nullptr;
+    HCAL_3_Z = nullptr;
+    HCAL_4_Type = nullptr;
+    HCAL_4_DetectorID = nullptr;
+    HCAL_4_DetectorID_x = nullptr;
+    HCAL_4_DetectorID_y = nullptr;
+    HCAL_4_DetectorID_z = nullptr;
+    HCAL_4_Time = nullptr;
+    HCAL_4_Edep = nullptr;
+    HCAL_4_EdepEM = nullptr;
+    HCAL_4_EdepHad = nullptr;
+    HCAL_4_X = nullptr;
+    HCAL_4_Y = nullptr;
+    HCAL_4_Z = nullptr;
+    HCAL_5_Type = nullptr;
+    HCAL_5_DetectorID = nullptr;
+    HCAL_5_DetectorID_x = nullptr;
+    HCAL_5_DetectorID_y = nullptr;
+    HCAL_5_DetectorID_z = nullptr;
+    HCAL_5_Time = nullptr;
+    HCAL_5_Edep = nullptr;
+    HCAL_5_EdepEM = nullptr;
+    HCAL_5_EdepHad = nullptr;
+    HCAL_5_X = nullptr;
+    HCAL_5_Y = nullptr;
+    HCAL_5_Z = nullptr;
+    HCAL_6_Type = nullptr;
+    HCAL_6_DetectorID = nullptr;
+    HCAL_6_DetectorID_x = nullptr;
+    HCAL_6_DetectorID_y = nullptr;
+    HCAL_6_DetectorID_z = nullptr;
+    HCAL_6_Time = nullptr;
+    HCAL_6_Edep = nullptr;
+    HCAL_6_EdepEM = nullptr;
+    HCAL_6_EdepHad = nullptr;
+    HCAL_6_X = nullptr;
+    HCAL_6_Y = nullptr;
+    HCAL_6_Z = nullptr;
+    HCAL_7_Type = nullptr;
+    HCAL_7_DetectorID = nullptr;
+    HCAL_7_DetectorID_x = nullptr;
+    HCAL_7_DetectorID_y = nullptr;
+    HCAL_7_DetectorID_z = nullptr;
+    HCAL_7_Time = nullptr;
+    HCAL_7_Edep = nullptr;
+    HCAL_7_EdepEM = nullptr;
+    HCAL_7_EdepHad = nullptr;
+    HCAL_7_X = nullptr;
+    HCAL_7_Y = nullptr;
+    HCAL_7_Z = nullptr;
+    HCAL_8_Type = nullptr;
+    HCAL_8_DetectorID = nullptr;
+    HCAL_8_DetectorID_x = nullptr;
+    HCAL_8_DetectorID_y = nullptr;
+    HCAL_8_DetectorID_z = nullptr;
+    HCAL_8_Time = nullptr;
+    HCAL_8_Edep = nullptr;
+    HCAL_8_EdepEM = nullptr;
+    HCAL_8_EdepHad = nullptr;
+    HCAL_8_X = nullptr;
+    HCAL_8_Y = nullptr;
+    HCAL_8_Z = nullptr;
     // Set branch addresses and branch pointers
     if (!tree) return;
     fChain = tree;
@@ -564,3 +587,5 @@ void EventReader::Init(TTree *tree)
     fChain->SetBranchAddress("HCAL_8_Y", &HCAL_8_Y, &b_HCAL_8_Y);
     fChain->SetBranchAddress("HCAL_8_Z", &HCAL_8_Z, &b_HCAL_8_Z);
 }
+
+

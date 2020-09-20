@@ -14,21 +14,10 @@ SimulatedHit::SimulatedHit(const SimulatedHit &rhs) : DHit(rhs) {
     *this = rhs;
 }
 
-bool SimulatedHit::operator==(const SimulatedHit &rhs) const {
-    return static_cast<const DHit &>(*this) == static_cast<const DHit &>(rhs) &&
-           EdepEm == rhs.EdepEm &&
-           EdepHad == rhs.EdepHad &&
-           PContribution == rhs.PContribution &&
-           CaloHits == rhs.CaloHits;
-}
-
-bool SimulatedHit::operator!=(const SimulatedHit &rhs) const {
-    return !(rhs == *this);
-}
-
 SimulatedHit &SimulatedHit::operator=(const SimulatedHit &rhs) {
     if (&rhs == this) { return *this; }
     DHit::operator=(rhs);
+    ELeak_Wrapper = rhs.ELeak_Wrapper;
     EdepEm = rhs.EdepEm;
     EdepHad = rhs.EdepHad;
     PContribution = rhs.PContribution;
@@ -66,6 +55,27 @@ void SimulatedHit::setPContribution(const MCParticleVec &pContribution) {
 
 void SimulatedHit::setCaloHits(const CalorimeterHitVec &caloHits) {
     CaloHits = caloHits;
+}
+
+void SimulatedHit::setELeakWrapper(double eLeakWrapper) {
+    ELeak_Wrapper = eLeakWrapper;
+}
+
+double SimulatedHit::getELeakWrapper() const {
+    return ELeak_Wrapper;
+}
+
+bool SimulatedHit::operator==(const SimulatedHit &rhs) const {
+    return static_cast<const DHit &>(*this) == static_cast<const DHit &>(rhs) &&
+           ELeak_Wrapper == rhs.ELeak_Wrapper &&
+           EdepEm == rhs.EdepEm &&
+           EdepHad == rhs.EdepHad &&
+           PContribution == rhs.PContribution &&
+           CaloHits == rhs.CaloHits;
+}
+
+bool SimulatedHit::operator!=(const SimulatedHit &rhs) const {
+    return !(rhs == *this);
 }
 
 

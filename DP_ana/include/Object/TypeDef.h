@@ -9,11 +9,17 @@
 #include <map>
 #include <iterator>
 
+class DStep;
 class McParticle;
 class ReconstructedParticle;
 class SimulatedHit;
 class CalorimeterHit;
 class AnaProcessor;
+
+typedef std::vector<DStep* > DStepVec;
+typedef std::vector<DStep* >::iterator DStepVecItr;
+typedef std::map<std::string, DStepVec* > DStepMap;
+typedef std::map<std::string, DStepVec* >::iterator DStepMapItr;
 
 typedef std::vector<McParticle* > MCParticleVec;
 typedef std::vector<McParticle* >::iterator MCParticleVecItr;

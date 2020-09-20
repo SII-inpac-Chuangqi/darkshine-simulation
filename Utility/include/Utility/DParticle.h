@@ -21,6 +21,7 @@ public:
     bool operator==(const DParticle &rhs) const {
         return id == rhs.id &&
                Name == rhs.Name &&
+               CreateProcess == rhs.CreateProcess &&
                PDG == rhs.PDG &&
                Mass == rhs.Mass &&
                Energy == rhs.Energy &&
@@ -43,6 +44,7 @@ public:
         if (&rhs == this) { return *this; }
         id = rhs.id ;
         Name = rhs.Name;
+        CreateProcess = rhs.CreateProcess;
         PDG = rhs.PDG ;
         Mass = rhs.Mass ;
         Energy = rhs.Energy ;
@@ -116,6 +118,10 @@ public:
         return Name;
     }
 
+    const std::string &getCreateProcess() const {
+        return CreateProcess;
+    }
+
     // Set Methods
     void setId(int ID) {
         DParticle::id = ID;
@@ -173,12 +179,17 @@ public:
         Name = name;
     }
 
+    void setCreateProcess(const std::string &createProcess) {
+        CreateProcess = createProcess;
+    }
+
 protected:
     // internal debug only
     int id{0};
 
     // internal String
-    std::string Name = "";
+    std::string Name;
+    std::string CreateProcess;
 
     int PDG{0};
     double Mass{0.};

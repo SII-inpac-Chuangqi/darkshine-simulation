@@ -11,6 +11,19 @@ void ExampleProcessor::Begin() {
 void ExampleProcessor::ProcessEvt(DEvent* evt) {
     cout<<"Process # "<<evt->getEventId()<<" event ..."<<endl;
 
+
+    for ( const auto& t : *evt->ListAllCollections() )
+        std::cout<<t<<std::endl;
+
+    const auto& MCCollection = evt->getMCParticleCollection();
+    auto mc = MCCollection.at("RawMCParticle");
+    for (auto itr : *mc)
+    {
+        cout<<"Particle " <<itr->getId() <<": ";
+        cout<<", PDG: "<<itr->getPdg();
+        cout<<", Energy: "<<itr->getEnergy();
+        cout<<", Create Process:"<<itr->getCreateProcess()<<std::endl;
+    }
 }
 
 void ExampleProcessor::CheckEvt(DEvent* evt) {
