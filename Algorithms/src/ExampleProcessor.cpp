@@ -5,7 +5,9 @@
 #include "Algo/ExampleProcessor.h"
 
 void ExampleProcessor::Begin() {
-    cout<<"Begin of Processor: "<<this->Name<<endl;
+    // Add description for this AnaProcessor
+    Description = "Just an Example Processor.";
+
     // Register Int parameter
     RegisterIntParameter("intVar","Int Variable",&intVar,0);
 
@@ -18,7 +20,6 @@ void ExampleProcessor::Begin() {
 }
 
 void ExampleProcessor::ProcessEvt(DEvent* evt) {
-    cout<<"Process # "<<evt->getEventId()<<" event ..."<<endl;
 
     cout<<"p1: "<<intVar<<endl;
     cout<<"p2: "<<doubleVar<<endl;

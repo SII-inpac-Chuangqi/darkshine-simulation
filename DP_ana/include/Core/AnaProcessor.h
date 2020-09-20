@@ -59,9 +59,25 @@ public:
         return StringParameters;
     }
 
+    int getVerbose() const {
+        return Verbose;
+    }
+
+    const string &getDescription() const {
+        return Description;
+    }
+
     // Set Methods
     void setName(const string &name) {
         Name = name;
+    }
+
+    void setVerbose(int verbose) {
+        Verbose = verbose;
+    }
+
+    void setDescription(const string &description) {
+        Description = description;
     }
 
     void setIntValue(const std::string &name, int value);
@@ -86,6 +102,12 @@ public:
 protected:
     // Algo Name
     string Name;
+
+    // Algo Description
+    string Description = "None";
+
+    // Verbosity
+    int Verbose{0};
 
     // Parameter Name, Description, Value
     std::map<std::string, std::pair<std::string, int*> > IntParameters;

@@ -9,8 +9,6 @@
 
 void ControlManager::run() {
 
-    std::cout<<"Start!!"<<std::endl;
-
     /* Read in Basic Configuration */
     /* Read Algorithm Lists */
     ConfMgr->ReadConst();
@@ -24,9 +22,9 @@ void ControlManager::run() {
 
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
-    algo->RegisterAnaProcessor(new ExampleProcessor("Example1") );
-    algo->RegisterAnaProcessor(new ExampleProcessor("Example2") );
-    algo->RegisterAnaProcessor(new ExampleProcessor("Example3") );
+    algo->RegisterAnaProcessor(new ExampleProcessor("Example1"));
+    algo->RegisterAnaProcessor(new ExampleProcessor("Example2VeryLongVeryLong"));
+    algo->RegisterAnaProcessor(new ExampleProcessor("Example3"));
 
     algo->BeginAnaProcessors();
 
@@ -39,22 +37,25 @@ void ControlManager::run() {
      *  Begin
      */
     EvtReader->ReadFile(FileName);
-    auto* evt = new DEvent();
+    auto *evt = new DEvent();
     EvtReader->setEvt(evt);
 
     /*
      *  Processing
      */
     Long64_t nentries = EvtReader->getEntries();
-    std::cout<<"[READFILE] ==> File with total "+to_string(nentries)+" event(s)."<<std::endl;
-    std::cout<<"[READFILE] ==> Skip First "+to_string(SkipNumber)<<" event(s)."<<std::endl;
+    std::cout << "[READFILE] ==> File with total " + to_string(nentries) + " event(s)." << std::endl;
+    std::cout << "[READFILE] ==> Skip First " + to_string(SkipNumber) << " event(s)." << std::endl;
 
-    if (EventNumber == -1 )
-        nentries = (nentries >= SkipNumber) ? nentries : SkipNumber ;
+    if (EventNumber == -1)
+        nentries = (nentries >= SkipNumber) ? nentries : SkipNumber;
     else
-        nentries = (nentries >= EventNumber+SkipNumber) ? EventNumber+SkipNumber : nentries ;
+        nentries = (nentries >= EventNumber + SkipNumber) ? EventNumber + SkipNumber : nentries;
     for (int i = SkipNumber; i < nentries; ++i) {
 
+        cout << "--------------------------";
+        cout << " Process Event: " << evt->getEventId();
+        cout << " --------------------------" << endl;
         // read the i-th event
         EvtReader->GetEntry(i);
 
@@ -66,6 +67,11 @@ void ControlManager::run() {
 
         // check algorithms
         algo->CheckEvtAnaProcessors(evt);
+
+        cout << "--------------------------";
+        cout << " End of Event: " << evt->getEventId();
+        cout << " --------------------------" << endl;
+
     }
 
 

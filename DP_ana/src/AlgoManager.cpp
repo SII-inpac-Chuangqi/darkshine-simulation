@@ -4,56 +4,84 @@
 
 #include "Core/AlgoManager.h"
 #include <sstream>
+#include <iomanip>
+#include <iostream>
 
 void AlgoManager::RegisterAnaProcessor(AnaProcessor *AnaP) {
-    if ( AnaProcessors.count(AnaP->getName()) != 0 )
-        std::cerr<<"[WARNING] ==> Algo Processor Name already exists."<<std::endl;
+    if (AnaProcessors.count(AnaP->getName()) != 0)
+        std::cerr << "[WARNING] ==> Algo Processor Name already exists." << std::endl;
     else
-        AnaProcessors.insert(std::pair<std::string, AnaProcessor*>(AnaP->getName(), AnaP));
+        AnaProcessors.insert(std::pair<std::string, AnaProcessor *>(AnaP->getName(), AnaP));
 }
 
 void AlgoManager::BeginAnaProcessors() {
-    for ( const auto& itr : AnaProcessorList)
-        AnaProcessors.at(itr)->Begin();
+
+    if (Verbose > 0) {
+        cout << "----------------------------------------------------------------------" << endl;
+        cout << "[ALGO PROCESS LIST] : " << endl;
+        cout << right;
+        cout << setw(10) << "----" << setw(50) << "-----------" << endl;
+        cout << setw(10) << "name" << setw(50) << "Description" << endl;
+        cout << setw(10) << "----" << setw(50) << "-----------" << endl;
+    }
+
+    for (auto itr = AnaProcessorList.begin(); itr != AnaProcessorList.end(); itr++) {
+        if (AnaProcessors.count(*itr) == 0) {
+            itr = AnaProcessorList.erase(itr);
+        }
+
+        AnaProcessors.at(*itr)->Begin();
+
+        if (Verbose > 0) {
+            cout << right << setw(5) << " " << left;
+            cout << setw(39) << *itr;
+            cout << setw(50) << AnaProcessors.at(*itr)->getDescription() << endl;
+        }
+    }
+
+    if (Verbose > 0) {
+        cout << "----------------------------------------------------------------------" << endl;
+    }
 }
 
-void AlgoManager::ProcessEvtAnaProcessors(DEvent* evt) {
-    for ( const auto& itr : AnaProcessorList)
+void AlgoManager::ProcessEvtAnaProcessors(DEvent *evt) {
+    for (const auto &itr : AnaProcessorList)
         AnaProcessors.at(itr)->ProcessEvt(evt);
 }
 
-void AlgoManager::CheckEvtAnaProcessors(DEvent* evt) {
-    for ( const auto& itr : AnaProcessorList)
+void AlgoManager::CheckEvtAnaProcessors(DEvent *evt) {
+    for (const auto &itr : AnaProcessorList)
         AnaProcessors.at(itr)->CheckEvt(evt);
 }
 
 void AlgoManager::EndAnaProcessors() {
-    for ( const auto& itr : AnaProcessorList)
+    for (const auto &itr : AnaProcessorList)
         AnaProcessors.at(itr)->End();
 }
 
-AnaProcessorVec* AlgoManager::getAllAnaProcessors() {
+AnaProcessorVec *AlgoManager::getAllAnaProcessors() {
     auto tmp = new AnaProcessorVec();
-    for ( const auto& itr : AnaProcessors)
+    for (const auto &itr : AnaProcessors)
         tmp->emplace_back(itr.second);
 
     return tmp;
 }
 
-void AlgoManager::SetAnaProcessorsList(const std::string& ProcessorList) {
+void AlgoManager::SetAnaProcessorsList(const std::string &ProcessorList) {
+
 
     istringstream sin(ProcessorList);
     do {
         std::string ProcessorName;
         sin >> ProcessorName;
 
-        if ( !ProcessorName.empty()) {
+        if (!ProcessorName.empty()) {
             if (std::find(AnaProcessorList.begin(), AnaProcessorList.end(), ProcessorName) == AnaProcessorList.end()) {
-                cout << "\"" << ProcessorName << "\"" << endl;
                 AnaProcessorList.emplace_back(ProcessorName);
-            }
-            else
-                std::cerr<<"[WARNING] ==> Duplicate Algo Processor Name."<<std::endl;
+            } else
+                std::cerr << "[WARNING] ==> Duplicate Algo Processor Name." << std::endl;
         }
     } while (sin);
+
+
 }

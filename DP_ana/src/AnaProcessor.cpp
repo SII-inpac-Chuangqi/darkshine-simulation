@@ -17,7 +17,10 @@ void AnaProcessor::RegisterIntParameter(const std::string& name,
         *address = default_value;
         std::pair<std::string, int*> tmp(description, address);
         IntParameters.insert(std::pair<std::string, std::pair<std::string, int*> >(name, tmp));
-        std::cout<<"[Parameter REGISTER] ==> Parameter "+name+" has been successfully added."<<std::endl;
+
+        if ( Verbose > 1 ) {
+            std::cout << "[Parameter REGISTER] ==> Parameter " + name + " has been successfully added." << std::endl;
+        }
     }
 }
 
@@ -32,7 +35,10 @@ void AnaProcessor::RegisterDoubleParameter(const string &name,
         *address = default_value;
         std::pair<std::string, double*> tmp(description,address);
         DoubleParameters.insert(std::pair<std::string, std::pair<std::string, double*> >(name, tmp));
-        std::cout<<"[Parameter REGISTER] ==> Parameter "+name+" has been successfully added."<<std::endl;
+
+        if ( Verbose > 1 ) {
+            std::cout << "[Parameter REGISTER] ==> Parameter " + name + " has been successfully added." << std::endl;
+        }
     }
 
 }
@@ -48,7 +54,10 @@ void AnaProcessor::RegisterStringParameter(const string &name,
         *address = std::move(default_value);
         std::pair<std::string, std::string*> tmp(description,address);
         StringParameters.insert(std::pair<std::string, std::pair<std::string, std::string*> >(name, tmp));
-        std::cout<<"[Parameter REGISTER] ==> Parameter "+name+" has been successfully added."<<std::endl;
+        
+        if ( Verbose > 1 ) {
+            std::cout << "[Parameter REGISTER] ==> Parameter " + name + " has been successfully added." << std::endl;
+        }
     }
 }
 

@@ -39,9 +39,20 @@ public:
         return Entries;
     }
 
+    int getVerbose() const {
+        return Verbose;
+    }
+
+    void setVerbose(int verbose) {
+        Verbose = verbose;
+    }
+
 private:
     DEvent* evt;
     Long64_t Entries;
+
+    // Verbosity
+    int Verbose{0};
     /*                     */
     /* From ROOT MakeClass */
     /*                     */

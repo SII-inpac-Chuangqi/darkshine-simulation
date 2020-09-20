@@ -33,6 +33,10 @@ public:
         return EventID;
     }
 
+    int getVerbose() const {
+        return Verbose;
+    }
+
     const MCParticleMap &getMCParticleCollection() const {
         return MCParticleCollection;
     }
@@ -55,6 +59,10 @@ public:
 
     void setEventId(int eventId) {
         EventID = eventId;
+    }
+
+    void setVerbose(int verbose) {
+        Verbose = verbose;
     }
 
     // Initialization
@@ -99,6 +107,9 @@ protected:
     double TotalRecEnergy{0.};
     double ECALRecEnergy{0.};
     double HCALRecEnergy{0.};
+
+    // Verbosity
+    int Verbose{0};
 
     // Step Collection
     DStepMap StepCollection;

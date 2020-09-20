@@ -44,7 +44,12 @@ DStepVec *DEvent::RegisterStepCollection(const std::string &str) {
     }
     auto tmpVec = new DStepVec;
     StepCollection.insert(std::pair<std::string, DStepVec*>(str, tmpVec) );
-    std::cout<<"[STEP REGISTER] ==> A new collection "+str+" has been successfully added to MCParticle Collection."<<std::endl;
+
+    if (Verbose > 1) {
+        std::cout << "[STEP REGISTER] ==> A new collection " + str +
+                     " has been successfully added to MCParticle Collection." << std::endl;
+    }
+
     return tmpVec;
 }
 
@@ -55,7 +60,12 @@ MCParticleVec* DEvent::RegisterMCParticleCollection(const std::string & str) {
     }
     auto tmpVec = new MCParticleVec;
     MCParticleCollection.insert(std::pair<std::string, MCParticleVec*>(str, tmpVec) );
-    std::cout<<"[MC REGISTER] ==> A new collection "+str+" has been successfully added to MCParticle Collection."<<std::endl;
+
+    if (Verbose > 1) {
+        std::cout << "[MC REGISTER] ==> A new collection " + str +
+                     " has been successfully added to MCParticle Collection." << std::endl;
+    }
+
     return tmpVec;
 }
 
@@ -67,7 +77,12 @@ RecParticleVec *DEvent::RegisterRecParticleCollection(const std::string & str) {
     }
     auto tmpVec = new RecParticleVec;
     RecParticleCollection.insert(std::pair<std::string, RecParticleVec*>(str, tmpVec) );
-    std::cout<<"[REC REGISTER] ==> A new collection "+str+" has been successfully added to RecParticle Collection."<<std::endl;
+
+    if (Verbose > 1) {
+        std::cout << "[REC REGISTER] ==> A new collection " + str +
+                     " has been successfully added to RecParticle Collection." << std::endl;
+    }
+
     return tmpVec;
 }
 
@@ -78,7 +93,12 @@ SimulatedHitVec *DEvent::RegisterSimulatedHitCollection(const std::string & str)
     }
     auto tmpVec = new SimulatedHitVec;
     SimulatedHitCollection.insert(std::pair<std::string, SimulatedHitVec*>(str, tmpVec) );
-    std::cout<<"[MC REGISTER] ==> A new collection "+str+" has been successfully added to SimulatedHit Collection."<<std::endl;
+
+    if (Verbose > 1) {
+        std::cout << "[MC REGISTER] ==> A new collection " + str +
+                     " has been successfully added to SimulatedHit Collection." << std::endl;
+    }
+
     return tmpVec;
 }
 
@@ -89,7 +109,12 @@ CalorimeterHitVec *DEvent::RegisterCalorimeterHitCollection(const std::string & 
     }
     auto tmpVec = new CalorimeterHitVec;
     CalorimeterHitCollection.insert(std::pair<std::string, CalorimeterHitVec*>(str, tmpVec) );
-    std::cout<<"[REC REGISTER] ==> A new collection "+str+" has been successfully added to CalorimterHit Collection"<<std::endl;
+
+    if (Verbose > 1) {
+        std::cout << "[REC REGISTER] ==> A new collection " + str +
+                     " has been successfully added to CalorimterHit Collection" << std::endl;
+    }
+
     return tmpVec;
 }
 

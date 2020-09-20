@@ -21,11 +21,19 @@ public:
         return AnaProcessors;
     }
 
+    int getVerbose() const {
+        return Verbose;
+    }
+
     AnaProcessorVec* getAllAnaProcessors();
 
     // Set Methods
     void setAnaProcessors(const AnaProcessorMap &anaProcessors) {
         AnaProcessors = anaProcessors;
+    }
+
+    void setVerbose(int verbose) {
+        Verbose = verbose;
     }
 
     // Register Processors
@@ -39,6 +47,9 @@ public:
     void EndAnaProcessors();
 
 private:
+    // Verbosity
+    int Verbose{1};
+
     AnaProcessorMap AnaProcessors;
     vector<std::string> AnaProcessorList;
 };
