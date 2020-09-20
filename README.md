@@ -41,7 +41,7 @@ Without any arguments, DSimu will run in graphic mode, which is highly not recom
 - The config file after '-m' is the normal configuration, e.g. biasing paramter, gun energy, etc. The details of how to write config file will be included in later chapter. 
 - The config file after '-o' is the optical simulation configuration, which will control whether to switch on the simulation of optical photon.
 
-## Writing config file
+## Writing DSimu config file
 
 | Command                            | Detail                                                             | Example          |
 |------------------------------------|--------------------------------------------------------------------|------------------|
