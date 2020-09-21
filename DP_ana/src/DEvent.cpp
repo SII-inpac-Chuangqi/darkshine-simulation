@@ -7,30 +7,45 @@
 void DEvent::Initialization() {
 
     for (auto itr : MCParticleCollection) {
+        for (auto itr2 : *itr.second) {
+            delete itr2;
+        }
         itr.second->clear();
         itr.second->shrink_to_fit();
     }
     MCParticleCollection.clear();
 
     for (auto itr : RecParticleCollection) {
+        for (auto itr2 : *itr.second) {
+            delete itr2;
+        }
         itr.second->clear();
         itr.second->shrink_to_fit();
     }
     RecParticleCollection.clear();
 
     for (auto itr : SimulatedHitCollection) {
+        for (auto itr2 : *itr.second) {
+            delete itr2;
+        }
         itr.second->clear();
         itr.second->shrink_to_fit();
     }
     SimulatedHitCollection.clear();
 
     for (auto itr : CalorimeterHitCollection) {
+        for (auto itr2 : *itr.second) {
+            delete itr2;
+        }
         itr.second->clear();
         itr.second->shrink_to_fit();
     }
     CalorimeterHitCollection.clear();
 
     for (auto itr : StepCollection) {
+        for (auto itr2 : *itr.second) {
+            delete itr2;
+        }
         itr.second->clear();
         itr.second->shrink_to_fit();
     }

@@ -135,13 +135,13 @@ public:
 
 private:
     int id{0};
-    double X;
-    double Y;
-    double Z;
-    double Px;
-    double Py;
-    double Pz;
-    double E;
+    double X{0.};
+    double Y{0.};
+    double Z{0.};
+    double Px{0.};
+    double Py{0.};
+    double Pz{0.};
+    double E{0.};
     std::string PVName;
     std::string ProcessName;
 
