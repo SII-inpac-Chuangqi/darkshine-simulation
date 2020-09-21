@@ -21,7 +21,7 @@ public:
     // Constructor
     DEvent() { Initialization(); };
 
-    virtual ~DEvent() = default;
+    virtual ~DEvent() { Initialization();}
 
     // Operators
 
