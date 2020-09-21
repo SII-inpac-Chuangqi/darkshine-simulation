@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
 
     auto control = new ControlManager();
 
-    auto evtrdr=new EventReader();
+    auto evtrdr = new EventReader();
     control->setEvtReader(evtrdr);
 
     auto algo = new AlgoManager();
@@ -42,7 +42,6 @@ int main(int argc, char **argv) {
     control->setConfMgr(new ConfigManager(configfile, algo));
     control->run();
 
-    //delete evtrdr;
     delete control;
     return 1;
 }
