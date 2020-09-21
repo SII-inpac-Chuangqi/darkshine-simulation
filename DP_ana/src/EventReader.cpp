@@ -9,7 +9,7 @@
 
 Int_t EventReader::ReadFile(const std::string &filename) {
     auto tree = new TTree;
-    auto *f = new TFile(TString(filename));
+    f = new TFile(TString(filename));
     if (!f) {
         std::cerr << "[READFILE ERROR] ==> File: " + filename + " does not exist." << std::endl;
         return -1;
@@ -87,6 +87,8 @@ void EventReader::Convert() {
         for (const auto &l : *list) {
             std::cout << setw(5) << " " << "- " << l << std::endl;
         }
+
+        delete list;
     }
 }
 

@@ -85,13 +85,11 @@ void ControlManager::run() {
 
     }
 
-
     /*
      *  End
      */
     algo->EndAnaProcessors();
     algo->PrintRunLog();
-
 
     std::cout << std::endl << " ==> Done ..." << std::endl;
 

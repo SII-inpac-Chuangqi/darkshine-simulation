@@ -34,12 +34,15 @@ int main(int argc, char **argv) {
 
     auto control = new ControlManager();
 
-    control->setEvtReader(new EventReader());
+    auto evtrdr=new EventReader();
+    control->setEvtReader(evtrdr);
 
     auto algo = new AlgoManager();
     control->setAlgo(algo);
     control->setConfMgr(new ConfigManager(configfile, algo));
     control->run();
 
+    //delete evtrdr;
+    delete control;
     return 1;
 }

@@ -17,8 +17,8 @@ public:
     ControlManager() = default;
 
     ~ControlManager() {
-        delete algo;
         delete EvtReader;
+        delete algo;
         delete ConfMgr;
     };
 

@@ -17,7 +17,12 @@ class EventReader {
 public:
     EventReader() : evt(nullptr), fChain(nullptr) {};
 
-    ~EventReader() = default;
+    ~EventReader() {
+        if (fChain) delete fChain;
+        if (f) f->Close();
+        delete f;
+
+    };
 
     void Convert();
 
@@ -100,6 +105,7 @@ public:
     virtual void Init(TTree *tree);
 
 public :
+    TFile *f;
     TTree *fChain;   //!pointer to the analyzed TTree or TChain
     Int_t fCurrent; //!current Tree number in a TChain
 
