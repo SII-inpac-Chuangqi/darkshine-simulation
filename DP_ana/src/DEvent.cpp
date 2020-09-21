@@ -138,19 +138,23 @@ std::vector<std::string> *DEvent::ListAllCollections() {
 
     auto s = ListCollections(StepCollection);
     tmp->insert(tmp->end(), s->begin(), s->end());
+    delete s;
 
     s = ListCollections(MCParticleCollection);
     tmp->insert(tmp->end(), s->begin(), s->end());
+    delete s;
 
     s = ListCollections(RecParticleCollection);
     tmp->insert(tmp->end(), s->begin(), s->end());
+    delete s;
 
     s = ListCollections(SimulatedHitCollection);
     tmp->insert(tmp->end(), s->begin(), s->end());
+    delete s;
 
     s = ListCollections(CalorimeterHitCollection);
     tmp->insert(tmp->end(), s->begin(), s->end());
-
+    delete s;
 
     return tmp;
 }
