@@ -9,11 +9,11 @@
 #include <ctime>
 #include <algorithm>
 
-void AlgoManager::RegisterAnaProcessor(AnaProcessor *AnaP) {
+void AlgoManager::RegisterAnaProcessor(std::shared_ptr<AnaProcessor> AnaP) {
     if (AnaProcessors.count(AnaP->getName()) != 0)
         std::cerr << "[WARNING] ==> Algo Processor Name already exists." << std::endl;
     else
-        AnaProcessors.insert(std::pair<std::string, AnaProcessor *>(AnaP->getName(), AnaP));
+        AnaProcessors.insert(std::pair<std::string, std::shared_ptr<AnaProcessor> >(AnaP->getName(), AnaP));
 }
 
 void AlgoManager::BeginAnaProcessors() {
@@ -87,9 +87,9 @@ void AlgoManager::EndAnaProcessors() {
 
 }
 
-AnaProcessorVec *AlgoManager::getAllAnaProcessors() {
-    auto tmp = new AnaProcessorVec();
-    for (const auto &itr : AnaProcessors)
+AnaProcessorVecUniPtr AlgoManager::getAllAnaProcessors() {
+    AnaProcessorVecUniPtr tmp ( new AnaProcessorVec());
+    for (const auto& itr : AnaProcessors)
         tmp->emplace_back(itr.second);
 
     return tmp;

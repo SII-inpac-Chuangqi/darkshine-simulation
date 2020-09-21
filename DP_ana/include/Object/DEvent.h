@@ -9,6 +9,7 @@
 #include<cstdlib>
 #include <map>
 #include <iostream>
+#include <memory>
 
 #include "Object/CalorimeterHit.h"
 #include "Object/McParticle.h"
@@ -73,15 +74,15 @@ public:
     void Initialization();
 
     // Register Collections
-    DStepVec *RegisterStepCollection(const std::string &);
+    DStepVecUniPtr RegisterStepCollection(const std::string &);
 
-    MCParticleVec *RegisterMCParticleCollection(const std::string &);
+    MCParticleVecUniPtr RegisterMCParticleCollection(const std::string &);
 
-    RecParticleVec *RegisterRecParticleCollection(const std::string &);
+    RecParticleVecUniPtr RegisterRecParticleCollection(const std::string &);
 
-    SimulatedHitVec *RegisterSimulatedHitCollection(const std::string &);
+    SimulatedHitVecUniPtr RegisterSimulatedHitCollection(const std::string &);
 
-    CalorimeterHitVec *RegisterCalorimeterHitCollection(const std::string &);
+    CalorimeterHitVecUniPtr RegisterCalorimeterHitCollection(const std::string &);
 
     // Delete Collections
     void DeleteCollection(const std::string &);

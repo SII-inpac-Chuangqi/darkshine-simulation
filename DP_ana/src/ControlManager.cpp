@@ -34,9 +34,9 @@ void ControlManager::run() {
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
     /* DEFINE ALGO PROCESSOR HERE */
-    algo->RegisterAnaProcessor(new ExampleProcessor("Example1"));
-    algo->RegisterAnaProcessor(new ExampleProcessor("Example2VeryLongVeryLong"));
-    algo->RegisterAnaProcessor(new ExampleProcessor("Example3"));
+    algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example1")) );
+    algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example2VeryLongVeryLong")) );
+    algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example3")) );
 
     algo->BeginAnaProcessors();
 
