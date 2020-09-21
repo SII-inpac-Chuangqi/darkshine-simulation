@@ -5,7 +5,9 @@
 #ifndef DSIMU_DHIT_H
 #define DSIMU_DHIT_H
 
-enum DetectorType {TagTrk, RecTrk, ECAL_Center, ECAL_Outer, HCAL};
+enum DetectorType {
+    TagTrk, RecTrk, ECAL_Center, ECAL_Outer, HCAL
+};
 
 class DHit {
 public:
@@ -33,19 +35,20 @@ public:
         return !(rhs == *this);
     }
 
-    DHit &operator=(const DHit &rhs ) {
+    DHit &operator=(const DHit &rhs) {
         if (&rhs == this) { return *this; }
-        id = rhs.id ;
-        CellID = rhs.CellID ;
+        id = rhs.id;
+        CellID = rhs.CellID;
         Detector = rhs.Detector;
-        X = rhs.X ;
-        Y = rhs.Y ;
-        Z = rhs.Z ;
-        T = rhs.T ;
-        E = rhs.E ;
+        X = rhs.X;
+        Y = rhs.Y;
+        Z = rhs.Z;
+        T = rhs.T;
+        E = rhs.E;
 
         return *this;
     }
+
     // Get Methods
     int getId() const {
         return id;

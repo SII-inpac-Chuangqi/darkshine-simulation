@@ -10,19 +10,20 @@
 #include "Object/CalorimeterHit.h"
 #include "Utility/DHit.h"
 
-class SimulatedHit : public DHit
-{
+class SimulatedHit : public DHit {
 public:
     // Constructor and Destructor
     SimulatedHit();
-    SimulatedHit(const SimulatedHit&);
+
+    SimulatedHit(const SimulatedHit &);
+
     ~SimulatedHit() override;
 
     bool operator==(const SimulatedHit &rhs) const;
 
     bool operator!=(const SimulatedHit &rhs) const;
 
-    SimulatedHit &operator=(const SimulatedHit &rhs );
+    SimulatedHit &operator=(const SimulatedHit &rhs);
 
     // Get Methods
     double getEdepEm() const;

@@ -10,12 +10,13 @@
 #include "Object/SimulatedHit.h"
 #include "Utility/DParticle.h"
 
-class McParticle : public DParticle
-{
+class McParticle : public DParticle {
 public:
     // Constructor and Destructor
     McParticle();
-    McParticle(const McParticle&);
+
+    McParticle(const McParticle &);
+
     ~McParticle() override;
 
     // Operators
@@ -23,7 +24,7 @@ public:
 
     bool operator!=(const McParticle &rhs) const;
 
-    McParticle &operator=(const McParticle &rhs );
+    McParticle &operator=(const McParticle &rhs);
 
     // Get Methods
     double getERemain() const;

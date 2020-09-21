@@ -33,7 +33,7 @@ public:
         return processing_avg_time;
     }
 
-    AnaProcessorVec* getAllAnaProcessors();
+    AnaProcessorVec *getAllAnaProcessors();
 
     // Set Methods
     void setAnaProcessors(const AnaProcessorMap &anaProcessors) {
@@ -52,13 +52,17 @@ public:
     void PrintRunLog();
 
     // Register Processors
-    void SetAnaProcessorsList(const std::string& ProcessorList);
-    void RegisterAnaProcessor(AnaProcessor* AnaP);
+    void SetAnaProcessorsList(const std::string &ProcessorList);
+
+    void RegisterAnaProcessor(AnaProcessor *AnaP);
 
     // Run AnaProcessor
     void BeginAnaProcessors();
-    void ProcessEvtAnaProcessors(DEvent* );
-    void CheckEvtAnaProcessors(DEvent* );
+
+    void ProcessEvtAnaProcessors(DEvent *);
+
+    void CheckEvtAnaProcessors(DEvent *);
+
     void EndAnaProcessors();
 
 private:

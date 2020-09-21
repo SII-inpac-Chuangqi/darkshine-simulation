@@ -18,29 +18,27 @@ namespace {
     }
 }
 
-int main (int argc,char** argv)
-{
-    if ( argc > 3 || argc < 2 ) {
+int main(int argc, char **argv) {
+    if (argc > 3 || argc < 2) {
         PrintUsage();
         return 1;
     }
 
     bool GenerateConfig = false;
     std::string configfile;
-    if (std::string (argv[1]) == "-c") configfile = argv[2];
-    else if (std::string (argv[1]) == "-x") {
+    if (std::string(argv[1]) == "-c") configfile = argv[2];
+    else if (std::string(argv[1]) == "-x") {
         GenerateConfig = true; // unused
         return 0;
-    }
-    else return -1;
+    } else return -1;
 
     auto control = new ControlManager();
 
     control->setEvtReader(new EventReader());
 
     auto algo = new AlgoManager();
-    control->setAlgo( algo );
-    control->setConfMgr(new ConfigManager(configfile,algo));
+    control->setAlgo(algo);
+    control->setConfMgr(new ConfigManager(configfile, algo));
     control->run();
 
     return 1;

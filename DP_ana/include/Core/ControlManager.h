@@ -98,9 +98,9 @@ private:
     std::string FileName;
     std::string OutName;
 
-    AlgoManager* algo;
-    EventReader* EvtReader;
-    ConfigManager* ConfMgr;
+    AlgoManager *algo;
+    EventReader *EvtReader;
+    ConfigManager *ConfMgr;
 };
 
 

@@ -4,6 +4,7 @@
 
 #ifndef DSIMU_DEVENT_H
 #define DSIMU_DEVENT_H
+
 #include <cstddef>
 #include<cstdlib>
 #include <map>
@@ -15,11 +16,11 @@
 #include "Object/SimulatedHit.h"
 #include "Utility/DStep.h"
 
-class DEvent
-{
+class DEvent {
 public:
     // Constructor
     DEvent() { Initialization(); };
+
     virtual ~DEvent() = default;
 
     // Operators
@@ -52,6 +53,7 @@ public:
     const CalorimeterHitMap &getCalorimeterHitCollection() const {
         return CalorimeterHitCollection;
     }
+
     // Set Methods
     void setRunId(int runId) {
         RunID = runId;
@@ -69,18 +71,24 @@ public:
     void Initialization();
 
     // Register Collections
-    DStepVec* RegisterStepCollection(const std::string& );
-    MCParticleVec* RegisterMCParticleCollection(const std::string& );
-    RecParticleVec* RegisterRecParticleCollection(const std::string& );
-    SimulatedHitVec* RegisterSimulatedHitCollection(const std::string& );
-    CalorimeterHitVec* RegisterCalorimeterHitCollection(const std::string& );
+    DStepVec *RegisterStepCollection(const std::string &);
+
+    MCParticleVec *RegisterMCParticleCollection(const std::string &);
+
+    RecParticleVec *RegisterRecParticleCollection(const std::string &);
+
+    SimulatedHitVec *RegisterSimulatedHitCollection(const std::string &);
+
+    CalorimeterHitVec *RegisterCalorimeterHitCollection(const std::string &);
 
     // Delete Collections
-    void DeleteCollection(const std::string&);
+    void DeleteCollection(const std::string &);
 
     // List all Registered Collections for template T
-    template<class T> std::vector<std::string>* ListCollections(const T&);
-    std::vector<std::string>* ListAllCollections();
+    template<class T>
+    std::vector<std::string> *ListCollections(const T &);
+
+    std::vector<std::string> *ListAllCollections();
 
 
 protected:
@@ -123,7 +131,7 @@ protected:
 
 // Some inline
 template<class T>
-std::vector<std::string>* DEvent::ListCollections(const T& in) {
+std::vector<std::string> *DEvent::ListCollections(const T &in) {
     auto tmp = new std::vector<std::string>;
     for (auto itr : in) tmp->push_back(itr.first);
 

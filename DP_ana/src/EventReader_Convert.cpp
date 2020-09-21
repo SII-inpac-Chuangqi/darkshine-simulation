@@ -5,7 +5,7 @@
 #include "Core/EventReader.h"
 
 void EventReader::ConvertMC() {
-    if ( !TRUTH_MC_id->empty() ) {
+    if (!TRUTH_MC_id->empty()) {
         auto mc = evt->RegisterMCParticleCollection("RawMCParticle");
         for (unsigned i = 0; i < TRUTH_MC_id->size(); ++i) {
             auto mcp = new McParticle();
@@ -36,7 +36,7 @@ void EventReader::ConvertMC() {
 }
 
 void EventReader::ConvertStep() {
-    if ( !ip_Pos->empty() ) {
+    if (!ip_Pos->empty()) {
         auto stepC = evt->RegisterStepCollection("Initial_Particle_Step");
         for (unsigned i = 0; i < ip_Pos->size(); ++i) {
             auto step = new DStep();
@@ -62,7 +62,7 @@ void EventReader::ConvertStep() {
 }
 
 void EventReader::ConvertTagTrk() {
-    if ( TagTrk1_No != 0 ) {
+    if (TagTrk1_No != 0) {
         auto TagTrk1Collection = evt->RegisterSimulatedHitCollection("TagTrk1");
         for (int i = 0; i < TagTrk1_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -81,7 +81,7 @@ void EventReader::ConvertTagTrk() {
             TagTrk1Collection->emplace_back(Hit);
         }
     }
-    if ( TagTrk2_No != 0 ) {
+    if (TagTrk2_No != 0) {
         auto TagTrk2Collection = evt->RegisterSimulatedHitCollection("TagTrk2");
         for (int i = 0; i < TagTrk2_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -103,7 +103,7 @@ void EventReader::ConvertTagTrk() {
 }
 
 void EventReader::ConvertRecTrk() {
-    if ( RecTrk1_No != 0 ) {
+    if (RecTrk1_No != 0) {
         auto RecTrk1Collection = evt->RegisterSimulatedHitCollection("RecTrk1");
         for (int i = 0; i < RecTrk1_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -122,7 +122,7 @@ void EventReader::ConvertRecTrk() {
             RecTrk1Collection->emplace_back(Hit);
         }
     }
-    if ( RecTrk2_No != 0 ) {
+    if (RecTrk2_No != 0) {
         auto RecTrk2Collection = evt->RegisterSimulatedHitCollection("RecTrk2");
         for (int i = 0; i < RecTrk2_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -145,7 +145,7 @@ void EventReader::ConvertRecTrk() {
 }
 
 void EventReader::ConvertECAL_Center() {
-    if ( ECAL_Center_No != 0 ) {
+    if (ECAL_Center_No != 0) {
         auto ECAL_CenterCollection = evt->RegisterSimulatedHitCollection("ECAL_Center");
         for (int i = 0; i < ECAL_Center_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -167,7 +167,7 @@ void EventReader::ConvertECAL_Center() {
 }
 
 void EventReader::ConvertECAL_Outer() {
-    if ( ECAL_Outer_1_No != 0 ) {
+    if (ECAL_Outer_1_No != 0) {
         auto ECAL_Outer_1_Collection = evt->RegisterSimulatedHitCollection("ECAL_Outer_1");
         for (int i = 0; i < ECAL_Outer_1_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -186,7 +186,7 @@ void EventReader::ConvertECAL_Outer() {
             ECAL_Outer_1_Collection->emplace_back(Hit);
         }
     }
-    if ( ECAL_Outer_2_No != 0 ) {
+    if (ECAL_Outer_2_No != 0) {
         auto ECAL_Outer_2_Collection = evt->RegisterSimulatedHitCollection("ECAL_Outer_2");
         for (int i = 0; i < ECAL_Outer_2_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -205,7 +205,7 @@ void EventReader::ConvertECAL_Outer() {
             ECAL_Outer_2_Collection->emplace_back(Hit);
         }
     }
-    if ( ECAL_Outer_3_No != 0 ) {
+    if (ECAL_Outer_3_No != 0) {
         auto ECAL_Outer_3_Collection = evt->RegisterSimulatedHitCollection("ECAL_Outer_3");
         for (int i = 0; i < ECAL_Outer_3_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -224,7 +224,7 @@ void EventReader::ConvertECAL_Outer() {
             ECAL_Outer_3_Collection->emplace_back(Hit);
         }
     }
-    if ( ECAL_Outer_4_No != 0 ) {
+    if (ECAL_Outer_4_No != 0) {
         auto ECAL_Outer_4_Collection = evt->RegisterSimulatedHitCollection("ECAL_Outer_4");
         for (int i = 0; i < ECAL_Outer_4_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -246,7 +246,7 @@ void EventReader::ConvertECAL_Outer() {
 }
 
 void EventReader::ConvertHCAL() {
-    if ( HCAL_0_No != 0 ) {
+    if (HCAL_0_No != 0) {
         auto HCAL_0_Collection = evt->RegisterSimulatedHitCollection("HCAL_0");
         for (int i = 0; i < HCAL_0_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -265,7 +265,7 @@ void EventReader::ConvertHCAL() {
             HCAL_0_Collection->emplace_back(Hit);
         }
     }
-    if ( HCAL_1_No != 0 ) {
+    if (HCAL_1_No != 0) {
         auto HCAL_1_Collection = evt->RegisterSimulatedHitCollection("HCAL_1");
         for (int i = 0; i < HCAL_1_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -284,7 +284,7 @@ void EventReader::ConvertHCAL() {
             HCAL_1_Collection->emplace_back(Hit);
         }
     }
-    if ( HCAL_2_No != 0 ) {
+    if (HCAL_2_No != 0) {
         auto HCAL_2_Collection = evt->RegisterSimulatedHitCollection("HCAL_2");
         for (int i = 0; i < HCAL_2_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -303,7 +303,7 @@ void EventReader::ConvertHCAL() {
             HCAL_2_Collection->emplace_back(Hit);
         }
     }
-    if ( HCAL_3_No != 0 ) {
+    if (HCAL_3_No != 0) {
         auto HCAL_3_Collection = evt->RegisterSimulatedHitCollection("HCAL_3");
         for (int i = 0; i < HCAL_3_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -322,7 +322,7 @@ void EventReader::ConvertHCAL() {
             HCAL_3_Collection->emplace_back(Hit);
         }
     }
-    if ( HCAL_4_No != 0 ) {
+    if (HCAL_4_No != 0) {
         auto HCAL_4_Collection = evt->RegisterSimulatedHitCollection("HCAL_4");
         for (int i = 0; i < HCAL_4_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -341,7 +341,7 @@ void EventReader::ConvertHCAL() {
             HCAL_4_Collection->emplace_back(Hit);
         }
     }
-    if ( HCAL_5_No != 0 ) {
+    if (HCAL_5_No != 0) {
         auto HCAL_5_Collection = evt->RegisterSimulatedHitCollection("HCAL_5");
         for (int i = 0; i < HCAL_5_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -360,7 +360,7 @@ void EventReader::ConvertHCAL() {
             HCAL_5_Collection->emplace_back(Hit);
         }
     }
-    if ( HCAL_6_No != 0 ) {
+    if (HCAL_6_No != 0) {
         auto HCAL_6_Collection = evt->RegisterSimulatedHitCollection("HCAL_6");
         for (int i = 0; i < HCAL_6_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -379,7 +379,7 @@ void EventReader::ConvertHCAL() {
             HCAL_6_Collection->emplace_back(Hit);
         }
     }
-    if ( HCAL_7_No != 0 ) {
+    if (HCAL_7_No != 0) {
         auto HCAL_7_Collection = evt->RegisterSimulatedHitCollection("HCAL_7");
         for (int i = 0; i < HCAL_7_No; ++i) {
             auto Hit = new SimulatedHit();
@@ -398,7 +398,7 @@ void EventReader::ConvertHCAL() {
             HCAL_7_Collection->emplace_back(Hit);
         }
     }
-    if ( HCAL_8_No != 0 ) {
+    if (HCAL_8_No != 0) {
         auto HCAL_8_Collection = evt->RegisterSimulatedHitCollection("HCAL_8");
         for (int i = 0; i < HCAL_8_No; ++i) {
             auto Hit = new SimulatedHit();

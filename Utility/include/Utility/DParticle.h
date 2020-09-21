@@ -4,15 +4,15 @@
 
 #ifndef DSIMU_DPARTICLE_H
 #define DSIMU_DPARTICLE_H
+
 #include <string>
 
-class DParticle
-{
+class DParticle {
 public:
     // Constructor and Destructor
     DParticle() = default;
 
-    DParticle(const DParticle& rhs) {
+    DParticle(const DParticle &rhs) {
         *this = rhs;
     }
 
@@ -40,22 +40,22 @@ public:
         return !(rhs == *this);
     }
 
-    DParticle &operator=(const DParticle &rhs ) {
+    DParticle &operator=(const DParticle &rhs) {
         if (&rhs == this) { return *this; }
-        id = rhs.id ;
+        id = rhs.id;
         Name = rhs.Name;
         CreateProcess = rhs.CreateProcess;
-        PDG = rhs.PDG ;
-        Mass = rhs.Mass ;
-        Energy = rhs.Energy ;
-        Px = rhs.Px ;
-        Py = rhs.Py ;
-        Pz = rhs.Pz ;
-        VertexX = rhs.VertexX ;
-        VertexY = rhs.VertexY ;
-        VertexZ = rhs.VertexZ ;
-        EndPointX = rhs.EndPointX ;
-        EndPointY = rhs.EndPointY ;
+        PDG = rhs.PDG;
+        Mass = rhs.Mass;
+        Energy = rhs.Energy;
+        Px = rhs.Px;
+        Py = rhs.Py;
+        Pz = rhs.Pz;
+        VertexX = rhs.VertexX;
+        VertexY = rhs.VertexY;
+        VertexZ = rhs.VertexZ;
+        EndPointX = rhs.EndPointX;
+        EndPointY = rhs.EndPointY;
         EndPointZ = rhs.EndPointZ;
 
         return *this;

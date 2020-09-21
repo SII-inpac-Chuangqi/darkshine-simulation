@@ -26,7 +26,9 @@ class AnaProcessor {
 
 public:
     AnaProcessor() = default;
+
     explicit AnaProcessor(string name) : Name(std::move(name)) {};
+
     virtual ~AnaProcessor() = default;
 
     /*
@@ -36,9 +38,9 @@ public:
 
     virtual void Begin() = 0;
 
-    virtual void ProcessEvt(DEvent*) = 0;
+    virtual void ProcessEvt(DEvent *) = 0;
 
-    virtual void CheckEvt(DEvent*) = 0;
+    virtual void CheckEvt(DEvent *) = 0;
 
     virtual void End() = 0;
 
@@ -47,15 +49,15 @@ public:
         return Name;
     }
 
-    const std::map<std::string, std::pair<std::string, int*>> &getIntParameters() const {
+    const std::map<std::string, std::pair<std::string, int *>> &getIntParameters() const {
         return IntParameters;
     }
 
-    const std::map<std::string, std::pair<std::string, double*>> &getDoubleParameters() const {
+    const std::map<std::string, std::pair<std::string, double *>> &getDoubleParameters() const {
         return DoubleParameters;
     }
 
-    const std::map<std::string, std::pair<std::string, std::string*>> &getStringParameters() const {
+    const std::map<std::string, std::pair<std::string, std::string *>> &getStringParameters() const {
         return StringParameters;
     }
 
@@ -110,9 +112,9 @@ protected:
     int Verbose{0};
 
     // Parameter Name, Description, Value
-    std::map<std::string, std::pair<std::string, int*> > IntParameters;
-    std::map<std::string, std::pair<std::string, double*> > DoubleParameters;
-    std::map<std::string, std::pair<std::string, std::string*> > StringParameters;
+    std::map<std::string, std::pair<std::string, int *> > IntParameters;
+    std::map<std::string, std::pair<std::string, double *> > DoubleParameters;
+    std::map<std::string, std::pair<std::string, std::string *> > StringParameters;
 
 };
 

@@ -93,7 +93,7 @@ void ControlManager::run() {
     algo->PrintRunLog();
 
 
-    std::cout<<std::endl<<" ==> Done ..."<<std::endl;
+    std::cout << std::endl << " ==> Done ..." << std::endl;
 
     delete evt;
 }

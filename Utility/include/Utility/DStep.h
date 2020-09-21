@@ -7,13 +7,14 @@
 
 #include <string>
 
-class DStep
-{
+class DStep {
 public:
     DStep() = default;
-    DStep(const DStep& rhs) {
+
+    DStep(const DStep &rhs) {
         *this = rhs;
     }
+
     ~DStep() = default;
 
     // Operators
@@ -34,17 +35,17 @@ public:
         return !(rhs == *this);
     }
 
-    DStep &operator=(const DStep &rhs ) {
+    DStep &operator=(const DStep &rhs) {
         if (&rhs == this) { return *this; }
-        id = rhs.id ;
-        X = rhs.X ;
-        Y = rhs.Y ;
-        Z = rhs.Z ;
-        Px = rhs.Px ;
-        Py = rhs.Py ;
-        Pz = rhs.Pz ;
-        E = rhs.E ;
-        PVName = rhs.PVName ;
+        id = rhs.id;
+        X = rhs.X;
+        Y = rhs.Y;
+        Z = rhs.Z;
+        Px = rhs.Px;
+        Py = rhs.Py;
+        Pz = rhs.Pz;
+        E = rhs.E;
+        PVName = rhs.PVName;
         ProcessName = rhs.ProcessName;
 
         return *this;

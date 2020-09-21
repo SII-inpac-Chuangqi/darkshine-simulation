@@ -10,12 +10,13 @@
 #include "Object/ReconstructedParticle.h"
 #include "Utility/DHit.h"
 
-class CalorimeterHit : public DHit
-{
+class CalorimeterHit : public DHit {
 public:
     // Constructor and Destructor
     CalorimeterHit();
-    CalorimeterHit(const CalorimeterHit&);
+
+    CalorimeterHit(const CalorimeterHit &);
+
     ~CalorimeterHit() override;
 
     // Operators
@@ -23,7 +24,7 @@ public:
 
     bool operator!=(const CalorimeterHit &rhs) const;
 
-    CalorimeterHit &operator=(const CalorimeterHit &rhs );
+    CalorimeterHit &operator=(const CalorimeterHit &rhs);
 
     // Get Methods
     const RecParticleVec &getPContribution() const;

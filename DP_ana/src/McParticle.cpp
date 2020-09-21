@@ -8,7 +8,7 @@ McParticle::McParticle() {
 
 }
 
-McParticle::McParticle(const McParticle &rhs)  : DParticle(rhs) {
+McParticle::McParticle(const McParticle &rhs) : DParticle(rhs) {
     *this = rhs;
 }
 

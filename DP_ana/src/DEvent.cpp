@@ -6,31 +6,31 @@
 
 void DEvent::Initialization() {
 
-    for (auto itr : MCParticleCollection ) {
+    for (auto itr : MCParticleCollection) {
         itr.second->clear();
         itr.second->shrink_to_fit();
     }
     MCParticleCollection.clear();
 
-    for (auto itr : RecParticleCollection ) {
+    for (auto itr : RecParticleCollection) {
         itr.second->clear();
         itr.second->shrink_to_fit();
     }
     RecParticleCollection.clear();
 
-    for (auto itr : SimulatedHitCollection ) {
+    for (auto itr : SimulatedHitCollection) {
         itr.second->clear();
         itr.second->shrink_to_fit();
     }
     SimulatedHitCollection.clear();
 
-    for (auto itr : CalorimeterHitCollection ) {
+    for (auto itr : CalorimeterHitCollection) {
         itr.second->clear();
         itr.second->shrink_to_fit();
     }
     CalorimeterHitCollection.clear();
 
-    for (auto itr : StepCollection ) {
+    for (auto itr : StepCollection) {
         itr.second->clear();
         itr.second->shrink_to_fit();
     }
@@ -39,11 +39,11 @@ void DEvent::Initialization() {
 
 DStepVec *DEvent::RegisterStepCollection(const std::string &str) {
     if (StepCollection.count(str) != 0) {
-        std::cerr<<"[WARNING] ==> Key already exists. Return the existing Key value."<<std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key value." << std::endl;
         return StepCollection.at(str);
     }
     auto tmpVec = new DStepVec;
-    StepCollection.insert(std::pair<std::string, DStepVec*>(str, tmpVec) );
+    StepCollection.insert(std::pair<std::string, DStepVec *>(str, tmpVec));
 
     if (Verbose > 1) {
         std::cout << "[STEP REGISTER] : (Verbosity 2) ==> A new collection " + str +
@@ -53,13 +53,13 @@ DStepVec *DEvent::RegisterStepCollection(const std::string &str) {
     return tmpVec;
 }
 
-MCParticleVec* DEvent::RegisterMCParticleCollection(const std::string & str) {
+MCParticleVec *DEvent::RegisterMCParticleCollection(const std::string &str) {
     if (MCParticleCollection.count(str) != 0) {
-        std::cerr<<"[WARNING] ==> Key already exists. Return the existing Key value."<<std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key value." << std::endl;
         return MCParticleCollection.at(str);
     }
     auto tmpVec = new MCParticleVec;
-    MCParticleCollection.insert(std::pair<std::string, MCParticleVec*>(str, tmpVec) );
+    MCParticleCollection.insert(std::pair<std::string, MCParticleVec *>(str, tmpVec));
 
     if (Verbose > 1) {
         std::cout << "[MC REGISTER] : (Verbosity 2) ==> A new collection " + str +
@@ -70,13 +70,13 @@ MCParticleVec* DEvent::RegisterMCParticleCollection(const std::string & str) {
 }
 
 
-RecParticleVec *DEvent::RegisterRecParticleCollection(const std::string & str) {
+RecParticleVec *DEvent::RegisterRecParticleCollection(const std::string &str) {
     if (RecParticleCollection.count(str) != 0) {
-        std::cerr<<"[WARNING] ==> Key already exists. Return the existing Key value."<<std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key value." << std::endl;
         return RecParticleCollection.at(str);
     }
     auto tmpVec = new RecParticleVec;
-    RecParticleCollection.insert(std::pair<std::string, RecParticleVec*>(str, tmpVec) );
+    RecParticleCollection.insert(std::pair<std::string, RecParticleVec *>(str, tmpVec));
 
     if (Verbose > 1) {
         std::cout << "[REC REGISTER] : (Verbosity 2) ==> A new collection " + str +
@@ -86,13 +86,13 @@ RecParticleVec *DEvent::RegisterRecParticleCollection(const std::string & str) {
     return tmpVec;
 }
 
-SimulatedHitVec *DEvent::RegisterSimulatedHitCollection(const std::string & str) {
+SimulatedHitVec *DEvent::RegisterSimulatedHitCollection(const std::string &str) {
     if (SimulatedHitCollection.count(str) != 0) {
-        std::cerr<<"[WARNING] ==> Key already exists. Return the existing Key value."<<std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key value." << std::endl;
         return SimulatedHitCollection.at(str);
     }
     auto tmpVec = new SimulatedHitVec;
-    SimulatedHitCollection.insert(std::pair<std::string, SimulatedHitVec*>(str, tmpVec) );
+    SimulatedHitCollection.insert(std::pair<std::string, SimulatedHitVec *>(str, tmpVec));
 
     if (Verbose > 1) {
         std::cout << "[MC REGISTER] : (Verbosity 2) ==> A new collection " + str +
@@ -102,13 +102,13 @@ SimulatedHitVec *DEvent::RegisterSimulatedHitCollection(const std::string & str)
     return tmpVec;
 }
 
-CalorimeterHitVec *DEvent::RegisterCalorimeterHitCollection(const std::string & str) {
+CalorimeterHitVec *DEvent::RegisterCalorimeterHitCollection(const std::string &str) {
     if (CalorimeterHitCollection.count(str) != 0) {
-        std::cerr<<"[WARNING] ==> Key already exists. Return the existing Key value."<<std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key value." << std::endl;
         return CalorimeterHitCollection.at(str);
     }
     auto tmpVec = new CalorimeterHitVec;
-    CalorimeterHitCollection.insert(std::pair<std::string, CalorimeterHitVec*>(str, tmpVec) );
+    CalorimeterHitCollection.insert(std::pair<std::string, CalorimeterHitVec *>(str, tmpVec));
 
     if (Verbose > 1) {
         std::cout << "[REC REGISTER] : (Verbosity 2) ==> A new collection " + str +
@@ -137,39 +137,33 @@ std::vector<std::string> *DEvent::ListAllCollections() {
     tmp->insert(tmp->end(), s->begin(), s->end());
 
 
-
     return tmp;
 }
 
-void DEvent::DeleteCollection(const std::string & str) {
+void DEvent::DeleteCollection(const std::string &str) {
     auto itr1 = MCParticleCollection.find(str);
     auto itr2 = RecParticleCollection.find(str);
     auto itr3 = SimulatedHitCollection.find(str);
     auto itr4 = CalorimeterHitCollection.find(str);
     auto itr5 = StepCollection.find(str);
 
-    if (itr1 != MCParticleCollection.end() ) {
+    if (itr1 != MCParticleCollection.end()) {
         MCParticleCollection.erase(itr1);
-        std::cout<<"[MC DELETE] ==> Collection "+str+" has been successfully removed."<<std::endl;
-    }
-    else if (itr2 != RecParticleCollection.end() ) {
+        std::cout << "[MC DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+    } else if (itr2 != RecParticleCollection.end()) {
         RecParticleCollection.erase(itr2);
-        std::cout<<"[MC DELETE] ==> Collection "+str+" has been successfully removed."<<std::endl;
-    }
-    else if (itr3 != SimulatedHitCollection.end() ) {
+        std::cout << "[MC DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+    } else if (itr3 != SimulatedHitCollection.end()) {
         SimulatedHitCollection.erase(itr3);
-        std::cout<<"[MC DELETE] ==> Collection "+str+" has been successfully removed."<<std::endl;
-    }
-    else if (itr4 != CalorimeterHitCollection.end() ) {
+        std::cout << "[MC DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+    } else if (itr4 != CalorimeterHitCollection.end()) {
         CalorimeterHitCollection.erase(itr4);
-        std::cout<<"[MC DELETE] ==> Collection "+str+" has been successfully removed."<<std::endl;
-    }
-    else if (itr5 != StepCollection.end() ) {
+        std::cout << "[MC DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+    } else if (itr5 != StepCollection.end()) {
         StepCollection.erase(itr5);
-        std::cout<<"[STEP DELETE] ==> Collection "+str+" has been successfully removed."<<std::endl;
-    }
-    else
-        std::cerr<<"[WARNING] ==> No Key named "+str+"."<<std::endl;
+        std::cout << "[STEP DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+    } else
+        std::cerr << "[WARNING] ==> No Key named " + str + "." << std::endl;
 }
 
 

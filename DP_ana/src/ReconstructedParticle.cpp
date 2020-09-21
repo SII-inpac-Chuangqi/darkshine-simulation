@@ -4,8 +4,7 @@
 
 #include "Object/ReconstructedParticle.h"
 
-ReconstructedParticle::ReconstructedParticle()
-{
+ReconstructedParticle::ReconstructedParticle() {
 
 }
 

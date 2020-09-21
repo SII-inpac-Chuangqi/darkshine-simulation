@@ -10,19 +10,20 @@
 #include "Object/McParticle.h"
 #include "Utility/DParticle.h"
 
-class ReconstructedParticle : public DParticle
-{
+class ReconstructedParticle : public DParticle {
 public:
     // Constructor and Destructor
     ReconstructedParticle();
-    ReconstructedParticle(const ReconstructedParticle&);
+
+    ReconstructedParticle(const ReconstructedParticle &);
+
     virtual ~ReconstructedParticle();
 
     bool operator==(const ReconstructedParticle &rhs) const;
 
     bool operator!=(const ReconstructedParticle &rhs) const;
 
-    ReconstructedParticle &operator=(const ReconstructedParticle &rhs );
+    ReconstructedParticle &operator=(const ReconstructedParticle &rhs);
 
     // Get Methods
     const MCParticleVec &getMcParticles() const;
