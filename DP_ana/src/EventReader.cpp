@@ -87,7 +87,8 @@ void EventReader::Convert() {
         for (const auto &l : *list) {
             std::cout << setw(5) << " " << "- " << l << std::endl;
         }
-
+        list->clear();
+        list->shrink_to_fit();
         delete list;
     }
 }
