@@ -23,6 +23,9 @@ public:
     bool operator==(const DHit &rhs) const {
         return id == rhs.id &&
                CellID == rhs.CellID &&
+               CellID_X == rhs.CellID_X &&
+               CellID_Y == rhs.CellID_Y &&
+               CellID_Z == rhs.CellID_Z &&
                Detector == rhs.Detector &&
                X == rhs.X &&
                Y == rhs.Y &&
@@ -39,6 +42,9 @@ public:
         if (&rhs == this) { return *this; }
         id = rhs.id;
         CellID = rhs.CellID;
+        CellID_X = rhs.CellID_X;
+        CellID_Y = rhs.CellID_Y;
+        CellID_Z = rhs.CellID_Z;
         Detector = rhs.Detector;
         X = rhs.X;
         Y = rhs.Y;
@@ -82,6 +88,18 @@ public:
         return Detector;
     }
 
+    int getCellIdX() const {
+        return CellID_X;
+    }
+
+    int getCellIdY() const {
+        return CellID_Y;
+    }
+
+    int getCellIdZ() const {
+        return CellID_Z;
+    }
+
     // Set Methods
     void setId(int ID) {
         DHit::id = ID;
@@ -115,9 +133,25 @@ public:
         Detector = detector;
     }
 
+    void setCellIdX(int cellIdX) {
+        CellID_X = cellIdX;
+    }
+
+    void setCellIdY(int cellIdY) {
+        CellID_Y = cellIdY;
+    }
+
+    void setCellIdZ(int cellIdZ) {
+        CellID_Z = cellIdZ;
+    }
+
 protected:
     int id{0};
     int CellID{0};
+
+    int CellID_X{0};
+    int CellID_Y{0};
+    int CellID_Z{0};
 
     DetectorType Detector;
 
