@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <iostream>
 #include <ctime>
+#include <algorithm>
 
 void AlgoManager::RegisterAnaProcessor(AnaProcessor *AnaP) {
     if (AnaProcessors.count(AnaP->getName()) != 0)
