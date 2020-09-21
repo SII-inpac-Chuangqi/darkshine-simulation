@@ -18,10 +18,8 @@ public:
     EventReader() : evt(nullptr), fChain(nullptr) {};
 
     ~EventReader() {
-        if (fChain) delete fChain;
-        if (f) f->Close();
-        delete f;
-
+        if (!fChain) return;
+        delete fChain->GetCurrentFile();
     };
 
     void Convert();
