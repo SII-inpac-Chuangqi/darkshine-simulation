@@ -58,7 +58,7 @@ DStepVec *DEvent::RegisterStepCollection(const std::string &str) {
         return StepCollection.at(str);
     }
     auto tmpVec = new DStepVec;
-    StepCollection.insert(std::pair<std::string, DStepVec *>(str, tmpVec));
+    StepCollection.emplace(std::pair<std::string, DStepVec *>(str, tmpVec));
 
     if (Verbose > 1) {
         std::cout << "[STEP REGISTER] : (Verbosity 2) ==> A new collection " + str +
@@ -74,7 +74,7 @@ MCParticleVec *DEvent::RegisterMCParticleCollection(const std::string &str) {
         return MCParticleCollection.at(str);
     }
     auto tmpVec = new MCParticleVec;
-    MCParticleCollection.insert(std::pair<std::string, MCParticleVec *>(str, tmpVec));
+    MCParticleCollection.emplace(std::pair<std::string, MCParticleVec *>(str, tmpVec));
 
     if (Verbose > 1) {
         std::cout << "[MC REGISTER] : (Verbosity 2) ==> A new collection " + str +
@@ -91,7 +91,7 @@ RecParticleVec *DEvent::RegisterRecParticleCollection(const std::string &str) {
         return RecParticleCollection.at(str);
     }
     auto tmpVec = new RecParticleVec;
-    RecParticleCollection.insert(std::pair<std::string, RecParticleVec *>(str, tmpVec));
+    RecParticleCollection.emplace(std::pair<std::string, RecParticleVec *>(str, tmpVec));
 
     if (Verbose > 1) {
         std::cout << "[REC REGISTER] : (Verbosity 2) ==> A new collection " + str +
@@ -107,7 +107,7 @@ SimulatedHitVec *DEvent::RegisterSimulatedHitCollection(const std::string &str) 
         return SimulatedHitCollection.at(str);
     }
     auto tmpVec = new SimulatedHitVec;
-    SimulatedHitCollection.insert(std::pair<std::string, SimulatedHitVec *>(str, tmpVec));
+    SimulatedHitCollection.emplace(std::pair<std::string, SimulatedHitVec *>(str, tmpVec));
 
     if (Verbose > 1) {
         std::cout << "[MC REGISTER] : (Verbosity 2) ==> A new collection " + str +
@@ -123,7 +123,7 @@ CalorimeterHitVec *DEvent::RegisterCalorimeterHitCollection(const std::string &s
         return CalorimeterHitCollection.at(str);
     }
     auto tmpVec = new CalorimeterHitVec;
-    CalorimeterHitCollection.insert(std::pair<std::string, CalorimeterHitVec *>(str, tmpVec));
+    CalorimeterHitCollection.emplace(std::pair<std::string, CalorimeterHitVec *>(str, tmpVec));
 
     if (Verbose > 1) {
         std::cout << "[REC REGISTER] : (Verbosity 2) ==> A new collection " + str +

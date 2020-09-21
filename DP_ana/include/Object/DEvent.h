@@ -21,7 +21,9 @@ public:
     // Constructor
     DEvent() { Initialization(); };
 
-    virtual ~DEvent() { Initialization();}
+    virtual ~DEvent() {
+        Initialization();
+    }
 
     // Operators
 
@@ -133,7 +135,7 @@ protected:
 template<class T>
 std::vector<std::string> *DEvent::ListCollections(const T &in) {
     auto tmp = new std::vector<std::string>;
-    for (auto itr : in) tmp->push_back(itr.first);
+    for (auto itr : in) tmp->emplace_back(itr.first);
 
     return tmp;
 }
