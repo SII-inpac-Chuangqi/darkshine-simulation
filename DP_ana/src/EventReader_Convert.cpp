@@ -50,7 +50,7 @@ void EventReader::ConvertStep() {
             step->setX(ip_Pos->at(i)[0]);
             step->setY(ip_Pos->at(i)[1]);
             step->setZ(ip_Pos->at(i)[2]);
-            // Step Physics Volumn
+            // Step Physics Volume
             step->setPVName(ip_PVName->at(i).Data());
             // Step Process
             step->setProcessName(ip_ProcessName->at(i).Data());

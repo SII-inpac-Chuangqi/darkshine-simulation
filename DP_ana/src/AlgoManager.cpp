@@ -119,7 +119,7 @@ void AlgoManager::PrintRunLog() {
     double total_time = 0.;
 
     cout << setw(5) << " " << setw(35) << "Processor Name";
-    cout << setw(40) << "Exceution Time / Event [sec]" << endl;
+    cout << setw(40) << "Execution Time / Event [sec]" << endl;
     cout << fixed << setprecision(8);
     for (const auto &itr : AnaProcessorList) {
 
