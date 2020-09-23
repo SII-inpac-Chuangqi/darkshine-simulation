@@ -57,10 +57,25 @@ endif()
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 #
+
+# Recursively Find Algorithm headers
+MACRO(HEADER_DIRECTORIES return_list)
+    FILE(GLOB_RECURSE new_list Algorithms/*/include/*.h)
+    SET(dir_list "")
+    FOREACH(file_path ${new_list})
+        GET_FILENAME_COMPONENT(dir_path ${file_path} PATH)
+        get_filename_component(dir_path ${dir_path} DIRECTORY)
+        SET(dir_list ${dir_list} ${dir_path})
+    ENDFOREACH()
+    LIST(REMOVE_DUPLICATES dir_list)
+    SET(${return_list} ${dir_list})
+ENDMACRO()
+HEADER_DIRECTORIES(Algo_List)
+
 include_directories(DP_simu/include
                     DP_ana/include
                     Utility/include
-                    Algorithms/include
+                    ${Algo_List}
                     ${Geant4_INCLUDE_DIR}
                     ${HEPMC_INCLUDE_DIR})
 
@@ -73,8 +88,10 @@ file(GLOB Ana_headers DP_ana/include/*)
 file(GLOB Util_sources Utility/src/*.cpp)
 file(GLOB Util_headers Utility/include/*)
 
-file(GLOB Algo_sources Algorithms/src/*.cpp)
-file(GLOB Algo_headers Algorithms/include/*)
+FILE(GLOB_RECURSE Algo_sources Algorithms/*/src/*.cpp)
+FILE(GLOB_RECURSE Algo_headers Algorithms/*/include/*.h)
+
+MESSAGE("${Algo_sources}")
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #

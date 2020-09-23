@@ -97,7 +97,6 @@ AnaProcessorVecUniPtr AlgoManager::getAllAnaProcessors() {
 
 void AlgoManager::SetAnaProcessorsList(const std::string &ProcessorList) {
 
-
     istringstream sin(ProcessorList);
     do {
         std::string ProcessorName;
@@ -105,7 +104,12 @@ void AlgoManager::SetAnaProcessorsList(const std::string &ProcessorList) {
 
         if (!ProcessorName.empty()) {
             if (std::find(AnaProcessorList.begin(), AnaProcessorList.end(), ProcessorName) == AnaProcessorList.end()) {
-                AnaProcessorList.emplace_back(ProcessorName);
+                {
+                    if (AnaProcessors.count(ProcessorName) != 0)
+                        AnaProcessorList.emplace_back(ProcessorName);
+                    else
+                        std::cerr << "[WARNING] ==> No Algo Processor named: " << ProcessorName << std::endl;
+                }
             } else
                 std::cerr << "[WARNING] ==> Duplicate Algo Processor Name." << std::endl;
         }

@@ -8,6 +8,7 @@
 
 // Processors
 #include "Algo/ExampleProcessor.h"
+#include "Algo/RecECAL.h"
 
 void ControlManager::run() {
 
@@ -15,7 +16,6 @@ void ControlManager::run() {
     /* Read in Basic Configuration */
     /* Read Algorithm Lists */
     ConfMgr->ReadConst();
-    ConfMgr->ReadAlgoList();
 
     setFileName(ConfMgr->getInputfile());
     setOutName(ConfMgr->getOutputfile());
@@ -35,9 +35,10 @@ void ControlManager::run() {
     /* Explicitly declare processors with name */
     /* DEFINE ALGO PROCESSOR HERE */
     algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example1")) );
-    algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example2VeryLongVeryLong")) );
-    algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example3")) );
+    //algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example2VeryLongVeryLong")) );
+    algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("Example3")) );
 
+    ConfMgr->ReadAlgoList();
     algo->BeginAnaProcessors();
 
     /*

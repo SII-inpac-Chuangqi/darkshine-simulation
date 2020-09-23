@@ -2,9 +2,9 @@
 // Created by Zhang Yulei on 9/19/20.
 //
 
-#include "Algo/ExampleProcessor.h"
+#include "Algo/RecECAL.h"
 
-void ExampleProcessor::Begin() {
+void RecECAL::Begin() {
     /*
      *
      *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
@@ -43,7 +43,7 @@ void ExampleProcessor::Begin() {
 
 }
 
-void ExampleProcessor::ProcessEvt(DEvent *evt) {
+void RecECAL::ProcessEvt(DEvent *evt) {
 
     //cout<<"p1: "<<intVar<<endl;
     //cout<<"p2: "<<doubleVar<<endl;
@@ -85,12 +85,12 @@ void ExampleProcessor::ProcessEvt(DEvent *evt) {
     }
 }
 
-void ExampleProcessor::CheckEvt(DEvent *evt) {
+void RecECAL::CheckEvt(DEvent *evt) {
     //cout<<"Check!"<<endl;
 
 }
 
-void ExampleProcessor::End() {
+void RecECAL::End() {
     //cout<<"End!"<<endl;
 
 }
