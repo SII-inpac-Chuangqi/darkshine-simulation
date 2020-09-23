@@ -58,7 +58,7 @@ void AlgoManager::ProcessEvtAnaProcessors(DEvent *evt) {
         start_processing = clock();
 
         if (Verbose > 2) {
-            cout << "[ PROCESSOR ] : " << itr << endl;
+            cout << "[ PROCESSOR ] (Verbosity 3) : " << itr << endl;
         }
         // process evt
         AnaProcessors.at(itr)->ProcessEvt(evt);
@@ -88,8 +88,8 @@ void AlgoManager::EndAnaProcessors() {
 }
 
 AnaProcessorVecUniPtr AlgoManager::getAllAnaProcessors() {
-    AnaProcessorVecUniPtr tmp ( new AnaProcessorVec());
-    for (const auto& itr : AnaProcessors)
+    AnaProcessorVecUniPtr tmp(new AnaProcessorVec());
+    for (const auto &itr : AnaProcessors)
         tmp->emplace_back(itr.second);
 
     return tmp;

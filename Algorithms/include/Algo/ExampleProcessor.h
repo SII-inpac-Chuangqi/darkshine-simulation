@@ -13,6 +13,7 @@ using namespace std;
 
 class ExampleProcessor : public AnaProcessor {
 public:
+    // No need to change anything here
     // Must initialized with Name
     explicit ExampleProcessor(string name) : AnaProcessor(std::move(name)) {};
     ~ExampleProcessor() {};
@@ -25,8 +26,15 @@ public:
 
     void End() override;
 
+    // Define some functions here if necessary
+
 private:
+
+    // Define some variables if necessary
+    // IMPORTANT: variables need to be registered by their types:
+    // Currently supported: int, double, string
     int intVar;
+    int verbose;
     double doubleVar;
     std::string strVar;
 };
