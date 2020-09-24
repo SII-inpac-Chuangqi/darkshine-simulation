@@ -10,6 +10,7 @@
 #include <TFile.h>
 
 #include "Object/DEvent.h"
+#include "Core/EventStoreAndWriter.h"
 
 using namespace std;
 
@@ -21,6 +22,8 @@ public:
         if (!fChain) return;
         delete fChain->GetCurrentFile();
     };
+
+    void RegisterOutput();
 
     void Convert();
 
@@ -82,9 +85,18 @@ public:
         skipNumber = skipnumber;
     }
 
+    const shared_ptr<EventStoreAndWriter> &getEvtWrt() const {
+        return EvtWrt;
+    }
+
+    void setEvtWrt(const shared_ptr<EventStoreAndWriter> &evtWrt) {
+        EvtWrt = evtWrt;
+    }
+
 private:
     DEvent *evt;
     Long64_t Entries;
+    shared_ptr<EventStoreAndWriter> EvtWrt;
 
     int runNumber{0};
     int eventNumber{-1};

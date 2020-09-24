@@ -48,11 +48,27 @@ Int_t EventReader::ReadFile(const std::string &filename) {
     return 1;
 }
 
+void EventReader::RegisterOutput() {
+
+    /*
+     * Register some variables in output
+     */
+    EvtWrt->RegisterIntVariable("RunNumber", &RunNumber, "RunNumber/I");
+    EvtWrt->RegisterIntVariable("EventNumber", &EventNumber, "EventNumber/I");
+    EvtWrt->RegisterDoubleVariable("Rndm", Rndm, "Rndm[4]/D");
+    EvtWrt->RegisterDoubleVariable("TRUTH_Eleak_ECAL", &TRUTH_MC_Eleak_ECAL, "TRUTH_Eleak_ECAL/D");
+    EvtWrt->RegisterDoubleVariable("TRUTH_PNEnergy_Tar", &TRUTH_MC_PNEnergy_Tar, "TRUTH_PNEnergy_Tar/D");
+    EvtWrt->RegisterDoubleVariable("TRUTH_PNEnergy_ECAL", &TRUTH_MC_PNEnergy_ECal, "TRUTH_PNEnergy_ECAL/D");
+}
+
+
 void EventReader::Convert() {
+    /*
+     * Convert Input root to DEvent format
+     */
+
     // Initialization
     evt->Initialization();
-
-    // Convert Input root to DEvent format
 
     // Other Variables
     evt->setRunId(RunNumber);

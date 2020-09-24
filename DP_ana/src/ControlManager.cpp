@@ -29,7 +29,9 @@ void ControlManager::run() {
     EvtReader->setRunNumber(RunNumber);
     EvtReader->setEventNumber(EventNumber);
     EvtReader->setSkipNumber(SkipNumber);
+    EvtReader->setEvtWrt(EvtWrt);
 
+    // Set Verbose
     EvtReader->setVerbose(ConfMgr->getEventReaderVerbose());
     algo->setVerbose(ConfMgr->getAlgoManagerVerbose());
     evt->setVerbose(ConfMgr->getDEventVerbose());
@@ -37,6 +39,7 @@ void ControlManager::run() {
 
     // Register Output Tree
     EvtWrt->RegisterTree();
+    EvtReader->RegisterOutput();
 
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
