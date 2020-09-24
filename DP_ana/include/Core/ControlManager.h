@@ -8,6 +8,7 @@
 #include "Core/AlgoManager.h"
 #include "Core/EventReader.h"
 #include "Core/ConfigManager.h"
+#include "Core/EventStoreAndWriter.h"
 
 class ControlManager {
     /*
@@ -101,6 +102,7 @@ private:
     AlgoManager *algo;
     EventReader *EvtReader;
     ConfigManager *ConfMgr;
+    std::shared_ptr<EventStoreAndWriter> EvtWrt;
 };
 
 

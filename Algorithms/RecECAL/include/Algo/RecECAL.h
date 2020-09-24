@@ -15,8 +15,8 @@ class RecECAL : public AnaProcessor {
 public:
     // No need to change anything here
     // Must initialized with Name
-    explicit RecECAL(string name) : AnaProcessor(std::move(name)) {};
-    ~RecECAL() {};
+    explicit RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name), std::move(evtwrt)) {};
+    ~RecECAL() override {};
 
     void Begin() override;
 
@@ -27,16 +27,33 @@ public:
     void End() override;
 
     // Define some functions here if necessary
+    void initialization() {
+        center_x = 0.;
+        center_y = 0.;
+        mc_x = 0.;
+        mc_y = 0.;
+        err_x = 0.;
+        err_y = 0.;
+    }
+
+    double SingleCenterFinding(const SimulatedHitVecUniPtr&, const DStepVecUniPtr &);
 
 private:
 
-    // Define some variables if necessary
-    // IMPORTANT: variables need to be registered by their types:
-    // Currently supported: int, double, string
-    int intVar;
+    int FindCenter{0};
+
+    double center_x{0.};
+    double center_y{0.};
+    double mc_x{0.};
+    double mc_y{0.};
+    double err_x{0.};
+    double err_y{0.};
+
+    // Verbosity
     int verbose;
-    double doubleVar;
-    std::string strVar;
+    // Input Parameter
+    double W0{0.};
+
 };
 
 

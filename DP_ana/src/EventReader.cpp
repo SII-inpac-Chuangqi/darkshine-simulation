@@ -21,7 +21,7 @@ Int_t EventReader::ReadFile(const std::string &filename) {
     Entries = fChain->GetEntriesFast();
 
     if (Verbose > -1) {
-        cout << "----------------------------------------------------------------------" << endl;
+        cout << "======================================================================" << endl;
         std::cout << "[ READ FILE ] : (Verbosity 0)" << std::endl;
         std::cout << left;
         std::cout << std::setw(5) << " " << std::setw(30);
@@ -79,7 +79,7 @@ void EventReader::Convert() {
     ConvertHCAL();
 
     if (Verbose > 1) {
-        cout << "----------------------------------------------------------------------" << endl;
+        cout << "======================================================================" << endl;
         std::cout << "[ READ EVENT ] : Convert (Verbosity 2)" << std::endl;
         std::cout << setw(0) << "These collections will be generated from this event" << std::endl;
         std::cout << left;

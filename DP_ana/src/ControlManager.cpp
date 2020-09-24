@@ -23,6 +23,9 @@ void ControlManager::run() {
     setEventNumber(ConfMgr->getEventNumber());
     setSkipNumber(ConfMgr->getSkipNumber());
 
+    // Define output and data storage
+    EvtWrt = shared_ptr<EventStoreAndWriter>(new EventStoreAndWriter(OutName));
+
     EvtReader->setRunNumber(RunNumber);
     EvtReader->setEventNumber(EventNumber);
     EvtReader->setSkipNumber(SkipNumber);
@@ -30,16 +33,22 @@ void ControlManager::run() {
     EvtReader->setVerbose(ConfMgr->getEventReaderVerbose());
     algo->setVerbose(ConfMgr->getAlgoManagerVerbose());
     evt->setVerbose(ConfMgr->getDEventVerbose());
+    EvtWrt->setVerbose(ConfMgr->getEventStoreAndWriterVerbose());
+
+    // Register Output Tree
+    EvtWrt->RegisterTree();
 
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
     /* DEFINE ALGO PROCESSOR HERE */
-    algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example1")) );
-    //algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example2VeryLongVeryLong")) );
-    algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("Example3")) );
+    algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example1", EvtWrt)) );
+    algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)) );
 
     ConfMgr->ReadAlgoList();
     algo->BeginAnaProcessors();
+
+    // Print Output Tree
+    EvtWrt->PrintTree();
 
     /*
      *  Readin Config File
@@ -78,6 +87,9 @@ void ControlManager::run() {
         // check algorithms
         algo->CheckEvtAnaProcessors(evt);
 
+        // Fill Output
+        EvtWrt->FillTree();
+
         processed_evt++;
 
         cout << "--------------------------";
@@ -91,6 +103,9 @@ void ControlManager::run() {
      */
     algo->EndAnaProcessors();
     algo->PrintRunLog();
+
+    // Close Output File
+    EvtWrt->CloseFile();
 
     std::cout << std::endl << " ==> Done ..." << std::endl;
 

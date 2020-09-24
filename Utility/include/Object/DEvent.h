@@ -57,6 +57,10 @@ public:
         return CalorimeterHitCollection;
     }
 
+    const DStepMap &getStepCollection() const {
+        return StepCollection;
+    }
+
     // Set Methods
     void setRunId(int runId) {
         RunID = runId;

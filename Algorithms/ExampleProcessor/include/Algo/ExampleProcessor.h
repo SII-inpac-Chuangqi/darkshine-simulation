@@ -15,7 +15,7 @@ class ExampleProcessor : public AnaProcessor {
 public:
     // No need to change anything here
     // Must initialized with Name
-    explicit ExampleProcessor(string name) : AnaProcessor(std::move(name)) {};
+    explicit ExampleProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name), std::move(evtwrt)) {};
     ~ExampleProcessor() {};
 
     void Begin() override;

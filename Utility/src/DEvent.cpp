@@ -6,7 +6,7 @@
 
 void DEvent::Initialization() {
 
-    for (auto itr : MCParticleCollection) {
+    for (const auto& itr : MCParticleCollection) {
         for (auto itr2 : *itr.second) {
             delete itr2;
         }
@@ -15,7 +15,7 @@ void DEvent::Initialization() {
     }
     MCParticleCollection.clear();
 
-    for (auto itr : RecParticleCollection) {
+    for (const auto& itr : RecParticleCollection) {
         for (auto itr2 : *itr.second) {
             delete itr2;
         }
@@ -24,7 +24,7 @@ void DEvent::Initialization() {
     }
     RecParticleCollection.clear();
 
-    for (auto itr : SimulatedHitCollection) {
+    for (const auto& itr : SimulatedHitCollection) {
         for (auto itr2 : *itr.second) {
             delete itr2;
         }
@@ -33,7 +33,7 @@ void DEvent::Initialization() {
     }
     SimulatedHitCollection.clear();
 
-    for (auto itr : CalorimeterHitCollection) {
+    for (const auto& itr : CalorimeterHitCollection) {
         for (auto itr2 : *itr.second) {
             delete itr2;
         }
@@ -42,7 +42,7 @@ void DEvent::Initialization() {
     }
     CalorimeterHitCollection.clear();
 
-    for (auto itr : StepCollection) {
+    for (const auto& itr : StepCollection) {
         for (auto itr2 : *itr.second) {
             delete itr2;
         }

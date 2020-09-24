@@ -24,6 +24,7 @@ private:
     int EventReader_Verbose{0};
     int AnaProcessor_Verbose{0};
     int DEvent_Verbose{0};
+    int EventStoreAndWriter_Verbose{0};
 
 public:
     ConfigManager() = default;
@@ -80,6 +81,10 @@ public:
         return DEvent_Verbose;
     }
 
+    int getEventStoreAndWriterVerbose() const {
+        return EventStoreAndWriter_Verbose;
+    }
+
     // Set Methods
     void setInputfile(const string &in) {
         ConfigManager::inputfile = in;
@@ -119,6 +124,10 @@ public:
 
     void setDEventVerbose(int dEventVerbose) {
         DEvent_Verbose = dEventVerbose;
+    }
+
+    void setEventStoreAndWriterVerbose(int eventStoreAndWriterVerbose) {
+        EventStoreAndWriter_Verbose = eventStoreAndWriterVerbose;
     }
 
 private:

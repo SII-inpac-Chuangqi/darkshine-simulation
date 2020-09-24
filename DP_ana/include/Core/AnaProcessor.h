@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "Object/DEvent.h"
+#include "Core/EventStoreAndWriter.h"
 
 using namespace std;
 
@@ -27,7 +28,7 @@ class AnaProcessor {
 public:
     AnaProcessor() = default;
 
-    explicit AnaProcessor(string name) : Name(std::move(name)) {};
+    explicit AnaProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : Name(std::move(name)) , EvtWrt(std::move(evtwrt)) {};
 
     virtual ~AnaProcessor() = default;
 
@@ -115,6 +116,9 @@ protected:
     std::map<std::string, std::pair<std::string, int *> > IntParameters;
     std::map<std::string, std::pair<std::string, double *> > DoubleParameters;
     std::map<std::string, std::pair<std::string, std::string *> > StringParameters;
+
+    // Event Writer and Data Storage
+    shared_ptr<EventStoreAndWriter> EvtWrt;
 
 };
 

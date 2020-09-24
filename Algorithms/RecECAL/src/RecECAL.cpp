@@ -4,84 +4,61 @@
 
 #include "Algo/RecECAL.h"
 
+#include <cmath>
+#include <iostream>
+#include <iomanip>
+
 void RecECAL::Begin() {
-    /*
-     *
-     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
-     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
-     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
-     *
-     */
 
     // Add description for this AnaProcessor
-    Description = "Just an Example Processor.";
+    Description = "ECAL Reconstruction Processor";
 
-    /*
-     * How to register parameters?
-     *
-     * RegisterIntParamter -> register int type variables
-     * RegisterIntParameter( "intVar", // variable name
-     *                       "Int Variable", // variable description
-     *                       &intVar,  // variable address
-     *                       0);       // varaible default value
-     *
-     * You can always register multiple variables with same type.
-     * Parameters can be access from the config file by variable name.
-     *
-     *
-     */
-
-    // Register Int parameter
-    RegisterIntParameter("intVar", "Int Variable", &intVar, 0);
+    // Register parameters
     RegisterIntParameter("Verbose", "Verbosity Variable", &verbose, 0);
+    RegisterDoubleParameter("W0", "W0", &W0, 0.);
 
-    // Register Double parameter
-    RegisterDoubleParameter("DoubleVar", "Double Var", &doubleVar, 0.);
-
-    // Register String Parameter
-    RegisterStringParameter("StrVar", "String Variable", &strVar, "test");
+    // Register Output Variable
+    EvtWrt->RegisterIntVariable("FindCenter", &FindCenter, "FindCenter/I");
+    EvtWrt->RegisterDoubleVariable("center_x", &center_x, "center_x/D");
+    EvtWrt->RegisterDoubleVariable("center_y", &center_y, "center_y/D");
+    EvtWrt->RegisterDoubleVariable("err_x", &err_x, "err_x/D");
+    EvtWrt->RegisterDoubleVariable("err_y", &err_y, "err_y/D");
 
 }
 
 void RecECAL::ProcessEvt(DEvent *evt) {
+    // Initialization
+    initialization();
 
-    //cout<<"p1: "<<intVar<<endl;
-    //cout<<"p2: "<<doubleVar<<endl;
-    //cout<<"p3: "<<strVar<<endl;
-
-    cout << "Event ID: " << evt->getEventId() << endl;
-
-    //for ( const auto& t : *evt->ListAllCollections() ) std::cout<<t<<std::endl;
-
-    /*
-     * Example to get MC Particle collection
-     */
-
-    // Get MCCollections for the current event
-    const auto &MCCollection = evt->getMCParticleCollection();
+    // Get Simulated Hits for the current event
+    const auto &HitCollection = evt->getSimulatedHitCollection();
+    const auto &StepCollection = evt->getStepCollection();
 
     // define the collection name (RawMCParticle) to find.
-    std::string CollectionName = "RawMCParticle";
+    std::string HitCollectionName = "ECAL_Center";
+    std::string StepCollectionName = "Initial_Particle_Step";
 
     // IMPORTANT: check if the collection exists
-    if (MCCollection.count(CollectionName) != 0) {
-        const auto& mc = MCCollection.at(CollectionName);
-        // if exists, then do something
+    if (HitCollection.count(HitCollectionName) != 0
+        && StepCollection.count(StepCollectionName) != 0) {
+        const auto &hits = HitCollection.at(HitCollectionName);
+        const auto &steps = StepCollection.at(StepCollectionName);
 
-        // Loop the collection to print out the information of each particle
-        for (auto itr : *mc) {
-            if (verbose > 0) {
-                cout << "Particle " << itr->getId() << ": ";
-                cout << ", PDG: " << itr->getPdg();
-                cout << ", Energy: " << itr->getEnergy();
-                cout << ", Create Process:" << itr->getCreateProcess() << std::endl;
-            }
+        //Find Center Hit
+        SingleCenterFinding(hits, steps);
+        if (verbose > 0) {
+            std::cout << "-- # of hits in ECAL_Center: " << hits->size() << endl;
+            std::cout << "-- Reconstructed Position: " << ( FindCenter ? "Found" : "NOT Found" ) <<endl;
+            std::cout << fixed << setprecision(3) << right;
+            std::cout << "-- Reconstructed X: " << setw(6) << center_x << " +- " << setw(6) << err_x << " [mm]"
+                      << std::endl;
+            std::cout << "-- Reconstructed Y: " << setw(6) << center_y << " +- " << setw(6) << err_y << " [mm]"
+                      << std::endl;
         }
+
     } else {
         // if not exists, print out error
-        if (verbose > 0)
-            cerr << "MCCollection not found" << endl;
-
+        cerr << "MCCollection not found" << endl;
     }
 }
 
@@ -94,5 +71,45 @@ void RecECAL::End() {
     //cout<<"End!"<<endl;
 
 }
+
+double RecECAL::SingleCenterFinding(const SimulatedHitVecUniPtr &hits, const DStepVecUniPtr &steps) {
+
+    // Calculate total Energy
+    double E_sum = 0.;
+    for (auto hit : *hits) E_sum += hit->getE();
+
+    // Calculate weight sum
+    double weight_sum = 0.;
+    for (auto hit : *hits) weight_sum += max(0., W0 + log(hit->getEdepEm() / E_sum));
+
+    // Calculate weighted center x,y
+    for (auto hit : *hits) center_x += max(0., W0 + log(hit->getEdepEm() / E_sum)) * hit->getX() / weight_sum;
+    for (auto hit : *hits) center_y += max(0., W0 + log(hit->getEdepEm() / E_sum)) * hit->getY() / weight_sum;
+
+    // Return if no reconstructed center
+    if (isnan(center_x) || isnan(center_y)) return -999.;
+
+    // Calculate Error with truth x,y
+    if (steps->size() >= 3) {
+        for (auto step = steps->begin() + 1; step != steps->end() - 1; step++) {
+            if ((*step)->getPVName() == std::string("ECAL")) {
+                mc_x = (*step)->getX();
+                mc_y = (*step)->getY();
+
+                break;
+            }
+        }
+        err_x = center_x - mc_x;
+        err_y = center_y - mc_y;
+
+        FindCenter = 1;
+    } else {
+        cerr << "[WARNING] ==> Not enough step points." << endl;
+        return -999.;
+    }
+    return 0.;
+}
+
+
 
 

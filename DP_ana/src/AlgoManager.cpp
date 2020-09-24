@@ -20,7 +20,7 @@ void AlgoManager::BeginAnaProcessors() {
     Processed_Evt = 0;
 
     if (Verbose > 0) {
-        cout << "----------------------------------------------------------------------" << endl;
+        cout << "======================================================================" << endl;
         cout << "[ ALGO PROCESS LIST ] : (Verbosity 1)" << endl;
         cout << right;
         cout << setw(10) << "----" << setw(50) << "-----------" << endl;
@@ -46,9 +46,6 @@ void AlgoManager::BeginAnaProcessors() {
         }
     }
 
-    if (Verbose > 0) {
-        cout << "----------------------------------------------------------------------" << endl;
-    }
 }
 
 void AlgoManager::ProcessEvtAnaProcessors(DEvent *evt) {
@@ -122,6 +119,7 @@ void AlgoManager::PrintRunLog() {
 
     double total_time = 0.;
 
+    cout << left;
     cout << setw(5) << " " << setw(35) << "Processor Name";
     cout << setw(40) << "Execution Time / Event [sec]" << endl;
     cout << fixed << setprecision(8);
