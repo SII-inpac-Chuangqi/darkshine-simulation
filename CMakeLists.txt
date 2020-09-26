@@ -135,11 +135,11 @@ target_link_libraries(DSimu ${Geant4_LIBRARIES}
         ${PYTHIA6_LIBRARIES}
         DEvent)
 
-#link_libraries(DictExample)
+link_libraries(DEvent)
 add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         ${Util_sources} ${Util_headers}
         ${Algo_sources} ${Algo_headers})
-target_link_libraries(DAna DEvent)
+#target_link_libraries(DAna DEvent)
 # if pythia is compiled with g77, link with -lg2c instead.
 
 #----------------------------------------------------------------------------
