@@ -37,7 +37,6 @@
 #pragma link C++ class ReconstructedParticle+;
 #pragma link C++ class std::vector<ReconstructedParticle*>+;
 
-#pragma link C++ class testT+;
 #pragma link C++ class DEvent+;
 #endif
 
