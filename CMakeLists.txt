@@ -148,4 +148,5 @@ add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
 install(TARGETS DSimu DESTINATION bin)
 install(TARGETS DAna DESTINATION bin)
 install(TARGETS DEvent LIBRARY DESTINATION lib )
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib* DESTINATION lib)
 
