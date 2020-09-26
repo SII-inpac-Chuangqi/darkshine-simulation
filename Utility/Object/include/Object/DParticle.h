@@ -6,6 +6,7 @@
 #define DSIMU_DPARTICLE_H
 
 #include <string>
+#include <cmath>
 
 #include "TObject.h"
 
