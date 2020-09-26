@@ -33,13 +33,12 @@
 
 #include "G4UserTrackingAction.hh"
 #include "globals.hh"
-#include "MCParticle.hh"
+#include "Object/McParticle.h"
 #include "RootManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class G4Track;
-class MCParticle;
 
 /// Tracking action class
 
@@ -54,7 +53,7 @@ class TrackingAction : public G4UserTrackingAction
 
   private:
     RootManager* froot;
-    MCParticle* fMC;
+    McParticle* fMC;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

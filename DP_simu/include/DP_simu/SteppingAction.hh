@@ -34,8 +34,9 @@
 #include "G4UserSteppingAction.hh"
 #include "globals.hh"
 #include "RootManager.hh"
-#include "MCParticle.hh"
 
+
+#include "Object/McParticle.h"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -52,15 +53,11 @@ class SteppingAction : public G4UserSteppingAction
     virtual void UserSteppingAction(const G4Step* aStep);
 
   private:
-    MCParticle*     p1;
-    MCParticle*     p2;
-    RootManager*    froot;
-    G4bool          if_select;
-    G4bool          if_kill;
-    G4bool          if_biased;
 
-    G4double        EMax1; // PN reaction in Target Region
-    G4double        EMax2; // PN reaction in ECal Region
+    RootManager*    froot;
+
+    G4double        PNEnergyTar{0.}; // PN reaction in Target Region
+    G4double        PNEnergyECAL{0.}; // PN reaction in ECal Region
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

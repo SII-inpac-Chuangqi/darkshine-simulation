@@ -8,11 +8,13 @@
 
 // Processors
 #include "Algo/ExampleProcessor.h"
+#include "Event/AnaEvnt.h"
+#include "Algo/MCTruthAnalysis.h"
 #include "Algo/RecECAL.h"
 
 void ControlManager::run() {
 
-    auto *evt = new DEvent();
+    auto *evt = new AnaEvnt();
     /* Read in Basic Configuration */
     /* Read Algorithm Lists */
     ConfMgr->ReadConst();
@@ -44,8 +46,9 @@ void ControlManager::run() {
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
     /* DEFINE ALGO PROCESSOR HERE */
-    algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example1", EvtWrt)) );
-    algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)) );
+    //algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example1", EvtWrt)) );
+    //algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)) );
+    //algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)) );
 
     ConfMgr->ReadAlgoList();
     algo->BeginAnaProcessors();
@@ -73,13 +76,16 @@ void ControlManager::run() {
         nentries = (nentries >= SkipNumber) ? nentries : SkipNumber;
     else
         nentries = (nentries >= EventNumber + SkipNumber) ? EventNumber + SkipNumber : nentries;
-    for (int i = SkipNumber; i < nentries; ++i) {
+    for (int i = 0; i < nentries; ++i) {
+        // read the i-th event
+        if ( !EvtReader->ReadNextEntry() ) break;
+
+        // Skip events
+        if ( i < SkipNumber ) continue;
 
         cout << "--------------------------";
         cout << " Process Event: " << i;
         cout << " --------------------------" << endl;
-        // read the i-th event
-        EvtReader->GetEntry(i);
 
         // convert into DEvent
         EvtReader->Convert();
@@ -91,7 +97,7 @@ void ControlManager::run() {
         algo->CheckEvtAnaProcessors(evt);
 
         // Fill Output
-        EvtWrt->FillTree();
+        EvtWrt->FillTree(evt);
 
         processed_evt++;
 

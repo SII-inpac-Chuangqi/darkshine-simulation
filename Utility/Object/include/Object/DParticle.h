@@ -7,7 +7,9 @@
 
 #include <string>
 
-class DParticle {
+#include "TObject.h"
+
+class DParticle : public TObject {
 public:
     // Constructor and Destructor
     DParticle() = default;
@@ -203,7 +205,8 @@ protected:
     double EndPointX{0.};
     double EndPointY{0.};
     double EndPointZ{0.};
-};
 
+ClassDef(DParticle,3);
+};
 
 #endif //DSIMU_DPARTICLE_H

@@ -34,7 +34,7 @@
 #include "G4VSensitiveDetector.hh"
 #include "RootManager.hh"
 
-#include "SimHit.hh"
+#include "Object/SimulatedHit.h"
 
 #include <vector>
 #include <iterator>
@@ -70,8 +70,8 @@ class DetectorSD : public G4VSensitiveDetector
     G4int         fType; // 1: ECAL_Center 0: Tracker 2: ECAL_Outer
     G4String      fname;
     
-    std::vector<SimHit* > fSimHitVec;
-    std::vector<SimHit* >::iterator itr; 
+    std::vector<SimulatedHit* > fSimHitVec;
+    std::vector<SimulatedHit* >::iterator itr;
 
     RootManager* fRootMng;
 };

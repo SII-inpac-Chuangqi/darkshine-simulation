@@ -43,7 +43,7 @@ void ExampleProcessor::Begin() {
 
 }
 
-void ExampleProcessor::ProcessEvt(DEvent *evt) {
+void ExampleProcessor::ProcessEvt(AnaEvnt *evt) {
 
     //cout<<"p1: "<<intVar<<endl;
     //cout<<"p2: "<<doubleVar<<endl;
@@ -58,7 +58,7 @@ void ExampleProcessor::ProcessEvt(DEvent *evt) {
      */
 
     // Get MCCollections for the current event
-    const auto &MCCollection = evt->getMCParticleCollection();
+    const auto &MCCollection = evt->getMcParticleCollection();
 
     // define the collection name (RawMCParticle) to find.
     std::string CollectionName = "RawMCParticle";
@@ -87,7 +87,7 @@ void ExampleProcessor::ProcessEvt(DEvent *evt) {
     }
 }
 
-void ExampleProcessor::CheckEvt(DEvent *evt) {
+void ExampleProcessor::CheckEvt(AnaEvnt *evt) {
     //cout<<"Check!"<<endl;
 
 }

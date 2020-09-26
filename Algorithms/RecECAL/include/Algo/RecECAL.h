@@ -20,9 +20,9 @@ public:
 
     void Begin() override;
 
-    void ProcessEvt(DEvent* evt) override;
+    void ProcessEvt(AnaEvnt* evt) override;
 
-    void CheckEvt(DEvent* evt) override;
+    void CheckEvt(AnaEvnt* evt) override;
 
     void End() override;
 

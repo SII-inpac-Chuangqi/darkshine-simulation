@@ -4,9 +4,6 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TString.h"
-#include "TVector3.h"
-#include "TLorentzVector.h"
-#include "TRandom.h"
 #include "TInterpreter.h"
 
 #include "G4TouchableHistory.hh"
@@ -23,10 +20,12 @@ RootManager::RootManager()
 
     fMessenger = new RootMessenger(this);
     outfilename = "dp_out.root";
+
+    Evt = new DEvent();
+    Evt->Initialization(nALL);
     initialize();
     if_Optical = false;
     if_record_ip = true;
-
 }
 
 void RootManager::initialize() {
@@ -34,82 +33,6 @@ void RootManager::initialize() {
     EventID = 0;
     for (double &i : Rndm) i = 0;
 
-    // truth 
-    for (int i = 0; i < 3; i++) {
-        t_e1_Momentum[i] = 0.;
-        t_e1_Pos[i] = 0.;
-        t_e2_Momentum[i] = 0.;
-        t_e2_Pos[i] = 0.;
-    }
-
-    t_mc_Nb = 0;
-    t_mc_PNEnergy_Tar = 0;
-    t_mc_PNEnergy_ECal = 0;
-    t_mc_Eleak_ECAL = 0;
-
-    t_mc_id.clear();
-    t_mc_PDG.clear();
-    t_mc_ParentID.clear();
-    t_mc_Mom.clear();
-    t_mc_E.clear();
-    t_mc_Eremain.clear();
-    t_mc_VPos.clear();
-    t_mc_EPos.clear();
-    t_mc_ProcessName.clear();
-
-    if (if_record_ip) {
-        ip_Pos.clear();
-        ip_Mom.clear();
-        ip_Energy.clear();
-        ip_PVName.clear();
-        ip_ProcessName.clear();
-    }
-
-
-    for (itr_i = Hit_No.begin(); itr_i != Hit_No.end(); itr_i++) itr_i->second = 0;
-    for (itr_d = Hit_Eleak_Wrapper.begin(); itr_d != Hit_Eleak_Wrapper.end(); itr_d++) itr_d->second = 0.;
-    for (itrvec_int = Hit_Type.begin(); itrvec_int != Hit_Type.end(); itrvec_int++) {
-        itrvec_int->second->clear();
-    }
-    for (itrvec_int = Hit_ID.begin(); itrvec_int != Hit_ID.end(); itrvec_int++) {
-        itrvec_int->second->clear();
-    }
-    for (itrvec_int = Hit_PDG.begin(); itrvec_int != Hit_PDG.end(); itrvec_int++) {
-        itrvec_int->second->clear();
-    }
-    for (itrvec_int = Hit_DetectorID.begin(); itrvec_int != Hit_DetectorID.end(); itrvec_int++) {
-        itrvec_int->second->clear();
-    }
-    for (itrvec_int = Hit_DetectorID_x.begin(); itrvec_int != Hit_DetectorID_x.end(); itrvec_int++) {
-        itrvec_int->second->clear();
-    }
-    for (itrvec_int = Hit_DetectorID_y.begin(); itrvec_int != Hit_DetectorID_y.end(); itrvec_int++) {
-        itrvec_int->second->clear();
-    }
-    for (itrvec_int = Hit_DetectorID_z.begin(); itrvec_int != Hit_DetectorID_z.end(); itrvec_int++) {
-        itrvec_int->second->clear();
-    }
-    for (itrvec_double = Hit_Time.begin(); itrvec_double != Hit_Time.end(); itrvec_double++) {
-        itrvec_double->second->clear();
-    }
-    for (itrvec_double = Hit_Edep.begin(); itrvec_double != Hit_Edep.end(); itrvec_double++) {
-        itrvec_double->second->clear();
-    }
-    for (itrvec_double = Hit_EdepEM.begin(); itrvec_double != Hit_EdepEM.end(); itrvec_double++) {
-        itrvec_double->second->clear();
-    }
-    for (itrvec_double = Hit_EdepHad.begin(); itrvec_double != Hit_EdepHad.end(); itrvec_double++) {
-        itrvec_double->second->clear();
-    }
-    for (itrvec_double = Hit_X.begin(); itrvec_double != Hit_X.end(); itrvec_double++) {
-        itrvec_double->second->clear();
-    }
-    for (itrvec_double = Hit_Y.begin(); itrvec_double != Hit_Y.end(); itrvec_double++) {
-        itrvec_double->second->clear();
-    }
-    for (itrvec_double = Hit_Z.begin(); itrvec_double != Hit_Z.end(); itrvec_double++) {
-        itrvec_double->second->clear();
-    }
     if (if_Optical) {
         for (itr_i = Optical_No.begin(); itr_i != Optical_No.end(); itr_i++) itr_i->second = 0;
         for (itrvec_double = Optical_Time.begin(); itrvec_double != Optical_Time.end(); itrvec_double++)
@@ -151,35 +74,14 @@ void RootManager::book() {
         tr->Branch("RunNumber", &fStart, "RunNumber/I");
         tr->Branch("EventNumber", &fEvtN, "EventNumber/I");
         tr->Branch("Rndm", &Rndm, "Rndm[4]/D");
+
         // truth
-        tr->Branch("TRUTH_e1_Momentum", &t_e1_Momentum, "t_e1_Momentum[3]/D");
-        tr->Branch("TRUTH_e1_VPos", &t_e1_Pos, "t_e1_VPos[3]/D");
-        tr->Branch("TRUTH_e2_Momentum", &t_e2_Momentum, "t_e2_Momentum[3]/D");
-        tr->Branch("TRUTH_e2_VPos", &t_e2_Pos, "t_e2_VPos[3]/D");
-
-        tr->Branch("TRUTH_MC_Nb", &t_mc_Nb, "TRUTH_MC_Nb/I");
-        tr->Branch("TRUTH_MC_id", &t_mc_id);
-        tr->Branch("TRUTH_MC_PDG", &t_mc_PDG);
-        tr->Branch("TRUTH_MC_ParentID", &t_mc_ParentID);
-        tr->Branch("TRUTH_MC_Mom", &t_mc_Mom);
-        tr->Branch("TRUTH_MC_E", &t_mc_E);
-        tr->Branch("TRUTH_MC_Eremain", &t_mc_Eremain);
-        tr->Branch("TRUTH_MC_VPos", &t_mc_VPos);
-        tr->Branch("TRUTH_MC_EPos", &t_mc_EPos);
-        tr->Branch("TRUTH_MC_ProcessName", &t_mc_ProcessName);
-
-        tr->Branch("TRUTH_MC_PNEnergy_Tar", &t_mc_PNEnergy_Tar, "TRUTH_MC_PNEnergy_Tar/D");
-        tr->Branch("TRUTH_MC_PNEnergy_ECal", &t_mc_PNEnergy_ECal, "TRUTH_MC_PNEnergy_ECal/D");
-        tr->Branch("TRUTH_MC_Eleak_ECAL", &t_mc_Eleak_ECAL, "TRUTH_MC_Eleak_ECAL/D");
-
-        if (if_record_ip) {
-            tr->Branch("ip_Pos", &ip_Pos);
-            tr->Branch("ip_Momentum", &ip_Mom);
-            tr->Branch("ip_Energy", &ip_Energy);
-            tr->Branch("ip_PVName", &ip_PVName);
-            tr->Branch("ip_ProcessName", &ip_ProcessName);
-        }
+        Evt->RegisterMCParticleCollection("RawMCParticle");
+        if (if_record_ip)
+            Evt->RegisterStepCollection("Initial_Particle_Step");
     }
+
+    tr->Branch("DEvent", &Evt, 32000000, 0);
 
     G4cout << "===> ROOT file is opened in " << fileName << G4endl;
 }
@@ -190,24 +92,6 @@ void RootManager::bookCollection(G4String cIn) {
 
     G4cout << "[Root Manager] ==> Booking tree for " << cIn << " ..." << G4endl;
 
-    Hit_Eleak_Wrapper.insert(std::pair<G4String, double>(cIn, 0));
-
-    Hit_No.insert(std::pair<G4String, int>(cIn, 0));
-    Hit_Type.insert(std::pair<G4String, std::vector<int> *>(cIn, new std::vector<int>));
-    Hit_ID.insert(std::pair<G4String, std::vector<int> *>(cIn, new std::vector<int>));
-    Hit_PDG.insert(std::pair<G4String, std::vector<int> *>(cIn, new std::vector<int>));
-    Hit_DetectorID.insert(std::pair<G4String, std::vector<int> *>(cIn, new std::vector<int>));
-    Hit_DetectorID_x.insert(std::pair<G4String, std::vector<int> *>(cIn, new std::vector<int>));
-    Hit_DetectorID_y.insert(std::pair<G4String, std::vector<int> *>(cIn, new std::vector<int>));
-    Hit_DetectorID_z.insert(std::pair<G4String, std::vector<int> *>(cIn, new std::vector<int>));
-    Hit_Time.insert(std::pair<G4String, std::vector<double> *>(cIn, new std::vector<double>));
-    Hit_Edep.insert(std::pair<G4String, std::vector<double> *>(cIn, new std::vector<double>));
-    Hit_EdepEM.insert(std::pair<G4String, std::vector<double> *>(cIn, new std::vector<double>));
-    Hit_EdepHad.insert(std::pair<G4String, std::vector<double> *>(cIn, new std::vector<double>));
-    Hit_X.insert(std::pair<G4String, std::vector<double> *>(cIn, new std::vector<double>));
-    Hit_Y.insert(std::pair<G4String, std::vector<double> *>(cIn, new std::vector<double>));
-    Hit_Z.insert(std::pair<G4String, std::vector<double> *>(cIn, new std::vector<double>));
-
     if (if_Optical) {
         Optical_No.insert(std::pair<G4String, int>(cIn, 0));
         Optical_Time.insert(std::pair<G4String, std::vector<double> *>(cIn, new std::vector<double>));
@@ -217,21 +101,6 @@ void RootManager::bookCollection(G4String cIn) {
         //Optical_DetID_y.insert(std::pair<G4String, int *>(cIn, new int[MaxOptPhoton]));
         //Optical_DetID_z.insert(std::pair<G4String, int *>(cIn, new int[MaxOptPhoton]));
     }
-
-    tr->Branch((cIn + "_No").data(), &Hit_No[cIn], (cIn + "_No/I").data());
-    tr->Branch((cIn + "_Eleak_Wrapper").data(), &Hit_Eleak_Wrapper[cIn], (cIn + "_Eleak_Wrapper/D").data());
-    tr->Branch((cIn + "_Type").data(), Hit_Type[cIn]);
-    tr->Branch((cIn + "_DetectorID").data(), Hit_DetectorID[cIn]);
-    tr->Branch((cIn + "_DetectorID_x").data(), Hit_DetectorID_x[cIn]);
-    tr->Branch((cIn + "_DetectorID_y").data(), Hit_DetectorID_y[cIn]);
-    tr->Branch((cIn + "_DetectorID_z").data(), Hit_DetectorID_z[cIn]);
-    tr->Branch((cIn + "_Time").data(), Hit_Time[cIn]);
-    tr->Branch((cIn + "_Edep").data(), Hit_Edep[cIn]);
-    tr->Branch((cIn + "_EdepEM").data(), Hit_EdepEM[cIn]);
-    tr->Branch((cIn + "_EdepHad").data(), Hit_EdepHad[cIn]);
-    tr->Branch((cIn + "_X").data(), Hit_X[cIn]);
-    tr->Branch((cIn + "_Y").data(), Hit_Y[cIn]);
-    tr->Branch((cIn + "_Z").data(), Hit_Z[cIn]);
 
     if (if_Optical) {
         tr->Branch((cIn + "_Optical_No").data(), &Optical_No[cIn], (cIn + "_Optical_No/I").data());
@@ -245,6 +114,8 @@ void RootManager::bookCollection(G4String cIn) {
         //tr->Branch((cIn + "_Optical_DetID_z").data(), Optical_DetID_z[cIn],
         //           (cIn + "_Optical_DetID_z[" + cIn + "_Optical_No]/I").data());
     }
+
+    Evt->RegisterSimulatedHitCollection(cIn);
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
@@ -259,52 +130,23 @@ void RootManager::save() {
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 
-void RootManager::FillE1(MCParticle *mc) {
-    if (if_clean) return;
-
-    for (int i = 0; i < 3; i++) {
-        t_e1_Momentum[i] = mc->GetMomentum()[i];
-        t_e1_Pos[i] = mc->GetVPos()[i];
-    }
-}
-
-void RootManager::FillE2(MCParticle *mc) {
-    if (if_clean) return;
-
-    for (int i = 0; i < 3; i++) {
-        t_e2_Momentum[i] = mc->GetMomentum()[i];
-        t_e2_Pos[i] = mc->GetVPos()[i];
-    }
-}
-
 void RootManager::FillPNE(G4double E1, G4double E2) {
-
-    t_mc_PNEnergy_Tar = E1 > t_mc_PNEnergy_Tar ? E1 : t_mc_PNEnergy_Tar;
-    t_mc_PNEnergy_ECal = E2 > t_mc_PNEnergy_ECal ? E2 : t_mc_PNEnergy_ECal;
+    auto EnergyTarget = Evt->getPnEnergyTarget();
+    Evt->setPnEnergyTarget(E1 > EnergyTarget ? E1 : EnergyTarget);
+    auto EnergyECAL = Evt->getPnEnergyEcal();
+    Evt->setPnEnergyEcal(E2 > EnergyECAL ? E2 : EnergyECAL);
 }
 
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 
-void RootManager::FillMC(MCParticle *mc, G4double Eremain) {
+void RootManager::FillMC(McParticle *mc, int ParentID) {
     if (if_clean) return;
 
-    t_mc_id.emplace_back(mc->Getid());
-    t_mc_PDG.emplace_back(mc->GetPDG());
-    t_mc_ParentID.emplace_back(mc->GetParentID());
-    t_mc_E.emplace_back(mc->GetEnergy());
-    t_mc_Eremain.emplace_back(Eremain);
+    auto mcps = Evt->getMcParticleCollection().at("RawMCParticle");
+    mc->setParents(mc->SearchID(mcps, ParentID));
 
-    double tmp1[] = {mc->GetMomentum()[0], mc->GetMomentum()[1], mc->GetMomentum()[2]};
-    t_mc_Mom.emplace_back(TArrayD(3, tmp1));
-    double tmp2[] = {mc->GetVPos()[0], mc->GetVPos()[1], mc->GetVPos()[2]};
-    t_mc_VPos.emplace_back(TArrayD(3, tmp2));
-    double tmp3[] = {mc->GetEPos()[0], mc->GetEPos()[1], mc->GetEPos()[2]};
-    t_mc_EPos.emplace_back(TArrayD(3, tmp3));
-
-    t_mc_ProcessName.emplace_back(mc->GetProcess());
-
-    t_mc_Nb++;
+    mcps->push_back(mc);
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
@@ -317,31 +159,24 @@ void RootManager::FillSim(Int_t eventID, const Double_t *Rnd) {
         Rndm[i] = *(Rnd + i);
     }
 
+    Evt->setEventId(EventID);
+    Evt->setRndm(Rnd);
+
     tr->Fill();
+
+    Evt->Initialization(nVector);
 
     initialize();
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 
-void RootManager::FillSimHit(const G4String &cIn, SimHit *hit) {
-    Hit_Type[cIn]->emplace_back(hit->GetType());
-    Hit_ID[cIn]->emplace_back(hit->GetParticleID());
-    Hit_PDG[cIn]->emplace_back(hit->GetPDG());
-    Hit_DetectorID[cIn]->emplace_back(hit->GetDetectorRepNo());
-    Hit_DetectorID_x[cIn]->emplace_back(hit->GetDetectorID().x());
-    Hit_DetectorID_y[cIn]->emplace_back(hit->GetDetectorID().y());
-    Hit_DetectorID_z[cIn]->emplace_back(hit->GetDetectorID().z());
+void RootManager::FillSimHit(const G4String &cIn, SimulatedHit *hit) {
 
-    Hit_Time[cIn]->emplace_back(hit->GetTime());
-    Hit_Edep[cIn]->emplace_back(hit->GetEdep());
-    Hit_EdepEM[cIn]->emplace_back(hit->GetEdepEM());
-    Hit_EdepHad[cIn]->emplace_back(hit->GetEdepHad());
-    Hit_X[cIn]->emplace_back(hit->GetX());
-    Hit_Y[cIn]->emplace_back(hit->GetY());
-    Hit_Z[cIn]->emplace_back(hit->GetZ());
+    auto SimHits = Evt->getSimulatedHitCollection();
+    auto Hits = new SimulatedHit(*hit);
 
-    Hit_No[cIn]++;
+    SimHits.at(cIn)->emplace_back(Hits);
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
@@ -349,11 +184,13 @@ void RootManager::FillSimHit(const G4String &cIn, SimHit *hit) {
 void RootManager::FillEleak(const G4Step *in, G4String type) {
     auto deltaE = in->GetTotalEnergyDeposit();
 
-    if (type == "ECAL") t_mc_Eleak_ECAL += deltaE;
+    if (type == "ECAL") Evt->setEleakEcal(Evt->getEleakEcal() + deltaE);
     else if (type.contains("_PVW")) {
         auto cin = type.remove(type.index("_PVW"));
 
-        Hit_Eleak_Wrapper[cin] += deltaE;
+        //auto SimHits = Evt->getSimulatedHitCollection();
+        //auto itr = SimHits.at(cin)->end() - 1;
+        //(*itr)->setELeakWrapper( (*itr)->getELeakWrapper() + deltaE);
     }
 }
 
@@ -383,41 +220,43 @@ bool RootManager::FillOptical(const G4Step *in, G4String type) {
 void RootManager::FillParticleStep(const G4Step *aStep) {
     G4StepPoint *prev = aStep->GetPreStepPoint();
     G4StepPoint *post = aStep->GetPostStepPoint();
-    if (ip_Pos.empty()) {
 
-        ip_Energy.emplace_back(prev->GetTotalEnergy());
-
-        double posD[] = {prev->GetPosition()[0], prev->GetPosition()[1], prev->GetPosition()[2]};
-        ip_Pos.emplace_back(TArrayD(3, posD));
-
-        double MomD[] = {prev->GetMomentum()[0], prev->GetMomentum()[1], prev->GetMomentum()[2]};
-        ip_Mom.emplace_back(TArrayD(3, MomD));
-
-        auto tmp1 = prev->GetPhysicalVolume()->GetName().data();
-        ip_PVName.emplace_back(TString(tmp1));
-        ip_ProcessName.emplace_back(TString("Initial Step"));
-
+    auto Steps = Evt->getStepCollection().at("Initial_Particle_Step");
+    auto step = new DStep();
+    step->setId(static_cast<int>(Steps->size()));
+    if (Steps->empty()) {
+        step->setX(prev->GetPosition()[0]);
+        step->setY(prev->GetPosition()[1]);
+        step->setZ(prev->GetPosition()[2]);
+        step->setPx(prev->GetMomentum()[0]);
+        step->setPy(prev->GetMomentum()[1]);
+        step->setPz(prev->GetMomentum()[2]);
+        step->setE(prev->GetTotalEnergy());
+        step->setPVName(prev->GetPhysicalVolume()->GetName().data());
+        step->setProcessName("Initial Step");
     }
-    ip_Energy.emplace_back(post->GetTotalEnergy());
+    step->setX(post->GetPosition()[0]);
+    step->setY(post->GetPosition()[1]);
+    step->setZ(post->GetPosition()[2]);
+    step->setPx(post->GetMomentum()[0]);
+    step->setPy(post->GetMomentum()[1]);
+    step->setPz(post->GetMomentum()[2]);
+    step->setE(post->GetTotalEnergy());
 
-    double posD[] = {post->GetPosition()[0], post->GetPosition()[1], post->GetPosition()[2]};
-    ip_Pos.emplace_back(TArrayD(3, posD));
-
-    double MomD[] = {post->GetMomentum()[0], post->GetMomentum()[1], post->GetMomentum()[2]};
-    ip_Mom.emplace_back(TArrayD(3, MomD));
 
     if (post->GetPhysicalVolume() == nullptr) {
-        ip_PVName.emplace_back(TString("OutofWorld"));
-        ip_ProcessName.emplace_back(TString("Transportation"));
+        step->setPVName("OutofWorld");
+        step->setProcessName("Transportation");
     } else {
-        auto tmp1 = post->GetPhysicalVolume()->GetName().data();
-        ip_PVName.emplace_back(TString(tmp1));
+        step->setPVName(post->GetPhysicalVolume()->GetName().data());
         auto tmp2 = post->GetProcessDefinedStep()->GetProcessName();
         const char *tmp3;
         if (tmp2.contains("biasWrapper"))
             tmp3 = tmp2(tmp2.index("(") + 1, tmp2.index(")") - tmp2.index("(") - 1).data();
         else
             tmp3 = tmp2.data();
-        ip_ProcessName.emplace_back(TString(tmp3));
+        step->setProcessName(std::string(tmp3));
     }
+
+    Steps->emplace_back(step);
 }

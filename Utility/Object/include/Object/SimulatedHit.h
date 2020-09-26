@@ -8,7 +8,7 @@
 #include "Object/TypeDef.h"
 #include "Object/McParticle.h"
 #include "Object/CalorimeterHit.h"
-#include "Utility/DHit.h"
+#include "DHit.h"
 
 class SimulatedHit : public DHit {
 public:
@@ -47,6 +47,14 @@ public:
 
     void setELeakWrapper(double eLeakWrapper);
 
+    // Add Methods
+    void addEdep(double EEm, double EHad) {
+        EdepEm += EEm;
+        EdepHad += EHad;
+
+        E += (EEm + EHad);
+    };
+
 private:
     double ELeak_Wrapper{0.};
     double EdepEm{0.};
@@ -55,6 +63,8 @@ private:
     // the corresponding MC particle contributing to this hit
     MCParticleVec PContribution;
     CalorimeterHitVec CaloHits;
+
+ClassDef(SimulatedHit, 11);
 };
 
 

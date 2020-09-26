@@ -2,7 +2,7 @@
 // Created by Zhang Yulei on 9/24/20.
 //
 
-#include "Core/EventStoreAndWriter.h"
+#include "Event/EventStoreAndWriter.h"
 
 #include <utility>
 #include <iostream>
@@ -52,14 +52,14 @@ void EventStoreAndWriter::RegisterDoubleVariable(const string &VarName, double *
     }
 }
 
-void EventStoreAndWriter::RegisterStrVariable(const string &VarName, TString *address, const string &LeafType) {
+void EventStoreAndWriter::RegisterStrVariable(const string &VarName, TString *address) {
     if (StringVariables.count(VarName) != 0) {
         std::cerr << "[WARNING] ==> String Variable " << VarName << " already exists." << std::endl;
     } else {
-        std::pair<std::string, TString *> tmp(LeafType, address);
-        StringVariables.insert(std::pair<std::string, std::pair<std::string, TString *> >(VarName, tmp));
+        //std::pair<std::string, TString *> tmp(LeafType, address);
+        StringVariables.insert(std::pair<std::string, TString * >(VarName, address));
 
-        tout->Branch(VarName.c_str(), address, LeafType.c_str());
+        tout->Branch(VarName.c_str(), address);
     }
 }
 
@@ -92,7 +92,8 @@ void EventStoreAndWriter::PrintTree() {
     }
 }
 
-void EventStoreAndWriter::FillTree() {
+void EventStoreAndWriter::FillTree(AnaEvnt* Evt) {
+
     tout->Fill();
     Initialization();
 }

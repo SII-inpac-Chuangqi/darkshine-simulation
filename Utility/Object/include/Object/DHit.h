@@ -5,11 +5,13 @@
 #ifndef DSIMU_DHIT_H
 #define DSIMU_DHIT_H
 
+#include "TObject.h"
+
 enum DetectorType {
-    TagTrk, RecTrk, ECAL_Center, ECAL_Outer, HCAL
+    nTagTrk, nRecTrk, nECAL_Center, nECAL_Outer, nHCAL
 };
 
-class DHit {
+class DHit : public TObject {
 public:
     // Constructor and Destructor
     DHit() = default;
@@ -145,6 +147,7 @@ public:
         CellID_Z = cellIdZ;
     }
 
+
 protected:
     int id{0};
     int CellID{0};
@@ -160,6 +163,8 @@ protected:
     double Z{0.};
     double T{0.};
     double E{0.};
+
+ClassDef(DHit,5);
 };
 
 #endif //DSIMU_DHIT_H

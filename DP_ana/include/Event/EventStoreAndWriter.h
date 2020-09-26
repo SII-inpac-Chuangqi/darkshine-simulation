@@ -12,6 +12,8 @@
 #include "TTree.h"
 #include "TString.h"
 
+#include "Event/AnaEvnt.h"
+
 class EventStoreAndWriter {
     /*
      * EventWriter:
@@ -58,7 +60,7 @@ public:
     void PrintTree();
 
     // Fill Methods
-    void FillTree();
+    void FillTree(AnaEvnt* );
     void Initialization();
     void CloseFile();
 
@@ -67,7 +69,7 @@ public:
 
     void RegisterIntVariable(const std::string& VarName, int *address, const std::string& LeafType);
     void RegisterDoubleVariable(const std::string& VarName, double *address, const std::string& LeafType);
-    void RegisterStrVariable(const std::string& VarName, TString *address, const std::string& LeafType);
+    void RegisterStrVariable(const std::string& VarName, TString *address);
 
 private:
 
@@ -85,7 +87,7 @@ private:
     // Registered Variables
     std::map<std::string, std::pair<std::string, int *> > IntVariables;
     std::map<std::string, std::pair<std::string, double *> > DoubleVariables;
-    std::map<std::string, std::pair<std::string, TString *> > StringVariables;
+    std::map<std::string, TString *>  StringVariables;
 };
 
 

@@ -34,7 +34,6 @@
 #include "G4TrackingManager.hh"
 #include "G4EventManager.hh"
 #include "G4Event.hh"
-#include "DP_simu/MCParticle.hh"
 #include "DP_simu/RootManager.hh"
 #include "G4SystemOfUnits.hh"
 
@@ -43,17 +42,14 @@ class MCParticle;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TrackingAction::TrackingAction(RootManager* rootMng)
- : G4UserTrackingAction()
-{
+ : G4UserTrackingAction() {
     froot = rootMng;
-    fMC = new MCParticle(); 
 }
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TrackingAction::~TrackingAction()
 {
-    delete fMC;
+    //delete fMC;
     //delete froot;
 }
 
@@ -63,49 +59,52 @@ void TrackingAction::PreUserTrackingAction(const G4Track* aTrack)
 { 
     /* Initialize Filter */
     //froot->Filter_Initialize();
+    fMC = new McParticle();
+    fMC->setPdg( aTrack->GetParticleDefinition()->GetPDGEncoding());
+    fMC->setId( aTrack->GetTrackID() );
+    fMC->setEnergy( aTrack->GetTotalEnergy() );
+    fMC->setPx(aTrack->GetMomentum()[0]);
+    fMC->setPy(aTrack->GetMomentum()[1]);
+    fMC->setPz(aTrack->GetMomentum()[2]);
+    fMC->setVertexX( aTrack->GetPosition()[0] );
+    fMC->setVertexY( aTrack->GetPosition()[1] );
+    fMC->setVertexZ( aTrack->GetPosition()[2] );
 
-    fMC->SetPDG( aTrack->GetParticleDefinition()->GetPDGEncoding());
-    fMC->Setid( aTrack->GetTrackID() );
-    fMC->SetParentID( aTrack->GetParentID() );
-    fMC->SetEnergy( aTrack->GetTotalEnergy() );
-    fMC->SetMomentum( aTrack->GetMomentum() );
-    fMC->SetVPos( aTrack->GetVertexPosition() );
-    if ( aTrack->GetCreatorProcess() ) {
-        fMC->SetProcess( aTrack->GetCreatorProcess()->GetProcessName() );
-        fMC->SetProcessType( aTrack->GetCreatorProcess()->GetProcessType() );
-        fMC->SetProcessSubType( aTrack->GetCreatorProcess()->GetProcessSubType() );
-    }
+    if ( aTrack->GetCreatorProcess() )
+        fMC->setCreateProcess( aTrack->GetCreatorProcess()->GetProcessName() );
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void TrackingAction::PostUserTrackingAction(const G4Track* aTrack)
 {
-    fMC->SetEPos( aTrack->GetStep()->GetPreStepPoint()->GetPosition() );
+    fMC->setEndPointX( aTrack->GetStep()->GetPreStepPoint()->GetPosition()[0] );
+    fMC->setEndPointY( aTrack->GetStep()->GetPreStepPoint()->GetPosition()[1] );
+    fMC->setEndPointZ( aTrack->GetStep()->GetPreStepPoint()->GetPosition()[2] );
 
-    G4double Eremain = aTrack->GetKineticEnergy();
+    fMC->setERemain( aTrack->GetKineticEnergy());
 
-    G4double pm = sqrt(fMC->GetMomentum()[0]*fMC->GetMomentum()[0]+
-                       fMC->GetMomentum()[1]*fMC->GetMomentum()[1]+
-                       fMC->GetMomentum()[2]*fMC->GetMomentum()[2]);
+    G4double pm = sqrt(fMC->getPx()*fMC->getPx()+
+                       fMC->getPy()*fMC->getPy()+
+                       fMC->getPz()*fMC->getPz());
 
-    if (  fMC->Getid() == 1 
+    auto MC = new McParticle(*fMC);
+
+    if (  fMC->getId() == 1
        || pm >= 1.*GeV
-       || (fMC->GetEnergy() >= 1.*GeV && fMC->GetEnergy() <= 8.*GeV)
-       || abs(fMC->GetPDG()) == 13   // Muon
-       || abs(fMC->GetPDG()) == 111  // Pion0
-       || abs(fMC->GetPDG()) == 211  // Pion+-
-       || abs(fMC->GetPDG()) == 321  // Kaon+-
-       || abs(fMC->GetPDG()) == 2212 // proton
-       || abs(fMC->GetPDG()) == 2112 // neutron
-       || abs(fMC->GetPDG()) == 14   // muon neutrino
-       || abs(fMC->GetPDG()) == 12   // electron neutrino
-       ) froot->FillMC( fMC , Eremain );
+       || (fMC->getEnergy() >= 1.*GeV && fMC->getEnergy() <= 8.*GeV)
+       || abs(fMC->getPdg()) == 13   // Muon
+       || abs(fMC->getPdg()) == 111  // Pion0
+       || abs(fMC->getPdg()) == 211  // Pion+-
+       || abs(fMC->getPdg()) == 321  // Kaon+-
+       || abs(fMC->getPdg()) == 2212 // proton
+       || abs(fMC->getPdg()) == 2112 // neutron
+       || abs(fMC->getPdg()) == 14   // muon neutrino
+       || abs(fMC->getPdg()) == 12   // electron neutrino
+       ) froot->FillMC( MC, aTrack->GetParentID());
 
-    fMC->Initialize();
-    if(aTrack->GetTrackID() == 1) {
-        //G4cout<< " " << G4endl;
-    }
+    delete fMC;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

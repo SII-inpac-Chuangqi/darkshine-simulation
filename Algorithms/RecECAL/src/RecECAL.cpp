@@ -26,7 +26,7 @@ void RecECAL::Begin() {
 
 }
 
-void RecECAL::ProcessEvt(DEvent *evt) {
+void RecECAL::ProcessEvt(AnaEvnt *evt) {
     // Initialization
     initialization();
 
@@ -45,7 +45,7 @@ void RecECAL::ProcessEvt(DEvent *evt) {
         const auto &steps = StepCollection.at(StepCollectionName);
 
         //Find Center Hit
-        SingleCenterFinding(hits, steps);
+        //SingleCenterFinding(hits, steps);
         if (verbose > 0) {
             std::cout << "-- # of hits in ECAL_Center: " << hits->size() << endl;
             std::cout << "-- Reconstructed Position: " << ( FindCenter ? "Found" : "NOT Found" ) <<endl;
@@ -62,7 +62,7 @@ void RecECAL::ProcessEvt(DEvent *evt) {
     }
 }
 
-void RecECAL::CheckEvt(DEvent *evt) {
+void RecECAL::CheckEvt(AnaEvnt *evt) {
     //cout<<"Check!"<<endl;
 
 }

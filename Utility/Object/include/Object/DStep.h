@@ -7,7 +7,9 @@
 
 #include <string>
 
-class DStep {
+#include "TObject.h"
+
+class DStep : public TObject {
 public:
     DStep() = default;
 
@@ -145,6 +147,7 @@ private:
     std::string PVName;
     std::string ProcessName;
 
+ClassDef(DStep,7);
 };
 
 #endif //DSIMU_DSTEP_H

@@ -6,7 +6,7 @@
 #define DSIMU_DEVENT_H
 
 #include <cstddef>
-#include<cstdlib>
+#include <cstdlib>
 #include <map>
 #include <iostream>
 #include <memory>
@@ -15,14 +15,20 @@
 #include "Object/McParticle.h"
 #include "Object/ReconstructedParticle.h"
 #include "Object/SimulatedHit.h"
-#include "Utility/DStep.h"
+#include "DStep.h"
 
-class DEvent {
+#include "TObject.h"
+
+enum CleanType {
+    nALL, nVector
+};
+
+class DEvent : public TObject {
 public:
     // Constructor
     DEvent() { Initialization(); };
 
-    virtual ~DEvent() {
+    ~DEvent() override {
         Initialization();
     }
 
@@ -41,24 +47,28 @@ public:
         return Verbose;
     }
 
-    const MCParticleMap &getMCParticleCollection() const {
+    const double *getRndm() const {
+        return Rndm;
+    }
+
+    const DStepMapO &getStepCollection() const {
+        return StepCollection;
+    }
+
+    const MCParticleMapO &getMcParticleCollection() const {
         return MCParticleCollection;
     }
 
-    const RecParticleMap &getRecParticleCollection() const {
+    const RecParticleMapO &getRecParticleCollection() const {
         return RecParticleCollection;
     }
 
-    const SimulatedHitMap &getSimulatedHitCollection() const {
+    const SimulatedHitMapO &getSimulatedHitCollection() const {
         return SimulatedHitCollection;
     }
 
-    const CalorimeterHitMap &getCalorimeterHitCollection() const {
+    const CalorimeterHitMapO &getCalorimeterHitCollection() const {
         return CalorimeterHitCollection;
-    }
-
-    const DStepMap &getStepCollection() const {
-        return StepCollection;
     }
 
     // Set Methods
@@ -74,19 +84,24 @@ public:
         Verbose = verbose;
     }
 
+    void setRndm(const double *rndm) {
+        for (int i = 0; i < 4; ++i)
+            Rndm[i] = rndm[i];
+    }
+
     // Initialization
-    void Initialization();
+    void Initialization(CleanType = nALL);
 
     // Register Collections
-    DStepVecUniPtr RegisterStepCollection(const std::string &);
+    DStepVec *RegisterStepCollection(const std::string &);
 
-    MCParticleVecUniPtr RegisterMCParticleCollection(const std::string &);
+    MCParticleVec *RegisterMCParticleCollection(const std::string &);
 
-    RecParticleVecUniPtr RegisterRecParticleCollection(const std::string &);
+    RecParticleVec *RegisterRecParticleCollection(const std::string &);
 
-    SimulatedHitVecUniPtr RegisterSimulatedHitCollection(const std::string &);
+    SimulatedHitVec *RegisterSimulatedHitCollection(const std::string &);
 
-    CalorimeterHitVecUniPtr RegisterCalorimeterHitCollection(const std::string &);
+    CalorimeterHitVec *RegisterCalorimeterHitCollection(const std::string &);
 
     // Delete Collections
     void DeleteCollection(const std::string &);
@@ -96,6 +111,33 @@ public:
     std::vector<std::string> *ListCollections(const T &);
 
     std::vector<std::string> *ListAllCollections();
+
+    /*
+     * Miscellaneous (truth)
+     */
+    double getPnEnergyTarget() const {
+        return PNEnergy_Target;
+    }
+
+    void setPnEnergyTarget(double pnEnergyTarget) {
+        PNEnergy_Target = pnEnergyTarget;
+    }
+
+    double getPnEnergyEcal() const {
+        return PNEnergy_ECAL;
+    }
+
+    void setPnEnergyEcal(double pnEnergyEcal) {
+        PNEnergy_ECAL = pnEnergyEcal;
+    }
+
+    double getEleakEcal() const {
+        return Eleak_ECAL;
+    }
+
+    void setEleakEcal(double eleakEcal) {
+        Eleak_ECAL = eleakEcal;
+    }
 
 
 protected:
@@ -127,13 +169,15 @@ protected:
     int Verbose{0};
 
     // Step Collection
-    DStepMap StepCollection;
+    DStepMapO StepCollection;
 
     // Event Physics Quantities
-    MCParticleMap MCParticleCollection;
-    RecParticleMap RecParticleCollection;
-    SimulatedHitMap SimulatedHitCollection;
-    CalorimeterHitMap CalorimeterHitCollection;
+    MCParticleMapO MCParticleCollection;
+    RecParticleMapO RecParticleCollection;
+    SimulatedHitMapO SimulatedHitCollection;
+    CalorimeterHitMapO CalorimeterHitCollection;
+
+ClassDef(DEvent, 1);
 };
 
 // Some inline

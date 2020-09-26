@@ -5,7 +5,9 @@
 #include "Object/McParticle.h"
 
 McParticle::McParticle() {
-
+    Parents = nullptr;
+    Children = nullptr;
+    RecParticles = nullptr;
 }
 
 McParticle::McParticle(const McParticle &rhs) : DParticle(rhs) {
@@ -31,40 +33,8 @@ double McParticle::getERemain() const {
     return ERemain;
 }
 
-const RecParticleVec &McParticle::getRecParticles() const {
-    return RecParticles;
-}
-
-const SimulatedHitVec &McParticle::getSimHits() const {
-    return SimHits;
-}
-
-const MCParticleVec &McParticle::getParents() const {
-    return Parents;
-}
-
-const MCParticleVec &McParticle::getChildren() const {
-    return Children;
-}
-
 void McParticle::setERemain(double eRemain) {
     ERemain = eRemain;
-}
-
-void McParticle::setRecParticles(const RecParticleVec &recParticles) {
-    RecParticles = recParticles;
-}
-
-void McParticle::setSimHits(const SimulatedHitVec &simHits) {
-    SimHits = simHits;
-}
-
-void McParticle::setParents(const MCParticleVec &parents) {
-    Parents = parents;
-}
-
-void McParticle::setChildren(const MCParticleVec &children) {
-    Children = children;
 }
 
 bool McParticle::operator==(const McParticle &rhs) const {

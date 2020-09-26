@@ -8,7 +8,7 @@
 #include "Object/TypeDef.h"
 #include "Object/SimulatedHit.h"
 #include "Object/ReconstructedParticle.h"
-#include "Utility/DHit.h"
+#include "DHit.h"
 
 class CalorimeterHit : public DHit {
 public:
@@ -39,6 +39,9 @@ public:
 private:
     RecParticleVec PContribution;
     SimulatedHitVec SimHits;
+
+ClassDef(CalorimeterHit,12);
+
 };
 
 

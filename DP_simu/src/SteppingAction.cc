@@ -30,7 +30,6 @@
 
 #include "DP_simu/SteppingAction.hh"
 #include "DP_simu/RootManager.hh"
-#include "DP_simu/MCParticle.hh"
 
 #include "G4Step.hh"
 #include "G4Track.hh"
@@ -45,8 +44,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 SteppingAction::SteppingAction(RootManager * rootMng)
- : G4UserSteppingAction(),
-   if_select(false), if_kill(true), if_biased(false)
+ : G4UserSteppingAction()
 {
     froot = rootMng;
     G4cout<<"Stepping Initialized!!"<<G4endl;
@@ -72,7 +70,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
     G4StepPoint* prev = aStep->GetPreStepPoint();
     G4StepPoint* post = aStep->GetPostStepPoint();
-    MCParticle* p = new MCParticle();
+    auto * p = new McParticle();
 
     // Get Detector Region
     if( post && post->GetPhysicalVolume() ) {
@@ -82,33 +80,19 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
     if ( aStep->GetTrack()->GetTrackID()==1 ) {
 
-        p->SetPDG( aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding() );
-        p->Setid( aStep->GetTrack()->GetTrackID());
-        p->SetEnergy( post->GetTotalEnergy() );
-        p->SetMomentum( post->GetMomentum() );
-        p->SetVPos( post->GetPosition() );
-
-        ///*
-        if ( fabs(p->GetVPos()[2] - 0.175*mm) <= 0.05*mm ) {
-            p1 = new MCParticle();
-            p1->SetMomentum( post->GetMomentum() );
-            p1->SetVPos( post->GetPosition() );
-
-            froot->FillE1( p1 );
-            p1->Initialize();
-        }
-
-        if ( fabs(p->GetVPos()[2] - 181.275*mm) <= 0.05*mm ) {
-                p2 = p;
-                froot->FillE2( p2 );
-                p2->Initialize();
-        }
-
+        p->setPdg( aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding() );
+        p->setId( aStep->GetTrack()->GetTrackID());
+        p->setEnergy( post->GetTotalEnergy() );
+        p->setPx(post->GetMomentum()[0]);
+        p->setPy(post->GetMomentum()[1]);
+        p->setPz(post->GetMomentum()[2]);
+        p->setVertexX( post->GetPosition()[0] );
+        p->setVertexY( post->GetPosition()[1] );
+        p->setVertexZ( post->GetPosition()[2] );
 
         /* Record all steps for certain particle */
         if ( froot->GetRecordStep() )
             froot->FillParticleStep(aStep);
-
     }
 
     if ( aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding() == 22 ) {
@@ -120,17 +104,15 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
             && post->GetProcessDefinedStep()->GetProcessSubType() == 121) {
             
             // Target
-            if( post->GetPosition()[2] <= 180.*mm ) 
-                EMax1 = deltaE; 
+            if( post->GetPosition()[2] <= 180.*mm )
+                PNEnergyTar = deltaE;
             // ECal
-            if( post->GetPosition()[2]  > 180.*mm ) 
-                EMax2 = deltaE; 
+            if( post->GetPosition()[2]  > 180.*mm )
+                PNEnergyECAL = deltaE;
 
-            froot->FillPNE(EMax1, EMax2);
+            froot->FillPNE(PNEnergyTar, PNEnergyECAL);
         }
     }
-
-
 
     /* Optical Photon Detection: APD region */
     if ( froot->GetOptical() && aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "opticalphoton" ) {

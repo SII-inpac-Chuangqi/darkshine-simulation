@@ -6,9 +6,9 @@
 #define DSIMU_CONTROLMANAGER_H
 
 #include "Core/AlgoManager.h"
-#include "Core/EventReader.h"
+#include "Event/EventReader.h"
 #include "Core/ConfigManager.h"
-#include "Core/EventStoreAndWriter.h"
+#include "Event/EventStoreAndWriter.h"
 
 class ControlManager {
     /*

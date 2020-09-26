@@ -1,9 +1,9 @@
 #ifndef RootManager_h
 #define RootManager_h 1
 
-#include "MCParticle.hh"
+#include "Object/McParticle.h"
+#include "Object/SimulatedHit.h"
 #include "RootMessenger.hh"
-#include "SimHit.hh"
 
 #include "TFile.h"
 #include "TTree.h"
@@ -26,214 +26,212 @@
 
 #include "RootGlobal.hh"
 
+#include "Object/DEvent.h"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class TFile;
+
 class TTree;
+
 class TRandom3;
+
 class RootMessenger;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class RootManager {
-    public:
-        RootManager();
-        ~RootManager();
+public:
+    RootManager();
 
-        void book();
-        void bookCollection(G4String );
-        void save();
-        void initialize();
+    ~RootManager();
 
-        /* set methods */
-        void SetOutFileName(G4String in) {  outfilename = in; };
-        void SetStartID(int id) { fStart = id; };
-        void SetNbEvent(int id) { fEvtNb = id; };
-        void SetClean(bool id) { if_clean = id; };
-        void SetFilter(bool id) { if_filter = id; };
-        void SetEndEvt(bool id) { if_EndEvt = id; };
-        void SetOptical(bool id) { if_Optical = id; G4cout<<"Optical Process: "<<if_Optical<<G4endl;};
-        void SetRecordStep(bool id) { if_record_ip = id; };
+    void book();
 
-        void SetifBias    (  G4bool   in )  { ifBias      = in; };
-        void SetBiasProcess( G4String in )  { BiasProcess = in; };
-        void SetBiasFactor ( G4double in )  { BiasFactor  = in; }; 
-        void SetBiasEmin   ( G4double in )  { BiasEmin    = in; }; 
-        void SetifBiasTarget(G4bool   in )  { ifBiasTarget= in; };
-        void SetifBiasECAL(  G4bool   in )  { ifBiasECAL  = in; };
+    void bookCollection(G4String);
 
-        void SetifFilter_HardBrem    (  G4bool   in )  { ifFilter_HardBrem = in; };
-        void SetifFilter_Process    (  G4bool   in )  { ifFilter_Process = in; };
+    void save();
 
-        /* get methods */
-        bool GetFilter() { return if_filter; };
-        bool GetOptical() { return if_Optical; };
-        bool GetRecordStep() { return if_record_ip; };
-        int  GetNbEvent() { return fEvtNb; };
-        G4String GetOutFileName() { return outfilename; };
+    void initialize();
 
-        G4bool   GetifBias    (  )  { return ifBias      ; };
-        G4String GetBiasProcess( )  { return BiasProcess ; };
-        G4double GetBiasFactor ( )  { return BiasFactor  ; }; 
-        G4double GetBiasEmin   ( )  { return BiasEmin    ; }; 
-        G4bool   GetifBiasTarget()  { return ifBiasTarget; };
-        G4bool   GetifBiasECAL(  )  { return ifBiasECAL  ; };
+    /* set methods */
+    void SetOutFileName(G4String in) { outfilename = in; };
 
-        G4bool   GetifFilter_HardBrem    (  )  { return ifFilter_HardBrem      ; };
-        G4bool   GetifFilter_Process    (  )  { return ifFilter_Process      ; };
-        /* filter methods */
-        void Filter_Track_Initialize();
-        void Filter_Event_Initialize();
+    void SetStartID(int id) { fStart = id; };
 
-        void SetnewTrack(G4bool in) { newTrack = in; };
-        void SetGammaEmin(G4double in) { GammaEmin = in; };
-        void SetHardBrem_ScanDistance(G4double in) { HardBrem_ScanDistance = in; };
+    void SetNbEvent(int id) { fEvtNb = id; };
 
-        void SetProcessName(G4String in) { ProcessName = in; };
-        void SetProcessEmin(G4double in) { ProcessEmin = in; };
-        void SetProcess_MinScanDistance(G4double in) { Process_MinScanDistance = in; };
-        void SetProcess_MaxScanDistance(G4double in) { Process_MaxScanDistance = in; };
+    void SetClean(bool id) { if_clean = id; };
 
-        G4bool Filter_HardBrem(const G4Step* );
-        void Filter_Process(const G4Step* );
-        G4bool GetFilter_Process_Result() { return Filter_Process_Result; };
+    void SetFilter(bool id) { if_filter = id; };
 
-        /* fill methods */
-        void FillSim(Int_t    EventID, const Double_t* Rndm);
-        void FillSimHit(const G4String&, SimHit* );
+    void SetEndEvt(bool id) { if_EndEvt = id; };
 
-        void FillMC( MCParticle* , G4double );
-        void FillE1( MCParticle* );
-        void FillE2( MCParticle* );
-        void FillPNE( G4double E1, G4double E2 );
-        void FillEleak( const G4Step*, G4String );
-        bool FillOptical( const G4Step*, G4String );
-        void FillParticleStep( const G4Step* );
+    void SetOptical(bool id) {
+        if_Optical = id;
+        G4cout << "Optical Process: " << if_Optical << G4endl;
+    };
 
-    private:
-        /*                   */
-        /* Control Variables */
-        /*                   */
+    void SetRecordStep(bool id) { if_record_ip = id; };
 
-        Bool_t      if_filter;
-        Bool_t      if_EndEvt;
-        Bool_t      if_Optical;
+    void SetifBias(G4bool in) { ifBias = in; };
 
-        RootMessenger* fMessenger;
+    void SetBiasProcess(G4String in) { BiasProcess = in; };
 
-        /* Biasing Variables */
-        G4bool      ifBias;
+    void SetBiasFactor(G4double in) { BiasFactor = in; };
 
-        G4String    BiasProcess;
-        G4double    BiasFactor ; 
-        G4double    BiasEmin   ; 
-        G4bool      ifBiasTarget;
-        G4bool      ifBiasECAL;
+    void SetBiasEmin(G4double in) { BiasEmin = in; };
 
-        /* Filter Variables */
-        G4bool      ifFilter_HardBrem;
-        G4bool      ifFilter_Process;
-        G4bool      newTrack;
+    void SetifBiasTarget(G4bool in) { ifBiasTarget = in; };
 
-        G4double    Filter_HardBrem_Result;
-        G4double    GammaEmin;
-        G4double    HardBrem_ScanDistance;
+    void SetifBiasECAL(G4bool in) { ifBiasECAL = in; };
 
-        G4String    ProcessName;
-        G4double    Filter_Process_Result;
-        G4double    ProcessEmin;
-        G4double    Process_MinScanDistance;
-        G4double    Process_MaxScanDistance;
+    void SetifFilter_HardBrem(G4bool in) { ifFilter_HardBrem = in; };
 
-        /*              */
-        /* Root Outputs */
-        /*              */
+    void SetifFilter_Process(G4bool in) { ifFilter_Process = in; };
 
-        G4String    outfilename;
-        TFile*      rootFile;
-        TTree*      tr;
+    /* get methods */
+    bool GetFilter() { return if_filter; };
 
-        Int_t       fStart;
-        Int_t       fEvtNb;
-        Int_t       fEvtN;
+    bool GetOptical() { return if_Optical; };
 
-        Int_t       EventID;
-        Double_t    Rndm[4];
+    bool GetRecordStep() { return if_record_ip; };
 
-        // Electron e1: right after target 
-        Double_t    t_e1_Momentum[3];
-        Double_t    t_e1_Pos[3]; // vertex position
-        Double_t    t_e2_Momentum[3];
-        Double_t    t_e2_Pos[3]; // vertex position
+    int GetNbEvent() { return fEvtNb; };
 
-        // MCParticle
-        Int_t                      t_mc_Nb;
-        std::vector<int>           t_mc_id;
-        std::vector<int>           t_mc_PDG;
-        std::vector<int>           t_mc_ParentID;
-        std::vector<TArrayD>       t_mc_Mom;
-        std::vector<double>        t_mc_E;
-        std::vector<double>        t_mc_Eremain;
-        std::vector<TArrayD>       t_mc_VPos;
-        std::vector<TArrayD>       t_mc_EPos;
-        std::vector<TString>       t_mc_ProcessName;
+    G4String GetOutFileName() { return outfilename; };
 
-        // Initial Particle Movement
-        bool            if_record_ip;
+    G4bool GetifBias() { return ifBias; };
 
-        std::vector<TArrayD> ip_Pos;
-        std::vector<TArrayD> ip_Mom;
-        std::vector<double> ip_Energy;
-        std::vector<TString> ip_PVName;
-        std::vector<TString> ip_ProcessName;
+    G4String GetBiasProcess() { return BiasProcess; };
 
-    // Max PN energy
-        Double_t        t_mc_PNEnergy_Tar;
-        Double_t        t_mc_PNEnergy_ECal;
+    G4double GetBiasFactor() { return BiasFactor; };
 
-        // Leaking Energy in ECAL
-        Double_t        t_mc_Eleak_ECAL;
+    G4double GetBiasEmin() { return BiasEmin; };
 
-        // map template variable
-        std::map<G4String, int > Hit_No;
-        std::map<G4String, std::vector<int >* > Hit_Type;
-        std::map<G4String, std::vector<int >* > Hit_ID;
-        std::map<G4String, std::vector<int >* > Hit_PDG;
-        std::map<G4String, std::vector<int >* > Hit_DetectorID;
-        std::map<G4String, std::vector<int >* > Hit_DetectorID_x;
-        std::map<G4String, std::vector<int >* > Hit_DetectorID_y;
-        std::map<G4String, std::vector<int >* > Hit_DetectorID_z;
-        std::map<G4String, std::vector<double >* > Hit_Time;
-        std::map<G4String, std::vector<double >* > Hit_Edep;
-        std::map<G4String, std::vector<double >* > Hit_EdepEM;
-        std::map<G4String, std::vector<double >* > Hit_EdepHad;
-        std::map<G4String, std::vector<double >* > Hit_X;
-        std::map<G4String, std::vector<double >* > Hit_Y;
-        std::map<G4String, std::vector<double >* > Hit_Z;
+    G4bool GetifBiasTarget() { return ifBiasTarget; };
 
-        std::map<G4String, int > Optical_No;
-        std::map<G4String, std::vector<double >* > Optical_Time;
-        std::map<G4String, std::vector<double >* > Optical_E;
-        std::map<G4String, std::vector<int >* > Optical_DetID;
-        //std::map<G4String, int* > Optical_DetID_x;
-        //std::map<G4String, int* > Optical_DetID_y;
-        //std::map<G4String, int* > Optical_DetID_z;
+    G4bool GetifBiasECAL() { return ifBiasECAL; };
 
-        std::map<G4String, double > Hit_Eleak_Wrapper;
+    G4bool GetifFilter_HardBrem() { return ifFilter_HardBrem; };
 
-        // iterators
-        std::map<G4String, int >::iterator itr_i;
-        std::map<G4String, double >::iterator itr_d;
-        std::map<G4String, int* >::iterator itr_int;
-        std::map<G4String, double* >::iterator itr_double;
-        std::map<G4String, std::vector<int >* >::iterator itrvec_int;
-        std::map<G4String, std::vector<double >* >::iterator itrvec_double;
+    G4bool GetifFilter_Process() { return ifFilter_Process; };
+
+    /* filter methods */
+    void Filter_Track_Initialize();
+
+    void Filter_Event_Initialize();
+
+    void SetnewTrack(G4bool in) { newTrack = in; };
+
+    void SetGammaEmin(G4double in) { GammaEmin = in; };
+
+    void SetHardBrem_ScanDistance(G4double in) { HardBrem_ScanDistance = in; };
+
+    void SetProcessName(G4String in) { ProcessName = in; };
+
+    void SetProcessEmin(G4double in) { ProcessEmin = in; };
+
+    void SetProcess_MinScanDistance(G4double in) { Process_MinScanDistance = in; };
+
+    void SetProcess_MaxScanDistance(G4double in) { Process_MaxScanDistance = in; };
+
+    G4bool Filter_HardBrem(const G4Step *);
+
+    void Filter_Process(const G4Step *);
+
+    G4bool GetFilter_Process_Result() { return Filter_Process_Result; };
+
+    /* fill methods */
+    void FillSim(Int_t EventID, const Double_t *Rndm);
+
+    void FillSimHit(const G4String &, SimulatedHit *);
+
+    void FillMC(McParticle *, int);
+
+    void FillPNE(G4double E1, G4double E2);
+
+    void FillEleak(const G4Step *, G4String);
+
+    bool FillOptical(const G4Step *, G4String);
+
+    void FillParticleStep(const G4Step *);
+
+private:
+    /*                   */
+    /* Control Variables */
+    /*                   */
+
+    Bool_t if_filter;
+    Bool_t if_EndEvt;
+    Bool_t if_Optical;
+
+    RootMessenger *fMessenger;
+
+    /* Biasing Variables */
+    G4bool ifBias;
+
+    G4String BiasProcess;
+    G4double BiasFactor;
+    G4double BiasEmin;
+    G4bool ifBiasTarget;
+    G4bool ifBiasECAL;
+
+    /* Filter Variables */
+    G4bool ifFilter_HardBrem;
+    G4bool ifFilter_Process;
+    G4bool newTrack;
+
+    G4double Filter_HardBrem_Result;
+    G4double GammaEmin;
+    G4double HardBrem_ScanDistance;
+
+    G4String ProcessName;
+    G4double Filter_Process_Result;
+    G4double ProcessEmin;
+    G4double Process_MinScanDistance;
+    G4double Process_MaxScanDistance;
+
+    /*              */
+    /* Root Outputs */
+    /*              */
+
+    G4String outfilename;
+    TFile *rootFile;
+    TTree *tr;
+
+    Int_t fStart;
+    Int_t fEvtNb;
+    Int_t fEvtN;
+
+    Int_t EventID;
+    Double_t Rndm[4];
 
 
-        // Clean Mode
-        TRandom3    rnd;
-        Bool_t      if_clean;
+    // Initial Particle Movement
+    bool if_record_ip;
 
+    // Optical Photon
+    std::map<G4String, int> Optical_No;
+    std::map<G4String, std::vector<double> *> Optical_Time;
+    std::map<G4String, std::vector<double> *> Optical_E;
+    std::map<G4String, std::vector<int> *> Optical_DetID;
+    //std::map<G4String, int* > Optical_DetID_x;
+    //std::map<G4String, int* > Optical_DetID_y;
+    //std::map<G4String, int* > Optical_DetID_z;
+
+    // iterators
+    std::map<G4String, int>::iterator itr_i;
+    std::map<G4String, double *>::iterator itr_double;
+    std::map<G4String, std::vector<int> *>::iterator itrvec_int;
+    std::map<G4String, std::vector<double> *>::iterator itrvec_double;
+
+    // Clean Mode
+    TRandom3 rnd;
+    Bool_t if_clean;
+
+    // DEvent Collection
+    DEvent *Evt;
 
 };
 

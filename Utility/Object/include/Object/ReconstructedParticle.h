@@ -8,7 +8,7 @@
 #include "Object/TypeDef.h"
 #include "Object/CalorimeterHit.h"
 #include "Object/McParticle.h"
-#include "Utility/DParticle.h"
+#include "DParticle.h"
 
 class ReconstructedParticle : public DParticle {
 public:
@@ -49,6 +49,8 @@ private:
 
     MCParticleVec MCParticles;
     CalorimeterHitVec CaloHits;
+
+ClassDef(ReconstructedParticle,13);
 
 };
 
