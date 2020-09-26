@@ -8,7 +8,6 @@
 
 #include "G4TouchableHistory.hh"
 
-#include <iostream>
 #include <stdexcept>
 #include <sstream>
 
@@ -143,7 +142,7 @@ void RootManager::FillPNE(G4double E1, G4double E2) {
 void RootManager::FillMC(McParticle *mc, int ParentID) {
     if (if_clean) return;
 
-    auto mcps = Evt->getMcParticleCollection().at("RawMCParticle");
+    auto mcps = Evt->getMcParticleCollection_Old().at("RawMCParticle");
     mc->setParents(mc->SearchID(mcps, ParentID));
 
     mcps->push_back(mc);
@@ -173,7 +172,7 @@ void RootManager::FillSim(Int_t eventID, const Double_t *Rnd) {
 
 void RootManager::FillSimHit(const G4String &cIn, SimulatedHit *hit) {
 
-    auto SimHits = Evt->getSimulatedHitCollection();
+    auto SimHits = Evt->getSimulatedHitCollection_Old();
     auto Hits = new SimulatedHit(*hit);
 
     SimHits.at(cIn)->emplace_back(Hits);
@@ -188,7 +187,7 @@ void RootManager::FillEleak(const G4Step *in, G4String type) {
     else if (type.contains("_PVW")) {
         auto cin = type.remove(type.index("_PVW"));
 
-        //auto SimHits = Evt->getSimulatedHitCollection();
+        //auto SimHits = Evt->getSimulatedHitCollection_Old();
         //auto itr = SimHits.at(cin)->end() - 1;
         //(*itr)->setELeakWrapper( (*itr)->getELeakWrapper() + deltaE);
     }
@@ -199,7 +198,6 @@ void RootManager::FillEleak(const G4Step *in, G4String type) {
 bool RootManager::FillOptical(const G4Step *in, G4String type) {
     bool flag = false;
     if (type.contains("_APDWorld_PV")) {
-        //G4cout << "==>Optical Photon Detected in APD." << G4endl;
         auto cin = type.remove(type.index("_APDWorld_PV"));
         auto *touchable = (G4TouchableHistory *) (in->GetPreStepPoint()->GetTouchable());
         G4int reNumber = touchable->GetReplicaNumber();
@@ -221,7 +219,7 @@ void RootManager::FillParticleStep(const G4Step *aStep) {
     G4StepPoint *prev = aStep->GetPreStepPoint();
     G4StepPoint *post = aStep->GetPostStepPoint();
 
-    auto Steps = Evt->getStepCollection().at("Initial_Particle_Step");
+    auto Steps = Evt->getStepCollection_Old().at("Initial_Particle_Step");
     auto step = new DStep();
     step->setId(static_cast<int>(Steps->size()));
     if (Steps->empty()) {

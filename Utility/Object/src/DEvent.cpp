@@ -6,7 +6,6 @@
 
 void DEvent::Initialization(CleanType ct) {
 
-
     for (auto itr : MCParticleCollection) {
         for (auto itr2 : *itr.second) {
             delete itr2;

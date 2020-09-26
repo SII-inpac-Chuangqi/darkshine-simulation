@@ -26,7 +26,7 @@ void ControlManager::run() {
     setSkipNumber(ConfMgr->getSkipNumber());
 
     // Define output and data storage
-    EvtWrt = shared_ptr<EventStoreAndWriter>(new EventStoreAndWriter(OutName));
+    std::shared_ptr<EventStoreAndWriter> EvtWrt = make_shared<EventStoreAndWriter>(OutName);
 
     EvtReader->setRunNumber(RunNumber);
     EvtReader->setEventNumber(EventNumber);
@@ -48,7 +48,7 @@ void ControlManager::run() {
     /* DEFINE ALGO PROCESSOR HERE */
     //algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example1", EvtWrt)) );
     //algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)) );
-    //algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)) );
+    algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)) );
 
     ConfMgr->ReadAlgoList();
     algo->BeginAnaProcessors();

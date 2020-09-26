@@ -14,11 +14,11 @@ public:
     // Constructor and Destructor
     DParticle() = default;
 
-    DParticle(const DParticle &rhs) {
+    DParticle(const DParticle &rhs)  : TObject(rhs) {
         *this = rhs;
     }
 
-    virtual ~DParticle() = default;
+    ~DParticle() override = default;
 
     bool operator==(const DParticle &rhs) const {
         return id == rhs.id &&

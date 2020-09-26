@@ -102,7 +102,7 @@ private:
     AlgoManager *algo;
     EventReader *EvtReader;
     ConfigManager *ConfMgr;
-    std::shared_ptr<EventStoreAndWriter> EvtWrt;
+
 };
 
 

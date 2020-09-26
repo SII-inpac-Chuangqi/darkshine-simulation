@@ -16,11 +16,11 @@ public:
     // Constructor and Destructor
     DHit() = default;
 
-    DHit(const DHit &rhs) {
+    DHit(const DHit &rhs)  : TObject(rhs) {
         *this = rhs;
     }
 
-    virtual ~DHit() = default;
+    ~DHit() override = default;
 
     bool operator==(const DHit &rhs) const {
         return id == rhs.id &&

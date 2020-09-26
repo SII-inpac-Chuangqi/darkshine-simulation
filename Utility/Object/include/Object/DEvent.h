@@ -26,10 +26,10 @@ enum CleanType {
 class DEvent : public TObject {
 public:
     // Constructor
-    DEvent() { Initialization(); };
+    DEvent() { Initialization(nALL); };
 
     ~DEvent() override {
-        Initialization();
+        Initialization(nALL);
     }
 
     // Operators
@@ -51,23 +51,23 @@ public:
         return Rndm;
     }
 
-    const DStepMapO &getStepCollection() const {
+    const DStepMapO &getStepCollection_Old() const {
         return StepCollection;
     }
 
-    const MCParticleMapO &getMcParticleCollection() const {
+    const MCParticleMapO &getMcParticleCollection_Old() const {
         return MCParticleCollection;
     }
 
-    const RecParticleMapO &getRecParticleCollection() const {
+    const RecParticleMapO &getRecParticleCollection_Old() const {
         return RecParticleCollection;
     }
 
-    const SimulatedHitMapO &getSimulatedHitCollection() const {
+    const SimulatedHitMapO &getSimulatedHitCollection_Old() const {
         return SimulatedHitCollection;
     }
 
-    const CalorimeterHitMapO &getCalorimeterHitCollection() const {
+    const CalorimeterHitMapO &getCalorimeterHitCollection_Old() const {
         return CalorimeterHitCollection;
     }
 
@@ -89,8 +89,8 @@ public:
             Rndm[i] = rndm[i];
     }
 
-    // Initialization
-    void Initialization(CleanType = nALL);
+    virtual // Initialization
+    void Initialization(CleanType);
 
     // Register Collections
     DStepVec *RegisterStepCollection(const std::string &);
@@ -110,7 +110,7 @@ public:
     template<class T>
     std::vector<std::string> *ListCollections(const T &);
 
-    std::vector<std::string> *ListAllCollections();
+    virtual std::vector<std::string> *ListAllCollections();
 
     /*
      * Miscellaneous (truth)
@@ -139,7 +139,12 @@ public:
         Eleak_ECAL = eleakEcal;
     }
 
-
+    McParticle* SearchID(MCParticleVec* mv, int ID) {
+        for (auto itr : *mv) {
+            if (itr->getId() == ID) return itr;
+        }
+        return nullptr;
+    }
 protected:
     // run number
     int RunID{0};

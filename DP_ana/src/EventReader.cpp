@@ -61,11 +61,11 @@ void EventReader::RegisterOutput() {
 
 void EventReader::Convert() {
     /*
-     * Convert Input root to DEvent format
+     *
      */
 
     // Initialization
-    evt->Initialization();
+    evt->Initialization(nALL);
 
     evt->ConvertTreeValuePtr(EvtPtr);
 

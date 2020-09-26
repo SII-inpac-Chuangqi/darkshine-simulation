@@ -117,6 +117,10 @@ public:
 
     G4bool GetifFilter_Process() { return ifFilter_Process; };
 
+    DEvent *GetEvt() const {
+        return Evt;
+    }
+
     /* filter methods */
     void Filter_Track_Initialize();
 

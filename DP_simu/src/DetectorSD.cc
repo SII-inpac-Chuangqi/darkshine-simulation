@@ -126,15 +126,15 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     if (PDG == 11 || PDG == -11 || PDG == 22) E_EM = edep;
     else E_Had = edep;
 
-
     // Add values
     hit->addEdep(E_EM, E_Had);
     hit->setT(step->GetPostStepPoint()->GetGlobalTime());
     hit->setCellIdX(static_cast<int>(CellID.x()));
     hit->setCellIdY(static_cast<int>(CellID.y()));
     hit->setCellIdZ(static_cast<int>(CellID.z()));
-    //hit->SetParticleID( step->GetTrack()->GetTrackID() );
-    //hit->setDetector( fType );
+
+    //hit->addPContribution_TrackID(step->GetTrack()->GetTrackID());
+
     hit->setCellId(reNumber + 1); // replica start from 0 in DetectorConstruction
     if (!fType) {
         hit->setX(HitPoint.x());
@@ -143,10 +143,11 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
         fRootMng->FillSimHit(fname, hit);
 
         delete hit;
-    } else
+    } else {
         hit->setX(CellPosition.x());
-    hit->setY(CellPosition.y());
-    hit->setZ(CellPosition.z());
+        hit->setY(CellPosition.y());
+        hit->setZ(CellPosition.z());
+    }
 
     //G4cout<<fname<<", "<<reNumber<<", "<<hit->GetEdep()<<", Edep "<<edep<<G4endl;
 

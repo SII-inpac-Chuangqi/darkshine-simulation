@@ -16,6 +16,30 @@ public:
 
     void ConvertTreeValuePtr(const std::shared_ptr<TTreeReaderValue<DEvent> >& evt);
 
+    void Initialization(CleanType ct) override;
+
+    std::vector<std::string> *ListAllCollections() override;
+
+    const DStepMap &getStepCollection() const  {
+        return StepCollectionSP;
+    }
+
+    const MCParticleMap &getMcParticleCollection() const  {
+        return MCParticleCollectionSP;
+    }
+
+    const RecParticleMap &getRecParticleCollection() const {
+        return RecParticleCollectionSP;
+    }
+
+    const SimulatedHitMap &getSimulatedHitCollection() const {
+        return SimulatedHitCollectionSP;
+    }
+
+    const CalorimeterHitMap &getCalorimeterHitCollection() const {
+        return CalorimeterHitCollectionSP;
+    }
+
 private:
     // Step Collection
     DStepMap StepCollectionSP;

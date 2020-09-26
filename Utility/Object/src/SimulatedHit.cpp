@@ -4,11 +4,7 @@
 
 #include "Object/SimulatedHit.h"
 
-SimulatedHit::SimulatedHit() {
-
-}
-
-SimulatedHit::~SimulatedHit() {}
+SimulatedHit::SimulatedHit() = default;
 
 SimulatedHit::SimulatedHit(const SimulatedHit &rhs) : DHit(rhs) {
     *this = rhs;
@@ -20,6 +16,7 @@ SimulatedHit &SimulatedHit::operator=(const SimulatedHit &rhs) {
     ELeak_Wrapper = rhs.ELeak_Wrapper;
     EdepEm = rhs.EdepEm;
     EdepHad = rhs.EdepHad;
+    //PContribution_TrackID = rhs.PContribution_TrackID;
     PContribution = rhs.PContribution;
     CaloHits = rhs.CaloHits;
     return *this;
@@ -33,7 +30,7 @@ double SimulatedHit::getEdepHad() const {
     return EdepHad;
 }
 
-const MCParticleVec &SimulatedHit::getPContribution() const {
+const MCParticleVec& SimulatedHit::getPContribution() const {
     return PContribution;
 }
 
@@ -70,6 +67,7 @@ bool SimulatedHit::operator==(const SimulatedHit &rhs) const {
            ELeak_Wrapper == rhs.ELeak_Wrapper &&
            EdepEm == rhs.EdepEm &&
            EdepHad == rhs.EdepHad &&
+           //PContribution_TrackID == rhs.PContribution_TrackID &&
            PContribution == rhs.PContribution &&
            CaloHits == rhs.CaloHits;
 }
@@ -77,5 +75,3 @@ bool SimulatedHit::operator==(const SimulatedHit &rhs) const {
 bool SimulatedHit::operator!=(const SimulatedHit &rhs) const {
     return !(rhs == *this);
 }
-
-
