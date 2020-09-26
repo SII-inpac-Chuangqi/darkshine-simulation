@@ -12,23 +12,22 @@ EventNumber     = -1
 SkipNumber      = 0
 
 ### Verbosity
-AlgoManager.Verbose = 2
-EventReader.Verbose = 2
-Event.Verbose       = 0
+AlgoManager.Verbose         = 3
+EventReader.Verbose         = 3
+Event.Verbose               = 1
+EventStoreAndWriter.Verbose = 3
 
 
 ### Algorithm Usage
-Algorithm.List = Example2VeryLongVeryLong Example1
+Algorithm.List = MCTruthAnalysis RecECAL
 
 ### Algorithm Config
 ###
 ### Formate: [AlgoProcessor_Name].[Variable_Name] = [Value]
 ###
 
-Example1.intVar      = 5
-Example1.DoubleVar   = 2.5
-Example1.StrVar      = example str
+MCTruthAnalysis.Verbose = 1
 
-Example2.intVar      = 15
-Example2.DoubleVar   = -2.3
-Example2.StrVar      = something
+RecECAL.Verbose = 1
+RecECAL.W0 = 3.2
+
