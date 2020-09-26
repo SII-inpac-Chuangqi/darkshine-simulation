@@ -24,14 +24,18 @@ public:
         //PContribution_TrackID.shrink_to_fit();
     };
 
-        SimulatedHit &operator=(const SimulatedHit &rhs);
+    bool operator==(const SimulatedHit &rhs) const;
+
+    bool operator!=(const SimulatedHit &rhs) const;
+
+    SimulatedHit &operator=(const SimulatedHit &rhs);
 
     // Get Methods
     double getEdepEm() const;
 
     double getEdepHad() const;
 
-    const MCParticleVec &getPContribution()const ;
+    const MCParticleVec &getPContribution() const;
 
     const CalorimeterHitVec &getCaloHits() const;
 
@@ -72,9 +76,6 @@ private:
 
 ClassDef(SimulatedHit, 11)
 
-    bool operator==(const SimulatedHit &rhs) const;
-
-    bool operator!=(const SimulatedHit &rhs) const;;
 };
 
 
