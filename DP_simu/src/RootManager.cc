@@ -145,6 +145,14 @@ void RootManager::FillMC(McParticle *mc, int ParentID) {
     auto mcps = Evt->getMcParticleCollection_Old().at("RawMCParticle");
     mc->setParents(mc->SearchID(mcps, ParentID));
 
+    auto tmp1 = G4String(mc->getCreateProcess());
+    const char *tmp2;
+    if (tmp1.contains("biasWrapper"))
+        tmp2 = tmp1(tmp1.index("(") + 1, tmp1.index(")") - tmp1.index("(") - 1).data();
+    else
+        tmp2 = tmp1.data();
+    mc->setCreateProcess(std::string(tmp2));
+
     mcps->push_back(mc);
 }
 

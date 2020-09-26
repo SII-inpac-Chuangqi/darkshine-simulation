@@ -40,6 +40,9 @@ public:
         return CalorimeterHitCollectionSP;
     }
 
+    // Link Parent && Children
+    void LinkChildren();
+
 private:
     // Step Collection
     DStepMap StepCollectionSP;

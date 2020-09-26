@@ -123,8 +123,6 @@ add_library(DEvent SHARED ${dict_header_shared} ${dict_source} G__DEvent.cxx)
 #target_include_directories(DEvent PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 #target_link_libraries(DEvent PUBLIC ROOT::Core)
 
-MESSAGE("test")
-
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
@@ -146,6 +144,6 @@ target_link_libraries(DAna DEvent)
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
-#install(TARGETS DSimu DESTINATION bin)
-#install(TARGETS DAna DESTINATION bin)
+install(TARGETS DSimu DESTINATION bin)
+install(TARGETS DAna DESTINATION bin)
 

@@ -33,7 +33,7 @@ public:
         return Parents;
     }
 
-    McParticle *getChildren() const {
+    MCParticleVec *getChildren() const {
         return Children;
     }
 
@@ -52,7 +52,7 @@ public:
         Parents = parents;
     }
 
-    void setChildren(McParticle *children) {
+    void setChildren(MCParticleVec *children) {
         Children = children;
     }
 
@@ -72,13 +72,17 @@ public:
         return nullptr;
     }
 
+    // Add Methods
+    void addChildren(McParticle* mcp) {
+        Children->emplace_back(mcp);
+    }
 private:
 
     // the remaining energy while leaving the world
     double ERemain{0.};
 
     McParticle* Parents;
-    McParticle* Children;
+    MCParticleVec* Children;
 
     ReconstructedParticle* RecParticles;
     SimulatedHitVec SimHits;

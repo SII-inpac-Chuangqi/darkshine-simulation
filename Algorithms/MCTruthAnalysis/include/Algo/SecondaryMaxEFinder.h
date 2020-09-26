@@ -7,6 +7,7 @@
 
 #include "TString.h"
 #include "Core/AnaProcessor.h"
+#include "Object/McParticle.h"
 
 class SecondaryMaxEFinder {
 public:
@@ -34,6 +35,10 @@ public:
         return EvtWrt;
     }
 
+    AnaEvnt *getEvt() const {
+        return Evt;
+    }
+
     // Set Methods
     void setVerbose(int verbose) {
         SecondaryMaxEFinder::Verbose = verbose;
@@ -55,11 +60,18 @@ public:
         EvtWrt = evtWrt;
     }
 
+    void setEvt(AnaEvnt *evt) {
+        Evt = evt;
+    }
+
     // Process
     void RegisterParameters();
 
+    McParticle* FindSecondary(int PDG = 0, double Emin = 0., McParticle *mcp = nullptr);
+
 private:
 
+    AnaEvnt* Evt;
     shared_ptr<EventStoreAndWriter> EvtWrt;
 
     int Verbose{0};

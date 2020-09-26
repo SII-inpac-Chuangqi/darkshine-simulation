@@ -68,6 +68,11 @@ void EventReader::Convert() {
     evt->Initialization(nALL);
 
     evt->ConvertTreeValuePtr(EvtPtr);
+    evt->LinkChildren();
+
+    RunNumber = evt->getRunId();
+    EventNumber = evt->getEventId();
+    for (int i = 0; i < 4; ++i) Rndm[i] = evt->getRndm()[i];
 
     if (Verbose > 1) {
         cout << "======================================================================" << endl;

@@ -128,4 +128,14 @@ std::vector<std::string> *AnaEvnt::ListAllCollections() {
     return tmp;
 }
 
+void AnaEvnt::LinkChildren() {
+    if (MCParticleCollectionSP.empty()) return;
+    for (const auto& collection : MCParticleCollectionSP) {
+        for (auto itr : *(collection.second)) {
+            // If parent exists
+            if ( itr->getParents() ) itr->getParents()->addChildren(itr);
+        }
+    }
+}
+
 

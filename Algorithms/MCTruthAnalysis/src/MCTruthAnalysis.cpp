@@ -46,9 +46,11 @@ void MCTruthAnalysis::ProcessEvt(AnaEvnt *evt) {
 
         const auto &mc = MCCollection.at(CollectionName);
         const auto &steps = StepCollection.at(StepCollectionName);
-        // if exists, then do something
 
-        SecFinder->getSecondaryMaxE();
+        // Find Secondary
+        SecFinder->setEvt(evt);
+        auto mcSec = SecFinder->FindSecondary();
+
 
     } else {
         // if not exists, print out error

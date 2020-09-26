@@ -47,7 +47,7 @@ void ControlManager::run() {
     /* Explicitly declare processors with name */
     /* DEFINE ALGO PROCESSOR HERE */
     //algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example1", EvtWrt)) );
-    //algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)) );
+    algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)) );
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)) );
 
     ConfMgr->ReadAlgoList();

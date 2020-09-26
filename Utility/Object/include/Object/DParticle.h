@@ -14,7 +14,7 @@ public:
     // Constructor and Destructor
     DParticle() = default;
 
-    DParticle(const DParticle &rhs)  : TObject(rhs) {
+    DParticle(const DParticle &rhs) : TObject(rhs) {
         *this = rhs;
     }
 
@@ -30,6 +30,7 @@ public:
                Px == rhs.Px &&
                Py == rhs.Py &&
                Pz == rhs.Pz &&
+               P == rhs.P &&
                VertexX == rhs.VertexX &&
                VertexY == rhs.VertexY &&
                VertexZ == rhs.VertexZ &&
@@ -53,6 +54,7 @@ public:
         Px = rhs.Px;
         Py = rhs.Py;
         Pz = rhs.Pz;
+        P = rhs.P;
         VertexX = rhs.VertexX;
         VertexY = rhs.VertexY;
         VertexZ = rhs.VertexZ;
@@ -124,6 +126,10 @@ public:
         return CreateProcess;
     }
 
+    double getP() const {
+        return sqrt(Px * Px + Py * Py + Pz * Pz);
+    }
+
     // Set Methods
     void setId(int ID) {
         DParticle::id = ID;
@@ -185,6 +191,10 @@ public:
         CreateProcess = createProcess;
     }
 
+    void setP(double p) {
+        P = p;
+    }
+
 protected:
     // internal debug only
     int id{0};
@@ -199,6 +209,7 @@ protected:
     double Px{0.};
     double Py{0.};
     double Pz{0.};
+    double P{0.};
     double VertexX{0.};
     double VertexY{0.};
     double VertexZ{0.};
@@ -206,7 +217,7 @@ protected:
     double EndPointY{0.};
     double EndPointZ{0.};
 
-ClassDef(DParticle,3);
+ClassDef(DParticle, 3);
 };
 
 #endif //DSIMU_DPARTICLE_H
