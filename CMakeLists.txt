@@ -147,4 +147,5 @@ target_link_libraries(DAna DEvent)
 #
 install(TARGETS DSimu DESTINATION bin)
 install(TARGETS DAna DESTINATION bin)
+install(TARGETS DEvent LIBRARY DESTINATION lib )
 
