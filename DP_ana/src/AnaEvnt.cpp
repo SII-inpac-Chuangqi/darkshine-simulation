@@ -6,6 +6,7 @@
 
 void AnaEvnt::Initialization(CleanType ct) {
     DEvent::Initialization(ct);
+
     for (const auto &itr : MCParticleCollectionSP) {
         for (auto itr2 : *itr.second) {
             delete itr2;
@@ -130,10 +131,10 @@ std::vector<std::string> *AnaEvnt::ListAllCollections() {
 
 void AnaEvnt::LinkChildren() {
     if (MCParticleCollectionSP.empty()) return;
-    for (const auto& collection : MCParticleCollectionSP) {
+    for (const auto &collection : MCParticleCollectionSP) {
         for (auto itr : *(collection.second)) {
             // If parent exists
-            if ( itr->getParents() ) itr->getParents()->addChildren(itr);
+            if (itr->getParents()) itr->getParents()->addChildren(itr);
         }
     }
 }

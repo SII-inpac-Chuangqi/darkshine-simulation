@@ -71,12 +71,13 @@ public:
 
 private:
 
-    AnaEvnt* Evt;
+    AnaEvnt* Evt{};
     shared_ptr<EventStoreAndWriter> EvtWrt;
 
     int Verbose{0};
 
-    double Secondary_MaxE;
+    int Secondary_PDG{0};
+    double Secondary_MaxE{0.};
     TString Secondary_MaxE_PVName;
     TString Secondary_MaxE_Process;
 

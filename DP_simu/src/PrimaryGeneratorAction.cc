@@ -41,58 +41,55 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 PrimaryGeneratorAction::PrimaryGeneratorAction()
- : G4VUserPrimaryGeneratorAction()
-{
-  // default generator is particle gun.
-  fCurrentGenerator = fGPS = new G4GeneralParticleSource();
-  fCurrentGeneratorName = "fParticleGun";
+        : G4VUserPrimaryGeneratorAction() {
+    // default generator is particle gun.
+    fCurrentGenerator = fGPS = new G4GeneralParticleSource();
+    fCurrentGeneratorName = "fParticleGun";
 
-  fParticleGun = new G4ParticleGun();
-  fHepmcAscii = new HepMCG4AsciiReader();
+    fParticleGun = new G4ParticleGun();
+    fHepmcAscii = new HepMCG4AsciiReader();
 #ifdef G4LIB_USE_PYTHIA
-  fPythiaGen = new HepMCG4PythiaInterface();
+    fPythiaGen = new HepMCG4PythiaInterface();
 #else
-  fPythiaGen = 0;
+    fPythiaGen = 0;
 #endif
-  fGentypeMap["particleGun"] = fParticleGun;
-  fGentypeMap["GPS"] = fGPS;
-  fGentypeMap["hepmcAscii"] = fHepmcAscii;
-  fGentypeMap["pythia"] = fPythiaGen;
+    fGentypeMap["particleGun"] = fParticleGun;
+    fGentypeMap["GPS"] = fGPS;
+    fGentypeMap["hepmcAscii"] = fHepmcAscii;
+    fGentypeMap["pythia"] = fPythiaGen;
 
-  fMessenger= new PrimaryGeneratorMessenger(this);
+    fMessenger = new PrimaryGeneratorMessenger(this);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-PrimaryGeneratorAction::~PrimaryGeneratorAction()
-{
-  delete fMessenger;
-  delete fCurrentGenerator;
-  delete fPythiaGen;
+PrimaryGeneratorAction::~PrimaryGeneratorAction() {
+    delete fMessenger;
+    delete fCurrentGenerator;
+    delete fPythiaGen;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
-{
-  if(fCurrentGeneratorName == "particleGun" && fDist) {
-    double px, py, pz;
-    fDist->GetRandom3(px,py,pz);
+void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent) {
+    if (fCurrentGeneratorName == "particleGun" && fDist) {
+        double px, py, pz;
+        fDist->GetRandom3(px, py, pz);
 
-    fParticleGun->SetParticleMomentum(G4ParticleMomentum(px,py,pz));
-  }
+        fParticleGun->SetParticleMomentum(G4ParticleMomentum(px, py, pz));
+    }
 
-  if(fCurrentGenerator)
-    fCurrentGenerator-> GeneratePrimaryVertex(anEvent);
-  else
-    G4Exception("PrimaryGeneratorAction::GeneratePrimaries",
-                "PrimaryGeneratorAction001", FatalException,
-                "generator is not instanciated." );
+    if (fCurrentGenerator)
+        fCurrentGenerator->GeneratePrimaryVertex(anEvent);
+    else
+        G4Exception("PrimaryGeneratorAction::GeneratePrimaries",
+                    "PrimaryGeneratorAction001", FatalException,
+                    "generator is not instanciated.");
 }
 
-void PrimaryGeneratorAction::SetHist(G4String a) {
+void PrimaryGeneratorAction::SetHist(const G4String &a) {
     //gRandom->SetSeed(0);
 
-    G4cout<<"Reading distribution from file: "<<filename<<G4endl;
-    fRootFile = new TFile( filename );
+    G4cout << "Reading distribution from file: " << filename << G4endl;
+    fRootFile = new TFile(filename);
 
-    fDist = (TH3D*)fRootFile->Get(a);
+    fDist = (TH3D *) fRootFile->Get(a);
 }

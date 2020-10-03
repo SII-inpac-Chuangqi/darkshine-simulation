@@ -57,7 +57,6 @@ void RecECAL::ProcessEvt(AnaEvnt *evt) {
             std::cout << "-- Reconstructed Y: " << setw(6) << center_y << " +- " << setw(6) << err_y << " [mm]"
                       << std::endl;
         }
-
     } else {
         // if not exists, print out error
         cerr << "MCCollection not found" << endl;
@@ -66,12 +65,10 @@ void RecECAL::ProcessEvt(AnaEvnt *evt) {
 
 void RecECAL::CheckEvt(AnaEvnt *evt) {
     //cout<<"Check!"<<endl;
-
 }
 
 void RecECAL::End() {
     //cout<<"End!"<<endl;
-
 }
 
 double RecECAL::SingleCenterFinding(const SimulatedHitVecUniPtr &hits, const DStepVecUniPtr &steps) {

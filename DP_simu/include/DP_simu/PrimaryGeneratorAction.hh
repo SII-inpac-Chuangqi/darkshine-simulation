@@ -40,68 +40,71 @@
 #include "TH3D.h"
 
 class G4Event;
+
 class G4VPrimaryGenerator;
+
 class G4ParticleGun;
+
 class PrimaryGeneratorMessenger;
 
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
 public:
-  PrimaryGeneratorAction();
-  ~PrimaryGeneratorAction();
+    PrimaryGeneratorAction();
 
-  virtual void GeneratePrimaries(G4Event* anEvent);
+    ~PrimaryGeneratorAction();
 
-  void SetGenerator(G4VPrimaryGenerator* gen);
-  void SetGenerator(G4String genname);
+    virtual void GeneratePrimaries(G4Event *anEvent);
 
-  void SetFileName(G4String a) { filename = a; };
-  void SetHist(G4String);
+    void SetGenerator(G4VPrimaryGenerator *gen);
 
-  G4VPrimaryGenerator* GetGenerator() const;
-  G4String GetGeneratorName() const;
+    void SetGenerator(G4String genname);
+
+    void SetFileName(G4String a) { filename = a; };
+
+    void SetHist(const G4String &);
+
+    G4VPrimaryGenerator *GetGenerator() const;
+
+    G4String GetGeneratorName() const;
 
 private:
-  G4ParticleGun* fParticleGun;
-  G4VPrimaryGenerator* fGPS;
-  G4VPrimaryGenerator* fHepmcAscii;
-  G4VPrimaryGenerator* fPythiaGen;
+    G4ParticleGun *fParticleGun;
+    G4VPrimaryGenerator *fGPS;
+    G4VPrimaryGenerator *fHepmcAscii;
+    G4VPrimaryGenerator *fPythiaGen;
 
-  G4VPrimaryGenerator* fCurrentGenerator;
-  G4String fCurrentGeneratorName;
-  std::map<G4String, G4VPrimaryGenerator*> fGentypeMap;
+    G4VPrimaryGenerator *fCurrentGenerator;
+    G4String fCurrentGeneratorName;
+    std::map<G4String, G4VPrimaryGenerator *> fGentypeMap;
 
-  PrimaryGeneratorMessenger* fMessenger;
+    PrimaryGeneratorMessenger *fMessenger;
 
-  G4String  filename;
-  TFile*    fRootFile;
-  TH3D*     fDist;
+    G4String filename;
+    TFile *fRootFile;
+    TH3D *fDist;
 
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-inline void PrimaryGeneratorAction::SetGenerator(G4VPrimaryGenerator* gen)
-{
-  fCurrentGenerator = gen;
+inline void PrimaryGeneratorAction::SetGenerator(G4VPrimaryGenerator *gen) {
+    fCurrentGenerator = gen;
 }
 
-inline void PrimaryGeneratorAction::SetGenerator(G4String genname)
-{
-  std::map<G4String, G4VPrimaryGenerator*>::iterator pos =
-                                            fGentypeMap.find(genname);
-  if ( pos != fGentypeMap.end() ) {
-    fCurrentGenerator = pos->second;
-    fCurrentGeneratorName = genname;
-  }
+inline void PrimaryGeneratorAction::SetGenerator(G4String genname) {
+    std::map<G4String, G4VPrimaryGenerator *>::iterator pos =
+            fGentypeMap.find(genname);
+    if (pos != fGentypeMap.end()) {
+        fCurrentGenerator = pos->second;
+        fCurrentGeneratorName = genname;
+    }
 }
 
-inline G4VPrimaryGenerator* PrimaryGeneratorAction::GetGenerator() const
-{
-  return fCurrentGenerator;
+inline G4VPrimaryGenerator *PrimaryGeneratorAction::GetGenerator() const {
+    return fCurrentGenerator;
 }
 
-inline G4String PrimaryGeneratorAction::GetGeneratorName() const
-{
-  return fCurrentGeneratorName;
+inline G4String PrimaryGeneratorAction::GetGeneratorName() const {
+    return fCurrentGeneratorName;
 }
 
 #endif
