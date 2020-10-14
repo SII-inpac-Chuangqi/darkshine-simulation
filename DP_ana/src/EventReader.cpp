@@ -54,8 +54,11 @@ void EventReader::RegisterOutput() {
      * Register some variables in output
      */
     EvtWrt->RegisterIntVariable("RunNumber", &RunNumber, "RunNumber/I");
-    EvtWrt->RegisterIntVariable("EventNumber", &EventNumber, "EventNumber/I");
+    EvtWrt->RegisterIntVariable("EventNumber", &eventProcessedNumber, "EventNumber/I");
     EvtWrt->RegisterDoubleVariable("Rndm", Rndm, "Rndm[4]/D");
+
+    // Initialized Processed Number
+    eventProcessedNumber = 0;
 }
 
 
@@ -74,6 +77,7 @@ void EventReader::Convert() {
     EventNumber = evt->getEventId();
     for (int i = 0; i < 4; ++i) Rndm[i] = evt->getRndm()[i];
 
+    eventProcessedNumber++;
     if (Verbose > 1) {
         cout << "======================================================================" << endl;
         std::cout << "[ READ EVENT ] : Convert (Verbosity 2)" << std::endl;

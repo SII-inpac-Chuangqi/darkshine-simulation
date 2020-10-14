@@ -150,5 +150,3 @@ install(TARGETS DAna DESTINATION bin)
 install(TARGETS DEvent LIBRARY DESTINATION lib )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent_rdict.pcm DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent.rootmap DESTINATION lib)
-
-

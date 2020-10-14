@@ -93,6 +93,7 @@ private:
     int runNumber{0};
     int eventNumber{-1};
     int skipNumber{0};
+    int eventProcessedNumber{0};
 
     // Verbosity
     int Verbose{0};
