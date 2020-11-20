@@ -44,11 +44,11 @@ class RootManager;
 class EventAction : public G4UserEventAction
 {
   public:
-    EventAction(RootManager*);
-    virtual ~EventAction();
+    explicit EventAction(RootManager*);
+    ~EventAction() override;
 
-    virtual void  BeginOfEventAction(const G4Event* );
-    virtual void    EndOfEventAction(const G4Event* );
+    void  BeginOfEventAction(const G4Event* ) override;
+    void    EndOfEventAction(const G4Event* ) override;
 
     // Set methods
     void SetStartID(int startID);
