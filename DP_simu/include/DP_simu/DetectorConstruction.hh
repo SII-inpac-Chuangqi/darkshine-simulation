@@ -87,6 +87,8 @@ public:
 public:
     G4VPhysicalVolume *Construct() override;
 
+    void SaveGeometry();
+
     // Set methods
     void SetCheckOverlaps(G4bool);
 

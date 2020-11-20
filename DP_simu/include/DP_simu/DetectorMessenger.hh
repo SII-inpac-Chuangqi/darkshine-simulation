@@ -35,11 +35,17 @@
 #include "G4UImessenger.hh"
 
 class DetectorConstruction;
+
 class G4UIdirectory;
+
 class G4UIcmdWithAString;
+
 class G4UIcmdWithAnInteger;
+
 class G4UIcmdWithADouble;
+
 class G4UIcmdWithABool;
+
 class G4UIcmdWithADoubleAndUnit;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -52,27 +58,29 @@ class G4UIcmdWithADoubleAndUnit;
 /// - //det/setField value unit
 /// - //det/stepMax value unit
 
-class DetectorMessenger: public G4UImessenger
-{
-  public:
-    DetectorMessenger(DetectorConstruction* );
+class DetectorMessenger : public G4UImessenger {
+public:
+    DetectorMessenger(DetectorConstruction *);
+
     virtual ~DetectorMessenger();
-    
-    virtual void SetNewValue(G4UIcommand*, G4String);
-    
-  private:
-    DetectorConstruction*  fDetectorConstruction;
 
-    G4UIdirectory*           fDirectory;
-    G4UIdirectory*           fDetDirectory;
+    void SetNewValue(G4UIcommand *, G4String) override;
 
-    G4UIcmdWithADoubleAndUnit*         fSetTBxCmd;
-    G4UIcmdWithADoubleAndUnit*         fSetRBxCmd;
+private:
+    DetectorConstruction *fDetectorConstruction;
 
-    G4UIcmdWithADoubleAndUnit* fSetELayerPosCmd;
-    G4UIcmdWithABool*          fSetifBiasCmd;
+    G4UIdirectory *fDirectory;
+    G4UIdirectory *fDetDirectory;
 
-    G4UIcmdWithABool*         fifOpticalCmd;
+    G4UIcmdWithADoubleAndUnit *fSetTBxCmd;
+    G4UIcmdWithADoubleAndUnit *fSetRBxCmd;
+
+    G4UIcmdWithADoubleAndUnit *fSetELayerPosCmd;
+    G4UIcmdWithABool *fSetifBiasCmd;
+
+    G4UIcmdWithABool *fifOpticalCmd;
+
+    G4UIcmdWithABool *fifSaveGeomCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

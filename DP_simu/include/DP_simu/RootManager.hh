@@ -90,6 +90,7 @@ public:
 
     void SetifFilter_Process(G4bool in) { ifFilter_Process = in; };
 
+
     /* get methods */
     bool GetFilter() { return if_filter; };
 

@@ -328,13 +328,6 @@ G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
 
     SetBiasLayer();
 
-    /* Save GDML to ROOT File */
-    G4GDMLParser parser;
-    G4String f_gdml = "geometry.gdml";
-    parser.Write(f_gdml, World_PV);
-
-    fRootMng->FillGeometry(f_gdml);
-
     return World_PV;
 }
 
@@ -584,5 +577,15 @@ void DetectorConstruction::SetRecTrkMagField(G4double in) {
 
 void DetectorConstruction::SetOptical(G4bool in) {
     fRootMng->SetOptical(in);
+
+}
+
+void DetectorConstruction::SaveGeometry() {
+
+    /* Save GDML to ROOT File */
+    G4GDMLParser parser;
+    parser.Write("geometry.gdml", World_PV);
+
+    fRootMng->FillGeometry("geometry.gdml");
 
 }

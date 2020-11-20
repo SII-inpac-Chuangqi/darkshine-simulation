@@ -274,7 +274,7 @@ void RootManager::FillGeometry(const G4String& filename) {
     TGeoManager::Import(filename);
 
     rootFile->cd();
-    geoM->Write("MasterVolume");
+    geoM->Write("DetGeoManager");
 
     std::remove(filename);
 
