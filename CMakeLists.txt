@@ -28,7 +28,6 @@ include(${Geant4_USE_FILE})
 # Find required packages)
 #
 find_package(HepMC REQUIRED)
-#find_package(Eigen REQUIRED)
 
 find_package(XercesC REQUIRED)
 if (XercesC_FOUND)
@@ -82,6 +81,7 @@ HEADER_DIRECTORIES(Util_List Util_File "Utility")
 
 include_directories(DP_simu/include
         DP_ana/include
+        Utility/Eigen
         ./
         ${Util_List}
         ${Algo_List}
