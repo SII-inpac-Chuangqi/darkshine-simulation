@@ -81,14 +81,14 @@ HEADER_DIRECTORIES(Util_List Util_File "Utility")
 
 include_directories(DP_simu/include
         DP_ana/include
-        Utility/Eigen
+        #Utility/Eigen
         ./
         ${Util_List}
         ${Algo_List}
         ${Geant4_INCLUDE_DIR}
         ${HEPMC_INCLUDE_DIR})
 
-file(GLOB Simu_sources DP_simu/src/*.cc)
+file(GLOB Simu_sources DP_simu/src/* DP_simu/src/Geometry/*)
 file(GLOB Simu_headers DP_simu/include/*)
 
 file(GLOB Ana_sources DP_ana/src/*.cpp)

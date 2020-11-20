@@ -48,7 +48,7 @@ public:
 
     void book();
 
-    void bookCollection(G4String);
+    void bookCollection(const G4String&);
 
     void save();
 

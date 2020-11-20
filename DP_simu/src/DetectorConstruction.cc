@@ -66,6 +66,11 @@
 
 DetectorConstruction::DetectorConstruction(RootManager *rootMng) {
     fMessenger = new DetectorMessenger(this);
+
+    ECAL_Con1 = new ECAL_XYCrossing();
+    ECAL_Con2 = new ECAL_AllZ();
+    HCAL_Con = new HCAL_Construct();
+
     fRootMng = rootMng;
     fCheckOverlaps = false;
     fStepLimit = nullptr;
@@ -73,9 +78,9 @@ DetectorConstruction::DetectorConstruction(RootManager *rootMng) {
     build_Target = true;
     build_TagTrk = true;
     build_RecTrk = true;
-    build_ECAL_Center = true;
-    build_ECAL_Outer = true;
     build_HCAL = true;
+
+    ECAL_Selection = 2;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -273,71 +278,25 @@ void DetectorConstruction::DefineParameters() {
     /////////////////////////
     //  ECAL
     /////////////////////////
-    ECALRegion_Mat = G4Material::GetMaterial("CarbonFiber");
-    ECAL_Center_Mat = G4Material::GetMaterial("LYSO");
-    ECAL_Outer_Mat = G4Material::GetMaterial("PWO4");
-    ECAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
+    G4ThreeVector Pos_ECAL;
+    G4ThreeVector Size_ECAL;
+    if (ECAL_Selection == 1) {
+        ECAL_Con1->DefineParameters(Pos_RecRegion, Size_RecRegion);
+        Pos_ECAL = ECAL_Con1->getPosEcalRegion();
+        Size_ECAL = ECAL_Con1->getSizeEcalRegion();
+    }
+    if (ECAL_Selection == 2) {
+        ECAL_Con2->DefineParameters(Pos_RecRegion, Size_RecRegion);
+        Pos_ECAL = ECAL_Con2->getPosEcalRegion();
+        Size_ECAL = ECAL_Con2->getSizeEcalRegion();
+    }
 
-    ECAL_Center_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
-    ECAL_Center_Size = G4ThreeVector(1 * cm, 1 * cm, 36 * cm + 35 * ECAL_Center_Wrap_Size.z());
-    ECAL_Center_Module_No = G4ThreeVector(6, 6, 1);
-
-    ECAL_Outer_Wrap_Size = ECAL_Center_Wrap_Size;
-    ECAL_Outer_Size_Dir = G4ThreeVector(20 * cm + 19 * ECAL_Outer_Wrap_Size.x(), 1 * cm, 1 * cm);
-    ECAL_Outer_Mod_No_Dir = G4ThreeVector(1, 20, 36);
-    ECAL_Outer_Module_No = G4ThreeVector(2, 2, 1);
-    ECAL_Module_Gap = 0.5 * mm;
-
-    Size_ECALRegion = G4ThreeVector(0, 0, 0);
-    Size_ECALRegion.setX(
-            ECAL_Outer_Module_No.x() * (ECAL_Outer_Size_Dir.x() + ECAL_Outer_Wrap_Size.x()) + ECAL_Module_Gap);
-    Size_ECALRegion.setY(ECAL_Outer_Module_No.y() * ECAL_Outer_Mod_No_Dir.y() *
-                         (ECAL_Outer_Size_Dir.y() + ECAL_Outer_Wrap_Size.y()) + ECAL_Module_Gap);
-    Size_ECALRegion.setZ(
-            ECAL_Outer_Mod_No_Dir.z() * (ECAL_Outer_Size_Dir.z() + ECAL_Outer_Wrap_Size.z()) + ECAL_Module_Gap);
-
-    Pos_ECALRegion = G4ThreeVector(0, 0,
-                                   0.5 * Size_ECALRegion.z() + Pos_RecRegion.z() + 0.5 * Size_RecRegion.z() + 1.0 * mm);
-
-    G4cout << " ==> ECAL starts from " << Pos_ECALRegion.z() - Size_ECALRegion.z() / 2 << G4endl;
-
-
-    /////////////////////////
-    //  HCAL
-    /////////////////////////
-    HCAL_Absorber_Mat = G4Material::GetMaterial("G4_Fe");
-    HCALRegion_Mat = G4Material::GetMaterial("CarbonFiber");
-    HCAL_Mat = G4Material::GetMaterial("Polystyrene");
-    HCAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
-
-    HCAL_Absorber_Thickness = 3 * cm;
-    HCAL_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
-    HCAL_Size_Dir = G4ThreeVector(100 * cm + 19 * HCAL_Wrap_Size.x(), 5 * cm, 1 * cm);
-    //HCAL_Mod_No_Dir = G4ThreeVector( 1, 20, 2 );
-    HCAL_Mod_No_Dir = G4ThreeVector(1, 20, 120);
-    HCAL_Module_No = G4ThreeVector(3, 3, 1);
-    HCAL_Module_Gap = 0.5 * mm;
-
-    Size_HCALRegion = G4ThreeVector(0, 0, 0);
-    Size_HCALRegion.setX(
-            HCAL_Module_No.x() * (HCAL_Size_Dir.x() + HCAL_Wrap_Size.x()) + HCAL_Module_Gap * (HCAL_Module_No.x() - 1));
-    Size_HCALRegion.setY(HCAL_Module_No.y() * HCAL_Mod_No_Dir.y() * (HCAL_Size_Dir.y() + HCAL_Wrap_Size.y()) +
-                         HCAL_Module_Gap * (HCAL_Module_No.y() - 1));
-    Size_HCALRegion.setZ(
-            HCAL_Mod_No_Dir.z() / 2 * (2 * (HCAL_Size_Dir.z() + HCAL_Wrap_Size.z()) + HCAL_Absorber_Thickness) +
-            HCAL_Module_Gap * (HCAL_Module_No.z() - 1));
-
-    Pos_HCALRegion = G4ThreeVector(0, 0,
-                                   0.5 * Size_HCALRegion.z() + Pos_RecRegion.z() + 0.5 * Size_RecRegion.z() + 1.0 * mm +
-                                   Size_ECALRegion.z());
-
-    G4cout << " ==> HCAL starts from " << Pos_HCALRegion.z() - Size_HCALRegion.z() / 2 << G4endl;
-
+    HCAL_Con->DefineParameters(Pos_ECAL, Size_ECAL);
     /////////////////////////
     //  World
     /////////////////////////
     World_Mat = G4Material::GetMaterial("vacuum");
-    auto l = 2.0 * (Pos_HCALRegion.z() + Size_HCALRegion.x());
+    auto l = 2.0 * (HCAL_Con->getPosHcalRegion().z() + HCAL_Con->getSizeHcalRegion().x());
     Size_World = G4ThreeVector(l, l, l);
 }
 
@@ -349,8 +308,13 @@ G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
     if (build_Target) DefineTarget();     // Build Target
     if (build_TagTrk) DefineTagTracker(); // Build Tagging Tracker
     if (build_RecTrk) DefineRecTracker(); // Build Recoil Tracker
-    if (build_ECAL_Center || build_ECAL_Outer) DefineECAL();       // Build ECal
-    if (build_HCAL) DefineHCAL();       // Build HCal
+    // Build ECAL
+    if (ECAL_Selection == 1)
+        ECAL_Con1->Build(0, World_LV, fRootMng, fCheckOverlaps);
+    if (ECAL_Selection == 2)
+        ECAL_Con2->Build(0, World_LV, fRootMng, fCheckOverlaps);
+
+    if (build_HCAL) HCAL_Con->Build(0, World_LV, fRootMng, fCheckOverlaps);
 
     // Set User Limit 
     G4double maxStep = 10 * mm;
@@ -361,7 +325,7 @@ G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
     G4cout << "[Root Manager] ==> Root Manager initialized ..." << G4endl;
     G4cout << "[Root Manager] ==> Output File" << fRootMng->GetOutFileName() << " created ..." << G4endl;
 
-    //SetBiasLayer();
+    SetBiasLayer();
 
     //G4GDMLParser parser;
     //parser.Write("g4test.gdml", World_PV);
@@ -473,124 +437,6 @@ void DetectorConstruction::DefineRecTracker() {
     RecTrk_LV2 = RecTrk2->GetTrkLVVector();
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void DetectorConstruction::DefineECAL() {
-    ////////////////////////////////////////////////////////////
-    //
-    //  ECAL
-    //
-    ////////////////////////////////////////////////////////////
-
-    auto ECAL_Box = new G4Box("ecal", Size_ECALRegion.x() / 2, Size_ECALRegion.y() / 2, Size_ECALRegion.z() / 2);
-    auto ECal_LV = new G4LogicalVolume(ECAL_Box, ECALRegion_Mat, "ECAL", nullptr, nullptr, nullptr);
-    new G4PVPlacement(nullptr, Pos_ECALRegion, ECal_LV, "ECAL", World_LV, false, 0, fCheckOverlaps);
-    ECal_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
-
-    /* Building Center Calorimeter with LYSO
-     * Cell Size: 1*1*36 cm^3
-     * Module No: 6*6 
-     */
-    if (build_ECAL_Center) {
-        auto ECAL_Center = new CALConstruct("ECAL_Center", ECal_LV, 0, true, true, fRootMng->GetOptical(),
-                                            fCheckOverlaps);
-        ECAL_Center->SetSizeXYZ(ECAL_Center_Size.x() / 2., ECAL_Center_Size.y() / 2., ECAL_Center_Size.z() / 2.);
-        ECAL_Center->SetWrapSizeXYZ(ECAL_Center_Wrap_Size.x() / 2., ECAL_Center_Wrap_Size.y() / 2.,
-                                    ECAL_Center_Wrap_Size.z() / 2.);
-        ECAL_Center->SetCALMaterial(ECAL_Center_Mat);
-        ECAL_Center->SetWrapMaterial(ECAL_Wrap_Mat);
-        ECAL_Center->SetVis(new G4VisAttributes(G4Colour(0.5, 0.5, .0)));
-        ECAL_Center->SetAPDSize(APD_Size, Glue_Size);
-        ECAL_Center->SetAPDMat(APD_Mat, Glue_Mat);
-        ECAL_Center->MatrixPlacement(ECAL_Center_Module_No.x(), ECAL_Center_Module_No.y(), ECAL_Center_Module_No.z(),
-                                     G4ThreeVector(0, 0, 0));
-
-        ECAL_Center_LV = ECAL_Center->GetCaloLVVector();
-    }
-
-    /* Building Surrounding Calorimeter with PWO4
-     * Cell Size: 1*20*1 cm^3 or 20*1*1 cm^3
-     * Totally 4 modules
-     */
-    if (build_ECAL_Outer) {
-        int nECAL_Outer;
-        nECAL_Outer = ECAL_Outer_Module_No.x() * ECAL_Outer_Module_No.y() * ECAL_Outer_Module_No.z();
-        for (int ip = 1; ip <= nECAL_Outer; ip++) {
-            double w1 = pow(-1, (ip % 2)) * Size_ECALRegion.x() / 4.;
-            double w2 = pow(-1, (ip - 1) / 2) * Size_ECALRegion.x() / 4.;
-            auto ECAL_Outer = new CALConstruct("ECAL_Outer_" + std::to_string(ip), ECal_LV, 0, true, true,
-                                               fRootMng->GetOptical(), fCheckOverlaps);
-            ECAL_Outer->SetSizeXYZ(ECAL_Outer_Size_Dir.x() / 2., ECAL_Outer_Size_Dir.y() / 2.,
-                                   ECAL_Outer_Size_Dir.z() / 2.);
-            ECAL_Outer->SetWrapSizeXYZ(ECAL_Outer_Wrap_Size.x() / 2., ECAL_Outer_Wrap_Size.y() / 2.,
-                                       ECAL_Outer_Wrap_Size.z() / 2.);
-            ECAL_Outer->SetCALMaterial(ECAL_Outer_Mat);
-            ECAL_Outer->SetWrapMaterial(ECAL_Wrap_Mat);
-            ECAL_Outer->SetVis(new G4VisAttributes(G4Colour(0.4, 0.57, 0.6)));
-            ECAL_Outer->SetAPDSize(APD_Size, Glue_Size);
-            ECAL_Outer->SetAPDMat(APD_Mat, Glue_Mat);
-            ECAL_Outer->MatrixPlacementXYRemoved(ECAL_Outer_Mod_No_Dir.x(), ECAL_Outer_Mod_No_Dir.y(),
-                                                 ECAL_Outer_Mod_No_Dir.z(), G4ThreeVector(w1, w2, 0), 3, ip);
-
-            auto tmp_LV = ECAL_Outer->GetCaloLVVector();
-            //ECAL_Outer_LV.insert( ECAL_Outer_LV.end(), tmp_LV.begin(), tmp_LV.end() );
-            ECAL_Outer_LV[ip - 1] = ECAL_Outer->GetCaloLVVector();
-        }
-    }
-
-    // Production Cut
-    //G4Region* emCal = new G4Region("EMCal");
-    //emCal->AddRootLogicalVolume(ECal_LV);
-    //G4ProductionCuts* cuts = new G4ProductionCuts;
-    //cuts->SetProductionCut(1.0*nm,G4ProductionCuts::GetIndex("gamma"));
-    //cuts->SetProductionCut(1.0*nm,G4ProductionCuts::GetIndex("opticalphoton"));
-    //cuts->SetProductionCut(1.0*nm,G4ProductionCuts::GetIndex("e-"));
-    //cuts->SetProductionCut(1.0*nm,G4ProductionCuts::GetIndex("e+"));
-
-    //emCal->SetProductionCuts(cuts);
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void DetectorConstruction::DefineHCAL() {
-    ////////////////////////////////////////////////////////////
-    //
-    //  HCAL
-    //
-    ////////////////////////////////////////////////////////////
-
-    auto HCAL_Box = new G4Box("hcal", Size_HCALRegion.x() / 2, Size_HCALRegion.y() / 2, Size_HCALRegion.z() / 2);
-    auto HCAL_LV = new G4LogicalVolume(HCAL_Box, HCALRegion_Mat, "HCAL", nullptr, nullptr, nullptr);
-    new G4PVPlacement(nullptr, Pos_HCALRegion, HCAL_LV, "HCAL", World_LV, false, 0, fCheckOverlaps);
-    //HCAL_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
-
-    /* Building Surrounding Calorimeter with Scintillator
-     * Cell Size: 2*100*1 cm^3 or 100*2*1 cm^3
-     * Totally 3*3*1 modules
-     */
-
-    for (int iy = 0; iy < HCAL_Module_No.y(); iy++) {
-        for (int ix = 0; ix < HCAL_Module_No.x(); ix++) {
-            double wx = -Size_HCALRegion.x() * 0.5 + (Size_HCALRegion.x() / HCAL_Module_No.x() * (0.5 + ix));
-            double wy = -Size_HCALRegion.y() * 0.5 + (Size_HCALRegion.y() / HCAL_Module_No.y() * (0.5 + iy));
-
-            auto HCAL = new CALConstruct("HCAL_" + std::to_string((int) (ix + iy * HCAL_Module_No.x())), HCAL_LV, 0,
-                                         true, true, fRootMng->GetOptical(), fCheckOverlaps);
-            HCAL->SetSizeXYZ(HCAL_Size_Dir.x() / 2., HCAL_Size_Dir.y() / 2., HCAL_Size_Dir.z() / 2.);
-            HCAL->SetWrapSizeXYZ(HCAL_Wrap_Size.x() / 2., HCAL_Wrap_Size.y() / 2., HCAL_Wrap_Size.z() / 2.);
-            HCAL->SetCALMaterial(HCAL_Mat);
-            HCAL->SetWrapMaterial(HCAL_Wrap_Mat);
-            HCAL->SetVis(new G4VisAttributes(G4Colour(0.2, 0.37, 0.8)));
-            HCAL->SetAPDSize(APD_Size, Glue_Size);
-            HCAL->SetAPDMat(APD_Mat, Glue_Mat);
-            HCAL->MatrixPlacementXYwithAbsorber(HCAL_Mod_No_Dir.x(), HCAL_Mod_No_Dir.y(), HCAL_Mod_No_Dir.z(),
-                                                G4ThreeVector(wx, wy, 0), HCAL_Absorber_Thickness, HCAL_Absorber_Mat);
-
-            HCAL_SD_LV[(int) (ix + iy * HCAL_Module_No.x())] = HCAL->GetCaloLVVector();
-        }
-    }
-
-}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -649,37 +495,10 @@ void DetectorConstruction::ConstructSDandField() {
             (*itr_LV)->SetSensitiveDetector(RecTrkSD2);
     }
 
-    if (build_ECAL_Center) {
-        auto *ECalSD = new DetectorSD(1, "ECAL_Center", ECAL_Center_Module_No, fRootMng);
-        G4SDManager::GetSDMpointer()->AddNewDetector(ECalSD);
-        for (itr_LV = ECAL_Center_LV.begin(); itr_LV != ECAL_Center_LV.end(); itr_LV++)
-            (*itr_LV)->SetSensitiveDetector(ECalSD);
+    if (ECAL_Selection == 1) ECAL_Con1->BuildSD(fRootMng);
+    if (ECAL_Selection == 2) ECAL_Con2->BuildSD(fRootMng);
 
-    }
-    if (build_ECAL_Outer) {
-        const int nECAL_Outer = ECAL_Outer_Module_No.x() * ECAL_Outer_Module_No.y() * ECAL_Outer_Module_No.z();
-        DetectorSD *ECalOutSD[nECAL_Outer];
-        for (int i = 1; i <= nECAL_Outer; i++) {
-            ECalOutSD[i - 1] = new DetectorSD(2, "ECAL_Outer_" + std::to_string(i), ECAL_Outer_Mod_No_Dir,
-                                              fRootMng);
-            G4SDManager::GetSDMpointer()->AddNewDetector(ECalOutSD[i - 1]);
-            for (itr_LV = (ECAL_Outer_LV[i - 1]).begin(); itr_LV != (ECAL_Outer_LV[i - 1]).end(); itr_LV++)
-                (*itr_LV)->SetSensitiveDetector(ECalOutSD[i - 1]);
-        }
-    }
-
-    if (build_HCAL) {
-        DetectorSD *HCalSD[9];
-        for (int iy = 0; iy < HCAL_Module_No.y(); iy++) {
-            for (int ix = 0; ix < HCAL_Module_No.x(); ix++) {
-                int index = (int) (ix + iy * HCAL_Module_No.x());
-                HCalSD[index] = new DetectorSD(2, "HCAL_" + std::to_string(index), HCAL_Mod_No_Dir, fRootMng);
-                G4SDManager::GetSDMpointer()->AddNewDetector(HCalSD[index]);
-                for (itr_LV = HCAL_SD_LV[index].begin(); itr_LV != HCAL_SD_LV[index].end(); itr_LV++)
-                    (*itr_LV)->SetSensitiveDetector(HCalSD[index]);
-            }
-        }
-    }
+    HCAL_Con->BuildSD(fRootMng);
 
 }
 
@@ -718,14 +537,10 @@ void DetectorConstruction::SetBiasLayer() {
     }
 
     if (fRootMng->GetifBiasECAL()) {
-        for (itr_LV = ECAL_Center_LV.begin(); itr_LV != ECAL_Center_LV.end(); itr_LV++)
-            bias->AttachTo(*itr_LV);
-
-        for (int i = 1; i <= 4; i++) {
-            for (itr_LV = (ECAL_Outer_LV[i - 1]).begin(); itr_LV != (ECAL_Outer_LV[i - 1]).end(); itr_LV++)
-                bias->AttachTo(*itr_LV);
-        }
+        if (ECAL_Selection == 1) ECAL_Con1->BuildBias(bias);
+        if (ECAL_Selection == 2) ECAL_Con2->BuildBias(bias);
     }
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
