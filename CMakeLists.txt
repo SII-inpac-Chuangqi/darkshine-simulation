@@ -39,7 +39,7 @@ endif ()
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
 #
-FIND_PACKAGE(ROOT COMPONENTS GDML Geom)
+FIND_PACKAGE(ROOT COMPONENTS Geom)
 IF (ROOT_FOUND)
     INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIRS})
     INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
