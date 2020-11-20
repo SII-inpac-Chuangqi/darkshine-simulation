@@ -26,7 +26,7 @@ void MCTruthAnalysis::Begin() {
     SecFinder->RegisterParameters();
 }
 
-void MCTruthAnalysis::ProcessEvt(AnaEvnt *evt) {
+void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
 
     /*
      * Get MC Particle collection
@@ -60,7 +60,7 @@ void MCTruthAnalysis::ProcessEvt(AnaEvnt *evt) {
     }
 }
 
-void MCTruthAnalysis::CheckEvt(AnaEvnt *evt) {
+void MCTruthAnalysis::CheckEvt(AnaEvent *evt) {
     //cout<<"Check!"<<endl;
 
 }

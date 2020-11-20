@@ -22,9 +22,9 @@ public:
 
     void Begin() override;
 
-    void ProcessEvt(AnaEvnt *evt) override;
+    void ProcessEvt(AnaEvent *evt) override;
 
-    void CheckEvt(AnaEvnt *evt) override;
+    void CheckEvt(AnaEvent *evt) override;
 
     void End() override;
 

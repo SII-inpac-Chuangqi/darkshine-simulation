@@ -12,7 +12,7 @@
 #include "TTree.h"
 #include "TString.h"
 
-#include "Event/AnaEvnt.h"
+#include "Event/AnaEvent.h"
 
 class EventStoreAndWriter {
     /*
@@ -60,7 +60,7 @@ public:
     void PrintTree();
 
     // Fill Methods
-    void FillTree(AnaEvnt* );
+    void FillTree(AnaEvent* );
     void Initialization();
     void CloseFile();
 

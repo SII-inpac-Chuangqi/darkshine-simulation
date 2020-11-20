@@ -26,7 +26,7 @@ void RecECAL::Begin() {
 
 }
 
-void RecECAL::ProcessEvt(AnaEvnt *evt) {
+void RecECAL::ProcessEvt(AnaEvent *evt) {
     // Initialization
     initialization();
 
@@ -63,7 +63,7 @@ void RecECAL::ProcessEvt(AnaEvnt *evt) {
     }
 }
 
-void RecECAL::CheckEvt(AnaEvnt *evt) {
+void RecECAL::CheckEvt(AnaEvent *evt) {
     //cout<<"Check!"<<endl;
 }
 

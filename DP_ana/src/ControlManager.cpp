@@ -8,13 +8,13 @@
 
 // Processors
 #include "Algo/ExampleProcessor.h"
-#include "Event/AnaEvnt.h"
+#include "Event/AnaEvent.h"
 #include "Algo/MCTruthAnalysis.h"
 #include "Algo/RecECAL.h"
 
 void ControlManager::run() {
 
-    auto *evt = new AnaEvnt();
+    auto *evt = new AnaEvent();
     /* Read in Basic Configuration */
     /* Read Algorithm Lists */
     ConfMgr->ReadConst();

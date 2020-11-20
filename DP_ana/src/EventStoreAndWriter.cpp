@@ -92,7 +92,7 @@ void EventStoreAndWriter::PrintTree() {
     }
 }
 
-void EventStoreAndWriter::FillTree(AnaEvnt* Evt) {
+void EventStoreAndWriter::FillTree(AnaEvent* Evt) {
 
     tout->Fill();
     Initialization();

@@ -35,7 +35,7 @@ public:
         return EvtWrt;
     }
 
-    AnaEvnt *getEvt() const {
+    AnaEvent *getEvt() const {
         return Evt;
     }
 
@@ -60,7 +60,7 @@ public:
         EvtWrt = evtWrt;
     }
 
-    void setEvt(AnaEvnt *evt) {
+    void setEvt(AnaEvent *evt) {
         Evt = evt;
     }
 
@@ -71,7 +71,7 @@ public:
 
 private:
 
-    AnaEvnt* Evt{};
+    AnaEvent* Evt{};
     shared_ptr<EventStoreAndWriter> EvtWrt;
 
     int Verbose{0};

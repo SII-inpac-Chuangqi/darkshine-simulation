@@ -43,7 +43,7 @@ void ExampleProcessor::Begin() {
 
 }
 
-void ExampleProcessor::ProcessEvt(AnaEvnt *evt) {
+void ExampleProcessor::ProcessEvt(AnaEvent *evt) {
 
     //cout<<"p1: "<<intVar<<endl;
     //cout<<"p2: "<<doubleVar<<endl;
@@ -87,7 +87,7 @@ void ExampleProcessor::ProcessEvt(AnaEvnt *evt) {
     }
 }
 
-void ExampleProcessor::CheckEvt(AnaEvnt *evt) {
+void ExampleProcessor::CheckEvt(AnaEvent *evt) {
     //cout<<"Check!"<<endl;
 
 }

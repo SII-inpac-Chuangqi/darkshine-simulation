@@ -28,13 +28,14 @@ include(${Geant4_USE_FILE})
 # Find required packages)
 #
 find_package(HepMC REQUIRED)
+#find_package(Eigen REQUIRED)
 
-#find_package(XercesC REQUIRED)
-#if (XercesC_FOUND)
-#    INCLUDE_DIRECTORIES( ${XercesC_INCLUDE_DIRS} )
-#    INCLUDE_DIRECTORIES( ${XercesC_LIBRARIES} )
-#    LINK_LIBRARIES( ${XercesC_LIBRARIES} )
-#endif ()
+find_package(XercesC REQUIRED)
+if (XercesC_FOUND)
+    INCLUDE_DIRECTORIES( ${XercesC_INCLUDE_DIRS} )
+    INCLUDE_DIRECTORIES( ${XercesC_LIBRARIES} )
+    LINK_LIBRARIES( ${XercesC_LIBRARIES} )
+endif ()
 
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
