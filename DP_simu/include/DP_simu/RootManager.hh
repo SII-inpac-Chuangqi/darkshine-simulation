@@ -161,6 +161,8 @@ public:
 
     void FillParticleStep(const G4Step *);
 
+    void FillGeometry(const G4String& filename);
+
 private:
     /*                   */
     /* Control Variables */

@@ -59,6 +59,7 @@
 #include "G4GDMLParser.hh"
 
 #include <iterator>
+#include <stdio.h>
 
 //#include "G4ios.hh"
 
@@ -327,8 +328,12 @@ G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
 
     SetBiasLayer();
 
-    //G4GDMLParser parser;
-    //parser.Write("g4test.gdml", World_PV);
+    /* Save GDML to ROOT File */
+    G4GDMLParser parser;
+    G4String f_gdml = "geometry.gdml";
+    parser.Write(f_gdml, World_PV);
+
+    fRootMng->FillGeometry(f_gdml);
 
     return World_PV;
 }

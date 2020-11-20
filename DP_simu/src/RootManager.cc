@@ -5,6 +5,7 @@
 #include "TTree.h"
 #include "TString.h"
 #include "TInterpreter.h"
+#include "TGeoManager.h"
 
 #include "G4TouchableHistory.hh"
 
@@ -265,4 +266,16 @@ void RootManager::FillParticleStep(const G4Step *aStep) {
     }
 
     Steps->emplace_back(step);
+}
+
+void RootManager::FillGeometry(const G4String& filename) {
+
+    auto geoM = new TGeoManager();
+    TGeoManager::Import(filename);
+
+    rootFile->cd();
+    geoM->Write("MasterVolume");
+
+    std::remove(filename);
+
 }
