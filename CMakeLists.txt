@@ -81,7 +81,7 @@ HEADER_DIRECTORIES(Util_List Util_File "Utility")
 
 include_directories(DP_simu/include
         DP_ana/include
-        #Utility/Eigen
+        Utility/Eigen
         ./
         ${Util_List}
         ${Algo_List}

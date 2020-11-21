@@ -48,12 +48,12 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
         SingleCenterFinding(hits, steps);
         if (verbose > 0) {
             std::cout << "-- # of hits in ECAL_Center: " << hits->size() << endl;
-            std::cout << "-- Reconstructed Position: " << ( FindCenter ? "Found" : "NOT Found" ) <<endl;
+            std::cout << "-- Reconstructed Position: " << (FindCenter ? "Found" : "NOT Found") << endl;
             std::cout << fixed << setprecision(3) << right;
-            std::cout << "-- MC X: " << setw(6) << mc_x <<" [mm]" << std::endl;
+            std::cout << "-- MC X: " << setw(6) << mc_x << " [mm]" << std::endl;
             std::cout << "-- Reconstructed X: " << setw(6) << center_x << " +- " << setw(6) << err_x << " [mm]"
                       << std::endl;
-            std::cout << "-- MC Y: " << setw(6) << mc_y <<" [mm]" << std::endl;
+            std::cout << "-- MC Y: " << setw(6) << mc_y << " [mm]" << std::endl;
             std::cout << "-- Reconstructed Y: " << setw(6) << center_y << " +- " << setw(6) << err_y << " [mm]"
                       << std::endl;
         }

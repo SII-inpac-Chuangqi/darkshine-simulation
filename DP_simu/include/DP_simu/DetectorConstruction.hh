@@ -90,7 +90,6 @@ public:
     void SaveGeometry();
 
     // Set methods
-    void SetCheckOverlaps(G4bool);
 
     void SetTagTrkMagField(G4double in);
 
