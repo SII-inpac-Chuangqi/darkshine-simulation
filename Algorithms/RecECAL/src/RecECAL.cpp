@@ -7,6 +7,13 @@
 #include <cmath>
 #include <iostream>
 #include <iomanip>
+#include <utility>
+
+
+RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name), std::move(evtwrt)) {
+
+    ECAL_TF = std::shared_ptr<ECAL_TrkFit>(new ECAL_TrkFit());
+}
 
 void RecECAL::Begin() {
 
@@ -44,7 +51,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
         const auto &hits = HitCollection.at(HitCollectionName);
         const auto &steps = StepCollection.at(StepCollectionName);
 
-        //Find Center Hit
+        // Find Center Hit
         SingleCenterFinding(hits, steps);
         if (verbose > 0) {
             std::cout << "-- # of hits in ECAL_Center: " << hits->size() << endl;
@@ -57,6 +64,17 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
             std::cout << "-- Reconstructed Y: " << setw(6) << center_y << " +- " << setw(6) << err_y << " [mm]"
                       << std::endl;
         }
+
+        // Find Trackers in ECAL
+        for (auto hit: *hits) {
+            double x = hit->getX();
+            double y = hit->getY();
+            double z = hit->getZ();
+
+            ECAL_TF->AddPoint(x,y,z);
+        }
+        std::pair<V3 , V3> result = ECAL_TF->best_line_from_points();
+        std::cout << "origin:\n" << result.first << "\naxis:\n" << result.second;
     } else {
         // if not exists, print out error
         cerr << "MCCollection not found" << endl;
@@ -91,7 +109,7 @@ double RecECAL::SingleCenterFinding(const SimulatedHitVecUniPtr &hits, const DSt
     // Calculate Error with truth x,y
     if (steps->size() >= 3) {
         for (auto step = steps->begin() + 1; step != steps->end() - 1; step++) {
-            if ((*step)->getPVName() == std::string("ECAL")) {
+            if ((*step)->getPVName().find(std::string("ECAL_Center_PVW")) != std::string::npos) {
                 mc_x = (*step)->getX();
                 mc_y = (*step)->getY();
 

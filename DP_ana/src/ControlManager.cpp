@@ -33,7 +33,7 @@ void ControlManager::run() {
     EvtReader->setSkipNumber(SkipNumber);
     EvtReader->setEvtWrt(EvtWrt);
 
-    // Set Verbose
+    // Set Verbosity
     EvtReader->setVerbose(ConfMgr->getEventReaderVerbose());
     algo->setVerbose(ConfMgr->getAlgoManagerVerbose());
     evt->setVerbose(ConfMgr->getDEventVerbose());

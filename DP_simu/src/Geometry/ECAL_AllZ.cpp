@@ -11,8 +11,8 @@ void ECAL_AllZ::DefineParameters(const G4ThreeVector &Pos_RecRegion, const G4Thr
     ECAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
 
     ECAL_Center_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
-    ECAL_Center_Size = G4ThreeVector(1 * cm, 1 * cm, 37 * cm);
-    ECAL_Center_Module_No = G4ThreeVector(45, 45, 1);
+    ECAL_Center_Size = G4ThreeVector(1 * cm, 1 * cm, 2 * cm);
+    ECAL_Center_Module_No = G4ThreeVector(45, 45, 18);
 
     ECAL_Module_Gap = 0.5 * mm;
 
