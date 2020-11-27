@@ -2,9 +2,9 @@
 // Credit to Lv Meng
 //
 
-#include "Algo/ECAL_TrkFit.h"
+#include "Algo/Trk_LineFit.h"
 
-std::pair<V3, V3> ECAL_TrkFit::best_line_from_points() {
+std::pair<V3, V3> Trk_LineFit::best_line_from_points() {
     // copy coordinates to  matrix in Eigen format
     size_t num_atoms = Points.size();
     Eigen::Matrix<V3::Scalar, Eigen::Dynamic, Eigen::Dynamic> centers(num_atoms, 3);
@@ -20,7 +20,7 @@ std::pair<V3, V3> ECAL_TrkFit::best_line_from_points() {
 }
 
 template<class Vector3>
-std::pair<Vector3, Vector3> ECAL_TrkFit::best_line_from_points(const std::vector<Vector3> &c) {
+std::pair<Vector3, Vector3> Trk_LineFit::best_line_from_points(const std::vector<Vector3> &c) {
     // copy coordinates to  matrix in Eigen format
     size_t num_atoms = c.size();
     Eigen::Matrix<typename Vector3::Scalar, Eigen::Dynamic, Eigen::Dynamic> centers(num_atoms, 3);
@@ -35,7 +35,7 @@ std::pair<Vector3, Vector3> ECAL_TrkFit::best_line_from_points(const std::vector
     return std::make_pair(origin, axis);
 }
 
-void ECAL_TrkFit::FillPoints(std::vector<double> x, std::vector<double> y, std::vector<double> z) {
+void Trk_LineFit::FillPoints(std::vector<double> x, std::vector<double> y, std::vector<double> z) {
     assert( x.size() == y.size() == z.size() );
     int N=x.size();
     Eigen::VectorXd vx = Eigen::Map<Eigen::VectorXd>(x.data(), N);
@@ -46,13 +46,13 @@ void ECAL_TrkFit::FillPoints(std::vector<double> x, std::vector<double> y, std::
     for (int i=0; i<N; ++i) Points.push_back(M.row(i));
 }
 
-void ECAL_TrkFit::AddPoint(double x, double y, double z) {
+void Trk_LineFit::AddPoint(double x, double y, double z) {
     Eigen::MatrixXd M(1, 3);
     M << x,y,z;
     Points.push_back(M.row(0));
 }
 
-void ECAL_TrkFit::Clean() {
+void Trk_LineFit::Clean() {
     Points.clear();
     Points.shrink_to_fit();
 }

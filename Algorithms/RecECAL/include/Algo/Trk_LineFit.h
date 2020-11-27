@@ -2,8 +2,8 @@
 // Credit to Lv Meng
 //
 
-#ifndef DSIMU_ECAL_TRKFIT_H
-#define DSIMU_ECAL_TRKFIT_H
+#ifndef DSIMU_TRK_LINEFIT_H
+#define DSIMU_TRK_LINEFIT_H
 
 #include <vector>
 #include <utility>
@@ -16,11 +16,11 @@
 typedef Eigen::Vector3d V3;
 typedef std::vector<Eigen::Vector3d> VecV3;
 
-class ECAL_TrkFit {
+class Trk_LineFit {
 public:
-    ECAL_TrkFit() = default;
+    Trk_LineFit() = default;
 
-    ~ECAL_TrkFit() = default;
+    ~Trk_LineFit() = default;
 
     void FillPoints(std::vector<double> x, std::vector<double> y, std::vector<double> z);
     void AddPoint(double x, double y, double z);
@@ -36,4 +36,4 @@ private:
     VecV3 Points;
 };
 
-#endif //DSIMU_ECAL_TRKFIT_H
+#endif //DSIMU_TRK_LINEFIT_H

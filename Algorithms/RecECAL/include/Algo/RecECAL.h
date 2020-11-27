@@ -8,7 +8,7 @@
 #include <utility>
 
 #include "Core/AnaProcessor.h"
-#include "Algo/ECAL_TrkFit.h"
+#include "Algo/Trk_LineFit.h"
 
 using namespace std;
 
@@ -52,13 +52,14 @@ private:
     double err_x{0.};
     double err_y{0.};
 
+    double Hits_E[400];
     // Verbosity
-    int verbose;
+    int verbose{0};
     // Input Parameter
     double W0{0.};
 
     // Internal Algorithm Processors
-    shared_ptr<ECAL_TrkFit> ECAL_TF;
+    shared_ptr<Trk_LineFit> ECAL_TF;
 
 };
 

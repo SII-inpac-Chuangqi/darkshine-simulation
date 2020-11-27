@@ -12,7 +12,7 @@
 
 RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name), std::move(evtwrt)) {
 
-    ECAL_TF = std::shared_ptr<ECAL_TrkFit>(new ECAL_TrkFit());
+    ECAL_TF = std::shared_ptr<Trk_LineFit>(new Trk_LineFit());
 }
 
 void RecECAL::Begin() {
@@ -31,6 +31,7 @@ void RecECAL::Begin() {
     EvtWrt->RegisterDoubleVariable("err_x", &err_x, "err_x/D");
     EvtWrt->RegisterDoubleVariable("err_y", &err_y, "err_y/D");
 
+    EvtWrt->RegisterDoubleVariable("ECAL_Hits", Hits_E, "ECAL_Hits[400]/D");
 }
 
 void RecECAL::ProcessEvt(AnaEvent *evt) {
@@ -71,10 +72,15 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
             double y = hit->getY();
             double z = hit->getZ();
 
+            int cell_id = hit->getCellId();
+
+            Hits_E[cell_id-1] = ( hit->getE() > 1e-6 && !isnan(hit->getE()) ) ? hit->getE() : 0. ;
+
             ECAL_TF->AddPoint(x,y,z);
         }
+
         std::pair<V3 , V3> result = ECAL_TF->best_line_from_points();
-        std::cout << "origin:\n" << result.first << "\naxis:\n" << result.second;
+        //std::cout << "origin:\n" << result.first << "\naxis:\n" << result.second;
     } else {
         // if not exists, print out error
         cerr << "MCCollection not found" << endl;
