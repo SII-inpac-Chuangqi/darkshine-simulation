@@ -22,7 +22,7 @@ RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProce
     RegisterIntParameter("Verbose", "Verbosity Variable", &verbose, 0);
     RegisterDoubleParameter("W0", "W0", &W0, 0.);
     RegisterIntParameter("Channels", "Nb of Channels", &nb_ch, 1);
-    RegisterStringParameter("RNN_Status", "Train or Apply", &RNN_Status, "none");
+    RegisterStringParameter("RNN_Status", "train or apply", &RNN_Status, "none");
     RegisterStringParameter("RNN_Path", "Weight xml path", &RNN_Path, "none");
     RegisterStringParameter("RNN_Sig_Path", "Signal File path", &RNN_Sig_Path, "none");
     RegisterStringParameter("RNN_Bkg_Path", "Background File path", &RNN_Bkg_Path, "none");

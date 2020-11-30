@@ -47,17 +47,20 @@ void ECAL_RNN::TrainDNN(TChain *sig, TChain *bkg, int NB_ch, const string &DSNam
 
     std::cout << "prepared DATA LOADER " << std::endl;
     // Input Layout
-    TString inputLayoutString("InputLayout=1|1|300");
+    //TString inputLayoutString("InputLayout=1|1|"+to_string(nb_ch));
+    TString inputLayoutString("InputLayout=1|1|400");
+
 
     // Batch Layout
     TString batchLayoutString("BatchLayout=256|2|300");
 
     // General layout.
-    TString layoutString("Layout=RNN|128|300|2|0,DENSE|64|TANH,DENSE|2|LINEAR");
+    //TString layoutString("Layout=RNN|128|300|2|0,DENSE|64|TANH,DENSE|2|LINEAR");
+    TString layoutString("Layout=TANH|128,TANH|128,TANH|128,LINEAR");
 
     // Training strategies.
     TString training0("LearningRate=1e-1,Momentum=0.9,Repetitions=1,"
-                      "ConvergenceSteps=100,BatchSize=256,TestRepetitions=1,"
+                      "ConvergenceSteps=100,BatchSize=16,TestRepetitions=1,"
                       "WeightDecay=1e-4,Regularization=L2,"
                       "DropConfig=0.0+0.5+0.5+0.5, Multithreading=True");
     TString training1("LearningRate=1e-2,Momentum=0.9,Repetitions=1,"
@@ -78,8 +81,8 @@ void ECAL_RNN::TrainDNN(TChain *sig, TChain *bkg, int NB_ch, const string &DSNam
     rnnOptions.Append(":");
     rnnOptions.Append(inputLayoutString);
     rnnOptions.Append(":");
-    rnnOptions.Append(batchLayoutString);
-    rnnOptions.Append(":");
+    //rnnOptions.Append(batchLayoutString);
+    //rnnOptions.Append(":");
     rnnOptions.Append(layoutString);
     rnnOptions.Append(":");
     rnnOptions.Append(trainingStrategyString);

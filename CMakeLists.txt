@@ -29,12 +29,12 @@ include(${Geant4_USE_FILE})
 #
 find_package(HepMC REQUIRED)
 
-#find_package(XercesC REQUIRED)
-#if (XercesC_FOUND)
-#    INCLUDE_DIRECTORIES( ${XercesC_INCLUDE_DIRS} )
-#    INCLUDE_DIRECTORIES( ${XercesC_LIBRARIES} )
-#    LINK_LIBRARIES( ${XercesC_LIBRARIES} )
-#endif ()
+find_package(XercesC REQUIRED)
+if (XercesC_FOUND)
+    INCLUDE_DIRECTORIES( ${XercesC_INCLUDE_DIRS} )
+    INCLUDE_DIRECTORIES( ${XercesC_LIBRARIES} )
+    LINK_LIBRARIES( ${XercesC_LIBRARIES} )
+endif ()
 
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
@@ -60,9 +60,6 @@ endif ()
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 #
-
-include_directories(/usr/local/lib)
-link_directories(/usr/local/lib)
 
 # Recursively Find Algorithm headers
 MACRO(HEADER_DIRECTORIES return_list return_file search_directory)
