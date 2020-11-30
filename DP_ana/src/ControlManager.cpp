@@ -51,15 +51,15 @@ void ControlManager::run() {
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)) );
 
     ConfMgr->ReadAlgoList();
+    /*
+    *  Readin Config File
+    */
+    ConfMgr->ReadAnaParameters();
+
     algo->BeginAnaProcessors();
 
     // Print Output Tree
     EvtWrt->PrintTree();
-
-    /*
-     *  Readin Config File
-     */
-    ConfMgr->ReadAnaParameters();
 
     /*
      *  Begin

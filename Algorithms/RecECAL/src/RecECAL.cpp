@@ -13,16 +13,18 @@
 RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name), std::move(evtwrt)) {
 
     ECAL_TF = std::shared_ptr<Trk_LineFit>(new Trk_LineFit());
+    ECAL_Wrt = std::shared_ptr<ECAL_Writer>(new ECAL_Writer());
+
+    // Register parameters
+    RegisterIntParameter("Verbose", "Verbosity Variable", &verbose, 0);
+    RegisterDoubleParameter("W0", "W0", &W0, 0.);
+    RegisterIntParameter("Channels","Nb of Channels", &nb_ch, 1);
 }
 
 void RecECAL::Begin() {
 
     // Add description for this AnaProcessor
     Description = "ECAL Reconstruction Processor";
-
-    // Register parameters
-    RegisterIntParameter("Verbose", "Verbosity Variable", &verbose, 0);
-    RegisterDoubleParameter("W0", "W0", &W0, 0.);
 
     // Register Output Variable
     EvtWrt->RegisterIntVariable("FindCenter", &FindCenter, "FindCenter/I");
@@ -32,6 +34,8 @@ void RecECAL::Begin() {
     EvtWrt->RegisterDoubleVariable("err_y", &err_y, "err_y/D");
 
     EvtWrt->RegisterDoubleVariable("ECAL_Hits", Hits_E, "ECAL_Hits[400]/D");
+
+    ECAL_Wrt->BookTree("ECAL_Hits.root","dp",nb_ch);
 }
 
 void RecECAL::ProcessEvt(AnaEvent *evt) {
@@ -66,6 +70,8 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                       << std::endl;
         }
 
+        ECAL_Wrt->FillHits(hits);
+
         // Find Trackers in ECAL
         for (auto hit: *hits) {
             double x = hit->getX();
@@ -74,7 +80,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
 
             int cell_id = hit->getCellId();
 
-            Hits_E[cell_id-1] = ( hit->getE() > 1e-6 && !isnan(hit->getE()) ) ? hit->getE() : 0. ;
+            //Hits_E[cell_id-1] = ( hit->getE() > 1e-6 && !isnan(hit->getE()) ) ? hit->getE() : 0. ;
 
             ECAL_TF->AddPoint(x,y,z);
         }
@@ -92,6 +98,7 @@ void RecECAL::CheckEvt(AnaEvent *evt) {
 }
 
 void RecECAL::End() {
+    ECAL_Wrt->SaveTree();
     //cout<<"End!"<<endl;
 }
 

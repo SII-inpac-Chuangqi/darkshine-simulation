@@ -9,6 +9,7 @@
 
 #include "Core/AnaProcessor.h"
 #include "Algo/Trk_LineFit.h"
+#include "Algo/ECAL_Writer.h"
 
 using namespace std;
 
@@ -57,10 +58,11 @@ private:
     int verbose{0};
     // Input Parameter
     double W0{0.};
+    int nb_ch{1};
 
     // Internal Algorithm Processors
     shared_ptr<Trk_LineFit> ECAL_TF;
-
+    shared_ptr<ECAL_Writer> ECAL_Wrt;
 };
 
 
