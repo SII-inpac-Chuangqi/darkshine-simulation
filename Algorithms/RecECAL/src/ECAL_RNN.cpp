@@ -47,16 +47,14 @@ void ECAL_RNN::TrainDNN(TChain *sig, TChain *bkg, int NB_ch, const string &DSNam
 
     std::cout << "prepared DATA LOADER " << std::endl;
     // Input Layout
-    //TString inputLayoutString("InputLayout=1|1|"+to_string(nb_ch));
-    TString inputLayoutString("InputLayout=1|1|400");
-
+    TString inputLayoutString = TString::Format("InputLayout=1|1|%d",NB_ch);
 
     // Batch Layout
     TString batchLayoutString("BatchLayout=256|2|300");
 
     // General layout.
     //TString layoutString("Layout=RNN|128|300|2|0,DENSE|64|TANH,DENSE|2|LINEAR");
-    TString layoutString("Layout=TANH|128,TANH|128,TANH|128,LINEAR");
+    TString layoutString("Layout=DENSE|64|TANH,DENSE|64|TANH,DENSE|64|TANH,LINEAR");
 
     // Training strategies.
     TString training0("LearningRate=1e-1,Momentum=0.9,Repetitions=1,"
