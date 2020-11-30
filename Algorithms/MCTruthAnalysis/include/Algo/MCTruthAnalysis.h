@@ -36,6 +36,13 @@ private:
 
     std::shared_ptr<SecondaryMaxEFinder> SecFinder;
 
+    int Initial_PDG;
+    double Initial_Px;
+    double Initial_Py;
+    double Initial_Pz;
+    double Initial_X;
+    double Initial_Y;
+    double Initial_Z;
 };
 
 

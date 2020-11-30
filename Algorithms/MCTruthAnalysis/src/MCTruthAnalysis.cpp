@@ -23,6 +23,15 @@ void MCTruthAnalysis::Begin() {
     // Register Parameters
     RegisterIntParameter("Verbose", "Verbosity", &verbose, 0);
 
+    // Register Outputs
+    //EvtWrt->RegisterIntVariable("Initial_PDG", &Initial_PDG, "Initial_PDG/D");
+    EvtWrt->RegisterDoubleVariable("Initial_Px", &Initial_Px, "Initial_Px/D");
+    EvtWrt->RegisterDoubleVariable("Initial_Py", &Initial_Py, "Initial_Py/D");
+    EvtWrt->RegisterDoubleVariable("Initial_Pz", &Initial_Pz, "Initial_Pz/D");
+    EvtWrt->RegisterDoubleVariable("Initial_X", &Initial_X, "Initial_X/D");
+    EvtWrt->RegisterDoubleVariable("Initial_Y", &Initial_Y, "Initial_Y/D");
+    EvtWrt->RegisterDoubleVariable("Initial_Z", &Initial_Z, "Initial_Z/D");
+
     SecFinder->RegisterParameters();
 }
 
@@ -47,10 +56,18 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
         const auto &mc = MCCollection.at(CollectionName);
         const auto &steps = StepCollection.at(StepCollectionName);
 
+        // Record Initial Particle Status
+        auto step = steps->begin();
+        Initial_Px = (*step)->getPx();
+        Initial_Py = (*step)->getPy();
+        Initial_Pz = (*step)->getPz();
+        Initial_X  = (*step)->getX();
+        Initial_Y  = (*step)->getY();
+        Initial_Z  = (*step)->getZ();
+
         // Find Secondary
         SecFinder->setEvt(evt);
         auto mcSec = SecFinder->FindSecondary();
-
 
     } else {
         // if not exists, print out error
