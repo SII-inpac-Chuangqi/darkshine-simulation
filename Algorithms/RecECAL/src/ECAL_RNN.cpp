@@ -89,6 +89,8 @@ void ECAL_RNN::TrainDNN(TChain *sig, TChain *bkg, int NB_ch, const string &DSNam
     factory->BookMethod(dataloader, TMVA::Types::kDL, "DNN_CPU", rnnOptions);
 
     factory->TrainAllMethods();
+    factory->TestAllMethods();
+    factory->EvaluateAllMethods();
 }
 
 void ECAL_RNN::LoadModel(int NB_ch, const string &DSPath, const string &DSName) {
