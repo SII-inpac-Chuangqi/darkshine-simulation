@@ -108,7 +108,7 @@ void ECAL_RNN::LoadModel(int NB_ch, const string &DSPath, const string &DSName) 
 double ECAL_RNN::ApplyDNN(const shared_ptr<vector<SimulatedHit *>> &hits) {
     for (auto hit : *hits) {
         int cell_id = hit->getCellId();
-        Hits.at(cell_id) = hits->at(cell_id)->getE();
+        Hits.at(cell_id) = hit->getE();
     }
     return reader->EvaluateMVA(DatasetName);
 }
