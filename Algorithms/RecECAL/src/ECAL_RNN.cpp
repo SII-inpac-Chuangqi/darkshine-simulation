@@ -109,7 +109,6 @@ double ECAL_RNN::ApplyDNN(const shared_ptr<vector<SimulatedHit *>> &hits) {
     for (auto hit : *hits) {
         int cell_id = hit->getCellId();
         Hits.at(cell_id-1) = ( hit->getE() > 1e-6 && !isnan(hit->getE()) ) ? hit->getE() : 0. ;
-        cout<<Hits.at(cell_id-1)<<endl;
     }
     return reader->EvaluateMVA(DatasetName);
 }
