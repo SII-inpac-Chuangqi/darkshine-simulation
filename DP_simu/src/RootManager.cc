@@ -27,8 +27,8 @@ RootManager::RootManager()
     if_record_ip = true;
 }
 
+/// \brief Clean Optical stuff.
 void RootManager::initialize() {
-    // Initialization
     EventID = 0;
     for (double &i : Rndm) i = 0;
 
@@ -53,7 +53,7 @@ RootManager::~RootManager() {
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
+/// \brief Create rootFile.
 void RootManager::book() {
     G4String fileName = outfilename;
     rootFile = new TFile(fileName, "RECREATE");
@@ -86,7 +86,8 @@ void RootManager::book() {
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
-
+/// \brief 
+/// \param[in] cIn
 void RootManager::bookCollection(G4String cIn) {
 
     G4cout << "[Root Manager] ==> Booking tree for " << cIn << " ..." << G4endl;
@@ -118,7 +119,7 @@ void RootManager::bookCollection(G4String cIn) {
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
-
+/// \brief Save ROOT file of Simulation tree.
 void RootManager::save() {
     if (rootFile) {
         rootFile->WriteTObject(tr, "", "Overwrite");
@@ -128,7 +129,9 @@ void RootManager::save() {
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
-
+/// \brief Fill Photon-Nuclear reaction Energy.
+/// \param[in] E1 if E1 > PNEnergy_Target, replace it by E1
+/// \param[in] E1 if E2 > PNEnergy_Ecal, replace it by E2
 void RootManager::FillPNE(G4double E1, G4double E2) {
     auto EnergyTarget = Evt->getPnEnergyTarget();
     Evt->setPnEnergyTarget(E1 > EnergyTarget ? E1 : EnergyTarget);
@@ -138,7 +141,9 @@ void RootManager::FillPNE(G4double E1, G4double E2) {
 
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
-
+/// \brief
+/// \param[in] mc
+/// \param[in] ParentID
 void RootManager::FillMC(McParticle *mc, int ParentID) {
     if (if_clean) return;
 
@@ -157,7 +162,9 @@ void RootManager::FillMC(McParticle *mc, int ParentID) {
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
-
+/// \brief
+/// \param[in] eventID
+/// \param[in] RnD
 void RootManager::FillSim(Int_t eventID, const Double_t *Rnd) {
 
     EventID = eventID + fEvtNb * fStart;

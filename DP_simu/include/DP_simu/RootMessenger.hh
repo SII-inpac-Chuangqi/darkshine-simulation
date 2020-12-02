@@ -16,6 +16,8 @@ class RootManager;
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// class description:
+//  
 
 class RootMessenger: public G4UImessenger
 {

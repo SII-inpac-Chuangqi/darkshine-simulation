@@ -10,6 +10,11 @@
 #include "Object/ReconstructedParticle.h"
 #include "DHit.h"
 
+/// class descriptoin:
+/// \brief With optical photon detected, the
+/// next step is to change the optical signal to CalorimeterHit,
+/// which is calld digitization. CalorimeterHit collection is used in
+/// real analysis instead of SimulatedHit.
 class CalorimeterHit : public DHit {
 public:
     // Constructor and Destructor

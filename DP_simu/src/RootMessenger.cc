@@ -15,7 +15,7 @@
 RootMessenger::RootMessenger(RootManager* rootMng)
 	 : G4UImessenger(), froot(rootMng)
 {
-    /* Event Setting */
+    // Event Setting
     fEventDirectory = new G4UIdirectory("/DP/Event/");
     fEventDirectory->SetGuidance("Event operations");
     
@@ -41,7 +41,7 @@ RootMessenger::RootMessenger(RootManager* rootMng)
     fFilterCmd->SetDefaultValue(false);
     fFilterCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    /* Bias Setting */
+    // Bias Setting
     fBiasDirectory = new G4UIdirectory("/DP/Bias/");
     fBiasDirectory->SetGuidance("Event operations");
 
@@ -68,7 +68,7 @@ RootMessenger::RootMessenger(RootManager* rootMng)
     fifBiasECALCmd->SetDefaultValue(false);
     fifBiasECALCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    /* Filter Setting */
+    // Filter Setting
     fFilterDirectory = new G4UIdirectory("/DP/Filter/");
     fFilterDirectory->SetGuidance("Simulation Filter control");
 
@@ -108,13 +108,13 @@ RootMessenger::RootMessenger(RootManager* rootMng)
     fFilterProcess_MaxScanDistanceCmd->SetGuidance("Max Scan Distance for certain process");
     fFilterProcess_MaxScanDistanceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    /* Optical Photon */
+    // Optical Photon
     fifOpticalCmd = new G4UIcmdWithABool("/DP/if_Optical_Photon",this);
     fifOpticalCmd->SetGuidance("if simulate optical photon process");
     fifOpticalCmd->SetDefaultValue(false);
     fifOpticalCmd->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
 
-    /* Rndm Setting */
+    // Rndm Setting
     fEngDirectory = new G4UIdirectory("/DP/Engine/");
     fEngDirectory->SetGuidance("Simulation Engine control");
     

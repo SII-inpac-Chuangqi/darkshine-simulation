@@ -71,7 +71,8 @@ namespace {
 
 int main(int argc, char **argv) {
 
-    /* Evaluate Arguments */
+//-------------------------------------------------------------------------------
+// Evaluate Arguments
 
     if (argc > 9) {
         PrintUsage();
@@ -98,17 +99,16 @@ int main(int argc, char **argv) {
         }
     }
 
+//-------------------------------------------------------------------------
     G4cout << macro << ", " << OpticalMacro << G4endl;
 
     // Get the pointer to the User Interface manager
     G4UImanager *UImanager = G4UImanager::GetUIpointer();
 
     // Choose the Random engine
-
     CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine);
 
     // Construct the root manager
-
     auto *rootMng = new RootManager;
 
     if (!OpticalMacro.empty())   // batch mode

@@ -39,6 +39,8 @@ class TRandom3;
 class RootMessenger;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// class description:
+//   This class
 
 class RootManager {
 public:
@@ -168,7 +170,7 @@ private:
 
     Bool_t if_filter;
     Bool_t if_EndEvt;
-    Bool_t if_Optical;
+    Bool_t if_Optical; // flag of Optical Process. 
 
     RootMessenger *fMessenger;
 
@@ -204,12 +206,12 @@ private:
     TFile *rootFile;
     TTree *tr;
 
-    Int_t fStart;
-    Int_t fEvtNb;
+    Int_t fStart; // Run Number, Initialized to 0. Set method: RootManager::SetStartID(int id)
+    Int_t fEvtNb; // Event Number, Initialized to 100000. Set method: RootManager::SetNbEvent(int id)
     Int_t fEvtN;
 
     Int_t EventID;
-    Double_t Rndm[4];
+    Double_t Rndm[4]; //Random double array, size=4
 
 
     // Initial Particle Movement
@@ -232,7 +234,7 @@ private:
 
     // Clean Mode
     TRandom3 rnd;
-    Bool_t if_clean;
+    Bool_t if_clean; // Flag of Clean Mode. Initialized to false
 
     // DEvent Collection
     DEvent *Evt;

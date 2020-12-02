@@ -11,7 +11,8 @@
 #include "DHit.h"
 
 #include <vector>
-
+/// class description:
+/// \brief Deposit energy. TRUTH information which is known only in simulation.
 class SimulatedHit : public DHit {
 public:
     // Constructor and Destructor
