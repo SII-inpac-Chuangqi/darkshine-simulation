@@ -87,14 +87,9 @@ void RootManager::book() {
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
-<<<<<<< HEAD
 /// \brief 
 /// \param[in] cIn
-void RootManager::bookCollection(G4String cIn) {
-=======
-
 void RootManager::bookCollection(const G4String &cIn) {
->>>>>>> yulei_zhang/master
 
     G4cout << "[Root Manager] ==> Booking tree for " << cIn << " ..." << G4endl;
 
