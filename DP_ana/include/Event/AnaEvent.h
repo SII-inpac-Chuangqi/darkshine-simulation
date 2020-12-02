@@ -2,21 +2,32 @@
 // Created by Zhang Yulei on 9/26/20.
 //
 
-#ifndef DSIMU_ANAEVNT_H
-#define DSIMU_ANAEVNT_H
+#ifndef DSIMU_ANAEVENT_H
+#define DSIMU_ANAEVENT_H
 
 #include "Object/DEvent.h"
 #include "TTreeReaderValue.h"
 
-class AnaEvnt : public DEvent{
+class AnaEvent : public DEvent{
 public:
-    AnaEvnt() = default;
+    AnaEvent() = default;
 
-    ~AnaEvnt() override = default;
+    ~AnaEvent() override = default;
 
     void ConvertTreeValuePtr(const std::shared_ptr<TTreeReaderValue<DEvent> >& evt);
 
     void Initialization(CleanType ct) override;
+
+    // Register Collections
+    DStepVecUniPtr RegisterStepCollection(const std::string &);
+
+    MCParticleVecUniPtr RegisterMCParticleCollection(const std::string &);
+
+    RecParticleVecUniPtr RegisterRecParticleCollection(const std::string &);
+
+    SimulatedHitVecUniPtr RegisterSimulatedHitCollection(const std::string &);
+
+    CalorimeterHitVecUniPtr RegisterCalorimeterHitCollection(const std::string &);
 
     std::vector<std::string> *ListAllCollections() override;
 
@@ -56,4 +67,4 @@ private:
 };
 
 
-#endif //DSIMU_ANAEVNT_H
+#endif //DSIMU_ANAEVENT_H

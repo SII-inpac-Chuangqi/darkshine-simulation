@@ -7,9 +7,9 @@
 void ExampleProcessor::Begin() {
     /*
      *
-     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
-     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
-     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
+     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.50
+     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.50
+     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.50
      *
      */
 
@@ -41,9 +41,12 @@ void ExampleProcessor::Begin() {
     // Register String Parameter
     RegisterStringParameter("StrVar", "String Variable", &strVar, "test");
 
+    // Register Output Variable
+    EvtWrt->RegisterIntVariable("Output_Var1", &Output_Var1, "Output_Var1/I");
+    EvtWrt->RegisterDoubleVariable("Output_Var2", &Output_Var2, "Output_Var2/D");
 }
 
-void ExampleProcessor::ProcessEvt(AnaEvnt *evt) {
+void ExampleProcessor::ProcessEvt(AnaEvent *evt) {
 
     //cout<<"p1: "<<intVar<<endl;
     //cout<<"p2: "<<doubleVar<<endl;
@@ -87,7 +90,7 @@ void ExampleProcessor::ProcessEvt(AnaEvnt *evt) {
     }
 }
 
-void ExampleProcessor::CheckEvt(AnaEvnt *evt) {
+void ExampleProcessor::CheckEvt(AnaEvent *evt) {
     //cout<<"Check!"<<endl;
 
 }

@@ -12,7 +12,7 @@
 #include "TTreeReaderValue.h"
 
 
-#include "Event/AnaEvnt.h"
+#include "Event/AnaEvent.h"
 #include "EventStoreAndWriter.h"
 
 using namespace std;
@@ -37,7 +37,7 @@ public:
         return evt;
     }
 
-    void setEvt(AnaEvnt *in) {
+    void setEvt(AnaEvent *in) {
         evt = in;
     }
 
@@ -86,7 +86,7 @@ public:
     }
 
 private:
-    AnaEvnt *evt;
+    AnaEvent *evt;
     Long64_t Entries;
     shared_ptr<EventStoreAndWriter> EvtWrt;
 

@@ -16,13 +16,13 @@ public:
     // No need to change anything here
     // Must initialized with Name
     explicit ExampleProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name), std::move(evtwrt)) {};
-    ~ExampleProcessor() {};
+    ~ExampleProcessor() override = default;
 
     void Begin() override;
 
-    void ProcessEvt(AnaEvnt* evt) override;
+    void ProcessEvt(AnaEvent* evt) override;
 
-    void CheckEvt(AnaEvnt* evt) override;
+    void CheckEvt(AnaEvent* evt) override;
 
     void End() override;
 
@@ -37,6 +37,10 @@ private:
     int verbose;
     double doubleVar;
     std::string strVar;
+
+    // Some output variables which would be recorded in the output root file
+    int Output_Var1;
+    double Output_Var2;
 };
 
 

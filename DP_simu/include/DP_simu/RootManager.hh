@@ -50,7 +50,7 @@ public:
 
     void book();
 
-    void bookCollection(G4String);
+    void bookCollection(const G4String&);
 
     void save();
 
@@ -91,6 +91,7 @@ public:
     void SetifFilter_HardBrem(G4bool in) { ifFilter_HardBrem = in; };
 
     void SetifFilter_Process(G4bool in) { ifFilter_Process = in; };
+
 
     /* get methods */
     bool GetFilter() { return if_filter; };
@@ -162,6 +163,8 @@ public:
     bool FillOptical(const G4Step *, G4String);
 
     void FillParticleStep(const G4Step *);
+
+    void FillGeometry(const G4String& filename);
 
 private:
     /*                   */

@@ -29,17 +29,17 @@ include(${Geant4_USE_FILE})
 #
 find_package(HepMC REQUIRED)
 
-#find_package(XercesC REQUIRED)
-#if (XercesC_FOUND)
-#    INCLUDE_DIRECTORIES( ${XercesC_INCLUDE_DIRS} )
-#    INCLUDE_DIRECTORIES( ${XercesC_LIBRARIES} )
-#    LINK_LIBRARIES( ${XercesC_LIBRARIES} )
-#endif ()
+find_package(XercesC REQUIRED)
+if (XercesC_FOUND)
+    INCLUDE_DIRECTORIES( ${XercesC_INCLUDE_DIRS} )
+    INCLUDE_DIRECTORIES( ${XercesC_LIBRARIES} )
+    LINK_LIBRARIES( ${XercesC_LIBRARIES} )
+endif ()
 
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
 #
-FIND_PACKAGE(ROOT REQUIRED)
+FIND_PACKAGE(ROOT COMPONENTS Geom TMVA)
 IF (ROOT_FOUND)
     INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIRS})
     INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
@@ -81,13 +81,14 @@ HEADER_DIRECTORIES(Util_List Util_File "Utility")
 
 include_directories(DP_simu/include
         DP_ana/include
+        Utility/Eigen
         ./
         ${Util_List}
         ${Algo_List}
         ${Geant4_INCLUDE_DIR}
         ${HEPMC_INCLUDE_DIR})
 
-file(GLOB Simu_sources DP_simu/src/*.cc)
+file(GLOB Simu_sources DP_simu/src/* DP_simu/src/Geometry/*)
 file(GLOB Simu_headers DP_simu/include/*)
 
 file(GLOB Ana_sources DP_ana/src/*.cpp)

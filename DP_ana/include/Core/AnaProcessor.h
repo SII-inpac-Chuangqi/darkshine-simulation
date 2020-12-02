@@ -11,7 +11,7 @@
 #include <string>
 #include <iostream>
 
-#include "Event/AnaEvnt.h"
+#include "Event/AnaEvent.h"
 #include "Event/EventStoreAndWriter.h"
 
 using namespace std;
@@ -39,9 +39,9 @@ public:
 
     virtual void Begin() = 0;
 
-    virtual void ProcessEvt(AnaEvnt *) = 0;
+    virtual void ProcessEvt(AnaEvent *) = 0;
 
-    virtual void CheckEvt(AnaEvnt *) = 0;
+    virtual void CheckEvt(AnaEvent *) = 0;
 
     virtual void End() = 0;
 

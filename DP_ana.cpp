@@ -43,5 +43,5 @@ int main(int argc, char **argv) {
     control->run();
 
     delete control;
-    return 1;
+    return 0;
 }

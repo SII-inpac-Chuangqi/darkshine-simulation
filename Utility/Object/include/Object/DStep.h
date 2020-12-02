@@ -13,11 +13,11 @@ class DStep : public TObject {
 public:
     DStep() = default;
 
-    DStep(const DStep &rhs) {
+    DStep(const DStep &rhs)  : TObject(rhs) {
         *this = rhs;
     }
 
-    ~DStep() = default;
+    ~DStep() override = default;
 
     // Operators
     bool operator==(const DStep &rhs) const {

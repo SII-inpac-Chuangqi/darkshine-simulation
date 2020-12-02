@@ -13,6 +13,7 @@
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 
+#include <utility>
 #include <vector>
 
 class CALConstruct
@@ -23,7 +24,7 @@ class CALConstruct
     virtual ~CALConstruct();
 
     G4ThreeVector Construct();
-    G4ThreeVector MatrixPlacement(G4int, G4int, G4int, G4ThreeVector );
+    G4ThreeVector MatrixPlacement(G4int, G4int, G4int, const G4ThreeVector& );
     void          MatrixPlacementXYRemoved(G4int, G4int, G4int, G4ThreeVector, G4int, G4int);
     void          MatrixPlacementXYwithAbsorber( G4int, G4int, G4int, G4ThreeVector, G4double, G4Material*);
 
@@ -43,7 +44,7 @@ class CALConstruct
     void SetWrapSizeY(G4double in)   { fWrapSizeY = in; };
     void SetWrapSizeZ(G4double in)   { fWrapSizeZ = in; };
     void SetCopyNo(G4int in)            { fCopyNo = in; };
-    void SetCALName(G4String in)        { fCALName = in; };
+    void SetCALName(G4String in)        { fCALName = std::move(in); };
     void SetCALSD(DetectorSD* in)    { fCALSD = in; };
     void SetVis(G4VisAttributes* in)    { fVis = in; };
     void SetCALWrapSD(DetectorSD* in)        { fCALWrapSD = in; };
@@ -56,7 +57,7 @@ class CALConstruct
     void SetPosXYZ(G4double x, G4double y, G4double z) { fPosX = x; fPosY = y; fPosZ = z; };
     void SetWrapSizeXYZ(G4double x, G4double y, G4double z) { fWrapSizeX = x; fWrapSizeY = y; fWrapSizeZ = z; };
 
-    void SetAPDSize(G4ThreeVector apd, G4ThreeVector glue) { 
+    void SetAPDSize(const G4ThreeVector& apd, const G4ThreeVector& glue) {
         aSizeX = apd.x(); aSizeY = apd.y(); aSizeZ = apd.z(); 
         gSizeX = glue.x(); gSizeY = glue.y(); gSizeZ = glue.z(); 
     };

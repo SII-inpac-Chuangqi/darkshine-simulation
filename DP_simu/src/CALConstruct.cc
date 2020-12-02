@@ -35,12 +35,12 @@ CALConstruct::CALConstruct(G4String CALName,
     fWrapSizeY = 0.; 
     fWrapSizeZ = 0.; 
 
-    fCALSD = NULL;
-    fCALWrapSD = NULL;
-    fVis = NULL;
-    fWrapVis = NULL;
-    fCALMaterial = NULL;
-    fWrapMaterial = NULL;
+    fCALSD = nullptr;
+    fCALWrapSD = nullptr;
+    fVis = nullptr;
+    fWrapVis = nullptr;
+    fCALMaterial = nullptr;
+    fWrapMaterial = nullptr;
 
     ifAbsorber = false;
     fRecordLV = true;
@@ -98,7 +98,7 @@ G4ThreeVector CALConstruct::Construct()
     auto fName = ifAbsorber ? fCALName+"Abs" : fCALName;
     auto box = new G4Box(fName+"_Box" , fSizeX, fSizeY, fSizeZ );
     auto boxLV = new G4LogicalVolume(box, fCALMaterial, fName+"_LV", 0,0,0);
-    auto boxPV = new G4PVPlacement(0, pos, boxLV, fName+"_PV", fMotherVolume, false, fCopyNo, fCheckOverlap);
+    auto boxPV = new G4PVPlacement(nullptr, pos, boxLV, fName+"_PV", fMotherVolume, false, fCopyNo, fCheckOverlap);
 
     if ( fRecordLV ) fCaloLVVector.push_back(boxLV);
 
@@ -177,7 +177,7 @@ G4ThreeVector CALConstruct::Construct()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, G4ThreeVector CentrePos)
+G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, const G4ThreeVector& CentrePos)
 {
     auto TotalSize = G4ThreeVector(0,0,0);
     // check consistency

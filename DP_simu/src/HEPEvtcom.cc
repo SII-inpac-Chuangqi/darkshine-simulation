@@ -71,7 +71,7 @@
 // to the maximum possible number of entries --- 10000 is a good choice
 // (and is the number used by ATLAS versions of Pythia).
 
-#include <ctype.h>
+#include <cctype>
 
 enum {HEPEVT_EntriesAllocation=4000};
 

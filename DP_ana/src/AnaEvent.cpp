@@ -2,9 +2,9 @@
 // Created by Zhang Yulei on 9/26/20.
 //
 
-#include "Event/AnaEvnt.h"
+#include "Event/AnaEvent.h"
 
-void AnaEvnt::Initialization(CleanType ct) {
+void AnaEvent::Initialization(CleanType ct) {
     DEvent::Initialization(ct);
 
     for (const auto &itr : MCParticleCollectionSP) {
@@ -52,7 +52,7 @@ void AnaEvnt::Initialization(CleanType ct) {
     if (ct == nALL) StepCollectionSP.clear();
 }
 
-void AnaEvnt::ConvertTreeValuePtr(const std::shared_ptr<TTreeReaderValue<DEvent>> &evt) {
+void AnaEvent::ConvertTreeValuePtr(const std::shared_ptr<TTreeReaderValue<DEvent>> &evt) {
     /* Convert some normal variables */
     RunID = (*evt)->getRunId();
     EventID = (*evt)->getEventId();
@@ -103,7 +103,7 @@ void AnaEvnt::ConvertTreeValuePtr(const std::shared_ptr<TTreeReaderValue<DEvent>
     }
 }
 
-std::vector<std::string> *AnaEvnt::ListAllCollections() {
+std::vector<std::string> *AnaEvent::ListAllCollections() {
     auto tmp = new std::vector<std::string>;
 
     auto s = ListCollections(StepCollectionSP);
@@ -129,7 +129,7 @@ std::vector<std::string> *AnaEvnt::ListAllCollections() {
     return tmp;
 }
 
-void AnaEvnt::LinkChildren() {
+void AnaEvent::LinkChildren() {
     if (MCParticleCollectionSP.empty()) return;
     for (const auto &collection : MCParticleCollectionSP) {
         for (auto itr : *(collection.second)) {
@@ -139,4 +139,82 @@ void AnaEvnt::LinkChildren() {
     }
 }
 
+DStepVecUniPtr AnaEvent::RegisterStepCollection(const std::string &str) {
+    if (StepCollectionSP.count(str) != 0) {
+        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key value." << std::endl;
+        return nullptr;
+    }
+    auto tmpVec = std::shared_ptr<DStepVec>(new DStepVec());
+    StepCollectionSP.emplace(std::pair<std::string, DStepVecUniPtr>(str, tmpVec));
 
+    if (Verbose > 1) {
+        std::cout << "[STEP REGISTER] : (Verbosity 2) ==> A new collection " + str +
+                     " has been successfully added to MCParticle Collection." << std::endl;
+    }
+
+    return tmpVec;
+}
+
+MCParticleVecUniPtr AnaEvent::RegisterMCParticleCollection(const std::string &str) {
+    if (MCParticleCollectionSP.count(str) != 0) {
+        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key value." << std::endl;
+        return nullptr;
+    }
+    auto tmpVec = std::shared_ptr<MCParticleVec>(new MCParticleVec());
+    MCParticleCollectionSP.emplace(std::pair<std::string, MCParticleVecUniPtr>(str, tmpVec));
+
+    if (Verbose > 1) {
+        std::cout << "[MC REGISTER] : (Verbosity 2) ==> A new collection " + str +
+                     " has been successfully added to MCParticle Collection." << std::endl;
+    }
+
+    return tmpVec;
+}
+
+RecParticleVecUniPtr AnaEvent::RegisterRecParticleCollection(const std::string &str) {
+    if (RecParticleCollectionSP.count(str) != 0) {
+        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key value." << std::endl;
+        return nullptr;
+    }
+    auto tmpVec = std::shared_ptr<RecParticleVec>(new RecParticleVec());
+    RecParticleCollectionSP.emplace(std::pair<std::string, RecParticleVecUniPtr >(str, tmpVec));
+
+    if (Verbose > 1) {
+        std::cout << "[REC REGISTER] : (Verbosity 2) ==> A new collection " + str +
+                     " has been successfully added to RecParticle Collection." << std::endl;
+    }
+
+    return tmpVec;
+}
+
+SimulatedHitVecUniPtr AnaEvent::RegisterSimulatedHitCollection(const std::string &str) {
+    if (SimulatedHitCollectionSP.count(str) != 0) {
+        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key value." << std::endl;
+        return nullptr;
+    }
+    auto tmpVec = std::shared_ptr<SimulatedHitVec>(new SimulatedHitVec());
+    SimulatedHitCollectionSP.emplace(std::pair<std::string, SimulatedHitVecUniPtr >(str, tmpVec));
+
+    if (Verbose > 1) {
+        std::cout << "[MC REGISTER] : (Verbosity 2) ==> A new collection " + str +
+                     " has been successfully added to SimulatedHit Collection." << std::endl;
+    }
+
+    return tmpVec;
+}
+
+CalorimeterHitVecUniPtr AnaEvent::RegisterCalorimeterHitCollection(const std::string &str) {
+    if (CalorimeterHitCollectionSP.count(str) != 0) {
+        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key value." << std::endl;
+        return nullptr;
+    }
+    auto tmpVec = std::shared_ptr<CalorimeterHitVec>(new CalorimeterHitVec());
+    CalorimeterHitCollectionSP.emplace(std::pair<std::string, CalorimeterHitVecUniPtr >(str, tmpVec));
+
+    if (Verbose > 1) {
+        std::cout << "[REC REGISTER] : (Verbosity 2) ==> A new collection " + str +
+                     " has been successfully added to CalorimterHit Collection" << std::endl;
+    }
+
+    return tmpVec;
+}

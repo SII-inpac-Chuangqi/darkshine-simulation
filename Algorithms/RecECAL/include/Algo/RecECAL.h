@@ -8,6 +8,9 @@
 #include <utility>
 
 #include "Core/AnaProcessor.h"
+#include "Algo/Trk_LineFit.h"
+#include "Algo/ECAL_Writer.h"
+#include "Algo/ECAL_RNN.h"
 
 using namespace std;
 
@@ -15,14 +18,14 @@ class RecECAL : public AnaProcessor {
 public:
     // No need to change anything here
     // Must initialized with Name
-    explicit RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name), std::move(evtwrt)) {};
-    ~RecECAL() override {};
+    explicit RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt);
+    ~RecECAL() override {}
 
     void Begin() override;
 
-    void ProcessEvt(AnaEvnt* evt) override;
+    void ProcessEvt(AnaEvent* evt) override;
 
-    void CheckEvt(AnaEvnt* evt) override;
+    void CheckEvt(AnaEvent* evt) override;
 
     void End() override;
 
@@ -34,6 +37,8 @@ public:
         mc_y = 0.;
         err_x = 0.;
         err_y = 0.;
+
+        ECAL_TF->Clean();
     }
 
     double SingleCenterFinding(const SimulatedHitVecUniPtr&, const DStepVecUniPtr &);
@@ -49,11 +54,23 @@ private:
     double err_x{0.};
     double err_y{0.};
 
+    double RNN_Score{0.};
+
+    double Hits_E[400];
     // Verbosity
-    int verbose;
+    int verbose{0};
     // Input Parameter
     double W0{0.};
+    int nb_ch{1};
+    string RNN_Status{};
+    string RNN_Path{};
+    string RNN_Sig_Path{};
+    string RNN_Bkg_Path{};
 
+    // Internal Algorithm Processors
+    shared_ptr<Trk_LineFit> ECAL_TF;
+    shared_ptr<ECAL_Writer> ECAL_Wrt;
+    shared_ptr<ECAL_RNN>    ECAL_rnn;
 };
 
 

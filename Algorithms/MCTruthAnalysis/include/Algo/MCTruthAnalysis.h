@@ -22,9 +22,9 @@ public:
 
     void Begin() override;
 
-    void ProcessEvt(AnaEvnt *evt) override;
+    void ProcessEvt(AnaEvent *evt) override;
 
-    void CheckEvt(AnaEvnt *evt) override;
+    void CheckEvt(AnaEvent *evt) override;
 
     void End() override;
 
@@ -36,6 +36,13 @@ private:
 
     std::shared_ptr<SecondaryMaxEFinder> SecFinder;
 
+    int Initial_PDG;
+    double Initial_Px;
+    double Initial_Py;
+    double Initial_Pz;
+    double Initial_X;
+    double Initial_Y;
+    double Initial_Z;
 };
 
 

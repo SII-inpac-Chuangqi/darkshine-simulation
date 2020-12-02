@@ -8,13 +8,13 @@
 
 // Processors
 #include "Algo/ExampleProcessor.h"
-#include "Event/AnaEvnt.h"
+#include "Event/AnaEvent.h"
 #include "Algo/MCTruthAnalysis.h"
 #include "Algo/RecECAL.h"
 
 void ControlManager::run() {
 
-    auto *evt = new AnaEvnt();
+    auto *evt = new AnaEvent();
     /* Read in Basic Configuration */
     /* Read Algorithm Lists */
     ConfMgr->ReadConst();
@@ -33,7 +33,7 @@ void ControlManager::run() {
     EvtReader->setSkipNumber(SkipNumber);
     EvtReader->setEvtWrt(EvtWrt);
 
-    // Set Verbose
+    // Set Verbosity
     EvtReader->setVerbose(ConfMgr->getEventReaderVerbose());
     algo->setVerbose(ConfMgr->getAlgoManagerVerbose());
     evt->setVerbose(ConfMgr->getDEventVerbose());
@@ -51,15 +51,15 @@ void ControlManager::run() {
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)) );
 
     ConfMgr->ReadAlgoList();
+    /*
+    *  Readin Config File
+    */
+    ConfMgr->ReadAnaParameters();
+
     algo->BeginAnaProcessors();
 
     // Print Output Tree
     EvtWrt->PrintTree();
-
-    /*
-     *  Readin Config File
-     */
-    ConfMgr->ReadAnaParameters();
 
     /*
      *  Begin

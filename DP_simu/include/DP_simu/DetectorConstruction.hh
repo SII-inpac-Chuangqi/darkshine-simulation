@@ -47,6 +47,10 @@
 #include "RootManager.hh"
 #include "BOptrMultiParticleChangeCrossSection.hh"
 
+#include "Geometry/ECAL_XYCrossing.h"
+#include "Geometry/ECAL_AllZ.h"
+#include "Geometry/HCAL_Construct.h"
+
 #include <vector>
 #include <iterator>
 
@@ -61,6 +65,12 @@ class G4UserLimits;
 class RootManager;
 
 class DetectorMessenger;
+
+class ECAL_XYCrossing;
+
+class ECAL_AllZ;
+
+class HCAL_Construct;
 
 /// Detector construction class to define materials and geometry.
 ///
@@ -77,8 +87,9 @@ public:
 public:
     G4VPhysicalVolume *Construct() override;
 
+    void SaveGeometry();
+
     // Set methods
-    void SetCheckOverlaps(G4bool);
 
     void SetTagTrkMagField(G4double in);
 
@@ -106,27 +117,30 @@ private:
 
     void DefineRecTracker();
 
-    void DefineECAL();
-
-    void DefineHCAL();
-
     void DefineWorld();
 
     // Root Manaer
     RootManager *fRootMng;
 
-    DetectorMessenger *fMessenger;   // messenger
+    // Messenger
+    DetectorMessenger *fMessenger;
+
+    // ECAL Construction Class
+    ECAL_XYCrossing *ECAL_Con1;
+    ECAL_AllZ *ECAL_Con2;
+    G4int ECAL_Selection{0};
+
+    HCAL_Construct *HCAL_Con;
 
     //global option
     G4UserLimits *fStepLimit; // pointer to user step limits
     G4bool fCheckOverlaps;   // option to activate checking of volumes overlaps
     std::vector<G4LogicalVolume *>::iterator itr_LV;
 
+
     G4bool build_Target;
     G4bool build_TagTrk;
     G4bool build_RecTrk;
-    G4bool build_ECAL_Center;
-    G4bool build_ECAL_Outer;
     G4bool build_HCAL;
     /////////////////////////
     //  EM Field
@@ -194,44 +208,6 @@ private:
     std::vector<G4LogicalVolume *> RecTrk_LV1;
     std::vector<G4LogicalVolume *> RecTrk_LV2;
 
-    /////////////////////////
-    //  ECAL
-    /////////////////////////
-    G4Material *ECALRegion_Mat{};
-    G4Material *ECAL_Center_Mat{};
-    G4Material *ECAL_Outer_Mat{};
-    G4Material *ECAL_Wrap_Mat{};
-    G4ThreeVector Size_ECALRegion;
-    G4ThreeVector Pos_ECALRegion;
-    G4ThreeVector ECAL_Center_Wrap_Size;
-    G4ThreeVector ECAL_Center_Size;
-    G4ThreeVector ECAL_Center_Module_No;
-    G4ThreeVector ECAL_Outer_Wrap_Size;
-    G4ThreeVector ECAL_Outer_Size_Dir;
-    G4ThreeVector ECAL_Outer_Mod_No_Dir;
-    G4ThreeVector ECAL_Outer_Module_No;
-    G4double ECAL_Module_Gap{};
-
-    std::vector<G4LogicalVolume *> ECAL_Center_LV;
-    std::vector<G4LogicalVolume *> ECAL_Outer_LV[4];
-
-    /////////////////////////
-    //  HCAL
-    /////////////////////////
-    G4Material *HCALRegion_Mat{};
-    G4Material *HCAL_Mat{};
-    G4Material *HCAL_Wrap_Mat{};
-    G4Material *HCAL_Absorber_Mat{};
-    G4ThreeVector Size_HCALRegion;
-    G4ThreeVector Pos_HCALRegion;
-    G4ThreeVector HCAL_Wrap_Size;
-    G4ThreeVector HCAL_Size_Dir;
-    G4ThreeVector HCAL_Mod_No_Dir;
-    G4ThreeVector HCAL_Module_No;
-    G4double HCAL_Module_Gap{};
-    G4double HCAL_Absorber_Thickness{};
-
-    std::vector<G4LogicalVolume *> HCAL_SD_LV[9];
 
 };
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

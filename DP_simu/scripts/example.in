@@ -2,21 +2,24 @@
 /DP/det/setTByField                 -1.5 tesla
 /DP/det/setRByField                 -0.5 tesla
 
+######## Save Geometry #########
+/DP/ifSaveGeometry                  1
+
 ########## Biasing ############
 /DP/Bias/Process                    GammaToMuPair
 /DP/Bias/Factor                     1e10
 /DP/Bias/Emin                       1 GeV
 /DP/Bias/if_bias_target             1
 /DP/Bias/if_bias_ecal               1
-/DP/setifBias                       1
+/DP/setifBias                       0
 
 ########## Filter ############
 # HardBrem
-/DP/Filter/if_filter_HardBrem       1                 
+/DP/Filter/if_filter_HardBrem       0
 /DP/Filter/HardBrem_GammaEmin       2 GeV
 /DP/Filter/HardBrem_ScanDistance    20 cm
 # Process
-/DP/Filter/if_filter_Process        1                     
+/DP/Filter/if_filter_Process        0
 /DP/Filter/Process_Name             GammaToMuPair
 /DP/Filter/Process_Emin             1 GeV
 /DP/Filter/Process_MinScanDistance  -5 mm
