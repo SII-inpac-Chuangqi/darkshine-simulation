@@ -653,11 +653,13 @@ void DetectorConstruction::SetifTarget(G4bool build) {
 
 void DetectorConstruction::SetifTagTrk(G4bool build) {
     build_TagTrk = build;
+    if (!build) SetTagTrkMagField(0.); // Clear magnetic field
     G4cerr << "turned " << (build ? "ON " : "OFF ") << "Tagging Tracker" << G4endl; 
 }
 
 void DetectorConstruction::SetifRecTrk(G4bool build) {
     build_RecTrk = build;
+    if (!build) SetRecTrkMagField(0.); // Clear magnetic field
     G4cerr << "turned " << (build ? "ON " : "OFF ") << "Recoil Tracker" << G4endl; 
 }
 
