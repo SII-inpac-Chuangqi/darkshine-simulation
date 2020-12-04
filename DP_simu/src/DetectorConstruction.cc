@@ -58,6 +58,10 @@
 
 #include "G4GDMLParser.hh"
 
+#include "G4SolidStore.hh"
+#include "G4LogicalVolumeStore.hh"
+#include "G4PhysicalVolumeStore.hh"
+
 #include <iterator>
 #include <stdio.h>
 
@@ -68,20 +72,25 @@
 DetectorConstruction::DetectorConstruction(RootManager *rootMng) {
     fMessenger = new DetectorMessenger(this);
 
-    ECAL_Con1 = new ECAL_XYCrossing();
-    ECAL_Con2 = new ECAL_AllZ();
+    // TODO: Importing ASCII Text Models
+    // see examples/extended/persistency/P03
+
+    // Build-in ECAL Confituration definition
+    ECAL_Con1 = new ECAL_XYCrossing(); // Color grey blue
+    ECAL_Con2 = new ECAL_AllZ(); // Color blue
+
+    // Build-in HCAL Confituration definition
     HCAL_Con = new HCAL_Construct();
 
     fRootMng = rootMng;
     fCheckOverlaps = false;
     fStepLimit = nullptr;
 
-    build_Target = true;
-    build_TagTrk = true;
-    build_RecTrk = true;
-    build_HCAL = true;
+    // build_Target = true;
+    // build_TagTrk = true;
+    /// build_RecTrk = true;
+    // build_HCAL = true;
 
-    ECAL_Selection = 2;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -94,11 +103,10 @@ DetectorConstruction::~DetectorConstruction() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4VPhysicalVolume *DetectorConstruction::Construct() {
-    // Define materials
-    DefineMaterials();
+    // Define materials, Only do it once.
+    if (!reconstruct) DefineMaterials();
+    
     DefineParameters();
-
-    // Define volumes
     return DefineVolumes();
 }
 
@@ -279,17 +287,32 @@ void DetectorConstruction::DefineParameters() {
     /////////////////////////
     //  ECAL
     /////////////////////////
-    G4ThreeVector Pos_ECAL;
-    G4ThreeVector Size_ECAL;
-    if (ECAL_Selection == 1) {
-        ECAL_Con1->DefineParameters(Pos_RecRegion, Size_RecRegion);
-        Pos_ECAL = ECAL_Con1->getPosEcalRegion();
-        Size_ECAL = ECAL_Con1->getSizeEcalRegion();
+
+    if (build_ECAL) {
+        if (ECAL_Selection == 1) {
+            ECAL_Con1->DefineParameters(Pos_RecRegion, Size_RecRegion);
+            Pos_ECAL = ECAL_Con1->getPosEcalRegion();
+            Size_ECAL = ECAL_Con1->getSizeEcalRegion();
+        }
+        else if (ECAL_Selection == 2) {
+            ECAL_Con2->DefineParameters(Pos_RecRegion, Size_RecRegion);
+            Pos_ECAL = ECAL_Con2->getPosEcalRegion();
+            Size_ECAL = ECAL_Con2->getSizeEcalRegion();
+        }
     }
-    if (ECAL_Selection == 2) {
-        ECAL_Con2->DefineParameters(Pos_RecRegion, Size_RecRegion);
-        Pos_ECAL = ECAL_Con2->getPosEcalRegion();
-        Size_ECAL = ECAL_Con2->getSizeEcalRegion();
+    // If no ECAL but built Tagger, in order to determine the position of HCAL,
+    // use Tagger's position instead. If only HCAL, use default Pos_ECAL = 0.
+    else if (build_RecTrk) { 
+        Pos_ECAL = Pos_RecRegion;
+        Size_ECAL = Size_RecRegion;
+    }
+    else if (build_TagTrk) {
+        Pos_ECAL = Pos_TagRegion;
+        Size_ECAL = Size_TagRegion;
+    }
+    else {
+        Pos_ECAL = G4ThreeVector(0 * cm, 0 * cm, 0* cm);
+        Size_ECAL = G4ThreeVector(0 * cm, 0 * cm, 0 * cm);
     }
 
     HCAL_Con->DefineParameters(Pos_ECAL, Size_ECAL);
@@ -298,7 +321,7 @@ void DetectorConstruction::DefineParameters() {
     /////////////////////////
     World_Mat = G4Material::GetMaterial("vacuum");
     auto l = 2.0 * (HCAL_Con->getPosHcalRegion().z() + HCAL_Con->getSizeHcalRegion().x());
-    Size_World = G4ThreeVector(l, l, l);
+    Size_World = G4ThreeVector(l, l, l); 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -310,10 +333,13 @@ G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
     if (build_TagTrk) DefineTagTracker(); // Build Tagging Tracker
     if (build_RecTrk) DefineRecTracker(); // Build Recoil Tracker
     // Build ECAL
-    if (ECAL_Selection == 1)
-        ECAL_Con1->Build(0, World_LV, fRootMng, fCheckOverlaps);
-    if (ECAL_Selection == 2)
-        ECAL_Con2->Build(0, World_LV, fRootMng, fCheckOverlaps);
+    if (build_ECAL) {
+        if (ECAL_Selection == 1)
+            ECAL_Con1->Build(0, World_LV, fRootMng, fCheckOverlaps);
+        else if (ECAL_Selection == 2)
+            ECAL_Con2->Build(0, World_LV, fRootMng, fCheckOverlaps);
+    }
+    
 
     if (build_HCAL) HCAL_Con->Build(0, World_LV, fRootMng, fCheckOverlaps);
 
@@ -339,15 +365,15 @@ void DetectorConstruction::DefineWorld() {
     //  World
     //
     ////////////////////////////////////////////////////////////
-
-    G4GeometryManager::GetInstance()->SetWorldMaximumExtent(Size_World.z());
+    if (!reconstruct)
+        G4GeometryManager::GetInstance()->SetWorldMaximumExtent(Size_World.z());
 
     G4cout << "Computed tolerance = "
            << G4GeometryTolerance::GetInstance()->GetSurfaceTolerance() / mm
            << " mm" << G4endl;
 
-    auto World_Box = new G4Box("World_Box", Size_World.x() / 2, Size_World.y() / 2, Size_World.z() / 2);
-    World_LV = new G4LogicalVolume(World_Box, World_Mat, "World_LV");
+    auto World_Box = new G4Box("World_Box", Size_World.x() / 2, Size_World.y() / 2, Size_World.z() / 2); // Solid of World.
+    World_LV = new G4LogicalVolume(World_Box, World_Mat, "World_LV"); 
     World_PV = new G4PVPlacement(nullptr, G4ThreeVector(), World_LV, "World", nullptr, false, 0, fCheckOverlaps);
 
 }
@@ -493,8 +519,11 @@ void DetectorConstruction::ConstructSDandField() {
             (*itr_LV)->SetSensitiveDetector(RecTrkSD2);
     }
 
-    if (ECAL_Selection == 1) ECAL_Con1->BuildSD(fRootMng);
-    if (ECAL_Selection == 2) ECAL_Con2->BuildSD(fRootMng);
+    if (build_ECAL) {
+        if (ECAL_Selection == 1) ECAL_Con1->BuildSD(fRootMng);
+        else if (ECAL_Selection == 2) ECAL_Con2->BuildSD(fRootMng);
+    }
+    
 
     HCAL_Con->BuildSD(fRootMng);
 
@@ -535,8 +564,8 @@ void DetectorConstruction::SetBiasLayer() {
     }
 
     if (fRootMng->GetifBiasECAL()) {
-        if (ECAL_Selection == 1) ECAL_Con1->BuildBias(bias);
-        if (ECAL_Selection == 2) ECAL_Con2->BuildBias(bias);
+        if (build_ECAL && ECAL_Selection == 1) ECAL_Con1->BuildBias(bias);
+        else if (build_ECAL && ECAL_Selection == 2) ECAL_Con2->BuildBias(bias);
     }
 
 }
@@ -588,4 +617,56 @@ void DetectorConstruction::SaveGeometry() {
 
     fRootMng->FillGeometry("geometry.gdml");
 
+}
+
+// ------ Functions to rebuild geometry at runtime. ------
+
+void DetectorConstruction::CleanGeometry(G4bool clean) {
+    if (clean) {
+        G4SolidStore::GetInstance()->Clean();
+        G4LogicalVolumeStore::GetInstance()->Clean();
+        G4PhysicalVolumeStore::GetInstance()->Clean();
+    }
+}
+
+void DetectorConstruction::RebuildGeometry(G4bool rebuild) {
+    if (rebuild) {
+        // flag
+        reconstruct = true;
+        // clean-up previous geometry
+        CleanGeometry();
+        // define new one
+        G4RunManager::GetRunManager()->DefineWorldVolume(Construct());
+        G4RunManager::GetRunManager()->GeometryHasBeenModified();
+    }
+}
+
+void DetectorConstruction::SetECALSelection(unsigned int id) {
+    ECAL_Selection = id;
+    G4cerr << "Selected ECAL Configuration " << id << G4endl;
+}
+
+void DetectorConstruction::SetifTarget(G4bool build) {
+    build_Target = build;
+    G4cerr << "turned " << (build ? "ON " : "OFF ") << "Target" << G4endl; 
+}
+
+void DetectorConstruction::SetifTagTrk(G4bool build) {
+    build_TagTrk = build;
+    G4cerr << "turned " << (build ? "ON " : "OFF ") << "Tagging Tracker" << G4endl; 
+}
+
+void DetectorConstruction::SetifRecTrk(G4bool build) {
+    build_RecTrk = build;
+    G4cerr << "turned " << (build ? "ON " : "OFF ") << "Recoil Tracker" << G4endl; 
+}
+
+void DetectorConstruction::SetifECAL(G4bool build) {
+    build_ECAL = build;
+    G4cerr << "turned " << (build ? "ON " : "OFF ") << "ECAL" << G4endl; 
+}
+
+void DetectorConstruction::SetifHCAL(G4bool build) {
+    build_HCAL = build;
+    G4cerr << "turned " << (build ? "on " : "off ") << "HCAL" << G4endl;
 }

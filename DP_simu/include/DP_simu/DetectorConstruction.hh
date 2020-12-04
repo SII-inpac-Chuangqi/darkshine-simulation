@@ -101,6 +101,30 @@ public:
 
     void SetOptical(G4bool);
 
+    /// \brief Clean-up previous geometry.
+    /// \param[in] clean if it is true,G4SolidStore, G4LogicalVolumeStore
+    /// and G4PhysicalVolumeStore will be cleaned up
+    void CleanGeometry(G4bool clean=true);
+
+    /// \brief SHOULD be called after modifing geometry at runtime.
+    /// \param[in] if is true, clean-up previous geometry and define a new one.
+    void RebuildGeometry(G4bool rebuild=true);
+    
+    /// \brief Select build-in ECAL Configuration.
+    /// \param[in] id 1=ECAL_XYCrossing,
+    /// 2=ECAL_ALLZ
+    void SetECALSelection(unsigned int id);
+
+    void SetifTarget(G4bool);
+
+    void SetifTagTrk(G4bool);
+
+    void SetifRecTrk(G4bool);
+
+    void SetifECAL(G4bool);
+
+    void SetifHCAL(G4bool);
+
 private:
     // methods
     G4VPhysicalVolume *DefineVolumes();
@@ -128,7 +152,7 @@ private:
     // ECAL Construction Class
     ECAL_XYCrossing *ECAL_Con1;
     ECAL_AllZ *ECAL_Con2;
-    G4int ECAL_Selection{0};
+    unsigned int ECAL_Selection = 0; 
 
     HCAL_Construct *HCAL_Con;
 
@@ -137,11 +161,13 @@ private:
     G4bool fCheckOverlaps;   // option to activate checking of volumes overlaps
     std::vector<G4LogicalVolume *>::iterator itr_LV;
 
-
-    G4bool build_Target;
-    G4bool build_TagTrk;
-    G4bool build_RecTrk;
-    G4bool build_HCAL;
+    G4bool reconstruct = false; // flag. Set to true when it is not the first-time construction of geometry.
+    
+    G4bool build_Target = true; // build Target if it is ture.
+    G4bool build_TagTrk = true; // build Tagging trackir if it is true.
+    G4bool build_RecTrk = true; // build Recoil Tracker if it is ture.
+    G4bool build_ECAL = true; // build ECAL if it is ture.
+    G4bool build_HCAL = true; // build HCAL if it is true.
     /////////////////////////
     //  EM Field
     /////////////////////////
@@ -159,10 +185,10 @@ private:
     /////////////////////////
     //  World
     /////////////////////////
-    G4Material *World_Mat{};
-    G4ThreeVector Size_World;
-    G4LogicalVolume *World_LV{};
-    G4PVPlacement *World_PV{};
+    G4Material *World_Mat{}; // Materials of Word (vaccum).
+    G4ThreeVector Size_World; // Total side-length of the "Wolrd" box. Referenced in G4Box *World_Box.
+    G4LogicalVolume *World_LV{}; // Logical Volume of World.
+    G4PVPlacement *World_PV{}; // Placement (Phyisical Volume) of the World. 
 
     /////////////////////////
     //  Target
@@ -201,6 +227,12 @@ private:
     G4ThreeVector Pos_RecTrk[6];
     G4ThreeVector Size_RecRegion;
     G4ThreeVector Pos_RecRegion;
+
+    /////////////////////////
+    //  ECAL
+    //////////////////////////
+    G4ThreeVector Pos_ECAL;
+    G4ThreeVector Size_ECAL;
 
     G4double Rec_Angle{};
 

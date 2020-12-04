@@ -48,6 +48,8 @@ class G4UIcmdWithABool;
 
 class G4UIcmdWithADoubleAndUnit;
 
+class G4UIcmdWithoutParameter;
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 /// Messenger class that defines commands for DetectorConstruction.
@@ -81,6 +83,17 @@ private:
     G4UIcmdWithABool *fifOpticalCmd;
 
     G4UIcmdWithABool *fifSaveGeomCmd;
+
+    G4UIcmdWithAnInteger *fECAL_SelectionCmd;
+    G4UIcmdWithABool *fSetifTarget;
+    G4UIcmdWithABool *fSetifTagTrk;
+    G4UIcmdWithABool *fSetifRecTrk;
+    G4UIcmdWithABool *fSetifECAL;
+    G4UIcmdWithABool *fSetifHCAL;
+    G4UIcmdWithoutParameter *fSetonlyTracker;
+    G4UIcmdWithoutParameter *fSetonlyECAL;
+    G4UIcmdWithoutParameter *fSetonlyHCAL;
+    
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

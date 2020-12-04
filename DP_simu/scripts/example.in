@@ -3,7 +3,7 @@
 /DP/det/setRByField                 -0.5 tesla
 
 ######## Save Geometry #########
-/DP/ifSaveGeometry                  1
+/DP/ifSaveGeometry                  0
 
 ########## Biasing ############
 /DP/Bias/Process                    GammaToMuPair
@@ -24,6 +24,9 @@
 /DP/Filter/Process_Emin             1 GeV
 /DP/Filter/Process_MinScanDistance  -5 mm
 /DP/Filter/Process_MaxScanDistance  +600 mm
+
+####### ECAL Selection ########
+/DP/det/selectECAL                     2 
 
 ########## Verbose ############
 /tracking/verbose                   0
