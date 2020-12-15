@@ -26,7 +26,8 @@
 /DP/Filter/Process_MaxScanDistance  +600 mm
 
 ####### ECAL Selection ########
-/DP/det/selectECAL                     2 
+/DP/det/selectECAL                     2
+/DP/det/reCosntruct
 
 ########## Verbose ############
 /tracking/verbose                   0

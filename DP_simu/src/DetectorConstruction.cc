@@ -72,8 +72,16 @@
 DetectorConstruction::DetectorConstruction(RootManager *rootMng) {
     fMessenger = new DetectorMessenger(this);
 
-    // TODO: Importing ASCII Text Models
+    // TODO (xuliang): 1. Move all to /Geometry.
+    // TODO (xuliang): 2. Add commands for modifying geometry.
+    //                  could be done by using python script to generate code.
+    // TODO (xuliang): 3. Importing ASCII Text Models
     // see examples/extended/persistency/P03
+
+    // Trackers
+
+    TagTrk = new Tracker_Construct();
+    RecTrk = new Tracker_Construct();
 
     // Build-in ECAL Confituration definition
     ECAL_Con1 = new ECAL_XYCrossing(); // Color grey blue
@@ -228,65 +236,19 @@ void DetectorConstruction::DefineParameters() {
     Target_Pos = G4ThreeVector(0 * cm, 0 * cm, 0 * cm);
     Trk_Tar_Dis = 7.5 * mm;
 
-    /////////////////////////
-    //  Tagging Tracker
-    /////////////////////////
-    TagTrk_Mat = G4Material::GetMaterial("G4_Si");
-    TagRegion_Mat = G4Material::GetMaterial("vacuum");
+    ///  Tagging Tracker
 
-    Tag_Angle = 0.1 * radian;
+    TagTrk->DefineParameters(dTagging, Trk_Tar_Dis, Target_Size);
+    Size_TagRegion = TagTrk->GetSizeTrkRegion();
+    Pos_TagRegion = TagTrk->GetPosTrkRetion();
 
-    No_TagTrk = 7;
-    Size_TagTrk[0] = G4ThreeVector(Target_Size.x(), Target_Size.y(), 0.1 * mm);
-    Size_TagTrk[1] = G4ThreeVector(Target_Size.x(), Target_Size.y(), 0.1 * mm);
-    Size_TagTrk[2] = G4ThreeVector(Target_Size.x(), Target_Size.y(), 0.1 * mm);
-    Size_TagTrk[3] = G4ThreeVector(Target_Size.x(), Target_Size.y(), 0.1 * mm);
-    Size_TagTrk[4] = G4ThreeVector(Target_Size.x(), Target_Size.y(), 0.1 * mm);
-    Size_TagTrk[5] = G4ThreeVector(Target_Size.x(), Target_Size.y(), 0.1 * mm);
-    Size_TagTrk[6] = G4ThreeVector(Target_Size.x(), Target_Size.y(), 0.1 * mm);
+    ///  Recoil Tracker
 
-    Pos_TagTrk[0] = G4ThreeVector(0 * cm, 0 * cm, -30. * cm);
-    Pos_TagTrk[1] = G4ThreeVector(0 * cm, 0 * cm, -20. * cm);
-    Pos_TagTrk[2] = G4ThreeVector(0 * cm, 0 * cm, -10. * cm);
-    Pos_TagTrk[3] = G4ThreeVector(0 * cm, 0 * cm, 0. * cm);
-    Pos_TagTrk[4] = G4ThreeVector(0 * cm, 0 * cm, 10. * cm);
-    Pos_TagTrk[5] = G4ThreeVector(0 * cm, 0 * cm, 20. * cm);
-    Pos_TagTrk[6] = G4ThreeVector(0 * cm, 0 * cm, 30. * cm);
+    RecTrk->DefineParameters(dRecoil, Trk_Tar_Dis, Target_Size);
+    Size_RecRegion = RecTrk->GetSizeTrkRegion(); 
+    Pos_RecRegion = RecTrk->GetPosTrkRetion();
 
-    Size_TagRegion = G4ThreeVector(2.0 * Size_TagTrk[0].x(), 2.0 * Size_TagTrk[0].y(),
-                                   60 * cm + 2 * No_TagTrk * Size_TagTrk[0].z());
-    Pos_TagRegion = G4ThreeVector(0 * cm, 0 * cm, -30 * cm - Trk_Tar_Dis - (Size_TagTrk[0].z() + Target_Size.z()) / 2);
-
-    /////////////////////////
-    //  Recoil Tracker
-    /////////////////////////
-    RecTrk_Mat = G4Material::GetMaterial("G4_Si");
-    RecRegion_Mat = G4Material::GetMaterial("vacuum");
-
-    Rec_Angle = 0.1 * radian;
-
-    No_RecTrk = 6;
-    Size_RecTrk[0] = G4ThreeVector(Target_Size.x(), 20 * cm, 0.1 * mm);
-    Size_RecTrk[1] = G4ThreeVector(Target_Size.x(), 20 * cm, 0.1 * mm);
-    Size_RecTrk[2] = G4ThreeVector(Target_Size.x(), 20 * cm, 0.1 * mm);
-    Size_RecTrk[3] = G4ThreeVector(Target_Size.x(), 20 * cm, 0.1 * mm);
-    Size_RecTrk[4] = G4ThreeVector(Target_Size.x(), 20 * cm, 0.1 * mm);
-    Size_RecTrk[5] = G4ThreeVector(Target_Size.x(), 20 * cm, 0.1 * mm);
-
-    Pos_RecTrk[0] = G4ThreeVector(0 * cm, 0 * cm, -86.25 * mm);
-    Pos_RecTrk[1] = G4ThreeVector(0 * cm, 0 * cm, -71.25 * mm);
-    Pos_RecTrk[2] = G4ThreeVector(0 * cm, 0 * cm, -55.25 * mm);
-    Pos_RecTrk[3] = G4ThreeVector(0 * cm, 0 * cm, -40.25 * mm);
-    Pos_RecTrk[4] = G4ThreeVector(0 * cm, 0 * cm, -4.25 * mm);
-    Pos_RecTrk[5] = G4ThreeVector(0 * cm, 0 * cm, 86.25 * mm);
-
-    Size_RecRegion = G4ThreeVector(2.0 * Size_RecTrk[5].x(), 2.0 * Size_RecTrk[5].y(),
-                                   17.25 * cm + 2 * No_TagTrk * 0.1 * mm);
-    Pos_RecRegion = G4ThreeVector(0 * cm, 0 * cm, 0.5 * Size_RecRegion.z() + 7.5 * mm + 0.5 * 350 * um);
-
-    /////////////////////////
-    //  ECAL
-    /////////////////////////
+    ///  ECAL
 
     if (build_ECAL) {
         if (ECAL_Selection == 1) {
@@ -300,7 +262,7 @@ void DetectorConstruction::DefineParameters() {
             Size_ECAL = ECAL_Con2->getSizeEcalRegion();
         }
     }
-    // If no ECAL but built Tagger, in order to determine the position of HCAL,
+    // If no ECAL but built Tracker, in order to determine the position of HCAL,
     // use Tagger's position instead. If only HCAL, use default Pos_ECAL = 0.
     else if (build_RecTrk) { 
         Pos_ECAL = Pos_RecRegion;
@@ -330,8 +292,10 @@ G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
 
     DefineWorld();      // Build World
     if (build_Target) DefineTarget();     // Build Target
-    if (build_TagTrk) DefineTagTracker(); // Build Tagging Tracker
-    if (build_RecTrk) DefineRecTracker(); // Build Recoil Tracker
+    /// Build Tagging Tracker
+    if (build_TagTrk) TagTrk->Build(dTagging, World_LV, fRootMng, fCheckOverlaps);
+    /// Build Recoil Tracker
+    if (build_RecTrk) RecTrk->Build(dRecoil, World_LV, fRootMng, fCheckOverlaps);
     // Build ECAL
     if (build_ECAL) {
         if (ECAL_Selection == 1)
@@ -365,13 +329,13 @@ void DetectorConstruction::DefineWorld() {
     //  World
     //
     ////////////////////////////////////////////////////////////
-    if (!reconstruct)
+    if (!reconstruct) {
         G4GeometryManager::GetInstance()->SetWorldMaximumExtent(Size_World.z());
 
-    G4cout << "Computed tolerance = "
-           << G4GeometryTolerance::GetInstance()->GetSurfaceTolerance() / mm
-           << " mm" << G4endl;
-
+        G4cout << "Computed tolerance = "
+               << G4GeometryTolerance::GetInstance()->GetSurfaceTolerance() / mm
+               << " mm" << G4endl;
+    }
     auto World_Box = new G4Box("World_Box", Size_World.x() / 2, Size_World.y() / 2, Size_World.z() / 2); // Solid of World.
     World_LV = new G4LogicalVolume(World_Box, World_Mat, "World_LV"); 
     World_PV = new G4PVPlacement(nullptr, G4ThreeVector(), World_LV, "World", nullptr, false, 0, fCheckOverlaps);
@@ -399,125 +363,16 @@ void DetectorConstruction::DefineTarget() {
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void DetectorConstruction::DefineTagTracker() {
-    ////////////////////////////////////////////////////////////
-    //
-    //  Tagging Tracker
-    //
-    ////////////////////////////////////////////////////////////
-
-    auto TagRegion_Box = new G4Box("TagTrk", Size_TagRegion.x() / 2., Size_TagRegion.y() / 2., Size_TagRegion.z() / 2.);
-    TagRegion_LV = new G4LogicalVolume(TagRegion_Box, TagRegion_Mat, "TAGTrK", nullptr, nullptr, nullptr);
-    new G4PVPlacement(nullptr, Pos_TagRegion, TagRegion_LV, "TAGTRK", World_LV, false, 0, fCheckOverlaps);
-    //TagRegion_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
-
-    auto TagTrk1 = new TrkConstruct("TagTrk1", TagRegion_LV, 0, fCheckOverlaps);
-    TagTrk1->SetRotation(0.);
-    TagTrk1->SetTrkMaterial(TagTrk_Mat);
-    TagTrk1->SetVis(new G4VisAttributes(G4Colour(0.5, 0.5, .0)));
-    TagTrk1->LinearPlacement(No_TagTrk, Size_TagTrk, Pos_TagTrk);
-
-    TagTrk_LV1 = TagTrk1->GetTrkLVVector();
-
-    auto TagTrk2 = new TrkConstruct("TagTrk2", TagRegion_LV, 0, fCheckOverlaps);
-    TagTrk2->SetZMove(Size_TagTrk[0].z());
-    TagTrk2->SetRotation(Tag_Angle);
-    TagTrk2->SetTrkMaterial(TagTrk_Mat);
-    TagTrk2->SetVis(new G4VisAttributes(G4Colour(0.5, 0.5, .0)));
-    TagTrk2->LinearPlacement(No_TagTrk, Size_TagTrk, Pos_TagTrk);
-
-    TagTrk_LV2 = TagTrk2->GetTrkLVVector();
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void DetectorConstruction::DefineRecTracker() {
-    ////////////////////////////////////////////////////////////
-    //
-    //  Recoil Tracker
-    //
-    ////////////////////////////////////////////////////////////
-
-    auto RecRegion_Box = new G4Box("RecTrk", Size_RecRegion.x() / 2., Size_RecRegion.y() / 2., Size_RecRegion.z() / 2.);
-    RecRegion_LV = new G4LogicalVolume(RecRegion_Box, RecRegion_Mat, "RECTrK", nullptr, nullptr, nullptr);
-    new G4PVPlacement(nullptr, Pos_RecRegion, RecRegion_LV, "RECTRK", World_LV, false, 0, fCheckOverlaps);
-    //RecRegion_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
-
-    auto RecTrk1 = new TrkConstruct("RecTrk1", RecRegion_LV, 0, fCheckOverlaps);
-    RecTrk1->SetRotation(0);
-    RecTrk1->SetTrkMaterial(RecTrk_Mat);
-    RecTrk1->SetVis(new G4VisAttributes(G4Colour(0.5, 0.5, .0)));
-    RecTrk1->LinearPlacement(No_RecTrk, Size_RecTrk, Pos_RecTrk);
-
-    RecTrk_LV1 = RecTrk1->GetTrkLVVector();
-
-    auto RecTrk2 = new TrkConstruct("RecTrk2", RecRegion_LV, 0, fCheckOverlaps);
-    RecTrk2->SetZMove(Size_RecTrk[0].z());
-    RecTrk2->SetRotation(Rec_Angle);
-    RecTrk2->SetTrkMaterial(RecTrk_Mat);
-    RecTrk2->SetVis(new G4VisAttributes(G4Colour(0.5, 0.5, .0)));
-    RecTrk2->LinearPlacement(No_RecTrk, Size_RecTrk, Pos_RecTrk);
-
-    RecTrk_LV2 = RecTrk2->GetTrkLVVector();
-}
-
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 void DetectorConstruction::ConstructSDandField() {
 
-    /*                          */
-    /* Construct Magnetic Field */
-    /*                          */
-
-    G4bool allLocal = true;
-    // Tagging Tracker
-    if (build_TagTrk) {
-        G4MagneticField *TagTrkMagField;
-        TagTrkMagField = new G4UniformMagField(G4ThreeVector(0., TagTrk_MagField_y, 0.));
-        auto *TagTrkFieldMng = new G4FieldManager();
-        TagTrkFieldMng->SetDetectorField(TagTrkMagField);
-        TagTrkFieldMng->CreateChordFinder(TagTrkMagField);
-
-        TagRegion_LV->SetFieldManager(TagTrkFieldMng, allLocal);
-    }
-    // Recoil Tracker
-    if (build_RecTrk) {
-        G4MagneticField *RecTrkMagField;
-        RecTrkMagField = new G4UniformMagField(G4ThreeVector(0., RecTrk_MagField_y, 0.));
-        auto *RecTrkFieldMng = new G4FieldManager();
-        RecTrkFieldMng->SetDetectorField(RecTrkMagField);
-        RecTrkFieldMng->CreateChordFinder(RecTrkMagField);
-
-        RecRegion_LV->SetFieldManager(RecTrkFieldMng, allLocal);
-    }
+    // Construct Magnetic Field and Sensitive Detector of the Tagging Tracker
+    if (build_TagTrk) TagTrk->BuildSDandField(dTagging, fRootMng);
+    // Constructg Magnetic Field and Sensitive Detector of the Recoil Tracker
+    if (build_RecTrk) RecTrk->BuildSDandField(dRecoil, fRootMng);
+    
     /*                              */
     /* Construct Sensitive Detector */
     /*                              */
-
-    if (build_TagTrk) {
-        auto *TagTrkSD1 = new DetectorSD(0, "TagTrk1", G4ThreeVector(1, 1, No_TagTrk), fRootMng);
-        G4SDManager::GetSDMpointer()->AddNewDetector(TagTrkSD1);
-        for (itr_LV = TagTrk_LV1.begin(); itr_LV != TagTrk_LV1.end(); itr_LV++)
-            (*itr_LV)->SetSensitiveDetector(TagTrkSD1);
-
-        auto *TagTrkSD2 = new DetectorSD(0, "TagTrk2", G4ThreeVector(1, 1, No_TagTrk), fRootMng);
-        G4SDManager::GetSDMpointer()->AddNewDetector(TagTrkSD2);
-        for (itr_LV = TagTrk_LV2.begin(); itr_LV != TagTrk_LV2.end(); itr_LV++)
-            (*itr_LV)->SetSensitiveDetector(TagTrkSD2);
-    }
-
-    if (build_RecTrk) {
-        auto *RecTrkSD1 = new DetectorSD(0, "RecTrk1", G4ThreeVector(1, 1, No_RecTrk), fRootMng);
-        G4SDManager::GetSDMpointer()->AddNewDetector(RecTrkSD1);
-        for (itr_LV = RecTrk_LV1.begin(); itr_LV != RecTrk_LV1.end(); itr_LV++)
-            (*itr_LV)->SetSensitiveDetector(RecTrkSD1);
-
-        auto *RecTrkSD2 = new DetectorSD(0, "RecTrk2", G4ThreeVector(1, 1, No_RecTrk), fRootMng);
-        G4SDManager::GetSDMpointer()->AddNewDetector(RecTrkSD2);
-        for (itr_LV = RecTrk_LV2.begin(); itr_LV != RecTrk_LV2.end(); itr_LV++)
-            (*itr_LV)->SetSensitiveDetector(RecTrkSD2);
-    }
 
     if (build_ECAL) {
         if (ECAL_Selection == 1) ECAL_Con1->BuildSD(fRootMng);
@@ -563,9 +418,9 @@ void DetectorConstruction::SetBiasLayer() {
             bias->AttachTo(*itr_LV);
     }
 
-    if (fRootMng->GetifBiasECAL()) {
-        if (build_ECAL && ECAL_Selection == 1) ECAL_Con1->BuildBias(bias);
-        else if (build_ECAL && ECAL_Selection == 2) ECAL_Con2->BuildBias(bias);
+    if (build_ECAL && fRootMng->GetifBiasECAL()) {
+        if (ECAL_Selection == 1) ECAL_Con1->BuildBias(bias);
+        else if (ECAL_Selection == 2) ECAL_Con2->BuildBias(bias);
     }
 
 }
@@ -573,35 +428,13 @@ void DetectorConstruction::SetBiasLayer() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void DetectorConstruction::SetTagTrkMagField(G4double in) {
-    TagTrk_MagField_y = in;
-
-    G4bool allLocal = false;
-    // Tagging Tracker
-    G4MagneticField *TagTrkMagField = new G4UniformMagField(G4ThreeVector(0., TagTrk_MagField_y, 0.));
-    auto *TagTrkFieldMng = new G4FieldManager();
-    TagTrkFieldMng->SetDetectorField(TagTrkMagField);
-    TagTrkFieldMng->CreateChordFinder(TagTrkMagField);
-
-    TagRegion_LV->SetFieldManager(TagTrkFieldMng, allLocal);
-
-    G4RunManager::GetRunManager()->GeometryHasBeenModified();
+    TagTrk->SetTrackerMagField(in);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void DetectorConstruction::SetRecTrkMagField(G4double in) {
-    RecTrk_MagField_y = in;
-
-    G4bool allLocal = false;
-    // Recging Tracker
-    G4MagneticField *RecTrkMagField = new G4UniformMagField(G4ThreeVector(0., RecTrk_MagField_y, 0.));
-    auto *RecTrkFieldMng = new G4FieldManager();
-    RecTrkFieldMng->SetDetectorField(RecTrkMagField);
-    RecTrkFieldMng->CreateChordFinder(RecTrkMagField);
-
-    RecRegion_LV->SetFieldManager(RecTrkFieldMng, allLocal);
-
-    G4RunManager::GetRunManager()->GeometryHasBeenModified();
+    RecTrk->SetTrackerMagField(in);
 }
 
 void DetectorConstruction::SetOptical(G4bool in) {
@@ -619,56 +452,61 @@ void DetectorConstruction::SaveGeometry() {
 
 }
 
-// ------ Functions to rebuild geometry at runtime. ------
+/// ------ Functions to rebuild geometry at runtime. ------
 
 void DetectorConstruction::CleanGeometry(G4bool clean) {
-    if (clean) {
+    if (clean) { // clean-up previous geometry.
         G4SolidStore::GetInstance()->Clean();
         G4LogicalVolumeStore::GetInstance()->Clean();
         G4PhysicalVolumeStore::GetInstance()->Clean();
     }
 }
 
-void DetectorConstruction::RebuildGeometry(G4bool rebuild) {
-    if (rebuild) {
-        // flag
-        reconstruct = true;
-        // clean-up previous geometry
-        CleanGeometry();
-        // define new one
-        G4RunManager::GetRunManager()->DefineWorldVolume(Construct());
-        G4RunManager::GetRunManager()->GeometryHasBeenModified();
-    }
+void DetectorConstruction::ReConstruct(G4bool flag) {
+    if(flag && reconstruct) CleanGeometry();
+    // If this is the second construction,
+    // we should clean-up the previous
+    // geometry in safety concern.
+    
+    reconstruct = true;
+    // When reconstruct = 0, World is empty.
+    // When reconstruct = 1, World is filld.
+    
+    /// Define new one
+    G4RunManager::GetRunManager()->DefineWorldVolume(Construct());
+    G4RunManager::GetRunManager()->GeometryHasBeenModified();
 }
+
+/// Setter
 
 void DetectorConstruction::SetECALSelection(unsigned int id) {
     ECAL_Selection = id;
-    G4cerr << "Selected ECAL Configuration " << id << G4endl;
+    G4cout << "[det]==>Selected ECAL Configuration " << id << G4endl;
 }
 
 void DetectorConstruction::SetifTarget(G4bool build) {
     build_Target = build;
-    G4cerr << "turned " << (build ? "ON " : "OFF ") << "Target" << G4endl; 
+    G4cout << "[det]==>turned " << (build ? "ON " : "OFF ") << "Target" << G4endl; 
 }
 
 void DetectorConstruction::SetifTagTrk(G4bool build) {
     build_TagTrk = build;
-    if (!build) SetTagTrkMagField(0.); // Clear magnetic field
-    G4cerr << "turned " << (build ? "ON " : "OFF ") << "Tagging Tracker" << G4endl; 
+    if (!build) TagTrk->SetTrackerMagField(0.); // Clear magnetic field
+    G4cout << "[det]==>turned " << (build ? "ON " : "OFF ") << "Tagging Tracker" << G4endl; 
 }
 
 void DetectorConstruction::SetifRecTrk(G4bool build) {
     build_RecTrk = build;
-    if (!build) SetRecTrkMagField(0.); // Clear magnetic field
-    G4cerr << "turned " << (build ? "ON " : "OFF ") << "Recoil Tracker" << G4endl; 
+    if (!build) RecTrk->SetTrackerMagField(0.); // Clear magnetic field
+    G4cout << "[det]==>turned " << (build ? "ON " : "OFF ") << "Recoil Tracker" << G4endl; 
 }
 
 void DetectorConstruction::SetifECAL(G4bool build) {
     build_ECAL = build;
-    G4cerr << "turned " << (build ? "ON " : "OFF ") << "ECAL" << G4endl; 
+    G4cout << "[det]==>turned " << (build ? "ON " : "OFF ") << "ECAL" << G4endl; 
 }
 
 void DetectorConstruction::SetifHCAL(G4bool build) {
     build_HCAL = build;
-    G4cerr << "turned " << (build ? "on " : "off ") << "HCAL" << G4endl;
+    G4cout << "[det]==>turned " << (build ? "on " : "off ") << "HCAL" << G4endl;
 }

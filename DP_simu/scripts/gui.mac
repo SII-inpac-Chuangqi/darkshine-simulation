@@ -45,4 +45,5 @@
 /gui/addButton viewer "Update scene" "/vis/scene/notifyHandlers"
 
 ####### ECAL Selection ########
-/DP/det/selectECAL                      2 
+/DP/det/selectECAL                       1
+/DP/det/reConstruct

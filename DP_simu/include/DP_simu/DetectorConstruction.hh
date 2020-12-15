@@ -50,6 +50,7 @@
 #include "Geometry/ECAL_XYCrossing.h"
 #include "Geometry/ECAL_AllZ.h"
 #include "Geometry/HCAL_Construct.h"
+#include "Geometry/Tracker_Construct.h"
 
 #include <vector>
 #include <iterator>
@@ -65,6 +66,8 @@ class G4UserLimits;
 class RootManager;
 
 class DetectorMessenger;
+
+class Tracker_Construct;
 
 class ECAL_XYCrossing;
 
@@ -89,41 +92,57 @@ public:
 
     void SaveGeometry();
 
-    // Set methods
+    /// Target Setter
+
+    void SetifTarget(G4bool);
+
+    /// Tracker Setter
 
     void SetTagTrkMagField(G4double in);
 
     void SetRecTrkMagField(G4double in);
 
-    void SetifBias(G4bool);
-
-    void SetBiasLayer();
-
-    void SetOptical(G4bool);
-
-    /// \brief Clean-up previous geometry.
-    /// \param[in] clean if it is true,G4SolidStore, G4LogicalVolumeStore
-    /// and G4PhysicalVolumeStore will be cleaned up
-    void CleanGeometry(G4bool clean=true);
-
-    /// \brief SHOULD be called after modifing geometry at runtime.
-    /// \param[in] if is true, clean-up previous geometry and define a new one.
-    void RebuildGeometry(G4bool rebuild=true);
-    
-    /// \brief Select build-in ECAL Configuration.
-    /// \param[in] id 1=ECAL_XYCrossing,
-    /// 2=ECAL_ALLZ
-    void SetECALSelection(unsigned int id);
-
-    void SetifTarget(G4bool);
-
     void SetifTagTrk(G4bool);
 
     void SetifRecTrk(G4bool);
 
+    /// Bias Setter
+
+    void SetifBias(G4bool);
+
+    void SetBiasLayer();
+
+    /// Optical Setter
+
+    void SetOptical(G4bool);
+
+    /// ECAL Setter
+
     void SetifECAL(G4bool);
 
+    /// \brief Select build-in ECAL Configuration.
+    /// \param[in] id 1=ECAL_XYCrossing,
+    /// 2=ECAL_ALLZ
+    void SetECALSelection(unsigned int id);    
+
+    /// HCAL Setter
+
     void SetifHCAL(G4bool);
+
+    /// Getter
+
+    G4ThreeVector GetTargetSize() {return Target_Size; };
+
+    /// \brief Clean-up previous geometry.
+    /// \param[in] clean If it is true,G4SolidStore, G4LogicalVolumeStore
+    /// and G4PhysicalVolumeStore will be cleaned up
+    void CleanGeometry(G4bool clean=true);
+
+    /// \brief USAGE: Called in DetectorMessenger::SetNewValue().
+    /// SHOULD be called after modifing geometry at runtime.
+    /// It will automatically call CleanGeometry() in subsequent ReConstruct().
+    /// \param[in] flag If is false, supress call of CleanGeometry().
+    void ReConstruct(G4bool flag=true);
 
 private:
     // methods
@@ -149,11 +168,17 @@ private:
     // Messenger
     DetectorMessenger *fMessenger;
 
+    /// Tracker Construction Class
+
+    Tracker_Construct *TagTrk;
+    Tracker_Construct *RecTrk;
+
     // ECAL Construction Class
     ECAL_XYCrossing *ECAL_Con1;
     ECAL_AllZ *ECAL_Con2;
-    unsigned int ECAL_Selection = 0; 
+    G4int ECAL_Selection = 0; 
 
+    // HCAL Construction Class
     HCAL_Construct *HCAL_Con;
 
     //global option
@@ -203,31 +228,15 @@ private:
     /////////////////////////
     //  Tagging Tracker
     /////////////////////////
-    G4Material *TagTrk_Mat{};
-    G4Material *TagRegion_Mat{};
-    G4int No_TagTrk{};
-    G4ThreeVector Size_TagTrk[7];
-    G4ThreeVector Pos_TagTrk[7];
     G4ThreeVector Size_TagRegion;
     G4ThreeVector Pos_TagRegion;
-
-    G4double Tag_Angle{};
-
-    G4LogicalVolume *TagRegion_LV{};
-    std::vector<G4LogicalVolume *> TagTrk_LV1;
-    std::vector<G4LogicalVolume *> TagTrk_LV2;
 
     /////////////////////////
     //  Recoil Tracker
     /////////////////////////
-    G4Material *RecTrk_Mat{};
-    G4Material *RecRegion_Mat{};
-    G4int No_RecTrk{};
-    G4ThreeVector Size_RecTrk[6];
-    G4ThreeVector Pos_RecTrk[6];
     G4ThreeVector Size_RecRegion;
     G4ThreeVector Pos_RecRegion;
-
+    
     /////////////////////////
     //  ECAL
     //////////////////////////

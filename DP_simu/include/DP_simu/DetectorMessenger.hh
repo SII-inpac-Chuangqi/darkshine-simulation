@@ -73,6 +73,11 @@ private:
 
     G4UIdirectory *fDirectory;
     G4UIdirectory *fDetDirectory;
+    G4UIdirectory *fTargetDirectory;
+    G4UIdirectory *fTagTrkDirectory;
+    G4UIdirectory *fRecTrkDirectory;
+    G4UIdirectory *fECALDirectory;
+    G4UIdirectory *fHCALDirecotry;
 
     G4UIcmdWithADoubleAndUnit *fSetTBxCmd;
     G4UIcmdWithADoubleAndUnit *fSetRBxCmd;
@@ -93,6 +98,7 @@ private:
     G4UIcmdWithoutParameter *fSetonlyTracker;
     G4UIcmdWithoutParameter *fSetonlyECAL;
     G4UIcmdWithoutParameter *fSetonlyHCAL;
+    G4UIcmdWithoutParameter *fReConstruct;
     
 };
 

@@ -38,6 +38,8 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4UIcmdWith3Vector.hh"
+//#include "G4UIcmdWtih3VectorAndUnit.hh"
 #include "G4UIcmdWithoutParameter.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -56,6 +58,21 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction *Det)
 
     fDetDirectory = new G4UIdirectory("/DP/det/");
     fDetDirectory->SetGuidance("Detector construction control");
+
+    fTargetDirectory = new G4UIdirectory("/DP/det/target");
+    fTargetDirectory->SetGuidance("Target construction control");
+
+    fTagTrkDirectory = new G4UIdirectory("/DP/det/tagTrk");
+    fTagTrkDirectory->SetGuidance("Tagging tracker construction control");
+
+    fRecTrkDirectory = new G4UIdirectory("/DP/det/recTrk");
+    fRecTrkDirectory->SetGuidance("Recoil Tracker construction control");
+
+    fECALDirectory = new G4UIdirectory("/DP/det/ECAL");
+    fECALDirectory->SetGuidance("ECAL construction control");
+
+    fHCALDirecotry = new G4UIdirectory("/DP/det/HCAL");
+    fHCALDirecotry->SetGuidance("HCAL construction control");
 
     fSetTBxCmd = new G4UIcmdWithADoubleAndUnit("/DP/det/setTByField", this);
     fSetTBxCmd->SetGuidance("Define tagging tracker y-direction magnetic field.");
@@ -76,11 +93,11 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction *Det)
     fSetifBiasCmd->SetParameterName("if_Bias", false);
     fSetifBiasCmd->SetDefaultValue(false);
 
-    // ------------- Detector Setting ---------------
+    /// ------------- Detector Settings ---------------
     fECAL_SelectionCmd = new G4UIcmdWithAnInteger("/DP/det/selectECAL",this);
     fECAL_SelectionCmd->SetGuidance("Select the build-in ECAL Configuration.");
     fECAL_SelectionCmd->SetParameterName("ECAL_Selection",false);
-    fECAL_SelectionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fECAL_SelectionCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
     fSetifTarget = new G4UIcmdWithABool("/DP/det/ifTarget", this);
     fSetifTarget->SetGuidance("Whether to build Target.");
@@ -121,6 +138,12 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction *Det)
     fSetonlyHCAL = new G4UIcmdWithoutParameter("/DP/det/onlyHCAL", this);
     fSetonlyHCAL->AvailableForStates(G4State_PreInit, G4State_Idle);
 
+    fReConstruct = new G4UIcmdWithoutParameter("/DP/det/reConstruct", this);
+    fReConstruct->SetGuidance("Called after parameter setting is done.");
+    fReConstruct->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+    // -----------Tracker Setting-------------
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -128,6 +151,11 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction *Det)
 DetectorMessenger::~DetectorMessenger() {
     delete fDirectory;
     delete fDetDirectory;
+    delete fTargetDirectory;
+    delete fTagTrkDirectory;
+    delete fRecTrkDirectory;
+    delete fECALDirectory;
+    delete fHCALDirecotry;
     delete fSetTBxCmd;
     delete fSetRBxCmd;
     delete fSetifBiasCmd;
@@ -140,6 +168,7 @@ DetectorMessenger::~DetectorMessenger() {
     delete fSetifHCAL;
     delete fSetonlyTracker;
     delete fSetonlyHCAL;
+    delete fReConstruct;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -163,37 +192,31 @@ void DetectorMessenger::SetNewValue(G4UIcommand *command, G4String newValue) {
     if (command == fECAL_SelectionCmd) {
         fDetectorConstruction
                 ->SetECALSelection(fECAL_SelectionCmd->GetNewIntValue(newValue));
-        fDetectorConstruction->RebuildGeometry();
     }
 
     if (command == fSetifTarget) {
         fDetectorConstruction
                 ->SetifTarget(fSetifTarget->GetNewBoolValue(newValue));
-        fDetectorConstruction->RebuildGeometry();
     }
 
     if (command == fSetifTagTrk) {
         fDetectorConstruction
                 ->SetifTagTrk(fSetifTagTrk->GetNewBoolValue(newValue));
-        fDetectorConstruction->RebuildGeometry();
     }
 
     if (command == fSetifRecTrk) {
         fDetectorConstruction
                 ->SetifRecTrk(fSetifRecTrk->GetNewBoolValue(newValue));
-        fDetectorConstruction->RebuildGeometry();
     }
 
     if (command == fSetifECAL) {
         fDetectorConstruction
                 ->SetifECAL(fSetifECAL->GetNewBoolValue(newValue));
-        fDetectorConstruction->RebuildGeometry();
     }
 
     if (command == fSetifHCAL) {
         fDetectorConstruction
                 ->SetifHCAL(fSetifHCAL->GetNewBoolValue(newValue));
-        fDetectorConstruction->RebuildGeometry();
     }
 
     if (command == fSetonlyTracker) {
@@ -202,7 +225,6 @@ void DetectorMessenger::SetNewValue(G4UIcommand *command, G4String newValue) {
         fDetectorConstruction->SetifRecTrk(true);
         fDetectorConstruction->SetifECAL(false);
         fDetectorConstruction->SetifHCAL(false);
-        fDetectorConstruction->RebuildGeometry();
     }
 
     if (command == fSetonlyECAL) {
@@ -211,7 +233,6 @@ void DetectorMessenger::SetNewValue(G4UIcommand *command, G4String newValue) {
         fDetectorConstruction->SetifRecTrk(false);
         fDetectorConstruction->SetifECAL(true);
         fDetectorConstruction->SetifHCAL(false);
-        fDetectorConstruction->RebuildGeometry();
     }
 
     if (command == fSetonlyHCAL) {
@@ -220,7 +241,10 @@ void DetectorMessenger::SetNewValue(G4UIcommand *command, G4String newValue) {
         fDetectorConstruction->SetifRecTrk(false);
         fDetectorConstruction->SetifECAL(false);
         fDetectorConstruction->SetifHCAL(true);
-        fDetectorConstruction->RebuildGeometry();
+    }
+
+    if (command == fReConstruct) {
+        fDetectorConstruction->ReConstruct();
     }
 
     if (command == fifSaveGeomCmd) {
