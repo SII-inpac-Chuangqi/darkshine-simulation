@@ -70,7 +70,7 @@ private:
     double EdepHad{0.};
 
     // the corresponding MC particle contributing to this hit
-    //std::vector<int> PContribution_TrackID;
+    // std::vector<int> PContribution_TrackID;
     MCParticleVec PContribution;
     CalorimeterHitVec CaloHits;
 

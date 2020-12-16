@@ -36,6 +36,14 @@ if (XercesC_FOUND)
     LINK_LIBRARIES( ${XercesC_LIBRARIES} )
 endif ()
 
+# GenFit2
+option(USE_GENFIT "USE_GENFIT" OFF)
+if (USE_GENFIT)
+    MESSAGE("-- USING GenFit2: ${USE_GENFIT}")
+    INCLUDE_DIRECTORIES($ENV{GENFIT_INCLUDE_DIR})
+    LINK_LIBRARIES( genfit2 )
+    LINK_DIRECTORIES($ENV{GENFIT_LIB_DIR})
+endif ()
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
 #
