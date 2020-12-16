@@ -32,7 +32,6 @@ find_package(HepMC REQUIRED)
 find_package(XercesC REQUIRED)
 if (XercesC_FOUND)
     INCLUDE_DIRECTORIES( ${XercesC_INCLUDE_DIRS} )
-    INCLUDE_DIRECTORIES( ${XercesC_LIBRARIES} )
     LINK_LIBRARIES( ${XercesC_LIBRARIES} )
 endif ()
 
