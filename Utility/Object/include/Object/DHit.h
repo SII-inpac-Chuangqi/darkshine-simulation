@@ -164,7 +164,7 @@ protected:
     double T{0.};
     double E{0.};
 
-ClassDef(DHit,5);
+ClassDefOverride(DHit,5);
 };
 
 #endif //DSIMU_DHIT_H

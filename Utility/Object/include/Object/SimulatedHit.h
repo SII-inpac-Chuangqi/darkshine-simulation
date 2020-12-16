@@ -74,7 +74,7 @@ private:
     MCParticleVec PContribution;
     CalorimeterHitVec CaloHits;
 
-ClassDef(SimulatedHit, 11)
+ClassDefOverride(SimulatedHit, 11)
 
 };
 

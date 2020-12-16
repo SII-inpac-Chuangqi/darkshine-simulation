@@ -10,8 +10,8 @@
 #include <algorithm>
 
 // Eigen
-#include <Core>
-#include <Dense>
+#include <Eigen/Core>
+#include <Eigen/Dense>
 
 typedef Eigen::Vector3d V3;
 typedef std::vector<Eigen::Vector3d> VecV3;

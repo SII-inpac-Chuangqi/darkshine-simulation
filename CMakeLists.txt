@@ -43,6 +43,11 @@ if (USE_GENFIT)
     INCLUDE_DIRECTORIES($ENV{GENFIT_INCLUDE_DIR})
     LINK_LIBRARIES( genfit2 )
     LINK_DIRECTORIES($ENV{GENFIT_LIB_DIR})
+
+    FIND_PACKAGE(Eigen3 REQUIRED)
+        INCLUDE_DIRECTORIES(${EIGEN_INCLUDE_DIR})
+else()
+    INCLUDE_DIRECTORIES(Utility/)
 endif ()
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
@@ -89,7 +94,7 @@ HEADER_DIRECTORIES(Util_List Util_File "Utility")
 
 include_directories(DP_simu/include
         DP_ana/include
-        Utility/Eigen
+
         ./
         ${Util_List}
         ${Algo_List}
