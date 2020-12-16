@@ -82,17 +82,10 @@ int main(int argc, char **argv) {
     G4String macro;
     G4String OpticalMacro;
     G4String gdmlFileName;
-#ifdef G4MULTITHREADED
-    G4int nofThreads = 0;
-#endif
+
     for (G4int i = 1; i < argc; i = i + 2) {
         if (G4String(argv[i]) == "-m") macro = argv[i + 1];
         else if (G4String(argv[i]) == "-o") OpticalMacro = argv[i + 1];
-#ifdef G4MULTITHREADED
-            else if ( G4String(argv[i]) == "-t" ) {
-              nofThreads = G4UIcommand::ConvertToInt(argv[i+1]);
-            }
-#endif
         else {
             PrintUsage();
             //return 1;
@@ -142,7 +135,6 @@ int main(int argc, char **argv) {
     //physicsList->RegisterPhysics( new OpticalPhysics( rootMng ) );
 
     runManager->SetUserInitialization(physicsList);
-
 
 
     // Set user action classes

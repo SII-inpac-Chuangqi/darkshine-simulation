@@ -32,10 +32,23 @@ find_package(HepMC REQUIRED)
 find_package(XercesC REQUIRED)
 if (XercesC_FOUND)
     INCLUDE_DIRECTORIES( ${XercesC_INCLUDE_DIRS} )
-    INCLUDE_DIRECTORIES( ${XercesC_LIBRARIES} )
     LINK_LIBRARIES( ${XercesC_LIBRARIES} )
 endif ()
 
+# GenFit2
+option(USE_GENFIT "USE_GENFIT" OFF)
+if (USE_GENFIT)
+    MESSAGE("-- USING GenFit2: ${USE_GENFIT}")
+    INCLUDE_DIRECTORIES($ENV{GENFIT_INCLUDE_DIR})
+    LINK_LIBRARIES( genfit2 )
+    LINK_DIRECTORIES($ENV{GENFIT_LIB_DIR})
+
+    FIND_PACKAGE(Eigen3 REQUIRED)
+        INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
+        MESSAGE("-- Eigen Dir: ${EIGEN3_INCLUDE_DIR}")
+else()
+    INCLUDE_DIRECTORIES(Utility/)
+endif ()
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
 #
@@ -81,7 +94,7 @@ HEADER_DIRECTORIES(Util_List Util_File "Utility")
 
 include_directories(DP_simu/include
         DP_ana/include
-        Utility/Eigen
+
         ./
         ${Util_List}
         ${Algo_List}

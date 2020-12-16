@@ -12,8 +12,7 @@ GammaPhysics::GammaPhysics(const G4String& name) :
         G4VPhysicsConstructor(name) {
 }
 
-GammaPhysics::~GammaPhysics() {
-}
+GammaPhysics::~GammaPhysics() = default;
 
 // needed for GEANT4 10.3.0 and later
 #ifndef aParticleIterator
@@ -46,7 +45,7 @@ void GammaPhysics::ConstructProcess() {
             // EM processes. The biasing operator needs the photonNuclear
             // process to be called first because the cross-section is
             // needed to bias down other process.
-            for (int iProcess = 0; iProcess < vProcess->size(); ++iProcess) { 
+            for (unsigned iProcess = 0; iProcess < vProcess->size(); ++iProcess) {
                 G4String processName = (*vProcess)[iProcess]->GetProcessName();
                 G4cout<<"[Gamma Phyiscs] ==> "<<processName<<", with Type "<<(*vProcess)[iProcess]->GetProcessType()<<", sub Type "<<(*vProcess)[iProcess]->GetProcessSubType()<<G4endl;
                 //if (processName == "photonNuclear") { 
@@ -62,7 +61,7 @@ void GammaPhysics::ConstructProcess() {
             // Get the process list associated with the gamma.
             G4ProcessVector* vProcess = pmanager->GetProcessList(); 
 
-            for (int iProcess = 0; iProcess < vProcess->size(); ++iProcess) { 
+            for (unsigned iProcess = 0; iProcess < vProcess->size(); ++iProcess) {
                 G4String processName = (*vProcess)[iProcess]->GetProcessName();
                 G4cout<<"[Electron Phyiscs] ==> "<<processName<<", with Type "<<(*vProcess)[iProcess]->GetProcessType()<<", sub Type "<<(*vProcess)[iProcess]->GetProcessSubType()<<G4endl;
             }

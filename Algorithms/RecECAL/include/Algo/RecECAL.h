@@ -11,6 +11,7 @@
 #include "Algo/Trk_LineFit.h"
 #include "Algo/ECAL_Writer.h"
 #include "Algo/ECAL_RNN.h"
+#include "Algo/ECAL_Cluster.h"
 
 using namespace std;
 
@@ -19,7 +20,7 @@ public:
     // No need to change anything here
     // Must initialized with Name
     explicit RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt);
-    ~RecECAL() override {}
+    ~RecECAL() override = default;
 
     void Begin() override;
 
@@ -38,7 +39,7 @@ public:
         err_x = 0.;
         err_y = 0.;
 
-        ECAL_TF->Clean();
+        //ECAL_TF->Clean();
     }
 
     double SingleCenterFinding(const SimulatedHitVecUniPtr&, const DStepVecUniPtr &);
@@ -56,21 +57,26 @@ private:
 
     double RNN_Score{0.};
 
-    double Hits_E[400];
+    // double Hits_E[400];
     // Verbosity
     int verbose{0};
     // Input Parameter
     double W0{0.};
     int nb_ch{1};
+    int nb_z{1};
     string RNN_Status{};
     string RNN_Path{};
     string RNN_Sig_Path{};
     string RNN_Bkg_Path{};
 
+    double d_cut{1.};
+    double r_cut{0.5};
+
     // Internal Algorithm Processors
-    shared_ptr<Trk_LineFit> ECAL_TF;
+    //shared_ptr<Trk_LineFit> ECAL_TF;
     shared_ptr<ECAL_Writer> ECAL_Wrt;
     shared_ptr<ECAL_RNN>    ECAL_rnn;
+    shared_ptr<ECAL_Cluster> ECAL_cluster;
 };
 
 

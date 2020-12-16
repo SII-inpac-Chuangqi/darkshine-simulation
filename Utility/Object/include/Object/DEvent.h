@@ -182,7 +182,7 @@ protected:
     SimulatedHitMapO SimulatedHitCollection;
     CalorimeterHitMapO CalorimeterHitCollection;
 
-ClassDef(DEvent, 1);
+ClassDefOverride(DEvent, 1);
 };
 
 // Some inline

@@ -89,7 +89,7 @@ private:
     ReconstructedParticle* RecParticles;
     SimulatedHitVec SimHits;
 
-ClassDef(McParticle,10)
+ClassDefOverride(McParticle,10)
 
 };
 

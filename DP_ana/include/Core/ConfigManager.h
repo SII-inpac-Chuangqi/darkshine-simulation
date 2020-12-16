@@ -29,7 +29,7 @@ private:
 public:
     ConfigManager() = default;
 
-    ConfigManager(const string &configfile, AlgoManager *algomgr);
+    ConfigManager(string configfile, AlgoManager *algomgr);
 
     ~ConfigManager() = default;
 

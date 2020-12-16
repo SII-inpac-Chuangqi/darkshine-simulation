@@ -14,13 +14,18 @@
 RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name),
                                                                                      std::move(evtwrt)) {
 
-    ECAL_TF = std::shared_ptr<Trk_LineFit>(new Trk_LineFit());
+    //ECAL_TF = std::shared_ptr<Trk_LineFit>(new Trk_LineFit());
     ECAL_Wrt = std::shared_ptr<ECAL_Writer>(new ECAL_Writer());
     ECAL_rnn = std::shared_ptr<ECAL_RNN>(new ECAL_RNN());
+    ECAL_cluster = std::shared_ptr<ECAL_Cluster>(new ECAL_Cluster());
 
     // Register parameters
     RegisterIntParameter("Verbose", "Verbosity Variable", &verbose, 0);
     RegisterDoubleParameter("W0", "W0", &W0, 0.);
+    RegisterDoubleParameter("d_cut", "Cluster: d_cut", &d_cut, 0.2);
+    RegisterDoubleParameter("r_cut", "Cluster: r_cut", &r_cut, 0.5);
+    RegisterIntParameter("Z_Layers", "Nb of Z layers", &nb_z, 1);
+
     RegisterIntParameter("Channels", "Nb of Channels", &nb_ch, 1);
     RegisterStringParameter("RNN_Status", "train or apply", &RNN_Status, "none");
     RegisterStringParameter("RNN_Path", "Weight xml path", &RNN_Path, "none");
@@ -73,24 +78,36 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
         const auto &steps = StepCollection.at(StepCollectionName);
 
         // Find Center Hit
-        SingleCenterFinding(hits, steps);
+//        SingleCenterFinding(hits, steps);
+//        if (verbose > 0) {
+//            std::cout << "-- # of hits in ECAL_Center: " << hits->size() << endl;
+//            std::cout << "-- Reconstructed Position: " << (FindCenter ? "Found" : "NOT Found") << endl;
+//            std::cout << fixed << setprecision(3) << right;
+//            std::cout << "-- MC X: " << setw(6) << mc_x << " [mm]" << std::endl;
+//            std::cout << "-- Reconstructed X: " << setw(6) << center_x << " +- " << setw(6) << err_x << " [mm]"
+//                      << std::endl;
+//            std::cout << "-- MC Y: " << setw(6) << mc_y << " [mm]" << std::endl;
+//            std::cout << "-- Reconstructed Y: " << setw(6) << center_y << " +- " << setw(6) << err_y << " [mm]"
+//                      << std::endl;
+//        }
+
+        // Clustering
+        ECAL_cluster->ClusterHits(hits, nb_z, d_cut, r_cut);
+        ECAL_cluster->DrawClusterResults(hits);
+
         if (verbose > 0) {
-            std::cout << "-- # of hits in ECAL_Center: " << hits->size() << endl;
-            std::cout << "-- Reconstructed Position: " << (FindCenter ? "Found" : "NOT Found") << endl;
-            std::cout << fixed << setprecision(3) << right;
-            std::cout << "-- MC X: " << setw(6) << mc_x << " [mm]" << std::endl;
-            std::cout << "-- Reconstructed X: " << setw(6) << center_x << " +- " << setw(6) << err_x << " [mm]"
-                      << std::endl;
-            std::cout << "-- MC Y: " << setw(6) << mc_y << " [mm]" << std::endl;
-            std::cout << "-- Reconstructed Y: " << setw(6) << center_y << " +- " << setw(6) << err_y << " [mm]"
-                      << std::endl;
+
+            std::cout << "-- # of clusters found in ECAL: " << ECAL_cluster->getRawClusters().size() << std::endl;
+            std::cout << "-- # of clustered hits: " << ECAL_cluster->getNbHitsClustered() << std::endl;
+            std::cout << "-- # of not clustered hits: " << ECAL_cluster->getNbHitsNotClustered() << std::endl;
         }
+
 
         // RNN
         if (RNN_Status == "apply")
             RNN_Score = ECAL_rnn->ApplyDNN(hits);
 
-        ECAL_Wrt->FillHits(hits);
+        // ECAL_Wrt->FillHits(hits);
 
         // Find Trackers in ECAL
         for (auto hit: *hits) {
@@ -102,10 +119,10 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
 
             //Hits_E[cell_id-1] = ( hit->getE() > 1e-6 && !isnan(hit->getE()) ) ? hit->getE() : 0. ;
 
-            ECAL_TF->AddPoint(x, y, z);
+            //ECAL_TF->AddPoint(x, y, z);
         }
 
-        std::pair<V3, V3> result = ECAL_TF->best_line_from_points();
+        //std::pair<V3, V3> result = ECAL_TF->best_line_from_points();
         //std::cout << "origin:\n" << result.first << "\naxis:\n" << result.second;
     } else {
         // if not exists, print out error
