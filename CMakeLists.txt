@@ -45,6 +45,7 @@ if (USE_GENFIT)
 
     FIND_PACKAGE(Eigen3 REQUIRED)
         INCLUDE_DIRECTORIES(${EIGEN_INCLUDE_DIR})
+        MESSAGE("-- Eigen Dir: ${EIGEN_INCLUDE_DIR}")
 else()
     INCLUDE_DIRECTORIES(Utility/)
 endif ()
