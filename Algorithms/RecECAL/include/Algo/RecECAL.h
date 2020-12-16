@@ -39,7 +39,7 @@ public:
         err_x = 0.;
         err_y = 0.;
 
-        ECAL_TF->Clean();
+        //ECAL_TF->Clean();
     }
 
     double SingleCenterFinding(const SimulatedHitVecUniPtr&, const DStepVecUniPtr &);
