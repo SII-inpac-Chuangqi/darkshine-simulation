@@ -4,7 +4,9 @@
 
 #include "Core/ConfigManager.h"
 
-ConfigManager::ConfigManager(const string &_configfile, AlgoManager *_algomgr) : configfile(_configfile),
+#include <utility>
+
+ConfigManager::ConfigManager(string _configfile, AlgoManager *_algomgr) : configfile(std::move(_configfile)),
                                                                                algomgr(_algomgr) {
     config = new Config(configfile);
 }
