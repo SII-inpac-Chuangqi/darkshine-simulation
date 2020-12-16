@@ -121,6 +121,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void DetectorConstruction::DefineMaterials() {
+
     G4NistManager *nistManager = G4NistManager::Instance();
 
     // Material definition 
@@ -213,76 +214,78 @@ void DetectorConstruction::DefineMaterials() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void DetectorConstruction::DefineParameters() {
-    /* Define all the parameter used */
-    /////////////////////////
-    //  APD
-    /////////////////////////
-    APD_Mat = G4Material::GetMaterial("G4_Si");
-    APD_Size = G4ThreeVector(1 * cm, 1 * cm, 1 * mm);
+    
+    if (reconstruct) {
+        /* Define all the parameter used */
+        /////////////////////////
+        //  APD
+        /////////////////////////
+        APD_Mat = G4Material::GetMaterial("G4_Si");
+        APD_Size = G4ThreeVector(1 * cm, 1 * cm, 1 * mm);
 
-    Glue_Mat = G4Material::GetMaterial("G4_W");
-    Glue_Size = G4ThreeVector(1 * cm, 1 * cm, 0.1 * mm);
+        Glue_Mat = G4Material::GetMaterial("G4_W");
+        Glue_Size = G4ThreeVector(1 * cm, 1 * cm, 0.1 * mm);
+    
+        /////////////////////////
+        //  Target
+        /////////////////////////
+        Target_Mat = G4Material::GetMaterial("G4_W");
+        Target_Size = G4ThreeVector(10 * cm, 20 * cm, 350 * um);
+        Target_Pos = G4ThreeVector(0 * cm, 0 * cm, 0 * cm);
+        Trk_Tar_Dis = 7.5 * mm;
 
-    /////////////////////////
-    //  EM Field
-    /////////////////////////
-    TagTrk_MagField_y = -1.5 * tesla;
-    RecTrk_MagField_y = -0.5 * tesla;
-    /////////////////////////
-    //  Target
-    /////////////////////////
-    Target_Mat = G4Material::GetMaterial("G4_W");
-    Target_Size = G4ThreeVector(10 * cm, 20 * cm, 350 * um);
-    Target_Pos = G4ThreeVector(0 * cm, 0 * cm, 0 * cm);
-    Trk_Tar_Dis = 7.5 * mm;
+    
+        ///  Tagging Tracker
 
-    ///  Tagging Tracker
+        TagTrk->DefineParameters(dTagging, Trk_Tar_Dis, Target_Size);
+        Size_TagRegion = TagTrk->GetSizeTrkRegion();
+        Pos_TagRegion = TagTrk->GetPosTrkRetion();
 
-    TagTrk->DefineParameters(dTagging, Trk_Tar_Dis, Target_Size);
-    Size_TagRegion = TagTrk->GetSizeTrkRegion();
-    Pos_TagRegion = TagTrk->GetPosTrkRetion();
+        ///  Recoil Tracker
 
-    ///  Recoil Tracker
+        RecTrk->DefineParameters(dRecoil, Trk_Tar_Dis, Target_Size);
+        Size_RecRegion = RecTrk->GetSizeTrkRegion(); 
+        Pos_RecRegion = RecTrk->GetPosTrkRetion();
 
-    RecTrk->DefineParameters(dRecoil, Trk_Tar_Dis, Target_Size);
-    Size_RecRegion = RecTrk->GetSizeTrkRegion(); 
-    Pos_RecRegion = RecTrk->GetPosTrkRetion();
-
-    ///  ECAL
-
-    if (build_ECAL) {
-        if (ECAL_Selection == 1) {
-            ECAL_Con1->DefineParameters(Pos_RecRegion, Size_RecRegion);
-            Pos_ECAL = ECAL_Con1->getPosEcalRegion();
-            Size_ECAL = ECAL_Con1->getSizeEcalRegion();
+        ///  ECAL
+    
+        if (build_ECAL) {
+            if (ECAL_Selection == 1) {
+                ECAL_Con1->DefineParameters(Pos_RecRegion, Size_RecRegion);
+                Pos_ECAL = ECAL_Con1->getPosEcalRegion();
+                Size_ECAL = ECAL_Con1->getSizeEcalRegion();
+            }
+            else if (ECAL_Selection == 2) {
+                ECAL_Con2->DefineParameters(Pos_RecRegion, Size_RecRegion);
+                Pos_ECAL = ECAL_Con2->getPosEcalRegion();
+                Size_ECAL = ECAL_Con2->getSizeEcalRegion();
+            }
         }
-        else if (ECAL_Selection == 2) {
-            ECAL_Con2->DefineParameters(Pos_RecRegion, Size_RecRegion);
-            Pos_ECAL = ECAL_Con2->getPosEcalRegion();
-            Size_ECAL = ECAL_Con2->getSizeEcalRegion();
+        // If no ECAL but built Tracker, in order to determine the position of HCAL,
+        // use Tagger's position instead. If only HCAL, use default Pos_ECAL = 0.
+        else if (build_RecTrk) { 
+            Pos_ECAL = Pos_RecRegion;
+            Size_ECAL = Size_RecRegion;
         }
-    }
-    // If no ECAL but built Tracker, in order to determine the position of HCAL,
-    // use Tagger's position instead. If only HCAL, use default Pos_ECAL = 0.
-    else if (build_RecTrk) { 
-        Pos_ECAL = Pos_RecRegion;
-        Size_ECAL = Size_RecRegion;
-    }
-    else if (build_TagTrk) {
-        Pos_ECAL = Pos_TagRegion;
-        Size_ECAL = Size_TagRegion;
-    }
-    else {
-        Pos_ECAL = G4ThreeVector(0 * cm, 0 * cm, 0* cm);
-        Size_ECAL = G4ThreeVector(0 * cm, 0 * cm, 0 * cm);
-    }
+        else if (build_TagTrk) {
+            Pos_ECAL = Pos_TagRegion;
+            Size_ECAL = Size_TagRegion;
+        }
+        else {
+            Pos_ECAL = G4ThreeVector(0 * cm, 0 * cm, 0* cm);
+            Size_ECAL = G4ThreeVector(0 * cm, 0 * cm, 0 * cm);
+        }
 
-    HCAL_Con->DefineParameters(Pos_ECAL, Size_ECAL);
+        if (build_HCAL ) HCAL_Con->DefineParameters(Pos_ECAL, Size_ECAL);
+    }
     /////////////////////////
     //  World
     /////////////////////////
     World_Mat = G4Material::GetMaterial("vacuum");
-    auto l = 2.0 * (HCAL_Con->getPosHcalRegion().z() + HCAL_Con->getSizeHcalRegion().x());
+    G4double l = 10 * m;
+    // if (reconstruct && build_HCAL) {
+    //     l = 2.0 * (HCAL_Con->getPosHcalRegion().z() + HCAL_Con->getSizeHcalRegion().x());
+    // }
     Size_World = G4ThreeVector(l, l, l); 
 }
 
@@ -291,22 +294,21 @@ void DetectorConstruction::DefineParameters() {
 G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
 
     DefineWorld();      // Build World
-    if (build_Target) DefineTarget();     // Build Target
-    /// Build Tagging Tracker
-    if (build_TagTrk) TagTrk->Build(dTagging, World_LV, fRootMng, fCheckOverlaps);
-    /// Build Recoil Tracker
-    if (build_RecTrk) RecTrk->Build(dRecoil, World_LV, fRootMng, fCheckOverlaps);
-    // Build ECAL
-    if (build_ECAL) {
-        if (ECAL_Selection == 1)
-            ECAL_Con1->Build(0, World_LV, fRootMng, fCheckOverlaps);
-        else if (ECAL_Selection == 2)
-            ECAL_Con2->Build(0, World_LV, fRootMng, fCheckOverlaps);
+    if (reconstruct) {
+        if (build_Target) DefineTarget();     // Build Target
+        /// Build Tagging Tracker
+        if (build_TagTrk) TagTrk->Build(dTagging, World_LV, fRootMng, fCheckOverlaps);
+        /// Build Recoil Tracker
+        if (build_RecTrk) RecTrk->Build(dRecoil, World_LV, fRootMng, fCheckOverlaps);
+        // Build ECAL
+        if (build_ECAL) {
+            if (ECAL_Selection == 1)
+                ECAL_Con1->Build(0, World_LV, fRootMng, fCheckOverlaps);
+            else if (ECAL_Selection == 2)
+                ECAL_Con2->Build(0, World_LV, fRootMng, fCheckOverlaps);
+        }
+        if (build_HCAL) HCAL_Con->Build(0, World_LV, fRootMng, fCheckOverlaps);
     }
-    
-
-    if (build_HCAL) HCAL_Con->Build(0, World_LV, fRootMng, fCheckOverlaps);
-
     // Set User Limit 
     G4double maxStep = 10 * mm;
     fStepLimit = new G4UserLimits(maxStep, DBL_MAX, 200 * s);
@@ -339,7 +341,6 @@ void DetectorConstruction::DefineWorld() {
     auto World_Box = new G4Box("World_Box", Size_World.x() / 2, Size_World.y() / 2, Size_World.z() / 2); // Solid of World.
     World_LV = new G4LogicalVolume(World_Box, World_Mat, "World_LV"); 
     World_PV = new G4PVPlacement(nullptr, G4ThreeVector(), World_LV, "World", nullptr, false, 0, fCheckOverlaps);
-
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -364,24 +365,25 @@ void DetectorConstruction::DefineTarget() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void DetectorConstruction::ConstructSDandField() {
+    //G4cerr << "[DEBUG] ConstructSDandField" << G4endl;
+    if (reconstruct) {
+        // Construct Magnetic Field and Sensitive Detector of the Tagging Tracker
+        if (build_TagTrk) TagTrk->BuildSDandField(dTagging, fRootMng);
+        // Constructg Magnetic Field and Sensitive Detector of the Recoil Tracker
+        if (build_RecTrk) RecTrk->BuildSDandField(dRecoil, fRootMng);
+        
+        /*                              */
+        /* Construct Sensitive Detector */
+        /*                              */
 
-    // Construct Magnetic Field and Sensitive Detector of the Tagging Tracker
-    if (build_TagTrk) TagTrk->BuildSDandField(dTagging, fRootMng);
-    // Constructg Magnetic Field and Sensitive Detector of the Recoil Tracker
-    if (build_RecTrk) RecTrk->BuildSDandField(dRecoil, fRootMng);
-    
-    /*                              */
-    /* Construct Sensitive Detector */
-    /*                              */
+        if (build_ECAL) {
+            if (ECAL_Selection == 1) ECAL_Con1->BuildSD(fRootMng);
+            else if (ECAL_Selection == 2) ECAL_Con2->BuildSD(fRootMng);
+        }
+        
 
-    if (build_ECAL) {
-        if (ECAL_Selection == 1) ECAL_Con1->BuildSD(fRootMng);
-        else if (ECAL_Selection == 2) ECAL_Con2->BuildSD(fRootMng);
+        if (build_HCAL ) HCAL_Con->BuildSD(fRootMng);
     }
-    
-
-    HCAL_Con->BuildSD(fRootMng);
-
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -417,25 +419,15 @@ void DetectorConstruction::SetBiasLayer() {
         for (itr_LV = Target_LV.begin(); itr_LV != Target_LV.end(); itr_LV++)
             bias->AttachTo(*itr_LV);
     }
-
-    if (build_ECAL && fRootMng->GetifBiasECAL()) {
-        if (ECAL_Selection == 1) ECAL_Con1->BuildBias(bias);
-        else if (ECAL_Selection == 2) ECAL_Con2->BuildBias(bias);
+    if (reconstruct) {
+        if (build_ECAL && fRootMng->GetifBiasECAL()) {
+            if (ECAL_Selection == 1) ECAL_Con1->BuildBias(bias);
+            else if (ECAL_Selection == 2) ECAL_Con2->BuildBias(bias);
+        }
     }
-
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void DetectorConstruction::SetTagTrkMagField(G4double in) {
-    TagTrk->SetTrackerMagField(in);
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void DetectorConstruction::SetRecTrkMagField(G4double in) {
-    RecTrk->SetTrackerMagField(in);
-}
 
 void DetectorConstruction::SetOptical(G4bool in) {
     fRootMng->SetOptical(in);
@@ -463,50 +455,162 @@ void DetectorConstruction::CleanGeometry(G4bool clean) {
 }
 
 void DetectorConstruction::ReConstruct(G4bool flag) {
-    if(flag && reconstruct) CleanGeometry();
+    if(flag) CleanGeometry();
     // If this is the second construction,
     // we should clean-up the previous
     // geometry in safety concern.
-    
     reconstruct = true;
     // When reconstruct = 0, World is empty.
     // When reconstruct = 1, World is filld.
-    
     /// Define new one
     G4RunManager::GetRunManager()->DefineWorldVolume(Construct());
+    ConstructSDandField();
     G4RunManager::GetRunManager()->GeometryHasBeenModified();
 }
 
 /// Setter
 
-void DetectorConstruction::SetECALSelection(unsigned int id) {
-    ECAL_Selection = id;
-    G4cout << "[det]==>Selected ECAL Configuration " << id << G4endl;
-}
+/// Target SEtter
 
 void DetectorConstruction::SetifTarget(G4bool build) {
     build_Target = build;
     G4cout << "[det]==>turned " << (build ? "ON " : "OFF ") << "Target" << G4endl; 
 }
 
+/// TagTrk Setter
+
 void DetectorConstruction::SetifTagTrk(G4bool build) {
     build_TagTrk = build;
-    if (!build) TagTrk->SetTrackerMagField(0.); // Clear magnetic field
+    //if (!build) TagTrk->SetTrackerMagField(0.); // Clear magnetic field
     G4cout << "[det]==>turned " << (build ? "ON " : "OFF ") << "Tagging Tracker" << G4endl; 
 }
 
+void DetectorConstruction::AddNewTagTrkSize(G4ThreeVector in) {
+    TagTrk->AddNewTrackerSize(in);
+}
+
+void DetectorConstruction::AddNewTagTrkPos(G4ThreeVector in) {
+    TagTrk->AddNewTrackerPos(in);
+}
+
+void DetectorConstruction::DelTagTrk(G4bool in = true) {
+    TagTrk->DelTracker(in);
+}
+
+void DetectorConstruction::SetTagTrk1Rotation(G4double in) {
+    TagTrk->SetTracker1Rotation(in);
+}
+
+void DetectorConstruction::SetTagTrk2Rotation(G4double in) {
+    TagTrk->SetTracker2Rotation(in);
+}
+
+void DetectorConstruction::SetTagTrk1Color(G4ThreeVector in) {
+    TagTrk->SetTracker1Color(in);
+}
+
+void DetectorConstruction::SetTagTrk2Color(G4ThreeVector in) {
+   TagTrk->SetTracker2Color(in);
+}
+
+void DetectorConstruction::SetTagTrkMagField(G4double in) {
+    TagTrk->SetTrackerMagField(in);
+}
+
+/// RecTrk Setter
+
 void DetectorConstruction::SetifRecTrk(G4bool build) {
     build_RecTrk = build;
-    if (!build) RecTrk->SetTrackerMagField(0.); // Clear magnetic field
+    //if (!build) RecTrk->SetTrackerMagField(0.); // Clear magnetic field
     G4cout << "[det]==>turned " << (build ? "ON " : "OFF ") << "Recoil Tracker" << G4endl; 
 }
+
+void DetectorConstruction::AddNewRecTrkSize(G4ThreeVector in) {
+    RecTrk->AddNewTrackerSize(in);
+}
+
+void DetectorConstruction::AddNewRecTrkPos(G4ThreeVector in) {
+    RecTrk->AddNewTrackerPos(in);
+}
+
+void DetectorConstruction::DelRecTrk(G4bool in) {
+    RecTrk->DelTracker(in);
+}
+
+void DetectorConstruction::SetRecTrk1Rotation(G4double in) {
+    RecTrk->SetTracker1Rotation(in);
+}
+
+void DetectorConstruction::SetRecTrk2Rotation(G4double in) {
+    RecTrk->SetTracker2Rotation(in);
+}
+
+void DetectorConstruction::SetRecTrk1Color(G4ThreeVector in) {
+    RecTrk->SetTracker1Color(in);
+}
+
+void DetectorConstruction::SetRecTrk2Color(G4ThreeVector in) {
+    RecTrk->SetTracker2Color(in);
+}
+
+void DetectorConstruction::SetRecTrkMagField(G4double in) {
+    RecTrk->SetTrackerMagField(in);
+}
+
+/// ECAL Setter
 
 void DetectorConstruction::SetifECAL(G4bool build) {
     build_ECAL = build;
     G4cout << "[det]==>turned " << (build ? "ON " : "OFF ") << "ECAL" << G4endl; 
 }
 
+void DetectorConstruction::SetECALSelection(unsigned int id) {
+    ECAL_Selection = id;
+    G4cout << "[det]==>Selected ECAL Configuration " << id << G4endl;
+}
+
+void DetectorConstruction::SetECALCenterWrapSize(G4ThreeVector in) {
+    ECAL_Con1->SetECALCenterWrapSize(in);
+    ECAL_Con2->SetECALCenterWrapSize(in);
+}
+
+void DetectorConstruction::SetECALCenterSize(G4ThreeVector in) {
+    ECAL_Con1->SetECALCenterSize(in);
+    ECAL_Con2->SetECALCenterSize(in);
+}
+
+void DetectorConstruction::SetECALCenterModuleNo(G4ThreeVector in) {
+    ECAL_Con1->SetECALCenterModuleNo(in);
+    ECAL_Con2->SetECALCenterModuleNo(in);
+}
+
+/// HCAL Setter
+
 void DetectorConstruction::SetifHCAL(G4bool build) {
     build_HCAL = build;
     G4cout << "[det]==>turned " << (build ? "on " : "off ") << "HCAL" << G4endl;
+}
+
+void DetectorConstruction::SetHCALWrapSize(G4ThreeVector in) {
+    HCAL_Con->SetHCALWrapSize(in);
+}
+
+void DetectorConstruction::SetHCALSizeDir(G4ThreeVector in) {
+    HCAL_Con->SetHCALSizeDir(in);
+}
+
+void DetectorConstruction::SetHCALModNoDir(G4ThreeVector in) {
+    HCAL_Con->SetHCALModNoDir(in);
+}
+
+void DetectorConstruction::SetHCALModuleNo(G4ThreeVector in) {
+    HCAL_Con->SetHCALModuleNo(in);
+}
+
+void DetectorConstruction::SetHCALModuleGap(G4double in) {
+    HCAL_Con->SetHCALModuleGap(in);
+}
+
+void DetectorConstruction::SetHCALAbsorberThickness(G4double in) {
+    HCAL_Con->SetHCALAbsorberThickness(in);
 }

@@ -44,11 +44,17 @@ class G4UIcmdWithAnInteger;
 
 class G4UIcmdWithADouble;
 
+class G4UIcmdWithADoubleAndUnit;
+
 class G4UIcmdWithABool;
 
 class G4UIcmdWithADoubleAndUnit;
 
 class G4UIcmdWithoutParameter;
+
+class G4UIcmdWith3Vector;
+
+class G4UIcmdWith3VectorAndUnit;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -79,9 +85,6 @@ private:
     G4UIdirectory *fECALDirectory;
     G4UIdirectory *fHCALDirecotry;
 
-    G4UIcmdWithADoubleAndUnit *fSetTBxCmd;
-    G4UIcmdWithADoubleAndUnit *fSetRBxCmd;
-
     G4UIcmdWithADoubleAndUnit *fSetELayerPosCmd;
     G4UIcmdWithABool *fSetifBiasCmd;
 
@@ -91,15 +94,57 @@ private:
 
     G4UIcmdWithAnInteger *fECAL_SelectionCmd;
     G4UIcmdWithABool *fSetifTarget;
-    G4UIcmdWithABool *fSetifTagTrk;
-    G4UIcmdWithABool *fSetifRecTrk;
+    
+    
     G4UIcmdWithABool *fSetifECAL;
     G4UIcmdWithABool *fSetifHCAL;
     G4UIcmdWithoutParameter *fSetonlyTracker;
     G4UIcmdWithoutParameter *fSetonlyECAL;
     G4UIcmdWithoutParameter *fSetonlyHCAL;
     G4UIcmdWithoutParameter *fReConstruct;
+
+    /// Tracker Setter
+
+    G4UIcmdWithADoubleAndUnit *fSetTrkTarDis;
+
+    /// TagTrk Setter
+
+    G4UIcmdWithABool          *fSetifTagTrk;
+    G4UIcmdWith3VectorAndUnit *fAddNewTagTrkSize;
+    G4UIcmdWith3VectorAndUnit *fAddNewTagTrkPos;
+    G4UIcmdWithABool          *fDelTagTrk;
+    G4UIcmdWithADoubleAndUnit *fSetTagTrk1Rotation;
+    G4UIcmdWithADoubleAndUnit *fSetTagTrk2Rotation;
+    G4UIcmdWith3Vector        *fSetTagTrk1Color;
+    G4UIcmdWith3Vector        *fSetTagTrk2Color;
+    G4UIcmdWithADoubleAndUnit *fSetTBxCmd;
+
+    /// RecTrk Setter
+
+    G4UIcmdWithABool          *fSetifRecTrk;
+    G4UIcmdWith3VectorAndUnit *fAddNewRecTrkSize;
+    G4UIcmdWith3VectorAndUnit *fAddNewRecTrkPos;
+    G4UIcmdWithABool          *fDelRecTrk;
+    G4UIcmdWithADoubleAndUnit *fSetRecTrk1Rotation;
+    G4UIcmdWithADoubleAndUnit *fSetRecTrk2Rotation;
+    G4UIcmdWith3Vector        *fSetRecTrk1Color;
+    G4UIcmdWith3Vector        *fSetRecTrk2Color;
+    G4UIcmdWithADoubleAndUnit *fSetRBxCmd;
+
+    /// ECAL Setter
     
+    G4UIcmdWith3VectorAndUnit *fSetECALCenterWrapSize;
+    G4UIcmdWith3VectorAndUnit *fSetECALCenterSize;
+    G4UIcmdWith3Vector        *fSetECALCenterModuleNo;
+
+    /// HCAL Setter
+    
+    G4UIcmdWith3VectorAndUnit *fSetHCALWrapSize;
+    G4UIcmdWith3VectorAndUnit *fSetHCALSizeDir;
+    G4UIcmdWith3Vector        *fSetHCALModNoDir;
+    G4UIcmdWith3Vector        *fSetHCALModuleNo;
+    G4UIcmdWithADoubleAndUnit *fSetHCALModuleGap;
+    G4UIcmdWithADoubleAndUnit *fSetHCALAbsorberThickness;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

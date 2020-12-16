@@ -98,13 +98,47 @@ public:
 
     /// Tracker Setter
 
-    void SetTagTrkMagField(G4double in);
+    void SetTrkTarDis(G4double in) { Trk_Tar_Dis = in; };
 
-    void SetRecTrkMagField(G4double in);
+    /// Tagging Tracker Setter
 
     void SetifTagTrk(G4bool);
 
+    void AddNewTagTrkSize(G4ThreeVector in);
+
+    void AddNewTagTrkPos(G4ThreeVector in);
+
+    void DelTagTrk(G4bool);
+
+    void SetTagTrk1Rotation(G4double in);
+
+    void SetTagTrk2Rotation(G4double in);
+
+    void SetTagTrk1Color(G4ThreeVector in);
+
+    void SetTagTrk2Color(G4ThreeVector in);
+
+    void SetTagTrkMagField(G4double in);
+
+    /// Recoil Tracker Setter
+
     void SetifRecTrk(G4bool);
+
+    void AddNewRecTrkSize(G4ThreeVector in);
+
+    void AddNewRecTrkPos(G4ThreeVector in);
+
+    void DelRecTrk(G4bool);
+
+    void SetRecTrk1Rotation(G4double in);
+
+    void SetRecTrk2Rotation(G4double in);
+
+    void SetRecTrk1Color(G4ThreeVector in);
+
+    void SetRecTrk2Color(G4ThreeVector in);
+
+    void SetRecTrkMagField(G4double in);
 
     /// Bias Setter
 
@@ -125,9 +159,27 @@ public:
     /// 2=ECAL_ALLZ
     void SetECALSelection(unsigned int id);    
 
+    void SetECALCenterWrapSize(G4ThreeVector in);
+
+    void SetECALCenterSize(G4ThreeVector in);
+
+    void SetECALCenterModuleNo(G4ThreeVector in);
+
     /// HCAL Setter
 
     void SetifHCAL(G4bool);
+
+    void SetHCALWrapSize(G4ThreeVector in);
+
+    void SetHCALSizeDir(G4ThreeVector in);
+
+    void SetHCALModNoDir(G4ThreeVector in);
+
+    void SetHCALModuleNo(G4ThreeVector in);
+
+    void SetHCALModuleGap(G4double in);
+
+    void SetHCALAbsorberThickness(G4double in);
 
     /// Getter
 
@@ -140,7 +192,6 @@ public:
 
     /// \brief USAGE: Called in DetectorMessenger::SetNewValue().
     /// SHOULD be called after modifing geometry at runtime.
-    /// It will automatically call CleanGeometry() in subsequent ReConstruct().
     /// \param[in] flag If is false, supress call of CleanGeometry().
     void ReConstruct(G4bool flag=true);
 
@@ -176,7 +227,7 @@ private:
     // ECAL Construction Class
     ECAL_XYCrossing *ECAL_Con1;
     ECAL_AllZ *ECAL_Con2;
-    G4int ECAL_Selection = 0; 
+    G4int ECAL_Selection = 1; 
 
     // HCAL Construction Class
     HCAL_Construct *HCAL_Con;
@@ -196,8 +247,8 @@ private:
     /////////////////////////
     //  EM Field
     /////////////////////////
-    G4double TagTrk_MagField_y{-1.5};
-    G4double RecTrk_MagField_y{-0.5};
+    G4double TagTrk_MagField_y = -1.5 * tesla;
+    G4double RecTrk_MagField_y = -0.5 * tesla;
 
     /////////////////////////
     //  APD stuff

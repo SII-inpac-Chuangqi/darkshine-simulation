@@ -44,6 +44,67 @@
 /gui/addButton viewer "Flush viewer (= refresh + update)" "/vis/viewer/flush"
 /gui/addButton viewer "Update scene" "/vis/scene/notifyHandlers"
 
-####### ECAL Selection ########
-/DP/det/selectECAL                       1
+####### Detector Settings ########
+/DP/det/setTByField                 -1.5 tesla
+/DP/det/setRByField                 -0.5 tesla
+/DP/det/ifHCAL                      0
+/DP/det/ifECAL                      0
 /DP/det/reConstruct
+
+######## Save Geometry #########
+/DP/ifSaveGeometry                  0
+
+########## Biasing ############
+/DP/Bias/Process                    GammaToMuPair
+/DP/Bias/Factor                     1e10
+/DP/Bias/Emin                       1 GeV
+/DP/Bias/if_bias_target             1
+/DP/Bias/if_bias_ecal               1
+/DP/setifBias                       0
+
+########## Filter ############
+# HardBrem
+/DP/Filter/if_filter_HardBrem       0
+/DP/Filter/HardBrem_GammaEmin       2 GeV
+/DP/Filter/HardBrem_ScanDistance    20 cm
+# Process
+/DP/Filter/if_filter_Process        0
+/DP/Filter/Process_Name             GammaToMuPair
+/DP/Filter/Process_Emin             1 GeV
+/DP/Filter/Process_MinScanDistance  -5 mm
+/DP/Filter/Process_MaxScanDistance  +600 mm
+
+########## Verbose ############
+/tracking/verbose                   0
+/event/verbose                      0
+/run/verbose                        2
+
+########## Primary Gun ############
+/gps/source/multiplevertex          true
+/gps/source/intensity               5.
+/gps/particle                       e-
+
+#/gps/pos/type                      Beam
+#/gps/pos/shape                     Circle
+#/gps/pos/centre                    0. 0. -607.5 mm
+#/gps/pos/radius                    3. cm
+#/gps/pos/sigma_r                   1 cm
+#/gps/ang/type                      beam1d
+#/gps/ang/rot1                      0 1 0
+#/gps/ang/rot2                      1 0 0
+#/gps/ang/type                      beam1d
+#/gps/ang/sigma_r                   5. deg
+#/gps/ene/type                      Gauss
+#/gps/ene/mono                      4 GeV
+#/gps/ene/sigma                     0.1 GeV
+
+/gps/ene/mono                       8 GeV
+/gps/direction                      0. 0. 1.
+/gps/position                       0. 0.01 -610. mm
+
+########## Other Setting ############
+/DP/Event/StartID                   0
+/DP/Event/NbEvent                   10000
+
+/DP/Engine/randomSeed               1051
+#/random/resetEngineFrom            currentEvent.rndm

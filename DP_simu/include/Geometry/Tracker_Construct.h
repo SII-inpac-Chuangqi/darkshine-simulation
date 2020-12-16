@@ -40,10 +40,10 @@ public:
 
     /// Setter
     
-    void SetTrackerMat(G4String in) { Tracker_Mat = G4Material::GetMaterial(in); };
-    void SetTrackerRegionMat(G4String in) { TrackerRegion_Mat = G4Material::GetMaterial(in); };
-    void AddNewSizeTracker(G4ThreeVector in) { Size_Tracker.push_back(in); }; // Set the Size of the new Tracker.
-    void AddNewPosTracker(G4ThreeVector in) { Pos_Tracker.push_back(in); }; // Set the Postion of the new Tracker.
+    //void SetTrackerMat(G4String in) { Tracker_Mat = G4Material::GetMaterial(in); };
+    //void SetTrackerRegionMat(G4String in) { TrackerRegion_Mat = G4Material::GetMaterial(in); };
+    void AddNewTrackerSize(G4ThreeVector in) { Size_Tracker.push_back(in); }; // Set the Size of the new Tracker.
+    void AddNewTrackerPos(G4ThreeVector in) { Pos_Tracker.push_back(in); }; // Set the Postion of the new Tracker.
     void DelTracker(G4bool in = true) { if(in) {
         Size_Tracker = {};
         Pos_Tracker = {}; 
@@ -87,7 +87,7 @@ private:
 
     /// Tracker build parameters
 
-    G4double Tracker1_Rotation = 0.;
+    G4double Tracker1_Rotation = 0. * radian;
     G4double Tracker2_Rotation = 0.1 * radian;
     G4double Tracker1_Color[3] {0.5, 0.5, 0.};
     G4double Tracker2_Color[3] {0.5, 0.5, 0.};

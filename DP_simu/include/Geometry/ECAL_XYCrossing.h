@@ -38,6 +38,14 @@ public:
 
     bool BuildBias(BOptrMultiParticleChangeCrossSection *bias);
 
+    /// Setter
+
+    void SetECALCenterWrapSize(G4ThreeVector in) { ECAL_Center_Wrap_Size = in; };
+
+    void SetECALCenterSize(G4ThreeVector in) { ECAL_Center_Size = in; };
+    
+    void SetECALCenterModuleNo(G4ThreeVector in) { ECAL_Center_Module_No = in; };
+
 private:
     G4Material *ECALRegion_Mat{};
     G4Material *ECAL_Center_Mat{};
@@ -45,9 +53,9 @@ private:
     G4Material *ECAL_Wrap_Mat{};
     G4ThreeVector Size_ECALRegion;
     G4ThreeVector Pos_ECALRegion;
-    G4ThreeVector ECAL_Center_Wrap_Size;
-    G4ThreeVector ECAL_Center_Size;
-    G4ThreeVector ECAL_Center_Module_No;
+    G4ThreeVector ECAL_Center_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
+    G4ThreeVector ECAL_Center_Size = G4ThreeVector(1 * cm, 1 * cm, 36 * cm + 35 * ECAL_Center_Wrap_Size.z());
+    G4ThreeVector ECAL_Center_Module_No = G4ThreeVector(6, 6, 1);
     G4ThreeVector ECAL_Outer_Wrap_Size;
     G4ThreeVector ECAL_Outer_Size_Dir;
     G4ThreeVector ECAL_Outer_Mod_No_Dir;

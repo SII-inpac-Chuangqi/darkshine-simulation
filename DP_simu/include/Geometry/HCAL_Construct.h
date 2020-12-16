@@ -28,6 +28,20 @@ public:
 
     bool BuildSD(RootManager *fRootMng);
 
+    // Setter
+
+    void SetHCALWrapSize(G4ThreeVector in) { HCAL_Wrap_Size = in; };
+
+    void SetHCALSizeDir(G4ThreeVector in) { HCAL_Size_Dir = in; };
+
+    void SetHCALModNoDir(G4ThreeVector in) { HCAL_Mod_No_Dir = in; };
+
+    void SetHCALModuleNo(G4ThreeVector in) { HCAL_Module_No = in; };
+
+    void SetHCALModuleGap(G4double in) { HCAL_Module_Gap = in; };
+
+    void SetHCALAbsorberThickness(G4double in) { HCAL_Absorber_Thickness = in; };
+
 private:
 
     G4Material *HCALRegion_Mat{};
@@ -36,12 +50,12 @@ private:
     G4Material *HCAL_Absorber_Mat{};
     G4ThreeVector Size_HCALRegion;
     G4ThreeVector Pos_HCALRegion;
-    G4ThreeVector HCAL_Wrap_Size;
-    G4ThreeVector HCAL_Size_Dir;
-    G4ThreeVector HCAL_Mod_No_Dir;
-    G4ThreeVector HCAL_Module_No;
-    G4double HCAL_Module_Gap{};
-    G4double HCAL_Absorber_Thickness{};
+    G4ThreeVector HCAL_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm); // MODIFY
+    G4ThreeVector HCAL_Size_Dir = G4ThreeVector(100 * cm + 19 * HCAL_Wrap_Size.x(), 5 * cm, 1 * cm); // MODIFY
+    G4ThreeVector HCAL_Mod_No_Dir = G4ThreeVector(1, 20, 120); // MODIFY
+    G4ThreeVector HCAL_Module_No = G4ThreeVector(3, 3, 1); // MODIFY
+    G4double HCAL_Module_Gap = 0.5 * mm; //MODIFY
+    G4double HCAL_Absorber_Thickness = 3 * cm; // MODIFY
 
     std::vector<G4LogicalVolume *> HCAL_SD_LV[9];
 

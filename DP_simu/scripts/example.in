@@ -1,6 +1,15 @@
-########## Pre_Init ############
+########## Pre_Init  ############
 /DP/det/setTByField                 -1.5 tesla
 /DP/det/setRByField                 -0.5 tesla
+/DP/det/selectECAL                       1
+#/DP/det/ifTarget                    1
+#/DP/det/ifTagTracker                1
+#/DP/det/ifRecTracker                1
+#/DP/det/ifECAL                      1
+/DP/det/ifHCAL                      0
+#/DP/det/onlyHCAL
+#/DP/det/trkTarDis                   7.5 mm
+/DP/det/reConstruct
 
 ######## Save Geometry #########
 /DP/ifSaveGeometry                  0
@@ -24,10 +33,6 @@
 /DP/Filter/Process_Emin             1 GeV
 /DP/Filter/Process_MinScanDistance  -5 mm
 /DP/Filter/Process_MaxScanDistance  +600 mm
-
-####### ECAL Selection ########
-/DP/det/selectECAL                     2
-/DP/det/reCosntruct
 
 ########## Verbose ############
 /tracking/verbose                   0

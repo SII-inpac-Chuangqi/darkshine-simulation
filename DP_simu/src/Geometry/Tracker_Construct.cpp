@@ -32,8 +32,8 @@ void Tracker_Construct::DefineParameters(const G4int type , const G4double Trk_T
             }
 
             No_Tracker = Size_Tracker.size();
-
-            /// Size and Position of Tracer Region
+      
+      	    /// Size and Position of Tracer Region
             
             Size_TrackerRegion = G4ThreeVector(
                 2.0 * Size_Tracker[0].x(),
@@ -112,6 +112,16 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, RootManager
         (type == dTagging ? "TAGTrk" : "RECTrk"),
         nullptr, nullptr, nullptr
     );
+
+    G4MagneticField *TrackerMagField = new G4UniformMagField(G4ThreeVector(0., Tracker_MagField_y, 0.));
+    auto *TrackerFieldMng = new G4FieldManager();
+    TrackerFieldMng->SetDetectorField(TrackerMagField);
+    TrackerFieldMng->CreateChordFinder(TrackerMagField);
+    
+    TrackerRegion_LV->SetFieldManager(TrackerFieldMng, allLocal);
+
+    G4RunManager::GetRunManager()->GeometryHasBeenModified();
+
     new G4PVPlacement(
         nullptr, Pos_TrackerRegion, TrackerRegion_LV, 
         (type == dTagging ? "TAGTrk" : "RECTrk"),
@@ -187,13 +197,4 @@ void Tracker_Construct::SetTrackerMagField(G4double in) {
     Tracker_MagField_y = in;
 
     allLocal = false;
-    
-    G4MagneticField *TrackerMagField = new G4UniformMagField(G4ThreeVector(0., Tracker_MagField_y, 0.));
-    auto *TrackerFieldMng = new G4FieldManager();
-    TrackerFieldMng->SetDetectorField(TrackerMagField);
-    TrackerFieldMng->CreateChordFinder(TrackerMagField);
-    
-    TrackerRegion_LV->SetFieldManager(TrackerFieldMng, allLocal);
-
-    G4RunManager::GetRunManager()->GeometryHasBeenModified();
 }
