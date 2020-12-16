@@ -73,7 +73,7 @@ private:
     double r_cut{0.5};
 
     // Internal Algorithm Processors
-    shared_ptr<Trk_LineFit> ECAL_TF;
+    //shared_ptr<Trk_LineFit> ECAL_TF;
     shared_ptr<ECAL_Writer> ECAL_Wrt;
     shared_ptr<ECAL_RNN>    ECAL_rnn;
     shared_ptr<ECAL_Cluster> ECAL_cluster;

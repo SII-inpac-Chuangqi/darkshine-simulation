@@ -14,7 +14,7 @@
 RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name),
                                                                                      std::move(evtwrt)) {
 
-    ECAL_TF = std::shared_ptr<Trk_LineFit>(new Trk_LineFit());
+    //ECAL_TF = std::shared_ptr<Trk_LineFit>(new Trk_LineFit());
     ECAL_Wrt = std::shared_ptr<ECAL_Writer>(new ECAL_Writer());
     ECAL_rnn = std::shared_ptr<ECAL_RNN>(new ECAL_RNN());
     ECAL_cluster = std::shared_ptr<ECAL_Cluster>(new ECAL_Cluster());
@@ -119,10 +119,10 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
 
             //Hits_E[cell_id-1] = ( hit->getE() > 1e-6 && !isnan(hit->getE()) ) ? hit->getE() : 0. ;
 
-            ECAL_TF->AddPoint(x, y, z);
+            //ECAL_TF->AddPoint(x, y, z);
         }
 
-        std::pair<V3, V3> result = ECAL_TF->best_line_from_points();
+        //std::pair<V3, V3> result = ECAL_TF->best_line_from_points();
         //std::cout << "origin:\n" << result.first << "\naxis:\n" << result.second;
     } else {
         // if not exists, print out error
