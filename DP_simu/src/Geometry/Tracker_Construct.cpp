@@ -7,7 +7,7 @@
 /// \brief Define Parameters of Trackers
 /// \param[in] type
 /// \param[in] preset  0 = Tagging Tracker; 1 = Recoil Tracker
-/// \param[in] Target_Size  A back-up input. Only used when user don't input Tracker geometry.
+/// \param[in] Target_Size 
 void Tracker_Construct::DefineParameters(const G4int type , const G4double Trk_Tar_Dis ,
                                          const G4ThreeVector Target_Size
                                          = G4ThreeVector(10 * cm, 20 * cm, 350 * um)) {
@@ -38,13 +38,13 @@ void Tracker_Construct::DefineParameters(const G4int type , const G4double Trk_T
             Size_TrackerRegion = G4ThreeVector(
                 2.0 * Size_Tracker[0].x(),
                 2.0 * Size_Tracker[0].y(),
-                Pos_Tracker[No_Tracker - 1].z() - Pos_Tracker[0].z() + 2.0 * No_Tracker * Size_Tracker[0].z()
+                Pos_Tracker[No_Tracker - 1].z() - Pos_Tracker[0].z() + 2.0 * Size_Tracker[0].z()
             );
 
             Pos_TrackerRegion = G4ThreeVector(
                 0 * cm,
                 0 * cm,
-                Pos_Tracker[0].z() - Trk_Tar_Dis - (Size_Tracker[0].z() + Target_Size.z()) / 2
+                - 0.5 * Size_TrackerRegion.z() - Trk_Tar_Dis - 0.5 * Target_Size.z() 
             );
 
             break;
@@ -60,7 +60,7 @@ void Tracker_Construct::DefineParameters(const G4int type , const G4double Trk_T
                 Pos_Tracker.push_back(G4ThreeVector(0 * cm, 0 * cm, -55.25 * mm));
                 Pos_Tracker.push_back(G4ThreeVector(0 * cm, 0 * cm, -40.25 * mm));
                 Pos_Tracker.push_back(G4ThreeVector(0 * cm, 0 * cm, -4.25 * mm));
-                Pos_Tracker.push_back(G4ThreeVector(0 * cm, 0 * cm, -86.25 * mm));
+                Pos_Tracker.push_back(G4ThreeVector(0 * cm, 0 * cm, 86.25 * mm));
             }
 
             No_Tracker = Size_Tracker.size();
@@ -70,13 +70,13 @@ void Tracker_Construct::DefineParameters(const G4int type , const G4double Trk_T
             Size_TrackerRegion = G4ThreeVector(
                 2.0 * Size_Tracker[No_Tracker - 1].x(),
                 2.0 * Size_Tracker[No_Tracker - 1].y(),
-                17.25 * cm + 2 * No_Tracker * Size_Tracker[No_Tracker - 1].z()
+                Pos_Tracker[No_Tracker - 1].z() - Pos_Tracker[0].z() + 2.0 * Size_Tracker[No_Tracker - 1].z()
             );
 
             Pos_TrackerRegion = G4ThreeVector(
                 0 * cm,
                 0 * cm,
-                0.5 * Size_TrackerRegion.z() + 7.5 * mm + 0.5 * 350 * um
+                0.5 * Size_TrackerRegion.z() + Trk_Tar_Dis + 0.5 * Target_Size.z()
             );
             
             break;
@@ -133,6 +133,7 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, RootManager
         TrackerRegion_LV, 0, fCheckOverlaps
     );
 
+    Tracker1->SetZMove(- 0.5 * Size_Tracker[0].z());
     Tracker1->SetRotation(Tracker1_Rotation);
     Tracker1->SetTrkMaterial(Tracker_Mat);
     Tracker1->SetVis(new G4VisAttributes(G4Colour(Tracker1_Color[0], Tracker1_Color[1], Tracker1_Color[2])));
@@ -144,7 +145,7 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, RootManager
         (type == dTagging ? "TagTrk2" : "RecTrk2"),
         TrackerRegion_LV, 0, fCheckOverlaps
     );
-    Tracker2->SetZMove(Size_Tracker[0].z());
+    Tracker2->SetZMove(0.5 * Size_Tracker[0].z());
     Tracker2->SetRotation(Tracker2_Rotation);
     Tracker2->SetTrkMaterial(Tracker_Mat);
     Tracker2->SetVis(new G4VisAttributes(G4Color(Tracker2_Color[0], Tracker2_Color[1], Tracker2_Color[2])));

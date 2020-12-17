@@ -47,8 +47,24 @@
 ####### Detector Settings ########
 /DP/det/setTByField                 -1.5 tesla
 /DP/det/setRByField                 -0.5 tesla
-/DP/det/ifHCAL                      0
-/DP/det/ifECAL                      0
+#/DP/det/ifHCAL                      1
+#/DP/det/ifECAL                      1
+# Add Tagging Tracker (addNewPos.z must be symmetric)
+#/DP/det/tagTrk/addNewSize          10 20 0.01 cm
+#/DP/det/tagTrk/addNewPos           0 0 -10 cm
+#/DP/det/tagTrk/addNewSize          10 20 0.01 cm
+#/DP/det/tagTrk/addNewPos           0 0 0 cm
+#/DP/det/tagTrk/addNewSize          10 20 0.01 cm
+#/DP/det/tagTrk/addNewPos           0 0 10 cm
+# Add Recoil Tracker (addNewPos.z must be symmetric)
+#/DP/det/recTrk/addNewSize          10 20 0.01 cm
+#/DP/det/recTrk/addNewPos           0  0  -15 cm
+#/DP/det/recTrk/addNewSize          10 20 0.01 cm
+#/DP/det/recTrk/addNewPos           0  0 -5 cm
+#/DP/det/recTrk/addNewSize          10 20 0.01 cm
+#/DP/det/recTrk/addNewPos           0  0  5 cm
+#/DP/det/recTrk/addNewSize          10 20 0.01 cm
+#/DP/det/recTrk/addNewPos           0  0  15 cm
 /DP/det/reConstruct
 
 ######## Save Geometry #########

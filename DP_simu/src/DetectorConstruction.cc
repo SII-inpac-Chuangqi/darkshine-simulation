@@ -232,7 +232,6 @@ void DetectorConstruction::DefineParameters() {
         Target_Mat = G4Material::GetMaterial("G4_W");
         Target_Size = G4ThreeVector(10 * cm, 20 * cm, 350 * um);
         Target_Pos = G4ThreeVector(0 * cm, 0 * cm, 0 * cm);
-        Trk_Tar_Dis = 7.5 * mm;
 
     
         ///  Tagging Tracker

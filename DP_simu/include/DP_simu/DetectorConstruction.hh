@@ -272,7 +272,7 @@ private:
     G4Material *Target_Mat{};
     G4ThreeVector Target_Size;
     G4ThreeVector Target_Pos;
-    G4double Trk_Tar_Dis{};
+    G4double Trk_Tar_Dis = 7.5 * mm ;
 
     std::vector<G4LogicalVolume *> Target_LV;
 
