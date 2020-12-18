@@ -63,7 +63,7 @@
 #include "G4PhysicalVolumeStore.hh"
 
 #include <iterator>
-#include <stdio.h>
+#include <cstdio>
 
 //#include "G4ios.hh"
 
@@ -94,10 +94,10 @@ DetectorConstruction::DetectorConstruction(RootManager *rootMng) {
     fCheckOverlaps = false;
     fStepLimit = nullptr;
 
-    // build_Target = true;
-    // build_TagTrk = true;
-    /// build_RecTrk = true;
-    // build_HCAL = true;
+     build_Target = true;
+     build_TagTrk = true;
+     build_RecTrk = true;
+     build_HCAL = true;
 
 }
 
@@ -484,11 +484,11 @@ void DetectorConstruction::SetifTagTrk(G4bool build) {
     G4cout << "[det]==>turned " << (build ? "ON " : "OFF ") << "Tagging Tracker" << G4endl; 
 }
 
-void DetectorConstruction::AddNewTagTrkSize(G4ThreeVector in) {
+void DetectorConstruction::AddNewTagTrkSize(const G4ThreeVector& in) {
     TagTrk->AddNewTrackerSize(in);
 }
 
-void DetectorConstruction::AddNewTagTrkPos(G4ThreeVector in) {
+void DetectorConstruction::AddNewTagTrkPos(const G4ThreeVector& in) {
     TagTrk->AddNewTrackerPos(in);
 }
 
@@ -504,11 +504,11 @@ void DetectorConstruction::SetTagTrk2Rotation(G4double in) {
     TagTrk->SetTracker2Rotation(in);
 }
 
-void DetectorConstruction::SetTagTrk1Color(G4ThreeVector in) {
+void DetectorConstruction::SetTagTrk1Color(const G4ThreeVector& in) {
     TagTrk->SetTracker1Color(in);
 }
 
-void DetectorConstruction::SetTagTrk2Color(G4ThreeVector in) {
+void DetectorConstruction::SetTagTrk2Color(const G4ThreeVector& in) {
    TagTrk->SetTracker2Color(in);
 }
 
@@ -524,11 +524,11 @@ void DetectorConstruction::SetifRecTrk(G4bool build) {
     G4cout << "[det]==>turned " << (build ? "ON " : "OFF ") << "Recoil Tracker" << G4endl; 
 }
 
-void DetectorConstruction::AddNewRecTrkSize(G4ThreeVector in) {
+void DetectorConstruction::AddNewRecTrkSize(const G4ThreeVector& in) {
     RecTrk->AddNewTrackerSize(in);
 }
 
-void DetectorConstruction::AddNewRecTrkPos(G4ThreeVector in) {
+void DetectorConstruction::AddNewRecTrkPos(const G4ThreeVector& in) {
     RecTrk->AddNewTrackerPos(in);
 }
 
@@ -544,11 +544,11 @@ void DetectorConstruction::SetRecTrk2Rotation(G4double in) {
     RecTrk->SetTracker2Rotation(in);
 }
 
-void DetectorConstruction::SetRecTrk1Color(G4ThreeVector in) {
+void DetectorConstruction::SetRecTrk1Color(const G4ThreeVector& in) {
     RecTrk->SetTracker1Color(in);
 }
 
-void DetectorConstruction::SetRecTrk2Color(G4ThreeVector in) {
+void DetectorConstruction::SetRecTrk2Color(const G4ThreeVector& in) {
     RecTrk->SetTracker2Color(in);
 }
 
@@ -565,20 +565,20 @@ void DetectorConstruction::SetifECAL(G4bool build) {
 
 void DetectorConstruction::SetECALSelection(unsigned int id) {
     ECAL_Selection = id;
-    G4cout << "[det]==>Selected ECAL Configuration " << id << G4endl;
+    G4cout << "[det] ==> Selected ECAL Configuration " << id << G4endl;
 }
 
-void DetectorConstruction::SetECALCenterWrapSize(G4ThreeVector in) {
+void DetectorConstruction::SetECALCenterWrapSize(const G4ThreeVector& in) {
     ECAL_Con1->SetECALCenterWrapSize(in);
     ECAL_Con2->SetECALCenterWrapSize(in);
 }
 
-void DetectorConstruction::SetECALCenterSize(G4ThreeVector in) {
+void DetectorConstruction::SetECALCenterSize(const G4ThreeVector& in) {
     ECAL_Con1->SetECALCenterSize(in);
     ECAL_Con2->SetECALCenterSize(in);
 }
 
-void DetectorConstruction::SetECALCenterModuleNo(G4ThreeVector in) {
+void DetectorConstruction::SetECALCenterModuleNo(const G4ThreeVector& in) {
     ECAL_Con1->SetECALCenterModuleNo(in);
     ECAL_Con2->SetECALCenterModuleNo(in);
 }
@@ -587,22 +587,22 @@ void DetectorConstruction::SetECALCenterModuleNo(G4ThreeVector in) {
 
 void DetectorConstruction::SetifHCAL(G4bool build) {
     build_HCAL = build;
-    G4cout << "[det]==>turned " << (build ? "on " : "off ") << "HCAL" << G4endl;
+    G4cout << "[det] ==> turned " << (build ? "on " : "off ") << "HCAL" << G4endl;
 }
 
-void DetectorConstruction::SetHCALWrapSize(G4ThreeVector in) {
+void DetectorConstruction::SetHCALWrapSize(const G4ThreeVector& in) {
     HCAL_Con->SetHCALWrapSize(in);
 }
 
-void DetectorConstruction::SetHCALSizeDir(G4ThreeVector in) {
+void DetectorConstruction::SetHCALSizeDir(const G4ThreeVector& in) {
     HCAL_Con->SetHCALSizeDir(in);
 }
 
-void DetectorConstruction::SetHCALModNoDir(G4ThreeVector in) {
+void DetectorConstruction::SetHCALModNoDir(const G4ThreeVector& in) {
     HCAL_Con->SetHCALModNoDir(in);
 }
 
-void DetectorConstruction::SetHCALModuleNo(G4ThreeVector in) {
+void DetectorConstruction::SetHCALModuleNo(const G4ThreeVector& in) {
     HCAL_Con->SetHCALModuleNo(in);
 }
 

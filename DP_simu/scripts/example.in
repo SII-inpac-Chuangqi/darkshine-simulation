@@ -1,7 +1,7 @@
 ########## Pre_Init  ############
 /DP/det/setTByField                 -1.5 tesla
 /DP/det/setRByField                 -0.5 tesla
-/DP/det/selectECAL                       1
+/DP/det/selectECAL                   1
 #/DP/det/ifTarget                    1
 #/DP/det/ifTagTracker                1
 #/DP/det/ifRecTracker                1

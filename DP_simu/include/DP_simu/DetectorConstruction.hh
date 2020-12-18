@@ -104,9 +104,9 @@ public:
 
     void SetifTagTrk(G4bool);
 
-    void AddNewTagTrkSize(G4ThreeVector in);
+    void AddNewTagTrkSize(const G4ThreeVector& in);
 
-    void AddNewTagTrkPos(G4ThreeVector in);
+    void AddNewTagTrkPos(const G4ThreeVector& in);
 
     void DelTagTrk(G4bool);
 
@@ -114,9 +114,9 @@ public:
 
     void SetTagTrk2Rotation(G4double in);
 
-    void SetTagTrk1Color(G4ThreeVector in);
+    void SetTagTrk1Color(const G4ThreeVector& in);
 
-    void SetTagTrk2Color(G4ThreeVector in);
+    void SetTagTrk2Color(const G4ThreeVector& in);
 
     void SetTagTrkMagField(G4double in);
 
@@ -124,9 +124,9 @@ public:
 
     void SetifRecTrk(G4bool);
 
-    void AddNewRecTrkSize(G4ThreeVector in);
+    void AddNewRecTrkSize(const G4ThreeVector& in);
 
-    void AddNewRecTrkPos(G4ThreeVector in);
+    void AddNewRecTrkPos(const G4ThreeVector& in);
 
     void DelRecTrk(G4bool);
 
@@ -134,9 +134,9 @@ public:
 
     void SetRecTrk2Rotation(G4double in);
 
-    void SetRecTrk1Color(G4ThreeVector in);
+    void SetRecTrk1Color(const G4ThreeVector& in);
 
-    void SetRecTrk2Color(G4ThreeVector in);
+    void SetRecTrk2Color(const G4ThreeVector& in);
 
     void SetRecTrkMagField(G4double in);
 
@@ -159,23 +159,23 @@ public:
     /// 2=ECAL_ALLZ
     void SetECALSelection(unsigned int id);    
 
-    void SetECALCenterWrapSize(G4ThreeVector in);
+    void SetECALCenterWrapSize(const G4ThreeVector& in);
 
-    void SetECALCenterSize(G4ThreeVector in);
+    void SetECALCenterSize(const G4ThreeVector& in);
 
-    void SetECALCenterModuleNo(G4ThreeVector in);
+    void SetECALCenterModuleNo(const G4ThreeVector& in);
 
     /// HCAL Setter
 
     void SetifHCAL(G4bool);
 
-    void SetHCALWrapSize(G4ThreeVector in);
+    void SetHCALWrapSize(const G4ThreeVector& in);
 
-    void SetHCALSizeDir(G4ThreeVector in);
+    void SetHCALSizeDir(const G4ThreeVector& in);
 
-    void SetHCALModNoDir(G4ThreeVector in);
+    void SetHCALModNoDir(const G4ThreeVector& in);
 
-    void SetHCALModuleNo(G4ThreeVector in);
+    void SetHCALModuleNo(const G4ThreeVector& in);
 
     void SetHCALModuleGap(G4double in);
 
@@ -188,7 +188,7 @@ public:
     /// \brief Clean-up previous geometry.
     /// \param[in] clean If it is true,G4SolidStore, G4LogicalVolumeStore
     /// and G4PhysicalVolumeStore will be cleaned up
-    void CleanGeometry(G4bool clean=true);
+    static void CleanGeometry(G4bool clean=true);
 
     /// \brief USAGE: Called in DetectorMessenger::SetNewValue().
     /// SHOULD be called after modifing geometry at runtime.

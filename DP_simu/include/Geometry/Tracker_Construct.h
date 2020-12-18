@@ -10,7 +10,7 @@
 #include "G4FieldManager.hh"
 #include "G4RunManager.hh"
 
-#include "assert.h"
+#include <cassert>
 
 #include <vector>
 
@@ -32,7 +32,7 @@ public:
 
     //~Tracker_Construct();
 
-    void DefineParameters(const G4int type, const G4double Trk_Tar_Dis , const G4ThreeVector Target_Size);
+    void DefineParameters(Tracker_Type type, G4double Trk_Tar_Dis , const G4ThreeVector& Target_Size);
 
     bool Build(G4int type, G4LogicalVolume *World_LV, RootManager *fRootMng, G4bool fCheckOverlaps);
 
@@ -42,8 +42,8 @@ public:
     
     //void SetTrackerMat(G4String in) { Tracker_Mat = G4Material::GetMaterial(in); };
     //void SetTrackerRegionMat(G4String in) { TrackerRegion_Mat = G4Material::GetMaterial(in); };
-    void AddNewTrackerSize(G4ThreeVector in) { Size_Tracker.push_back(in); }; // Set the Size of the new Tracker.
-    void AddNewTrackerPos(G4ThreeVector in) { Pos_Tracker.push_back(in); }; // Set the Postion of the new Tracker.
+    void AddNewTrackerSize(const G4ThreeVector& in) { Size_Tracker.push_back(in); }; // Set the Size of the new Tracker.
+    void AddNewTrackerPos(const G4ThreeVector& in) { Pos_Tracker.push_back(in); }; // Set the Postion of the new Tracker.
     void DelTracker(G4bool in = true) { if(in) {
         Size_Tracker = {};
         Pos_Tracker = {}; 
@@ -51,12 +51,12 @@ public:
     };
     void SetTracker1Rotation(G4double in) { Tracker1_Rotation = in; };
     void SetTracker2Rotation(G4double in) { Tracker2_Rotation = in; };
-    void SetTracker1Color(G4ThreeVector in) {
+    void SetTracker1Color(const G4ThreeVector& in) {
         Tracker1_Color[0] = in.x();
         Tracker1_Color[1] = in.y();
         Tracker1_Color[2] = in.z();
     };
-    void SetTracker2Color(G4ThreeVector in) {
+    void SetTracker2Color(const G4ThreeVector& in) {
         Tracker2_Color[0] = in.x();
         Tracker2_Color[1] = in.y();
         Tracker2_Color[2] = in.z();
