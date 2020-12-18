@@ -8,7 +8,7 @@
 #include "TObject.h"
 
 enum DetectorType {
-    nTagTrk, nRecTrk, nECAL_Center, nECAL_Outer, nHCAL
+    nNone, nTracker, nECAL, nHCAL
 };
 
 class DHit : public TObject {
@@ -156,7 +156,7 @@ protected:
     int CellID_Y{0};
     int CellID_Z{0};
 
-    DetectorType Detector;
+    DetectorType Detector{nNone};
 
     double X{0.};
     double Y{0.};

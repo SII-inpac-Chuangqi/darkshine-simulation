@@ -94,11 +94,6 @@ DetectorConstruction::DetectorConstruction(RootManager *rootMng) {
     fCheckOverlaps = false;
     fStepLimit = nullptr;
 
-     build_Target = true;
-     build_TagTrk = true;
-     build_RecTrk = true;
-     build_HCAL = true;
-
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -307,17 +302,17 @@ G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
                 ECAL_Con2->Build(0, World_LV, fRootMng, fCheckOverlaps);
         }
         if (build_HCAL) HCAL_Con->Build(0, World_LV, fRootMng, fCheckOverlaps);
+
+        // Book RootMng
+        fRootMng->book();
+        G4cout << "[Root Manager] ==> Root Manager initialized ..." << G4endl;
+        G4cout << "[Root Manager] ==> Output File " << fRootMng->GetOutFileName() << " created ..." << G4endl;
     }
     // Set User Limit 
     G4double maxStep = 10 * mm;
     fStepLimit = new G4UserLimits(maxStep, DBL_MAX, 200 * s);
 
-    // Book RootMng
-    fRootMng->book();
-    G4cout << "[Root Manager] ==> Root Manager initialized ..." << G4endl;
-    G4cout << "[Root Manager] ==> Output File" << fRootMng->GetOutFileName() << " created ..." << G4endl;
-
-    SetBiasLayer();
+    //SetBiasLayer();
 
     return World_PV;
 }
@@ -379,7 +374,6 @@ void DetectorConstruction::ConstructSDandField() {
             if (ECAL_Selection == 1) ECAL_Con1->BuildSD(fRootMng);
             else if (ECAL_Selection == 2) ECAL_Con2->BuildSD(fRootMng);
         }
-        
 
         if (build_HCAL ) HCAL_Con->BuildSD(fRootMng);
     }
@@ -473,7 +467,7 @@ void DetectorConstruction::ReConstruct(G4bool flag) {
 
 void DetectorConstruction::SetifTarget(G4bool build) {
     build_Target = build;
-    G4cout << "[det]==>turned " << (build ? "ON " : "OFF ") << "Target" << G4endl; 
+    G4cout << "[Detector Geo.] ==> turned " << (build ? "ON " : "OFF ") << "Target" << G4endl;
 }
 
 /// TagTrk Setter
@@ -481,7 +475,7 @@ void DetectorConstruction::SetifTarget(G4bool build) {
 void DetectorConstruction::SetifTagTrk(G4bool build) {
     build_TagTrk = build;
     //if (!build) TagTrk->SetTrackerMagField(0.); // Clear magnetic field
-    G4cout << "[det]==>turned " << (build ? "ON " : "OFF ") << "Tagging Tracker" << G4endl; 
+    G4cout << "[Detector Geo.] ==> turned " << (build ? "ON " : "OFF ") << "Tagging Tracker" << G4endl;
 }
 
 void DetectorConstruction::AddNewTagTrkSize(const G4ThreeVector& in) {
@@ -560,12 +554,12 @@ void DetectorConstruction::SetRecTrkMagField(G4double in) {
 
 void DetectorConstruction::SetifECAL(G4bool build) {
     build_ECAL = build;
-    G4cout << "[det]==>turned " << (build ? "ON " : "OFF ") << "ECAL" << G4endl; 
+    G4cout << "[Detector Geo.] ==> turned " << (build ? "ON " : "OFF ") << "ECAL" << G4endl;
 }
 
 void DetectorConstruction::SetECALSelection(unsigned int id) {
     ECAL_Selection = id;
-    G4cout << "[det] ==> Selected ECAL Configuration " << id << G4endl;
+    G4cout << "[Detector Geo.] ==> Selected ECAL Configuration " << id << G4endl;
 }
 
 void DetectorConstruction::SetECALCenterWrapSize(const G4ThreeVector& in) {
@@ -587,7 +581,7 @@ void DetectorConstruction::SetECALCenterModuleNo(const G4ThreeVector& in) {
 
 void DetectorConstruction::SetifHCAL(G4bool build) {
     build_HCAL = build;
-    G4cout << "[det] ==> turned " << (build ? "on " : "off ") << "HCAL" << G4endl;
+    G4cout << "[Detector Geo.] ==> turned " << (build ? "on " : "off ") << "HCAL" << G4endl;
 }
 
 void DetectorConstruction::SetHCALWrapSize(const G4ThreeVector& in) {

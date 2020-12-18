@@ -68,6 +68,7 @@ void RootManager::book() {
 
     rnd.SetSeed(fStart + fEvtNb);
     tr = new TTree("Dark_Photon", "Dark_Photon");
+    // tr->SetAutoSave();
     if (if_clean) {
         G4cout << "Clean Mode..." << G4endl;
     } else {

@@ -218,7 +218,7 @@ private:
 
 
     // Initial Particle Movement
-    bool if_record_ip;
+    bool if_record_ip{true};
 
     // Optical Photon
     std::map<G4String, int> Optical_No;
@@ -237,7 +237,7 @@ private:
 
     // Clean Mode
     TRandom3 rnd;
-    Bool_t if_clean; // Flag of Clean Mode. Initialized to false
+    Bool_t if_clean{false}; // Flag of Clean Mode. Initialized to false
 
     // DEvent Collection
     DEvent *Evt;

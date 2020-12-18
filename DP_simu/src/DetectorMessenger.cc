@@ -259,7 +259,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction *Det)
     fSetECALCenterSize = new G4UIcmdWith3VectorAndUnit("/DP/det/ECAL/centerSize", this);
     fSetECALCenterSize->SetGuidance("ECAL Center Size");
     fSetECALCenterSize->SetParameterName("X", "Y", "Z", false);
-    fSetECALCenterSize->SetDefaultValue(G4ThreeVector(2.5 * cm, 2.5 * cm, 36. * cm));
+    fSetECALCenterSize->SetDefaultValue(G4ThreeVector(2.5 * cm, 2.5 * cm, 2.0 * cm));
     fSetECALCenterSize->SetUnitCategory("Length");
     fSetECALCenterSize->AvailableForStates(G4State_PreInit, G4State_Idle);
 
@@ -386,7 +386,6 @@ void DetectorMessenger::SetNewValue(G4UIcommand *command, G4String newValue) {
     }
 
     if (command == fSetifTagTrk) {
-        G4cerr << "[DEBUG] fSetifTagTrk" << G4endl;
         fDetectorConstruction
                 ->SetifTagTrk(fSetifTagTrk->GetNewBoolValue(newValue));
     }
