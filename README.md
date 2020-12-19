@@ -120,8 +120,9 @@ Without any arguments, DSimu will run in graphic mode, which is highly not recom
 </details>
 
 
-
 ### Rare Process Biasing
+<details><summary><b>Biasing</b></summary>
+
 | Command                            | Detail                                                             | Example          |
 |------------------------------------|--------------------------------------------------------------------|------------------|
 |**Biasing**|
@@ -141,6 +142,7 @@ Without any arguments, DSimu will run in graphic mode, which is highly not recom
 | /DP/Filter/Process_Emin            | The minimal energy required for the parent particle in the process | 1 GeV            |
 | /DP/Filter/Process_MinScanDistance | Only scan the region with z large than this value                  | -1 mm            |
 | /DP/Filter/Process_MaxScanDistance | Only scan the region with z less than this value                   | 100 mm           |
+</details>
 
 # Data Recoding
 - For all variables with format “xxx_Y”, it means the Y of “xxx”. For example, “TRUTH_MC_E” means the Energy of “Truth MC”.
