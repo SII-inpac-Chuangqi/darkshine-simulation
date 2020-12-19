@@ -52,7 +52,7 @@ endif ()
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
 #
-FIND_PACKAGE(ROOT COMPONENTS Geom TMVA)
+FIND_PACKAGE(ROOT COMPONENTS GDML Geom TMVA Eve)
 IF (ROOT_FOUND)
     INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIRS})
     INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
@@ -94,7 +94,7 @@ HEADER_DIRECTORIES(Util_List Util_File "Utility")
 
 include_directories(DP_simu/include
         DP_ana/include
-
+        DP_display/include
         ./
         ${Util_List}
         ${Algo_List}
@@ -112,6 +112,9 @@ file(GLOB_RECURSE Util_headers Utility/*/include/*)
 
 FILE(GLOB_RECURSE Algo_sources Algorithms/*/src/*.cpp)
 FILE(GLOB_RECURSE Algo_headers Algorithms/*/include/*)
+
+file(GLOB Display_sources DP_display/src/* )
+file(GLOB Display_headers DP_display/include/* )
 
 #----------------------------------------------------------------------------
 # Generate ROOT library for DEvent
@@ -139,6 +142,19 @@ add_library(DEvent SHARED ${dict_header_shared} ${dict_source} G__DEvent.cxx)
 #target_link_libraries(DEvent PUBLIC ROOT::Core)
 
 #----------------------------------------------------------------------------
+# Generate ROOT library for EventDisplay
+#
+root_generate_dictionary(G__DEventDisplay
+                         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventDisplay.h
+                         LINKDEF DP_display/include/EventDisplayLinkDef.h
+                        )
+add_library(DEventDisplay
+            SHARED
+            ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventDisplay.h
+            ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay.cpp
+            G__DEventDisplay.cxx
+            )
+#----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(DSimu DP_simu.cc ${Simu_sources} ${Simu_headers}
@@ -154,13 +170,20 @@ add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         ${Util_sources} ${Util_headers}
         ${Algo_sources} ${Algo_headers})
 #target_link_libraries(DAna DEvent)
-# if pythia is compiled with g77, link with -lg2c instead.
 
+link_libraries(DEventDisplay)
+add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
+target_link_libraries(DDis ${ROOT_LIBRARIES} DEventDisplay)
+MESSAGE(${ROOT_LIBRARIES})
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
 install(TARGETS DSimu DESTINATION bin)
 install(TARGETS DAna DESTINATION bin)
+install(TARGETS DDis DESTINATION bin)
 install(TARGETS DEvent LIBRARY DESTINATION lib )
+install(TARGETS DEventDisplay LIBRARY DESTINATION lib )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent_rdict.pcm DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent.rootmap DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEventDisplay.rootmap DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEventDisplay_rdict.pcm DESTINATION lib)
