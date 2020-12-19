@@ -24,11 +24,10 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    bool GenerateConfig = false;
     std::string configfile;
     if (std::string(argv[1]) == "-c") configfile = argv[2];
     else if (std::string(argv[1]) == "-x") {
-        GenerateConfig = true; // unused
+        // unused right now
         return 0;
     } else return -1;
 
