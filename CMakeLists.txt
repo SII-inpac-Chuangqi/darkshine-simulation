@@ -52,7 +52,7 @@ endif ()
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
 #
-FIND_PACKAGE(ROOT COMPONENTS GDML Geom TMVA Eve)
+FIND_PACKAGE(ROOT COMPONENTS Geom TMVA Eve)
 IF (ROOT_FOUND)
     INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIRS})
     INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
