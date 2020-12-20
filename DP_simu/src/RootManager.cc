@@ -33,6 +33,8 @@ void RootManager::initialize() {
     EventID = 0;
     for (double &i : Rndm) i = 0;
 
+    Evt->Initialization(nVector);
+
     if (if_Optical) {
         for (itr_i = Optical_No.begin(); itr_i != Optical_No.end(); itr_i++) itr_i->second = 0;
         for (itrvec_double = Optical_Time.begin(); itrvec_double != Optical_Time.end(); itrvec_double++)
