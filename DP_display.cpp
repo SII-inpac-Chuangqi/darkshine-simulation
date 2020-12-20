@@ -11,16 +11,17 @@
 namespace {
     void PrintUsage() {
         std::cerr << "Usage: " << std::endl;
-        std::cerr << "  DAna [ -b ] [ -f geometry.root]" << std::endl;
+        std::cerr << "  DAna [ -b ] [ -f geometry.root] [ -h ]" << std::endl;
         std::cerr << " -- [-b] : only print out detector geometry information" << std::endl;
         std::cerr << " -- [-f] : read the geometry from input root file" << std::endl;
+        std::cerr << " -- [-h] : show this help usage" << std::endl;
         std::cerr << std::endl;
     }
 }
 
 int main(int argc, char **argv) {
 
-    if (argc > 3 || argc < 2) {
+    if (argc > 3) {
         PrintUsage();
         return 1;
     }
@@ -33,12 +34,15 @@ int main(int argc, char **argv) {
             file_in = TString(argv[i+1]);
         else if (std::string(argv[i]) == "-b")
             batch_mode = true;
+        else if (std::string(argv[i]) == "-h")
+            PrintUsage();
         else
             return -1;
     }
 
     auto EvtDisplay = new EventDisplay();
-    EvtDisplay->readGeo(file_in);
+    EvtDisplay->readFile(file_in);
+    EvtDisplay->readGeo();
 
     if (batch_mode) {
         EvtDisplay->inspectMainRegion();
@@ -46,10 +50,13 @@ int main(int argc, char **argv) {
     }
     else{
         EvtDisplay->Initialize();
+        EvtDisplay->readEvt();
 
-        EvtDisplay->drawDetector();
+        //EvtDisplay->drawEvent(1);
+        EvtDisplay->drawEvent(0);
+        //EvtDisplay->drawDetector();
 
-        EvtDisplay->Open();
+        EvtDisplay->Open(EvtDisplay);
 
     }
 

@@ -38,6 +38,9 @@
 #pragma link C++ class std::vector<ReconstructedParticle*>+;
 
 #pragma link C++ class DEvent+;
+#pragma link C++ class EventReader_D+;
+#pragma link C++ class DSMagneticField+;
+#pragma link C++ class EventDisplay+;
 #endif
 
 #endif //DSIMU_DEVENTLINKDEF_H

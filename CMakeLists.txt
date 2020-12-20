@@ -52,7 +52,7 @@ endif ()
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
 #
-FIND_PACKAGE(ROOT COMPONENTS Geom TMVA Eve)
+FIND_PACKAGE(ROOT COMPONENTS Geom TMVA Eve Gui RGL EG)
 IF (ROOT_FOUND)
     INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIRS})
     INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
@@ -128,6 +128,10 @@ SET(dict_header_shared
         Utility/Object/include/Object/McParticle.h
         Utility/Object/include/Object/ReconstructedParticle.h
         Utility/Object/include/Object/DEvent.h
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventDisplay.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventReader_dis.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DSMagneticField.h
         )
 SET(dict_source
         Utility/Object/src/SimulatedHit.cpp
@@ -135,6 +139,11 @@ SET(dict_source
         Utility/Object/src/McParticle.cpp
         Utility/Object/src/ReconstructedParticle.cpp
         Utility/Object/src/DEvent.cpp
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay_DetInfo.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay_DrawEvent.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventReader_dis.cpp
         )
 root_generate_dictionary(G__DEvent ${dict_header_shared} LINKDEF Utility/UTIL/include/Utility/DEventLinkDef.h)
 add_library(DEvent SHARED ${dict_header_shared} ${dict_source} G__DEvent.cxx)
@@ -144,16 +153,20 @@ add_library(DEvent SHARED ${dict_header_shared} ${dict_source} G__DEvent.cxx)
 #----------------------------------------------------------------------------
 # Generate ROOT library for EventDisplay
 #
-root_generate_dictionary(G__DEventDisplay
-                         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventDisplay.h
-                         LINKDEF DP_display/include/EventDisplayLinkDef.h
-                        )
-add_library(DEventDisplay
-            SHARED
-            ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventDisplay.h
-            ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay.cpp
-            G__DEventDisplay.cxx
-            )
+#root_generate_dictionary(G__DEventDisplay
+#                         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventDisplay.h
+#                         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventReader_dis.h
+#                         LINKDEF DP_display/include/EventDisplayLinkDef.h
+#                        )
+#add_library(DEventDisplay
+#            SHARED
+#            ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventDisplay.h
+#            ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay.cpp
+#            ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay_DetInfo.cpp
+#            ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay_DrawEvent.cpp
+#            ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventReader_dis.cpp
+#            G__DEventDisplay.cxx
+#            )
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
@@ -169,12 +182,10 @@ link_libraries(DEvent)
 add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         ${Util_sources} ${Util_headers}
         ${Algo_sources} ${Algo_headers})
-#target_link_libraries(DAna DEvent)
 
-link_libraries(DEventDisplay)
-add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
-target_link_libraries(DDis ${ROOT_LIBRARIES} DEventDisplay)
-MESSAGE(${ROOT_LIBRARIES})
+add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers} ${Ana_sources} ${Ana_headers}
+                                   ${Util_sources} ${Util_headers} ${Algo_sources} ${Algo_headers})
+#target_link_libraries(DDis DEventDisplay)
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
@@ -182,8 +193,9 @@ install(TARGETS DSimu DESTINATION bin)
 install(TARGETS DAna DESTINATION bin)
 install(TARGETS DDis DESTINATION bin)
 install(TARGETS DEvent LIBRARY DESTINATION lib )
-install(TARGETS DEventDisplay LIBRARY DESTINATION lib )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent_rdict.pcm DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent.rootmap DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEventDisplay.rootmap DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEventDisplay_rdict.pcm DESTINATION lib)
+
+#install(TARGETS DEventDisplay LIBRARY DESTINATION lib )
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEventDisplay.rootmap DESTINATION lib)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEventDisplay_rdict.pcm DESTINATION lib)

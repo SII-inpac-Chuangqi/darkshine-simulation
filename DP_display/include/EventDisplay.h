@@ -10,11 +10,83 @@
 #include "TApplication.h"
 #include "TString.h"
 #include "TNamed.h"
+#include "TFile.h"
 
+#include "TEveViewer.h"
+#include "TEveScene.h"
+
+#include "TGNumberEntry.h"
+#include "TGButton.h"
 #include "TGeoNode.h"
+#include "TEveProjectionManager.h"
+#include "TEveStraightLineSet.h"
+#include "TEveTrack.h"
+#include "TGeoVolume.h"
+#include "TGeoBBox.h"
+#include "TEveBox.h"
 
-enum Det_Type {DNone, DTarget, DTracker, DECAL, DHCAL};
+#include <TVector3.h>
 
+#include <map>
+
+#include "MultiView.h"
+#include "Object/DEvent.h"
+#include "EventReader_dis.h"
+#include "DSMagneticField.h"
+
+
+namespace {
+    enum Det_Type {
+        DNone, DTarget, DTracker, DECAL, DHCAL
+    };
+
+    std::map<int, Color_t> PDG_Color = {
+            // Leptons
+            {11,    kGreen},
+            {-11,   kBlue},
+            {12,    kCyan},
+            {-12,   kCyan},
+            {13,    kGreen - 10},
+            {-13,   kGreen - 10},
+            {14,    kCyan + 2},
+            {-14,   kCyan + 2},
+            {22,    kPink + 9},
+            // Hadrons
+            {2212,  kYellow},
+            {-2212, kYellow}, // proton
+            {2112,  kYellow - 7},
+            {-2112, kYellow - 7}, // neutron
+            {111,   kMagenta},
+            {-111,  kMagenta}, // pion0
+            {321,   kYellow + 2},
+            {-321,  kYellow + 2}, // kaon
+            {211,   kMagenta - 9},
+            {-211,  kMagenta - 9}  // pion +-
+    };
+
+    std::map<double, Color_t> Energy_Color = {
+            // Energy Color Represent [MeV]
+            {0.001, kBlue},
+            {0.005, kBlue - 4},
+            {0.01,  kBlue - 7},
+            {0.05,  kBlue - 9},
+            {0.10,  kBlue - 10},
+            {0.25,  kRed - 10},
+            {0.50,  kRed - 7},
+            {0.75,  kRed - 4},
+            {1.00,  kRed},
+    };
+
+    Color_t FindColor(double E, double EMax) {
+        double r = E / EMax;
+        double prev = 1e-7;
+        for (auto c_map : Energy_Color) {
+            if (r < c_map.first && r >= prev)
+                return c_map.second;
+        }
+        return kRed + 2;
+    }
+}
 class EventDisplay : public TNamed {
 public:
     EventDisplay() = default;
@@ -24,34 +96,95 @@ public:
     // Initialize gApplication and gEve
     void Initialize();
 
-    // Read Detector Geometry from root file
-    bool readGeo(const TString& file_in);
+    // Read Data from root file
+    bool readFile(const TString &file_in);
+
+    bool readGeo(const TString &file_in = "");
+
+    bool readEvt(const TString &file_in = "");
 
     // Draw Detector Geometry
     bool drawDetector();
 
+    // Load Event
+    bool readEntry(int i);
+
+    bool drawEvent(int id, bool resCam= false);
+
+    // Draw Class
+    void makeLines(TEveStraightLineSet *lineSet, const TVector3 &start, const TVector3 &end,
+                   const Color_t &color, const Style_t &style, bool drawMarkers, double lineWidth, int markerPos);
+
+    TEveTrack *makeMCTrack(unsigned id, McParticle *mc);
+
+    TEveBox *makeCaloBox(SimulatedHit *hit, double EMax);
+
+    void setRMin(double rMin) {
+        r_min = rMin;
+    }
+
     // Open Application
-    void makeGUI();
-    void Open();
+    void makeGUI(EventDisplay *);
+
+    void Open(EventDisplay *);
+
+    // Navigator && GUI commands
+    void gotoEvent(unsigned int id);
+
+    void guiGoto();
+
+    void guiGoto2();
+
+    void guiOptions();
 
     /**************************/
     /* Detector Geometry Info */
     /**************************/
     void inspectMainRegion();
+
     void inspectSubRegion(int id, Det_Type dt);
 
 private:
+    TGNumberEntry *guiEvent{nullptr};
+    TGNumberEntry *guiR_min{nullptr};
+    TGNumberEntry *guiECAL_Emin{nullptr};
+    TGNumberEntry *guiHCAL_Emin{nullptr};
+    TGCheckButton *guidrawDetector{nullptr};
+    TGCheckButton *guidrawHits{nullptr};
+    TGCheckButton *guidrawTracks{nullptr};
+
+
     // Core Manager from ROOT
     // gEve
     // gGeoManager
     // gApplication
+    TFile *f{nullptr};
 
-    TGeoNode* world_node{nullptr};
+    TGeoNode *world_node{nullptr};
+
+    MultiView *gMultiView{nullptr};
+
+    EventReader_D *EvtReader{nullptr};
 
     int _eventID{0};
 
+    DEvent *evt{nullptr};
 
-ClassDefOverride(EventDisplay,100);
+    // Track
+    //TEveTrackList *gMCTrackList{nullptr};
+    DSMagneticField *DSmag{nullptr};
+
+    // Draw Options
+    bool _drawDetector = true;
+    bool _drawHits = true;
+    bool _drawTracks = true;
+
+    // Calo Options
+    double r_min = 0.;
+    double ECAL_Emin = 0.;
+    double HCAL_Emin = 0.;
+
+ClassDefOverride(EventDisplay, 0);
 };
 
 

@@ -232,7 +232,6 @@ void EventDisplay::inspectSubRegion(int id, Det_Type dt) {
         std::cout << "    ==> Absorber Material: " << mat_abs << std::endl;
 
     }
-
-
-
 }
+
+
