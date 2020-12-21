@@ -276,7 +276,6 @@ TEveBox *EventDisplay::makeCaloBox(SimulatedHit *hit, double EMax) {
                        hit->getX(), hit->getY(), hit->getZ()
     ));
     return box;
-
 }
 
 template<class CaloCol>
@@ -290,8 +289,7 @@ void EventDisplay::makeCaloLego(CaloCol col, CaloHitsDisplay *calo_dis) {
 
     std::vector<std::vector<CaloHit> > tmpCaloHits;
 
-    auto CALCols = evt->getSimulatedHitCollection_Old();
-    for (const auto &CALCol : CALCols) {
+    for (const auto &CALCol : col) {
         // only count hits in calorimeter
         if (!TString(CALCol.first).Contains("CAL")) continue;
         if (CALCol.second->empty()) continue;

@@ -51,17 +51,17 @@ public:
     vector<Color_t> color;
 
     unsigned xbin = 0;
-    float xmin = 0;
-    float xmax = 0;
+    double xmin = 0;
+    double xmax = 0;
     unsigned ybin = 0;
-    float ymin = 0;
-    float ymax = 0;
+    double ymin = 0;
+    double ymax = 0;
     unsigned zbin = 0;
-    float zmin = 0;
-    float zmax = 0;
-    float delta_x = 0;
-    float delta_y = 0;
-    float delta_z = 0;
+    double zmin = 0;
+    double zmax = 0;
+    double delta_x = 0;
+    double delta_y = 0;
+    double delta_z = 0;
 
     double scale_factor = 0.1;
     bool if_log = false;

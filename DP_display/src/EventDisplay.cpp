@@ -14,6 +14,7 @@
 #include "TGPicture.h"
 #include "TGLabel.h"
 #include "TGButton.h"
+#include "TGTab.h"
 
 #include <TGeoManager.h>
 #include <TGeoMatrix.h>
@@ -384,5 +385,7 @@ void EventDisplay::bookSlot() {
         win_s.push_back(new TEveScene);
         MakeViewerScene(win_slots.at(i), win_v.at(i), win_s.at(i));
     }
+
+    gEve->GetBrowser()->GetTabLeft()->SetTab(1);
 
 }

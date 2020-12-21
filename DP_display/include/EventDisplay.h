@@ -129,6 +129,7 @@ public:
 
     TEveTrack *makeMCTrack(TEveTrackPropagator *trkProp, unsigned id, McParticle *mc);
 
+    static TEveBox *makeTrackerBox(SimulatedHit *hit, double EMax);
     static TEveBox *makeCaloBox(SimulatedHit *hit, double EMax);
     static TEveBox *makeBox(const double *abs_pos, const double *half_size);
 
