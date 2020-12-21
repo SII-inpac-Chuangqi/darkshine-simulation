@@ -14,6 +14,7 @@
 
 #include "TEveViewer.h"
 #include "TEveScene.h"
+#include "TEveWindow.h"
 
 #include "TGNumberEntry.h"
 #include "TGButton.h"
@@ -25,6 +26,9 @@
 #include "TGeoBBox.h"
 #include "TEveBox.h"
 
+#include "TEveCaloData.h"
+#include "TEveCaloLegoGL.h"
+
 #include <TVector3.h>
 
 #include <map>
@@ -33,7 +37,11 @@
 #include "Object/DEvent.h"
 #include "EventReader_dis.h"
 #include "DSMagneticField.h"
+#include "CaloHitsDisplay.h"
 
+typedef vector<TH2F *> CaloHitsVec;
+
+class CaloHitsDisplay;
 
 namespace {
     enum Det_Type {
@@ -112,19 +120,22 @@ public:
     // Load Event
     bool readEntry(int i);
 
-    bool drawEvent(int id, bool resCam= false);
+    bool drawEvent(int id, bool resCam = false);
 
     // Draw Class
     static void makeLines(TEveStraightLineSet *lineSet, const TVector3 &start, const TVector3 &end,
-                   const Color_t &color, const Style_t &style, bool drawMarkers, double lineWidth, int markerPos);
+                          const Color_t &color, const Style_t &style, bool drawMarkers, double lineWidth,
+                          int markerPos);
 
-    TEveTrack *makeMCTrack(TEveTrackPropagator* trkProp, unsigned id, McParticle *mc);
+    TEveTrack *makeMCTrack(TEveTrackPropagator *trkProp, unsigned id, McParticle *mc);
 
     static TEveBox *makeCaloBox(SimulatedHit *hit, double EMax);
+    static TEveBox *makeBox(const double *abs_pos, const double *half_size);
 
-    void setRMin(double rMin) {
-        r_min = rMin;
-    }
+    template<class CaloCol>
+    void makeCaloLego(CaloCol col, CaloHitsDisplay* calo_dis);
+
+    static void MakeViewerScene(TEveWindowSlot* slot, TEveViewer*& v, TEveScene*& s);
 
     // Open Application
     void makeGUI(EventDisplay *);
@@ -138,12 +149,15 @@ public:
 
     void guiOptions();
 
+    void bookSlot();
+
     /**************************/
     /* Detector Geometry Info */
     /**************************/
     void inspectMainRegion();
 
     void inspectSubRegion(int id, Det_Type dt);
+
 
 private:
     TGNumberEntry *guiEvent{nullptr};
@@ -153,6 +167,8 @@ private:
     TGCheckButton *guidrawDetector{nullptr};
     TGCheckButton *guidrawHits{nullptr};
     TGCheckButton *guidrawTracks{nullptr};
+    TGCheckButton *guiLogCaloHitsLego{nullptr};
+    TGNumberEntry *guiScaleFactorLego{nullptr};
 
 
     // Core Manager from ROOT
@@ -171,21 +187,38 @@ private:
 
     DEvent *evt{nullptr};
 
-    // Track
-    DSMagneticField *DSmag{nullptr};
+
+    // Detector Geometry Info
+    // size is half, length = 2*size [cm]
+    double ECAL_Z_Move{0.};
+    TVector3 ECAL_Size{TVector3(-1, -1, -1)};
+    TVector3 ECAL_Cell_Size{TVector3(-1, -1, -1)};
+    TVector3 ECAL_Cell_Arr{TVector3(-1, -1, -1)};
 
     // Draw Options
     bool _drawDetector = true;
     bool _drawHits = true;
     bool _drawTracks = true;
+    bool _drawCaloHist = true;
 
     // Calo Options
     double r_min = 0.;
     double ECAL_Emin = 0.;
     double HCAL_Emin = 0.;
 
+    // CaloHits Lego Options
+    bool ECALslice_calo = false; // if to slice ECAL hits w.r.t Z layer
+    bool _drawECAL_calo = true;
+    bool _drawHCAL_calo = false;
+    bool _drawLogSacle = true;
+    double _scale_factor = 1.0;
+
+    // Window Slots
+    vector<TEveWindowSlot* > win_slots;
+    vector<TEveViewer* > win_v;
+    vector<TEveScene* > win_s;
+
 ClassDefOverride(EventDisplay, 0);
 };
-
 
 #endif //DSIMU_EVENTDISPLAY_H

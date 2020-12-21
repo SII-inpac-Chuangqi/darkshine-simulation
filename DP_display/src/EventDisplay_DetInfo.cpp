@@ -46,7 +46,11 @@ void EventDisplay::inspectMainRegion() {
         Det_Type dt = DNone;
         if (cur_Name.Contains("Target")) dt = DTarget;
         if (cur_Name.Contains("Trk")) dt = DTracker;
-        if (cur_Name.Contains("ECAL")) dt = DECAL;
+        if (cur_Name.Contains("ECAL")) {
+            dt = DECAL;
+            ECAL_Size = TVector3(cur_shape->GetDX(), cur_shape->GetDY(), cur_shape->GetDZ());
+            ECAL_Z_Move = current_node->GetMatrix()->GetTranslation()[2];
+        }
         if (cur_Name.Contains("HCAL")) dt = DHCAL;
 
         inspectSubRegion(i, dt);
@@ -120,6 +124,9 @@ void EventDisplay::inspectSubRegion(int id, Det_Type dt) {
             size_cal[0] = 2 * cur_shape->GetDX();
             size_cal[1] = 2 * cur_shape->GetDY();
             size_cal[2] = 2 * cur_shape->GetDZ();
+
+            ECAL_Cell_Arr = TVector3(n_cell[0],n_cell[1],n_cell[2]);
+            ECAL_Cell_Size = TVector3(size_cal[0],size_cal[1],size_cal[2]);
 
             for (int j = 0; j < 3; ++j)
                 last_pos[j] = daughter_pos[j];

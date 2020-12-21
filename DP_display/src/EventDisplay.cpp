@@ -41,7 +41,7 @@ void EventDisplay::Initialize() {
     // Set Camera
     auto *v = gEve->GetDefaultGLViewer();
     v->CurrentCamera().SetExternalCenter(kTRUE);
-    v->CurrentCamera().SetCenterVec(0,0,0);
+    v->CurrentCamera().SetCenterVec(0, 0, 0);
 
     _eventID = 0;
 
@@ -152,24 +152,24 @@ bool EventDisplay::readEntry(int i) {
 }
 
 
-void EventDisplay::Open(EventDisplay* evtDis) {
+void EventDisplay::Open(EventDisplay *evtDis) {
     makeGUI(evtDis);
 
     gEve->Redraw3D(kTRUE);
     gApplication->Run(kTRUE);
 }
 
-void EventDisplay::makeGUI(EventDisplay* fh) {
+void EventDisplay::makeGUI(EventDisplay *fh) {
     TEveBrowser *browser = gEve->GetBrowser();
 
-    TGLabel* lbl = nullptr;
-    TGTextButton* tb = nullptr;
+    TGLabel *lbl = nullptr;
+    TGTextButton *tb = nullptr;
 
     browser->StartEmbedding(TRootBrowser::kLeft);
-    auto * frmMain1 = new TGMainFrame(gClient->GetRoot(), 1000, 600);
+    auto *frmMain1 = new TGMainFrame(gClient->GetRoot(), 1000, 600);
     frmMain1->SetWindowName("XX GUI");
     frmMain1->SetCleanup(kDeepCleanup);
-    TGHorizontalFrame* hf = nullptr;
+    TGHorizontalFrame *hf = nullptr;
     // Event Options
     {
         hf = new TGHorizontalFrame(frmMain1);
@@ -178,9 +178,9 @@ void EventDisplay::makeGUI(EventDisplay* fh) {
             lbl = new TGLabel(hf, "Go to event: ");
             hf->AddFrame(lbl);
             guiEvent = new TGNumberEntry(hf, 0, 9, 999, TGNumberFormat::kNESInteger,
-                                          TGNumberFormat::kNEANonNegative,
-                                          TGNumberFormat::kNELLimitMinMax,
-                                          0, 99999);
+                                         TGNumberFormat::kNEANonNegative,
+                                         TGNumberFormat::kNELLimitMinMax,
+                                         0, 99999);
             hf->AddFrame(guiEvent);
             guiEvent->Connect("ValueSet(Long_t)", "EventDisplay", fh, "guiGoto()");
 
@@ -199,28 +199,32 @@ void EventDisplay::makeGUI(EventDisplay* fh) {
             hf->AddFrame(lbl);
         }
         frmMain1->AddFrame(hf);
+
+        hf = new TGHorizontalFrame(frmMain1);
+        {
+            guidrawDetector = new TGCheckButton(hf, "Draw Detectors");
+            if (guidrawDetector) guidrawDetector->Toggle();
+            hf->AddFrame(guidrawDetector);
+            guidrawDetector->Connect("Toggled(Bool_t)", "EventDisplay", fh, "guiOptions()");
+        }
+        frmMain1->AddFrame(hf);
+        hf = new TGHorizontalFrame(frmMain1);
+        {
+            guidrawHits = new TGCheckButton(hf, "Draw Calo Hits");
+            if (guidrawHits) guidrawHits->Toggle();
+            hf->AddFrame(guidrawHits);
+            guidrawHits->Connect("Toggled(Bool_t)", "EventDisplay", fh, "guiOptions()");
+        }
+        frmMain1->AddFrame(hf);
+        hf = new TGHorizontalFrame(frmMain1);
+        {
+            guidrawTracks = new TGCheckButton(hf, "Draw MC Tracks");
+            if (guidrawTracks) guidrawTracks->Toggle();
+            hf->AddFrame(guidrawTracks);
+            guidrawTracks->Connect("Toggled(Bool_t)", "EventDisplay", fh, "guiOptions()");
+        }
+        frmMain1->AddFrame(hf);
     }
-    hf = new TGHorizontalFrame(frmMain1); {
-        guidrawDetector =  new TGCheckButton(hf, "Draw Detectors");
-        if(guidrawDetector) guidrawDetector->Toggle();
-        hf->AddFrame(guidrawDetector);
-        guidrawDetector->Connect("Toggled(Bool_t)", "EventDisplay", fh, "guiOptions()");
-    }
-    frmMain1->AddFrame(hf);
-    hf = new TGHorizontalFrame(frmMain1); {
-        guidrawHits =  new TGCheckButton(hf, "Draw Calo Hits");
-        if(guidrawHits) guidrawHits->Toggle();
-        hf->AddFrame(guidrawHits);
-        guidrawHits->Connect("Toggled(Bool_t)", "EventDisplay", fh, "guiOptions()");
-    }
-    frmMain1->AddFrame(hf);
-    hf = new TGHorizontalFrame(frmMain1); {
-        guidrawTracks =  new TGCheckButton(hf, "Draw MC Tracks");
-        if(guidrawTracks) guidrawTracks->Toggle();
-        hf->AddFrame(guidrawTracks);
-        guidrawTracks->Connect("Toggled(Bool_t)", "EventDisplay", fh, "guiOptions()");
-    }
-    frmMain1->AddFrame(hf);
     // Calo Options
     {
         hf = new TGHorizontalFrame(frmMain1);
@@ -266,6 +270,39 @@ void EventDisplay::makeGUI(EventDisplay* fh) {
         }
         frmMain1->AddFrame(hf);
     }
+    // CaloHit Display Options
+    {
+        hf = new TGHorizontalFrame(frmMain1);
+        {
+            lbl = new TGLabel(hf, "\n CaloHit Lego Options");
+            hf->AddFrame(lbl);
+        }
+        frmMain1->AddFrame(hf);
+
+        hf = new TGHorizontalFrame(frmMain1);
+        {
+            guiLogCaloHitsLego = new TGCheckButton(hf, "Log Scale");
+            if (guiLogCaloHitsLego) guiLogCaloHitsLego->Toggle();
+            hf->AddFrame(guiLogCaloHitsLego);
+            guiLogCaloHitsLego->Connect("Toggled(Bool_t)", "EventDisplay", fh, "guiOptions()");
+        }
+        frmMain1->AddFrame(hf);
+
+        hf = new TGHorizontalFrame(frmMain1);
+        {
+            guiScaleFactorLego = new TGNumberEntry(hf, _scale_factor, 6, 999, TGNumberFormat::kNESReal,
+                                         TGNumberFormat::kNEANonNegative,
+                                         TGNumberFormat::kNELLimitMinMax,
+                                         0.01, 10.);
+            hf->AddFrame(guiScaleFactorLego);
+            guiScaleFactorLego->Connect("ValueSet(Long_t)", "EventDisplay", fh, "guiOptions()");
+            lbl = new TGLabel(hf, " Scale Factor of Height");
+            hf->AddFrame(lbl);
+        }
+        frmMain1->AddFrame(hf);
+    }
+
+
     frmMain1->MapSubwindows();
     frmMain1->Resize();
     frmMain1->MapWindow();
@@ -275,7 +312,7 @@ void EventDisplay::makeGUI(EventDisplay* fh) {
 }
 
 
-void EventDisplay::guiGoto(){
+void EventDisplay::guiGoto() {
     Long_t n = guiEvent->GetNumberEntry()->GetIntNumber();
     //guiEvent->SetIntNumber(n);
     gotoEvent(n);
@@ -285,15 +322,15 @@ void EventDisplay::gotoEvent(unsigned int id) {
 
     if (EvtReader->GetEntries() == 0)
         return;
-    else if(id >= EvtReader->GetEntries())
+    else if (id >= EvtReader->GetEntries())
         id = EvtReader->GetEntries() - 1;
 
     bool resetCam = true;
 
-    if (id == (unsigned int)_eventID)
+    if (id == (unsigned int) _eventID)
         resetCam = false;
 
-    _eventID = (int)id;
+    _eventID = (int) id;
 
     std::cout << "At event " << id << std::endl;
     if (gEve->GetCurrentEvent()) {
@@ -314,6 +351,38 @@ void EventDisplay::guiOptions() {
     ECAL_Emin = guiECAL_Emin->GetNumberEntry()->GetNumber();
     HCAL_Emin = guiHCAL_Emin->GetNumberEntry()->GetNumber();
 
+    // CaloHits Lego Options
+    _drawLogSacle = guiLogCaloHitsLego->IsOn();
+    _scale_factor = guiScaleFactorLego->GetNumberEntry()->GetNumber();
 
     gotoEvent(_eventID);
+}
+
+
+void EventDisplay::bookSlot() {
+    // frames
+    auto slot = TEveWindow::CreateWindowInTab(gEve->GetBrowser()->GetTabRight());
+    auto packH = slot->MakePack();
+    packH->SetElementName("CaloHits Details");
+    packH->SetHorizontal();
+    packH->SetShowTitleBar(kFALSE);
+
+    slot = packH->NewSlot();
+    auto pack0 = slot->MakePack();
+    pack0->SetShowTitleBar(kFALSE);
+    win_slots.push_back(pack0->NewSlot());
+    win_slots.push_back(pack0->NewSlot());
+
+    slot = packH->NewSlot();
+    auto pack1 = slot->MakePack();
+    pack1->SetShowTitleBar(kFALSE);
+    win_slots.push_back(pack1->NewSlot());
+    win_slots.push_back(pack1->NewSlot());
+
+    for (unsigned i = 0; i < win_slots.size(); ++i) {
+        win_v.push_back(new TEveViewer);
+        win_s.push_back(new TEveScene);
+        MakeViewerScene(win_slots.at(i), win_v.at(i), win_s.at(i));
+    }
+
 }

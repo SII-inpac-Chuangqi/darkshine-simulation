@@ -44,12 +44,13 @@ int main(int argc, char **argv) {
     EvtDisplay->readFile(file_in);
     EvtDisplay->readGeo();
 
-    if (batch_mode) {
-        EvtDisplay->inspectMainRegion();
+    EvtDisplay->inspectMainRegion();
+    if (batch_mode)
         return 0;
-    }
+
     else{
         EvtDisplay->Initialize();
+        EvtDisplay->bookSlot();
         EvtDisplay->readEvt();
 
         //EvtDisplay->drawEvent(1);

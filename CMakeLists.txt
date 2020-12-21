@@ -52,6 +52,8 @@ endif ()
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
 #
+FIND_PACKAGE(OpenGL)
+
 FIND_PACKAGE(ROOT COMPONENTS Geom TMVA Eve Gui RGL EG)
 IF (ROOT_FOUND)
     INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIRS})
@@ -132,6 +134,7 @@ SET(dict_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventDisplay.h
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventReader_dis.h
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DSMagneticField.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/CaloHitsDisplay.h
         )
 SET(dict_source
         Utility/Object/src/SimulatedHit.cpp
@@ -144,6 +147,7 @@ SET(dict_source
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay_DetInfo.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay_DrawEvent.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventReader_dis.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/CaloHitsDisplay.cpp
         )
 root_generate_dictionary(G__DEvent ${dict_header_shared} LINKDEF Utility/UTIL/include/Utility/DEventLinkDef.h)
 add_library(DEvent SHARED ${dict_header_shared} ${dict_source} G__DEvent.cxx)

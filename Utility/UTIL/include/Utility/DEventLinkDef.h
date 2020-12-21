@@ -40,7 +40,9 @@
 #pragma link C++ class DEvent+;
 #pragma link C++ class EventReader_D+;
 #pragma link C++ class DSMagneticField+;
+#pragma link C++ class CaloHitsDisplay+;
 #pragma link C++ class EventDisplay+;
+
 #endif
 
 #endif //DSIMU_DEVENTLINKDEF_H

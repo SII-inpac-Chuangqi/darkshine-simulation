@@ -11,6 +11,16 @@
 #include "TEveTrackEditor.h"
 #include "TParticle.h"
 #include "TEvePathMark.h"
+#include "TEveProjectionAxes.h"
+#include "TGLViewer.h"
+#include "TEveCaloLegoOverlay.h"
+#include "TEveLegoEventHandler.h"
+#include "TEveBrowser.h"
+#include "TGTab.h"
+
+#include "TH2F.h"
+
+#include "CaloHitsDisplay.h"
 
 #include <iostream>
 
@@ -65,7 +75,7 @@ bool EventDisplay::drawEvent(int id, bool resCam) {
             if (MCs->size() < 2) continue;
             for (unsigned i = 0; i < MCs->size(); ++i) {
                 if (MCs->at(i)->getId() == 1) continue;
-                TEveTrack *track = makeMCTrack(trkProp,i, MCs->at(i));
+                TEveTrack *track = makeMCTrack(trkProp, i, MCs->at(i));
                 gMCTrackList->AddElement(track);
             }
         }
@@ -108,6 +118,16 @@ bool EventDisplay::drawEvent(int id, bool resCam) {
         }
     }
 
+    if (_drawCaloHist) {
+        // clean vector first
+
+        auto CaloDisplay = new CaloHitsDisplay();
+
+        auto CALCols = evt->getSimulatedHitCollection_Old();
+        makeCaloLego(CALCols, CaloDisplay);
+
+    }
+
     // Finalize
     gEve->Redraw3D(resCam);
 
@@ -130,7 +150,7 @@ void EventDisplay::makeLines(TEveStraightLineSet *lineSet, const TVector3 &start
     }
 }
 
-TEveTrack *EventDisplay::makeMCTrack(TEveTrackPropagator* trkProp, unsigned id, McParticle *mc) {
+TEveTrack *EventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned id, McParticle *mc) {
     // get mother id
     int m_id = -999;
     auto p = mc->getParents();
@@ -147,7 +167,7 @@ TEveTrack *EventDisplay::makeMCTrack(TEveTrackPropagator* trkProp, unsigned id, 
     EndPoint->fV.Set(endpoint);
 
     auto *track = new TEveTrack(&rt, trkProp);
-    track->SetCharge( mc->getPdg()/abs(mc->getPdg()) );
+    track->SetCharge(mc->getPdg() / abs(mc->getPdg()));
     track->SetName(Form("Trk %d: PDG %d", rt.GetUniqueID(), rt.GetPdgCode()));
     track->SetPdg(mc->getPdg());
     track->SetLineColor(PDG_Color[mc->getPdg()]);
@@ -168,7 +188,7 @@ TEveTrack *EventDisplay::makeMCTrack(TEveTrackPropagator* trkProp, unsigned id, 
             track->SetLineStyle(8);
         }
         if (mc->getP() > 1e3) {
-            track->SetLineWidth(track->GetLineWidth() * 2);
+            track->SetLineWidth(track->GetLineWidth() * 1.5);
         }
     }
     track->AddPathMark(*EndPoint);
@@ -191,13 +211,9 @@ TEveTrack *EventDisplay::makeMCTrack(TEveTrackPropagator* trkProp, unsigned id, 
     return track;
 }
 
-TEveBox *EventDisplay::makeCaloBox(SimulatedHit *hit, double EMax) {
-    auto cur_node = gGeoManager->FindNode(hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10);
-    auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
-    double abs_pos[3] = {hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10};
-    double half_size[3] = {cur_shape->GetDX(), cur_shape->GetDY(), cur_shape->GetDZ()};
 
-    auto *box = new TEveBox((Form("Cell %d", hit->getCellId())));
+TEveBox *EventDisplay::makeBox(const double *abs_pos, const double *half_size) {
+    auto *box = new TEveBox();
     double vertex[24] = {0.};
     // (a,b,-c)
     vertex[0] = half_size[0] + abs_pos[0];
@@ -234,6 +250,19 @@ TEveBox *EventDisplay::makeCaloBox(SimulatedHit *hit, double EMax) {
 
     for (int k = 0; k < 24; k += 3) box->SetVertex((k / 3), vertex[k], vertex[k + 1], vertex[k + 2]);
 
+    return box;
+}
+
+
+TEveBox *EventDisplay::makeCaloBox(SimulatedHit *hit, double EMax) {
+    auto cur_node = gGeoManager->FindNode(hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10);
+    auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
+    double abs_pos[3] = {hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10};
+    double half_size[3] = {cur_shape->GetDX(), cur_shape->GetDY(), cur_shape->GetDZ()};
+
+    auto *box = makeBox(abs_pos, half_size);
+    box->SetName((Form("Cell %d", hit->getCellId())));
+
     auto color = FindColor(hit->getE(), EMax);
     box->SetLineColor(color);
     box->SetFillColor(color);
@@ -247,5 +276,95 @@ TEveBox *EventDisplay::makeCaloBox(SimulatedHit *hit, double EMax) {
                        hit->getX(), hit->getY(), hit->getZ()
     ));
     return box;
+
 }
 
+template<class CaloCol>
+void EventDisplay::makeCaloLego(CaloCol col, CaloHitsDisplay *calo_dis) {
+    // Convert Calo Hits to Eve Calo Data
+    // ECAL is split into several slices with respect to Z layer
+    // HCAL merges together
+
+    int ECAL_slice_number = ECALslice_calo ? (int) ECAL_Cell_Arr[2] : 1;
+    std::cout << "[Calo Data Hist] ==> ECAL slice number: " << ECAL_slice_number << std::endl;
+
+    std::vector<std::vector<CaloHit> > tmpCaloHits;
+
+    auto CALCols = evt->getSimulatedHitCollection_Old();
+    for (const auto &CALCol : CALCols) {
+        // only count hits in calorimeter
+        if (!TString(CALCol.first).Contains("CAL")) continue;
+        if (CALCol.second->empty()) continue;
+        auto CALs = CALCol.second;
+        if (TString(CALCol.first).Contains("ECAL_Center") && _drawECAL_calo) {
+            // Only Slice for ECAL Center
+            for (int i = 0; i < ECAL_slice_number; ++i) {
+                tmpCaloHits.emplace_back();
+            }
+
+            // Fill Calo hits in to hist 2F vector
+            for (auto hits : *CALs) {
+                int i = ECALslice_calo ? hits->getCellIdZ() - 1 : 0;
+                CaloHit tmp;
+                tmp.X = hits->getX() / 10; // cm
+                tmp.Y = hits->getY() / 10; // cm
+                tmp.Z = hits->getZ() / 10; // cm
+                tmp.E = hits->getE();    // MeV
+                tmp.Color = kGreen + i;
+                tmp.id = hits->getCellId();
+                tmp.id_x = hits->getCellIdX();
+                tmp.id_y = hits->getCellIdY();
+                tmp.id_z = hits->getCellIdZ();
+
+                tmpCaloHits.at(i).push_back(tmp);
+            }
+        }
+        if (TString(CALCol.first).Contains("HCAL") && _drawHCAL_calo) {
+            // unused
+        }
+    }
+    for (unsigned i = 0; i < tmpCaloHits.size(); ++i) {
+        if (i < (unsigned) ECAL_slice_number) {
+            auto name = "ECAL" + to_string(i);
+            calo_dis->name.emplace_back(name);
+            calo_dis->E_thre.push_back(ECAL_Emin * 1e-3);
+            calo_dis->color.push_back(kBlue + i);
+        } else {
+            calo_dis->name.emplace_back("HCAL");
+            calo_dis->E_thre.push_back(HCAL_Emin * 1e-3);
+            calo_dis->color.push_back(kMagenta);
+        }
+    }
+    calo_dis->xbin = ECAL_Cell_Arr[0];
+    calo_dis->ybin = ECAL_Cell_Arr[1];
+    calo_dis->zbin = ECAL_Cell_Arr[2];
+    calo_dis->xmin = -ECAL_Size[0];
+    calo_dis->xmax = ECAL_Size[0];
+    calo_dis->ymin = -ECAL_Size[1];
+    calo_dis->ymax = ECAL_Size[1];
+    calo_dis->zmin = -ECAL_Size[2] + ECAL_Z_Move;
+    calo_dis->zmax = ECAL_Size[2] + ECAL_Z_Move;
+
+    calo_dis->if_log = _drawLogSacle;
+    calo_dis->scale_factor = _scale_factor;
+    calo_dis->calovec = tmpCaloHits;
+    calo_dis->makeLego(win_v.at(0), win_s.at(0), dXY);
+    calo_dis->calovec = tmpCaloHits;
+    calo_dis->makeLego(win_v.at(1), win_s.at(1), dXZ);
+    calo_dis->calovec = tmpCaloHits;
+    calo_dis->makeLego(win_v.at(2), win_s.at(2), dYZ);
+
+}
+
+
+void EventDisplay::MakeViewerScene(TEveWindowSlot *slot, TEveViewer *&v, TEveScene *&s) {
+
+    // Create a scene and a viewer in the given slot.
+
+    v = new TEveViewer("Viewer");
+    v->SpawnGLViewer(reinterpret_cast<TGedEditor *>(gEve->GetEditor()));
+    slot->ReplaceWindow(v);
+    gEve->GetViewers()->AddElement(v);
+    s = gEve->SpawnNewScene("Scene");
+    v->AddScene(s);
+}
