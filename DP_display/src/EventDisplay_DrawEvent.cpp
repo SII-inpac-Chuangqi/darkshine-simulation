@@ -54,6 +54,8 @@ bool EventDisplay::drawEvent(int id, bool resCam) {
         // Initialize Track
         auto *gMCTrackList = new TEveTrackList("MC Tracks");
         gEve->AddElement(gMCTrackList);
+        auto *trkProp = gMCTrackList->GetPropagator();
+        trkProp->SetMagFieldObj(new DSMagneticField());
 
         auto MCCols = evt->getMcParticleCollection_Old();
         for (const auto &MCCol : MCCols) {
@@ -63,7 +65,7 @@ bool EventDisplay::drawEvent(int id, bool resCam) {
             if (MCs->size() < 2) continue;
             for (unsigned i = 0; i < MCs->size(); ++i) {
                 if (MCs->at(i)->getId() == 1) continue;
-                TEveTrack *track = makeMCTrack(i, MCs->at(i));
+                TEveTrack *track = makeMCTrack(trkProp,i, MCs->at(i));
                 gMCTrackList->AddElement(track);
             }
         }
@@ -97,7 +99,7 @@ bool EventDisplay::drawEvent(int id, bool resCam) {
 
             for (auto cal_hit : *CALs) {
                 // Skip calo hits under threshold
-                if (cal_hit->getE() <= r_min * EMax) continue;
+                if (cal_hit->getE() < r_min * EMax) continue;
                 if (cal_hit->getE() < ECAL_Emin && TString(CALCol.first).Contains("ECAL")) continue;
                 if (cal_hit->getE() < HCAL_Emin && TString(CALCol.first).Contains("HCAL")) continue;
                 auto *box = makeCaloBox(cal_hit, EMax);
@@ -128,7 +130,7 @@ void EventDisplay::makeLines(TEveStraightLineSet *lineSet, const TVector3 &start
     }
 }
 
-TEveTrack *EventDisplay::makeMCTrack(unsigned id, McParticle *mc) {
+TEveTrack *EventDisplay::makeMCTrack(TEveTrackPropagator* trkProp, unsigned id, McParticle *mc) {
     // get mother id
     int m_id = -999;
     auto p = mc->getParents();
@@ -140,8 +142,6 @@ TEveTrack *EventDisplay::makeMCTrack(unsigned id, McParticle *mc) {
     rt.SetMomentum(mc->getPx() * 1e-3, mc->getPy() * 1e-3, mc->getPz() * 1e-3, mc->getEnergy() * 1e-3);
     rt.SetProductionVertex(mc->getVertexX() / 10, mc->getVertexY() / 10, mc->getVertexZ() / 10, 0.);
     TVector3 endpoint(mc->getEndPointX() / 10, mc->getEndPointY() / 10, mc->getEndPointZ() / 10);
-    auto *trkProp = new TEveTrackPropagator;
-    trkProp->SetMagFieldObj(new DSMagneticField);
 
     auto EndPoint = new TEvePathMark(TEvePathMark::kDecay);
     EndPoint->fV.Set(endpoint);

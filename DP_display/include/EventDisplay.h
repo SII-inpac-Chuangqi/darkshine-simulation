@@ -87,6 +87,9 @@ namespace {
         return kRed + 2;
     }
 }
+/*
+ * Importance: Unit in TEve is [cm], [GeV]
+ */
 class EventDisplay : public TNamed {
 public:
     EventDisplay() = default;
@@ -112,12 +115,12 @@ public:
     bool drawEvent(int id, bool resCam= false);
 
     // Draw Class
-    void makeLines(TEveStraightLineSet *lineSet, const TVector3 &start, const TVector3 &end,
+    static void makeLines(TEveStraightLineSet *lineSet, const TVector3 &start, const TVector3 &end,
                    const Color_t &color, const Style_t &style, bool drawMarkers, double lineWidth, int markerPos);
 
-    TEveTrack *makeMCTrack(unsigned id, McParticle *mc);
+    TEveTrack *makeMCTrack(TEveTrackPropagator* trkProp, unsigned id, McParticle *mc);
 
-    TEveBox *makeCaloBox(SimulatedHit *hit, double EMax);
+    static TEveBox *makeCaloBox(SimulatedHit *hit, double EMax);
 
     void setRMin(double rMin) {
         r_min = rMin;
@@ -132,8 +135,6 @@ public:
     void gotoEvent(unsigned int id);
 
     void guiGoto();
-
-    void guiGoto2();
 
     void guiOptions();
 
@@ -171,7 +172,6 @@ private:
     DEvent *evt{nullptr};
 
     // Track
-    //TEveTrackList *gMCTrackList{nullptr};
     DSMagneticField *DSmag{nullptr};
 
     // Draw Options

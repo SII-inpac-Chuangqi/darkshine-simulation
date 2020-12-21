@@ -25,10 +25,6 @@
 #include <iomanip>
 #include <iostream>
 
-namespace {
-    EventDisplay* eventDisplay_ = nullptr;
-}
-
 void EventDisplay::Initialize() {
     // Need to initialize gApplication and gEve first
     if ((!gApplication) || (gApplication && gApplication->TestBit(TApplication::kDefaultApplication))) {
@@ -52,8 +48,6 @@ void EventDisplay::Initialize() {
     EvtReader = new EventReader_D();
     evt = new DEvent();
     EvtReader->setEvt(evt);
-
-    DSmag = new DSMagneticField();
 }
 
 bool EventDisplay::drawDetector() {
