@@ -98,10 +98,6 @@ void ECAL_XYCrossing::DefineParameters(const G4ThreeVector &Pos_RecRegion, const
     ECAL_Outer_Mat = G4Material::GetMaterial("PWO4");
     ECAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
 
-    ECAL_Center_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
-    ECAL_Center_Size = G4ThreeVector(1 * cm, 1 * cm, 36 * cm + 35 * ECAL_Center_Wrap_Size.z());
-    ECAL_Center_Module_No = G4ThreeVector(6, 6, 1);
-
     ECAL_Outer_Wrap_Size = ECAL_Center_Wrap_Size;
     ECAL_Outer_Size_Dir = G4ThreeVector(20 * cm + 19 * ECAL_Outer_Wrap_Size.x(), 1 * cm, 1 * cm);
     ECAL_Outer_Mod_No_Dir = G4ThreeVector(1, 20, 36);

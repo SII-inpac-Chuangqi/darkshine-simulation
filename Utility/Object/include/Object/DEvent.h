@@ -23,6 +23,8 @@ enum CleanType {
     nALL, nVector
 };
 
+/// class description:
+/// \brief Contains all the necessary information for analysis.
 class DEvent : public TObject {
 public:
     // Constructor
@@ -155,13 +157,11 @@ protected:
     /*
      * Miscellaneous (truth)
      */
-    // Random Number Seeds
-    double Rndm[4]{};
-    // Photon-Nuclear reaction Energy in Target/ECAL region
-    double PNEnergy_Target{0.};
-    double PNEnergy_ECAL{0.};
-    // Energy leakage in ECAL holder
-    double Eleak_ECAL{0.};
+    
+    double Rndm[4]{}; // Random Number Seeds
+    double PNEnergy_Target{0.}; // Photon-Nuclear reaction Energy in Target region
+    double PNEnergy_ECAL{0.}; // Photon-Nuclear reaction Energy in ECAL region
+    double Eleak_ECAL{0.}; // Energy leakage in ECAL holder
 
     /*
      * Miscellaneous (Reconstructed)
@@ -182,7 +182,7 @@ protected:
     SimulatedHitMapO SimulatedHitCollection;
     CalorimeterHitMapO CalorimeterHitCollection;
 
-ClassDef(DEvent, 1);
+ClassDefOverride(DEvent, 1);
 };
 
 // Some inline

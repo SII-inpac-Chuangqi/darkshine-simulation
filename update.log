@@ -1,0 +1,6 @@
+v2.1.1
+Added DDis module, which can print out the detector geometry very fast
+
+v2.1.0
+Added bunches of detector messenger in DSimu, so that users can change the detector geometry in the config file, without
+re-compiling the DSimu.

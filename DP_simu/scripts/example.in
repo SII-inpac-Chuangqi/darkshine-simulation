@@ -1,9 +1,39 @@
-########## Pre_Init ############
+########## Pre_Init  ############
+###
+ #################################
+ ### Detector Geometry Setting ###
+ #################################
+###
+# Magnetic Field in Tracker Region
 /DP/det/setTByField                 -1.5 tesla
 /DP/det/setRByField                 -0.5 tesla
 
+# ECAL Type: 1: XYcorssing 2: All Z
+/DP/det/selectECAL                   2
+
+# if to build component
+/DP/det/ifTarget                     1
+/DP/det/ifTagTracker                 1
+/DP/det/ifRecTracker                 1
+/DP/det/ifECAL                       1
+/DP/det/ifHCAL                       1
+
+#################
+# ECAL Settings #
+#################
+/DP/det/ECAL/centerSize              2.0 2.0 2.0 cm
+/DP/det/ECAL/centerModuleNo          10 10 10
+
+# if to build only
+#/DP/det/onlyTracker
+#/DP/det/onlyECAL
+#/DP/det/onlyHCAL
+
+# IMPORTANT, just leave it alone at the last
+/DP/det/reConstruct
+
 ######## Save Geometry #########
-/DP/ifSaveGeometry                  1
+/DP/ifSaveGeometry                  0
 
 ########## Biasing ############
 /DP/Bias/Process                    GammaToMuPair
@@ -16,7 +46,7 @@
 ########## Filter ############
 # HardBrem
 /DP/Filter/if_filter_HardBrem       0
-/DP/Filter/HardBrem_GammaEmin       2 GeV
+/DP/Filter/HardBrem_GammaEmin       4 GeV
 /DP/Filter/HardBrem_ScanDistance    20 cm
 # Process
 /DP/Filter/if_filter_Process        0

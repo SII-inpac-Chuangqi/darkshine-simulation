@@ -6,6 +6,7 @@
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 #include <iterator>
+#include <utility>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -17,7 +18,7 @@ CALConstruct::CALConstruct(G4String CALName,
                            G4bool Optical,  /* if simulate optical photon */
                            G4bool CheckOverlap)
 {
-    fCALName = CALName;
+    fCALName = std::move(CALName);
     fMotherVolume = MotherVolume;
     fCopyNo = CopyNo;
     fType = Type;
@@ -78,7 +79,7 @@ CALConstruct::CALConstruct(const CALConstruct& in)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 CALConstruct::~CALConstruct()
-{}
+= default;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -97,7 +98,7 @@ G4ThreeVector CALConstruct::Construct()
 
     auto fName = ifAbsorber ? fCALName+"Abs" : fCALName;
     auto box = new G4Box(fName+"_Box" , fSizeX, fSizeY, fSizeZ );
-    auto boxLV = new G4LogicalVolume(box, fCALMaterial, fName+"_LV", 0,0,0);
+    auto boxLV = new G4LogicalVolume(box, fCALMaterial, fName+"_LV", nullptr,nullptr,nullptr);
     auto boxPV = new G4PVPlacement(nullptr, pos, boxLV, fName+"_PV", fMotherVolume, false, fCopyNo, fCheckOverlap);
 
     if ( fRecordLV ) fCaloLVVector.push_back(boxLV);
@@ -119,8 +120,8 @@ G4ThreeVector CALConstruct::Construct()
                                                  fSizeY+fWrapSizeY, 
                                                  fSizeZ+fWrapSizeZ);
         auto WrapBox = new G4SubtractionSolid(fCALName+"_BoxW", boxL, box);
-        auto WrapLV = new G4LogicalVolume(WrapBox, fWrapMaterial, fCALName+"_LVW", 0,0,0);
-        auto WrapPV = new G4PVPlacement(0, pos, WrapLV, fCALName+"_PVW", fMotherVolume, false, fCopyNo, fCheckOverlap);
+        auto WrapLV = new G4LogicalVolume(WrapBox, fWrapMaterial, fCALName+"_LVW", nullptr,nullptr,nullptr);
+        auto WrapPV = new G4PVPlacement(nullptr, pos, WrapLV, fCALName+"_PVW", fMotherVolume, false, fCopyNo, fCheckOverlap);
         
         if ( fWrapVis ) 
         {
@@ -161,8 +162,8 @@ G4ThreeVector CALConstruct::Construct()
 
             /* Placement of APD */
             auto abox = new G4Box(fCALName+"_APDWorld_Box" , wSizeX, wSizeY, wSizeZ );
-            auto aboxLV = new G4LogicalVolume(abox, G4Material::GetMaterial("vacuum"), fCALName+"_APDWorld_LV", 0,0,0);
-            new G4PVPlacement( 0, G4ThreeVector(wPosX, wPosY, wPosZ), aboxLV, fCALName+"_APDWorld_PV", boxLV, false, fCopyNo, fCheckOverlap);
+            auto aboxLV = new G4LogicalVolume(abox, G4Material::GetMaterial("vacuum"), fCALName+"_APDWorld_LV", nullptr,nullptr,nullptr);
+            new G4PVPlacement( nullptr, G4ThreeVector(wPosX, wPosY, wPosZ), aboxLV, fCALName+"_APDWorld_PV", boxLV, false, fCopyNo, fCheckOverlap);
 
             auto* wVis = new G4VisAttributes(G4Colour(0.5,0.5,.0));
             wVis->SetVisibility(true);
@@ -220,7 +221,7 @@ G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, con
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void CALConstruct:: MatrixPlacementXYRemoved(G4int xNo, G4int yNo, G4int zNo, G4ThreeVector CentrePos, G4int NoRemoved, G4int type) 
+void CALConstruct:: MatrixPlacementXYRemoved(G4int xNo, G4int yNo, G4int zNo, const G4ThreeVector& CentrePos, G4int NoRemoved, G4int type)
 {
     /* Type: 
      * 1) Left Bottom Corner
@@ -310,10 +311,9 @@ void CALConstruct:: MatrixPlacementXYRemoved(G4int xNo, G4int yNo, G4int zNo, G4
       }
     }
     
-    return;
-}
+    }
 
-void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo, G4ThreeVector CentrePos, G4double AbsThickness, G4Material* AbsMat) {
+void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo, const G4ThreeVector& CentrePos, G4double AbsThickness, G4Material* AbsMat) {
 
     auto Mat = fCALMaterial;
     auto ifwrap = fWrap;
@@ -396,10 +396,6 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
         }
       }
     }
-
-
-
-    return;
 }
 
 

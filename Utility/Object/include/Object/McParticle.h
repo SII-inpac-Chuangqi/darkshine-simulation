@@ -10,6 +10,8 @@
 #include "Object/SimulatedHit.h"
 #include "DParticle.h"
 
+/// class description:
+/// \brief Secondary particles. TRUTH information which is known only in simulation.
 class McParticle : public DParticle {
 public:
     // Constructor and Destructor
@@ -87,7 +89,7 @@ private:
     ReconstructedParticle* RecParticles;
     SimulatedHitVec SimHits;
 
-ClassDef(McParticle,10)
+ClassDefOverride(McParticle,10)
 
 };
 

@@ -67,7 +67,7 @@ class DetectorSD : public G4VSensitiveDetector
 
   private:
     G4ThreeVector fCellID;
-    G4int         fType; // 1: ECAL_Center 0: Tracker 2: ECAL_Outer
+    G4int         fType; // 0: Tracker 1: ECAL_Center 2: ECAL_Outer
     G4String      fname;
     
     std::vector<SimulatedHit* > fSimHitVec;

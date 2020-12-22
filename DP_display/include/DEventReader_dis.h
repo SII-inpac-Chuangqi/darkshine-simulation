@@ -2,8 +2,8 @@
 // Created by Zhang Yulei on 9/19/20.
 //
 
-#ifndef DSIMU_EVENTREADER_H
-#define DSIMU_EVENTREADER_H
+#ifndef DSIMU_EVENTREADERDIS_H
+#define DSIMU_EVENTREADERDIS_H
 
 #include "TROOT.h"
 #include <TChain.h>
@@ -11,34 +11,32 @@
 #include "TTreeReader.h"
 #include "TTreeReaderValue.h"
 
+#include "Object/DEvent.h"
 #include "Event/AnaEvent.h"
-#include "EventStoreAndWriter.h"
 
 using namespace std;
 
-class EventReader {
+class EventReader_D : public TNamed {
 public:
-    EventReader() : evt(nullptr) {};
+    EventReader_D() : evt(nullptr) {};
 
-    ~EventReader() = default;
-
-    void RegisterOutput();
+    ~EventReader_D() override = default;
 
     void Convert();
 
     bool ReadNextEntry() const;
     bool ReadEntry(int i) const;
-
+    Long64_t GetEntries();
 
     Int_t ReadFile(const std::string &filename);
     Int_t ReadTree(const std::string &treename, TFile* f);
 
-    AnaEvent *getEvt() const {
+    const shared_ptr<AnaEvent> &getEvt() const {
         return evt;
     }
 
-    void setEvt(AnaEvent *in) {
-        evt = in;
+    void setEvt(const shared_ptr<AnaEvent> &Evt) {
+        EventReader_D::evt = Evt;
     }
 
     Long64_t getEntries() const {
@@ -77,18 +75,11 @@ public:
         skipNumber = skipnumber;
     }
 
-    const shared_ptr<EventStoreAndWriter> &getEvtWrt() const {
-        return EvtWrt;
-    }
-
-    void setEvtWrt(const shared_ptr<EventStoreAndWriter> &evtWrt) {
-        EvtWrt = evtWrt;
-    }
 
 private:
-    AnaEvent *evt{nullptr};
+    //DEvent *evt{nullptr};
+    shared_ptr<AnaEvent> evt;
     Long64_t Entries{0};
-    shared_ptr<EventStoreAndWriter> EvtWrt;
 
     int runNumber{0};
     int eventNumber{-1};
@@ -107,6 +98,7 @@ private:
     Int_t EventNumber{0};
     Double_t Rndm[4] = {0,0,0,0};
 
+    ClassDefOverride(EventReader_D,0);
 };
 
-#endif //DSIMU_EVENTREADER_H
+#endif //DSIMU_EVENTREADERDIS_H

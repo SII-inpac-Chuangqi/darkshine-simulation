@@ -2,12 +2,12 @@
 // Created by Zhang Yulei on 9/19/20.
 //
 
-#include "Event/EventReader.h"
+#include "DEventReader_dis.h"
 
 #include <iostream>
 #include <iomanip>
 
-Int_t EventReader::ReadFile(const std::string &filename) {
+Int_t EventReader_D::ReadFile(const std::string &filename) {
     f = new TFile(TString(filename));
     if (!f) {
         std::cerr << "[READFILE ERROR] ==> File: " + filename + " does not exist." << std::endl;
@@ -19,21 +19,7 @@ Int_t EventReader::ReadFile(const std::string &filename) {
     return 1;
 }
 
-void EventReader::RegisterOutput() {
-
-    /*
-     * Register some variables in output
-     */
-    EvtWrt->RegisterIntVariable("RunNumber", &RunNumber, "RunNumber/I");
-    EvtWrt->RegisterIntVariable("EventNumber", &eventProcessedNumber, "EventNumber/I");
-    EvtWrt->RegisterDoubleVariable("Rndm", Rndm, "Rndm[4]/D");
-
-    // Initialized Processed Number
-    eventProcessedNumber = 0;
-}
-
-
-void EventReader::Convert() {
+void EventReader_D::Convert() {
     /*
      *
      */
@@ -68,25 +54,29 @@ void EventReader::Convert() {
 /* From ROOT MakeClass */
 /*                     */
 
-bool EventReader::ReadNextEntry() const {
+bool EventReader_D::ReadNextEntry() const {
 // Read contents of entry.
     if (!treeReader) return false;
     return treeReader->Next();
 }
 
-bool EventReader::ReadEntry(int i) const {
+bool EventReader_D::ReadEntry(int i) const {
     if (!treeReader) return false;
     if (!treeReader->SetEntry(i)) return false;
 
     return true;
 }
 
-Int_t EventReader::ReadTree(const string &treename, TFile* tfile) {
+Long64_t EventReader_D::GetEntries() {
+    return treeReader->GetEntries();
+}
+
+Int_t EventReader_D::ReadTree(const string &treename, TFile* tfile) {
 
     treeReader = shared_ptr<TTreeReader>(new TTreeReader(treename.data(),tfile));
     Entries = treeReader->GetEntries();
 
-    EvtPtr = shared_ptr<TTreeReaderValue<DEvent> >( new TTreeReaderValue<DEvent>(*treeReader,"DEvent") ) ;
+    EvtPtr =  shared_ptr<TTreeReaderValue<DEvent>>( new TTreeReaderValue<DEvent>(*treeReader,"DEvent") );
 
     if (Verbose > -1) {
         cout << "======================================================================" << endl;

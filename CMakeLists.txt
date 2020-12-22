@@ -32,14 +32,29 @@ find_package(HepMC REQUIRED)
 find_package(XercesC REQUIRED)
 if (XercesC_FOUND)
     INCLUDE_DIRECTORIES( ${XercesC_INCLUDE_DIRS} )
-    INCLUDE_DIRECTORIES( ${XercesC_LIBRARIES} )
     LINK_LIBRARIES( ${XercesC_LIBRARIES} )
 endif ()
 
+# GenFit2
+option(USE_GENFIT "USE_GENFIT" OFF)
+if (USE_GENFIT)
+    MESSAGE("-- USING GenFit2: ${USE_GENFIT}")
+    INCLUDE_DIRECTORIES($ENV{GENFIT_INCLUDE_DIR})
+    LINK_LIBRARIES( genfit2 )
+    LINK_DIRECTORIES($ENV{GENFIT_LIB_DIR})
+
+    FIND_PACKAGE(Eigen3 REQUIRED)
+        INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
+        MESSAGE("-- Eigen Dir: ${EIGEN3_INCLUDE_DIR}")
+else()
+    INCLUDE_DIRECTORIES(Utility/)
+endif ()
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
 #
-FIND_PACKAGE(ROOT COMPONENTS Geom TMVA)
+FIND_PACKAGE(OpenGL)
+
+FIND_PACKAGE(ROOT COMPONENTS Geom TMVA Eve Gui RGL EG)
 IF (ROOT_FOUND)
     INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIRS})
     INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
@@ -81,7 +96,7 @@ HEADER_DIRECTORIES(Util_List Util_File "Utility")
 
 include_directories(DP_simu/include
         DP_ana/include
-        Utility/Eigen
+        DP_display/include
         ./
         ${Util_List}
         ${Algo_List}
@@ -100,6 +115,9 @@ file(GLOB_RECURSE Util_headers Utility/*/include/*)
 FILE(GLOB_RECURSE Algo_sources Algorithms/*/src/*.cpp)
 FILE(GLOB_RECURSE Algo_headers Algorithms/*/include/*)
 
+file(GLOB Display_sources DP_display/src/* )
+file(GLOB Display_headers DP_display/include/* )
+
 #----------------------------------------------------------------------------
 # Generate ROOT library for DEvent
 #
@@ -112,6 +130,18 @@ SET(dict_header_shared
         Utility/Object/include/Object/McParticle.h
         Utility/Object/include/Object/ReconstructedParticle.h
         Utility/Object/include/Object/DEvent.h
+
+        DP_ana/include/Event/AnaEvent.h
+        DP_ana/include/Event/EventStoreAndWriter.h
+        DP_ana/include/Core/AnaProcessor.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DEventDisplay.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DEventReader_dis.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DSMagneticField.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/CaloHitsDisplay.h
+
+        # include All Running Ana Processors
+        Algorithms/RecECAL/include/Algo/RecECAL.h
+        Algorithms/RecECAL/include/Algo/ECAL_Cluster.h
         )
 SET(dict_source
         Utility/Object/src/SimulatedHit.cpp
@@ -119,6 +149,20 @@ SET(dict_source
         Utility/Object/src/McParticle.cpp
         Utility/Object/src/ReconstructedParticle.cpp
         Utility/Object/src/DEvent.cpp
+
+        DP_ana/src/AnaEvent.cpp
+        DP_ana/src/EventStoreAndWriter.cpp
+        DP_ana/src/AnaProcessor.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_Processor.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_DetInfo.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_DrawEvent.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventReader_dis.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/CaloHitsDisplay.cpp
+
+        # include All Running Ana Processors
+        Algorithms/RecECAL/src/RecECAL.cpp
+        Algorithms/RecECAL/src/ECAL_Cluster.cpp
         )
 root_generate_dictionary(G__DEvent ${dict_header_shared} LINKDEF Utility/UTIL/include/Utility/DEventLinkDef.h)
 add_library(DEvent SHARED ${dict_header_shared} ${dict_source} G__DEvent.cxx)
@@ -140,14 +184,20 @@ link_libraries(DEvent)
 add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         ${Util_sources} ${Util_headers}
         ${Algo_sources} ${Algo_headers})
-#target_link_libraries(DAna DEvent)
-# if pythia is compiled with g77, link with -lg2c instead.
 
+add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers} ${Ana_sources} ${Ana_headers}
+                                   ${Util_sources} ${Util_headers} ${Algo_sources} ${Algo_headers})
+#target_link_libraries(DDis DEventDisplay)
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
 install(TARGETS DSimu DESTINATION bin)
 install(TARGETS DAna DESTINATION bin)
+install(TARGETS DDis DESTINATION bin)
 install(TARGETS DEvent LIBRARY DESTINATION lib )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent_rdict.pcm DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent.rootmap DESTINATION lib)
+
+#install(TARGETS DEventDisplay LIBRARY DESTINATION lib )
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEventDisplay.rootmap DESTINATION lib)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEventDisplay_rdict.pcm DESTINATION lib)

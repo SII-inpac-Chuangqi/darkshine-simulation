@@ -147,7 +147,7 @@ private:
     std::string PVName;
     std::string ProcessName;
 
-ClassDef(DStep,7);
+ClassDefOverride(DStep,7);
 };
 
 #endif //DSIMU_DSTEP_H

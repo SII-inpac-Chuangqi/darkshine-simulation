@@ -148,7 +148,7 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
         hit->setY(CellPosition.y());
         hit->setZ(CellPosition.z());
     }
-
+    
     //G4cout<<fname<<", "<<reNumber<<", "<<hit->GetEdep()<<", Edep "<<edep<<G4endl;
 
     return true;

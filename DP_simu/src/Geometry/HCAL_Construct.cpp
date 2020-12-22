@@ -8,15 +8,8 @@ void HCAL_Construct::DefineParameters(const G4ThreeVector &Pos_ECALRegion, const
     HCAL_Absorber_Mat = G4Material::GetMaterial("G4_Fe");
     HCALRegion_Mat = G4Material::GetMaterial("CarbonFiber");
     HCAL_Mat = G4Material::GetMaterial("Polystyrene");
-    HCAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
-
-    HCAL_Absorber_Thickness = 3 * cm;
-    HCAL_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
-    HCAL_Size_Dir = G4ThreeVector(100 * cm + 19 * HCAL_Wrap_Size.x(), 5 * cm, 1 * cm);
+    HCAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");    
     //HCAL_Mod_No_Dir = G4ThreeVector( 1, 20, 2 );
-    HCAL_Mod_No_Dir = G4ThreeVector(1, 20, 120);
-    HCAL_Module_No = G4ThreeVector(3, 3, 1);
-    HCAL_Module_Gap = 0.5 * mm;
 
     Size_HCALRegion = G4ThreeVector(0, 0, 0);
     Size_HCALRegion.setX(

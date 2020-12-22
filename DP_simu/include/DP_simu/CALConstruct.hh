@@ -25,8 +25,8 @@ class CALConstruct
 
     G4ThreeVector Construct();
     G4ThreeVector MatrixPlacement(G4int, G4int, G4int, const G4ThreeVector& );
-    void          MatrixPlacementXYRemoved(G4int, G4int, G4int, G4ThreeVector, G4int, G4int);
-    void          MatrixPlacementXYwithAbsorber( G4int, G4int, G4int, G4ThreeVector, G4double, G4Material*);
+    void          MatrixPlacementXYRemoved(G4int, G4int, G4int, const G4ThreeVector&, G4int, G4int);
+    void          MatrixPlacementXYwithAbsorber( G4int, G4int, G4int, const G4ThreeVector&, G4double, G4Material*);
 
     // initializing the output LV
     void CleanLV() { fCaloLVVector.clear(); fWrapLVVector.clear(); };

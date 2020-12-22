@@ -9,14 +9,14 @@ There are two parts of the Dark SHINE Software: **DSimu** and **DAna**.
 - **DSimu** is the simulation program based on Geant4 and ROOT, characterized by Dark SHINE detector.
 - **DAna** is a framework for the analysis and reconstruction tools. It requires the output ROOT file from **DSimu**.
 
-They could be executed separately, with totally different configuration file format. 
+They could be executed separately, with totally different configuration file format.
 ## Installation
 Dark SHINE Software can be easily downloaded through GitLab.
 ```c++
     git clone git@gitlab.com:yulei_zhang/darkshine-simulation.git
 ```
-Before installing, several dependencies need to be checked. 
-- Geant4 10.06 
+Before installing, several dependencies need to be checked.
+- Geant4 10.06
 - ROOT 6
 - HepMC
 
@@ -30,7 +30,7 @@ make -j100  # Just do it!
 make install
 ```
 
-Now in your install directory, there should be two binary files: **DSimu** and **DAna**. 
+Now in your install directory, there should be two binary files: **DSimu** and **DAna**.
 Now it's the time to have fun with them. :relaxed:
 
 ## Running DSimu with macro
@@ -38,10 +38,90 @@ Without any arguments, DSimu will run in graphic mode, which is highly not recom
 
 **Batch Mode**: _DSimu [ -m config.file ] [ -o optical.file ]_
 
-- The config file after '-m' is the normal configuration, e.g. biasing paramter, gun energy, etc. The details of how to write config file will be included in later chapter. 
+- The config file after '-m' is the normal configuration, e.g. biasing paramter, gun energy, etc. The details of how to write config file will be included in later chapter.
 - The config file after '-o' is the optical simulation configuration, which will control whether to switch on the simulation of optical photon.
 
 ## Writing DSimu config file
+
+### Changing Geometry
+| Command                            | Detail                                                             | Example          |
+|------------------------------------|--------------------------------------------------------------------|------------------|
+|**Geometry**|
+| /DP/det/reConstruct                | **Must be called after all geometry parameter settings is done.**  |                  |
+| /DP/det/trkTarDis                  | Distance between the tracker and target.                           | 7.5 mm           |
+| /DP/det/onlyTracker                | Only build the tagging tracker and the recoild tracker.            |                  |
+| /DP/det/onlyECAL                   | Only build the ECAL.                                               |                  |
+| /DP/det/onlyHCAL                   | Only build the HCAL.                                               |                  |
+
+<details><summary><b>Tagging Tracker</b></summary>
+
+| Command                            | Detail                                                             | Example          |
+|------------------------------------|--------------------------------------------------------------------|------------------|
+|**Tagging Tracker**|
+| /DP/det/ifTagTracker               | Whether to build the tagging tracker.                              | 1(true)/0(false) |
+| /DP/det/setTByField                | Define tagging tracker y-direction magnetic field.                 | -1.5 tesla       |
+| /DP/det/tagTrk/addNewSize          | Add a new pair of tagging tracker layers, and specify it's size. Repeat this command to add multiple tagging tracker layers. | 10 20 0.01 cm |
+| /DP/det/tagTrk/addNewPos           | Specify the position of the new tagging tracker layer. <br> The maximum Z value and minimum Z value should be centrosymmetric, and the number of this conmmand should be consistent with the addNewSize command. | 0 0 -10 cm <br> 0 0 5 cm <br> 0 0 10 cm |
+| /DP/det/tagTrk/del                 | Delete all previous tagging tracker layers.                        |                  |
+| /DP/det/tagTrk/rot1                | Angle of front tagging tracker layers.                             | 0 radian         |
+| /DP/det/tagTrk/rot2                | Angle of back tagging trackers layers.                             | 0.1 radian       |
+| /DP/det/tagTrk/color1              | Display RGB color of TagTrk1 in GUI.                               | 0.5 0.5 0        |
+| /DP/det/tagTrk/color2              | Display RGB color of TagTrk2 in GUI.                               | 0.5 0.5 0        |
+</details>
+
+<details><summary><b>Recoil Tracker</b></summary>
+
+| Command                            | Detail                                                             | Example          |
+|------------------------------------|--------------------------------------------------------------------|------------------|
+|**Recoil Tracker**|
+| /DP/det/ifRecTracker               | Whether to build the recoil tracker.                               | 1(true)/0(false) |
+| /DP/det/setRByField                | Define recoil tracker y-direction magnetic field.                  | -0.5 tesla       |
+| /DP/det/recTrk/addNewSize          | Add a new pair of recoil tracker layers, and specify it's size. Repeat this command to add multiple recoil tracker layers. | 10 20 0.01 cm |
+| /DP/det/recTrk/addNewPos           | Specify the position of the new recoil tracker layer. <br> The maximum Z value and minimum Z value should be centrosymmetric, and the number of this conmmand should be consistent with the addNewSize command. | 0 0 -10 cm <br> 0 0 5 cm <br> 0 0 10 cm |
+| /DP/det/recTrk/del                 | Delete all previous recoil tracker layers.                         |                  |
+| /DP/det/recTrk/rot1                | Angle of front recoil tracker layers.                              | 0 radian         |
+| /DP/det/recTrk/rot2                | Angle of back recoil trackers layers.                              | 0.1 radian       |
+| /DP/det/recTrk/color1              | Display RGB color of RecTrk1 in GUI.                               | 0.5 0.5 0        |
+| /DP/det/recTrk/color2              | Display RGB color of RecTrk2 in GUI.                               | 0.5 0.5 0        |
+</details>
+
+<details><summary><b>Target</b></summary>
+
+| Command                            | Detail                                                             | Example          |
+|------------------------------------|--------------------------------------------------------------------|------------------|
+|**Target**|
+| /DP/det/ifTarget                   | Whether to build the target.                                       | 1(true)/0(false) |
+</details>
+
+<details><summary><b>ECAL</b></summary>
+
+| Command                            | Detail                                                             | Example          |
+|------------------------------------|--------------------------------------------------------------------|------------------|
+|**ECAL**|
+| /DP/det/ifECAL                     | Whether to build the ECAL.                                         | 1(true)/0(false) |
+| /DP/det/selectECAL                 | Select the build-in ECAL configuration.                | 1 : XYCrossing <br> 2 : AllZ |
+| /DP/det/ECAL/centerWrapSize        | ECAL center wrap size.                                             | 0.3 0.3 0.3 mm   |
+| /DP/det/ECAL/centerSize            | ECAL center size.                                                  | 1 1 37.05 cm     |
+| /DP/det/ECAL/centerModuleNo        | ECAL center module number.                                         | 6 6 1            |
+</details>
+
+<details><summary><b>HCAL</b></summary>
+
+| Command                            | Detail                                                             | Example          |
+|------------------------------------|--------------------------------------------------------------------|------------------|
+|**HCAL**|
+| /DP/det/ifHCAL                     | Whether to build the HCAL.                                         | 1(true)/0(false) |
+| /DP/det/HCAL/wrapSize              | HCAL wrap size.                                                    | 0.3 0.3 0.3 mm   |
+| /DP/det/HCAL/sizeDir               |  | 100.57 5 1 cm |
+| /DP/det/HCAL/moduleNoDir           |  | 1 20 120 |
+| /DP/det/HCAL/moduleNo              | HCAL module number.                                                | 3 3 1            |
+| /DP/det/HCAL/moduleGap             | Gap between HCAL modules.                                          | 0.5 mm           |
+| /DP/det/HCAL/absorberThickness     | Thickness of the absorber.                                         | 3 cm             |
+</details>
+
+
+### Rare Process Biasing
+<details><summary><b>Biasing</b></summary>
 
 | Command                            | Detail                                                             | Example          |
 |------------------------------------|--------------------------------------------------------------------|------------------|
@@ -62,56 +142,11 @@ Without any arguments, DSimu will run in graphic mode, which is highly not recom
 | /DP/Filter/Process_Emin            | The minimal energy required for the parent particle in the process | 1 GeV            |
 | /DP/Filter/Process_MinScanDistance | Only scan the region with z large than this value                  | -1 mm            |
 | /DP/Filter/Process_MaxScanDistance | Only scan the region with z less than this value                   | 100 mm           |
+</details>
 
 # Data Recoding
-## Output Data format (ROOT file)
-|     Variables    |     Definition    |
-|-|-|
-|     Px    |     Momentum along x    |
-|     Py    |     Momentum along y    |
-|     Pz    |     Momentum along z    |
-|     E    |     Total Energy    |
-|     Eremain    |     The remaining Kinetic Energy leaving detector region    |
-|     VPosx    |     Vertex position x    |
-|     VPosy    |     Vertex position y    |
-|     VPosz    |     Vertex position z    |
-|     EPosx    |     End position x    |
-|     EPosy    |     End position y    |
-|     EPosz    |     End position z    |
-| |
-|     Rndm    |     random number seed    |
-|     t_e1_Momentum    |     the momentum of initial electron while passing target    |
-|     t_e1_VPos    |     the position of initial electron while passing target    |
-|     t_e2_Momentum    |     the momentum of initial electron while hitting surface of ECAL    |
-|     t_e2_VPos    |     the position of initial electron while hitting surface of ECAL    |
-|     TRUTH_MC_Nb    |     # of MC particles recorded    |
-|     TRUTH_MC_id    |     Track id in Geant 4 for each MC particle    |
-|     TRUTH_MC_PDG    |     PDG    |
-|     TRUTH_MC_ParentID    |     Parent track id    |
-|     Process_Type    |     Type of creating process (refer to Geant4)    |
-|     Process_SubType    |     SubType of creating process (refer to Geant4)    |
-|     TRUTH_MC_PNEnergy_Tar    |     Max photonuclear reaction energy in target region    |
-|     TRUTH_MC_PNEnergy_ECal    |     Max photonuclear reaction energy in ECAL region    |
-|     TRUTH_MC_Eleak_ECAL    |     Energy deposition in ECAL holder/gap region    |
-| |
-|     Detector_No    |     # of hits in this detector    |
-|     Detector_Eleak_Wrapper    |     Energy deposition in Cell Wrapper region    |
-|     Detector_Type    |     Detector Type     |
-|     Detector_PDG    |     Useless, ignore it.    |
-|     Detector_Time    |     Hit time (Energy weighted)    |
-|     Detector_EDep    |     Total energy deposition    |
-|     Detector_EdepEM    |     EM part of EDep    |
-|     Detector_EdepHad    |     Had part of EDep    |
-|     Detector_X    |     Position x of the hit (For tracker, it is accurate; For calorimeter, it’s the center of the cell)    |
-|     Detector_Y    |     Position y of the hit (For tracker, it is accurate; For calorimeter, it’s the center of the cell)    |
-|     Detector_Z    |     Position z of the center of the cell    |
-|     Detector_DetectorID    |     Replication Number of cor. detector    |
-|     Detector_DetectorID_x    |     DetectorID of x direction     |
-|     Detector_DetectorID_y    |     DetectorID of y direction     |
-|     Detector_DetectorID_z    |     DetectorID of z direction     |
-| |
-- For all variables with format “xxx_Y”, it means the Y of “xxx”. For example, “TRUTH_MC_E” means the Energy of “Truth MC”.   
-- For all Detector Hit (Trackers and Calorimeters), the output format is the same.   
+- For all variables with format “xxx_Y”, it means the Y of “xxx”. For example, “TRUTH_MC_E” means the Energy of “Truth MC”.
+- For all Detector Hit (Trackers and Calorimeters), the output format is the same.
 - **Units: MeV, mm, ns**
 
 ## Detector modules
@@ -146,13 +181,5 @@ For detector type,
 
 ## Detector ID
 For detector ID, DetectorID and (DetectorID_x, DetectorID_y, DetectorID_z) are the same. Analyzer can either use DetectorID or (DetectorID_x, DetectorID_y, DetectorID_z). The later one is calculated by splitting the former one according to corresponding cell number along x, y and z. 
-
-# To do list
-- [x] Basic software framework
-- [x] Biasing modules
-- [x] Filter modules 
-- [ ] Optical material properties both for ECAL and HCAL
-- [ ] Digitization simulation
-- [ ] Optimization (running time estimation for each function)  
 
 

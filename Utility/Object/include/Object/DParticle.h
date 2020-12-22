@@ -218,7 +218,7 @@ protected:
     double EndPointY{0.};
     double EndPointZ{0.};
 
-ClassDef(DParticle, 3);
+ClassDefOverride(DParticle, 3);
 };
 
 #endif //DSIMU_DPARTICLE_H

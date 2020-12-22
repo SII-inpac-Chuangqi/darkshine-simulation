@@ -10,10 +10,6 @@ void ECAL_AllZ::DefineParameters(const G4ThreeVector &Pos_RecRegion, const G4Thr
     ECAL_Center_Mat = G4Material::GetMaterial("PWO4"); // X0 = 0.92 cm
     ECAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
 
-    ECAL_Center_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
-    ECAL_Center_Size = G4ThreeVector(2.5 * cm, 2.5 * cm, 36. * cm);
-    ECAL_Center_Module_No = G4ThreeVector(20, 20, 1);
-
     ECAL_Module_Gap = 0.5 * mm;
 
     Size_ECALRegion = G4ThreeVector(0, 0, 0);

@@ -50,7 +50,7 @@ private:
     MCParticleVec MCParticles;
     CalorimeterHitVec CaloHits;
 
-ClassDef(ReconstructedParticle,13);
+ClassDefOverride(ReconstructedParticle,13);
 
 };
 
