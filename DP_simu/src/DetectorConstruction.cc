@@ -81,7 +81,7 @@ DetectorConstruction::DetectorConstruction(RootManager *rootMng) {
     build_RecTrk = true;
     build_HCAL = true;
 
-    ECAL_Selection = 1;
+    ECAL_Selection = 2;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
