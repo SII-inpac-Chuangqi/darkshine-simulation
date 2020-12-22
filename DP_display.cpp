@@ -36,8 +36,6 @@ int main(int argc, char **argv) {
             batch_mode = true;
         else if (std::string(argv[i]) == "-h")
             PrintUsage();
-        else
-            return -1;
     }
 
     auto EvtDisplay = new DEventDisplay();

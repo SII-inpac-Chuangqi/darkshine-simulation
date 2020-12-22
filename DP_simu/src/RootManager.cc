@@ -278,7 +278,7 @@ void RootManager::FillParticleStep(const G4Step *aStep) {
     Steps->emplace_back(step);
 }
 
-void RootManager::FillGeometry(const G4String& filename) {
+void RootManager::FillGeometry(const G4String &filename) {
 
     auto geoM = new TGeoManager();
     TGeoManager::Import(filename);

@@ -30,7 +30,6 @@ CaloHitsDisplay::~CaloHitsDisplay() {
 
 void CaloHitsDisplay::makeLego(TEveViewer *v, TEveScene *s, ProjectionPlane plane) {
 
-
     s->DestroyElements();
 
     if (plane == dXY) {
@@ -63,6 +62,7 @@ void CaloHitsDisplay::makeLego(TEveViewer *v, TEveScene *s, ProjectionPlane plan
     vector<CaloHit> sumhit_table;
     vector<CaloHit> hit_table;
     // Loop first to find the Maximum Energy Value
+    // EMax is to scale the total lego height
     for (const auto &calo : calovec) {
         for (auto hit : calo) {
             bool found = false;

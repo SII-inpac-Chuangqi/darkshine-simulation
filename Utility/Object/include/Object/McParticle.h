@@ -78,6 +78,10 @@ public:
     void addChildren(McParticle* mcp) {
         Children->emplace_back(mcp);
     }
+
+    void addSimHits(SimulatedHit* hit) {
+        SimHits.emplace_back(hit);
+    }
 private:
 
     // the remaining energy while leaving the world

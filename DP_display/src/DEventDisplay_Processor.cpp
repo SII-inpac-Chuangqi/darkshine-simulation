@@ -64,7 +64,7 @@ void DEventDisplay::makeGUIProcessor(DEventDisplay *fh) {
     TGTextButton *tb = nullptr;
 
     browser->StartEmbedding(TRootBrowser::kLeft);
-    auto *frmMain1 = new TGMainFrame(gClient->GetRoot(), 1000, 600);
+    auto *frmMain1 = new TGMainFrame(gClient->GetRoot(), 1200, 800);
     frmMain1->SetWindowName("XX GUI");
     frmMain1->SetCleanup(kDeepCleanup);
     TGHorizontalFrame *hf = nullptr;
@@ -79,7 +79,7 @@ void DEventDisplay::makeGUIProcessor(DEventDisplay *fh) {
         hf = new TGHorizontalFrame(frmMain1);
         {
             guiRecECAL = new TGCheckButton(hf, "Run RecECAL");
-            if (guiRecECAL) guiRecECAL->Toggle();
+            //if (guiRecECAL) guiRecECAL->Toggle();
             hf->AddFrame(guiRecECAL);
             guiRecECAL->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptionsAna()");
         }

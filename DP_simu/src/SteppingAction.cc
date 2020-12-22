@@ -77,7 +77,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         auto Region_name = post->GetPhysicalVolume()->GetName();
         froot->FillEleak( aStep , Region_name );
     }
-
+    if ( !post ) return;
     if ( aStep->GetTrack()->GetTrackID()==1 ) {
 
         p->setPdg( aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding() );
@@ -116,7 +116,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
     /* Optical Photon Detection: APD region */
     if ( froot->GetOptical() && aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "opticalphoton" ) {
-        if( post && post->GetPhysicalVolume() ) {
+        if( post->GetPhysicalVolume() ) {
             auto Region_name = post->GetPhysicalVolume()->GetName();
             auto kill_flag = froot->FillOptical( aStep , Region_name );
 

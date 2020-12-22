@@ -1,3 +1,12 @@
+v2.2.0 (Ongoing)
+DSimu:
+    1. Add MC Particle Contribution to Simulated Hits; Only the three most contributed particles will be recorded.
+    2. Tracker Hits is pixelized along trackers z position. (hit position z is fixed for each tracker layer)
+DDis:
+    1. Add the full detector geometry display
+    2. Add SimulatedHits Collection display; Add initial particle step collection display; Add MC particle tracks display.
+    3. Now support Ana Processor module. One can easily visualize the processing of AnaProcessor.
+
 v2.1.1
 Added DDis module, which can print out the detector geometry very fast
 

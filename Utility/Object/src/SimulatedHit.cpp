@@ -4,7 +4,10 @@
 
 #include "Object/SimulatedHit.h"
 
-SimulatedHit::SimulatedHit() = default;
+#include <iostream>
+
+SimulatedHit::SimulatedHit() {
+};
 
 SimulatedHit::SimulatedHit(const SimulatedHit &rhs) : DHit(rhs) {
     *this = rhs;
@@ -17,7 +20,7 @@ SimulatedHit &SimulatedHit::operator=(const SimulatedHit &rhs) {
     EdepEm = rhs.EdepEm;
     EdepHad = rhs.EdepHad;
     //PContribution_TrackID = rhs.PContribution_TrackID;
-    PContribution = rhs.PContribution;
+    MCPContribution = rhs.MCPContribution;
     CaloHits = rhs.CaloHits;
     return *this;
 }
@@ -30,28 +33,12 @@ double SimulatedHit::getEdepHad() const {
     return EdepHad;
 }
 
-const MCParticleVec& SimulatedHit::getPContribution() const {
-    return PContribution;
-}
-
-const CalorimeterHitVec &SimulatedHit::getCaloHits() const {
-    return CaloHits;
-}
-
 void SimulatedHit::setEdepEm(double edepEm) {
     EdepEm = edepEm;
 }
 
 void SimulatedHit::setEdepHad(double edepHad) {
     EdepHad = edepHad;
-}
-
-void SimulatedHit::setPContribution(const MCParticleVec &pContribution) {
-    PContribution = pContribution;
-}
-
-void SimulatedHit::setCaloHits(const CalorimeterHitVec &caloHits) {
-    CaloHits = caloHits;
 }
 
 void SimulatedHit::setELeakWrapper(double eLeakWrapper) {
@@ -68,10 +55,26 @@ bool SimulatedHit::operator==(const SimulatedHit &rhs) const {
            EdepEm == rhs.EdepEm &&
            EdepHad == rhs.EdepHad &&
            //PContribution_TrackID == rhs.PContribution_TrackID &&
-           PContribution == rhs.PContribution &&
+           MCPContribution == rhs.MCPContribution &&
            CaloHits == rhs.CaloHits;
 }
 
 bool SimulatedHit::operator!=(const SimulatedHit &rhs) const {
     return !(rhs == *this);
+}
+
+// Add the 3 particles with the most energy deposition contributed to this hit
+void SimulatedHit::addParticleContribution(McParticle *mcp, double Edep) {
+    if (MCPContribution.size() >= 3) {
+        assert(SimHits_Edep.size() == MCPContribution.size());
+        for (unsigned i = 0; i < SimHits_Edep.size(); ++i) {
+            if (SimHits_Edep.at(i) < Edep) {
+                MCPContribution.at(i) = mcp;
+                SimHits_Edep.at(i) = Edep;
+            }
+        }
+    } else {
+        MCPContribution.push_back(mcp);
+        SimHits_Edep.push_back(Edep);
+    }
 }

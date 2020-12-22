@@ -41,118 +41,26 @@ bool DEventDisplay::drawEvent(int id, bool resCam) {
     if (!evt) return false;
     std::cout << "[Event Display] ==> Plotting event: " << evt->getEventId() << std::endl;
 
-    if (_drawMCTracks) {
-        // Draw Event collection by collection
-        // Step Collection
-        auto StepCols = evt->getStepCollection();
-        for (const auto &StepCol : StepCols) {
-            auto Steps = StepCol.second;
-            std::cout << "[Event Display] ==> Draw Collection: " << StepCol.first;
-            std::cout << ", with total steps: " << Steps->size() << std::endl;
-            if (Steps->size() < 2) continue;
-            auto lineSet = new TEveStraightLineSet(StepCol.first.data());
-            for (unsigned i = 0; i < Steps->size() - 1; ++i) {
-                // loop from 0 to n-1 to draw n-1 lines
-                auto step = Steps->at(i);
-                auto next_step = Steps->at(i + 1);
 
-                TVector3 start(step->getX() / 10, step->getY() / 10, step->getZ() / 10);
-                TVector3 end(next_step->getX() / 10, next_step->getY() / 10, next_step->getZ() / 10);
-
-                makeLines(lineSet, start, end, kRed, 1, false, 3, 0);
-            }
-            gEve->AddElement(lineSet);
-        }
-
-        // MC Collection ( e.g. Particle Track)
-        // Initialize Track
-        auto *gMCTrackList = new TEveTrackList("MC Tracks");
-        gEve->AddElement(gMCTrackList);
-        auto *trkProp = gMCTrackList->GetPropagator();
-        trkProp->SetMagFieldObj(new DSMagneticField());
-
-        auto MCCols = evt->getMcParticleCollection();
-        for (const auto &MCCol : MCCols) {
-            auto MCs = MCCol.second;
-            std::cout << "[Event Display] ==> Draw Collection: " << MCCol.first;
-            std::cout << ", with total particles: " << MCs->size() << std::endl;
-            if (MCs->size() < 2) continue;
-            for (unsigned i = 0; i < MCs->size(); ++i) {
-                if (MCs->at(i)->getId() == 1) continue;
-                TEveTrack *track = makeMCTrack(trkProp, i, MCs->at(i));
-                gMCTrackList->AddElement(track);
-            }
-        }
-        gMCTrackList->MakeTracks();
-    }
-
+    // Draw Event collection by collection
     /***************************/
     /*   Display of Raw Hits   */
     /***************************/
+    if (_drawMCTracks) {
+        drawInitialParticleStep();
+        drawMCParticles();
+    }
     auto *SimHitsList = new TEveElementList("Simulated Hits");
     gEve->AddElement(SimHitsList);
     // Tracker Hits
     if (_drawSimuTrkHits) {
-        /***************/
-        /*   Tracker   */
-        /***************/
-        // Ploting raw hits
-        // basic idea is to draw a box on the hit point, but the box is scaled with a factor
-        auto TrkCols = evt->getSimulatedHitCollection();
-        for (const auto &TrkCol : TrkCols) {
-            // only count hits in tracker
-            if (!TString(TrkCol.first).Contains("Trk")) continue;
-            if (TrkCol.second->empty()) continue;
-            auto *SimTrkHits = new TEveElementList(TrkCol.first.data());
-            SimHitsList->AddElement(SimTrkHits);
-            auto Trks = TrkCol.second;
-            std::cout << "[Event Display] ==> Draw Collection: " << TrkCol.first;
-            std::cout << ", with total hits: " << Trks->size() << std::endl;
-            if (Trks->empty()) continue;
-
-            for (auto trk_hit : *Trks) {
-                // Skip calo hits under threshold
-                if (trk_hit->getE() < Trk_Emin && TString(TrkCol.first).Contains("Trk")) continue;
-                auto *box = makeTrackerBox(trk_hit, _scale_factor_SimuTrkHits);
-                SimTrkHits->AddElement(reinterpret_cast<TEveElement *>(box));
-            }
-        }
+        drawSimuTrkHits(SimHitsList);
     }
-
     if (_drawSimuCaloHits) {
-        /************/
-        /*   CALO   */
-        /************/
-        // Ploting raw hits
-        // basic idea is to draw a box on the hit point
-        auto CALCols = evt->getSimulatedHitCollection();
-        for (const auto &CALCol : CALCols) {
-            // only count hits in calorimeter
-            if (!TString(CALCol.first).Contains("CAL")) continue;
-            if (CALCol.second->empty()) continue;
-            auto *SimHits = new TEveElementList(CALCol.first.data());
-            SimHitsList->AddElement(SimHits);
-            auto CALs = CALCol.second;
-            std::cout << "[Event Display] ==> Draw Collection: " << CALCol.first;
-            std::cout << ", with total hits: " << CALs->size() << std::endl;
-            if (CALs->empty()) continue;
-            double EMax = 0.;
-            for (auto cal_hit : *CALs)
-                EMax = (cal_hit->getE() > EMax) ? cal_hit->getE() : EMax;
-
-            for (auto cal_hit : *CALs) {
-                // Skip calo hits under threshold
-                if (cal_hit->getE() < r_min * EMax) continue;
-                if (cal_hit->getE() < ECAL_Emin && TString(CALCol.first).Contains("ECAL")) continue;
-                if (cal_hit->getE() < HCAL_Emin && TString(CALCol.first).Contains("HCAL")) continue;
-                auto *box = makeSimuCaloBox(cal_hit, EMax);
-                SimHits->AddElement(reinterpret_cast<TEveElement *>(box));
-            }
-        }
+        drawSimuCaloHits(SimHitsList);
     }
 
-
-    // Display Simulated Calorimeter Hits
+    // Display Simulated Calorimeter Hits LEGO
     CaloDisplay = new CaloHitsDisplay();
     auto CALCols = evt->getSimulatedHitCollection();
     makeCaloLego(CALCols, CaloDisplay, _drawSimuCaloLego);
@@ -162,10 +70,119 @@ bool DEventDisplay::drawEvent(int id, bool resCam) {
     /************************************/
     RunAnaProcessors();
 
-    // Finalize
+    /*********************/
+    /*   Finalization   */
+    /********************/
     gEve->Redraw3D(resCam);
 
     return true;
+}
+
+void DEventDisplay::drawInitialParticleStep() {
+    // Step Collection
+    auto StepCols = evt->getStepCollection();
+    for (const auto &StepCol : StepCols) {
+        auto Steps = StepCol.second;
+        std::cout << "[Event Display] ==> Draw Collection: " << StepCol.first;
+        std::cout << ", with total steps: " << Steps->size() << std::endl;
+        if (Steps->size() < 2) continue;
+        auto lineSet = new TEveStraightLineSet(StepCol.first.data());
+        for (unsigned i = 0; i < Steps->size() - 1; ++i) {
+            // loop from 0 to n-1 to draw n-1 lines
+            auto step = Steps->at(i);
+            auto next_step = Steps->at(i + 1);
+
+            TVector3 start(step->getX() / 10, step->getY() / 10, step->getZ() / 10);
+            TVector3 end(next_step->getX() / 10, next_step->getY() / 10, next_step->getZ() / 10);
+
+            makeLines(lineSet, start, end, kRed, 1, false, 3, 0);
+        }
+        gEve->AddElement(lineSet);
+    }
+}
+
+void DEventDisplay::drawMCParticles() {
+    // MC Collection ( e.g. Particle Track)
+    // Initialize Track
+    auto *gMCTrackList = new TEveTrackList("MC Tracks");
+    gEve->AddElement(gMCTrackList);
+    auto *trkProp = gMCTrackList->GetPropagator();
+    trkProp->SetMagFieldObj(new DSMagneticField());
+
+    auto MCCols = evt->getMcParticleCollection();
+    for (const auto &MCCol : MCCols) {
+        auto MCs = MCCol.second;
+        std::cout << "[Event Display] ==> Draw Collection: " << MCCol.first;
+        std::cout << ", with total particles: " << MCs->size() << std::endl;
+        if (MCs->size() < 2) continue;
+        for (unsigned i = 0; i < MCs->size(); ++i) {
+            if (MCs->at(i)->getId() == 1) continue;
+            if (MCs->at(i)->getEnergy() < MC_Emin) continue;
+            if ( (MC_PDG) && (abs(MCs->at(i)->getPdg()) != MC_PDG)) continue;
+            TEveTrack *track = makeMCTrack(trkProp, i, MCs->at(i));
+            gMCTrackList->AddElement(track);
+        }
+    }
+    gMCTrackList->MakeTracks();
+}
+
+void DEventDisplay::drawSimuTrkHits(TEveElementList *SimHitsList) {
+    /***************/
+    /*   Tracker   */
+    /***************/
+    // Ploting raw hits
+    // basic idea is to draw a box on the hit point, but the box is scaled with a factor
+    auto TrkCols = evt->getSimulatedHitCollection();
+    for (const auto &TrkCol : TrkCols) {
+        // only count hits in tracker
+        if (!TString(TrkCol.first).Contains("Trk")) continue;
+        if (TrkCol.second->empty()) continue;
+        auto *SimTrkHits = new TEveElementList(TrkCol.first.data());
+        SimHitsList->AddElement(SimTrkHits);
+        auto Trks = TrkCol.second;
+        std::cout << "[Event Display] ==> Draw Collection: " << TrkCol.first;
+        std::cout << ", with total hits: " << Trks->size() << std::endl;
+        if (Trks->empty()) continue;
+
+        for (auto trk_hit : *Trks) {
+            // Skip calo hits under threshold
+            if (trk_hit->getE() < Trk_Emin && TString(TrkCol.first).Contains("Trk")) continue;
+            auto *box = makeTrackerBox(trk_hit, _scale_factor_SimuTrkHits);
+            SimTrkHits->AddElement(reinterpret_cast<TEveElement *>(box));
+        }
+    }
+}
+
+void DEventDisplay::drawSimuCaloHits(TEveElementList *SimHitsList) {
+    /************/
+    /*   CALO   */
+    /************/
+    // Ploting raw hits
+    // basic idea is to draw a box on the hit point
+    auto CALCols = evt->getSimulatedHitCollection();
+    for (const auto &CALCol : CALCols) {
+        // only count hits in calorimeter
+        if (!TString(CALCol.first).Contains("CAL")) continue;
+        if (CALCol.second->empty()) continue;
+        auto *SimHits = new TEveElementList(CALCol.first.data());
+        SimHitsList->AddElement(SimHits);
+        auto CALs = CALCol.second;
+        std::cout << "[Event Display] ==> Draw Collection: " << CALCol.first;
+        std::cout << ", with total hits: " << CALs->size() << std::endl;
+        if (CALs->empty()) continue;
+        double EMax = 0.;
+        for (auto cal_hit : *CALs)
+            EMax = (cal_hit->getE() > EMax) ? cal_hit->getE() : EMax;
+
+        for (auto cal_hit : *CALs) {
+            // Skip calo hits under threshold
+            if (cal_hit->getE() < r_min * EMax) continue;
+            if (cal_hit->getE() < ECAL_Emin && TString(CALCol.first).Contains("ECAL")) continue;
+            if (cal_hit->getE() < HCAL_Emin && TString(CALCol.first).Contains("HCAL")) continue;
+            auto *box = makeSimuCaloBox(cal_hit, EMax);
+            SimHits->AddElement(reinterpret_cast<TEveElement *>(box));
+        }
+    }
 }
 
 void DEventDisplay::makeLines(TEveStraightLineSet *lineSet, const TVector3 &start, const TVector3 &end,
@@ -213,13 +230,13 @@ TEveTrack *DEventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned id,
         // highlighted Special Particle like muons, hadrons
         if (abs(mc->getPdg()) == 13) {
             track->SetLineWidth(4);
-            track->SetLineStyle(9);
+            track->SetLineStyle(2);
         } else if (abs(mc->getPdg()) > 1e2 || abs(mc->getPdg()) < 1e3) {
             track->SetLineWidth(3);
-            track->SetLineStyle(6);
+            track->SetLineStyle(3);
         } else if (abs(mc->getPdg()) > 1e3 || mc->getP() > 1e3) { // Require Momentum > 1 GeV
             track->SetLineWidth(4);
-            track->SetLineStyle(8);
+            track->SetLineStyle(4);
         }
         if (mc->getP() > 1e3) { // Highlight
             track->SetLineWidth(track->GetLineWidth() * 1.5);
@@ -287,11 +304,19 @@ TEveBox *DEventDisplay::makeBox(const double *abs_pos, const double *half_size) 
     return box;
 }
 
-TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) {
+TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) const {
     auto cur_node = gGeoManager->FindNode(hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10);
     auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
     double abs_pos[3] = {hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10};
     double half_size[3] = {cur_shape->GetDX(), cur_shape->GetDY(), cur_shape->GetDZ()};
+
+    if (_drawScaleSimuCaloBox) {
+        double ratio =
+                log(hit->getE() / EMax / _scale_factor_SimuCaloHits + 1) / log(1 / _scale_factor_SimuCaloHits + 1);
+        half_size[0] *= ratio;
+        half_size[1] *= ratio;
+        half_size[2] *= ratio;
+    }
 
     auto *box = makeBox(abs_pos, half_size);
     box->SetName((Form("Cell %d", hit->getCellId())));
@@ -299,7 +324,10 @@ TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) {
     auto color = FindColor(hit->getE(), EMax);
     box->SetLineColor(color);
     box->SetFillColor(color);
-    box->SetMainAlpha(log(log(hit->getE() + 1) / log(EMax + 1) + 1));
+    if (!_drawScaleSimuCaloBox)
+        box->SetMainAlpha(log(log(hit->getE() + 1) / log(EMax + 1) + 1));
+    else
+        box->SetMainAlpha(0.65);
 
     box->SetTitle(Form("CellID=%d, ID=(%d, %d, %d)\n"
                        "E = %.3f , E_EM = %.3f, E_Had = %.3f [MeV]\n"

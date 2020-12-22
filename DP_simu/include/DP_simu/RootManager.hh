@@ -38,6 +38,10 @@ class TRandom3;
 
 class RootMessenger;
 
+// Some Global String
+static TString InitialParticleStepCollection = "Initial_Particle_Step";
+static TString RawMCCollection = "RawMCParticle";
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // class description:
 //   This class
