@@ -54,8 +54,8 @@ void CaloHitsDisplay::makeLego(TEveViewer *v, TEveScene *s, ProjectionPlane plan
     s->SetElementName("Scene - Calo Lego");
 
     // Make Grid First
-    makeGrid(plane, kWhite, 0.5);
-    s->AddElement(grid_line);
+    makeGrid(plane, kWhite);
+    //s->AddElement(grid_line);
 
     if (!if_drawLego || calovec.empty()) return;
 
@@ -130,11 +130,10 @@ void CaloHitsDisplay::makeLego(TEveViewer *v, TEveScene *s, ProjectionPlane plan
     }
 
     s->AddElement(CaloHitsList);
-    //v->GetGLViewer()->SetCurrentCamera(CameraType);
 
 }
 
-void CaloHitsDisplay::makeGrid(ProjectionPlane plane, Color_t grid_color, float grid_alpha) {
+void CaloHitsDisplay::makeGrid(ProjectionPlane plane, Color_t grid_color) {
     // Draw Grid Line
     if (xbin * ybin * zbin <= 0) return;
     if (xmax - xmin < 0 || ymax - ymin < 0 || zmax - zmin < 0) return;
@@ -178,19 +177,18 @@ void CaloHitsDisplay::makeGrid(ProjectionPlane plane, Color_t grid_color, float 
         TVector3 start(0, 0, 0.);
         TVector3 end(0, 0, 0.);
         if (plane == dXY) {
-            start = TVector3(xmin, (ymin + (float) i * delta_y), 0.);
-            end = TVector3(xmax, (ymin + (float) i * delta_y), 0.);
+            start = TVector3(xmin, (ymin + (float) i * delta_y), -1e-6);
+            end = TVector3(xmax, (ymin + (float) i * delta_y), -1e-6);
         } else if (plane == dXZ) {
-            start = TVector3(xmin, 0., (zmin + (float) i * delta_z));
-            end = TVector3(xmax, 0., (zmin + (float) i * delta_z));
+            start = TVector3(xmin, -1e-6, (zmin + (float) i * delta_z));
+            end = TVector3(xmax, -1e-6, (zmin + (float) i * delta_z));
         } else if (plane == dYZ) {
-            start = TVector3(0., ymin, (zmin + (float) i * delta_z));
-            end = TVector3(0., ymax, (zmin + (float) i * delta_z));
+            start = TVector3(-1e-6, ymin, (zmin + (float) i * delta_z));
+            end = TVector3(-1e-6, ymax, (zmin + (float) i * delta_z));
         }
 
         DEventDisplay::makeLines(grid_line, start, end, grid_color, 1, false, 0.5, 0);
     }
-
-    grid_line->SetMainAlpha(grid_alpha);
+    grid_line->SetMainAlpha(0.5);
 }
 

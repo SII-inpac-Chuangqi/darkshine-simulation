@@ -90,7 +90,7 @@ public:
     TEveStraightLineSet *grid_line{nullptr};
 
     /// \brief base function to create grid lines given the projection plane
-    void makeGrid(ProjectionPlane plane, Color_t grid_color = kWhite, float grid_alpha = 1.0);
+    void makeGrid(ProjectionPlane plane, Color_t grid_color = kWhite);
 
     /// \brief Core function to display Lego
     /// \arguments v and s are the user-defined TEve elements, which have to be explicitly defined.

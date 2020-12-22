@@ -17,6 +17,8 @@
 #include "TEveLegoEventHandler.h"
 #include "TEveBrowser.h"
 #include "TGTab.h"
+#include "TEveText.h"
+#include "TGLAutoRotator.h"
 
 #include "TH2F.h"
 
@@ -74,6 +76,8 @@ bool DEventDisplay::drawEvent(int id, bool resCam) {
     /*   Finalization   */
     /********************/
     gEve->Redraw3D(resCam);
+    gEve->FullRedraw3D(kTRUE);
+    gEve->GetDefaultGLViewer()->RequestDraw(TGLRnrCtx::kLODHigh);
 
     return true;
 }
@@ -464,6 +468,31 @@ void DEventDisplay::makeCaloLego(CaloCol col, CaloHitsDisplay *calo_dis, bool if
     calo_dis->calovec = tmpCaloHits;
     calo_dis->makeLego(win_v.at(2), win_s.at(2), dYZ);
 
+    // Draw Text For Fun
+    win_v.at(3)->SetElementName("Dark SHINE Logo");
+    win_s.at(3)->DestroyElements();
+    auto marker = new TEvePointSet(1);
+    marker->SetName("Origin marker");
+    marker->SetMarkerColor(kBlack);
+    marker->SetMarkerStyle(3);
+    Float_t a = 1;
+    marker->SetPoint(0, a,  +a, +a);
+    win_s.at(3)->AddElement(marker);
+    auto text_ds = new TEveText("Dark SHINE");
+    gEve->AddToListTree(text_ds, kFALSE);
+    text_ds->PtrMainTrans()->RotateLF(1, 3, TMath::PiOver2());
+    text_ds->SetMainColor(kOrange-2);
+    text_ds->SetFontSize(64);
+    text_ds->SetFontMode(TGLFont::kExtrude);
+    text_ds->SetLighting(kTRUE);
+    win_s.at(3)->AddElement(text_ds);
+    win_v.at(3)->GetGLViewer()->GetAutoRotator()->SetWDolly(0.01);
+    win_v.at(3)->GetGLViewer()->GetAutoRotator()->SetADolly(0.01);
+    win_v.at(3)->GetGLViewer()->GetAutoRotator()->SetATheta(0.01);
+    win_v.at(3)->GetGLViewer()->GetAutoRotator()->SetWTheta(0.01);
+    win_v.at(3)->GetGLViewer()->GetAutoRotator()->SetDt(0.001);
+    win_v.at(3)->GetGLViewer()->GetAutoRotator()->SetWPhi(0.75);
+    win_v.at(3)->GetGLViewer()->GetAutoRotator()->Start();
 }
 
 
