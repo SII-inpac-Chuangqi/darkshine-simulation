@@ -139,7 +139,7 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     if (!fType) {
         hit->setX(HitPoint.x());
         hit->setY(HitPoint.y());
-        hit->setZ(HitPoint.z());
+        hit->setZ(CellPosition.z());
         fRootMng->FillSimHit(fname, hit);
 
         delete hit;
