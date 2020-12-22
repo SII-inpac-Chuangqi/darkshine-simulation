@@ -4,7 +4,7 @@
 
 #include "Object/SimulatedHit.h"
 
-#include <iostream>
+#include <cassert>
 
 SimulatedHit::SimulatedHit() {
 };
