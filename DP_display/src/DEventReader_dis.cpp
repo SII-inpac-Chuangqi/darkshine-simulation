@@ -2,7 +2,7 @@
 // Created by Zhang Yulei on 9/19/20.
 //
 
-#include "EventReader_dis.h"
+#include "DEventReader_dis.h"
 
 #include <iostream>
 #include <iomanip>
@@ -25,10 +25,10 @@ void EventReader_D::Convert() {
      */
 
     // Initialization
-    if (evt->getEventId() == EvtPtr->Get()->getEventId())
-        return;
-    //evt->Initialization(nALL);
-    evt = EvtPtr->Get();
+    evt->Initialization(nALL);
+
+    evt->ConvertTreeValuePtr(EvtPtr);
+    evt->LinkChildren();
 
     RunNumber = evt->getRunId();
     EventNumber = evt->getEventId();
@@ -73,10 +73,10 @@ Long64_t EventReader_D::GetEntries() {
 
 Int_t EventReader_D::ReadTree(const string &treename, TFile* tfile) {
 
-    treeReader = new TTreeReader(treename.data(),tfile);
+    treeReader = shared_ptr<TTreeReader>(new TTreeReader(treename.data(),tfile));
     Entries = treeReader->GetEntries();
 
-    EvtPtr =  new TTreeReaderValue<DEvent>(*treeReader,"DEvent") ;
+    EvtPtr =  shared_ptr<TTreeReaderValue<DEvent>>( new TTreeReaderValue<DEvent>(*treeReader,"DEvent") );
 
     if (Verbose > -1) {
         cout << "======================================================================" << endl;

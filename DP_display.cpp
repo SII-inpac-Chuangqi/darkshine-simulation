@@ -2,7 +2,7 @@
 // Created by Zhang Yulei on 12/18/20.
 //
 
-#include "EventDisplay.h"
+#include "DEventDisplay.h"
 
 #include "TFile.h"
 
@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
             return -1;
     }
 
-    auto EvtDisplay = new EventDisplay();
+    auto EvtDisplay = new DEventDisplay();
     EvtDisplay->readFile(file_in);
     EvtDisplay->readGeo();
 
@@ -53,9 +53,8 @@ int main(int argc, char **argv) {
         EvtDisplay->bookSlot();
         EvtDisplay->readEvt();
 
-        //EvtDisplay->drawEvent(1);
+        // default Draw 0-th event
         EvtDisplay->drawEvent(0);
-        //EvtDisplay->drawDetector();
 
         EvtDisplay->Open(EvtDisplay);
 

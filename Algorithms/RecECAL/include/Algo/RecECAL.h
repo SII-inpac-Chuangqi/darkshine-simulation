@@ -8,9 +8,9 @@
 #include <utility>
 
 #include "Core/AnaProcessor.h"
-#include "Algo/Trk_LineFit.h"
-#include "Algo/ECAL_Writer.h"
-#include "Algo/ECAL_RNN.h"
+//#include "Algo/Trk_LineFit.h"
+//#include "Algo/ECAL_Writer.h"
+//#include "Algo/ECAL_RNN.h"
 #include "Algo/ECAL_Cluster.h"
 
 using namespace std;
@@ -64,18 +64,18 @@ private:
     double W0{0.};
     int nb_ch{1};
     int nb_z{1};
-    string RNN_Status{};
-    string RNN_Path{};
-    string RNN_Sig_Path{};
-    string RNN_Bkg_Path{};
+//    string RNN_Status{};
+//    string RNN_Path{};
+//    string RNN_Sig_Path{};
+//    string RNN_Bkg_Path{};
 
     double d_cut{1.};
     double r_cut{0.5};
 
     // Internal Algorithm Processors
     //shared_ptr<Trk_LineFit> ECAL_TF;
-    shared_ptr<ECAL_Writer> ECAL_Wrt;
-    shared_ptr<ECAL_RNN>    ECAL_rnn;
+    //shared_ptr<ECAL_Writer> ECAL_Wrt;
+    //shared_ptr<ECAL_RNN>    ECAL_rnn;
     shared_ptr<ECAL_Cluster> ECAL_cluster;
 };
 

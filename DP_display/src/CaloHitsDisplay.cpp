@@ -3,8 +3,8 @@
 //
 
 #include "CaloHitsDisplay.h"
-#include "TGLViewer.h"
 #include "TGLCameraOverlay.h"
+#include "TGListTree.h"
 
 #include "TGLAxis.h"
 #include "TAxis.h"
@@ -15,7 +15,7 @@ bool compE(CaloHit h1, CaloHit h2) {
 
 CaloHitsDisplay::CaloHitsDisplay() {
     CaloHitsDisplayList = new TEveElementList("Calo Hits Plot");
-    gEve->AddToListTree(CaloHitsDisplayList, kTRUE);
+    LegoListTree = gEve->AddToListTree(CaloHitsDisplayList, kFALSE);
 }
 
 CaloHitsDisplay::~CaloHitsDisplay() {
@@ -57,6 +57,8 @@ void CaloHitsDisplay::makeLego(TEveViewer *v, TEveScene *s, ProjectionPlane plan
     // Make Grid First
     makeGrid(plane, kWhite, 0.5);
     s->AddElement(grid_line);
+
+    if (!if_drawLego || calovec.empty()) return;
 
     vector<CaloHit> sumhit_table;
     vector<CaloHit> hit_table;
@@ -111,13 +113,13 @@ void CaloHitsDisplay::makeLego(TEveViewer *v, TEveScene *s, ProjectionPlane plan
                 half_size[0] = hit.E / 2;
             }
 
-            auto box = EventDisplay::makeBox(abs_pos, half_size);
+            auto box = DEventDisplay::makeBox(abs_pos, half_size);
             hit.Color = FindColor(orig_E, E_Max_sum / scale_factor);
             box->SetLineColor(hit.Color);
             box->SetFillColor(hit.Color);
             box->SetName(Form("Cell %d", hit.id));
             box->SetTitle(Form("CellID = %d, ID = (%d, %d, %d)\n"
-                               "E = %.3f , E_height = %.3f[MeV]\n"
+                               "E = %.3f [MeV], E_height = %.3f\n"
                                "Center = (%.3f, %.3f, %.3f) [cm]\n",
                                hit.id, hit.id_x, hit.id_y, hit.id_z,
                                orig_E, hit.E,
@@ -168,7 +170,7 @@ void CaloHitsDisplay::makeGrid(ProjectionPlane plane, Color_t grid_color, float 
             end = TVector3(0., (ymin + (float) i * delta_y), zmax);
         }
 
-        EventDisplay::makeLines(grid_line, start, end, grid_color, 1, false, 1.0, 0);
+        DEventDisplay::makeLines(grid_line, start, end, grid_color, 1, false, 1.0, 0);
     }
 
     // make y grid
@@ -186,7 +188,7 @@ void CaloHitsDisplay::makeGrid(ProjectionPlane plane, Color_t grid_color, float 
             end = TVector3(0., ymax, (zmin + (float) i * delta_z));
         }
 
-        EventDisplay::makeLines(grid_line, start, end, grid_color, 1, false, 0.5, 0);
+        DEventDisplay::makeLines(grid_line, start, end, grid_color, 1, false, 0.5, 0);
     }
 
     grid_line->SetMainAlpha(grid_alpha);

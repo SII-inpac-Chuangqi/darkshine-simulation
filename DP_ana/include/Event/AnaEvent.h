@@ -64,6 +64,7 @@ private:
     SimulatedHitMap SimulatedHitCollectionSP;
     CalorimeterHitMap CalorimeterHitCollectionSP;
 
+    ClassDefOverride(AnaEvent,1);
 };
 
 

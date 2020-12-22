@@ -6,13 +6,13 @@
 #define DSIMU_CALOHITSDISPLAY_H
 
 
-#include "EventDisplay.h"
+#include "DEventDisplay.h"
 #include "TGLViewer.h"
 
 
 #include <algorithm>
 
-class EventDisplay;
+class DEventDisplay;
 
 enum ProjectionPlane {dXY, dXZ, dYZ};
 
@@ -65,15 +65,26 @@ public:
 
     double scale_factor = 0.1;
     bool if_log = false;
+    bool if_drawLego = true;
 
     TEveElementList *CaloHitsDisplayList{nullptr};
     TEveElementList *CaloHitsList{nullptr};
+    TGListTreeItem* LegoListTree{nullptr};
 
     TEveStraightLineSet *grid_line{nullptr};
 
     void makeGrid(ProjectionPlane plane, Color_t grid_color = kWhite, float grid_alpha = 1.0);
 
     void makeLego(TEveViewer* v, TEveScene* s, ProjectionPlane plane);
+
+    // Clear TListTree
+    TEveElementList *getCaloHitsDisplayList() {
+        return CaloHitsDisplayList;
+    }
+
+    TGListTreeItem *getLegoListTree() {
+        return LegoListTree;
+    }
 
 ClassDefOverride(CaloHitsDisplay, 0);
 };

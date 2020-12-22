@@ -131,10 +131,17 @@ SET(dict_header_shared
         Utility/Object/include/Object/ReconstructedParticle.h
         Utility/Object/include/Object/DEvent.h
 
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventDisplay.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventReader_dis.h
+        DP_ana/include/Event/AnaEvent.h
+        DP_ana/include/Event/EventStoreAndWriter.h
+        DP_ana/include/Core/AnaProcessor.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DEventDisplay.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DEventReader_dis.h
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DSMagneticField.h
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/CaloHitsDisplay.h
+
+        # include All Running Ana Processors
+        Algorithms/RecECAL/include/Algo/RecECAL.h
+        Algorithms/RecECAL/include/Algo/ECAL_Cluster.h
         )
 SET(dict_source
         Utility/Object/src/SimulatedHit.cpp
@@ -143,34 +150,25 @@ SET(dict_source
         Utility/Object/src/ReconstructedParticle.cpp
         Utility/Object/src/DEvent.cpp
 
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay_DetInfo.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay_DrawEvent.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventReader_dis.cpp
+        DP_ana/src/AnaEvent.cpp
+        DP_ana/src/EventStoreAndWriter.cpp
+        DP_ana/src/AnaProcessor.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_Processor.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_DetInfo.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_DrawEvent.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventReader_dis.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/CaloHitsDisplay.cpp
+
+        # include All Running Ana Processors
+        Algorithms/RecECAL/src/RecECAL.cpp
+        Algorithms/RecECAL/src/ECAL_Cluster.cpp
         )
 root_generate_dictionary(G__DEvent ${dict_header_shared} LINKDEF Utility/UTIL/include/Utility/DEventLinkDef.h)
 add_library(DEvent SHARED ${dict_header_shared} ${dict_source} G__DEvent.cxx)
 #target_include_directories(DEvent PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 #target_link_libraries(DEvent PUBLIC ROOT::Core)
 
-#----------------------------------------------------------------------------
-# Generate ROOT library for EventDisplay
-#
-#root_generate_dictionary(G__DEventDisplay
-#                         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventDisplay.h
-#                         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventReader_dis.h
-#                         LINKDEF DP_display/include/EventDisplayLinkDef.h
-#                        )
-#add_library(DEventDisplay
-#            SHARED
-#            ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/EventDisplay.h
-#            ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay.cpp
-#            ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay_DetInfo.cpp
-#            ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventDisplay_DrawEvent.cpp
-#            ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/EventReader_dis.cpp
-#            G__DEventDisplay.cxx
-#            )
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #

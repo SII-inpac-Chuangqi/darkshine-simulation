@@ -2,7 +2,7 @@
 // Created by Zhang Yulei on 12/19/20.
 //
 
-#include "EventDisplay.h"
+#include "DEventDisplay.h"
 
 #include "TGeoBBox.h"
 #include "TGeoNode.h"
@@ -12,7 +12,7 @@
 #include <iostream>
 #include <iomanip>
 
-void EventDisplay::inspectMainRegion() {
+void DEventDisplay::inspectMainRegion() {
     if (!gGeoManager) {
         std::cerr << "[Det Info] ==> No gGeoManager..." << std::endl;
         return;
@@ -59,7 +59,7 @@ void EventDisplay::inspectMainRegion() {
 }
 
 
-void EventDisplay::inspectSubRegion(int id, Det_Type dt) {
+void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
     // Print daughter region of mother volume id
     auto *current_node = dynamic_cast<TGeoNode *>(world_node->GetDaughter(id));
 

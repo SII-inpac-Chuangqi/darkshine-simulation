@@ -9,14 +9,12 @@
 #include <iomanip>
 #include <utility>
 
-#include "TChain.h"
-
 RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name),
                                                                                      std::move(evtwrt)) {
 
     //ECAL_TF = std::shared_ptr<Trk_LineFit>(new Trk_LineFit());
-    ECAL_Wrt = std::shared_ptr<ECAL_Writer>(new ECAL_Writer());
-    ECAL_rnn = std::shared_ptr<ECAL_RNN>(new ECAL_RNN());
+    //ECAL_Wrt = std::shared_ptr<ECAL_Writer>(new ECAL_Writer());
+    //ECAL_rnn = std::shared_ptr<ECAL_RNN>(new ECAL_RNN());
     ECAL_cluster = std::shared_ptr<ECAL_Cluster>(new ECAL_Cluster());
 
     // Register parameters
@@ -27,10 +25,10 @@ RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProce
     RegisterIntParameter("Z_Layers", "Nb of Z layers", &nb_z, 1);
 
     RegisterIntParameter("Channels", "Nb of Channels", &nb_ch, 1);
-    RegisterStringParameter("RNN_Status", "train or apply", &RNN_Status, "none");
-    RegisterStringParameter("RNN_Path", "Weight xml path", &RNN_Path, "none");
-    RegisterStringParameter("RNN_Sig_Path", "Signal File path", &RNN_Sig_Path, "none");
-    RegisterStringParameter("RNN_Bkg_Path", "Background File path", &RNN_Bkg_Path, "none");
+//    RegisterStringParameter("RNN_Status", "train or apply", &RNN_Status, "none");
+//    RegisterStringParameter("RNN_Path", "Weight xml path", &RNN_Path, "none");
+//    RegisterStringParameter("RNN_Sig_Path", "Signal File path", &RNN_Sig_Path, "none");
+//    RegisterStringParameter("RNN_Bkg_Path", "Background File path", &RNN_Bkg_Path, "none");
 
 }
 
@@ -40,23 +38,25 @@ void RecECAL::Begin() {
     Description = "ECAL Reconstruction Processor";
 
     // Register Output Variable
-    EvtWrt->RegisterIntVariable("FindCenter", &FindCenter, "FindCenter/I");
-    EvtWrt->RegisterDoubleVariable("center_x", &center_x, "center_x/D");
-    EvtWrt->RegisterDoubleVariable("center_y", &center_y, "center_y/D");
-    EvtWrt->RegisterDoubleVariable("err_x", &err_x, "err_x/D");
-    EvtWrt->RegisterDoubleVariable("err_y", &err_y, "err_y/D");
+    if (EvtWrt) {
+        EvtWrt->RegisterIntVariable("FindCenter", &FindCenter, "FindCenter/I");
+        EvtWrt->RegisterDoubleVariable("center_x", &center_x, "center_x/D");
+        EvtWrt->RegisterDoubleVariable("center_y", &center_y, "center_y/D");
+        EvtWrt->RegisterDoubleVariable("err_x", &err_x, "err_x/D");
+        EvtWrt->RegisterDoubleVariable("err_y", &err_y, "err_y/D");
+    }
 
     // For Zhenting He
     //EvtWrt->RegisterDoubleVariable("ECAL_Hits", Hits_E, "ECAL_Hits[400]/D");
 
     // For DNN Training and Application
-    if (RNN_Status == "train") {
-        cout << "==> Apply training on RNN..." << endl;
-    } else if (RNN_Status == "apply") {
-        EvtWrt->RegisterDoubleVariable("RNN_Score", &RNN_Score, "RNN_Score/D");
-        ECAL_rnn->LoadModel(nb_ch, RNN_Path, "dp_DNN");
-    }
-    ECAL_Wrt->BookTree("ECAL_Hits.root", "dp", nb_ch);
+//    if (RNN_Status == "train") {
+//        cout << "==> Apply training on RNN..." << endl;
+//    } else if (RNN_Status == "apply") {
+//        EvtWrt->RegisterDoubleVariable("RNN_Score", &RNN_Score, "RNN_Score/D");
+//        ECAL_rnn->LoadModel(nb_ch, RNN_Path, "dp_DNN");
+//    }
+    //ECAL_Wrt->BookTree("ECAL_Hits.root", "dp", nb_ch);
 }
 
 void RecECAL::ProcessEvt(AnaEvent *evt) {
@@ -92,8 +92,11 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
 //        }
 
         // Clustering
+        auto reg_col = evt->RegisterCalorimeterHitCollection("Cluster_Center");
+        ECAL_cluster->setOutCollection(reg_col);
         ECAL_cluster->ClusterHits(hits, nb_z, d_cut, r_cut);
-        ECAL_cluster->DrawClusterResults(hits);
+        //ECAL_cluster->DrawClusterResults(hits);
+
 
         if (verbose > 0) {
 
@@ -104,26 +107,24 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
 
 
         // RNN
-        if (RNN_Status == "apply")
-            RNN_Score = ECAL_rnn->ApplyDNN(hits);
+//        if (RNN_Status == "apply")
+//            RNN_Score = ECAL_rnn->ApplyDNN(hits);
 
         // ECAL_Wrt->FillHits(hits);
 
         // Find Trackers in ECAL
-        for (auto hit: *hits) {
-            double x = hit->getX();
-            double y = hit->getY();
-            double z = hit->getZ();
+//        for (auto hit: *hits) {
+//            double x = hit->getX();
+//            double y = hit->getY();
+//            double z = hit->getZ();
+//
+//            int cell_id = hit->getCellId();
+//
+//            //Hits_E[cell_id-1] = ( hit->getE() > 1e-6 && !isnan(hit->getE()) ) ? hit->getE() : 0. ;
+//
+//            //ECAL_TF->AddPoint(x, y, z);
+//        }
 
-            int cell_id = hit->getCellId();
-
-            //Hits_E[cell_id-1] = ( hit->getE() > 1e-6 && !isnan(hit->getE()) ) ? hit->getE() : 0. ;
-
-            //ECAL_TF->AddPoint(x, y, z);
-        }
-
-        //std::pair<V3, V3> result = ECAL_TF->best_line_from_points();
-        //std::cout << "origin:\n" << result.first << "\naxis:\n" << result.second;
     } else {
         // if not exists, print out error
         cerr << "MCCollection not found" << endl;
@@ -136,17 +137,17 @@ void RecECAL::CheckEvt(AnaEvent *evt) {
 
 void RecECAL::End() {
     // Training for RNN
-    if (RNN_Status == "train") {
-        //Read Sig and Bkg TChain
-        auto sig = new TChain("dp");
-        sig->Add(RNN_Sig_Path.data());
-        auto bkg = new TChain("dp");
-        bkg->Add(RNN_Sig_Path.data());
-
-        ECAL_rnn->TrainDNN(sig, bkg, nb_ch, "dp_DNN");
-    }
-
-    ECAL_Wrt->SaveTree();
+//    if (RNN_Status == "train") {
+//        //Read Sig and Bkg TChain
+//        auto sig = new TChain("dp");
+//        sig->Add(RNN_Sig_Path.data());
+//        auto bkg = new TChain("dp");
+//        bkg->Add(RNN_Sig_Path.data());
+//
+//        ECAL_rnn->TrainDNN(sig, bkg, nb_ch, "dp_DNN");
+//    }
+//
+//    ECAL_Wrt->SaveTree();
     //cout<<"End!"<<endl;
 }
 

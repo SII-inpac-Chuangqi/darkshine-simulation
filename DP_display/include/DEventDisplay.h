@@ -2,8 +2,8 @@
 // Created by Zhang Yulei on 12/18/20.
 //
 
-#ifndef DSIMU_EVENTDISPLAY_H
-#define DSIMU_EVENTDISPLAY_H
+#ifndef DSIMU_DEVENTDISPLAY_H
+#define DSIMU_DEVENTDISPLAY_H
 
 #include "TEveManager.h"
 #include "TGeoManager.h"
@@ -33,9 +33,9 @@
 
 #include <map>
 
-#include "MultiView.h"
 #include "Object/DEvent.h"
-#include "EventReader_dis.h"
+#include "Event/AnaEvent.h"
+#include "DEventReader_dis.h"
 #include "DSMagneticField.h"
 #include "CaloHitsDisplay.h"
 
@@ -98,11 +98,11 @@ namespace {
 /*
  * Importance: Unit in TEve is [cm], [GeV]
  */
-class EventDisplay : public TNamed {
+class DEventDisplay : public TNamed {
 public:
-    EventDisplay() = default;
+    DEventDisplay() = default;
 
-    ~EventDisplay() override = default;
+    ~DEventDisplay() override = default;
 
     // Initialize gApplication and gEve
     void Initialize();
@@ -127,21 +127,33 @@ public:
                           const Color_t &color, const Style_t &style, bool drawMarkers, double lineWidth,
                           int markerPos);
 
-    TEveTrack *makeMCTrack(TEveTrackPropagator *trkProp, unsigned id, McParticle *mc);
+    static TEveTrack *makeMCTrack(TEveTrackPropagator *trkProp, unsigned id, McParticle *mc);
 
-    static TEveBox *makeTrackerBox(SimulatedHit *hit, double EMax);
-    static TEveBox *makeCaloBox(SimulatedHit *hit, double EMax);
+    template<class Hit>
+    static TEveBox *makeTrackerBox(Hit *hit, double scale);
+
+    // I dont know why not to make it template function
+    // get Error if not
+    static TEveBox *makeSimuCaloBox(SimulatedHit *hit, double EMax);
+
+    static TEveBox *makeRecCaloBox(CalorimeterHit *hit, double EMax);
+
     static TEveBox *makeBox(const double *abs_pos, const double *half_size);
 
     template<class CaloCol>
-    void makeCaloLego(CaloCol col, CaloHitsDisplay* calo_dis);
+    void makeCaloLego(CaloCol col, CaloHitsDisplay *calo_dis, bool if_draw_lego = true);
 
-    static void MakeViewerScene(TEveWindowSlot* slot, TEveViewer*& v, TEveScene*& s);
+    static void MakeViewerScene(TEveWindowSlot *slot, TEveViewer *&v, TEveScene *&s);
+
+    // Ana Processors
+    void RunAnaProcessors();
 
     // Open Application
-    void makeGUI(EventDisplay *);
+    void makeGUIRaw(DEventDisplay *fh);
 
-    void Open(EventDisplay *);
+    void makeGUIProcessor(DEventDisplay *fh);
+
+    void Open(DEventDisplay *);
 
     // Navigator && GUI commands
     void gotoEvent(unsigned int id);
@@ -149,6 +161,8 @@ public:
     void guiGoto();
 
     void guiOptions();
+
+    void guiOptionsAna();
 
     void bookSlot();
 
@@ -166,11 +180,13 @@ private:
     TGNumberEntry *guiECAL_Emin{nullptr};
     TGNumberEntry *guiHCAL_Emin{nullptr};
     TGCheckButton *guidrawDetector{nullptr};
-    TGCheckButton *guidrawHits{nullptr};
-    TGCheckButton *guidrawTracks{nullptr};
+    TGCheckButton *guidrawSimuCaloHits{nullptr};
+    TGCheckButton *guidrawSimuTrkHits{nullptr};
+    TGCheckButton *guidrawMCTracks{nullptr};
+    TGCheckButton *guidrawCaloHitsLego{nullptr};
     TGCheckButton *guiLogCaloHitsLego{nullptr};
     TGNumberEntry *guiScaleFactorLego{nullptr};
-
+    TGNumberEntry *guiScaleFactorSimuTrkHits{nullptr};
 
     // Core Manager from ROOT
     // gEve
@@ -178,16 +194,13 @@ private:
     // gApplication
     TFile *f{nullptr};
 
-    TGeoNode *world_node{nullptr};
+    shared_ptr<TGeoNode> world_node;
 
-    MultiView *gMultiView{nullptr};
-
-    EventReader_D *EvtReader{nullptr};
+    shared_ptr<EventReader_D> EvtReader;
 
     int _eventID{0};
 
-    DEvent *evt{nullptr};
-
+    std::shared_ptr<AnaEvent> evt;
 
     // Detector Geometry Info
     // size is half, length = 2*size [cm]
@@ -198,28 +211,50 @@ private:
 
     // Draw Options
     bool _drawDetector = true;
-    bool _drawHits = true;
-    bool _drawTracks = true;
-    bool _drawCaloHist = true;
+    bool _drawSimuCaloHits = true;
+    bool _drawSimuTrkHits = true;
+    bool _drawMCTracks = true;
+    bool _drawSimuCaloLego = true;
 
     // Calo Options
     double r_min = 0.;
     double ECAL_Emin = 0.;
     double HCAL_Emin = 0.;
+    double Trk_Emin = 0.;
+    double _scale_factor_SimuTrkHits = 1e-2;
 
     // CaloHits Lego Options
+    CaloHitsDisplay* CaloDisplay;
     bool ECALslice_calo = false; // if to slice ECAL hits w.r.t Z layer
     bool _drawECAL_calo = true;
     bool _drawHCAL_calo = false;
     bool _drawLogSacle = true;
-    double _scale_factor = 1.0;
+    double _scale_factor_Lego = 1.0;
 
     // Window Slots
-    vector<TEveWindowSlot* > win_slots;
-    vector<TEveViewer* > win_v;
-    vector<TEveScene* > win_s;
+    vector<TEveWindowSlot *> win_slots;
+    vector<TEveViewer *> win_v;
+    vector<TEveScene *> win_s;
 
-ClassDefOverride(EventDisplay, 0);
+    /***************************/
+    /* Ana Processor Variables */
+    /***************************/
+    // Format:
+    //   ProcessorName_Variable
+
+    // Part One: Variables
+    bool   RecECAL_ = true;
+    double RecECAL_W0 = 3.2;
+    double RecECAL_r_cut = 0.01;
+
+    // Part Two: Gui Commands
+    TGCheckButton *guiRecECAL{nullptr};
+    TGNumberEntry *guiRecECAL_W0{nullptr};
+    TGNumberEntry *guiRecECAL_r_cut{nullptr};
+
+
+
+ClassDefOverride(DEventDisplay, 0);
 };
 
-#endif //DSIMU_EVENTDISPLAY_H
+#endif //DSIMU_DEVENTDISPLAY_H

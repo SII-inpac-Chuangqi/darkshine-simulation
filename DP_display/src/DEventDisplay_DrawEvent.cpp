@@ -2,7 +2,7 @@
 // Created by Zhang Yulei on 12/20/20.
 //
 
-#include "EventDisplay.h"
+#include "DEventDisplay.h"
 
 #include "TEveStraightLineSet.h"
 #include "TEveTrack.h"
@@ -24,23 +24,27 @@
 
 #include <iostream>
 
-bool EventDisplay::drawEvent(int id, bool resCam) {
+bool DEventDisplay::drawEvent(int id, bool resCam) {
     // Draw Events
 
     // Draw Geometry first
     if (_drawDetector) drawDetector();
 
+    // read event
+    evt = shared_ptr<AnaEvent>(new AnaEvent());
+    EvtReader->setEvt(evt);
+
     EvtReader->ReadEntry(id);
 
     EvtReader->Convert();
-    evt = EvtReader->getEvt();
+    //evtHistory.emplace_back(evt);
     if (!evt) return false;
     std::cout << "[Event Display] ==> Plotting event: " << evt->getEventId() << std::endl;
 
-    if (_drawTracks) {
+    if (_drawMCTracks) {
         // Draw Event collection by collection
         // Step Collection
-        auto StepCols = evt->getStepCollection_Old();
+        auto StepCols = evt->getStepCollection();
         for (const auto &StepCol : StepCols) {
             auto Steps = StepCol.second;
             std::cout << "[Event Display] ==> Draw Collection: " << StepCol.first;
@@ -67,7 +71,7 @@ bool EventDisplay::drawEvent(int id, bool resCam) {
         auto *trkProp = gMCTrackList->GetPropagator();
         trkProp->SetMagFieldObj(new DSMagneticField());
 
-        auto MCCols = evt->getMcParticleCollection_Old();
+        auto MCCols = evt->getMcParticleCollection();
         for (const auto &MCCol : MCCols) {
             auto MCs = MCCol.second;
             std::cout << "[Event Display] ==> Draw Collection: " << MCCol.first;
@@ -81,18 +85,47 @@ bool EventDisplay::drawEvent(int id, bool resCam) {
         }
         gMCTrackList->MakeTracks();
     }
-    // Tracker Hits
-    // Working...
 
-    if (_drawHits) {
+    /***************************/
+    /*   Display of Raw Hits   */
+    /***************************/
+    auto *SimHitsList = new TEveElementList("Simulated Hits");
+    gEve->AddElement(SimHitsList);
+    // Tracker Hits
+    if (_drawSimuTrkHits) {
+        /***************/
+        /*   Tracker   */
+        /***************/
+        // Ploting raw hits
+        // basic idea is to draw a box on the hit point, but the box is scaled with a factor
+        auto TrkCols = evt->getSimulatedHitCollection();
+        for (const auto &TrkCol : TrkCols) {
+            // only count hits in tracker
+            if (!TString(TrkCol.first).Contains("Trk")) continue;
+            if (TrkCol.second->empty()) continue;
+            auto *SimTrkHits = new TEveElementList(TrkCol.first.data());
+            SimHitsList->AddElement(SimTrkHits);
+            auto Trks = TrkCol.second;
+            std::cout << "[Event Display] ==> Draw Collection: " << TrkCol.first;
+            std::cout << ", with total hits: " << Trks->size() << std::endl;
+            if (Trks->empty()) continue;
+
+            for (auto trk_hit : *Trks) {
+                // Skip calo hits under threshold
+                if (trk_hit->getE() < Trk_Emin && TString(TrkCol.first).Contains("Trk")) continue;
+                auto *box = makeTrackerBox(trk_hit, _scale_factor_SimuTrkHits);
+                SimTrkHits->AddElement(reinterpret_cast<TEveElement *>(box));
+            }
+        }
+    }
+
+    if (_drawSimuCaloHits) {
         /************/
         /*   CALO   */
         /************/
         // Ploting raw hits
         // basic idea is to draw a box on the hit point
-        auto CALCols = evt->getSimulatedHitCollection_Old();
-        auto *SimHitsList = new TEveElementList("Simulated Hits");
-        gEve->AddElement(SimHitsList);
+        auto CALCols = evt->getSimulatedHitCollection();
         for (const auto &CALCol : CALCols) {
             // only count hits in calorimeter
             if (!TString(CALCol.first).Contains("CAL")) continue;
@@ -112,21 +145,22 @@ bool EventDisplay::drawEvent(int id, bool resCam) {
                 if (cal_hit->getE() < r_min * EMax) continue;
                 if (cal_hit->getE() < ECAL_Emin && TString(CALCol.first).Contains("ECAL")) continue;
                 if (cal_hit->getE() < HCAL_Emin && TString(CALCol.first).Contains("HCAL")) continue;
-                auto *box = makeCaloBox(cal_hit, EMax);
+                auto *box = makeSimuCaloBox(cal_hit, EMax);
                 SimHits->AddElement(reinterpret_cast<TEveElement *>(box));
             }
         }
     }
 
-    if (_drawCaloHist) {
-        // clean vector first
 
-        auto CaloDisplay = new CaloHitsDisplay();
+    // Display Simulated Calorimeter Hits
+    CaloDisplay = new CaloHitsDisplay();
+    auto CALCols = evt->getSimulatedHitCollection();
+    makeCaloLego(CALCols, CaloDisplay, _drawSimuCaloLego);
 
-        auto CALCols = evt->getSimulatedHitCollection_Old();
-        makeCaloLego(CALCols, CaloDisplay);
-
-    }
+    /************************************/
+    /*   Reconstruction Visualization   */
+    /************************************/
+    RunAnaProcessors();
 
     // Finalize
     gEve->Redraw3D(resCam);
@@ -134,9 +168,9 @@ bool EventDisplay::drawEvent(int id, bool resCam) {
     return true;
 }
 
-void EventDisplay::makeLines(TEveStraightLineSet *lineSet, const TVector3 &start, const TVector3 &end,
-                             const Color_t &color, const Style_t &style, bool drawMarkers,
-                             double lineWidth, int markerPos) {
+void DEventDisplay::makeLines(TEveStraightLineSet *lineSet, const TVector3 &start, const TVector3 &end,
+                              const Color_t &color, const Style_t &style, bool drawMarkers,
+                              double lineWidth, int markerPos) {
     // Make a straight line between two input points
     lineSet->AddLine(start.x(), start.y(), start.z(), end.x(), end.y(), end.z());
     lineSet->SetLineColor(color);
@@ -150,7 +184,7 @@ void EventDisplay::makeLines(TEveStraightLineSet *lineSet, const TVector3 &start
     }
 }
 
-TEveTrack *EventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned id, McParticle *mc) {
+TEveTrack *DEventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned id, McParticle *mc) {
     // get mother id
     int m_id = -999;
     auto p = mc->getParents();
@@ -178,16 +212,16 @@ TEveTrack *EventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned id, 
     } else {
         // highlighted Special Particle like muons, hadrons
         if (abs(mc->getPdg()) == 13) {
-            track->SetLineWidth(5);
+            track->SetLineWidth(4);
             track->SetLineStyle(9);
         } else if (abs(mc->getPdg()) > 1e2 || abs(mc->getPdg()) < 1e3) {
-            track->SetLineWidth(4);
+            track->SetLineWidth(3);
             track->SetLineStyle(6);
         } else if (abs(mc->getPdg()) > 1e3 || mc->getP() > 1e3) { // Require Momentum > 1 GeV
-            track->SetLineWidth(5);
+            track->SetLineWidth(4);
             track->SetLineStyle(8);
         }
-        if (mc->getP() > 1e3) {
+        if (mc->getP() > 1e3) { // Highlight
             track->SetLineWidth(track->GetLineWidth() * 1.5);
         }
     }
@@ -212,7 +246,7 @@ TEveTrack *EventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned id, 
 }
 
 
-TEveBox *EventDisplay::makeBox(const double *abs_pos, const double *half_size) {
+TEveBox *DEventDisplay::makeBox(const double *abs_pos, const double *half_size) {
     auto *box = new TEveBox();
     double vertex[24] = {0.};
     // (a,b,-c)
@@ -253,8 +287,7 @@ TEveBox *EventDisplay::makeBox(const double *abs_pos, const double *half_size) {
     return box;
 }
 
-
-TEveBox *EventDisplay::makeCaloBox(SimulatedHit *hit, double EMax) {
+TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) {
     auto cur_node = gGeoManager->FindNode(hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10);
     auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
     double abs_pos[3] = {hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10};
@@ -269,7 +302,7 @@ TEveBox *EventDisplay::makeCaloBox(SimulatedHit *hit, double EMax) {
     box->SetMainAlpha(log(log(hit->getE() + 1) / log(EMax + 1) + 1));
 
     box->SetTitle(Form("CellID=%d, ID=(%d, %d, %d)\n"
-                       "E=%.3f, E_EM=%.3f, E_Had= %.3f[MeV]\n"
+                       "E = %.3f , E_EM = %.3f, E_Had = %.3f [MeV]\n"
                        "Center=(%.3f, %.3f, %.3f) [mm]\n",
                        hit->getCellId(), hit->getCellIdX(), hit->getCellIdY(), hit->getCellIdZ(),
                        hit->getE(), hit->getEdepEm(), hit->getEdepHad(),
@@ -278,8 +311,58 @@ TEveBox *EventDisplay::makeCaloBox(SimulatedHit *hit, double EMax) {
     return box;
 }
 
+TEveBox *DEventDisplay::makeRecCaloBox(CalorimeterHit *hit, double EMax) {
+    auto cur_node = gGeoManager->FindNode(hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10);
+    auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
+    double abs_pos[3] = {hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10};
+    double half_size[3] = {cur_shape->GetDX(), cur_shape->GetDY(), cur_shape->GetDZ()};
+
+    auto *box = makeBox(abs_pos, half_size);
+    box->SetName((Form("Cell %d", hit->getCellId())));
+
+    //auto color = FindColor(hit->getE(), EMax);
+    auto color = kYellow;
+    box->SetLineColor(color);
+    box->SetFillColor(color);
+    //box->SetMainAlpha(log(log(hit->getE() + 1) / log(EMax + 1) + 1));
+
+    box->SetTitle(Form("CellID=%d, ID=(%d, %d, %d)\n"
+                       "E = %.3f [MeV]\n"
+                       "Center=(%.3f, %.3f, %.3f) [mm]\n",
+                       hit->getCellId(), hit->getCellIdX(), hit->getCellIdY(), hit->getCellIdZ(),
+                       hit->getE(),
+                       hit->getX(), hit->getY(), hit->getZ()
+    ));
+    return box;
+}
+
+template<class Hit>
+TEveBox *DEventDisplay::makeTrackerBox(Hit *hit, double scale) {
+    auto cur_node = gGeoManager->FindNode(hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10 + 1e-6);
+    auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
+    double abs_pos[3] = {hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10};
+    double half_size[3] = {cur_shape->GetDX() * scale, cur_shape->GetDY() * scale, cur_shape->GetDZ() * 0.1};
+
+    auto *box = makeBox(abs_pos, half_size);
+    box->SetName((Form("Tracker Hit %d", hit->getCellId())));
+
+    auto color = kMagenta;
+    box->SetLineColor(color);
+    box->SetFillColor(color);
+    box->SetMainAlpha(1.0);
+
+    box->SetTitle(Form("CellID=%d, ID=(%d, %d, %d)\n"
+                       "E = %.3f [MeV], t = %.3f [ns]\n"
+                       "Center=(%.3f, %.3f, %.3f) [mm]\n",
+                       hit->getCellId(), hit->getCellIdX(), hit->getCellIdY(), hit->getCellIdZ(),
+                       hit->getE(), hit->getT(),
+                       hit->getX(), hit->getY(), hit->getZ()
+    ));
+    return box;
+}
+
 template<class CaloCol>
-void EventDisplay::makeCaloLego(CaloCol col, CaloHitsDisplay *calo_dis) {
+void DEventDisplay::makeCaloLego(CaloCol col, CaloHitsDisplay *calo_dis, bool if_draw_lego) {
     // Convert Calo Hits to Eve Calo Data
     // ECAL is split into several slices with respect to Z layer
     // HCAL merges together
@@ -343,8 +426,9 @@ void EventDisplay::makeCaloLego(CaloCol col, CaloHitsDisplay *calo_dis) {
     calo_dis->zmin = -ECAL_Size[2] + ECAL_Z_Move;
     calo_dis->zmax = ECAL_Size[2] + ECAL_Z_Move;
 
+    calo_dis->if_drawLego = if_draw_lego;
     calo_dis->if_log = _drawLogSacle;
-    calo_dis->scale_factor = _scale_factor;
+    calo_dis->scale_factor = _scale_factor_Lego;
     calo_dis->calovec = tmpCaloHits;
     calo_dis->makeLego(win_v.at(0), win_s.at(0), dXY);
     calo_dis->calovec = tmpCaloHits;
@@ -355,7 +439,7 @@ void EventDisplay::makeCaloLego(CaloCol col, CaloHitsDisplay *calo_dis) {
 }
 
 
-void EventDisplay::MakeViewerScene(TEveWindowSlot *slot, TEveViewer *&v, TEveScene *&s) {
+void DEventDisplay::MakeViewerScene(TEveWindowSlot *slot, TEveViewer *&v, TEveScene *&s) {
 
     // Create a scene and a viewer in the given slot.
 

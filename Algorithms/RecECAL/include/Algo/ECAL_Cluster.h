@@ -37,6 +37,14 @@ public:
         return Raw_Clusters;
     }
 
+    const vector<SimulatedHitVecUniPtr> &getLayerClustersCenters() const {
+        return Layer_Clusters_Centers;
+    }
+
+    void setOutCollection(const CalorimeterHitVecUniPtr &outCollection) {
+        OutCollection = outCollection;
+    }
+
 private:
     int nb_z{1};
     double r_cut{0.1};
@@ -53,6 +61,8 @@ private:
 
     // Medium Cluster
 
+    // Output Collection
+    CalorimeterHitVecUniPtr OutCollection;
 
     static void FormatGraph(const shared_ptr<TGraph2D> &gr);
 

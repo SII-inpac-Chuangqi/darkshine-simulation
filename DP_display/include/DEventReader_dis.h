@@ -12,6 +12,7 @@
 #include "TTreeReaderValue.h"
 
 #include "Object/DEvent.h"
+#include "Event/AnaEvent.h"
 
 using namespace std;
 
@@ -27,16 +28,15 @@ public:
     bool ReadEntry(int i) const;
     Long64_t GetEntries();
 
-
     Int_t ReadFile(const std::string &filename);
     Int_t ReadTree(const std::string &treename, TFile* f);
 
-    DEvent *getEvt() const {
+    const shared_ptr<AnaEvent> &getEvt() const {
         return evt;
     }
 
-    void setEvt(DEvent *in) {
-        evt = in;
+    void setEvt(const shared_ptr<AnaEvent> &Evt) {
+        EventReader_D::evt = Evt;
     }
 
     Long64_t getEntries() const {
@@ -77,7 +77,8 @@ public:
 
 
 private:
-    DEvent *evt{nullptr};
+    //DEvent *evt{nullptr};
+    shared_ptr<AnaEvent> evt;
     Long64_t Entries{0};
 
     int runNumber{0};
@@ -89,8 +90,8 @@ private:
     int Verbose{0};
 
     TFile *f{nullptr};
-    TTreeReader* treeReader{nullptr};
-    TTreeReaderValue<DEvent>* EvtPtr{nullptr};
+    shared_ptr<TTreeReader> treeReader;
+    shared_ptr<TTreeReaderValue<DEvent> > EvtPtr;
 
     // Declaration of leaf types
     Int_t RunNumber{0};

@@ -44,6 +44,11 @@ void ECAL_Cluster::Clean() {
     }
     Layer_Hits.clear();
 
+    for (const auto &itr : *OutCollection) {
+        delete itr;
+    }
+    OutCollection->clear();
+
     //Cluster_Centers->clear();
     //Cluster_Centers->shrink_to_fit();
 }
@@ -72,7 +77,21 @@ void ECAL_Cluster::ClusterHits(const SimulatedHitVecUniPtr &hits, int nb_Z, doub
             ClusterHits_Layer(Layer_Hits.at(i), i);
     }
 
-    double b = 0.;
+    for (const auto& Layer_Centers : Layer_Clusters_Centers ) {
+        for (auto center: *Layer_Centers) {
+            auto rec_p = new CalorimeterHit();
+            rec_p->setX(center->getX());
+            rec_p->setY(center->getY());
+            rec_p->setZ(center->getZ());
+            rec_p->setE(center->getE());
+            rec_p->setCellId(center->getCellId());
+            rec_p->setCellIdX(center->getCellIdX());
+            rec_p->setCellIdY(center->getCellIdY());
+            rec_p->setCellIdZ(center->getCellIdZ());
+
+            OutCollection->push_back(rec_p);
+        }
+    }
 }
 
 void ECAL_Cluster::ClusterHits_Layer(const SimulatedHitVecUniPtr &hits, int nb_layer) {
@@ -126,6 +145,9 @@ void ECAL_Cluster::ClusterHits_Layer(const SimulatedHitVecUniPtr &hits, int nb_l
 //        if (if_fill) nb_hits_clustered++;
 //        else nb_hits_not_clustered++;
 //    }
+
+    //OutCollection = shared_ptr<CalorimeterHitVec>(new CalorimeterHitVec());
+
 }
 
 bool
