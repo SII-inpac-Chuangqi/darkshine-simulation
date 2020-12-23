@@ -452,6 +452,7 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
                         Abs_No * AbsThickness + CentrePos.z();
 
                 if (k % 3 == 2) {
+                    ifAbsorber = true;
                     Abs_No++;
 
                     fPosX = CentrePos.x();
@@ -461,6 +462,7 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
 
                     Construct(fAbsLV, nullptr, nullptr);
                 } else {
+                    ifAbsorber = false;
                     if (k % 3 == 0) // along x
                         Construct(fCaloLV, fWrapLV, fAPDWLV, 0., 90*degree );
                     if (k % 3 == 1) // along y

@@ -24,7 +24,7 @@ RootManager::RootManager()
     Evt = new DEvent();
     Evt->Initialization(nALL);
     initialize();
-    if_Optical = false;
+    if_Optical = true;
     if_record_ip = true;
 }
 
