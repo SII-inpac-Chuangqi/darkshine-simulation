@@ -224,7 +224,7 @@ G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, con
     wSizeX = fSizeX;
     wSizeY = fSizeY;
     wSizeZ = aSizeZ + gSizeZ;
-    wSizeZ = fSizeZ;
+    //wSizeZ = fSizeZ;
 
     ConstructLV();
 
