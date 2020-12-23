@@ -241,8 +241,8 @@ G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, con
 
                 wPosX = 0.;
                 wPosY = 0.;
-                wPosZ = fSizeZ - 0.5 * wSizeZ;
-                wPosZ = fSizeZ;
+                wPosZ = fSizeZ -  wSizeZ;
+                //wPosZ = fSizeZ;
 
                 Construct(fCaloLV, fWrapLV, fAPDWLV);
 
@@ -471,7 +471,7 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
 
                     fPosX = CentrePos.x();
                     fPosY = CentrePos.y();
-                    fPosZ = -1. * TotalSize.z() + (2 * (k - Abs_No) + 2) * (fSizeZ + fWrap * fWrapSizeZ) +
+                    fPosZ = -1. * TotalSize.z() + (2 * (k - Abs_No) + 2) * (fSizeZ +  fWrap * fWrapSizeZ) +
                             (Abs_No - 0.5) * AbsThickness + CentrePos.z();
 
                     fSizeZ = AbsThickness / 2.;
@@ -482,7 +482,6 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
                         Construct(fCaloLV, fWrapLV, fAPDWLV, 0.*degree);
                     if (k % 3 == 1) // along y
                         Construct(fCaloLV, fWrapLV, fAPDWLV, 90*degree);
-
 
                 }
                 fWrap = ifwrap;

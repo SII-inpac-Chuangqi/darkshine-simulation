@@ -91,7 +91,7 @@ DetectorConstruction::DetectorConstruction(RootManager *rootMng) {
     HCAL_Con = new HCAL_Construct();
 
     fRootMng = rootMng;
-    fCheckOverlaps = false;
+    fCheckOverlaps = true;
     fStepLimit = nullptr;
 
 }

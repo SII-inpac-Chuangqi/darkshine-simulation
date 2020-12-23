@@ -18,7 +18,7 @@ void HCAL_Construct::DefineParameters(const G4ThreeVector &Pos_ECALRegion, const
                          HCAL_Module_Gap * (HCAL_Module_No.y() - 1));
     Size_HCALRegion.setZ(
             HCAL_Mod_No_Dir.z() / 2 * (2 * (HCAL_Size_Dir.z() + HCAL_Wrap_Size.z()) + HCAL_Absorber_Thickness) +
-            HCAL_Module_Gap * (HCAL_Module_No.z() - 1));
+            HCAL_Module_Gap * (HCAL_Module_No.z()-1));
 
     Pos_HCALRegion = G4ThreeVector(0, 0,
                                    0.5 * Size_HCALRegion.z() + Pos_ECALRegion.z() + 0.5 * Size_ECALRegion.z());
