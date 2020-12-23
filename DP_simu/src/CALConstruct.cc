@@ -428,6 +428,8 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
     ConstructLV();
 
     // Initialize
+    ifAbsorber = false;
+    fRecordLV = true;
     fSizeX = iSizeX;
     fSizeY = iSizeY;
     fSizeZ = iSizeZ;
@@ -471,7 +473,7 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
                 } else {
                     ifAbsorber = false;
                     if (k % 3 == 0) // along x
-                        Construct(fCaloLV, fWrapLV, fAPDWLV, 0.);
+                        Construct(fCaloLV, fWrapLV, fAPDWLV, 45*degree);
                     if (k % 3 == 1) // along y
                         Construct(fCaloLV, fWrapLV, fAPDWLV, 90*degree);
                 }
