@@ -465,14 +465,15 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
                         Abs_No * AbsThickness + CentrePos.z();
 
                 if (k % 3 == 2) {
-                    ifAbsorber = true;
-                    fWrap = false;
                     Abs_No++;
-
                     fPosX = CentrePos.x();
                     fPosY = CentrePos.y();
                     fPosZ = -1. * TotalSize.z() + (2 * (k - Abs_No) + 2) * (fSizeZ +  fWrap * fWrapSizeZ) +
                             (Abs_No - 0.5) * AbsThickness + CentrePos.z();
+
+                    ifAbsorber = true;
+                    fWrap = false;
+
 
                     fSizeZ = AbsThickness / 2.;
                     Construct(fAbsLV, nullptr, nullptr);
