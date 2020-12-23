@@ -55,7 +55,7 @@ TrkConstruct::TrkConstruct(const TrkConstruct& in)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 TrkConstruct::~TrkConstruct()
-{}
+= default;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

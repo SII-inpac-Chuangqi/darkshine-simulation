@@ -78,8 +78,8 @@ bool ECAL_XYCrossing::Build(int type, G4LogicalVolume *World_LV, RootManager *fR
             ECAL_Outer->SetVis(new G4VisAttributes(G4Colour(0.4, 0.57, 0.6)));
             ECAL_Outer->SetAPDSize(APD_Size, Glue_Size);
             ECAL_Outer->SetAPDMat(APD_Mat, Glue_Mat);
-            ECAL_Outer->MatrixPlacementXYRemoved(ECAL_Outer_Mod_No_Dir.x(), ECAL_Outer_Mod_No_Dir.y(),
-                                                 ECAL_Outer_Mod_No_Dir.z(), G4ThreeVector(w1, w2, 0), 3, ip);
+//            ECAL_Outer->MatrixPlacementXYRemoved(ECAL_Outer_Mod_No_Dir.x(), ECAL_Outer_Mod_No_Dir.y(),
+//                                                 ECAL_Outer_Mod_No_Dir.z(), G4ThreeVector(w1, w2, 0), 3, ip);
 
             auto tmp_LV = ECAL_Outer->GetCaloLVVector();
             //ECAL_Outer_LV.insert( ECAL_Outer_LV.end(), tmp_LV.begin(), tmp_LV.end() );

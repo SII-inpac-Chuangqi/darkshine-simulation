@@ -39,8 +39,21 @@
 #include "DSMagneticField.h"
 #include "CaloHitsDisplay.h"
 
-namespace {
-    static std::map<int, Color_t> PDG_Color {
+class CaloHitsDisplay;
+
+/*
+ * Importance: Unit in TEve is [cm], [GeV]
+ */
+
+/// \brief
+class DEventDisplay : public TNamed {
+public:
+
+    enum Det_Type {
+        DNone, DTarget, DTracker, DECAL, DHCAL
+    };
+
+    static inline std::map<int, Color_t> PDG_Color{
 // Leptons
             {11,    kGreen},
             {-11,   kBlue},
@@ -64,7 +77,7 @@ namespace {
             {-211,  kMagenta - 9}  // pion +-
     };
 
-    static std::map<double, Color_t> Energy_Color {
+    static inline std::map<double, Color_t> Energy_Color{
             // Energy Color Represent [MeV]
             {0.001, kBlue},
             {0.005, kBlue - 4},
@@ -75,20 +88,6 @@ namespace {
             {0.50,  kRed - 7},
             {0.75,  kRed - 4},
             {1.00,  kRed},
-    };
-}
-
-
-class CaloHitsDisplay;
-
-/*
- * Importance: Unit in TEve is [cm], [GeV]
- */
-class DEventDisplay : public TNamed {
-public:
-
-    enum Det_Type {
-        DNone, DTarget, DTracker, DECAL, DHCAL
     };
 
     [[nodiscard]] static Color_t FindColor(double E, double EMax) {
