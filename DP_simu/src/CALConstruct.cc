@@ -427,6 +427,11 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
     fSizeZ = AbsThickness / 2.;
     ConstructLV();
 
+    // Initialize
+    fSizeX = iSizeX;
+    fSizeY = iSizeY;
+    fSizeZ = iSizeZ;
+
     auto Abs_No = 0;
     // Z layer Loop
     for (int k = 0; k < idz; k++) {
@@ -438,6 +443,8 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
             fSizeY = iSizeY;
             fSizeZ = iSizeZ;
         }
+        else
+            fSizeZ = AbsThickness / 2.;
 
         // Y layer Loop
         for (int j = 0; j < idy; j++) {
