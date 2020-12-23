@@ -120,7 +120,7 @@ void DEventDisplay::makeGUIProcessor(DEventDisplay *fh) {
     browser->SetTabTitle("Ana Processors", 0);
 }
 
-void DEventDisplay::guiOptionsAna() {
+[[maybe_unused]] void DEventDisplay::guiOptionsAna() {
     // Ana Processors
     RecECAL_ = guiRecECAL->IsOn();
     RecECAL_W0 = guiRecECAL_W0->GetNumberEntry()->GetNumber();

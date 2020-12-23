@@ -406,7 +406,7 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
 }
 
 
-void DEventDisplay::guiGoto() {
+[[maybe_unused]] void DEventDisplay::guiGoto() {
     Long_t n = guiEvent->GetNumberEntry()->GetIntNumber();
     //guiEvent->SetIntNumber(n);
     gotoEvent(n);
@@ -441,7 +441,7 @@ void DEventDisplay::gotoEvent(unsigned int id) {
 
 }
 
-void DEventDisplay::guiOptions() {
+[[maybe_unused]] void DEventDisplay::guiOptions() {
     // Draw Options
     _drawDetector = guidrawDetector->IsOn();
     _drawSimuCaloHits = guidrawSimuCaloHits->IsOn();

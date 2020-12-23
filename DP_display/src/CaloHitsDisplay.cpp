@@ -114,7 +114,7 @@ void CaloHitsDisplay::makeLego(TEveViewer *v, TEveScene *s, ProjectionPlane plan
             }
 
             auto box = DEventDisplay::makeBox(abs_pos, half_size);
-            hit.Color = FindColor(orig_E, E_Max_sum / scale_factor);
+            hit.Color = DEventDisplay::FindColor(orig_E, E_Max_sum / scale_factor);
             box->SetLineColor(hit.Color);
             box->SetFillColor(hit.Color);
             box->SetName(Form("Cell %d", hit.id));

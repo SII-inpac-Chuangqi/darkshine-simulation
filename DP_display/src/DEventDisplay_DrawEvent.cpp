@@ -11,7 +11,6 @@
 #include "TEveTrackEditor.h"
 #include "TParticle.h"
 #include "TEvePathMark.h"
-#include "TEveProjectionAxes.h"
 #include "TGLViewer.h"
 #include "TEveCaloLegoOverlay.h"
 #include "TEveLegoEventHandler.h"
@@ -19,8 +18,6 @@
 #include "TGTab.h"
 #include "TEveText.h"
 #include "TGLAutoRotator.h"
-
-#include "TH2F.h"
 
 #include "CaloHitsDisplay.h"
 

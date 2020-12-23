@@ -90,6 +90,7 @@ public:
     TEveStraightLineSet *grid_line{nullptr};
 
     /// \brief base function to create grid lines given the projection plane
+    /// \error Currently no used, otherwise will raise GL exception
     void makeGrid(ProjectionPlane plane, Color_t grid_color = kWhite);
 
     /// \brief Core function to display Lego
@@ -97,11 +98,11 @@ public:
     void makeLego(TEveViewer *v, TEveScene *s, ProjectionPlane plane);
 
     // Clear TListTree
-    TEveElementList *getCaloHitsDisplayList() const {
+    [[nodiscard]] TEveElementList *getCaloHitsDisplayList() const {
         return CaloHitsDisplayList;
     }
 
-    TGListTreeItem *getLegoListTree() const {
+    [[nodiscard]] TGListTreeItem *getLegoListTree() const {
         return LegoListTree;
     }
 

@@ -39,15 +39,9 @@
 #include "DSMagneticField.h"
 #include "CaloHitsDisplay.h"
 
-class CaloHitsDisplay;
-
 namespace {
-    enum Det_Type {
-        DNone, DTarget, DTracker, DECAL, DHCAL
-    };
-
-    std::map<int, Color_t> PDG_Color = {
-            // Leptons
+    static std::map<int, Color_t> PDG_Color {
+// Leptons
             {11,    kGreen},
             {-11,   kBlue},
             {12,    kCyan},
@@ -57,7 +51,7 @@ namespace {
             {14,    kCyan + 2},
             {-14,   kCyan + 2},
             {22,    kPink + 9},
-            // Hadrons
+// Hadrons
             {2212,  kYellow},
             {-2212, kYellow}, // proton
             {2112,  kOrange + 7},
@@ -70,7 +64,7 @@ namespace {
             {-211,  kMagenta - 9}  // pion +-
     };
 
-    std::map<double, Color_t> Energy_Color = {
+    static std::map<double, Color_t> Energy_Color {
             // Energy Color Represent [MeV]
             {0.001, kBlue},
             {0.005, kBlue - 4},
@@ -82,8 +76,22 @@ namespace {
             {0.75,  kRed - 4},
             {1.00,  kRed},
     };
+}
 
-    Color_t FindColor(double E, double EMax) {
+
+class CaloHitsDisplay;
+
+/*
+ * Importance: Unit in TEve is [cm], [GeV]
+ */
+class DEventDisplay : public TNamed {
+public:
+
+    enum Det_Type {
+        DNone, DTarget, DTracker, DECAL, DHCAL
+    };
+
+    [[nodiscard]] static Color_t FindColor(double E, double EMax) {
         double r = E / EMax;
         double prev = 1e-7;
         for (auto c_map : Energy_Color) {
@@ -92,12 +100,7 @@ namespace {
         }
         return kRed + 2;
     }
-}
-/*
- * Importance: Unit in TEve is [cm], [GeV]
- */
-class DEventDisplay : public TNamed {
-public:
+
     DEventDisplay() = default;
 
     ~DEventDisplay() override = default;
@@ -165,11 +168,11 @@ public:
     // Navigator && GUI commands
     void gotoEvent(unsigned int id);
 
-    void guiGoto();
+    [[maybe_unused]] void guiGoto();
 
-    void guiOptions();
+    [[maybe_unused]] void guiOptions();
 
-    void guiOptionsAna();
+    [[maybe_unused]] void guiOptionsAna();
 
     void bookSlot();
 
@@ -277,5 +280,6 @@ private:
 
 ClassDefOverride(DEventDisplay, 0);
 };
+
 
 #endif //DSIMU_DEVENTDISPLAY_H
