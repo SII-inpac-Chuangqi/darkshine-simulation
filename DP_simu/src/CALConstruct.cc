@@ -438,15 +438,12 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
     // Z layer Loop
     for (int k = 0; k < idz; k++) {
         // place detector
-        if (k % 3 != 2) {
-            idx = xNo;
-            idy = yNo;
-            fSizeX = iSizeX;
-            fSizeY = iSizeY;
-            fSizeZ = iSizeZ;
-        }
-        else
-            fSizeZ = AbsThickness / 2.;
+        // along x direction
+        if ( k%3 == 0 ) { idx = xNo; idy = yNo; fSizeX = iSizeX; fSizeY  = iSizeY; }
+        // along y direction
+        if ( k%3 == 1 ) { idx = yNo; idy = xNo; fSizeX = iSizeY; fSizeY  = iSizeX; }
+        // place absorber
+        if ( k%3 == 2 ) { idx = 1; idy = 1; fSizeX = xNo*(iSizeX + fWrap*fWrapSizeX ); fSizeY  = yNo*(iSizeY + fWrap*fWrapSizeY ); }
 
         // Y layer Loop
         for (int j = 0; j < idy; j++) {
@@ -469,13 +466,16 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
                     fPosZ = -1. * TotalSize.z() + (2 * (k - Abs_No) + 2) * (fSizeZ + fWrap * fWrapSizeZ) +
                             (Abs_No - 0.5) * AbsThickness + CentrePos.z();
 
+                    fSizeZ = AbsThickness / 2.;
                     Construct(fAbsLV, nullptr, nullptr);
                 } else {
                     ifAbsorber = false;
                     if (k % 3 == 0) // along x
-                        Construct(fCaloLV, fWrapLV, fAPDWLV, 45*degree);
+                        Construct(fCaloLV, fWrapLV, fAPDWLV, 0.*degree);
                     if (k % 3 == 1) // along y
                         Construct(fCaloLV, fWrapLV, fAPDWLV, 90*degree);
+
+                    fSizeZ = iSizeZ;
                 }
 
                 if (!ifAbsorber) fCopyNo++;
