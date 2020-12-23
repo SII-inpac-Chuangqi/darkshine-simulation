@@ -434,6 +434,7 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
     // Initialize
     ifAbsorber = false;
     fRecordLV = true;
+    fWrap = ifwrap;
     fSizeX = iSizeX;
     fSizeY = iSizeY;
     fSizeZ = iSizeZ;
@@ -463,6 +464,7 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
 
                 if (k % 3 == 2) {
                     ifAbsorber = true;
+                    fWrap = false;
                     Abs_No++;
 
                     fPosX = CentrePos.x();
