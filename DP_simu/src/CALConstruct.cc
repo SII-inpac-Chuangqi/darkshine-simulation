@@ -138,7 +138,7 @@ void CALConstruct::ConstructLV() {
 
 G4ThreeVector
 CALConstruct::Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4LogicalVolume *aboxLV,
-                        double x_angle, double y_angle) {
+                        double z_angle) {
     auto TotalSize = G4ThreeVector(0, 0, 0);
 
     // Placement of Calorimeter
@@ -146,10 +146,10 @@ CALConstruct::Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4Logic
 
     // Calculate Rotation Matrix
     HepRot = new G4RotationMatrix();
-    HepRot->rotateX( x_angle );
-    HepRot->rotateY( y_angle );
+    HepRot->rotateZ( z_angle );
 
-    G4RotationMatrix *fRotate = ( x_angle == 0 && y_angle == 0) ? nullptr: HepRot;
+
+    G4RotationMatrix *fRotate = ( z_angle == 0 ) ? nullptr: HepRot;
 
     auto fName = ifAbsorber ? fCALName + "Abs" : fCALName;
     if (boxLV == nullptr) {
@@ -464,9 +464,9 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
                 } else {
                     ifAbsorber = false;
                     if (k % 3 == 0) // along x
-                        Construct(fCaloLV, fWrapLV, fAPDWLV, 0., 90*degree );
+                        Construct(fCaloLV, fWrapLV, fAPDWLV, 0.);
                     if (k % 3 == 1) // along y
-                        Construct(fCaloLV, fWrapLV, fAPDWLV, 90*degree, 0.);
+                        Construct(fCaloLV, fWrapLV, fAPDWLV, 90*degree);
                 }
 
                 if (!ifAbsorber) fCopyNo++;

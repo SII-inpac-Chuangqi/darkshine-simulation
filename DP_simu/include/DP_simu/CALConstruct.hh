@@ -29,7 +29,7 @@ public:
     /// \brief main construct
     G4ThreeVector
     Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4LogicalVolume *aboxLV,
-              double x_angle = 0., double y_angle = 0.);
+              double z_angle = 0.);
 
     G4ThreeVector MatrixPlacement(G4int, G4int, G4int, const G4ThreeVector &);
 
