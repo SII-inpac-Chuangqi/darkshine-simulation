@@ -12,6 +12,9 @@
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithADouble.hh"
+
+#include <sstream>
+
 class RootManager;
 
 
@@ -48,15 +51,8 @@ class RootMessenger: public G4UImessenger
       G4UIcmdWithABool*        fifBiasECALCmd;
       G4UIcmdWithADoubleAndUnit* fBiasEminCmd;
 
-      G4UIcmdWithABool*        fifFilter_HardBremCmd;
-      G4UIcmdWithADoubleAndUnit* fFilterGammaEminCmd;
-      G4UIcmdWithADoubleAndUnit* fFilterHardBrem_ScanDistanceCmd;
-
-      G4UIcmdWithABool*        fifFilter_ProcessCmd;
-      G4UIcmdWithAString*      fFilterProcessNameCmd;
-      G4UIcmdWithADoubleAndUnit* fFilterProcessEminCmd;
-      G4UIcmdWithADoubleAndUnit* fFilterProcess_MinScanDistanceCmd;
-      G4UIcmdWithADoubleAndUnit* fFilterProcess_MaxScanDistanceCmd;
+      G4UIcmdWithAString* fSetNewParticleFilter;
+      G4UIcmdWithAString* fSetNewProcessFilter;
 
       G4UIcmdWithABool*         fifOpticalCmd;
 };
