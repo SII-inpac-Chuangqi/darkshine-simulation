@@ -19,16 +19,16 @@
 
 // Utility functions
 template<class ClusterHit>
-bool sortbyE(ClusterHit *a, ClusterHit *b) {return (a->getE() > b->getE());} // descending
+bool sortbyE(ClusterHit *a, ClusterHit *b) { return (a->getE() > b->getE()); } // descending
 
 template<class ClusterHit>
-bool sortbyX(ClusterHit *a, ClusterHit *b) {return (a->getCellIdX() < b->getCellIdX());} // ascending
+bool sortbyX(ClusterHit *a, ClusterHit *b) { return (a->getCellIdX() < b->getCellIdX()); } // ascending
 
 template<class ClusterHit>
-bool sortbyY(ClusterHit *a, ClusterHit *b) {return (a->getCellIdY() < b->getCellIdY());} // ascending
+bool sortbyY(ClusterHit *a, ClusterHit *b) { return (a->getCellIdY() < b->getCellIdY()); } // ascending
 
 template<class ClusterHit>
-bool sortbyZ(ClusterHit *a, ClusterHit *b) {return (a->getCellIdZ() < b->getCellIdXZ());} // ascending
+bool sortbyZ(ClusterHit *a, ClusterHit *b) { return (a->getCellIdZ() < b->getCellIdXZ()); } // ascending
 
 /// \brief Base Analysis Class for Cluster
 /// \note The input data vector will be automatically sorted in desending order by energy
@@ -47,7 +47,7 @@ public:
     }
 
     /// \brief Find the hit with maximumal energy
-    SimulatedHit* FindMaxEHit();
+    SimulatedHit *FindMaxEHit();
 
     /// \brief Find the total deposited energy
     double FindETotal();
@@ -58,7 +58,7 @@ public:
     /// \brief Find the n-th moment of the cluster along certain axis
     /// \param n: the n-th moments
     /// \param type: 0-all, 1-x, 2-y, 3-z
-    double FindMoment(unsigned n, int type, bool center= false);
+    double FindMoment(unsigned n, int type, bool center = false);
 
 
 private:
@@ -72,7 +72,7 @@ private:
     double E_Tot{0};
 
     // Maximum Energy Hit
-    SimulatedHit* MaxHit{nullptr};
+    SimulatedHit *MaxHit{nullptr};
 
     // Cluster Energy Fraction ( to the n-th highest energy )
     double E_frac{0.};
