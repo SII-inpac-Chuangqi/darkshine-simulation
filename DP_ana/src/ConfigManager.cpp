@@ -16,6 +16,7 @@ void ConfigManager::ReadConst() {
      * Read Const Running Configuration
      */
     inputfile = config->Read("InputFile", std::string("dp_out.root"));
+    inputGeofile = config->Read("InputGeoFile", inputfile);
     outputfile = config->Read("OutputFile", std::string("dp_ana.root"));
     RunNumber = config->Read("RunNumber", 0);
     EventNumber = config->Read("EventNumber", -1);
@@ -47,12 +48,13 @@ void ConfigManager::ReadAnaParameters() {
      */
     auto AnaPro = algomgr->getAnaProcessors();
     for (const auto &itr : AnaPro) {
-        auto algo_name = itr.first;
+        //auto algo_name = itr.first;
         auto algo_proccessor = itr.second;
 
         // Read Int Parameter
         auto IntPara = algo_proccessor->getIntParameters();
         for (const auto &itr_int : IntPara) {
+            auto algo_name = itr.first;
             auto parameter_name = itr_int.first;
             auto parameter_value = *(itr_int.second.second);
             auto read_str = algo_name.append(".").append(parameter_name);
@@ -62,6 +64,7 @@ void ConfigManager::ReadAnaParameters() {
         // Read Double Parameter
         auto DoublePara = algo_proccessor->getDoubleParameters();
         for (const auto &itr_double : DoublePara) {
+            auto algo_name = itr.first;
             auto parameter_name = itr_double.first;
             auto parameter_value = *(itr_double.second.second);
             auto read_str = algo_name.append(".").append(parameter_name);
@@ -71,6 +74,7 @@ void ConfigManager::ReadAnaParameters() {
         // Read String Parameter
         auto StrPara = algo_proccessor->getStringParameters();
         for (const auto &itr_str : StrPara) {
+            auto algo_name = itr.first;
             auto parameter_name = itr_str.first;
             auto parameter_value = *(itr_str.second.second);
             auto read_str = algo_name.append(".").append(parameter_name);

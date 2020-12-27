@@ -140,8 +140,9 @@ SET(dict_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/CaloHitsDisplay.h
 
         # include All Running Ana Processors
-        Algorithms/RecECAL/include/Algo/RecECAL.h
         Algorithms/RecECAL/include/Algo/ECAL_Cluster.h
+        Algorithms/RecECAL/include/Algo/Cluster_Analysis.h
+        Algorithms/RecECAL/include/Algo/RecECAL.h
         )
 SET(dict_source
         Utility/Object/src/SimulatedHit.cpp
@@ -161,8 +162,9 @@ SET(dict_source
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/CaloHitsDisplay.cpp
 
         # include All Running Ana Processors
-        Algorithms/RecECAL/src/RecECAL.cpp
         Algorithms/RecECAL/src/ECAL_Cluster.cpp
+        Algorithms/RecECAL/src/Cluster_Analysis.cpp
+        Algorithms/RecECAL/src/RecECAL.cpp
         )
 root_generate_dictionary(G__DEvent ${dict_header_shared} LINKDEF Utility/UTIL/include/Utility/DEventLinkDef.h)
 add_library(DEvent SHARED ${dict_header_shared} ${dict_source} G__DEvent.cxx)
@@ -172,15 +174,15 @@ add_library(DEvent SHARED ${dict_header_shared} ${dict_source} G__DEvent.cxx)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
+link_libraries(DEvent)
+
 add_executable(DSimu DP_simu.cc ${Simu_sources} ${Simu_headers}
         ${Util_sources} ${Util_headers})
 
 target_link_libraries(DSimu ${Geant4_LIBRARIES}
         ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES}
-        ${PYTHIA6_LIBRARIES}
-        DEvent)
+        ${PYTHIA6_LIBRARIES})
 
-link_libraries(DEvent)
 add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         ${Util_sources} ${Util_headers}
         ${Algo_sources} ${Algo_headers})

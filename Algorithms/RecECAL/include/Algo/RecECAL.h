@@ -12,6 +12,7 @@
 //#include "Algo/ECAL_Writer.h"
 //#include "Algo/ECAL_RNN.h"
 #include "Algo/ECAL_Cluster.h"
+#include "Algo/Cluster_Analysis.h"
 
 using namespace std;
 
@@ -32,50 +33,31 @@ public:
 
     // Define some functions here if necessary
     void initialization() {
-        center_x = 0.;
-        center_y = 0.;
-        mc_x = 0.;
-        mc_y = 0.;
-        err_x = 0.;
-        err_y = 0.;
-
         //ECAL_TF->Clean();
     }
 
-    double SingleCenterFinding(const SimulatedHitVecUniPtr&, const DStepVecUniPtr &);
-
 private:
+    // output variables
+    double E_total{0.};
+    double E_max{0.};
+    double E_frac{0.};
+    double Moments_R[4] = {0.};
+    double Moments_X[4] = {0.};
+    double Moments_Y[4] = {0.};
+    double Moments_Z[4] = {0.};
 
-    int FindCenter{0};
 
-    double center_x{0.};
-    double center_y{0.};
-    double mc_x{0.};
-    double mc_y{0.};
-    double err_x{0.};
-    double err_y{0.};
-
-    double RNN_Score{0.};
-
-    // double Hits_E[400];
     // Verbosity
     int verbose{0};
     // Input Parameter
     double W0{0.};
-    int nb_ch{1};
     int nb_z{1};
-//    string RNN_Status{};
-//    string RNN_Path{};
-//    string RNN_Sig_Path{};
-//    string RNN_Bkg_Path{};
-
     double d_cut{1.};
     double r_cut{0.5};
+    int n_fraction{1};
+
 
     // Internal Algorithm Processors
-    //shared_ptr<Trk_LineFit> ECAL_TF;
-    //shared_ptr<ECAL_Writer> ECAL_Wrt;
-    //shared_ptr<ECAL_RNN>    ECAL_rnn;
     shared_ptr<ECAL_Cluster> ECAL_cluster;
 };
 

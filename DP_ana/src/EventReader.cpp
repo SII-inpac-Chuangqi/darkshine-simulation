@@ -117,6 +117,21 @@ Int_t EventReader::ReadTree(const string &treename, TFile* tfile) {
     return 0;
 }
 
+void EventReader::ReadGeometry(const std::string &filename) {
+    auto tfile = new TFile(TString(filename));
+    if (!tfile) {
+        std::cerr << "[READFILE ERROR] ==> File: " + filename + " does not exist." << std::endl;
+        return;
+    }
+
+    std::cout << "[ READ Geometry ] ==> reading geometry from file: "<< tfile->GetName() << std::endl;
+    gGeoManager = (TGeoManager *) tfile->Get("DetGeoManager");
+    if (!gGeoManager) {
+        std::cerr << "[ READ Geometry ] ==> No Geometry in the file..." << std::endl;
+        return;
+    }
+}
+
 
 
 

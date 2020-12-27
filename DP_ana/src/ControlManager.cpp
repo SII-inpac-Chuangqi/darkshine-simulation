@@ -46,7 +46,6 @@ void ControlManager::run() {
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
     /* DEFINE ALGO PROCESSOR HERE */
-    //algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("Example1", EvtWrt)) );
     algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)) );
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)) );
 
@@ -66,6 +65,9 @@ void ControlManager::run() {
      */
     EvtReader->ReadFile(FileName);
     EvtReader->setEvt(evt);
+
+    // Read Geometry from ROOT file
+    EvtReader->ReadGeometry(ConfMgr->getInputGeofile());
 
     /*
      *  Processing

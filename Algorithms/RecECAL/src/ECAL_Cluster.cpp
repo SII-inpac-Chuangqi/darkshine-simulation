@@ -2,16 +2,14 @@
 // Created by Zhang Yulei on 12/8/20.
 //
 
-#include "Algorithms/RecECAL/include/Algo/ECAL_Cluster.h"
+#include "Algo/ECAL_Cluster.h"
 
 #include <algorithm>
 #include <cmath>
 
 // Root Library
 #include "TVector3.h"
-#include "TCanvas.h"
 #include "TAxis.h"
-#include "TFrame.h"
 #include "TH2D.h"
 
 // Driver function to sort the vector elements
@@ -190,111 +188,4 @@ ECAL_Cluster::FillClusterByMinDistance(SimulatedHit *hit, const SimulatedHitVecU
     Raw_Clusters.at(idx_MinDistance)->push_back(hit);
 
     return fill;
-}
-
-void ECAL_Cluster::DrawClusterResults(const SimulatedHitVecUniPtr &hits) {
-
-    // Define the canvas
-    auto c1 = new TCanvas("c1", "c1", 1500, 1200);
-
-    // Define Color
-    int col[27] = {632, 400, 591, 95, 876, 8, 4, 7, 5, 6, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-                   25};
-
-    auto gr = DrawGraph(hits, "Raw Hits", kBlack);
-    if (gr) {
-        gr->Draw("P0 FBBB");
-        gr->SetMarkerStyle(4);
-    }
-
-    // Draw Clusters
-    std::vector<shared_ptr<TGraph2D> > gr_v;
-    for (auto cluster: Layer_Clusters_Centers)
-        gr_v.push_back(shared_ptr<TGraph2D>(new TGraph2D()));
-    for (unsigned i = 0; i < Layer_Clusters_Centers.size(); ++i) {
-        gr_v.at(i) = DrawGraph(Layer_Clusters_Centers.at(i), to_string(i), col[i], 0.85);
-        if (gr_v.at(i)) {
-            gr_v.at(i)->Draw("P FBBB Same");
-            gr_v.at(i)->SetMarkerStyle(29);
-        }
-    }
-
-    // Draw Cluster Centers
-//    auto gr_c = DrawGraph(Cluster_Centers, to_string(20), 54, 0.75, 5);
-//    if (gr_c) {
-//        gr_c->Draw("P FBBB Same");
-//        gr_c->SetMarkerStyle(29);
-//    }
-
-//    std::vector<shared_ptr<TGraph2D> > gr_c;
-//    for (auto cluster: *Cluster_Centers)
-//        gr_c.push_back(shared_ptr<TGraph2D>(new TGraph2D()));
-//    for (unsigned i = 0; i < Cluster_Centers->size(); ++i) {
-//        SimulatedHitVecUniPtr tmp = shared_ptr<SimulatedHitVec>(new SimulatedHitVec());
-//        tmp->push_back(Cluster_Centers->at(i));
-//        gr_c.at(i) = DrawGraph(tmp, to_string(i+100), col[i], 1.0, 5);
-//        gr_c.at(i)->Draw("P FBBB Same");
-//        gr_c.at(i)->SetMarkerStyle(29);
-//    }
-
-    // Rotate Canvas
-    c1->SetPhi(0-0.01);
-    c1->SetTheta(0+0.01);
-    c1->SaveAs(("./plots/ECAL_Hits" + to_string(draw_n) + "_r" + to_string(r_cut) + ".png").data());
-
-    draw_n++;
-    delete c1;
-}
-
-void ECAL_Cluster::FormatGraph(const shared_ptr<TGraph2D> &gr) {
-    gr->SetTitle("ECAL Hits");
-    gr->GetXaxis()->SetTitle("z [mm]");
-    gr->GetYaxis()->SetTitle("x [mm]");
-    gr->GetZaxis()->SetTitle("y [mm]");
-
-//    gr->GetXaxis()->SetLabelOffset(999);
-//    gr->GetYaxis()->SetLabelOffset(999);
-//    gr->GetZaxis()->SetLabelOffset(999);
-
-    gr->GetXaxis()->SetTitleOffset(1.4);
-    gr->GetYaxis()->SetTitleOffset(2.2);
-    gr->GetZaxis()->SetTitleOffset(1.4);
-
-//
-//    gr->GetXaxis()->SetLabelSize(0);
-//    gr->GetYaxis()->SetLabelSize(0);
-//    gr->GetZaxis()->SetLabelSize(0);
-
-    gr->GetXaxis()->CenterTitle();
-    gr->GetYaxis()->CenterTitle();
-    gr->GetZaxis()->CenterTitle();
-
-}
-
-shared_ptr<TGraph2D>
-ECAL_Cluster::DrawGraph(const SimulatedHitVecUniPtr &hits, const TString &name, int marker_color, double alpha,
-                        int marker_size) {
-    // Convert vector to array
-    std::vector<double> vx;
-    std::vector<double> vy;
-    std::vector<double> vz;
-
-    for (auto hit : *hits) {
-        vx.push_back(hit->getX());
-        vy.push_back(hit->getY());
-        vz.push_back(hit->getZ());
-    }
-    auto hits_x = vx.data();
-    auto hits_y = vy.data();
-    auto hits_z = vz.data();
-    int hits_n = hits->size();
-    if (hits_n < 1) return nullptr;
-    auto gr = shared_ptr<TGraph2D>(new TGraph2D(hits_n, hits_z, hits_x, hits_y));
-    gr->SetName(name);
-    FormatGraph(gr);
-
-    gr->SetMarkerColorAlpha(marker_color, alpha);
-    gr->SetMarkerSize(marker_size);
-
-    return gr;
 }

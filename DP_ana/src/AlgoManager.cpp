@@ -9,7 +9,7 @@
 #include <ctime>
 #include <algorithm>
 
-void AlgoManager::RegisterAnaProcessor(std::shared_ptr<AnaProcessor> AnaP) {
+void AlgoManager::RegisterAnaProcessor(const std::shared_ptr<AnaProcessor>& AnaP) {
     if (AnaProcessors.count(AnaP->getName()) != 0)
         std::cerr << "[WARNING] ==> Algo Processor Name already exists." << std::endl;
     else

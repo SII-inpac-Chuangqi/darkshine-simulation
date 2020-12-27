@@ -13,6 +13,7 @@
 class ConfigManager {
 private:
     std::string inputfile; // input root file
+    std::string inputGeofile; // input Geometry root file
     std::string outputfile; // output root file
     std::string AlgoList;
     int RunNumber{0};
@@ -43,6 +44,10 @@ public:
     // Get Methods
     const string &getInputfile() const {
         return inputfile;
+    }
+
+    const string &getInputGeofile() const {
+        return inputGeofile;
     }
 
     const string &getOutputfile() const {
