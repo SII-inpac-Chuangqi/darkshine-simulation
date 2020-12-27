@@ -27,6 +27,7 @@
 #include "RootGlobal.hh"
 
 #include "Object/DEvent.h"
+#include "Filter/FilterManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -92,11 +93,6 @@ public:
 
     void SetifBiasECAL(G4bool in) { ifBiasECAL = in; };
 
-    void SetifFilter_HardBrem(G4bool in) { ifFilter_HardBrem = in; };
-
-    void SetifFilter_Process(G4bool in) { ifFilter_Process = in; };
-
-
     /* get methods */
     bool GetFilter() { return if_filter; };
 
@@ -120,38 +116,34 @@ public:
 
     G4bool GetifBiasECAL() { return ifBiasECAL; };
 
-    G4bool GetifFilter_HardBrem() { return ifFilter_HardBrem; };
+    G4bool GetifFilter_Particle() { return fFilterMng->GetifFilter_Particle(); };
 
-    G4bool GetifFilter_Process() { return ifFilter_Process; };
+    G4bool GetifFilter_Process() { return fFilterMng->GetifFilter_Process(); };
 
     DEvent *GetEvt() const {
         return Evt;
     }
 
     /* filter methods */
-    void Filter_Track_Initialize();
+    void Filter_Track_Initialize() { fFilterMng->Filter_Track_Initialize(); };
 
-    void Filter_Event_Initialize();
+    void Filter_Event_Initialize() { fFilterMng->Filter_Event_Initialize(); };
 
     void SetnewTrack(G4bool in) { newTrack = in; };
 
-    void SetGammaEmin(G4double in) { GammaEmin = in; };
+    void SetNew_Particle_Filter(G4int pdg, G4double risingEdge, G4double fallingEdge, G4double minDistance, G4double maxDistance) {
+        fFilterMng->SetNew_Particle_Filter(pdg, risingEdge, fallingEdge, minDistance, maxDistance);
+    };
 
-    void SetHardBrem_ScanDistance(G4double in) { HardBrem_ScanDistance = in; };
+    void SetNew_Process_Filter(G4String processName, G4double risingEdge, G4double fallingEdge ,G4double minDistance, G4double maxDistance) {
+        fFilterMng->SetNew_Process_Filter(processName, risingEdge, fallingEdge, minDistance, maxDistance);
+    };
 
-    void SetProcessName(G4String in) { ProcessName = in; };
+    G4bool Filter_Particle(const G4Step *aStep) { return fFilterMng->Filter_Particle(aStep); };
 
-    void SetProcessEmin(G4double in) { ProcessEmin = in; };
+    void Filter_Process(const G4Step *aStep) { fFilterMng->Filter_Process(aStep); };
 
-    void SetProcess_MinScanDistance(G4double in) { Process_MinScanDistance = in; };
-
-    void SetProcess_MaxScanDistance(G4double in) { Process_MaxScanDistance = in; };
-
-    G4bool Filter_HardBrem(const G4Step *);
-
-    void Filter_Process(const G4Step *);
-
-    G4bool GetFilter_Process_Result() { return Filter_Process_Result; };
+    G4bool GetFilter_Process_Result() { return fFilterMng->GetFilter_Process_Result(); };
 
     /* fill methods */
     void FillSim(Int_t EventID, const Double_t *Rndm);
@@ -191,19 +183,9 @@ private:
     G4bool ifBiasECAL;
 
     /* Filter Variables */
-    G4bool ifFilter_HardBrem;
-    G4bool ifFilter_Process;
+    std::shared_ptr<FilterManager> fFilterMng;
     G4bool newTrack;
 
-    G4double Filter_HardBrem_Result;
-    G4double GammaEmin;
-    G4double HardBrem_ScanDistance;
-
-    G4String ProcessName;
-    G4double Filter_Process_Result;
-    G4double ProcessEmin;
-    G4double Process_MinScanDistance;
-    G4double Process_MaxScanDistance;
 
     /*              */
     /* Root Outputs */

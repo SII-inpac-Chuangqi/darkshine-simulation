@@ -26,6 +26,7 @@ RootManager::RootManager()
     initialize();
     if_Optical = false;
     if_record_ip = true;
+    fFilterMng = std::make_shared<FilterManager>();
 }
 
 /// \brief Clean Optical stuff.

@@ -72,41 +72,13 @@ RootMessenger::RootMessenger(RootManager* rootMng)
     fFilterDirectory = new G4UIdirectory("/DP/Filter/");
     fFilterDirectory->SetGuidance("Simulation Filter control");
 
-    // Hard Brem
-    fifFilter_HardBremCmd = new G4UIcmdWithABool("/DP/Filter/if_filter_HardBrem",this);
-    fifFilter_HardBremCmd->SetGuidance("if filter hardbrem event");
-    fifFilter_HardBremCmd->SetDefaultValue(false);
-    fifFilter_HardBremCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fSetNewParticleFilter = new G4UIcmdWithAString("/DP/Filter/particle", this);
+    fSetNewParticleFilter->SetGuidance("Add New Particle Filter.");
+    fSetNewParticleFilter->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-    fFilterGammaEminCmd = new G4UIcmdWithADoubleAndUnit("/DP/Filter/HardBrem_GammaEmin",this);
-    fFilterGammaEminCmd->SetGuidance("Min Energy for Hard Brem");
-    fFilterGammaEminCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
-    fFilterHardBrem_ScanDistanceCmd = new G4UIcmdWithADoubleAndUnit("/DP/Filter/HardBrem_ScanDistance",this);
-    fFilterHardBrem_ScanDistanceCmd->SetGuidance("Max Scan Distance for Hard Brem");
-    fFilterHardBrem_ScanDistanceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
-    // Process
-    fifFilter_ProcessCmd = new G4UIcmdWithABool("/DP/Filter/if_filter_Process",this);
-    fifFilter_ProcessCmd->SetGuidance("if filter Process event");
-    fifFilter_ProcessCmd->SetDefaultValue(false);
-    fifFilter_ProcessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
-    fFilterProcessNameCmd = new G4UIcmdWithAString("/DP/Filter/Process_Name",this);
-    fFilterProcessNameCmd->SetGuidance("which process to be filtered");
-    fFilterProcessNameCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
-    fFilterProcessEminCmd = new G4UIcmdWithADoubleAndUnit("/DP/Filter/Process_Emin",this);
-    fFilterProcessEminCmd->SetGuidance("Min Energy for certain process");
-    fFilterProcessEminCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
-    fFilterProcess_MinScanDistanceCmd = new G4UIcmdWithADoubleAndUnit("/DP/Filter/Process_MinScanDistance",this);
-    fFilterProcess_MinScanDistanceCmd->SetGuidance("Max Scan Distance for certain process");
-    fFilterProcess_MinScanDistanceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
-    fFilterProcess_MaxScanDistanceCmd = new G4UIcmdWithADoubleAndUnit("/DP/Filter/Process_MaxScanDistance",this);
-    fFilterProcess_MaxScanDistanceCmd->SetGuidance("Max Scan Distance for certain process");
-    fFilterProcess_MaxScanDistanceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fSetNewProcessFilter = new G4UIcmdWithAString("/DP/Filter/process", this);
+    fSetNewProcessFilter->SetGuidance("Add New Process Filter");
+    fSetNewProcessFilter->AvailableForStates(G4State_PreInit, G4State_Idle);
 
     // Optical Photon
     fifOpticalCmd = new G4UIcmdWithABool("/DP/if_Optical_Photon",this);
@@ -141,14 +113,8 @@ RootMessenger::~RootMessenger()
   delete fifBiasECALCmd;
   delete fBiasEminCmd;
   delete fFilterDirectory;
-  delete fifFilter_HardBremCmd;
-  delete fFilterGammaEminCmd;
-  delete fFilterHardBrem_ScanDistanceCmd;
-  delete fifFilter_ProcessCmd;
-  delete fFilterProcessNameCmd;
-  delete fFilterProcessEminCmd;
-  delete fFilterProcess_MinScanDistanceCmd;
-  delete fFilterProcess_MaxScanDistanceCmd;
+  delete fSetNewParticleFilter;
+  delete fSetNewProcessFilter;
   delete fifOpticalCmd;
 }
 
@@ -181,29 +147,37 @@ void RootMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     if( command == fifBiasECALCmd)
         froot->SetifBiasECAL(fifBiasECALCmd->GetNewBoolValue(newValue));
 
-    if( command == fifFilter_HardBremCmd)
-        froot->SetifFilter_HardBrem(fifFilter_HardBremCmd->GetNewBoolValue(newValue));
+    if( command == fSetNewParticleFilter) {
+        std::vector<G4String> res; // storing splitted string.
+        G4String result; // temporary splitted stirng.
+        std::stringstream input(newValue);
+        while(input>>result)
+            res.emplace_back(result);
+        assert(res.size() == 5);
+        froot->SetNew_Particle_Filter(
+            std::stoi(res[0]), // pdf
+            std::stod(res[1]), // Energy risingEdge
+            std::stod(res[2]), // Energy fallingEdge
+            std::stod(res[3]), // minDistance
+            std::stod(res[4])  // maxDistance
+        );
+    }
 
-    if( command == fFilterGammaEminCmd )
-        froot->SetGammaEmin(fFilterGammaEminCmd->GetNewDoubleValue(newValue));
-
-    if( command == fFilterHardBrem_ScanDistanceCmd )
-        froot->SetHardBrem_ScanDistance(fFilterHardBrem_ScanDistanceCmd->GetNewDoubleValue(newValue));
-
-    if( command == fifFilter_ProcessCmd)
-        froot->SetifFilter_Process(fifFilter_ProcessCmd->GetNewBoolValue(newValue));
-
-    if( command == fFilterProcessNameCmd )
-        froot->SetProcessName(newValue);
-
-    if( command == fFilterProcessEminCmd )
-        froot->SetProcessEmin(fFilterProcessEminCmd->GetNewDoubleValue(newValue));
-
-    if( command == fFilterProcess_MinScanDistanceCmd )
-        froot->SetProcess_MinScanDistance(fFilterProcess_MinScanDistanceCmd->GetNewDoubleValue(newValue));
-
-    if( command == fFilterProcess_MaxScanDistanceCmd )
-        froot->SetProcess_MaxScanDistance(fFilterProcess_MaxScanDistanceCmd->GetNewDoubleValue(newValue));
+    if( command == fSetNewProcessFilter) {
+        std::vector<G4String> res;
+        G4String result;
+        std::stringstream input(newValue);
+        while(input>>result)
+            res.emplace_back(result);
+        assert(res.size() == 5);
+        froot->SetNew_Process_Filter(
+            res[0],            // processName
+            std::stod(res[1]), // Energy risingEdge
+            std::stod(res[2]), // Energy fallingEdge
+            std::stod(res[3]), // minDistance
+            std::stod(res[4])  // maxDistance
+        );
+    }
 
     if( command == fifOpticalCmd ) {
         froot->SetOptical(fifOpticalCmd->GetNewBoolValue(newValue));

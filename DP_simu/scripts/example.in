@@ -44,16 +44,8 @@
 /DP/setifBias                       0
 
 ########## Filter ############
-# HardBrem
-/DP/Filter/if_filter_HardBrem       0
-/DP/Filter/HardBrem_GammaEmin       4 GeV
-/DP/Filter/HardBrem_ScanDistance    20 cm
-# Process
-/DP/Filter/if_filter_Process        0
-/DP/Filter/Process_Name             GammaToMuPair
-/DP/Filter/Process_Emin             1 GeV
-/DP/Filter/Process_MinScanDistance  -5 mm
-/DP/Filter/Process_MaxScanDistance  +600 mm
+/DP/Filter/particle                            22  0  4  -1000  200
+/DP/Filter/process                  GammaToMuPair  0  1     -5  600
 
 ########## Verbose ############
 /tracking/verbose                   0
