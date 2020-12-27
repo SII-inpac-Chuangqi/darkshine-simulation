@@ -8,8 +8,8 @@
 /// \brief Class Description:
 ///  Take particle filter as an example. 
 ///  First, SetNewParticleFilter() will construct new class FilterParticle class,
-///  initialize PDG, risingEdge, fallingEdge, etc. The pointer to this class is stored
-///  in vector Filter_Particle_List.
+///  initialize PDG, risingEnergyEdge, fallingEnergyEdge, etc.
+///  The pointer to this class is stored in vector Filter_Particle_List.
 ///  Second, these class will be traversed in SteppingAction.
 class FilterManager {
 public:
@@ -29,12 +29,24 @@ public:
 
     /// Setter
 
-    /// \brief
-    /// \param flag  1: must have this particle in this range.
-    ///              0: must not have this particle in this range.
+    /// \brief Setup a new particle filter.
+    /// \param pdg  PDG ID of secondary particle.
+    /// \param risingEnergyEdge  The rising edge of Energy range.
+    /// \param fallingEnergyEdge  The falling edge of Energy range.
+    /// \param risingScanEdge  The rising edge of Scan Distance range.
+    /// \param fallingScanEdge  The falling edge of Scan Distance range.
+    /// \param flag  1: The Event to be computed must have this particle in particular range.
+    ///              0: The Event to be computed must not have this particle in particular range.
     void SetNew_Particle_Filter(G4int pdg, G4double risingEnergyEdge, G4double fallingEnergyEdge,
                                 G4double risingScanEdge, G4double fallingScanEdge, G4bool flag);
-
+    /// \brief Setup a new process filter.
+    /// \param processName  process name of post step point.
+    /// \param risingEnergyEdge  The rising edge of Energy range.
+    /// \param fallingEnergyEdge  The falling edge of Energy range.
+    /// \param risingScanEdge  The rising edge of Scan Distance range.
+    /// \param fallingScanEdge  The falling edge of Scan Distance range.
+    /// \param flag  1: The Event to be computed must have this process in particular range.
+    ///              0: The Event to be computed must not have this process in particular range.
     void SetNew_Process_Filter(G4String processName, G4double risingEnergyEdge, G4double fallingEnergyEdge,
                                G4double risingScanEdge, G4double fallingScanEdge, G4bool flag);
 

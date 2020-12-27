@@ -27,7 +27,6 @@ private:
     G4double Energy_Edge_Rising;
     G4double Energy_Edge_Falling;
 
-    G4double Filter_Result = false;
     G4double ScanDistance_Edge_Rising;
     G4double ScanDistance_Edge_Falling;
 
