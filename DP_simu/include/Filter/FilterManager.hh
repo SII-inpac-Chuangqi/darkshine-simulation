@@ -23,9 +23,9 @@ public:
 
     /// Filter method
 
-    G4bool Filter_Particle(const G4Step* aStep);
-    
-    void Filter_Process(const G4Step* aStep);
+    G4bool Filter_Particle(const G4Step *aStep);
+
+    void Filter_Process(const G4Step *aStep);
 
     /// Setter
 
@@ -39,6 +39,7 @@ public:
     ///              0: The Event to be computed must not have this particle in particular range.
     void SetNew_Particle_Filter(G4int pdg, G4double risingEnergyEdge, G4double fallingEnergyEdge,
                                 G4double risingScanEdge, G4double fallingScanEdge, G4bool flag);
+
     /// \brief Setup a new process filter.
     /// \param processName  process name of post step point.
     /// \param risingEnergyEdge  The rising edge of Energy range.
@@ -51,12 +52,11 @@ public:
                                G4double risingScanEdge, G4double fallingScanEdge, G4bool flag);
 
     /// Getter
+    [[nodiscard]] G4bool GetifFilter_Particle() const { return ifFilter_Particle; };
 
-    G4bool GetifFilter_Particle() { return ifFilter_Particle; };
+    [[nodiscard]] G4bool GetifFilter_Process() const { return ifFilter_Process; };
 
-    G4bool GetifFilter_Process() { return ifFilter_Process; };
-
-    G4bool GetFilter_Process_Result() { return Filter_Process_Result; } ;
+    [[nodiscard]] G4bool GetFilter_Process_Result() const { return Filter_Process_Result; };
 
 private:
     G4bool ifFilter_Particle = false;
@@ -67,7 +67,8 @@ private:
     std::vector<std::shared_ptr<FilterParticle>>::iterator particle_end;
     std::vector<std::shared_ptr<FilterProcess>>::iterator process_itr;
     std::vector<std::shared_ptr<FilterProcess>>::iterator process_end;
-    G4bool Filter_Particle_Result;
-    G4bool Filter_Process_Result;
+    G4bool Filter_Particle_Result{};
+    G4bool Filter_Process_Result{};
 };
+
 #endif // FILTER_MANAGER_H

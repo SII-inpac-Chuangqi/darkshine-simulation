@@ -21,6 +21,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
+#include <utility>
 #include <vector>
 #include <map>
 
@@ -40,8 +41,8 @@ class TRandom3;
 class RootMessenger;
 
 // Some Global String
-static TString InitialParticleStepCollection = "Initial_Particle_Step";
-static TString RawMCCollection = "RawMCParticle";
+// static TString InitialParticleStepCollection = "Initial_Particle_Step";
+// static TString RawMCCollection = "RawMCParticle";
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // class description:
@@ -62,7 +63,7 @@ public:
     void initialize();
 
     /* set methods */
-    void SetOutFileName(G4String in) { outfilename = in; };
+    void SetOutFileName(G4String in) { outfilename = std::move(in); };
 
     void SetStartID(int id) { fStart = id; };
 
@@ -83,7 +84,7 @@ public:
 
     void SetifBias(G4bool in) { ifBias = in; };
 
-    void SetBiasProcess(G4String in) { BiasProcess = in; };
+    void SetBiasProcess(G4String in) { BiasProcess = std::move(in); };
 
     void SetBiasFactor(G4double in) { BiasFactor = in; };
 
@@ -94,33 +95,33 @@ public:
     void SetifBiasECAL(G4bool in) { ifBiasECAL = in; };
 
     /* get methods */
-    bool GetFilter() { return if_filter; };
+    bool GetFilter() const { return if_filter; };
 
-    bool GetOptical() { return if_Optical; };
+    bool GetOptical() const { return if_Optical; };
 
-    bool GetRecordStep() { return if_record_ip; };
+    bool GetRecordStep() const { return if_record_ip; };
 
-    int GetNbEvent() { return fEvtNb; };
+    int GetNbEvent() const { return fEvtNb; };
 
     G4String GetOutFileName() { return outfilename; };
 
-    G4bool GetifBias() { return ifBias; };
+    G4bool GetifBias() const { return ifBias; };
 
     G4String GetBiasProcess() { return BiasProcess; };
 
-    G4double GetBiasFactor() { return BiasFactor; };
+    G4double GetBiasFactor() const { return BiasFactor; };
 
-    G4double GetBiasEmin() { return BiasEmin; };
+    G4double GetBiasEmin() const { return BiasEmin; };
 
-    G4bool GetifBiasTarget() { return ifBiasTarget; };
+    G4bool GetifBiasTarget() const { return ifBiasTarget; };
 
-    G4bool GetifBiasECAL() { return ifBiasECAL; };
+    G4bool GetifBiasECAL() const { return ifBiasECAL; };
 
     G4bool GetifFilter_Particle() { return fFilterMng->GetifFilter_Particle(); };
 
     G4bool GetifFilter_Process() { return fFilterMng->GetifFilter_Process(); };
 
-    DEvent *GetEvt() const {
+    [[nodiscard]] DEvent *GetEvt() const {
         return Evt;
     }
 
@@ -140,7 +141,7 @@ public:
     void SetNew_Process_Filter(G4String processName, G4double risingEnergyEdge, G4double fallingEnergyEdge,
                                G4double risingScanEdge, G4double fallingScanEdge, G4bool flag)
     {
-        fFilterMng->SetNew_Process_Filter(processName, risingEnergyEdge, fallingEnergyEdge, risingScanEdge, fallingScanEdge, flag);
+        fFilterMng->SetNew_Process_Filter(std::move(processName), risingEnergyEdge, fallingEnergyEdge, risingScanEdge, fallingScanEdge, flag);
     };
 
     G4bool Filter_Particle(const G4Step *aStep) { return fFilterMng->Filter_Particle(aStep); };
@@ -171,24 +172,24 @@ private:
     /* Control Variables */
     /*                   */
 
-    Bool_t if_filter;
-    Bool_t if_EndEvt;
+    Bool_t if_filter{};
+    Bool_t if_EndEvt{};
     Bool_t if_Optical; // flag of Optical Process. 
 
     RootMessenger *fMessenger;
 
     /* Biasing Variables */
-    G4bool ifBias;
+    G4bool ifBias{};
 
     G4String BiasProcess;
-    G4double BiasFactor;
-    G4double BiasEmin;
-    G4bool ifBiasTarget;
-    G4bool ifBiasECAL;
+    G4double BiasFactor{};
+    G4double BiasEmin{};
+    G4bool ifBiasTarget{};
+    G4bool ifBiasECAL{};
 
     /* Filter Variables */
     std::shared_ptr<FilterManager> fFilterMng;
-    G4bool newTrack;
+    G4bool newTrack{};
 
 
     /*              */
@@ -201,10 +202,10 @@ private:
 
     Int_t fStart; // Run Number, Initialized to 0. Set method: RootManager::SetStartID(int id)
     Int_t fEvtNb; // Event Number, Initialized to 100000. Set method: RootManager::SetNbEvent(int id)
-    Int_t fEvtN;
+    Int_t fEvtN{};
 
-    Int_t EventID;
-    Double_t Rndm[4]; //Random double array, size=4
+    Int_t EventID{};
+    Double_t Rndm[4]{}; //Random double array, size=4
 
 
     // Initial Particle Movement

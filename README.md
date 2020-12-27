@@ -132,16 +132,50 @@ Without any arguments, DSimu will run in graphic mode, which is highly not recom
 | /DP/Bias/Emin                      | The minimal energy required for the particle to be biased          | 1 GeV            |
 | /DP/Bias/if_bias_target            | Biased region                                                      | 1(true)/0(false) |
 | /DP/Bias/if_bias_ecal              | Biased region                                                      | 1(true)/0(false) |
-|**Gamma Filter**|
-| /DP/Filter/if_filter_HardBrem      | Only select the event with the corresponding hard-brem ¦Ã          | 1(true)/0(false) |
-| /DP/Filter/HardBrem_GammaEmin      | The minimal energy required to pass the hard-brem selection        | 1 GeV            |
-| /DP/Filter/HardBrem_ScanDistance   | Only scan hard-brem ¦Ã before the distance along z-axis            | 1 mm             |
-|**Process Filter**|
-| /DP/Filter/if_filter_Process       | Only select the event including the corresponding physics process  | 1(true)/0(false) |
-| /DP/Filter/Process_Name            | Name of the selected physics process in Geant4                     | GammaToMuPair    |
-| /DP/Filter/Process_Emin            | The minimal energy required for the parent particle in the process | 1 GeV            |
-| /DP/Filter/Process_MinScanDistance | Only scan the region with z large than this value                  | -1 mm            |
-| /DP/Filter/Process_MaxScanDistance | Only scan the region with z less than this value                   | 100 mm           |
+</details>
+
+<details><summary><b>Filters</b></summary>
+
+**new commands**
+
+``` 
+/DP/Filter/particle <pdf> <rising energy edge> <falling energy edge> <rising scan distance edge> <falling scan distance edge> <flag>
+/DP/Filter/process <process name> <rising energy edge> <falling energy edge> <rising scan distance edge> <falling scan distance edge> <flag>
+```
+
+**example**
+
+```
+/DP/Filter/particle 22 0 4 -1000 200 1
+/DP/Filter/process GammaToMuPair 0 1 -5 600 0
+```
+
+Each command will construct a new  ```FilterParticle``` or ```FilterProcess``` class, their pointers are emplace_back to a vector.
+
+**flag:**
+
+flag = 1: The Event to be computed must have this secondary particle/process in particular energy range and scan distance range. Otherwise this event will be aborted.
+
+flag = 0: The Event to be computed must not have this secondary particle/process in particular energy range and scan distance range. If this particle/process was scanned, then this event will be aborted.
+
+**usage of "edge":** Use "edge of the square wave" to specify energy range and scan distance range. So we can use 2 parameters to construct 5 types of filter.
+
+| filter type | rising energy edge (MeV) | falling energy edge (MeV) |
+| ---| ---| --- |
+| low-pass filter | 0 | 4000 |
+| high-pass filter | 4000 | 0 |
+| band-pass filter | 4000 | 8000 |
+| band-stop filter | 8000 | 4000 |
+| all-pass filter | 0 | 0 |
+
+| filter type | rising scan distance edge (MeV) | falling scan distance edge (MeV) |
+| ---| ---| --- |
+| band-pass filter | -1000 | 200 |
+| band-stop filter | 200 | -1000 |
+| all-pass filter | 0 | 0 |
+
+related method: ```Square_Filter()```
+
 </details>
 
 # Data Recoding
