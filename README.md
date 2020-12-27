@@ -139,7 +139,7 @@ Without any arguments, DSimu will run in graphic mode, which is highly not recom
 **new commands**
 
 ``` 
-/DP/Filter/particle <pdf> <rising energy edge> <falling energy edge> <rising scan distance edge> <falling scan distance edge> <flag>
+/DP/Filter/particle <PDG> <rising energy edge> <falling energy edge> <rising scan distance edge> <falling scan distance edge> <flag>
 /DP/Filter/process <process name> <rising energy edge> <falling energy edge> <rising scan distance edge> <falling scan distance edge> <flag>
 ```
 
