@@ -131,12 +131,16 @@ public:
 
     void SetnewTrack(G4bool in) { newTrack = in; };
 
-    void SetNew_Particle_Filter(G4int pdg, G4double risingEdge, G4double fallingEdge, G4double minDistance, G4double maxDistance) {
-        fFilterMng->SetNew_Particle_Filter(pdg, risingEdge, fallingEdge, minDistance, maxDistance);
+    void SetNew_Particle_Filter(G4int pdg, G4double risingEnergyEdge, G4double fallingEnergyEdge,
+                                G4double risingScanEdge, G4double fallingScanEdge, G4bool flag)
+    {
+        fFilterMng->SetNew_Particle_Filter(pdg, risingEnergyEdge, fallingEnergyEdge, risingScanEdge, fallingScanEdge, flag);
     };
 
-    void SetNew_Process_Filter(G4String processName, G4double risingEdge, G4double fallingEdge ,G4double minDistance, G4double maxDistance) {
-        fFilterMng->SetNew_Process_Filter(processName, risingEdge, fallingEdge, minDistance, maxDistance);
+    void SetNew_Process_Filter(G4String processName, G4double risingEnergyEdge, G4double fallingEnergyEdge,
+                               G4double risingScanEdge, G4double fallingScanEdge, G4bool flag)
+    {
+        fFilterMng->SetNew_Process_Filter(processName, risingEnergyEdge, fallingEnergyEdge, risingScanEdge, fallingScanEdge, flag);
     };
 
     G4bool Filter_Particle(const G4Step *aStep) { return fFilterMng->Filter_Particle(aStep); };

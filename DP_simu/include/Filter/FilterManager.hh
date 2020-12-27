@@ -29,11 +29,14 @@ public:
 
     /// Setter
 
-    void SetNew_Particle_Filter(G4int pdg, G4double risingEdge, G4double fallingEdge,
-                              G4double minDistance, G4double maxDistance);
+    /// \brief
+    /// \param flag  1: must have this particle in this range.
+    ///              0: must not have this particle in this range.
+    void SetNew_Particle_Filter(G4int pdg, G4double risingEnergyEdge, G4double fallingEnergyEdge,
+                                G4double risingScanEdge, G4double fallingScanEdge, G4bool flag);
 
-    void SetNew_Process_Filter(G4String processName, G4double risingEdge, G4double fallingEdge,
-                               G4double minDistance, G4double maxDistance);
+    void SetNew_Process_Filter(G4String processName, G4double risingEnergyEdge, G4double fallingEnergyEdge,
+                               G4double risingScanEdge, G4double fallingScanEdge, G4bool flag);
 
     /// Getter
 

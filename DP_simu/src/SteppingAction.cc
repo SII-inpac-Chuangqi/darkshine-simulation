@@ -64,7 +64,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 { 
     if ( froot->GetifFilter_Process() ) froot->Filter_Process(aStep);
     if ( froot->GetifFilter_Particle() ) {
-        if (froot->Filter_Particle(aStep)) { 
+        if ( !froot->Filter_Particle(aStep) ) { 
             G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
             G4EventManager::GetEventManager()->AbortCurrentEvent();
         }

@@ -44,8 +44,8 @@
 /DP/setifBias                       0
 
 ########## Filter ############
-/DP/Filter/particle                            22  0  4  -1000  200
-/DP/Filter/process                  GammaToMuPair  0  1     -5  600
+/DP/Filter/particle                            22  0  4  -1000  200 1
+/DP/Filter/process                  GammaToMuPair  0  1     -5  600 1
 
 ########## Verbose ############
 /tracking/verbose                   0

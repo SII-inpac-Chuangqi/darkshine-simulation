@@ -83,7 +83,7 @@ void EventAction::BeginOfEventAction(const G4Event* event)
 
 void EventAction::EndOfEventAction(const G4Event* event)
 {
-    if ( frootMng->GetifFilter_Process() && frootMng->GetFilter_Process_Result() ) {
+    if ( frootMng->GetifFilter_Process() && !frootMng->GetFilter_Process_Result() ) {
         frootMng->initialize();
         return;
     }
