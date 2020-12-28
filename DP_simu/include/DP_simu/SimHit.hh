@@ -42,52 +42,77 @@
 /// of charged particles in a selected volume:
 /// - fEdep, fTrackLength
 
-class SimHit : public G4VHit
-{
-  public:
+class SimHit : public G4VHit {
+public:
     SimHit();
-    SimHit(const SimHit&);
-    virtual ~SimHit();
+
+    SimHit(const SimHit &);
+
+    ~SimHit() override;
 
     // operators
-    const SimHit& operator=(const SimHit&);
-    G4int operator==(const SimHit&) const;
+    SimHit &operator=(const SimHit &);
 
-    inline void* operator new(size_t);
-    inline void  operator delete(void*);
+    G4int operator==(const SimHit &) const;
+
+    inline void *operator new(size_t);
+
+    inline void operator delete(void *);
 
     // methods from base class
-    virtual void Draw() {}
-    virtual void Print();
+    void Draw() override {}
+
+    void Print() override;
 
     // methods to handle data
     void SetT(G4double t);
+
     void SetX(G4double x) { fx = x; };
+
     void SetY(G4double y) { fy = y; };
+
     void SetZ(G4double z) { fz = z; };
+
     void AddEnergyDep(G4double, G4double);
+
     void SetXYZ(G4double, G4double, G4double);
+
     void SetParticleID(G4int a) { fID = a; };
+
     void SetPDG(G4int a) { fPDG = a; };
-    void SetDetectorID(G4ThreeVector a) { fDetectorID = a; };
-    void SetType(G4int a) { fType = a; }; 
-    void SetDetectorRepNo(G4int a) { fDetectorRepNo = a; }; 
+
+    void SetDetectorID(const G4ThreeVector &a) { fDetectorID = a; };
+
+    void SetType(G4int a) { fType = a; };
+
+    void SetDetectorRepNo(G4int a) { fDetectorRepNo = a; };
 
     // get methods
     G4double GetEdep() const { return fEdep; };
-    G4double GetTime() const { return ft; };
-    G4double GetX() const { return fx; };  
-    G4double GetY() const { return fy; };  
-    G4double GetZ() const { return fz; };  
-    G4double GetEdepEM() const  { return fEdepEM; };
-    G4double GetEdepHad() const { return fEdepHad; };
-    G4int    GetParticleID() const { return fID; };
-    G4int    GetPDG() const { return fPDG; };
-    G4int    GetType() const { return fType; };
-    G4ThreeVector GetDetectorID() const { return fDetectorID; };
-    G4int    GetDetectorRepNo() const { return fDetectorRepNo; };
 
-  private:
+    G4double GetTime() const { return ft; };
+
+    G4double GetX() const { return fx; };
+
+    G4double GetY() const { return fy; };
+
+    G4double GetZ() const { return fz; };
+
+    G4double GetEdepEM() const { return fEdepEM; };
+
+    G4double GetEdepHad() const { return fEdepHad; };
+
+    G4int GetParticleID() const { return fID; };
+
+    G4int GetPDG() const { return fPDG; };
+
+    G4int GetType() const { return fType; };
+
+    G4ThreeVector GetDetectorID() const { return fDetectorID; };
+
+    G4int GetDetectorRepNo() const { return fDetectorRepNo; };
+
+private:
     G4double fEdep;        ///< Energy deposit in the sensitive volume
     G4double fEdepEM;
     G4double fEdepHad;
@@ -96,9 +121,9 @@ class SimHit : public G4VHit
     G4double fx;
     G4double fy;
     G4double fz;
-    G4double fw;
+    G4double fw{};
 
-    G4int fType;
+    G4int fType{};
     G4int fID;
     G4int fPDG;
     G4ThreeVector fDetectorID;
@@ -113,24 +138,22 @@ extern G4Allocator<SimHit> SimHitAllocator;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-inline void* SimHit::operator new(size_t)
-{
+inline void *SimHit::operator new(size_t) {
     void *hit;
     hit = (void *) SimHitAllocator.MallocSingle();
     return hit;
 }
 
-inline void SimHit::operator delete(void *hit)
-{
-    SimHitAllocator.FreeSingle((SimHit*) hit);
+inline void SimHit::operator delete(void *hit) {
+    SimHitAllocator.FreeSingle((SimHit *) hit);
 }
 
 inline void SimHit::AddEnergyDep(G4double EdepEM, G4double EdepHad) {
-    fEdepEM += EdepEM; 
+    fEdepEM += EdepEM;
     fEdepHad += EdepHad;
 
-    fw = (fEdep + fEdepEM + fEdepHad <= 0) ? 0. : fEdep/(fEdep + fEdepEM + fEdepHad) ;
-    
+    fw = (fEdep + fEdepEM + fEdepHad <= 0) ? 0. : fEdep / (fEdep + fEdepEM + fEdepHad);
+
     fEdep = (fEdepEM + fEdepHad);
 }
 
@@ -142,7 +165,7 @@ inline void SimHit::SetXYZ(G4double x, G4double y, G4double z) {
 
 inline void SimHit::SetT(G4double t) {
 
-    ft = fw*ft + (1-fw)*t;
+    ft = fw * ft + (1 - fw) * t;
 
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
