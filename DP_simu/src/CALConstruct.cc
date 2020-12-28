@@ -12,7 +12,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-CALConstruct::CALConstruct(G4String CALName,
+CALConstruct::CALConstruct(const G4String& CALName,
                            G4LogicalVolume *MotherVolume,
                            G4int CopyNo,
                            G4bool Type,
@@ -93,6 +93,11 @@ CALConstruct::~CALConstruct() {
 
     fWrapLVVector.clear();
     fWrapLVVector.shrink_to_fit();
+
+    for (auto pv : PVVector)
+        delete pv;
+    PVVector.clear();
+    PVVector.shrink_to_fit();
 }
 
 
@@ -172,6 +177,7 @@ CALConstruct::Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4Logic
         return G4ThreeVector();
     }
     auto boxPV = new G4PVPlacement(fRotate, pos, boxLV, fName + "_PV", fMotherVolume, false, fCopyNo, fCheckOverlap);
+    PVVector.push_back(boxPV);
 
     TotalSize = G4ThreeVector(fSizeX, fSizeY, fSizeZ);
 
@@ -183,6 +189,7 @@ CALConstruct::Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4Logic
         }
         auto WrapPV = new G4PVPlacement(fRotate, pos, WrapLV, fCALName + "_PVW", fMotherVolume, false, fCopyNo,
                                         fCheckOverlap);
+        PVVector.push_back(WrapPV);
 
         TotalSize = G4ThreeVector(fSizeX + fWrapSizeX, fSizeY + fWrapSizeY, fSizeZ + fWrapSizeZ);
 
@@ -216,9 +223,10 @@ CALConstruct::Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4Logic
                 G4cerr << "APDboxLV is empty for " << fCALName << " " << fCopyNo << G4endl;
                 return G4ThreeVector();
             }
-            new G4PVPlacement(nullptr, G4ThreeVector(wPosX, wPosY, wPosZ), aboxLV, fCALName + "_APDWorld_PV", boxLV,
+            auto APDPV = new G4PVPlacement(nullptr, G4ThreeVector(wPosX, wPosY, wPosZ), aboxLV, fCALName + "_APDWorld_PV", boxLV,
                               false, fCopyNo, fCheckOverlap);
 
+            PVVector.push_back(APDPV);
         }
 
     }

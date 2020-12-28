@@ -55,7 +55,7 @@ TrackingAction::~TrackingAction() = default;
 void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
     /* Initialize Filter */
     fMC = new McParticle();
-    fMC->setPdg(aTrack->GetParticleDefinition()->GetPDGEncoding());
+//    fMC->setPdg(aTrack->GetParticleDefinition()->GetPDGEncoding());
 //    fMC->setId(aTrack->GetTrackID());
 //    fMC->setEnergy(aTrack->GetKineticEnergy());
 //    fMC->setPx(aTrack->GetMomentum()[0]);
@@ -102,10 +102,10 @@ void TrackingAction::PostUserTrackingAction(const G4Track *aTrack) {
 //    }
 //    delete fMC;
 //    fMC = nullptr;
-    fMC->setERemain(aTrack->GetKineticEnergy());
-    fMC->setEndPointX(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[0]);
-    fMC->setEndPointY(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[1]);
-    fMC->setEndPointZ(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[2]);
+//    fMC->setERemain(aTrack->GetKineticEnergy());
+//    fMC->setEndPointX(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[0]);
+//    fMC->setEndPointY(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[1]);
+//    fMC->setEndPointZ(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[2]);
 
 }
 

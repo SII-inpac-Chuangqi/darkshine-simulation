@@ -19,7 +19,7 @@
 
 class CALConstruct {
 public:
-    CALConstruct(G4String, G4LogicalVolume *, G4int, G4bool, G4bool, G4bool, G4bool);
+    CALConstruct(const G4String&, G4LogicalVolume *, G4int, G4bool, G4bool, G4bool, G4bool);
 
     CALConstruct(const CALConstruct &);
 
@@ -182,8 +182,8 @@ private:
     G4LogicalVolume *fAbsLV{nullptr}; // Absorber world
 
     // For Matrix Placement Output
-    std::vector<G4LogicalVolume *> fCaloLVVector;
-    std::vector<G4LogicalVolume *> fWrapLVVector;
+    std::vector<G4LogicalVolume *> fCaloLVVector{};
+    std::vector<G4LogicalVolume *> fWrapLVVector{};
 
     // For Memory Clean
     std::vector<G4PVPlacement*> PVVector;
