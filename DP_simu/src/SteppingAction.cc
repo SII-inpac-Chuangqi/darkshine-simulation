@@ -43,73 +43,70 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-SteppingAction::SteppingAction(RootManager * rootMng)
- : G4UserSteppingAction()
-{
+SteppingAction::SteppingAction(RootManager *rootMng)
+        : G4UserSteppingAction() {
     froot = rootMng;
-    G4cout<<"Stepping Initialized!!"<<G4endl;
+    G4cout << "Stepping Initialized!!" << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-SteppingAction::~SteppingAction()
-{
-    G4cout<<"Stepping deleted..."<<G4endl;
+SteppingAction::~SteppingAction() {
+    G4cout << "Stepping deleted..." << G4endl;
 }
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void SteppingAction::UserSteppingAction(const G4Step* aStep)
-{ 
-    if ( froot->GetifFilter_Process() ) froot->Filter_Process(aStep);
-    if ( froot->GetifFilter_Particle() ) {
-        if ( !froot->Filter_Particle(aStep) ) { 
+void SteppingAction::UserSteppingAction(const G4Step *aStep) {
+    if (froot->GetifFilter_Process()) froot->Filter_Process(aStep);
+    if (froot->GetifFilter_Particle()) {
+        if (!froot->Filter_Particle(aStep)) {
             G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
             G4EventManager::GetEventManager()->AbortCurrentEvent();
         }
     }
 
-    G4StepPoint* prev = aStep->GetPreStepPoint();
-    G4StepPoint* post = aStep->GetPostStepPoint();
-    auto * p = new McParticle();
+    G4StepPoint *prev = aStep->GetPreStepPoint();
+    G4StepPoint *post = aStep->GetPostStepPoint();
+    auto *p = new McParticle();
 
     // Get Detector Region
-    if( post && post->GetPhysicalVolume() ) {
+    if (post && post->GetPhysicalVolume()) {
         auto Region_name = post->GetPhysicalVolume()->GetName();
-        froot->FillEleak( aStep , Region_name );
+        froot->FillEleak(aStep, Region_name);
     }
-    if ( !post ) return;
-    if ( aStep->GetTrack()->GetTrackID()==1 ) {
+    if (!post) return;
+    if (aStep->GetTrack()->GetTrackID() == 1) {
 
-        p->setPdg( aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding() );
-        p->setId( aStep->GetTrack()->GetTrackID());
-        p->setEnergy( post->GetTotalEnergy() );
+        p->setPdg(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
+        p->setId(aStep->GetTrack()->GetTrackID());
+        p->setEnergy(post->GetTotalEnergy());
         p->setPx(post->GetMomentum()[0]);
         p->setPy(post->GetMomentum()[1]);
         p->setPz(post->GetMomentum()[2]);
-        p->setVertexX( post->GetPosition()[0] );
-        p->setVertexY( post->GetPosition()[1] );
-        p->setVertexZ( post->GetPosition()[2] );
+        p->setVertexX(post->GetPosition()[0]);
+        p->setVertexY(post->GetPosition()[1]);
+        p->setVertexZ(post->GetPosition()[2]);
 
         /* Record all steps for certain particle */
-        if ( froot->GetRecordStep() )
+        if (froot->GetRecordStep())
             froot->FillParticleStep(aStep);
     }
 
-    if ( aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding() == 22 ) {
-            
-        G4double deltaE = fabs( prev->GetKineticEnergy() - post->GetKineticEnergy() );
-        
+    if (aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding() == 22) {
+
+        G4double deltaE = fabs(prev->GetKineticEnergy() - post->GetKineticEnergy());
+
         // Photo-Nuclear Reaction
-        if (   post->GetProcessDefinedStep()->GetProcessType() == 4
+        if (post->GetProcessDefinedStep()->GetProcessType() == 4
             && post->GetProcessDefinedStep()->GetProcessSubType() == 121) {
-            
+
             // Target
-            if( post->GetPosition()[2] <= 180.*mm )
+            if (post->GetPosition()[2] <= 180. * mm)
                 PNEnergyTar = deltaE;
             // ECal
-            if( post->GetPosition()[2]  > 180.*mm )
+            if (post->GetPosition()[2] > 180. * mm)
                 PNEnergyECAL = deltaE;
 
             froot->FillPNE(PNEnergyTar, PNEnergyECAL);
@@ -117,12 +114,12 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     }
 
     /* Optical Photon Detection: APD region */
-    if ( froot->GetOptical() && aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "opticalphoton" ) {
-        if( post->GetPhysicalVolume() ) {
+    if (froot->GetOptical() && aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "opticalphoton") {
+        if (post->GetPhysicalVolume()) {
             auto Region_name = post->GetPhysicalVolume()->GetName();
-            auto kill_flag = froot->FillOptical( aStep , Region_name );
+            auto kill_flag = froot->FillOptical(aStep, Region_name);
 
-            if (kill_flag) aStep->GetTrack()->SetTrackStatus(fKillTrackAndSecondaries );
+            if (kill_flag) aStep->GetTrack()->SetTrackStatus(fKillTrackAndSecondaries);
         }
 
     }

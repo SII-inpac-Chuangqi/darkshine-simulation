@@ -72,19 +72,19 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
                        fMC->getPy() * fMC->getPy() +
                        fMC->getPz() * fMC->getPz());
 
-    if (fMC->getId() == 1
-        || pm >= 1. * GeV
-        || (fMC->getEnergy() >= 1. * GeV && fMC->getEnergy() <= 8. * GeV)
-        || abs(fMC->getPdg()) == 13   // Muon
-        || abs(fMC->getPdg()) == 111  // Pion0
-        || abs(fMC->getPdg()) == 211  // Pion+-
-        || abs(fMC->getPdg()) == 321  // Kaon+-
-        || abs(fMC->getPdg()) == 2212 // proton
-        || abs(fMC->getPdg()) == 2112 // neutron
-        || abs(fMC->getPdg()) == 14   // muon neutrino
-        || abs(fMC->getPdg()) == 12   // electron neutrino
-            )
-        froot->FillMC(fMC, aTrack->GetParentID());
+//    if (fMC->getId() == 1
+//        || pm >= 1. * GeV
+//        || (fMC->getEnergy() >= 1. * GeV && fMC->getEnergy() <= 8. * GeV)
+//        || abs(fMC->getPdg()) == 13   // Muon
+//        || abs(fMC->getPdg()) == 111  // Pion0
+//        || abs(fMC->getPdg()) == 211  // Pion+-
+//        || abs(fMC->getPdg()) == 321  // Kaon+-
+//        || abs(fMC->getPdg()) == 2212 // proton
+//        || abs(fMC->getPdg()) == 2112 // neutron
+//        || abs(fMC->getPdg()) == 14   // muon neutrino
+//        || abs(fMC->getPdg()) == 12   // electron neutrino
+//            )
+//        froot->FillMC(fMC, aTrack->GetParentID());
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

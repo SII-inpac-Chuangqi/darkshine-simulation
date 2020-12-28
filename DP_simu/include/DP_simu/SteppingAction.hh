@@ -44,20 +44,20 @@ class G4Step;
 
 /// Run action class
 
-class SteppingAction : public G4UserSteppingAction
-{
-  public:
-    SteppingAction(RootManager*);
-    virtual ~SteppingAction();
+class SteppingAction : public G4UserSteppingAction {
+public:
+    explicit SteppingAction(RootManager *);
 
-    virtual void UserSteppingAction(const G4Step* aStep);
+    ~SteppingAction() override;
 
-  private:
+    void UserSteppingAction(const G4Step *aStep) override;
 
-    RootManager*    froot;
+private:
 
-    G4double        PNEnergyTar{0.}; // PN reaction in Target Region
-    G4double        PNEnergyECAL{0.}; // PN reaction in ECal Region
+    RootManager *froot;
+
+    G4double PNEnergyTar{0.}; // PN reaction in Target Region
+    G4double PNEnergyECAL{0.}; // PN reaction in ECal Region
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
