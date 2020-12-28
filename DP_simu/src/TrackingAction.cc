@@ -71,8 +71,8 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
     G4double pm = sqrt(fMC->getPx() * fMC->getPx() +
                        fMC->getPy() * fMC->getPy() +
                        fMC->getPz() * fMC->getPz());
-//
-//    auto MC = new McParticle(*fMC);
+
+    auto MC = new McParticle(*fMC);
 //
 //    if (fMC->getId() == 1
 //        || pm >= 1. * GeV
