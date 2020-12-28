@@ -8,7 +8,9 @@ CalorimeterHit::CalorimeterHit() {
 
 }
 
-CalorimeterHit::~CalorimeterHit() {}
+CalorimeterHit::~CalorimeterHit() {
+
+}
 
 CalorimeterHit::CalorimeterHit(const CalorimeterHit &rhs) : DHit(rhs) {
     *this = rhs;

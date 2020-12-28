@@ -78,8 +78,23 @@ CALConstruct::CALConstruct(const CALConstruct &in) {
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-CALConstruct::~CALConstruct()
-= default;
+CALConstruct::~CALConstruct() {
+    delete fVis;
+    delete fAPDWLV;
+    delete fWrapLV;
+    delete fCaloLV;
+    delete fAbsLV;
+    delete fCALSD;
+    delete fCALWrapSD;
+    delete fWrapVis;
+
+    fCaloLVVector.clear();
+    fCaloLVVector.shrink_to_fit();
+
+    fWrapLVVector.clear();
+    fWrapLVVector.shrink_to_fit();
+}
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void CALConstruct::ConstructLV() {

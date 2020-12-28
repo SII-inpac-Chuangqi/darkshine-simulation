@@ -125,7 +125,7 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, RootManager
             TrackerRegion_LV, 0, fCheckOverlaps
     );
 
-    Tracker1->SetZMove(-0.5 * Size_Tracker[0].z());
+    Tracker1->SetZMove(-0.5 * Size_Tracker[0].z() - 25*um);
     Tracker1->SetRotation(Tracker1_Rotation);
     Tracker1->SetTrkMaterial(Tracker_Mat);
     Tracker1->SetVis(new G4VisAttributes(G4Colour(Tracker1_Color[0], Tracker1_Color[1], Tracker1_Color[2])));
@@ -137,7 +137,7 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, RootManager
             (type == dTagging ? "TagTrk2" : "RecTrk2"),
             TrackerRegion_LV, 0, fCheckOverlaps
     );
-    Tracker2->SetZMove(0.5 * Size_Tracker[0].z());
+    Tracker2->SetZMove(0.5 * Size_Tracker[0].z() + 25*um);
     Tracker2->SetRotation(Tracker2_Rotation);
     Tracker2->SetTrkMaterial(Tracker_Mat);
     Tracker2->SetVis(new G4VisAttributes(G4Color(Tracker2_Color[0], Tracker2_Color[1], Tracker2_Color[2])));

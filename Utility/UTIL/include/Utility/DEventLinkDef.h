@@ -28,11 +28,11 @@
 #pragma link C++ class CalorimeterHit+;
 #pragma link C++ class std::vector<CalorimeterHit*>+;
 
-#pragma link C++ class SimulatedHit+;
-#pragma link C++ class std::vector<SimulatedHit*>+;
-
 #pragma link C++ class McParticle+;
 #pragma link C++ class std::vector<McParticle*>+;
+
+#pragma link C++ class SimulatedHit+;
+#pragma link C++ class std::vector<SimulatedHit*>+;
 
 #pragma link C++ class ReconstructedParticle+;
 #pragma link C++ class std::vector<ReconstructedParticle*>+;

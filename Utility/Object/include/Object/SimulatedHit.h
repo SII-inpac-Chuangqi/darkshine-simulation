@@ -12,6 +12,8 @@
 
 #include <vector>
 
+class McParticle;
+
 /// class description:
 /// \brief Deposit energy. TRUTH information which is known only in simulation.
 class SimulatedHit : public DHit {
@@ -21,12 +23,7 @@ public:
 
     SimulatedHit(const SimulatedHit &);
 
-    ~SimulatedHit() override {
-        //PContribution_TrackID.clear();
-        //PContribution_TrackID.shrink_to_fit();
-        //delete PContribution;
-        //delete CaloHits;
-    };
+    ~SimulatedHit() override;
 
     bool operator==(const SimulatedHit &rhs) const;
 
@@ -80,7 +77,7 @@ private:
     double EdepHad{0.};
 
     // the corresponding MC particle contributing to this hit
-    MCParticleVec MCPContribution;
+    std::vector<McParticle*> MCPContribution;
     // the corresponding Edep for this MC particle in this hit
     std::vector<double> SimHits_Edep;
 

@@ -87,10 +87,10 @@ private:
     // the remaining energy while leaving the world
     double ERemain{0.};
 
-    McParticle* Parents;
-    MCParticleVec* Children;
+    McParticle* Parents{};
+    MCParticleVec* Children{};
 
-    ReconstructedParticle* RecParticles;
+    ReconstructedParticle* RecParticles{};
     SimulatedHitVec SimHits;
 
 ClassDefOverride(McParticle,10)

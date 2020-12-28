@@ -101,6 +101,11 @@ DetectorConstruction::DetectorConstruction(RootManager *rootMng) {
 DetectorConstruction::~DetectorConstruction() {
     delete fStepLimit;
     delete fMessenger;
+    delete TagTrk;
+    delete RecTrk;
+    delete ECAL_Con1;
+    delete ECAL_Con2;
+    delete HCAL_Con;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -287,7 +292,7 @@ void DetectorConstruction::DefineParameters() {
 
 G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
 
-    DefineWorld();      // Build World
+    if (!reconstruct) DefineWorld();      // Build World
     if (reconstruct) {
         if (build_Target) DefineTarget();     // Build Target
         /// Build Tagging Tracker
@@ -448,7 +453,7 @@ void DetectorConstruction::CleanGeometry(G4bool clean) {
 }
 
 void DetectorConstruction::ReConstruct(G4bool flag) {
-    if(flag) CleanGeometry();
+    //if(flag) CleanGeometry();
     // If this is the second construction,
     // we should clean-up the previous
     // geometry in safety concern.

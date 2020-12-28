@@ -41,14 +41,13 @@ class MCParticle;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-TrackingAction::TrackingAction(RootManager *rootMng)
-        : G4UserTrackingAction() {
+TrackingAction::TrackingAction(RootManager *rootMng) : G4UserTrackingAction() {
     froot = rootMng;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TrackingAction::~TrackingAction() {
-    //delete fMC;
+    delete fMC;
     //delete froot;
 }
 
@@ -107,6 +106,7 @@ void TrackingAction::PostUserTrackingAction(const G4Track *aTrack) {
         p->setEndPointZ(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[2]);
     }
     delete fMC;
+    fMC = nullptr;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

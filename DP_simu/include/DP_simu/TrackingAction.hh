@@ -53,7 +53,7 @@ class TrackingAction : public G4UserTrackingAction
 
   private:
     RootManager* froot;
-    McParticle* fMC;
+    McParticle* fMC{};
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

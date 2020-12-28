@@ -6,8 +6,7 @@
 
 #include <cassert>
 
-SimulatedHit::SimulatedHit() {
-};
+SimulatedHit::SimulatedHit() = default;
 
 SimulatedHit::SimulatedHit(const SimulatedHit &rhs) : DHit(rhs) {
     *this = rhs;
@@ -19,11 +18,26 @@ SimulatedHit &SimulatedHit::operator=(const SimulatedHit &rhs) {
     ELeak_Wrapper = rhs.ELeak_Wrapper;
     EdepEm = rhs.EdepEm;
     EdepHad = rhs.EdepHad;
-    //PContribution_TrackID = rhs.PContribution_TrackID;
     MCPContribution = rhs.MCPContribution;
+    SimHits_Edep = rhs.SimHits_Edep;
     CaloHits = rhs.CaloHits;
     return *this;
 }
+
+
+SimulatedHit::~SimulatedHit() {
+    SimHits_Edep.clear();
+    SimHits_Edep.shrink_to_fit();
+
+    for (auto p: MCPContribution)
+        delete p;
+    MCPContribution.clear();
+    MCPContribution.shrink_to_fit();
+
+    CaloHits.clear();
+    CaloHits.shrink_to_fit();
+}
+
 
 double SimulatedHit::getEdepEm() const {
     return EdepEm;
@@ -71,10 +85,12 @@ void SimulatedHit::addParticleContribution(McParticle *mcp, double Edep) {
             if (SimHits_Edep.at(i) < Edep) {
                 MCPContribution.at(i) = mcp;
                 SimHits_Edep.at(i) = Edep;
+                break;
             }
         }
     } else {
         MCPContribution.push_back(mcp);
         SimHits_Edep.push_back(Edep);
+        assert(SimHits_Edep.size() == MCPContribution.size());
     }
 }
