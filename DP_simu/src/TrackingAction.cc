@@ -88,7 +88,8 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
         || abs(fMC->getPdg()) == 14   // muon neutrino
         || abs(fMC->getPdg()) == 12   // electron neutrino
             )
-        froot->FillMC(MC, aTrack->GetParentID());
+        //froot->FillMC(MC, aTrack->GetParentID());
+        ;
 
 }
 
