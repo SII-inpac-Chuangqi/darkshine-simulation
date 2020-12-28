@@ -2,7 +2,7 @@
 // Created by Zhang Yulei on 12/27/20.
 //
 
-#include "Filter/FilterParticle.hh"
+#include "Bias_Filter/FilterParticle.hh"
 
 FilterParticle::FilterParticle(G4int pdg, G4double risingEnergyEdge, G4double fallingEnergyEdge,
                                G4double risingScanEdge, G4double fallingScanEdge, G4bool flag) {

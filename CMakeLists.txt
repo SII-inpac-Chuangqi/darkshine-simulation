@@ -103,8 +103,9 @@ include_directories(DP_simu/include
         ${Geant4_INCLUDE_DIR}
         ${HEPMC_INCLUDE_DIR})
 
-file(GLOB Simu_sources DP_simu/src/* DP_simu/src/Geometry/* DP_simu/src/Filter/*)
-file(GLOB Simu_headers DP_simu/include/*)
+file(GLOB_RECURSE Simu_sources DP_simu/src/*)
+
+file(GLOB_RECURSE Simu_headers DP_simu/include/*)
 
 file(GLOB Ana_sources DP_ana/src/*.cpp)
 file(GLOB Ana_headers DP_ana/include/*)

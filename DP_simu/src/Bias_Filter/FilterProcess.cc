@@ -4,7 +4,7 @@
 
 #include <utility>
 
-#include "Filter/FilterProcess.hh"
+#include "Bias_Filter/FilterProcess.hh"
 
 FilterProcess::FilterProcess(G4String processName, G4double risingEnergyEdge, G4double fallingEnergyEdge,
                              G4double risingScanEdge, G4double fallingScanEdge, G4bool flag) {

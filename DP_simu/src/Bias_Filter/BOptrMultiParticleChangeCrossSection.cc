@@ -26,10 +26,10 @@
 /// \file /src/BOptrMultiParticleChangeCrossSection.cc
 /// \brief Implementation of the BOptrMultiParticleChangeCrossSection class
 //
-#include "DP_simu/BOptrMultiParticleChangeCrossSection.hh"
+#include "Bias_Filter/BOptrMultiParticleChangeCrossSection.hh"
 #include "G4BiasingProcessInterface.hh"
 
-#include "DP_simu/BOptrChangeCrossSection.hh"
+#include "Bias_Filter/BOptrChangeCrossSection.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
 

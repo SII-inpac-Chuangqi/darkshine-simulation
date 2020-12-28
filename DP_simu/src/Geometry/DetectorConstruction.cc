@@ -32,8 +32,8 @@
 #include "DP_simu/DetectorMessenger.hh"
 #include "DP_simu/DetectorSD.hh"
 #include "DP_simu/RootManager.hh"
-#include "DP_simu/BOptrChangeCrossSection.hh"
-#include "DP_simu/BOptrMultiParticleChangeCrossSection.hh"
+#include "Bias_Filter/BOptrChangeCrossSection.hh"
+#include "Bias_Filter/BOptrMultiParticleChangeCrossSection.hh"
 #include "DP_simu/CALConstruct.hh"
 #include "DP_simu/TrkConstruct.hh"
 

@@ -2,8 +2,8 @@
 #ifndef FILTER_MANAGER_H
 #define FILTER_MANAGER_H
 
-#include "Filter/FilterParticle.hh"
-#include "Filter/FilterProcess.hh"
+#include "Bias_Filter/FilterParticle.hh"
+#include "Bias_Filter/FilterProcess.hh"
 
 /// \brief Class Description:
 ///  Take particle filter as an example. 

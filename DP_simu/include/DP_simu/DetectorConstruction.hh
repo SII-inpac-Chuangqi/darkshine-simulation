@@ -45,7 +45,7 @@
 #include "G4Colour.hh"
 
 #include "RootManager.hh"
-#include "BOptrMultiParticleChangeCrossSection.hh"
+#include "Bias_Filter/BOptrMultiParticleChangeCrossSection.hh"
 
 #include "Geometry/ECAL_XYCrossing.h"
 #include "Geometry/ECAL_AllZ.h"
