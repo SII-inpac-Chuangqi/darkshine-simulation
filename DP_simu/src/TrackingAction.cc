@@ -97,16 +97,16 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
 void TrackingAction::PostUserTrackingAction(const G4Track *aTrack) {
 
     // Find MC in collection
-    auto MCCols = froot->GetEvt()->getMcParticleCollection_Old().at("RawMCParticle");
-    auto p = fMC->SearchID(MCCols, fMC->getId());
-    if (p) {
-        p->setERemain(aTrack->GetKineticEnergy());
-        p->setEndPointX(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[0]);
-        p->setEndPointY(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[1]);
-        p->setEndPointZ(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[2]);
-    }
-    delete fMC;
-    fMC = nullptr;
+//    auto MCCols = froot->GetEvt()->getMcParticleCollection_Old().at("RawMCParticle");
+//    auto p = fMC->SearchID(MCCols, fMC->getId());
+//    if (p) {
+//        p->setERemain(aTrack->GetKineticEnergy());
+//        p->setEndPointX(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[0]);
+//        p->setEndPointY(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[1]);
+//        p->setEndPointZ(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[2]);
+//    }
+//    delete fMC;
+//    fMC = nullptr;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
