@@ -153,7 +153,7 @@ void RootManager::FillMC(McParticle *mc, int ParentID) {
     if (if_clean) return;
 
     auto mcps = Evt->getMcParticleCollection_Old().at("RawMCParticle");
-    mc->setParents(mc->SearchID(mcps, ParentID));
+    mc->setParents(McParticle::SearchID(mcps, ParentID));
 
     auto tmp1 = G4String(mc->getCreateProcess());
     const char *tmp2;

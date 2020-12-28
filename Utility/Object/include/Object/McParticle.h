@@ -67,7 +67,7 @@ public:
     }
 
     // Search Methods
-    McParticle* SearchID(MCParticleVec* mv, int ID) {
+    static McParticle* SearchID(MCParticleVec* mv, int ID) {
         for (auto itr : *mv) {
             if (itr->getId() == ID) return itr;
         }

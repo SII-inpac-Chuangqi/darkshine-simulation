@@ -70,6 +70,8 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
                        fMC->getPy() * fMC->getPy() +
                        fMC->getPz() * fMC->getPz());
 
+    auto mc = new McParticle(*fMC);
+
     if (fMC->getId() == 1
         || pm >= 1. * GeV
         || (fMC->getEnergy() >= 1. * GeV && fMC->getEnergy() <= 8. * GeV)
@@ -82,7 +84,7 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
         || abs(fMC->getPdg()) == 14   // muon neutrino
         || abs(fMC->getPdg()) == 12   // electron neutrino
             )
-        froot->FillMC(fMC, aTrack->GetParentID());
+        froot->FillMC(mc, aTrack->GetParentID());
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -91,13 +93,16 @@ void TrackingAction::PostUserTrackingAction(const G4Track *aTrack) {
 
     // Find MC in collection
     auto MCCols = froot->GetEvt()->getMcParticleCollection_Old().at("RawMCParticle");
-    auto p = fMC->SearchID(MCCols, fMC->getId());
+    auto p = McParticle::SearchID(MCCols, fMC->getId());
     if (p) {
         p->setERemain(aTrack->GetKineticEnergy());
         p->setEndPointX(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[0]);
         p->setEndPointY(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[1]);
         p->setEndPointZ(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[2]);
     }
+
+    delete fMC;
+    fMC = nullptr;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
