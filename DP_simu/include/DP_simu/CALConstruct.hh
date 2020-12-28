@@ -12,6 +12,7 @@
 #include "G4Colour.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
+#include "G4PVPlacement.hh"
 
 #include <utility>
 #include <vector>
@@ -183,6 +184,9 @@ private:
     // For Matrix Placement Output
     std::vector<G4LogicalVolume *> fCaloLVVector;
     std::vector<G4LogicalVolume *> fWrapLVVector;
+
+    // For Memory Clean
+    std::vector<G4PVPlacement*> PVVector;
 };
 
 #endif
