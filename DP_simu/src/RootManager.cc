@@ -163,7 +163,7 @@ void RootManager::FillMC(McParticle *mc, int ParentID) {
         tmp2 = tmp1.data();
     mc->setCreateProcess(std::string(tmp2));
 
-    mcps->push_back(mc);
+    mcps->emplace_back(mc);
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
