@@ -42,22 +42,24 @@ DetectorSD::DetectorSD(G4int Type,
                        const G4String &name,
                        const G4ThreeVector &CellID,
                        RootManager *rootMng
-)
-        : G4VSensitiveDetector(name) {
+) : G4VSensitiveDetector(name) {
     fRootMng = rootMng;
     fCellID = CellID;
     fType = Type;
     fname = name;
 
     fRootMng->bookCollection(name);
-
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorSD::~DetectorSD() {
-    //delete fHitsCollection;
-    //delete vHitsCollection;
+    for (auto simhit : fSimHitVec) {
+        delete simhit;
+    }
+
+    fSimHitVec.clear();
+    fSimHitVec.shrink_to_fit();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

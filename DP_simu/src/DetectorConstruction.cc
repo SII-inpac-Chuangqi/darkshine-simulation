@@ -292,7 +292,7 @@ void DetectorConstruction::DefineParameters() {
 
 G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
 
-    if (!reconstruct) DefineWorld();      // Build World
+    DefineWorld();      // Build World
     if (reconstruct) {
         if (build_Target) DefineTarget();     // Build Target
         /// Build Tagging Tracker
@@ -446,14 +446,14 @@ void DetectorConstruction::SaveGeometry() {
 
 void DetectorConstruction::CleanGeometry(G4bool clean) {
     if (clean) { // clean-up previous geometry.
-        G4SolidStore::GetInstance()->Clean();
-        G4LogicalVolumeStore::GetInstance()->Clean();
-        G4PhysicalVolumeStore::GetInstance()->Clean();
+        G4SolidStore::Clean();
+        G4LogicalVolumeStore::Clean();
+        G4PhysicalVolumeStore::Clean();
     }
 }
 
 void DetectorConstruction::ReConstruct(G4bool flag) {
-    //if(flag) CleanGeometry();
+    if(flag) CleanGeometry();
     // If this is the second construction,
     // we should clean-up the previous
     // geometry in safety concern.
