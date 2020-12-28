@@ -3,6 +3,7 @@ DSimu:
     1. Add MC Particle Contribution to Simulated Hits; Only the three most contributed particles will be recorded.
     2. Tracker Hits is pixelized along trackers z position. (hit position z is fixed for each tracker layer).
     3. Detector Overlay has been solved.
+    4. new Filter is added. (See readme for more details)
 
 DAna:
     1. Add geometry in config file; One can access to geomerty by gGeoManager, with including header file "TGeoManager.h"
