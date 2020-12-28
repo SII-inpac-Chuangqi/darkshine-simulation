@@ -48,32 +48,29 @@ TrackingAction::TrackingAction(RootManager *rootMng) : G4UserTrackingAction() {
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-TrackingAction::~TrackingAction() {
-    delete fMC;
-    //delete froot;
-}
+TrackingAction::~TrackingAction() = default;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
     /* Initialize Filter */
     fMC = new McParticle();
-//    fMC->setPdg(aTrack->GetParticleDefinition()->GetPDGEncoding());
-//    fMC->setId(aTrack->GetTrackID());
-//    fMC->setEnergy(aTrack->GetKineticEnergy());
-//    fMC->setPx(aTrack->GetMomentum()[0]);
-//    fMC->setPy(aTrack->GetMomentum()[1]);
-//    fMC->setPz(aTrack->GetMomentum()[2]);
-//    fMC->setVertexX(aTrack->GetPosition()[0]);
-//    fMC->setVertexY(aTrack->GetPosition()[1]);
-//    fMC->setVertexZ(aTrack->GetPosition()[2]);
-//
-//    if (aTrack->GetCreatorProcess())
-//        fMC->setCreateProcess(aTrack->GetCreatorProcess()->GetProcessName());
-//
-//    G4double pm = sqrt(fMC->getPx() * fMC->getPx() +
-//                       fMC->getPy() * fMC->getPy() +
-//                       fMC->getPz() * fMC->getPz());
+    fMC->setPdg(aTrack->GetParticleDefinition()->GetPDGEncoding());
+    fMC->setId(aTrack->GetTrackID());
+    fMC->setEnergy(aTrack->GetKineticEnergy());
+    fMC->setPx(aTrack->GetMomentum()[0]);
+    fMC->setPy(aTrack->GetMomentum()[1]);
+    fMC->setPz(aTrack->GetMomentum()[2]);
+    fMC->setVertexX(aTrack->GetPosition()[0]);
+    fMC->setVertexY(aTrack->GetPosition()[1]);
+    fMC->setVertexZ(aTrack->GetPosition()[2]);
+
+    if (aTrack->GetCreatorProcess())
+        fMC->setCreateProcess(aTrack->GetCreatorProcess()->GetProcessName());
+
+    G4double pm = sqrt(fMC->getPx() * fMC->getPx() +
+                       fMC->getPy() * fMC->getPy() +
+                       fMC->getPz() * fMC->getPz());
 //
 //    auto MC = new McParticle(*fMC);
 //
