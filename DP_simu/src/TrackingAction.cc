@@ -52,39 +52,44 @@ TrackingAction::~TrackingAction() = default;
 
 void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
     /* Initialize Filter */
-    fMC = new McParticle();
-    fMC->setPdg(aTrack->GetParticleDefinition()->GetPDGEncoding());
-    fMC->setId(aTrack->GetTrackID());
-    fMC->setEnergy(aTrack->GetKineticEnergy());
-    fMC->setPx(aTrack->GetMomentum()[0]);
-    fMC->setPy(aTrack->GetMomentum()[1]);
-    fMC->setPz(aTrack->GetMomentum()[2]);
-    fMC->setVertexX(aTrack->GetPosition()[0]);
-    fMC->setVertexY(aTrack->GetPosition()[1]);
-    fMC->setVertexZ(aTrack->GetPosition()[2]);
 
-    if (aTrack->GetCreatorProcess())
-        fMC->setCreateProcess(aTrack->GetCreatorProcess()->GetProcessName());
+    auto pdg = aTrack->GetParticleDefinition()->GetPDGEncoding();
+    auto energy = aTrack->GetKineticEnergy();
 
-    G4double pm = sqrt(fMC->getPx() * fMC->getPx() +
-                       fMC->getPy() * fMC->getPy() +
-                       fMC->getPz() * fMC->getPz());
+    G4double pm = sqrt(aTrack->GetMomentum()[0] * aTrack->GetMomentum()[0] +
+                       aTrack->GetMomentum()[1] * aTrack->GetMomentum()[1] +
+                       aTrack->GetMomentum()[2] * aTrack->GetMomentum()[2]);
 
-    auto mc = new McParticle(*fMC);
-
-    if (fMC->getId() == 1
+    if (aTrack->GetTrackID() == 1
         || pm >= 1. * GeV
-        || (fMC->getEnergy() >= 1. * GeV && fMC->getEnergy() <= 8. * GeV)
-        || abs(fMC->getPdg()) == 13   // Muon
-        || abs(fMC->getPdg()) == 111  // Pion0
-        || abs(fMC->getPdg()) == 211  // Pion+-
-        || abs(fMC->getPdg()) == 321  // Kaon+-
-        || abs(fMC->getPdg()) == 2212 // proton
-        || abs(fMC->getPdg()) == 2112 // neutron
-        || abs(fMC->getPdg()) == 14   // muon neutrino
-        || abs(fMC->getPdg()) == 12   // electron neutrino
-            )
-        froot->FillMC(mc, aTrack->GetParentID());
+        || (energy >= 1. * GeV && energy <= 8. * GeV)
+        || abs(pdg) == 13   // Muon
+        || abs(pdg) == 111  // Pion0
+        || abs(pdg) == 211  // Pion+-
+        || abs(pdg) == 321  // Kaon+-
+        || abs(pdg) == 2212 // proton
+        || abs(pdg) == 2112 // neutron
+        || abs(pdg) == 14   // muon neutrino
+        || abs(pdg) == 12   // electron neutrino
+            ) {
+
+        fMC = new McParticle();
+        fMC->setPdg(pdg);
+        fMC->setId(aTrack->GetTrackID());
+        fMC->setEnergy(energy);
+        fMC->setPx(aTrack->GetMomentum()[0]);
+        fMC->setPy(aTrack->GetMomentum()[1]);
+        fMC->setPz(aTrack->GetMomentum()[2]);
+        fMC->setVertexX(aTrack->GetPosition()[0]);
+        fMC->setVertexY(aTrack->GetPosition()[1]);
+        fMC->setVertexZ(aTrack->GetPosition()[2]);
+
+        if (aTrack->GetCreatorProcess())
+            fMC->setCreateProcess(aTrack->GetCreatorProcess()->GetProcessName());
+
+        froot->FillMC(fMC, aTrack->GetParentID());
+
+    }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -93,7 +98,7 @@ void TrackingAction::PostUserTrackingAction(const G4Track *aTrack) {
 
     // Find MC in collection
     auto MCCols = froot->GetEvt()->getMcParticleCollection_Old().at("RawMCParticle");
-    auto p = McParticle::SearchID(MCCols, fMC->getId());
+    auto p = McParticle::SearchID(MCCols, aTrack->GetTrackID());
     if (p) {
         p->setERemain(aTrack->GetKineticEnergy());
         p->setEndPointX(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[0]);

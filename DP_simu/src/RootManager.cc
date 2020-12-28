@@ -149,8 +149,10 @@ void RootManager::FillPNE(G4double E1, G4double E2) {
 /// \brief
 /// \param[in] mc
 /// \param[in] ParentID
-void RootManager::FillMC(McParticle *mc, int ParentID) {
+void RootManager::FillMC(McParticle *fMC, int ParentID) {
     if (if_clean) return;
+
+    auto mc = new McParticle(*fMC);
 
     auto mcps = Evt->getMcParticleCollection_Old().at("RawMCParticle");
     mc->setParents(McParticle::SearchID(mcps, ParentID));
