@@ -35,9 +35,9 @@ G4double DMBremProcess::GetMeanFreePath(const G4Track &aTrack, G4double, /*previ
     if (myDarkMatter->EmissionAllowed(ekin, DensityMat)) {
         G4double XMeanFreePath = myDarkMatter->GetMeanFreePathFactor() / myDarkMatter->GetSigmaTot(ekin);
         XMeanFreePath /= BiasSigmaFactor;
-        std::cout << "DMMeanFreePath = " << myDarkMatter->GetMeanFreePathFactor() << std::endl;
-        std::cout << "SigmaTotal = " << myDarkMatter->GetSigmaTot(ekin) << " [pb]" << std::endl;
-        std::cout << "XMeanFreePath = " << XMeanFreePath << std::endl;
+//        std::cout << "DMMeanFreePath = " << myDarkMatter->GetMeanFreePathFactor() << std::endl;
+//        std::cout << "SigmaTotal = " << myDarkMatter->GetSigmaTot(ekin) << " [pb]" << std::endl;
+//        std::cout << "XMeanFreePath = " << XMeanFreePath << std::endl;
         return XMeanFreePath;
     }
     //if not emit, nothing
@@ -90,9 +90,9 @@ G4VParticleChange *DMBremProcess::PostStepDoIt(const G4Track &aTrack, const G4St
     aParticleChange.ProposeEnergy(recoilE);
     aParticleChange.ProposeMomentumDirection(projDirection);
 
-    std::cout << "DM PDG ID = " << theDMParticlePtr->GetPDGEncoding()
-              << " emitted by " << aTrack.GetDefinition()->GetParticleName()
-              << " with energy = " << incidentE / GeV << " [GeV], DM energy = " << DME / GeV <<" [GeV]"<< std::endl;
+//    std::cout << "DM PDG ID = " << theDMParticlePtr->GetPDGEncoding()
+//              << " emitted by " << aTrack.GetDefinition()->GetParticleName()
+//              << " with energy = " << incidentE / GeV << " [GeV], DM energy = " << DME / GeV <<" [GeV]"<< std::endl;
 
 
     return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
