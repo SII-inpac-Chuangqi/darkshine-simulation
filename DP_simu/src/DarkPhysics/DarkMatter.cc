@@ -31,7 +31,7 @@ DarkMatter::DarkMatter(double MAIn, double EThreshIn, double SigmaNormIn, double
     const int NPTAB = 15;
     nptable = NPTAB;
     //double epi[NPTAB] = {0.00001, 0.00002, 0.0001, 0.0002, 0.0003, 0.0005, 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009};
-    double epi[NPTAB] = {0.008, 0.02, 0.05, 0.1, 0.2, 0.5, 1., 2., 5., 10., 15., 25., 50., 80., 150.};
+    double epi[NPTAB] = {1.0, 3.0, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.3, 7.5, 7.8, 8., 9., 10.};
     for (int ip = 0; ip < nptable; ip++) { ep[ip] = epi[ip]; }
 }
 
@@ -127,13 +127,13 @@ double DarkMatter::GetSigmaAngleMax(double E0) {
 
 double DarkMatter::GetSigmaTot0(double E0) {
 
-    std::cout<<"E0: "<<E0<<std::endl;
-
-    std::cout<<"sigmap: ";
-    for (auto i : sigmap) std::cout<<i<<", ";
-    std::cout<<std::endl;
-
-    std::cout<<"nptable: "<<nptable<<std::endl;
+//    std::cout<<"E0: "<<E0<<std::endl;
+//
+//    std::cout<<"sigmap: ";
+//    for (auto i : sigmap) std::cout<<i<<", ";
+//    std::cout<<std::endl;
+//
+//    std::cout<<"nptable: "<<nptable<<std::endl;
 
     return parinv(E0, ep, sigmap, nptable);
 }
