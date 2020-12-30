@@ -135,16 +135,16 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     hit->setCellIdY(static_cast<int>(CellID.y()));
     hit->setCellIdZ(static_cast<int>(CellID.z()));
 
-//    auto fMC = new McParticle();
-//    fMC->setPdg(step->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
-//    fMC->setId(step->GetTrack()->GetTrackID());
-//    fMC->setEnergy(step->GetTrack()->GetKineticEnergy());
-//    fMC->setPx(step->GetTrack()->GetMomentum()[0]);
-//    fMC->setPy(step->GetTrack()->GetMomentum()[1]);
-//    fMC->setPz(step->GetTrack()->GetMomentum()[2]);
-//    if (step->GetTrack()->GetCreatorProcess())
-//        fMC->setCreateProcess(step->GetTrack()->GetCreatorProcess()->GetProcessName());
-//    hit->addParticleContribution(fMC, edep);
+    auto fMC = new McParticle();
+    fMC->setPdg(step->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
+    fMC->setId(step->GetTrack()->GetTrackID());
+    fMC->setEnergy(step->GetTrack()->GetKineticEnergy());
+    fMC->setPx(step->GetTrack()->GetMomentum()[0]);
+    fMC->setPy(step->GetTrack()->GetMomentum()[1]);
+    fMC->setPz(step->GetTrack()->GetMomentum()[2]);
+    if (step->GetTrack()->GetCreatorProcess())
+        fMC->setCreateProcess(step->GetTrack()->GetCreatorProcess()->GetProcessName());
+    hit->addParticleContribution(fMC, edep);
 
     hit->setCellId(reNumber + 1); // replica start from 0 in DetectorConstruction
     if (!fType) {
