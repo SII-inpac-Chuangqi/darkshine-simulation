@@ -27,7 +27,7 @@ G4double DMBremProcess::GetMeanFreePath(const G4Track &aTrack, G4double, /*previ
                                         G4ForceCondition * /*condition*/ ) {
 
     G4double DensityMat = aTrack.GetMaterial()->GetDensity() / (g / cm3);
-    G4double ekin = aTrack.GetKineticEnergy() / MeV;
+    G4double ekin = aTrack.GetKineticEnergy() / GeV;
 
     //std::cout << "[Dark Process] E_kin: " << ekin << ", DensityMat: " << DensityMat << std::endl;
 
