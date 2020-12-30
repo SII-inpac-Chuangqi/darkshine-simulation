@@ -3,7 +3,7 @@
 
 #define Mel 5.109989461E-04 // electron mass in GeV
 #define Mmu 0.1056583745 // muon mass in GeV
-#define alphaEW (1.0/137.0)
+#define alphaEW 1.0/137.0
 #define MUp 2.79 // protonMu
 #define Mpr 0.938 // proton mass
 #define max_uint 4294967296.0l
@@ -112,15 +112,15 @@ private:
     double epsilBench;
     double epsil;
     //int DMType; // 1 - Dark Photon; 2 - Dark Scalar; 11 - Z'; 21 - ALP
-    int ParentPDGID;
-    int DaughterPDGID;
+    int ParentPDGID{};
+    int DaughterPDGID{};
     //int IDecay; // 1 - DM particle dacays; 2 - Force DM particle decay
 
     int nptable;
-    double ep[15];
-    double sigmap[15];
-    double sigmax[15];
-    double sigmaxa[15];
+    double ep[15]{};
+    double sigmap[15]{};
+    double sigmax[15]{};
+    double sigmaxa[15]{};
 
     double AccumulatedProbability;
 
