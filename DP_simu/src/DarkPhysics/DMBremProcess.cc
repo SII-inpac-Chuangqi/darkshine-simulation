@@ -46,7 +46,7 @@ G4double DMBremProcess::GetMeanFreePath(const G4Track &aTrack, G4double, /*previ
 
 
 G4VParticleChange *DMBremProcess::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep) {
-    std::cout << "Dark Process!!" << std::endl;
+//    std::cout << "Dark Process!!" << std::endl;
 
     const G4double incidentE = aTrack.GetKineticEnergy();
     //const G4double DMMass = theDMParticleAPrimePtr->GetPDGMass();
@@ -90,9 +90,9 @@ G4VParticleChange *DMBremProcess::PostStepDoIt(const G4Track &aTrack, const G4St
     aParticleChange.ProposeEnergy(recoilE);
     aParticleChange.ProposeMomentumDirection(projDirection);
 
-    std::cout << "DM PDG ID = " << theDMParticlePtr->GetPDGEncoding()
-              << " emitted by " << aTrack.GetDefinition()->GetParticleName()
-              << " with energy = " << incidentE / GeV << " [GeV], DM energy = " << DME / GeV <<" [GeV]"<< std::endl;
+//    std::cout << "DM PDG ID = " << theDMParticlePtr->GetPDGEncoding()
+//              << " emitted by " << aTrack.GetDefinition()->GetParticleName()
+//              << " with energy = " << incidentE / GeV << " [GeV], DM energy = " << DME / GeV <<" [GeV]"<< std::endl;
     //std::cout<< theDMParticlePtr->GetPDGEncoding() << incidentE / GeV << DME / GeV << std::endl;
 
     return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);

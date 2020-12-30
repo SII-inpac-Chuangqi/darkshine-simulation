@@ -76,8 +76,7 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
         auto mcSec = SecFinder->FindSecondary();
 
         DStep *prev_s = nullptr;
-        for (unsigned i = 0; i < steps->size(); i++) {
-            auto s = steps->at(i);
+        for (auto s : *steps) {
             if (s->getProcessName() == "DMProcessDMBrem") {
                 cout << "E_parent: " << prev_s->getE() << ", E_remain: " << s->getE() << ", DM_E: "
                      << mcSec->getEnergy() << endl;
