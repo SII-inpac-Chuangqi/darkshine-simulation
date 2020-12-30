@@ -4,6 +4,7 @@
 #include "Object/McParticle.h"
 #include "Object/SimulatedHit.h"
 #include "RootMessenger.hh"
+#include "DP_simu/DetectorConstruction.hh"
 
 #include "TFile.h"
 #include "TTree.h"
@@ -39,6 +40,8 @@ class TTree;
 class TRandom3;
 
 class RootMessenger;
+
+class DetectorConstruction;
 
 // Some Global String
 // static TString InitialParticleStepCollection = "Initial_Particle_Step";
@@ -94,6 +97,10 @@ public:
 
     void SetifBiasECAL(G4bool in) { ifBiasECAL = in; };
 
+    void setDetCon(DetectorConstruction *detCon) {
+        DetCon = detCon;
+    }
+
     /* get methods */
     bool GetFilter() const { return if_filter; };
 
@@ -123,6 +130,10 @@ public:
 
     [[nodiscard]] DEvent *GetEvt() const {
         return Evt;
+    }
+
+    DetectorConstruction *getDetCon() const {
+        return DetCon;
     }
 
     /* filter methods */
@@ -177,6 +188,7 @@ private:
     Bool_t if_Optical; // flag of Optical Process. 
 
     RootMessenger *fMessenger;
+    DetectorConstruction* DetCon{};
 
     /* Biasing Variables */
     G4bool ifBias{};

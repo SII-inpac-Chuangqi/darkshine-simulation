@@ -7,6 +7,7 @@
 
 #include "DP_simu/CALConstruct.hh"
 #include "DP_simu/DetectorConstruction.hh"
+#include "G4SystemOfUnits.hh"
 
 class HCAL_Construct {
 public:

@@ -56,6 +56,8 @@
 #include "G4ProductionCuts.hh"
 #include "G4LogicalSkinSurface.hh"
 
+#include "G4SDManager.hh"
+
 #include "G4GDMLParser.hh"
 
 #include "G4SolidStore.hh"
@@ -91,6 +93,7 @@ DetectorConstruction::DetectorConstruction(RootManager *rootMng) {
     HCAL_Con = new HCAL_Construct();
 
     fRootMng = rootMng;
+    fRootMng->setDetCon(this);
     fCheckOverlaps = false;
     fStepLimit = nullptr;
 
@@ -112,7 +115,7 @@ DetectorConstruction::~DetectorConstruction() {
 
 G4VPhysicalVolume *DetectorConstruction::Construct() {
     // Define materials, Only do it once.
-    if (!reconstruct) DefineMaterials();
+    if ( define_material ) DefineMaterials();
     
     DefineParameters();
     return DefineVolumes();
@@ -285,7 +288,7 @@ void DetectorConstruction::DefineParameters() {
     // if (reconstruct && build_HCAL) {
     //     l = 2.0 * (HCAL_Con->getPosHcalRegion().z() + HCAL_Con->getSizeHcalRegion().x());
     // }
-    Size_World = G4ThreeVector(l, l, l); 
+    Size_World = G4ThreeVector(l, l, l);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -330,7 +333,7 @@ void DetectorConstruction::DefineWorld() {
     //  World
     //
     ////////////////////////////////////////////////////////////
-    if (!reconstruct) {
+    if (define_material) {
         G4GeometryManager::GetInstance()->SetWorldMaximumExtent(Size_World.z());
 
         G4cout << "Computed tolerance = "
@@ -365,7 +368,7 @@ void DetectorConstruction::DefineTarget() {
 
 void DetectorConstruction::ConstructSDandField() {
     //G4cerr << "[DEBUG] ConstructSDandField" << G4endl;
-    if (reconstruct) {
+    if (define_SD_Only) {
         // Construct Magnetic Field and Sensitive Detector of the Tagging Tracker
         if (build_TagTrk) TagTrk->BuildSDandField(dTagging, fRootMng);
         // Constructg Magnetic Field and Sensitive Detector of the Recoil Tracker
@@ -453,11 +456,12 @@ void DetectorConstruction::CleanGeometry(G4bool clean) {
 }
 
 void DetectorConstruction::ReConstruct(G4bool flag) {
-    if(flag) CleanGeometry();
+    CleanGeometry();
     // If this is the second construction,
     // we should clean-up the previous
     // geometry in safety concern.
     reconstruct = true;
+    define_material = false;
     // When reconstruct = 0, World is empty.
     // When reconstruct = 1, World is filld.
     /// Define new one

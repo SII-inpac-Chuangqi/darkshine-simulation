@@ -7,6 +7,8 @@
 
 #include "DP_simu/CALConstruct.hh"
 #include "DP_simu/DetectorConstruction.hh"
+#include "G4SystemOfUnits.hh"
+
 
 class ECAL_AllZ {
 public:
@@ -14,11 +16,11 @@ public:
 
     virtual ~ECAL_AllZ() = default;
 
-    const G4ThreeVector &getSizeEcalRegion() const {
+    [[nodiscard]] const G4ThreeVector &getSizeEcalRegion() const {
         return Size_ECALRegion;
     }
 
-    const G4ThreeVector &getPosEcalRegion() const {
+    [[nodiscard]] const G4ThreeVector &getPosEcalRegion() const {
         return Pos_ECALRegion;
     }
 
@@ -32,13 +34,15 @@ public:
 
     /// Setter
 
-    void SetECALCenterWrapSize(G4ThreeVector in) { ECAL_Center_Wrap_Size = in; };
+    void SetECALCenterWrapSize(const G4ThreeVector& in) { ECAL_Center_Wrap_Size = in; };
 
-    void SetECALCenterSize(G4ThreeVector in) { ECAL_Center_Size = in; };
+    void SetECALCenterSize(const G4ThreeVector& in) { ECAL_Center_Size = in; };
     
-    void SetECALCenterModuleNo(G4ThreeVector in) { ECAL_Center_Module_No = in; };
+    void SetECALCenterModuleNo(const G4ThreeVector& in) { ECAL_Center_Module_No = in; };
 
 private:
+    G4String Name = "ECAL_Center";
+
     G4Material *ECALRegion_Mat{};
     G4Material *ECAL_Center_Mat{};
     G4Material *ECAL_Wrap_Mat{};

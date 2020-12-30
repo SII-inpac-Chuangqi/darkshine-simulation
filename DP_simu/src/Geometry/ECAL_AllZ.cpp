@@ -4,6 +4,8 @@
 
 #include "Geometry/ECAL_AllZ.h"
 
+#include "G4SDManager.hh"
+
 void ECAL_AllZ::DefineParameters(const G4ThreeVector &Pos_RecRegion, const G4ThreeVector &Size_RecRegion) {
     ECALRegion_Mat = G4Material::GetMaterial("CarbonFiber");
     //ECAL_Center_Mat = G4Material::GetMaterial("LYSO");
@@ -73,7 +75,7 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng
 
 bool ECAL_AllZ::BuildSD(RootManager *fRootMng) {
     // ECAL Center SD
-    auto *ECalSD = new DetectorSD(1, "ECAL_Center", ECAL_Center_Module_No, fRootMng);
+    auto *ECalSD = new DetectorSD(1, Name, ECAL_Center_Module_No, fRootMng);
     G4SDManager::GetSDMpointer()->AddNewDetector(ECalSD);
     for (auto &itr_LV : ECAL_Center_LV)
         itr_LV->SetSensitiveDetector(ECalSD);
@@ -85,4 +87,5 @@ bool ECAL_AllZ::BuildBias(BOptrMultiParticleChangeCrossSection *bias) {
     for (auto &itr_LV : ECAL_Center_LV)
         bias->AttachTo(itr_LV);
 
-    return false;}
+    return false;
+}

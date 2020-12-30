@@ -87,6 +87,8 @@ public:
 
     ~DetectorConstruction() override;
 
+    void ConstructSDandField() override; // build SD in run action
+
 public:
     G4VPhysicalVolume *Construct() override;
 
@@ -181,6 +183,10 @@ public:
 
     void SetHCALAbsorberThickness(G4double in);
 
+    void setDefineSdOnly(G4bool defineSdOnly) {
+        define_SD_Only = defineSdOnly;
+    }
+
     /// Getter
 
     G4ThreeVector GetTargetSize() {return Target_Size; };
@@ -188,7 +194,7 @@ public:
     /// \brief Clean-up previous geometry.
     /// \param[in] clean If it is true,G4SolidStore, G4LogicalVolumeStore
     /// and G4PhysicalVolumeStore will be cleaned up
-    static void CleanGeometry(G4bool clean=true);
+    void CleanGeometry(G4bool clean=true);
 
     /// \brief USAGE: Called in DetectorMessenger::SetNewValue().
     /// SHOULD be called after modifing geometry at runtime.
@@ -199,17 +205,11 @@ private:
     // methods
     G4VPhysicalVolume *DefineVolumes();
 
-    void ConstructSDandField() override;
-
     void DefineMaterials();
 
     void DefineParameters();
 
     void DefineTarget();
-
-    void DefineTagTracker();
-
-    void DefineRecTracker();
 
     void DefineWorld();
 
@@ -237,8 +237,10 @@ private:
     G4bool fCheckOverlaps;   // option to activate checking of volumes overlaps
     std::vector<G4LogicalVolume *>::iterator itr_LV;
 
-    G4bool reconstruct = false; // flag. Set to true when it is not the first-time construction of geometry.
-    
+    G4bool reconstruct = true; // flag. Set to true when it is not the first-time construction of geometry.
+    G4bool define_material = true;
+    G4bool define_SD_Only = false; // Only to reconstruct SD
+
     G4bool build_Target = true; // build Target if it is ture.
     G4bool build_TagTrk = true; // build Tagging trackir if it is true.
     G4bool build_RecTrk = true; // build Recoil Tracker if it is ture.
