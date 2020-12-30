@@ -36,13 +36,13 @@
 #include "DP_simu/SteppingAction.hh"
 #include "DP_simu/RootManager.hh"
 
-//#include "G4StepLimiterBuilder.hh"  // Geant4.9
 #include "G4StepLimiterPhysics.hh"  // Geant4.10
 #include "G4GenericBiasingPhysics.hh"
 #include "DP_simu/GammaPhysics.h"
 #include "DP_simu/OpticalPhysics.h"
 #include "G4OpticalPhysics.hh"
 #include "G4EmStandardPhysics_option4.hh"
+#include "DarkPhysics/DarkMatterPhysics.hh"
 
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
@@ -118,7 +118,14 @@ int main(int argc, char **argv) {
     runManager->SetUserInitialization(new DetectorConstruction(rootMng));
 
     G4VModularPhysicsList *physicsList = new FTFP_BERT;
+
+    // Dark Physics
+    //physicsList->RegisterPhysics(new DarkMatterPhysics());
+    physicsList->ReplacePhysics(new DarkMatterPhysics());
+
     physicsList->SetVerboseLevel(0);
+
+    // Optical Physics
     if (rootMng->GetOptical()) {
         physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
         auto *opticalPhysics = new G4OpticalPhysics();
@@ -126,16 +133,16 @@ int main(int argc, char **argv) {
     }
     physicsList->RegisterPhysics(new G4StepLimiterPhysics());
     physicsList->RegisterPhysics(new GammaPhysics());
+
+    // Biasing
     auto *biasingPhysics = new G4GenericBiasingPhysics();
     biasingPhysics->Bias("e-");
     biasingPhysics->Bias("gamma");
     physicsList->RegisterPhysics(biasingPhysics);
 
-
     //physicsList->RegisterPhysics( new OpticalPhysics( rootMng ) );
 
     runManager->SetUserInitialization(physicsList);
-
 
     // Set user action classes
     auto *run_action = new RunAction(rootMng);
