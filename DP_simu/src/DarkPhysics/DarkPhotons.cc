@@ -111,7 +111,7 @@ double DarkPhotons::TotalCrossSectionCalc(double E0) {
 
         //double KFactor = KfactorApproximate(MA, E0);
 
-        G4cout<<"MA: "<<MA<<", E0: "<<E0<<", Cutoff: " << cutoff<<G4endl;
+        G4cout<<"MA: "<<MA<<", E0: "<<E0<<", Cutoff: " << cutoff <<", sigmaTot: "<<sigmaTot<<G4endl;
 
         G4cout << "Total CS calc, E, M, K = " << E0 << " " << MA << " " << G4endl; //KFactor << G4endl;
 
