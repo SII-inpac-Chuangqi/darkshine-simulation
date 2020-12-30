@@ -4,8 +4,6 @@
 
 #include "Object/McParticle.h"
 
-ClassImp(McParticle);
-
 McParticle::McParticle() {
     Parents = nullptr;
     Children = nullptr;

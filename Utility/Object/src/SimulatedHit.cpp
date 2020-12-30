@@ -6,8 +6,6 @@
 
 #include <cassert>
 
-ClassImp(SimulatedHit);
-
 SimulatedHit::SimulatedHit() = default;
 
 SimulatedHit::SimulatedHit(const SimulatedHit &rhs) : DHit(rhs) {

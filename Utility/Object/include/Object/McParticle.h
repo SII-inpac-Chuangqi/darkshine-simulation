@@ -45,9 +45,9 @@ public:
         return RecParticles;
     }
 
-//    const SimulatedHitVec &getSimHits() const {
-//        return SimHits;
-//    }
+    const SimulatedHitVec &getSimHits() const {
+        return SimHits;
+    }
 
     // Set Methods
     void setERemain(double eRemain);
@@ -64,9 +64,9 @@ public:
         RecParticles = recParticles;
     }
 
-//    void setSimHits(const SimulatedHitVec &simHits) {
-//        SimHits = simHits;
-//    }
+    void setSimHits(const SimulatedHitVec &simHits) {
+        SimHits = simHits;
+    }
 
     // Search Methods
     static McParticle* SearchID(MCParticleVec* mv, int ID) {
@@ -90,7 +90,7 @@ private:
     MCParticleVec* Children{};
 
     ReconstructedParticle* RecParticles{};
-    //SimulatedHitVec SimHits;
+    SimulatedHitVec SimHits;
 
 ClassDefOverride(McParticle,10)
 
