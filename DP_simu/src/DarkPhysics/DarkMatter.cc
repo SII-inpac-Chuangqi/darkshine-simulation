@@ -127,7 +127,7 @@ double DarkMatter::GetSigmaAngleMax(double E0) {
 
 double DarkMatter::GetSigmaTot0(double E0) {
 
-//    std::cout<<"E0: "<<E0<<std::endl;
+    std::cout<<"E0: "<<E0<<std::endl;
 //
 //    std::cout<<"sigmap: ";
 //    for (auto i : sigmap) std::cout<<i<<", ";
