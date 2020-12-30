@@ -32,7 +32,7 @@ DarkMatter::DarkMatter(double MAIn, double EThreshIn, double SigmaNormIn, double
     nptable = NPTAB;
     //double epi[NPTAB] = {0.00001, 0.00002, 0.0001, 0.0002, 0.0003, 0.0005, 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009};
     double epi[NPTAB] = {0.008, 0.02, 0.05, 0.1, 0.2, 0.5, 1., 2., 5., 10., 15., 25., 50., 80., 150.};
-    for (int ip = 0; ip < nptable; ip++) { ep[ip] = epi[ip] / 100; }
+    for (int ip = 0; ip < nptable; ip++) { ep[ip] = epi[ip]; }
 }
 
 
