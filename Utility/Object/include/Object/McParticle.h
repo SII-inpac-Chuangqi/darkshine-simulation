@@ -10,6 +10,8 @@
 #include "Object/SimulatedHit.h"
 #include "DParticle.h"
 
+class SimulatedHit;
+
 /// class description:
 /// \brief Secondary particles. TRUTH information which is known only in simulation.
 class McParticle : public DParticle {
