@@ -18,10 +18,16 @@ public:
 
     G4bool Filter(const G4Step *aStep);
 
+    /// Setter
+
+    void SetFoundResult(G4bool in) { Found_Result = in; };
+
     /// Getter
     [[nodiscard]] G4int GetPDGID() const { return PDG; };
 
     [[nodiscard]] G4bool GetFlag() const { return Flag; };
+
+    [[nodiscard]] G4bool GetFoundResult() const { return Found_Result; };
 private:
     G4bool ifFilter{};
     G4StepPoint *prev{};
@@ -42,6 +48,7 @@ private:
     G4int PDG;
     G4double energy{};
     G4bool Flag;
+    G4bool Found_Result = false; // true if found this particle in the range of filter.
 };
 
 #endif

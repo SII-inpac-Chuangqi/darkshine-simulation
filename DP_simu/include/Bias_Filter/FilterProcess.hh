@@ -19,8 +19,14 @@ public:
 
     G4bool Filter(const G4Step *aStep);
 
+    /// Setter
+
+    void SetFoundResult(G4bool in) { Found_Result = in; };
+
     /// Getter
-    G4bool GetFlag() const { return Flag; };
+    [[nodiscard]] G4bool GetFlag() const { return Flag; };
+
+    [[nodiscard]] G4bool GetFoundResult() const { return Found_Result; };
 
 private:
     G4bool ifFilter{};
@@ -38,6 +44,7 @@ private:
     G4String pname;
     G4bool res = false;
     G4bool Flag;
+    G4bool Found_Result = false; // true if found this process in the range of filter
 };
 
 #endif

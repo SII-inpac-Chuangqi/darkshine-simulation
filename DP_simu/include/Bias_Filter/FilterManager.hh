@@ -27,6 +27,10 @@ public:
 
     void Filter_Process(const G4Step *aStep);
 
+    [[nodiscard]] G4bool Filter_Particle_EndofEvent(); /// check whether found must-have particle.
+
+    [[nodiscard]] G4bool Filter_Process_EndofEvent(); /// check whether found must-have process.
+
     /// Setter
 
     /// \brief Setup a new particle filter.

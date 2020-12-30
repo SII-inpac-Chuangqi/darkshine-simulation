@@ -50,6 +50,7 @@ G4bool FilterParticle::Filter(const G4Step* aStep) {
             // Energy of secondaries reqirement
             energy = aTrack->GetTotalEnergy();
             if( Square_Filter(energy, Energy_Edge_Rising, Energy_Edge_Falling) ) {
+                Found_Result = true;
                 return true;
             }
         }

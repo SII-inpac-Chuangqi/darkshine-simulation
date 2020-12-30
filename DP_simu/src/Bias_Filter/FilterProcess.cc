@@ -47,7 +47,10 @@ G4bool FilterProcess::Filter(const G4Step* aStep) {
     if  ( Square_Filter(post_distance, ScanDistance_Edge_Rising, ScanDistance_Edge_Falling) ) {
         if ( Square_Filter(deltaE, Energy_Edge_Rising, Energy_Edge_Falling)) {
             res = pname.contains( Process_Name );
-            if (res) return true;
+            if (res) {
+                Found_Result = true;
+                return true;
+            }
         }
         else
             return false;
