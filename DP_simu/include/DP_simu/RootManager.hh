@@ -148,9 +148,9 @@ public:
 
     void Filter_Process(const G4Step *aStep) { fFilterMng->Filter_Process(aStep); };
 
-    G4bool Filter_Particle_EndofEvent() { return fFilterMng->Filter_Particle_EndofEvent; };
+    G4bool Filter_Particle_EndofEvent() { return fFilterMng->Filter_Particle_EndofEvent(); };
 
-    G4bool Filter_Process_EndofEvent() { return fFilterMng->Filter_Process_EndofEvent; };
+    G4bool Filter_Process_EndofEvent() { return fFilterMng->Filter_Process_EndofEvent(); };
 
     G4bool GetFilter_Process_Result() { return fFilterMng->GetFilter_Process_Result(); };
 
