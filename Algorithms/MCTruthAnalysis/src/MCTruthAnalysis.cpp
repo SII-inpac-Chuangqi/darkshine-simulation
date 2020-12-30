@@ -85,7 +85,7 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
                 Parent_P[1] = prev_s->getPy();
                 Parent_P[2] = prev_s->getPz();
                 Parent_PVName = TString(prev_s->getPVName());
-                cout<<"End"<<ednl;
+                cout<<"End"<<endl;
             }
 
             prev_s = s;
