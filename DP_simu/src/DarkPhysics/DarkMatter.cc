@@ -35,8 +35,8 @@ DarkMatter::DarkMatter(double MAIn, double EThreshIn, double SigmaNormIn, double
     const int NPTAB = 15;
     nptable = NPTAB;
     //double epi[NPTAB] = {0.00001, 0.00002, 0.0001, 0.0002, 0.0003, 0.0005, 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009};
-    double epi[NPTAB] = {1.0, 3.0, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.3, 7.5, 7.8, 8., 9., 15.};
-    for (int ip = 0; ip < nptable; ip++) { ep[ip] = epi[ip] * 10; }
+    double epi[NPTAB] = {1.0, 3.0, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.3, 7.5, 7.8, 8., 9., 10.};
+    for (int ip = 0; ip < nptable; ip++) { ep[ip] = epi[ip] ; }
 }
 
 
@@ -310,23 +310,28 @@ double DarkMatter::SimulateEmissionWithAngle(double E0, double *angles) {
 
         double XEv, FactorSigma = 1.;
         if (MA > 0.001  ) {
-            double XFactor = 1.5 * sqrt(0.001 / MA);
-            double AlphaX = exp(-(1. - Xmax) / XFactor);
-            double BetaX = exp(-(1. - Xmin) / XFactor);
-            double DeltaX = -XFactor * log(BetaX + G4UniformRand() * (AlphaX - BetaX));
-            //double DeltaX = -XFactor * log(BetaX + G4RandExponential() * (AlphaX - BetaX));
-            XEv = 1. - DeltaX;
-            FactorSigma = exp(DeltaX / XFactor);
+//            double XFactor = 1.5 * sqrt(0.001 / MA);
+//            double AlphaX = exp(-(1. - Xmax) / XFactor);
+//            double BetaX = exp(-(1. - Xmin) / XFactor);
+//            double DeltaX = -XFactor * log(BetaX + G4UniformRand() * (AlphaX - BetaX));
+//            //double DeltaX = -XFactor * log(BetaX + G4RandExponential() * (AlphaX - BetaX));
+//            XEv = 1. - DeltaX;
+//            FactorSigma = exp(DeltaX / XFactor);
+
+            XEv = G4UniformRand() * (Xmax - Xmin) + Xmin;
+
         } else {
             XEv = G4UniformRand() * (Xmax - Xmin) + Xmin;
         }
 
         double UThetaEv, FactorSigmaU = 1.;
         if (MA > 0.001 ) {
-            double UFactor = 0.3 * UThetaMaxA;
-            double BetaU = exp(-UThetaMaxA / UFactor);
-            UThetaEv = -UFactor * log(BetaU + G4UniformRand() * (1. - BetaU));
-            FactorSigmaU = exp(UThetaEv / UFactor);
+//            double UFactor = 0.3 * UThetaMaxA;
+//            double BetaU = exp(-UThetaMaxA / UFactor);
+//            UThetaEv = -UFactor * log(BetaU + G4UniformRand() * (1. - BetaU));
+//            FactorSigmaU = exp(UThetaEv / UFactor);
+
+            UThetaEv = G4UniformRand() * UThetaMaxA; // this is a u = 0.5*theta^2 variable!!!
         } else {
             UThetaEv = G4UniformRand() * UThetaMaxA; // this is a u = 0.5*theta^2 variable!!!
         }
