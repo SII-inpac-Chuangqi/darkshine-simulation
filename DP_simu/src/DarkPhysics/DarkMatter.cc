@@ -126,6 +126,17 @@ double DarkMatter::GetSigmaAngleMax(double E0) {
 }
 
 double DarkMatter::GetSigmaTot0(double E0) {
+
+    std::cout<<"ep: ";
+    for (auto i : ep) std::cout<<i<<", ";
+    std::cout<<std::endl;
+
+    std::cout<<"sigmap: ";
+    for (auto i : sigmap) std::cout<<i<<", ";
+    std::cout<<std::endl;
+
+    std::cout<<"nptable: "<<nptable<<std::endl;
+
     return parinv(E0, ep, sigmap, nptable);
 }
 
