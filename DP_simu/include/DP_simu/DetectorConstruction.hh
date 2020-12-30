@@ -227,7 +227,7 @@ private:
     // ECAL Construction Class
     ECAL_XYCrossing *ECAL_Con1;
     ECAL_AllZ *ECAL_Con2;
-    G4int ECAL_Selection = 1; 
+    G4int ECAL_Selection = 2;
 
     // HCAL Construction Class
     HCAL_Construct *HCAL_Con;

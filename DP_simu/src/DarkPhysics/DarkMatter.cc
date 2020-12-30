@@ -21,6 +21,10 @@
 
 #include <iostream>
 
+
+#include "TGraph.h"
+#include "TCanvas.h"
+
 #define EPSPARINV 1.e-8
 
 DarkMatter::DarkMatter(double MAIn, double EThreshIn, double SigmaNormIn, double ANuclIn, double ZNuclIn,
@@ -288,6 +292,9 @@ double DarkMatter::SimulateEmission(double E0, double *angles) {
 
 
 double DarkMatter::SimulateEmissionWithAngle(double E0, double *angles) {
+
+    std::cout<<"E0: "<<E0<<", MA: "<<MA<<std::endl;
+
     double Xmin = MA / E0;
     double Xmax = 1.0 - Xmin; // Misha,  For E0~1 GeV and MA~500 MeV its rather small!
     //double ThetaMaxA = 0.0001*sqrt((MA/E0)/(0.001/100.));
@@ -303,23 +310,27 @@ double DarkMatter::SimulateEmissionWithAngle(double E0, double *angles) {
 
         double XEv, FactorSigma = 1.;
         if (MA > 0.001  ) {
-            double XFactor = 1.5 * sqrt(0.001 / MA);
-            double AlphaX = exp(-(1. - Xmax) / XFactor);
-            double BetaX = exp(-(1. - Xmin) / XFactor);
-            double DeltaX = -XFactor * log(BetaX + G4UniformRand() * (AlphaX - BetaX));
-            //double DeltaX = -XFactor * log(BetaX + G4RandExponential() * (AlphaX - BetaX));
-            XEv = 1. - DeltaX;
-            FactorSigma = exp(DeltaX / XFactor);
+//            double XFactor = 1.5 * sqrt(0.001 / MA);
+//            double AlphaX = exp(-(1. - Xmax) / XFactor);
+//            double BetaX = exp(-(1. - Xmin) / XFactor);
+//            double DeltaX = -XFactor * log(BetaX + G4UniformRand() * (AlphaX - BetaX));
+//            //double DeltaX = -XFactor * log(BetaX + G4RandExponential() * (AlphaX - BetaX));
+//            XEv = 1. - DeltaX;
+//            FactorSigma = exp(DeltaX / XFactor);
+
+            XEv = G4UniformRand() * (Xmax - Xmin) + Xmin;
         } else {
             XEv = G4UniformRand() * (Xmax - Xmin) + Xmin;
         }
 
         double UThetaEv, FactorSigmaU = 1.;
         if (MA > 0.001 ) {
-            double UFactor = 0.3 * UThetaMaxA;
-            double BetaU = exp(-UThetaMaxA / UFactor);
-            UThetaEv = -UFactor * log(BetaU + G4UniformRand() * (1. - BetaU));
-            FactorSigmaU = exp(UThetaEv / UFactor);
+//            double UFactor = 0.3 * UThetaMaxA;
+//            double BetaU = exp(-UThetaMaxA / UFactor);
+//            UThetaEv = -UFactor * log(BetaU + G4UniformRand() * (1. - BetaU));
+//            FactorSigmaU = exp(UThetaEv / UFactor);
+
+            UThetaEv = G4UniformRand() * UThetaMaxA; // this is a u = 0.5*theta^2 variable!!!
         } else {
             UThetaEv = G4UniformRand() * UThetaMaxA; // this is a u = 0.5*theta^2 variable!!!
         }
@@ -327,6 +338,8 @@ double DarkMatter::SimulateEmissionWithAngle(double E0, double *angles) {
         if (XEv * E0 < MA) return 0.;
 
         double sigma = FactorSigma * FactorSigmaU * CrossSectionDSDXDU(XEv, UThetaEv, E0);
+
+        //std::cout<<XEv<<", "<<sigma<<std::endl;
 
         double UU = G4UniformRand() * sigmaMax;
 

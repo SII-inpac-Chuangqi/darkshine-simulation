@@ -73,6 +73,7 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
         || abs(pdg) == 12   // electron neutrino
             ) {
 
+//    if (1) {
         fMC = new McParticle();
         fMC->setPdg(pdg);
         fMC->setId(aTrack->GetTrackID());

@@ -73,7 +73,7 @@ bool DEventDisplay::drawEvent(int id, bool resCam) {
     /*   Finalization   */
     /********************/
     gEve->Redraw3D(resCam);
-    gEve->FullRedraw3D(kTRUE);
+    gEve->FullRedraw3D(resCam);
     gEve->GetDefaultGLViewer()->RequestDraw(TGLRnrCtx::kLODHigh);
 
     return true;
