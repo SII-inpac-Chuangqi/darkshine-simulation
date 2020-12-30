@@ -211,7 +211,7 @@ double DarkMatter::MaxCrossSectionAngleCalc(double E0) {
             if (csi > csmax) csmax = csi;
         }
     }
-    return 1.01 * csmax;
+    return 1.0000001 * csmax;
 }
 
 double DarkMatter::CrossSectionDSDX(double XEv, double E0) {
@@ -313,53 +313,36 @@ double DarkMatter::SimulateEmissionWithAngle(double E0, double *angles) {
 
         double XEv, FactorSigma = 1.;
         if (MA > 0.001  ) {
-            double XFactor = 1.5 * sqrt(0.001 / MA);
-            double AlphaX = exp(-(1. - Xmax) / XFactor);
-            double BetaX = exp(-(1. - Xmin) / XFactor);
-            double DeltaX = -XFactor * log(BetaX + G4UniformRand() * (AlphaX - BetaX));
-            //double DeltaX = -XFactor * log(BetaX + G4RandExponential() * (AlphaX - BetaX));
-            XEv = 1. - DeltaX;
-            FactorSigma = exp(DeltaX / XFactor);
+//            double XFactor = 1.5 * sqrt(0.001 / MA);
+//            double AlphaX = exp(-(1. - Xmax) / XFactor);
+//            double BetaX = exp(-(1. - Xmin) / XFactor);
+//            double DeltaX = -XFactor * log(BetaX + G4UniformRand() * (AlphaX - BetaX));
+//            //double DeltaX = -XFactor * log(BetaX + G4RandExponential() * (AlphaX - BetaX));
+//            XEv = 1. - DeltaX;
+//            FactorSigma = exp(DeltaX / XFactor);
+
+            XEv = G4UniformRand() * (Xmax - Xmin) + Xmin;
+
         } else {
             XEv = G4UniformRand() * (Xmax - Xmin) + Xmin;
         }
 
         double UThetaEv, FactorSigmaU = 1.;
         if (MA > 0.001 ) {
-            double UFactor = 0.3 * UThetaMaxA;
-            double BetaU = exp(-UThetaMaxA / UFactor);
-            UThetaEv = -UFactor * log(BetaU + G4UniformRand() * (1. - BetaU));
-            FactorSigmaU = exp(UThetaEv / UFactor);
+//            double UFactor = 0.3 * UThetaMaxA;
+//            double BetaU = exp(-UThetaMaxA / UFactor);
+//            UThetaEv = -UFactor * log(BetaU + G4UniformRand() * (1. - BetaU));
+//            FactorSigmaU = exp(UThetaEv / UFactor);
+
+            UThetaEv = G4UniformRand() * UThetaMaxA; // this is a u = 0.5*theta^2 variable!!!
+
         } else {
             UThetaEv = G4UniformRand() * UThetaMaxA; // this is a u = 0.5*theta^2 variable!!!
         }
 
         if (XEv * E0 < MA) return 0.;
 
-        // Calculate Form Factor
-        gsl_integration_workspace *w = gsl_integration_workspace_alloc(1000);
-        double result, error;
-        double tmin = MA * MA * MA * MA / (4. * E0 * E0);
-        double tmax = MA * MA;
-        gsl_function F;
-        ParamsForChi alpha = {1.0, 1.0, 1.0, 1.0};
-        F.function = &chi;
-        F.params = &alpha;
-        alpha.AA = ANucl;
-        alpha.ZZ = ZNucl;
-        alpha.MMA = MA;
-        alpha.EE0 = E0;
-        gsl_integration_qags(&F, tmin, tmax, 0, 1e-7, 1000, w, &result, &error);
-        double ChiRes = result;
-
-        gsl_integration_workspace_free(w);
-
-        double beta = sqrt(1. - MA * MA / (E0 * E0));
-        double coeff = 8 * alphaEW * alphaEW * alphaEW * epsilBench * epsilBench * ChiRes * beta * E0 * E0;
-
-        double sigma_test = FactorSigma * FactorSigmaU * CrossSectionDSDXDU(XEv, UThetaEv, E0);
-        double sigma = coeff * CrossSectionDSDXDU(XEv, UThetaEv, E0);
-
+        double sigma = FactorSigma * FactorSigmaU * CrossSectionDSDXDU(XEv, UThetaEv, E0);
 
         double UU = G4UniformRand() * sigmaMax;
 
