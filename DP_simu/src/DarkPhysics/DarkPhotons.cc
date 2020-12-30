@@ -141,7 +141,7 @@ double DarkPhotons::TotalCrossSectionCalc(double E0) {
 }
 
 double DarkPhotons::GetSigmaTot(double E0) {
-    if (MA > 0.001) {
+    if (MA > 0.001 * GeV ) {
         return GetSigmaTot0(E0);
     } else {
         return TotCSVectorParticle(MA) * GeVtoPb * epsilBench * epsilBench;
