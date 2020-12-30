@@ -8,7 +8,7 @@
 /// \brief Class Description:
 ///  Take particle filter as an example. 
 ///  First, SetNewParticleFilter() will construct new class FilterParticle class,
-///  initialize PDG, risingEnergyEdge, fallingEnergyEdge, etc.
+///  initialize PDG, Energy range, Scan Distance range, etc.
 ///  The pointer to this class is stored in vector Filter_Particle_List.
 ///  Second, these class will be traversed in SteppingAction.
 class FilterManager {
@@ -27,33 +27,33 @@ public:
 
     void Filter_Process(const G4Step *aStep);
 
-    [[nodiscard]] G4bool Filter_Particle_EndofEvent(); /// check whether found must-have particle.
+    [[nodiscard]] G4bool Filter_Particle_Found_Result(); /// check whether found must-have particle.
 
-    [[nodiscard]] G4bool Filter_Process_EndofEvent(); /// check whether found must-have process.
+    [[nodiscard]] G4bool Filter_Process_Found_Result(); /// check whether found must-have process.
 
     /// Setter
 
     /// \brief Setup a new particle filter.
     /// \param pdg  PDG ID of secondary particle.
-    /// \param risingEnergyEdge  The rising edge of Energy range.
-    /// \param fallingEnergyEdge  The falling edge of Energy range.
-    /// \param risingScanEdge  The rising edge of Scan Distance range.
-    /// \param fallingScanEdge  The falling edge of Scan Distance range.
     /// \param flag  1: The Event to be computed must have this particle in particular range.
     ///              0: The Event to be computed must not have this particle in particular range.
-    void SetNew_Particle_Filter(G4int pdg, G4double risingEnergyEdge, G4double fallingEnergyEdge,
-                                G4double risingScanEdge, G4double fallingScanEdge, G4bool flag);
+    void SetNew_Particle_Filter(G4int pdg,
+                                G4double minEnergy,
+                                G4double maxEnergy,
+                                G4double minScanDistance,
+                                G4double maxScanDistance,
+                                G4bool flag);
 
     /// \brief Setup a new process filter.
     /// \param processName  process name of post step point.
-    /// \param risingEnergyEdge  The rising edge of Energy range.
-    /// \param fallingEnergyEdge  The falling edge of Energy range.
-    /// \param risingScanEdge  The rising edge of Scan Distance range.
-    /// \param fallingScanEdge  The falling edge of Scan Distance range.
     /// \param flag  1: The Event to be computed must have this process in particular range.
     ///              0: The Event to be computed must not have this process in particular range.
-    void SetNew_Process_Filter(G4String processName, G4double risingEnergyEdge, G4double fallingEnergyEdge,
-                               G4double risingScanEdge, G4double fallingScanEdge, G4bool flag);
+    void SetNew_Process_Filter(G4String processName,
+                               G4double minEnergy,
+                               G4double maxEnergy,
+                               G4double minScanDistance,
+                               G4double maxScanDistance,
+                               G4bool flag);
 
     /// Getter
     [[nodiscard]] G4bool GetifFilter_Particle() const { return ifFilter_Particle; };

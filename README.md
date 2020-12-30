@@ -174,7 +174,7 @@ flag = 0: The Event to be computed must not have this secondary particle/process
 | band-stop filter | 200 | -1000 |
 | all-pass filter | 0 | 0 |
 
-related method: ```Square_Filter()```
+related method: ```In_Range()```
 
 </details>
 

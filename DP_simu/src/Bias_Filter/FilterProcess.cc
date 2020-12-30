@@ -6,28 +6,34 @@
 
 #include "Bias_Filter/FilterProcess.hh"
 
-FilterProcess::FilterProcess(G4String processName, G4double risingEnergyEdge, G4double fallingEnergyEdge,
-                             G4double risingScanEdge, G4double fallingScanEdge, G4bool flag) {
+FilterProcess::FilterProcess(G4String processName,
+                             G4double minEnergy,
+                             G4double maxEnergy,
+                             G4double minScanDistance,
+                             G4double maxScanDistance,
+                             G4bool flag) {
     Process_Name = std::move(processName);
-    Energy_Edge_Rising = risingEnergyEdge;
-    Energy_Edge_Falling = fallingEnergyEdge;
-    ScanDistance_Edge_Rising = risingScanEdge;
-    ScanDistance_Edge_Falling = fallingScanEdge;
+    Energy_Min = minEnergy;
+    Energy_Max = maxEnergy;
+    ScanDistance_Min = minScanDistance;
+    ScanDistance_Max = maxScanDistance;
     Flag = flag;
 }
 
-/// \brief simple filter
-/// \return true - pass, false - stop.
-G4bool FilterProcess::Square_Filter(G4double val, G4double risingEdge, G4double fallingEdge) {
-    // All-pass case: fallingEdge=risingEdge, return true
-    if ( fallingEdge <= risingEdge) {
-        if (val >= risingEdge || val < fallingEdge)
+/// \brief judge if val is in the range.
+/// lowerBound < upperBound: band-pass;
+/// lowerBound > upperBound : band-stop;
+/// lowerBound = upperBound : all-pass.
+/// \return true - in the range, false - out of range.
+G4bool FilterProcess::In_Range(G4double val, G4double lowerBound, G4double upperBound) {
+    if (upperBound <= lowerBound) {
+        if (val >= lowerBound || val < upperBound)
             return true;
         else
             return false;
     }
-    else { // risingEdge < fallingEdge
-        if (val >= risingEdge && val < fallingEdge)
+    else { // lowerBound < upperBound
+        if (val >= lowerBound && val < upperBound)
             return true;
         else
             return false;
@@ -37,15 +43,15 @@ G4bool FilterProcess::Square_Filter(G4double val, G4double risingEdge, G4double 
 /// \brief Check if one particular process is in particular energy range and distance range.
 /// \return true - in the range,
 /// fasle - out of range.
-G4bool FilterProcess::Filter(const G4Step* aStep) {
+G4bool FilterProcess::In_Filter(const G4Step* aStep) {
     prev = aStep->GetPreStepPoint();
     post = aStep->GetPostStepPoint();
     deltaE = fabs( prev->GetKineticEnergy() - post->GetKineticEnergy() );
     pname = post->GetProcessDefinedStep()->GetProcessName();
     post_distance = post->GetPosition()[2];
 
-    if  ( Square_Filter(post_distance, ScanDistance_Edge_Rising, ScanDistance_Edge_Falling) ) {
-        if ( Square_Filter(deltaE, Energy_Edge_Rising, Energy_Edge_Falling)) {
+    if  (In_Range(post_distance, ScanDistance_Min, ScanDistance_Max) ) {
+        if (In_Range(deltaE, Energy_Min, Energy_Max)) {
             res = pname.contains( Process_Name );
             if (res) {
                 Found_Result = true;

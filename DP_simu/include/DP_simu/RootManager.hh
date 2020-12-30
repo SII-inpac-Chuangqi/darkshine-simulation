@@ -132,25 +132,25 @@ public:
 
     void SetnewTrack(G4bool in) { newTrack = in; };
 
-    void SetNew_Particle_Filter(G4int pdg, G4double risingEnergyEdge, G4double fallingEnergyEdge,
-                                G4double risingScanEdge, G4double fallingScanEdge, G4bool flag)
+    void SetNew_Particle_Filter(G4int pdg, G4double minEnergy, G4double maxEnergy,
+                                G4double minScanDistance, G4double maxScanDistance, G4bool flag)
     {
-        fFilterMng->SetNew_Particle_Filter(pdg, risingEnergyEdge, fallingEnergyEdge, risingScanEdge, fallingScanEdge, flag);
+        fFilterMng->SetNew_Particle_Filter(pdg, minEnergy, maxEnergy, minScanDistance, maxScanDistance, flag);
     };
 
-    void SetNew_Process_Filter(G4String processName, G4double risingEnergyEdge, G4double fallingEnergyEdge,
-                               G4double risingScanEdge, G4double fallingScanEdge, G4bool flag)
+    void SetNew_Process_Filter(G4String processName, G4double minEnergy, G4double maxEnergy,
+                               G4double minScanDistance, G4double maxScanDistance, G4bool flag)
     {
-        fFilterMng->SetNew_Process_Filter(std::move(processName), risingEnergyEdge, fallingEnergyEdge, risingScanEdge, fallingScanEdge, flag);
+        fFilterMng->SetNew_Process_Filter(std::move(processName), minEnergy, maxEnergy, minScanDistance, maxScanDistance, flag);
     };
 
     G4bool Filter_Particle(const G4Step *aStep) { return fFilterMng->Filter_Particle(aStep); };
 
     void Filter_Process(const G4Step *aStep) { fFilterMng->Filter_Process(aStep); };
 
-    G4bool Filter_Particle_EndofEvent() { return fFilterMng->Filter_Particle_EndofEvent(); };
+    G4bool Filter_Particle_Found_Result() { return fFilterMng->Filter_Particle_Found_Result(); };
 
-    G4bool Filter_Process_EndofEvent() { return fFilterMng->Filter_Process_EndofEvent(); };
+    G4bool Filter_Process_Found_Result() { return fFilterMng->Filter_Process_Found_Result(); };
 
     G4bool GetFilter_Process_Result() { return fFilterMng->GetFilter_Process_Result(); };
 

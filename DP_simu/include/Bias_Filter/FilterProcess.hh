@@ -10,14 +10,18 @@
 ///  This class will be put in a vector container in class FilterManager.
 class FilterProcess {
 public:
-    FilterProcess(G4String processName, G4double risingEnergyEdge, G4double fallingEnergyEdge,
-                  G4double risingScanEdge, G4double fallingScanEdge, G4bool flag);
+    FilterProcess(G4String processName,
+                  G4double minEnergy,
+                  G4double maxEnergy,
+                  G4double minScanDistance,
+                  G4double maxScanDistance,
+                  G4bool flag);
 
     virtual ~FilterProcess() = default;
 
-    static G4bool Square_Filter(G4double val, G4double risingEdge, G4double fallingEdge);
+    static G4bool In_Range(G4double val, G4double lowerBound, G4double upperBound);
 
-    G4bool Filter(const G4Step *aStep);
+    G4bool In_Filter(const G4Step *aStep);
 
     /// Setter
 
@@ -29,22 +33,21 @@ public:
     [[nodiscard]] G4bool GetFoundResult() const { return Found_Result; };
 
 private:
-    G4bool ifFilter{};
     G4StepPoint *prev{};
     G4StepPoint *post{};
     G4double post_distance{};
     G4double deltaE{};
-    G4double Energy_Edge_Rising;
-    G4double Energy_Edge_Falling;
+    G4double Energy_Min;
+    G4double Energy_Max;
 
-    G4double ScanDistance_Edge_Rising;
-    G4double ScanDistance_Edge_Falling;
+    G4double ScanDistance_Min;
+    G4double ScanDistance_Max;
 
     G4String Process_Name{};
     G4String pname;
     G4bool res = false;
     G4bool Flag;
-    G4bool Found_Result = false; // true if found this process in the range of filter
+    G4bool Found_Result = false; // true if found this process in the range.
 };
 
 #endif
