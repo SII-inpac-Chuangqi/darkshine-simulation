@@ -28,7 +28,6 @@ public:
 
     void End() override;
 
-    // Define some functions here if necessary
 
 private:
 

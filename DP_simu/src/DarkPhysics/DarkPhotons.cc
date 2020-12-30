@@ -27,35 +27,19 @@
 
 double TotCSVectorParticle(double MAtest) // CS in GeV^-2 for epsilon=1
 {
-    double MMAA[nMALowM] = {0.000001, 0.00001, 0.00002, 0.00003, 0.00004, 0.00005, 0.00006, 0.00007, 0.0001, 0.00015,
-                            0.0002,
-                            0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009}; // mass of A' in GeV
-    double TotCSList[nMALowM] = {831989., 714214., 608205., 537442., 485739., 445566., 413065., 386006., 325514.,
-                                 261274., 219140.,
-                                 165447., 131948., 108852., 91940.7, 79039.6, 68896.5, 60733.3};
-    //double MMAA[nMALowM] = {0.00158489,0.00251189,0.00398107,0.00630957,0.01,0.0158489,0.0251189,0.0398107,0.0630957,0.1,0.158489,0.251189,0.398107,0.630957,1,1.58489,2.51189};
-    // double TotCSList[nMALowM]={8.05E+12
-//,4.74E+12
-//,2.63E+12
-//,1.38E+12
-//,6.69E+11
-//,2.89E+11
-//,1.08E+11
-//,3.65E+10
-//,1.15E+10
-//,3.36E+09
-//,9.05E+08
-//,2.15E+08
-//,4.08E+07
-//,5.01E+06
-//,292608
-//,13118.8
-//,571.706
-//};
-
+//    double MMAA[nMALowM] = {0.000001, 0.00001, 0.00002, 0.00003, 0.00004, 0.00005, 0.00006, 0.00007, 0.0001, 0.00015,
+//                            0.0002,
+//                            0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009}; // mass of A' in GeV
+//    double TotCSList[nMALowM] = {831989., 714214., 608205., 537442., 485739., 445566., 413065., 386006., 325514.,
+//                                 261274., 219140.,
+//                                 165447., 131948., 108852., 91940.7, 79039.6, 68896.5, 60733.3};
+    double MMAA[nMALowM] = {0.00158489, 0.00251189, 0.00398107, 0.00630957, 0.01, 0.0158489, 0.0251189, 0.0398107,
+                            0.0630957, 0.1, 0.158489, 0.251189, 0.398107, 0.630957, 1, 1.58489, 2.51189}; // mass of A' in GeV
+    double TotCSList[nMALowM] = {8.05E+12, 4.74E+12, 2.63E+12, 1.38E+12, 6.69E+11, 2.89E+11, 1.08E+11, 3.65E+10,
+                                 1.15E+10, 3.36E+09, 9.05E+08, 2.15E+08, 4.08E+07, 5.01E+06, 292608, 13118.8, 571.706
+    };
 
     return parinv(MAtest, MMAA, TotCSList, nMALowM); // This is to be converted to pb and multiplied by eps^2
-
 }
 
 DarkPhotons::DarkPhotons(double MAIn, double EThreshIn, double SigmaNormIn, double ANuclIn, double ZNuclIn,
@@ -80,7 +64,7 @@ double DarkPhotons::TotalCrossSectionCalc(double E0) {
 
     if (E0 < 2. * MA) return 0.;
 
-    if (MA > 0.001 ) { // analytical IWW calculation above 1 MeV, result in pb
+    if (MA > 0.001) { // analytical IWW calculation above 1 MeV, result in pb
 
         //ThetaMaxA = pow(MA/E0, 1.5);
         //ThetaMaxEl = sqrt(MA*Mel)/E0;
@@ -140,17 +124,18 @@ double DarkPhotons::TotalCrossSectionCalc(double E0) {
 }
 
 double DarkPhotons::GetSigmaTot(double E0) {
-    if (MA > 0.001 * GeV ) {
+    if (MA > 0.001 * GeV) {
         return GetSigmaTot0(E0);
     } else {
-        return TotCSVectorParticle(MA) * GeVtoPb * epsilBench * epsilBench;
+        //return TotCSVectorParticle(MA) * GeVtoPb * epsilBench * epsilBench;
+        return TotCSVectorParticle(MA) * epsilBench * epsilBench;
     }
 }
 
 
 double DarkPhotons::CrossSectionDSDX(double XEv, double E0) {
     double sigma = 0;
-    if (MA > 0.001 ) {
+    if (MA > 0.001) {
         double momentumOfDP = sqrt(XEv * XEv * E0 * E0 - MA * MA);
         double umaxtilde = -MA * MA * (1.0 - XEv) / XEv - Mel * Mel * XEv;
         double Numerator =
@@ -166,7 +151,7 @@ double DarkPhotons::CrossSectionDSDX(double XEv, double E0) {
 
 double DarkPhotons::CrossSectionDSDXDU(double XEv, double UThetaEv, double E0) {
     double sigma = 0;
-    if (MA > 0.001 ) {
+    if (MA > 0.001) {
         double Uxtheta = 2. * E0 * E0 * UThetaEv * XEv + MA * MA * (1.0 - XEv) / XEv + Mel * Mel * XEv;
         double AA = (1. - XEv + XEv * XEv / 2.) / (Uxtheta * Uxtheta);
         double BB = (1. - XEv) * (1. - XEv) * MA * MA / (Uxtheta * Uxtheta * Uxtheta * Uxtheta);
