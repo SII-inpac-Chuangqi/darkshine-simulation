@@ -87,10 +87,10 @@ void DarkMatterPhysics::ConstructProcess() {
                << (*vProcess)[iProcess]->GetProcessType()
                << ", sub Type " << (*vProcess)[iProcess]->GetProcessSubType() << G4endl;
 
-        if (processName == "DMProcessDMBrem") {
-            pmanager->SetProcessOrderingToFirst((*vProcess)[iProcess],
-                                                G4ProcessVectorDoItIndex::idxPostStep);
-        }
+//        if (processName == "DMProcessDMBrem") {
+//            pmanager->SetProcessOrderingToFirst((*vProcess)[iProcess],
+//                                                G4ProcessVectorDoItIndex::idxPostStep);
+//        }
     }
 
 
