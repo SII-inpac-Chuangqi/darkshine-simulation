@@ -208,7 +208,7 @@ double DarkMatter::MaxCrossSectionAngleCalc(double E0) {
             if (csi > csmax) csmax = csi;
         }
     }
-    return 1.1 * csmax;
+    return 1.0 * csmax;
 }
 
 double DarkMatter::CrossSectionDSDX(double XEv, double E0) {

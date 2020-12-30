@@ -83,7 +83,7 @@ void DarkMatterPhysics::ConstructProcess() {
 
     for (unsigned iProcess = 0; iProcess < vProcess->size(); ++iProcess) {
         G4String processName = (*vProcess)[iProcess]->GetProcessName();
-        G4cout << "[Electron Phyiscs 2] ==> " << processName << ", with Type "
+        G4cout << "[Electron Physics 2] ==> " << processName << ", with Type "
                << (*vProcess)[iProcess]->GetProcessType()
                << ", sub Type " << (*vProcess)[iProcess]->GetProcessSubType() << G4endl;
 
