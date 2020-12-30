@@ -29,7 +29,7 @@ McParticle &McParticle::operator=(const McParticle &rhs) {
     DParticle::operator=(rhs);
     ERemain = rhs.ERemain;
     RecParticles = rhs.RecParticles;
-    SimHits = rhs.SimHits;
+    //SimHits = rhs.SimHits;
     Parents = rhs.Parents;
     Children = rhs.Children;
     return *this;
@@ -48,8 +48,8 @@ bool McParticle::operator==(const McParticle &rhs) const {
            ERemain == rhs.ERemain &&
            Parents == rhs.Parents &&
            Children == rhs.Children &&
-           RecParticles == rhs.RecParticles &&
-           SimHits == rhs.SimHits;
+           RecParticles == rhs.RecParticles ;
+           //SimHits == rhs.SimHits;
 }
 
 bool McParticle::operator!=(const McParticle &rhs) const {
