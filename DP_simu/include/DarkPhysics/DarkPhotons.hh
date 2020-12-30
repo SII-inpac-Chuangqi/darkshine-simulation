@@ -11,9 +11,9 @@ public:
                 double DensityIn = 19.25,
                 double epsilIn = 0.00001, int IDecayIn = 0);
 
-    virtual ~DarkPhotons();
+    ~DarkPhotons() override;
 
-    double TotalCrossSectionCalc(double E0);
+    double TotalCrossSectionCalc(double E0) override;
     double GetSigmaTot(double E0) override;
 
     double CrossSectionDSDX(double Xev, double E0) override;

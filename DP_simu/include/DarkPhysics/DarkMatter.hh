@@ -45,33 +45,34 @@ public:
     void ResetNEmissions() { NEmissions = 0; } // For G4 DM classes
     void EmissionSimulated() { NEmissions++; } // For G4 DM classes; in future do it automatically in SimulateEmission
     virtual double TotalCrossSectionCalc(double E0) = 0;
+
     void PrepareTable();
 
-    double GetMA() { return MA; }
+    double GetMA() const { return MA; }
 
     virtual void SetMA(double MAIn) { MA = MAIn; }
 
-    double GetEThresh() { return EThresh; }
+    double GetEThresh() const { return EThresh; }
 
-    double GetSigmaNorm() { return SigmaNorm; }
+    double GetSigmaNorm() const { return SigmaNorm; }
 
-    double Getepsil() { return epsil; }
+    double Getepsil() const { return epsil; }
 
-    double GetDensity() { return Density; }
+    double GetDensity() const { return Density; }
 
     //int GetDMType() {return DMType;}
-    int GetParentPDGID() { return ParentPDGID; }
+    int GetParentPDGID() const { return ParentPDGID; }
 
-    int GetDaughterPDGID() { return DaughterPDGID; }
+    int GetDaughterPDGID() const { return DaughterPDGID; }
 
     //int Decay() {return IDecay;}
     // usage of normalization below:   Nsign = (Naccepted/Nsimulated)*Normalization*EOT
-    double GetNormalization() {
+    double GetNormalization() const {
         return 3.0e-15 * (Density / 19.25) * (184. / ANucl) *
                epsil * epsil / (SigmaNorm * epsilBench * epsilBench);
     }
 
-    double GetMeanFreePathFactor() { return 1. / (GetNormalization()); }
+    double GetMeanFreePathFactor() const { return 1. / (GetNormalization()); }
 
     double GetSigmaTot0(double E0);
 
@@ -98,7 +99,7 @@ public:
 
     double SimulateEmissionWithAngle(double E0, double *angles);
 
-    double GetAccumulatedProbability() { return AccumulatedProbability; }
+    double GetAccumulatedProbability() const { return AccumulatedProbability; }
 
 private:
 
