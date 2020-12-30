@@ -4,6 +4,7 @@ release/
 debug/
 .ycm_extra_conf.py
 .vscode
+.idea
 DP_simu/scripts/currentEvent.rndm
 DP_simu/scripts/currentRun.rndm
 DP_simu/scripts/dp_out.root
