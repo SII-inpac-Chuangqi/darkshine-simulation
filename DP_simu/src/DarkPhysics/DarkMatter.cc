@@ -15,6 +15,9 @@
 
 #include "DarkPhysics/DarkMatter.hh"
 
+#include "gsl/gsl_math.h"
+#include <gsl/gsl_integration.h>
+
 #include "G4SystemOfUnits.hh"
 
 #include "Randomize.hh"
@@ -208,7 +211,7 @@ double DarkMatter::MaxCrossSectionAngleCalc(double E0) {
             if (csi > csmax) csmax = csi;
         }
     }
-    return 1.0 * csmax;
+    return 1.01 * csmax;
 }
 
 double DarkMatter::CrossSectionDSDX(double XEv, double E0) {
@@ -333,7 +336,30 @@ double DarkMatter::SimulateEmissionWithAngle(double E0, double *angles) {
 
         if (XEv * E0 < MA) return 0.;
 
-        double sigma = FactorSigma * FactorSigmaU * CrossSectionDSDXDU(XEv, UThetaEv, E0);
+        // Calculate Form Factor
+        gsl_integration_workspace *w = gsl_integration_workspace_alloc(1000);
+        double result, error;
+        double tmin = MA * MA * MA * MA / (4. * E0 * E0);
+        double tmax = MA * MA;
+        gsl_function F;
+        ParamsForChi alpha = {1.0, 1.0, 1.0, 1.0};
+        F.function = &chi;
+        F.params = &alpha;
+        alpha.AA = ANucl;
+        alpha.ZZ = ZNucl;
+        alpha.MMA = MA;
+        alpha.EE0 = E0;
+        gsl_integration_qags(&F, tmin, tmax, 0, 1e-7, 1000, w, &result, &error);
+        double ChiRes = result;
+
+        gsl_integration_workspace_free(w);
+
+        double beta = sqrt(1. - MA * MA / (E0 * E0));
+        double coeff = 8 * alphaEW * alphaEW * alphaEW * epsilBench * epsilBench * ChiRes * beta * E0 * E0;
+
+        double sigma_test = FactorSigma * FactorSigmaU * CrossSectionDSDXDU(XEv, UThetaEv, E0);
+        double sigma = coeff * CrossSectionDSDXDU(XEv, UThetaEv, E0);
+
 
         double UU = G4UniformRand() * sigmaMax;
 
