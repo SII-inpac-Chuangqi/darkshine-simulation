@@ -34,7 +34,7 @@ public:
 
     DarkMatter(double MAIn, double EThreshIn, double SigmaNormIn = 1., double ANuclIn = 184., double ZNuclIn = 74.,
                double DensityIn = 19.25,
-               double epsilIn = 1, int IDecayIn = 0);
+               double epsilIn = 0.0001, int IDecayIn = 0);
 
     //DarkMatter(double MAIn, double EThreshIn, double SigmaNormIn=1., double ANuclIn=207., double ZNuclIn=84., double DensityIn=11.35,
     //           double epsilIn=0.0001 );

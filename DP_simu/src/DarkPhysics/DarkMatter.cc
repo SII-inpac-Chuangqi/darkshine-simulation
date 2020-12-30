@@ -26,7 +26,7 @@
 DarkMatter::DarkMatter(double MAIn, double EThreshIn, double SigmaNormIn, double ANuclIn, double ZNuclIn,
                        double DensityIn, double epsilIn, int DecayIn)
         : MA(MAIn), EThresh(EThreshIn), SigmaNorm(SigmaNormIn),
-          ANucl(ANuclIn), ZNucl(ZNuclIn), Density(DensityIn), epsilBench(1), epsil(epsilIn),
+          ANucl(ANuclIn), ZNucl(ZNuclIn), Density(DensityIn), epsilBench(0.0001), epsil(epsilIn),
           AccumulatedProbability(0.), NEmissions(0) {
     const int NPTAB = 15;
     nptable = NPTAB;
