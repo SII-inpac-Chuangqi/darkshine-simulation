@@ -93,7 +93,7 @@ G4VParticleChange *DMBremProcess::PostStepDoIt(const G4Track &aTrack, const G4St
     std::cout << "DM PDG ID = " << theDMParticlePtr->GetPDGEncoding()
               << " emitted by " << aTrack.GetDefinition()->GetParticleName()
               << " with energy = " << incidentE / GeV << " [GeV], DM energy = " << DME / GeV <<" [GeV]"<< std::endl;
-    std::cout<< theDMParticlePtr->GetPDGEncoding() << incidentE / GeV << DME / GeV << std::endl;
+
 
     return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
 }
