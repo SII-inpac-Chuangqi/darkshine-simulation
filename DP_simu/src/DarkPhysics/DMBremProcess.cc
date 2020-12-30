@@ -36,7 +36,7 @@ G4double DMBremProcess::GetMeanFreePath(const G4Track &aTrack, G4double, /*previ
         G4double XMeanFreePath = myDarkMatter->GetMeanFreePathFactor() / myDarkMatter->GetSigmaTot(ekin);
         XMeanFreePath /= BiasSigmaFactor;
         std::cout << "DMMeanFreePath = " << myDarkMatter->GetMeanFreePathFactor() << std::endl;
-        std::cout << "SigmaTotal = " << myDarkMatter->GetSigmaTot(ekin) << std::endl;
+        std::cout << "SigmaTotal = " << myDarkMatter->GetSigmaTot(ekin) << " [pb]" << std::endl;
         std::cout << "XMeanFreePath = " << XMeanFreePath << std::endl;
         return XMeanFreePath;
     }

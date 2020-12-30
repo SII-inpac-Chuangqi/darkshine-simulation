@@ -6,8 +6,6 @@
 #include "DarkPhysics/DarkMatter.hh"
 #include "DarkPhysics/DarkPhotons.hh"
 
-#include "Randomize.hh"
-
 #include "G4ios.hh"
 #include <cstdlib>
 #include <cmath>
@@ -83,7 +81,7 @@ double DarkPhotons::TotalCrossSectionCalc(double E0) {
 
     if (E0 < 2. * MA) return 0.;
 
-    if (MA > 0.001) { // analytical IWW calculation above 1 MeV, result in pb
+    if (MA > 0.001 ) { // analytical IWW calculation above 1 MeV, result in pb
 
         //ThetaMaxA = pow(MA/E0, 1.5);
         //ThetaMaxEl = sqrt(MA*Mel)/E0;
@@ -143,7 +141,7 @@ double DarkPhotons::TotalCrossSectionCalc(double E0) {
 }
 
 double DarkPhotons::GetSigmaTot(double E0) {
-    if (MA > 0.001 * GeV) {
+    if (MA > 0.001 ) {
         return GetSigmaTot0(E0);
     } else {
         return TotCSVectorParticle(MA) * GeVtoPb * epsilBench * epsilBench;
@@ -153,7 +151,7 @@ double DarkPhotons::GetSigmaTot(double E0) {
 
 double DarkPhotons::CrossSectionDSDX(double XEv, double E0) {
     double sigma = 0;
-    if (MA > 0.001) {
+    if (MA > 0.001 ) {
         double momentumOfDP = sqrt(XEv * XEv * E0 * E0 - MA * MA);
         double umaxtilde = -MA * MA * (1.0 - XEv) / XEv - Mel * Mel * XEv;
         double Numerator =
@@ -169,7 +167,7 @@ double DarkPhotons::CrossSectionDSDX(double XEv, double E0) {
 
 double DarkPhotons::CrossSectionDSDXDU(double XEv, double UThetaEv, double E0) {
     double sigma = 0;
-    if (MA > 0.001) {
+    if (MA > 0.001 ) {
         double Uxtheta = 2. * E0 * E0 * UThetaEv * XEv + MA * MA * (1.0 - XEv) / XEv + Mel * Mel * XEv;
         double AA = (1. - XEv + XEv * XEv / 2.) / (Uxtheta * Uxtheta);
         double BB = (1. - XEv) * (1. - XEv) * MA * MA / (Uxtheta * Uxtheta * Uxtheta * Uxtheta);

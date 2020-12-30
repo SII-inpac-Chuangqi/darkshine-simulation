@@ -24,13 +24,19 @@ void MCTruthAnalysis::Begin() {
     RegisterIntParameter("Verbose", "Verbosity", &verbose, 0);
 
     // Register Outputs
-    //EvtWrt->RegisterIntVariable("Initial_PDG", &Initial_PDG, "Initial_PDG/D");
-    EvtWrt->RegisterDoubleVariable("Initial_Px", &Initial_Px, "Initial_Px/D");
-    EvtWrt->RegisterDoubleVariable("Initial_Py", &Initial_Py, "Initial_Py/D");
-    EvtWrt->RegisterDoubleVariable("Initial_Pz", &Initial_Pz, "Initial_Pz/D");
-    EvtWrt->RegisterDoubleVariable("Initial_X", &Initial_X, "Initial_X/D");
-    EvtWrt->RegisterDoubleVariable("Initial_Y", &Initial_Y, "Initial_Y/D");
-    EvtWrt->RegisterDoubleVariable("Initial_Z", &Initial_Z, "Initial_Z/D");
+    if (EvtWrt) {
+        //EvtWrt->RegisterIntVariable("Initial_PDG", &Initial_PDG, "Initial_PDG/D");
+        EvtWrt->RegisterDoubleVariable("Initial_Px", &Initial_Px, "Initial_Px/D");
+        EvtWrt->RegisterDoubleVariable("Initial_Py", &Initial_Py, "Initial_Py/D");
+        EvtWrt->RegisterDoubleVariable("Initial_Pz", &Initial_Pz, "Initial_Pz/D");
+        EvtWrt->RegisterDoubleVariable("Initial_X", &Initial_X, "Initial_X/D");
+        EvtWrt->RegisterDoubleVariable("Initial_Y", &Initial_Y, "Initial_Y/D");
+        EvtWrt->RegisterDoubleVariable("Initial_Z", &Initial_Z, "Initial_Z/D");
+
+        EvtWrt->RegisterDoubleVariable("Parent_E", &Parent_E, "Parent_E/D");
+        EvtWrt->RegisterDoubleVariable("Parent_P", Parent_P, "Parent_P[3]/D");
+        EvtWrt->RegisterStrVariable("Parent_Volume", &Parent_PVName);
+    }
 
     SecFinder->RegisterParameters();
 }
@@ -68,6 +74,12 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
         // Find Secondary
         SecFinder->setEvt(evt);
         auto mcSec = SecFinder->FindSecondary();
+
+        for (auto s : *steps) {
+            if (s->getProcessName() == "DMProcessDMBrem")
+                cout<<"E: "<<s->getE()<<", DM_E: "<<mcSec->getEnergy()<<endl;
+        }
+
 
     } else {
         // if not exists, print out error

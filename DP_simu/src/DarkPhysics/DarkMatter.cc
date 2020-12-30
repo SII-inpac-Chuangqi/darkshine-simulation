@@ -2,8 +2,23 @@
 //Now we onliy add dark photon channel
 //If you want to add more process, you can first define the particles. Then to touch files defining particles or define the process
 //TO.DO:Add the decay channel of Dark Photon(width is kept for NA64)
+
+// In user RunAction constructor:
+//   myDarkMatter = new DarkPhotons(MA, EThresh, SigmaNorm, AA, ZZ, Density, epsilon, IDecay);
+//             where MA              - dark photon mass, GeV
+//                   EThresh         - Threshold energy for electron to emit dark photon
+//                   SigmaNorm       - Additional cross section factor to provide rare event condition
+//                   AA, ZZ, Density - Atomic number, nucleus charge and density of the element (default is lead)
+//                   epsilon         - mixing, is used to calculate decay width and in the calculation of the final normalization
+//                   IDecay          - if the particle decays into visible particles, IDecay = 2 means that the decays will be forced in some region
+
+
 #include "DarkPhysics/DarkMatter.hh"
+
+#include "G4SystemOfUnits.hh"
+
 #include "Randomize.hh"
+
 #include <iostream>
 
 #define EPSPARINV 1.e-8
@@ -11,7 +26,7 @@
 DarkMatter::DarkMatter(double MAIn, double EThreshIn, double SigmaNormIn, double ANuclIn, double ZNuclIn,
                        double DensityIn, double epsilIn, int DecayIn)
         : MA(MAIn), EThresh(EThreshIn), SigmaNorm(SigmaNormIn),
-          ANucl(ANuclIn), ZNucl(ZNuclIn), Density(DensityIn), epsilBench(1), epsil(epsilIn),
+          ANucl(ANuclIn), ZNucl(ZNuclIn), Density(DensityIn), epsilBench(0.0001), epsil(epsilIn),
           AccumulatedProbability(0.), NEmissions(0) {
     const int NPTAB = 15;
     nptable = NPTAB;
@@ -94,7 +109,7 @@ double chi(double t, void *pp) {
 }
 
 double DarkMatter::GetSigmaMax(double E0) {
-    if (MA > 0.001) {
+    if (MA > 0.001 ) {
         return parinv(E0, ep, sigmax, nptable);
     } else {
         return 1.;
@@ -103,7 +118,7 @@ double DarkMatter::GetSigmaMax(double E0) {
 
 
 double DarkMatter::GetSigmaAngleMax(double E0) {
-    if (MA > 0.001) {
+    if (MA > 0.001 ) {
         return parinv(E0, ep, sigmaxa, nptable);
     } else {
         return 1.;
@@ -116,7 +131,7 @@ double DarkMatter::GetSigmaTot0(double E0) {
 
 
 void DarkMatter::PrepareTable() {
-    if (MA > 0.001) {
+    if (MA > 0.001 ) {
         for (int ip = 0; ip < nptable; ip++) {
             sigmap[ip] = TotalCrossSectionCalc(ep[ip]);
             sigmax[ip] = MaxCrossSectionCalc(ep[ip]);
@@ -129,7 +144,6 @@ void DarkMatter::PrepareTable() {
 //double DarkMatter::GetSigmaTot0(double E0) {
 //    return parinv(E0, ep, sigmap, nptable);
 //}
-
 
 
 double DarkMatter::MaxCrossSectionCalc(double E0) {
@@ -279,7 +293,7 @@ double DarkMatter::SimulateEmissionWithAngle(double E0, double *angles) {
     for (int iii = 1; iii < maxiter; iii++) {
 
         double XEv, FactorSigma = 1.;
-        if (MA > 0.001) {
+        if (MA > 0.001  ) {
             double XFactor = 1.5 * sqrt(0.001 / MA);
             double AlphaX = exp(-(1. - Xmax) / XFactor);
             double BetaX = exp(-(1. - Xmin) / XFactor);
@@ -292,7 +306,7 @@ double DarkMatter::SimulateEmissionWithAngle(double E0, double *angles) {
         }
 
         double UThetaEv, FactorSigmaU = 1.;
-        if (MA > 0.001) {
+        if (MA > 0.001 ) {
             double UFactor = 0.3 * UThetaMaxA;
             double BetaU = exp(-UThetaMaxA / UFactor);
             UThetaEv = -UFactor * log(BetaU + G4UniformRand() * (1. - BetaU));
@@ -315,7 +329,7 @@ double DarkMatter::SimulateEmissionWithAngle(double E0, double *angles) {
         if (sigma >= UU) {
             XAcc = XEv;
             ThetaAcc = sqrt(2.0 * UThetaEv); // this is just a theta accepted!!!
-            PhiAcc = G4UniformRand() * 2. * 3.1415926;
+            PhiAcc = G4UniformRand() * 2. * M_PI;
 
             printf("Accepted at iteration %d\n", iii);
             printf("EParent = %e XAcc = %e ThetaAcc = %e\n ", E0, XAcc, ThetaAcc);

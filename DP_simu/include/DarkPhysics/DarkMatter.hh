@@ -3,7 +3,7 @@
 
 #define Mel 5.109989461E-04 // electron mass in GeV
 #define Mmu 0.1056583745 // muon mass in GeV
-#define alphaEW 1.0/137.0
+#define alphaEW (1.0/137.0)
 #define MUp 2.79 // protonMu
 #define Mpr 0.938 // proton mass
 #define max_uint 4294967296.0l
@@ -34,7 +34,7 @@ public:
 
     DarkMatter(double MAIn, double EThreshIn, double SigmaNormIn = 1., double ANuclIn = 184., double ZNuclIn = 74.,
                double DensityIn = 19.25,
-               double epsilIn = 1, int IDecayIn = 0);
+               double epsilIn = 0.0001, int IDecayIn = 0);
 
     //DarkMatter(double MAIn, double EThreshIn, double SigmaNormIn=1., double ANuclIn=207., double ZNuclIn=84., double DensityIn=11.35,
     //           double epsilIn=0.0001 );

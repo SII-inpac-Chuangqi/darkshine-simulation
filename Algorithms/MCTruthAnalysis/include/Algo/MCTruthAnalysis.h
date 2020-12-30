@@ -36,13 +36,19 @@ private:
 
     std::shared_ptr<SecondaryMaxEFinder> SecFinder;
 
-    int Initial_PDG;
-    double Initial_Px;
-    double Initial_Py;
-    double Initial_Pz;
-    double Initial_X;
-    double Initial_Y;
-    double Initial_Z;
+    int Initial_PDG{};
+    double Initial_Px{};
+    double Initial_Py{};
+    double Initial_Pz{};
+    double Initial_X{};
+    double Initial_Y{};
+    double Initial_Z{};
+
+    // For Dark Matter
+    double Parent_E{};
+    double Parent_P[3] = {0};
+    TString Parent_PVName{};
+
 };
 
 
