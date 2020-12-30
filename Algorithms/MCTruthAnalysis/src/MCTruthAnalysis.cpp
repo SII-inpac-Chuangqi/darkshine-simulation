@@ -67,17 +67,28 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
         Initial_Px = (*step)->getPx();
         Initial_Py = (*step)->getPy();
         Initial_Pz = (*step)->getPz();
-        Initial_X  = (*step)->getX();
-        Initial_Y  = (*step)->getY();
-        Initial_Z  = (*step)->getZ();
+        Initial_X = (*step)->getX();
+        Initial_Y = (*step)->getY();
+        Initial_Z = (*step)->getZ();
 
         // Find Secondary
         SecFinder->setEvt(evt);
         auto mcSec = SecFinder->FindSecondary();
 
-        for (auto s : *steps) {
-            if (s->getProcessName() == "DMProcessDMBrem")
-                cout<<"E: "<<s->getE()<<", DM_E: "<<mcSec->getEnergy()<<endl;
+        DStep *prev_s = nullptr;
+        for (unsigned i = 0; i < steps->size(); i++) {
+            auto s = steps->at(i);
+            if (s->getProcessName() == "DMProcessDMBrem") {
+                cout << "E_parent: " << prev_s->getE() << ", E_remain: " << s->getE() << ", DM_E: "
+                     << mcSec->getEnergy() << endl;
+                Parent_E = prev_s->getE();
+                Parent_P[0] = prev_s->getPx();
+                Parent_P[1] = prev_s->getPy();
+                Parent_P[2] = prev_s->getPz();
+                Parent_PVName = TString(prev_s->getPVName());
+            }
+
+            prev_s = s;
         }
 
 
