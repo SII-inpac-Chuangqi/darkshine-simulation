@@ -1,4 +1,4 @@
-#include "DP_simu/CALConstruct.hh"
+#include "Geometry/CALConstruct.hh"
 #include "G4Box.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
@@ -12,7 +12,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-CALConstruct::CALConstruct(const G4String& CALName,
+CALConstruct::CALConstruct(const G4String &CALName,
                            G4LogicalVolume *MotherVolume,
                            G4int CopyNo,
                            G4bool Type,
@@ -111,7 +111,9 @@ void CALConstruct::ConstructLV() {
 
     // Core Detector Region
     auto fName = ifAbsorber ? fCALName + "Abs" : fCALName;
-    auto box = new G4Box(fName + "_Box", fSizeX, fSizeY, fSizeZ);
+    auto box = new G4Box(fName + "_Box", fSizeX-eps, fSizeY-eps, fSizeZ-eps);
+    auto box_Large = new G4Box(fName + "_Box", fSizeX, fSizeY, fSizeZ);
+
     auto boxLV = new G4LogicalVolume(box, fCALMaterial, fName + "_LV", nullptr, nullptr, nullptr);
     if (ifAbsorber) fAbsLV = boxLV;
     else fCaloLV = boxLV;
@@ -128,7 +130,7 @@ void CALConstruct::ConstructLV() {
         auto boxL = new G4Box(fCALName + "_BoxL", fSizeX + fWrapSizeX,
                               fSizeY + fWrapSizeY,
                               fSizeZ + fWrapSizeZ);
-        auto WrapBox = new G4SubtractionSolid(fCALName + "_BoxW", boxL, box);
+        auto WrapBox = new G4SubtractionSolid(fCALName + "_BoxW", boxL, box_Large);
         auto WrapLV = new G4LogicalVolume(WrapBox, fWrapMaterial, fCALName + "_LVW", nullptr, nullptr, nullptr);
         fWrapLV = WrapLV;
 
@@ -142,6 +144,10 @@ void CALConstruct::ConstructLV() {
 
     // APD
     if (fWrap && fOptical) {
+        wSizeX -= eps;
+        wSizeY -= eps;
+        wSizeZ -= eps;
+
         auto abox = new G4Box(fCALName + "_APDWorld_Box", wSizeX, wSizeY, wSizeZ);
         auto aboxLV = new G4LogicalVolume(abox, G4Material::GetMaterial("vacuum"), fCALName + "_APDWorld_LV", nullptr,
                                           nullptr, nullptr);
@@ -166,10 +172,10 @@ CALConstruct::Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4Logic
 
     // Calculate Rotation Matrix
     HepRot = new G4RotationMatrix();
-    HepRot->rotateZ( z_angle );
+    HepRot->rotateZ(z_angle);
 
 
-    G4RotationMatrix *fRotate = ( z_angle == 0 ) ? nullptr: HepRot;
+    G4RotationMatrix *fRotate = (z_angle == 0) ? nullptr : HepRot;
 
     auto fName = ifAbsorber ? fCALName + "Abs" : fCALName;
     if (boxLV == nullptr) {
@@ -223,8 +229,9 @@ CALConstruct::Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4Logic
                 G4cerr << "APDboxLV is empty for " << fCALName << " " << fCopyNo << G4endl;
                 return G4ThreeVector();
             }
-            auto APDPV = new G4PVPlacement(nullptr, G4ThreeVector(wPosX, wPosY, wPosZ), aboxLV, fCALName + "_APDWorld_PV", boxLV,
-                              false, fCopyNo, fCheckOverlap);
+            auto APDPV = new G4PVPlacement(nullptr, G4ThreeVector(wPosX, wPosY, wPosZ), aboxLV,
+                                           fCALName + "_APDWorld_PV", boxLV,
+                                           false, fCopyNo, fCheckOverlap);
 
             PVVector.push_back(APDPV);
         }
@@ -264,7 +271,7 @@ G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, con
 
                 wPosX = 0.;
                 wPosY = 0.;
-                wPosZ = fSizeZ -  wSizeZ;
+                wPosZ = fSizeZ - wSizeZ - eps;
                 //wPosZ = fSizeZ;
 
                 Construct(fCaloLV, fWrapLV, fAPDWLV);
@@ -469,11 +476,26 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
     for (int k = 0; k < idz; k++) {
         // place detector
         // along x direction
-        if ( k%3 == 0 ) { idx = xNo; idy = yNo; fSizeX = iSizeX; fSizeY  = iSizeY; }
+        if (k % 3 == 0) {
+            idx = xNo;
+            idy = yNo;
+            fSizeX = iSizeX;
+            fSizeY = iSizeY;
+        }
         // along y direction
-        if ( k%3 == 1 ) { idx = yNo; idy = xNo; fSizeX = iSizeY; fSizeY  = iSizeX; }
+        if (k % 3 == 1) {
+            idx = yNo;
+            idy = xNo;
+            fSizeX = iSizeY;
+            fSizeY = iSizeX;
+        }
         // place absorber
-        if ( k%3 == 2 ) { idx = 1; idy = 1; fSizeX = xNo*(iSizeX + fWrap*fWrapSizeX ); fSizeY  = yNo*(iSizeY + fWrap*fWrapSizeY ); }
+        if (k % 3 == 2) {
+            idx = 1;
+            idy = 1;
+            fSizeX = xNo * (iSizeX + fWrap * fWrapSizeX);
+            fSizeY = yNo * (iSizeY + fWrap * fWrapSizeY);
+        }
 
         // Y layer Loop
         for (int j = 0; j < idy; j++) {
@@ -491,7 +513,7 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
                     Abs_No++;
                     fPosX = CentrePos.x();
                     fPosY = CentrePos.y();
-                    fPosZ = -1. * TotalSize.z() + (2 * (k - Abs_No) + 2) * (fSizeZ +  fWrap * fWrapSizeZ) +
+                    fPosZ = -1. * TotalSize.z() + (2 * (k - Abs_No) + 2) * (fSizeZ + fWrap * fWrapSizeZ) +
                             (Abs_No - 0.5) * AbsThickness + CentrePos.z();
 
                     ifAbsorber = true;
@@ -503,9 +525,9 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
                 } else {
                     ifAbsorber = false;
                     if (k % 3 == 0) // along x
-                        Construct(fCaloLV, fWrapLV, fAPDWLV, 0.*degree);
+                        Construct(fCaloLV, fWrapLV, fAPDWLV, 0. * degree);
                     if (k % 3 == 1) // along y
-                        Construct(fCaloLV, fWrapLV, fAPDWLV, 90*degree);
+                        Construct(fCaloLV, fWrapLV, fAPDWLV, 90 * degree);
 
                 }
                 fWrap = ifwrap;

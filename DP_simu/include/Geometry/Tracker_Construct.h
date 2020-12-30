@@ -68,6 +68,7 @@ public:
     G4ThreeVector GetSizeTrkRegion() {return Size_TrackerRegion;};
     G4ThreeVector GetPosTrkRetion() {return Pos_TrackerRegion;};
 
+    double eps = 1*um;
 private:
 
     /// EM Field

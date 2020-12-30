@@ -5,7 +5,7 @@
 #ifndef DSIMU_ECAL_ALLZ_H
 #define DSIMU_ECAL_ALLZ_H
 
-#include "DP_simu/CALConstruct.hh"
+#include "CALConstruct.hh"
 #include "DP_simu/DetectorConstruction.hh"
 #include "G4SystemOfUnits.hh"
 
@@ -40,6 +40,7 @@ public:
     
     void SetECALCenterModuleNo(const G4ThreeVector& in) { ECAL_Center_Module_No = in; };
 
+    double eps = 1 * um;
 private:
     G4String Name = "ECAL_Center";
 
@@ -50,7 +51,7 @@ private:
     G4ThreeVector Pos_ECALRegion;
     G4ThreeVector ECAL_Center_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
     G4ThreeVector ECAL_Center_Size = G4ThreeVector(2.5 * cm, 2.5 * cm, 2.0 * cm);
-    G4ThreeVector ECAL_Center_Module_No = G4ThreeVector(20, 20, 18);
+    G4ThreeVector ECAL_Center_Module_No = G4ThreeVector(4, 4, 2);
     G4double ECAL_Module_Gap{};
 
     std::vector<G4LogicalVolume *> ECAL_Center_LV;

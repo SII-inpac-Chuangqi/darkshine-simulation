@@ -8,17 +8,18 @@ void HCAL_Construct::DefineParameters(const G4ThreeVector &Pos_ECALRegion, const
     HCAL_Absorber_Mat = G4Material::GetMaterial("G4_Fe");
     HCALRegion_Mat = G4Material::GetMaterial("CarbonFiber");
     HCAL_Mat = G4Material::GetMaterial("Polystyrene");
-    HCAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");    
+    HCAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
     //HCAL_Mod_No_Dir = G4ThreeVector( 1, 20, 2 );
 
     Size_HCALRegion = G4ThreeVector(0, 0, 0);
     Size_HCALRegion.setX(
-            HCAL_Module_No.x() * (HCAL_Size_Dir.x() + HCAL_Wrap_Size.x()) + HCAL_Module_Gap * (HCAL_Module_No.x() - 1));
+            HCAL_Module_No.x() * (HCAL_Size_Dir.x() + HCAL_Wrap_Size.x()) + HCAL_Module_Gap * (HCAL_Module_No.x() - 1) +
+            HCAL_Module_No.x() * 2 * eps);
     Size_HCALRegion.setY(HCAL_Module_No.y() * HCAL_Mod_No_Dir.y() * (HCAL_Size_Dir.y() + HCAL_Wrap_Size.y()) +
-                         HCAL_Module_Gap * (HCAL_Module_No.y() - 1));
+                         HCAL_Module_Gap * (HCAL_Module_No.y() - 1) + HCAL_Module_No.x() * 2 * eps);
     Size_HCALRegion.setZ(
             HCAL_Mod_No_Dir.z() / 2 * (2 * (HCAL_Size_Dir.z() + HCAL_Wrap_Size.z()) + HCAL_Absorber_Thickness) +
-            HCAL_Module_Gap * (HCAL_Module_No.z()-1));
+            HCAL_Module_Gap * (HCAL_Module_No.z() - 1) + HCAL_Module_No.x() * 2 * eps);
 
     Pos_HCALRegion = G4ThreeVector(0, 0,
                                    0.5 * Size_HCALRegion.z() + Pos_ECALRegion.z() + 0.5 * Size_ECALRegion.z());
@@ -80,7 +81,7 @@ bool HCAL_Construct::Build(int type, G4LogicalVolume *World_LV, RootManager *fRo
 
 bool HCAL_Construct::BuildSD(RootManager *fRootMng) {
     //DetectorSD *HCalSD[ (int)(HCAL_Module_No.x() * HCAL_Module_No.y() * HCAL_Module_No.z()) ];
-    std::vector<DetectorSD* > HCalSD;
+    std::vector<DetectorSD *> HCalSD;
     for (int iy = 0; iy < HCAL_Module_No.y(); iy++) {
         for (int ix = 0; ix < HCAL_Module_No.x(); ix++) {
             int index = (int) (ix + iy * HCAL_Module_No.x());

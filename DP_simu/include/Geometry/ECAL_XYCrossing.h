@@ -5,7 +5,7 @@
 #ifndef DSIMU_ECAL_XYCROSSING_H
 #define DSIMU_ECAL_XYCROSSING_H
 
-#include "DP_simu/CALConstruct.hh"
+#include "CALConstruct.hh"
 #include "DP_simu/DetectorConstruction.hh"
 #include "G4SystemOfUnits.hh"
 

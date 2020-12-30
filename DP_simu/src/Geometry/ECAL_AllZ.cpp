@@ -15,9 +15,12 @@ void ECAL_AllZ::DefineParameters(const G4ThreeVector &Pos_RecRegion, const G4Thr
     ECAL_Module_Gap = 0.5 * mm;
 
     Size_ECALRegion = G4ThreeVector(0, 0, 0);
-    Size_ECALRegion.setX((ECAL_Center_Size.x() + ECAL_Center_Wrap_Size.x()) * ECAL_Center_Module_No.x());
-    Size_ECALRegion.setY((ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y()) * ECAL_Center_Module_No.y());
-    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z()) * ECAL_Center_Module_No.z());
+    Size_ECALRegion.setX((ECAL_Center_Size.x() + ECAL_Center_Wrap_Size.x()) * ECAL_Center_Module_No.x() +
+                         ECAL_Center_Module_No.x() * 2 * eps);
+    Size_ECALRegion.setY((ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y()) * ECAL_Center_Module_No.y() +
+                         ECAL_Center_Module_No.y() * 2 * eps);
+    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z()) * ECAL_Center_Module_No.z() +
+                         ECAL_Center_Module_No.z() * 2 * eps);
 
     Pos_ECALRegion = G4ThreeVector(0, 0,
                                    0.5 * Size_ECALRegion.z() + Pos_RecRegion.z() + 0.5 * Size_RecRegion.z() + 1.0 * mm);

@@ -2,7 +2,7 @@
 #ifndef CALConstruct_h
 #define CALConstruct_h 1
 
-#include "DetectorSD.hh"
+#include "DP_simu/DetectorSD.hh"
 
 #include "globals.hh"
 #include "G4Material.hh"
@@ -122,6 +122,8 @@ public:
     std::vector<G4LogicalVolume *> GetCaloLVVector() { return fCaloLVVector; };
 
     std::vector<G4LogicalVolume *> GetWrapLVVector() { return fWrapLVVector; };
+
+    double eps = 1 * um;
 
 private:
     G4bool fType{false}; // 0: Absorber; 1: Calorimeter
