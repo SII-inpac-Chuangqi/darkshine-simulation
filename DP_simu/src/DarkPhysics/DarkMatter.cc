@@ -347,7 +347,7 @@ double DarkMatter::SimulateEmissionWithAngle(double E0, double *angles) {
             ThetaAcc = sqrt(2.0 * UThetaEv); // this is just a theta accepted!!!
             PhiAcc = G4UniformRand() * 2. * M_PI;
 
-            std::cout<<XEv<<", "<<sigma<<std::endl;
+            //std::cout<<XEv<<", "<<sigma<<std::endl;
 
 //            printf("Accepted at iteration %d\n", iii);
 //            printf("EParent = %e XAcc = %e ThetaAcc = %e\n ", E0, XAcc, ThetaAcc);
