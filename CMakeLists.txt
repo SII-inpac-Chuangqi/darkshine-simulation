@@ -204,6 +204,3 @@ install(TARGETS DEvent LIBRARY DESTINATION lib )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent_rdict.pcm DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent.rootmap DESTINATION lib)
 
-#install(TARGETS DEventDisplay LIBRARY DESTINATION lib )
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEventDisplay.rootmap DESTINATION lib)
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEventDisplay_rdict.pcm DESTINATION lib)

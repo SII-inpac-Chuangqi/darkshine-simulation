@@ -13,7 +13,7 @@ class DarkMatterPhysics : public G4VPhysicsConstructor {
 public:
     DarkMatterPhysics();
 
-    ~DarkMatterPhysics();
+    ~DarkMatterPhysics() override;
 
     // Should call initial constructor of particle singletons
     void ConstructParticle() override;
@@ -22,12 +22,12 @@ public:
 
     DarkPhotons *GetDarkMatterPointer() { return myDarkMatter; }
 
-    G4double GetBiasSigmaFactor() { return BiasSigmaFactor; }
+    [[nodiscard]] G4double GetBiasSigmaFactor() const { return BiasSigmaFactor; }
 
 private:
-    DarkMatterPhysics(const DarkMatterPhysics &) = delete;
+    //DarkMatterPhysics(const DarkMatterPhysics &) = delete;
 
-    DarkMatterPhysics &operator=(const DarkMatterPhysics &) = delete;
+    //DarkMatterPhysics &operator=(const DarkMatterPhysics &) = delete;
 
 private:
     DarkPhotons *myDarkMatter;

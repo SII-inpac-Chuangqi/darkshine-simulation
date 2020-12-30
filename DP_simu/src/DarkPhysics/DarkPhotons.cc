@@ -35,7 +35,7 @@ double TotCSVectorParticle(double MAtest) // CS in GeV^-2 for epsilon=1
     double TotCSList[nMALowM] = {831989., 714214., 608205., 537442., 485739., 445566., 413065., 386006., 325514.,
                                  261274., 219140.,
                                  165447., 131948., 108852., 91940.7, 79039.6, 68896.5, 60733.3};
-     //double MMAA[nMALowM] = {0.00158489,0.00251189,0.00398107,0.00630957,0.01,0.0158489,0.0251189,0.0398107,0.0630957,0.1,0.158489,0.251189,0.398107,0.630957,1,1.58489,2.51189};
+    //double MMAA[nMALowM] = {0.00158489,0.00251189,0.00398107,0.00630957,0.01,0.0158489,0.0251189,0.0398107,0.0630957,0.1,0.158489,0.251189,0.398107,0.630957,1,1.58489,2.51189};
     // double TotCSList[nMALowM]={8.05E+12
 //,4.74E+12
 //,2.63E+12
@@ -76,70 +76,70 @@ DarkPhotons::DarkPhotons(double MAIn, double EThreshIn, double SigmaNormIn, doub
 
 DarkPhotons::~DarkPhotons() { ; }
 
-double DarkPhotons::TotalCrossSectionCalc(double E0)
-{
-  //double ThetaMaxA;
-  //double ThetaMaxEl;
-  double sigmaTot;
+double DarkPhotons::TotalCrossSectionCalc(double E0) {
+    //double ThetaMaxA;
+    //double ThetaMaxEl;
+    double sigmaTot;
 
-  if(E0 < 2.*MA) return 0.;
+    if (E0 < 2. * MA) return 0.;
 
-  if(MA > 0.001) { // analytical IWW calculation above 1 MeV, result in pb
+    if (MA > 0.001) { // analytical IWW calculation above 1 MeV, result in pb
 
-    //ThetaMaxA = pow(MA/E0, 1.5);
-    //ThetaMaxEl = sqrt(MA*Mel)/E0;
+        //ThetaMaxA = pow(MA/E0, 1.5);
+        //ThetaMaxEl = sqrt(MA*Mel)/E0;
 
-    //begin: chi-formfactor calculation
+        //begin: chi-formfactor calculation
 
-    gsl_integration_workspace* w = gsl_integration_workspace_alloc (1000);
+        gsl_integration_workspace *w = gsl_integration_workspace_alloc(1000);
 
-    double result, error;
-    double tmin = MA*MA*MA*MA/(4.*E0*E0);
-    double tmax = MA*MA;
+        double result, error;
+        double tmin = MA * MA * MA * MA / (4. * E0 * E0);
+        double tmax = MA * MA;
 
-    gsl_function F;
-    ParamsForChi alpha = {1.0, 1.0, 1.0, 1.0};
-    F.function = &chi;
-    F.params = &alpha;
+        gsl_function F;
+        ParamsForChi alpha = {1.0, 1.0, 1.0, 1.0};
+        F.function = &chi;
+        F.params = &alpha;
 
-    alpha.AA = ANucl;
-    alpha.ZZ = ZNucl;
-    alpha.MMA = MA;
-    alpha.EE0 = E0;
+        alpha.AA = ANucl;
+        alpha.ZZ = ZNucl;
+        alpha.MMA = MA;
+        alpha.EE0 = E0;
 
-    gsl_integration_qags (&F, tmin, tmax, 0, 1e-7, 1000, w, &result, &error);
+        gsl_integration_qags(&F, tmin, tmax, 0, 1e-7, 1000, w, &result, &error);
 
-    //printf ("chi/Z^2 = % .18f\n", result/(ZNucl*ZNucl));
-    //printf ("result    = % .18f\n", result);
-    //printf ("estimated error = % .18f\n", error);
-    //printf ("intervals =  %d\n", w->size);
+        //printf ("chi/Z^2 = % .18f\n", result/(ZNucl*ZNucl));
+        //printf ("result    = % .18f\n", result);
+        //printf ("estimated error = % .18f\n", error);
+        //printf ("intervals =  %d\n", w->size);
 
-    double ChiRes = result;
+        double ChiRes = result;
 
-    gsl_integration_workspace_free (w);
+        gsl_integration_workspace_free(w);
 
-    //end: chi-formfactor calculation
+        //end: chi-formfactor calculation
 
-    double beta = sqrt(1. - MA*MA/(E0*E0));
-    double cutoff1 = Mel/MA;
-    double cutoff2 = MA/E0;
-    double cutoff = cutoff2;
-    if(cutoff1 > cutoff2) cutoff = cutoff1;
-    sigmaTot= GeVtoPb*(4./3.)*alphaEW*alphaEW*alphaEW*epsilBench*epsilBench*ChiRes*beta*log(1./(cutoff*cutoff))/(MA*MA);
-    if(sigmaTot < 0.) sigmaTot=0.;
+        double beta = sqrt(1. - MA * MA / (E0 * E0));
+        double cutoff1 = Mel / MA;
+        double cutoff2 = MA / E0;
+        double cutoff = cutoff2;
+        if (cutoff1 > cutoff2) cutoff = cutoff1;
+        sigmaTot = GeVtoPb * (4. / 3.) * alphaEW * alphaEW * alphaEW * epsilBench * epsilBench * ChiRes * beta *
+                   log(1. / (cutoff * cutoff)) / (MA * MA);
+        if (sigmaTot < 0.) sigmaTot = 0.;
 
-    //double KFactor = KfactorApproximate(MA, E0);
+        //double KFactor = KfactorApproximate(MA, E0);
 
-    G4cout << "Total CS calc, E, M, K = " << E0 << " " << MA << " " << G4endl;
+        G4cout << "Total CS calc, E, M, K = " << E0 << " " << MA << " " << G4endl;
 
-    //return sigmaTot / KFactor; // This K-factor decreases the cross section for MA > ~2 MeV
-    return sigmaTot ; // This K-factor decreases the cross section for MA > ~2 MeV
+        //return sigmaTot / KFactor; // This K-factor decreases the cross section for MA > ~2 MeV
+        return sigmaTot; // This K-factor decreases the cross section for MA > ~2 MeV
 
-  } else {
-    
-    G4cout << "No analytical calculations below 1 MeV, exiting" << G4endl;
-    exit(1);
-  }
+    } else {
+
+        G4cout << "No analytical calculations below 1 MeV, exiting" << G4endl;
+        exit(1);
+    }
 }
 
 double DarkPhotons::GetSigmaTot(double E0) {

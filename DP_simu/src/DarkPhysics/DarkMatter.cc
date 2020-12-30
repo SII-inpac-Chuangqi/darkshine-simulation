@@ -17,7 +17,7 @@ DarkMatter::DarkMatter(double MAIn, double EThreshIn, double SigmaNormIn, double
     nptable = NPTAB;
     //double epi[NPTAB] = {0.00001, 0.00002, 0.0001, 0.0002, 0.0003, 0.0005, 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009};
     double epi[NPTAB] = {0.008, 0.02, 0.05, 0.1, 0.2, 0.5, 1., 2., 5., 10., 15., 25., 50., 80., 150.};
-    for (int ip = 0; ip < nptable; ip++) { ep[ip] = epi[ip]/100; }
+    for (int ip = 0; ip < nptable; ip++) { ep[ip] = epi[ip] / 100; }
 }
 
 
@@ -107,24 +107,22 @@ double DarkMatter::GetSigmaAngleMax(double E0) {
         return parinv(E0, ep, sigmaxa, nptable);
     } else {
         return 1.;
-    }   
-}
-
-double DarkMatter::GetSigmaTot0(double E0)
-{  
-  return parinv(E0, ep, sigmap, nptable);
-}
-
-
-void DarkMatter::PrepareTable()
-{
-  if(MA > 0.001) {
-   for(int ip=0; ip < nptable; ip++) {
-      sigmap[ip] = TotalCrossSectionCalc(ep[ip]);
-      sigmax[ip] = MaxCrossSectionCalc(ep[ip]);
-      sigmaxa[ip] = MaxCrossSectionAngleCalc(ep[ip]);
     }
-  }
+}
+
+double DarkMatter::GetSigmaTot0(double E0) {
+    return parinv(E0, ep, sigmap, nptable);
+}
+
+
+void DarkMatter::PrepareTable() {
+    if (MA > 0.001) {
+        for (int ip = 0; ip < nptable; ip++) {
+            sigmap[ip] = TotalCrossSectionCalc(ep[ip]);
+            sigmax[ip] = MaxCrossSectionCalc(ep[ip]);
+            sigmaxa[ip] = MaxCrossSectionAngleCalc(ep[ip]);
+        }
+    }
 }
 
 
@@ -134,58 +132,56 @@ void DarkMatter::PrepareTable()
 
 
 
-double DarkMatter::MaxCrossSectionCalc(double E0)
-{
-  double Xmin;
-  double Xmax;
+double DarkMatter::MaxCrossSectionCalc(double E0) {
+    double Xmin;
+    double Xmax;
 
-  double csmax = 0.;
+    double csmax = 0.;
 
-  if(E0 < 2.*MA) return 0.;
+    if (E0 < 2. * MA) return 0.;
 
-  Xmin = MA/E0;
-  Xmax = 1.0-Xmin;
-  if(ParentPDGID == 22 || ParentPDGID == -11) Xmax = 0.99999;
+    Xmin = MA / E0;
+    Xmax = 1.0 - Xmin;
+    if (ParentPDGID == 22 || ParentPDGID == -11) Xmax = 0.99999;
 
-  csmax = CrossSectionDSDX(Xmax, E0);
-  for(int i=0; i<1000; i++) {
-    double xi = 0.0005 + 0.001*((double)i);
-    if(xi >= Xmin && xi <= Xmax) {
-      double csi = CrossSectionDSDX(xi, E0);
-      if(csi > csmax) csmax = csi;
+    csmax = CrossSectionDSDX(Xmax, E0);
+    for (int i = 0; i < 1000; i++) {
+        double xi = 0.0005 + 0.001 * ((double) i);
+        if (xi >= Xmin && xi <= Xmax) {
+            double csi = CrossSectionDSDX(xi, E0);
+            if (csi > csmax) csmax = csi;
+        }
     }
-  }
-  return 1.1*csmax;
+    return 1.1 * csmax;
 }
 
 
-double DarkMatter::MaxCrossSectionAngleCalc(double E0)
-{
-  double Xmin;
-  double Xmax;
+double DarkMatter::MaxCrossSectionAngleCalc(double E0) {
+    double Xmin;
+    double Xmax;
 
-  double csmax = 0.;
+    double csmax = 0.;
 
-  if(E0 < 2.*MA) return 0.;
+    if (E0 < 2. * MA) return 0.;
 
-  Xmin = MA/E0;
-  Xmax = 1.0-Xmin;
-  if(ParentPDGID == 22) Xmax = 0.99999;
+    Xmin = MA / E0;
+    Xmax = 1.0 - Xmin;
+    if (ParentPDGID == 22) Xmax = 0.99999;
 
-  csmax = CrossSectionDSDXDU(Xmax, 0., E0);
-  double csmax1 = CrossSectionDSDXDU(Xmax, 0.000005 , E0);
-  if(csmax1 > csmax) csmax = csmax1;
+    csmax = CrossSectionDSDXDU(Xmax, 0., E0);
+    double csmax1 = CrossSectionDSDXDU(Xmax, 0.000005, E0);
+    if (csmax1 > csmax) csmax = csmax1;
 
-  for(int i=0; i<1000; i++) {
-    double xi = 0.0005 + 0.001*((double)i);
-    if(xi >= Xmin && xi <= Xmax) {
-      double csi = CrossSectionDSDXDU(xi, 0., E0);
-      if(csi > csmax) csmax = csi;
-      csi = CrossSectionDSDXDU(xi, 0.000005, E0);
-      if(csi > csmax) csmax = csi;
+    for (int i = 0; i < 1000; i++) {
+        double xi = 0.0005 + 0.001 * ((double) i);
+        if (xi >= Xmin && xi <= Xmax) {
+            double csi = CrossSectionDSDXDU(xi, 0., E0);
+            if (csi > csmax) csmax = csi;
+            csi = CrossSectionDSDXDU(xi, 0.000005, E0);
+            if (csi > csmax) csmax = csi;
+        }
     }
-  }
-  return 1.1*csmax;
+    return 1.1 * csmax;
 }
 
 double DarkMatter::CrossSectionDSDX(double XEv, double E0) {
@@ -203,7 +199,7 @@ bool DarkMatter::EmissionAllowed(double E0, double DensityMat) {
     if (E0 < 1.001 * MA) return false;
     if (E0 < EThresh) return false;
     //if (NEmissions) return false; // For G4 DM classes, only emmission once
-    if(fabs(DensityMat - Density) > 0.1) return false;//must hit on target
+    if (fabs(DensityMat - Density) > 0.1) return false;//must hit on target
     //double prob = SigmaNorm * GetSigmaTot(E0) * StepLength;
     //AccumulatedProbability += prob;
     //double tmprandom = G4UniformRand();
