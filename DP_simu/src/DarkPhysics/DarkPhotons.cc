@@ -58,7 +58,6 @@ double TotCSVectorParticle(double MAtest) // CS in GeV^-2 for epsilon=1
 
 }
 
-
 DarkPhotons::DarkPhotons(double MAIn, double EThreshIn, double SigmaNormIn, double ANuclIn, double ZNuclIn,
                          double DensityIn,
                          double epsilIn, int IDecayIn)
