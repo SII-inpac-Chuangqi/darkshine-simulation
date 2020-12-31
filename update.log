@@ -1,4 +1,7 @@
 v2.2.0
+Global:
+    1. Add a control class, which handle all variables, easy to manage the whole data.
+
 DSimu:
     1. Add MC Particle Contribution to Simulated Hits; Only the three most contributed particles will be recorded.
     2. Tracker Hits is pixelized along trackers z position. (hit position z is fixed for each tracker layer).

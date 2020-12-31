@@ -7,6 +7,8 @@
 
 #include "CALConstruct.hh"
 #include "DP_simu/DetectorConstruction.hh"
+#include "Control.h"
+
 #include "G4SystemOfUnits.hh"
 
 
@@ -16,15 +18,7 @@ public:
 
     virtual ~ECAL_AllZ() = default;
 
-    [[nodiscard]] const G4ThreeVector &getSizeEcalRegion() const {
-        return Size_ECALRegion;
-    }
-
-    [[nodiscard]] const G4ThreeVector &getPosEcalRegion() const {
-        return Pos_ECALRegion;
-    }
-
-    void DefineParameters(const G4ThreeVector &pos_RecRegion, const G4ThreeVector &size_RecRegion);
+    void DefineParameters();
 
     bool Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng, bool fCheckOverlaps);
 
@@ -32,17 +26,9 @@ public:
 
     bool BuildBias(BOptrMultiParticleChangeCrossSection *bias);
 
-    /// Setter
-
-    void SetECALCenterWrapSize(const G4ThreeVector& in) { ECAL_Center_Wrap_Size = in; };
-
-    void SetECALCenterSize(const G4ThreeVector& in) { ECAL_Center_Size = in; };
-    
-    void SetECALCenterModuleNo(const G4ThreeVector& in) { ECAL_Center_Module_No = in; };
-
-    double eps = 1 * um;
+    double eps = dControl->eps;
 private:
-    G4String Name = "ECAL_Center";
+    G4String Name;
 
     G4Material *ECALRegion_Mat{};
     G4Material *ECAL_Center_Mat{};
@@ -52,7 +38,6 @@ private:
     G4ThreeVector ECAL_Center_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
     G4ThreeVector ECAL_Center_Size = G4ThreeVector(2.5 * cm, 2.5 * cm, 2.0 * cm);
     G4ThreeVector ECAL_Center_Module_No = G4ThreeVector(20, 20, 18);
-    G4double ECAL_Module_Gap{};
 
     std::vector<G4LogicalVolume *> ECAL_Center_LV;
 

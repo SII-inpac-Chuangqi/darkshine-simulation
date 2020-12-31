@@ -7,6 +7,8 @@
 
 #include "DP_simu/TrkConstruct.hh"
 #include "DP_simu/DetectorConstruction.hh"
+#include "Control.h"
+
 #include "G4FieldManager.hh"
 #include "G4RunManager.hh"
 
@@ -28,51 +30,17 @@ public:
     Tracker_Construct() = default;
     virtual ~Tracker_Construct() = default;
 
-    //Tracker_Construct();
+    void DefineParameters(Tracker_Type type);
 
-    //~Tracker_Construct();
-
-    void DefineParameters(Tracker_Type type, G4double Trk_Tar_Dis , const G4ThreeVector& Target_Size);
-
-    bool Build(G4int type, G4LogicalVolume *World_LV, RootManager *fRootMng, G4bool fCheckOverlaps);
+    bool Build(G4int type, G4LogicalVolume *World_LV, G4bool fCheckOverlaps);
 
     bool BuildSDandField(G4int type, RootManager *fRootMng);
 
-    /// Setter
-    
-    //void SetTrackerMat(G4String in) { Tracker_Mat = G4Material::GetMaterial(in); };
-    //void SetTrackerRegionMat(G4String in) { TrackerRegion_Mat = G4Material::GetMaterial(in); };
-    void AddNewTrackerSize(const G4ThreeVector& in) { Size_Tracker.push_back(in); }; // Set the Size of the new Tracker.
-    void AddNewTrackerPos(const G4ThreeVector& in) { Pos_Tracker.push_back(in); }; // Set the Postion of the new Tracker.
-    void DelTracker(G4bool in = true) { if(in) {
-        Size_Tracker = {};
-        Pos_Tracker = {}; 
-        } 
-    };
-    void SetTracker1Rotation(G4double in) { Tracker1_Rotation = in; };
-    void SetTracker2Rotation(G4double in) { Tracker2_Rotation = in; };
-    void SetTracker1Color(const G4ThreeVector& in) {
-        Tracker1_Color[0] = in.x();
-        Tracker1_Color[1] = in.y();
-        Tracker1_Color[2] = in.z();
-    };
-    void SetTracker2Color(const G4ThreeVector& in) {
-        Tracker2_Color[0] = in.x();
-        Tracker2_Color[1] = in.y();
-        Tracker2_Color[2] = in.z();
-    };
-    void SetTrackerMagField(G4double in);
+    double eps = dControl->eps;
 
-    /// Getter
-
-    G4ThreeVector GetSizeTrkRegion() {return Size_TrackerRegion;};
-    G4ThreeVector GetPosTrkRetion() {return Pos_TrackerRegion;};
-
-    double eps = 1*um;
 private:
 
     /// Tracker parameters
-
     G4Material *Tracker_Mat = nullptr; 
     G4Material *TrackerRegion_Mat = nullptr; 
     std::vector<G4ThreeVector> Size_Tracker{};
@@ -83,24 +51,17 @@ private:
     G4LogicalVolume *TrackerRegion_LV{};
 
     /// Tracker build parameters
-
-    G4double Tracker1_Rotation = 0. * radian;
-    G4double Tracker2_Rotation = 0.1 * radian;
-    G4double Tracker1_Color[3] {0.5, 0.5, 0.};
-    G4double Tracker2_Color[3] {0.5, 0.5, 0.};
+    G4double Tracker1_Rotation{};
+    G4double Tracker2_Rotation{};
+    G4ThreeVector Tracker1_Color;
+    G4ThreeVector Tracker2_Color;
     std::vector<G4LogicalVolume *> Tracker_LV1;
     std::vector<G4LogicalVolume *> Tracker_LV2;
 
-    /// Tracker build SD and Field parameters
-
     /// Magnetic Field
-
     G4bool allLocal = true;
-    G4double Tracker_MagField_y{};
+    G4ThreeVector Tracker_MagField;
 
-    /// Sensitive Detector
-
-    std::vector<G4LogicalVolume *>::iterator itr_LV;
 };
 
 #endif //DSIMU_TRACKER_CONSTRUCT_H

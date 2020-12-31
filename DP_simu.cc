@@ -35,6 +35,7 @@
 #include "DP_simu/TrackingAction.hh"
 #include "DP_simu/SteppingAction.hh"
 #include "DP_simu/RootManager.hh"
+#include "Control.h"
 
 #include "G4StepLimiterPhysics.hh"  // Geant4.10
 #include "G4GenericBiasingPhysics.hh"
@@ -101,6 +102,9 @@ int main(int argc, char **argv) {
     // Choose the Random engine
     CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine);
 
+    // Initiate Control Class
+    Control::CreateInstance();
+
     // Construct the root manager
     auto *rootMng = new RootManager;
 
@@ -109,6 +113,10 @@ int main(int argc, char **argv) {
         G4String command = "/control/execute ";
         UImanager->ApplyCommand(command + OpticalMacro);
     }
+
+    // Rebuild all dependent variables
+    dControl->RebuildVariables();
+
     // Construct the default run manager
 
     auto *runManager = new G4RunManager;

@@ -6,35 +6,25 @@
 
 #include "G4SDManager.hh"
 
-void ECAL_AllZ::DefineParameters(const G4ThreeVector &Pos_RecRegion, const G4ThreeVector &Size_RecRegion) {
-    ECALRegion_Mat = G4Material::GetMaterial("CarbonFiber");
-    //ECAL_Center_Mat = G4Material::GetMaterial("LYSO");
-    ECAL_Center_Mat = G4Material::GetMaterial("PWO4"); // X0 = 0.92 cm
-    ECAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
+void ECAL_AllZ::DefineParameters() {
+    Name = dControl->ECAL_Name;
 
-    ECAL_Module_Gap = 0.5 * mm;
-
-    Size_ECALRegion = G4ThreeVector(0, 0, 0);
-    Size_ECALRegion.setX((ECAL_Center_Size.x() + ECAL_Center_Wrap_Size.x()) * ECAL_Center_Module_No.x() +
-                         ECAL_Center_Module_No.x() * 2 * eps);
-    Size_ECALRegion.setY((ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y()) * ECAL_Center_Module_No.y() +
-                         ECAL_Center_Module_No.y() * 2 * eps);
-    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z()) * ECAL_Center_Module_No.z() +
-                         ECAL_Center_Module_No.z() * 2 * eps);
-
-    Pos_ECALRegion = G4ThreeVector(0, 0,
-                                   0.5 * Size_ECALRegion.z() + Pos_RecRegion.z() + 0.5 * Size_RecRegion.z() + 1.0 * mm);
+    ECALRegion_Mat = dControl->ECALRegion_Mat;
+    ECAL_Center_Mat = dControl->ECAL_Center_Mat;
+    ECAL_Wrap_Mat = dControl->ECAL_Wrap_Mat;
+    Size_ECALRegion = dControl->Size_ECALRegion;
+    Pos_ECALRegion = dControl->Pos_ECALRegion;
 
     G4cout << " ==> ECAL starts from " << Pos_ECALRegion.z() - Size_ECALRegion.z() / 2 << G4endl;
 
     /////////////////////////
     //  APD
     /////////////////////////
-    APD_Mat = G4Material::GetMaterial("G4_Si");
-    APD_Size = G4ThreeVector(1 * cm, 1 * cm, 1 * mm);
+    APD_Mat = dControl->APD_Mat;
+    APD_Size = dControl->APD_Size;
 
-    Glue_Mat = G4Material::GetMaterial("G4_W");
-    Glue_Size = G4ThreeVector(1 * cm, 1 * cm, 0.1 * mm);
+    Glue_Mat = dControl->Glue_Mat;
+    Glue_Size = dControl->Glue_Size;
 }
 
 bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng, bool fCheckOverlaps) {

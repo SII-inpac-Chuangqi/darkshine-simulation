@@ -29,6 +29,7 @@
 /// \brief Implementation of the TrackingAction class
 
 #include "DP_simu/TrackingAction.hh"
+#include "Control.h"
 
 #include "G4Track.hh"
 #include "G4TrackingManager.hh"
@@ -60,20 +61,18 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
                        aTrack->GetMomentum()[1] * aTrack->GetMomentum()[1] +
                        aTrack->GetMomentum()[2] * aTrack->GetMomentum()[2]);
 
-//    if (aTrack->GetTrackID() == 1
-//        || pm >= 1. * GeV
-//        || (energy >= 1. * GeV && energy <= 8. * GeV)
-//        || abs(pdg) == 13   // Muon
-//        || abs(pdg) == 111  // Pion0
-//        || abs(pdg) == 211  // Pion+-
-//        || abs(pdg) == 321  // Kaon+-
-//        || abs(pdg) == 2212 // proton
-//        || abs(pdg) == 2112 // neutron
-//        || abs(pdg) == 14   // muon neutrino
-//        || abs(pdg) == 12   // electron neutrino
-//            ) {
-
-    if (1) {
+    if (dControl->save_all_mcp || (aTrack->GetTrackID() == 1
+                                   || pm >= 1. * GeV
+                                   || (energy >= 1. * GeV && energy <= 8. * GeV)
+                                   || abs(pdg) == 13   // Muon
+                                   || abs(pdg) == 111  // Pion0
+                                   || abs(pdg) == 211  // Pion+-
+                                   || abs(pdg) == 321  // Kaon+-
+                                   || abs(pdg) == 2212 // proton
+                                   || abs(pdg) == 2112 // neutron
+                                   || abs(pdg) == 14   // muon neutrino
+                                   || abs(pdg) == 12   // electron neutrino
+    )) {
         fMC = new McParticle();
         fMC->setPdg(pdg);
         fMC->setId(aTrack->GetTrackID());

@@ -8,90 +8,49 @@
 /// \param[in] type
 /// \param[in] preset  0 = Tagging Tracker; 1 = Recoil Tracker
 /// \param[in] Target_Size 
-void Tracker_Construct::DefineParameters(const Tracker_Type type, const G4double Trk_Tar_Dis,
-                                         const G4ThreeVector &Target_Size
-                                         = G4ThreeVector(10 * cm, 20 * cm, 350 * um)) {
-    // Migrate from: DetectorConstruction::DefineParameters
-    assert(Size_Tracker.size() == Pos_Tracker.size());
+void Tracker_Construct::DefineParameters(Tracker_Type type) {
 
-    if (Tracker_Mat == nullptr) Tracker_Mat = G4Material::GetMaterial("G4_Si");
-    if (TrackerRegion_Mat == nullptr) TrackerRegion_Mat = G4Material::GetMaterial("vacuum");
+    // Global tracker parameter
+    Tracker_Mat = dControl->Tracker_Mat;
+    TrackerRegion_Mat = dControl->TrackerRegion_Mat;
+    Tracker1_Rotation = dControl->Tracker1_Rotation;
+    Tracker2_Rotation = dControl->Tracker2_Rotation;
+    Tracker1_Color = dControl->Tracker1_Color;
+    Tracker2_Color = dControl->Tracker2_Color;
 
     switch (type) {
         case dNone:
             break;
 
         case dTagging:
+            Size_Tracker = dControl->tag_Size_Tracker;
+            Pos_Tracker = dControl->tag_Pos_Tracker;
+            No_Tracker = dControl->tag_No_Tracker;
+            Size_TrackerRegion = dControl->tag_Size_TrackerRegion;
+            Pos_TrackerRegion = dControl->tag_Pos_TrackerRegion;
 
-            /// If user don't input geometry, built-in Tagging Tracker geometry will be set.
-            if (Size_Tracker.empty()) {
-                for (int i = 0; i < 7; i++) {
-                    Size_Tracker.emplace_back(Target_Size.x(), Target_Size.y(), 0.1 * mm);
-                    Pos_Tracker.emplace_back(0 * cm, 0 * cm, (-30. + i * 10.) * cm);
-                }
-            }
-
-            No_Tracker = Size_Tracker.size();
-
-            /// Size and Position of Tracer Region
-
-            Size_TrackerRegion = G4ThreeVector(
-                    2.0 * Size_Tracker[0].x(),
-                    2.0 * Size_Tracker[0].y(),
-                    Pos_Tracker[No_Tracker - 1].z() - Pos_Tracker[0].z() + 2.0 * Size_Tracker[0].z() + 2 * eps * (No_Tracker + 1 )
-            );
-
-            Pos_TrackerRegion = G4ThreeVector(
-                    0 * cm,
-                    0 * cm,
-                    -0.5 * Size_TrackerRegion.z() - Trk_Tar_Dis - 0.5 * Target_Size.z()
-            );
+            Tracker_MagField = dControl->tag_Tracker_MagField;
 
             break;
         case dRecoil:
+            Size_Tracker = dControl->rec_Size_Tracker;
+            Pos_Tracker = dControl->rec_Pos_Tracker;
+            No_Tracker = dControl->rec_No_Tracker;
+            Size_TrackerRegion = dControl->rec_Size_TrackerRegion;
+            Pos_TrackerRegion = dControl->rec_Pos_TrackerRegion;
 
-            /// If user don't input geometry, built-in Recoil Tracker geometry will be set.
-            if (Size_Tracker.empty()) {
-                for (int i = 0; i < 6; i++) {
-                    Size_Tracker.emplace_back(Target_Size.x(), 20 * cm, 0.1 * mm);
-                }
-                Pos_Tracker.emplace_back(0 * cm, 0 * cm, -86.25 * mm);
-                Pos_Tracker.emplace_back(0 * cm, 0 * cm, -71.25 * mm);
-                Pos_Tracker.emplace_back(0 * cm, 0 * cm, -55.25 * mm);
-                Pos_Tracker.emplace_back(0 * cm, 0 * cm, -40.25 * mm);
-                Pos_Tracker.emplace_back(0 * cm, 0 * cm, -4.25 * mm);
-                Pos_Tracker.emplace_back(0 * cm, 0 * cm, 86.25 * mm);
-            }
-
-            No_Tracker = Size_Tracker.size();
-
-            /// Size and Position of Recoil Tracker Region
-
-            Size_TrackerRegion = G4ThreeVector(
-                    2.0 * Size_Tracker[No_Tracker - 1].x(),
-                    2.0 * Size_Tracker[No_Tracker - 1].y(),
-                    Pos_Tracker[No_Tracker - 1].z() - Pos_Tracker[0].z() + 2.0 * Size_Tracker[No_Tracker - 1].z() + 2 * eps * (No_Tracker + 1 )
-            );
-
-            Pos_TrackerRegion = G4ThreeVector(
-                    0 * cm,
-                    0 * cm,
-                    0.5 * Size_TrackerRegion.z() + Trk_Tar_Dis + 0.5 * Target_Size.z()
-            );
+            Tracker_MagField = dControl->rec_Tracker_MagField;
 
             break;
 
         default:
-            break;
+            return;
     }
-
-
 }
 
-bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, RootManager *fRootMng, G4bool fCheckOverlaps) {
-    // Migrate from: DectectorCoinstruction::DefineTagTracker / DetecotrConstruction::DefineRecTracker
-    if (type == dNone) return false;
+bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, G4bool fCheckOverlaps) {
 
+    if (type == dNone) return false;
 
     auto TrackerRegion_Box = new G4Box(
             (type == dTagging ? "TagTrk" : "RecTrk"),
@@ -104,15 +63,6 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, RootManager
             (type == dTagging ? "TAGTrk" : "RECTrk"),
             nullptr, nullptr, nullptr
     );
-
-    G4MagneticField *TrackerMagField = new G4UniformMagField(G4ThreeVector(0., Tracker_MagField_y, 0.));
-    auto *TrackerFieldMng = new G4FieldManager();
-    TrackerFieldMng->SetDetectorField(TrackerMagField);
-    TrackerFieldMng->CreateChordFinder(TrackerMagField);
-
-    TrackerRegion_LV->SetFieldManager(TrackerFieldMng, allLocal);
-
-    G4RunManager::GetRunManager()->GeometryHasBeenModified();
 
     new G4PVPlacement(
             nullptr, Pos_TrackerRegion, TrackerRegion_LV,
@@ -154,7 +104,7 @@ bool Tracker_Construct::BuildSDandField(G4int type, RootManager *fRootMng) {
     /// Constrtruct Magnetic Field.
 
     G4MagneticField *TrackerMagField;
-    TrackerMagField = new G4UniformMagField(G4ThreeVector(0., Tracker_MagField_y, 0.));
+    TrackerMagField = new G4UniformMagField(G4ThreeVector(Tracker_MagField));
     auto *TrackerFieldMng = new G4FieldManager();
     TrackerFieldMng->SetDetectorField(TrackerMagField);
     TrackerFieldMng->CreateChordFinder(TrackerMagField);
@@ -169,8 +119,8 @@ bool Tracker_Construct::BuildSDandField(G4int type, RootManager *fRootMng) {
             G4ThreeVector(1, 1, No_Tracker), fRootMng
     );
     G4SDManager::GetSDMpointer()->AddNewDetector(TrackerSD1);
-    for (itr_LV = Tracker_LV1.begin(); itr_LV != Tracker_LV1.end(); itr_LV++)
-        (*itr_LV)->SetSensitiveDetector(TrackerSD1);
+    for (auto LV : Tracker_LV1)
+        LV->SetSensitiveDetector(TrackerSD1);
 
     auto *TrackerSD2 = new DetectorSD(
             0,
@@ -178,16 +128,8 @@ bool Tracker_Construct::BuildSDandField(G4int type, RootManager *fRootMng) {
             G4ThreeVector(1, 1, No_Tracker), fRootMng
     );
     G4SDManager::GetSDMpointer()->AddNewDetector(TrackerSD2);
-    for (itr_LV = Tracker_LV2.begin(); itr_LV != Tracker_LV2.end(); itr_LV++)
-        (*itr_LV)->SetSensitiveDetector(TrackerSD2);
+    for (auto LV : Tracker_LV2)
+        LV->SetSensitiveDetector(TrackerSD2);
 
     return true;
-}
-
-/// Setter
-
-void Tracker_Construct::SetTrackerMagField(G4double in) {
-    Tracker_MagField_y = in;
-
-    allLocal = false;
 }

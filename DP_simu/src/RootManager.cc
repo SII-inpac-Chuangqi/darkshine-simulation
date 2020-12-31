@@ -16,17 +16,20 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 RootManager::RootManager()
-        : rootFile(nullptr), tr(nullptr), fStart(0), fEvtNb(100000), if_clean(false) {
+        : rootFile(nullptr), tr(nullptr), if_clean(false) {
 
     fMessenger = new RootMessenger(this);
-    outfilename = "dp_out.root";
+    outfilename = dControl->outfile_Name;
 
     Evt = new DEvent();
     Evt->Initialization(nALL);
     initialize();
-    if_Optical = false;
+    if_Optical = dControl->if_optical;
     if_record_ip = true;
     fFilterMng = std::make_shared<FilterManager>();
+
+    fStart = dControl->Run_Number;
+    fEvtNb = dControl->Total_Event_Number;
 }
 
 /// \brief Clean Optical stuff.
@@ -70,8 +73,8 @@ void RootManager::book() {
     }
 
     rnd.SetSeed(fStart + fEvtNb);
-    tr = new TTree("Dark_Photon", "Dark_Photon");
-    // tr->SetAutoSave();
+    tr = new TTree(dControl->tree_Name, dControl->tree_Name);
+    tr->SetAutoSave();
     if (if_clean) {
         G4cout << "Clean Mode..." << G4endl;
     } else {
@@ -80,9 +83,10 @@ void RootManager::book() {
         tr->Branch("Rndm", &Rndm, "Rndm[4]/D");
 
         // truth
-        Evt->RegisterMCParticleCollection("RawMCParticle");
-        if (if_record_ip)
-            Evt->RegisterStepCollection("Initial_Particle_Step");
+        if (dControl->save_MC)
+            Evt->RegisterMCParticleCollection(dControl->RawMCCollection_Name);
+        if (dControl->save_initial_particle_step)
+            Evt->RegisterStepCollection(dControl->InitialParticleStepCollection_Name);
     }
 
     tr->Branch("DEvent", &Evt, 32000000, 0);
@@ -154,7 +158,7 @@ void RootManager::FillMC(McParticle *fMC, int ParentID) {
 
     auto mc = new McParticle(*fMC);
 
-    auto mcps = Evt->getMcParticleCollection_Old().at("RawMCParticle");
+    auto mcps = Evt->getMcParticleCollection_Old().at(dControl->RawMCCollection_Name);
     mc->setParents(McParticle::SearchID(mcps, ParentID));
 
     auto tmp1 = G4String(mc->getCreateProcess());
@@ -241,7 +245,7 @@ void RootManager::FillParticleStep(const G4Step *aStep) {
     G4StepPoint *prev = aStep->GetPreStepPoint();
     G4StepPoint *post = aStep->GetPostStepPoint();
 
-    auto Steps = Evt->getStepCollection_Old().at("Initial_Particle_Step");
+    auto Steps = Evt->getStepCollection_Old().at(dControl->InitialParticleStepCollection_Name);
     auto step = new DStep();
     step->setId(static_cast<int>(Steps->size()));
     if (Steps->empty()) {

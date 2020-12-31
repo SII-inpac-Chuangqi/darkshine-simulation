@@ -363,196 +363,196 @@ DetectorMessenger::~DetectorMessenger() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void DetectorMessenger::SetNewValue(G4UIcommand *command, G4String newValue) {
-
-    if (command == fSetifBiasCmd) {
-        fDetectorConstruction
-                ->SetifBias(fSetifBiasCmd->GetNewBoolValue(newValue));
-    }
-
-    if (command == fECAL_SelectionCmd) {
-        fDetectorConstruction
-                ->SetECALSelection(fECAL_SelectionCmd->GetNewIntValue(newValue));
-    }
-
-    if (command == fSetifTarget) {
-        fDetectorConstruction
-                ->SetifTarget(fSetifTarget->GetNewBoolValue(newValue));
-    }
-
-    /// Tracker
-
-    if (command == fSetTrkTarDis) {
-       fDetectorConstruction->SetTrkTarDis(fSetTrkTarDis->GetNewDoubleValue(newValue));
-    }
-
-    if (command == fSetifTagTrk) {
-        fDetectorConstruction
-                ->SetifTagTrk(fSetifTagTrk->GetNewBoolValue(newValue));
-    }
-
-    /// TagTrk
-
-    if (command == fAddNewTagTrkSize) {
-        fDetectorConstruction->AddNewTagTrkSize(fAddNewTagTrkSize->GetNew3VectorValue(newValue));
-    }
-
-    if (command == fAddNewTagTrkPos) {
-        fDetectorConstruction->AddNewTagTrkPos(fAddNewTagTrkPos->GetNew3VectorValue(newValue));
-    }
-
-    if (command == fDelTagTrk) {
-       fDetectorConstruction->DelTagTrk(fDelTagTrk->GetNewBoolValue(newValue));
-    }
-
-    if (command == fSetTagTrk1Rotation) {
-       fDetectorConstruction->SetTagTrk1Rotation(fSetTagTrk1Rotation->GetNewDoubleValue(newValue));
-    }
-
-    if (command == fSetTagTrk2Rotation) {
-       fDetectorConstruction->SetTagTrk2Rotation(fSetTagTrk2Rotation->GetNewDoubleValue(newValue));
-    }
-
-    if (command == fSetTagTrk1Color) {
-       fDetectorConstruction->SetTagTrk1Color(fSetTagTrk1Color->GetNew3VectorValue(newValue));
-    }
-
-    if (command == fSetTagTrk2Color) {
-       fDetectorConstruction->SetTagTrk2Color(fSetTagTrk2Color->GetNew3VectorValue(newValue));
-    }
-
-    if (command == fSetTBxCmd) {
-        fDetectorConstruction
-                ->SetTagTrkMagField(fSetTBxCmd->GetNewDoubleValue(newValue));
-    }
-
-    /// RecTrk
-
-    if (command == fSetifRecTrk) {
-        fDetectorConstruction
-                ->SetifRecTrk(fSetifRecTrk->GetNewBoolValue(newValue));
-    }
-
-    if (command == fAddNewRecTrkSize) {
-       fDetectorConstruction->AddNewRecTrkSize(fAddNewRecTrkSize->GetNew3VectorValue(newValue));
-    }
-
-    if (command == fAddNewRecTrkPos) {
-       fDetectorConstruction->AddNewRecTrkPos(fAddNewRecTrkPos->GetNew3VectorValue(newValue));
-    }
-
-    if (command == fDelRecTrk) {
-       fDetectorConstruction->DelRecTrk(fDelRecTrk->GetNewBoolValue(newValue));
-    }
-
-    if (command == fSetRecTrk1Rotation) {
-       fDetectorConstruction->SetRecTrk1Rotation(fSetRecTrk1Rotation->GetNewDoubleValue(newValue));
-    }
-
-    if (command == fSetRecTrk2Rotation) {
-       fDetectorConstruction->SetRecTrk2Rotation(fSetRecTrk2Rotation->GetNewDoubleValue(newValue));
-    }
-
-    if (command == fSetRecTrk1Color) {
-       fDetectorConstruction->SetRecTrk1Color(fSetRecTrk1Color->GetNew3VectorValue(newValue));
-    }
-
-    if (command == fSetRecTrk2Color) {
-       fDetectorConstruction->SetRecTrk2Color(fSetRecTrk2Color->GetNew3VectorValue(newValue));
-    }
-
-    if (command == fSetRBxCmd) {
-        fDetectorConstruction
-                ->SetRecTrkMagField(fSetRBxCmd->GetNewDoubleValue(newValue));
-    }
-
-    /// ECAL
-
-    if (command == fSetifECAL) {
-        fDetectorConstruction
-                ->SetifECAL(fSetifECAL->GetNewBoolValue(newValue));
-    }
-    
-    if (command == fSetECALCenterWrapSize) {
-       fDetectorConstruction->SetECALCenterWrapSize(fSetECALCenterWrapSize->GetNew3VectorValue(newValue));
-    }
-
-    if (command == fSetECALCenterSize) {
-       fDetectorConstruction->SetECALCenterSize(fSetECALCenterSize->GetNew3VectorValue(newValue));
-    }
-
-    if (command == fSetECALCenterModuleNo) {
-       fDetectorConstruction->SetECALCenterModuleNo(fSetECALCenterModuleNo->GetNew3VectorValue(newValue));
-    }
-
-    /// HCAL
-
-    if (command == fSetifHCAL) {
-        fDetectorConstruction
-                ->SetifHCAL(fSetifHCAL->GetNewBoolValue(newValue));
-    }
-
-    if (command == fSetHCALWrapSize) {
-       fDetectorConstruction->SetHCALWrapSize(fSetHCALWrapSize->GetNew3VectorValue(newValue));
-    }
-
-    if (command == fSetHCALSizeDir) {
-       fDetectorConstruction->SetHCALSizeDir(fSetHCALSizeDir->GetNew3VectorValue(newValue));
-    }
-
-    if (command == fSetHCALModNoDir) {
-       fDetectorConstruction->SetHCALModNoDir(fSetHCALModNoDir->GetNew3VectorValue(newValue));
-    }
-
-    if (command == fSetHCALModuleNo) {
-       fDetectorConstruction->SetHCALModuleNo(fSetHCALModuleNo->GetNew3VectorValue(newValue));
-    }
-
-    if (command == fSetHCALModuleGap) {
-       fDetectorConstruction->SetHCALModuleGap(fSetHCALModuleGap->GetNewDoubleValue(newValue));
-    }
-
-    if (command == fSetHCALAbsorberThickness) {
-       fDetectorConstruction->SetHCALAbsorberThickness(fSetHCALAbsorberThickness->GetNewDoubleValue(newValue));
-    }
-
-    /// Set Only
-
-    if (command == fSetonlyTracker) {
-        fDetectorConstruction->SetifTarget(false);
-        fDetectorConstruction->SetifTagTrk(true);
-        fDetectorConstruction->SetifRecTrk(true);
-        fDetectorConstruction->SetifECAL(false);
-        fDetectorConstruction->SetifHCAL(false);
-    }
-
-    if (command == fSetonlyECAL) {
-        fDetectorConstruction->SetifTarget(false);
-        fDetectorConstruction->SetifTagTrk(false);
-        fDetectorConstruction->SetifRecTrk(false);
-        fDetectorConstruction->SetifECAL(true);
-        fDetectorConstruction->SetifHCAL(false);
-    }
-
-    if (command == fSetonlyHCAL) {
-        fDetectorConstruction->SetifTarget(false);
-        fDetectorConstruction->SetifTagTrk(false);
-        fDetectorConstruction->SetifRecTrk(false);
-        fDetectorConstruction->SetifECAL(false);
-        fDetectorConstruction->SetifHCAL(true);
-    }
-
-    /// ReConstruct
-
-    if (command == fReConstruct) {
-        fDetectorConstruction->ReConstruct();
-    }
-
-    /// Save
-
-    if (command == fifSaveGeomCmd) {
-        if (fifSaveGeomCmd->GetNewBoolValue(newValue))
-            fDetectorConstruction->SaveGeometry();
-    }
+//
+//    if (command == fSetifBiasCmd) {
+//        fDetectorConstruction
+//                ->SetifBias(fSetifBiasCmd->GetNewBoolValue(newValue));
+//    }
+//
+//    if (command == fECAL_SelectionCmd) {
+//        fDetectorConstruction
+//                ->SetECALSelection(fECAL_SelectionCmd->GetNewIntValue(newValue));
+//    }
+//
+//    if (command == fSetifTarget) {
+//        fDetectorConstruction
+//                ->SetifTarget(fSetifTarget->GetNewBoolValue(newValue));
+//    }
+//
+//    /// Tracker
+//
+//    if (command == fSetTrkTarDis) {
+//       fDetectorConstruction->SetTrkTarDis(fSetTrkTarDis->GetNewDoubleValue(newValue));
+//    }
+//
+//    if (command == fSetifTagTrk) {
+//        fDetectorConstruction
+//                ->SetifTagTrk(fSetifTagTrk->GetNewBoolValue(newValue));
+//    }
+//
+//    /// TagTrk
+//
+//    if (command == fAddNewTagTrkSize) {
+//        fDetectorConstruction->AddNewTagTrkSize(fAddNewTagTrkSize->GetNew3VectorValue(newValue));
+//    }
+//
+//    if (command == fAddNewTagTrkPos) {
+//        fDetectorConstruction->AddNewTagTrkPos(fAddNewTagTrkPos->GetNew3VectorValue(newValue));
+//    }
+//
+//    if (command == fDelTagTrk) {
+//       fDetectorConstruction->DelTagTrk(fDelTagTrk->GetNewBoolValue(newValue));
+//    }
+//
+//    if (command == fSetTagTrk1Rotation) {
+//       fDetectorConstruction->SetTagTrk1Rotation(fSetTagTrk1Rotation->GetNewDoubleValue(newValue));
+//    }
+//
+//    if (command == fSetTagTrk2Rotation) {
+//       fDetectorConstruction->SetTagTrk2Rotation(fSetTagTrk2Rotation->GetNewDoubleValue(newValue));
+//    }
+//
+//    if (command == fSetTagTrk1Color) {
+//       fDetectorConstruction->SetTagTrk1Color(fSetTagTrk1Color->GetNew3VectorValue(newValue));
+//    }
+//
+//    if (command == fSetTagTrk2Color) {
+//       fDetectorConstruction->SetTagTrk2Color(fSetTagTrk2Color->GetNew3VectorValue(newValue));
+//    }
+//
+//    if (command == fSetTBxCmd) {
+//        fDetectorConstruction
+//                ->SetTagTrkMagField(fSetTBxCmd->GetNewDoubleValue(newValue));
+//    }
+//
+//    /// RecTrk
+//
+//    if (command == fSetifRecTrk) {
+//        fDetectorConstruction
+//                ->SetifRecTrk(fSetifRecTrk->GetNewBoolValue(newValue));
+//    }
+//
+//    if (command == fAddNewRecTrkSize) {
+//       fDetectorConstruction->AddNewRecTrkSize(fAddNewRecTrkSize->GetNew3VectorValue(newValue));
+//    }
+//
+//    if (command == fAddNewRecTrkPos) {
+//       fDetectorConstruction->AddNewRecTrkPos(fAddNewRecTrkPos->GetNew3VectorValue(newValue));
+//    }
+//
+//    if (command == fDelRecTrk) {
+//       fDetectorConstruction->DelRecTrk(fDelRecTrk->GetNewBoolValue(newValue));
+//    }
+//
+//    if (command == fSetRecTrk1Rotation) {
+//       fDetectorConstruction->SetRecTrk1Rotation(fSetRecTrk1Rotation->GetNewDoubleValue(newValue));
+//    }
+//
+//    if (command == fSetRecTrk2Rotation) {
+//       fDetectorConstruction->SetRecTrk2Rotation(fSetRecTrk2Rotation->GetNewDoubleValue(newValue));
+//    }
+//
+//    if (command == fSetRecTrk1Color) {
+//       fDetectorConstruction->SetRecTrk1Color(fSetRecTrk1Color->GetNew3VectorValue(newValue));
+//    }
+//
+//    if (command == fSetRecTrk2Color) {
+//       fDetectorConstruction->SetRecTrk2Color(fSetRecTrk2Color->GetNew3VectorValue(newValue));
+//    }
+//
+//    if (command == fSetRBxCmd) {
+//        fDetectorConstruction
+//                ->SetRecTrkMagField(fSetRBxCmd->GetNewDoubleValue(newValue));
+//    }
+//
+//    /// ECAL
+//
+//    if (command == fSetifECAL) {
+//        fDetectorConstruction
+//                ->SetifECAL(fSetifECAL->GetNewBoolValue(newValue));
+//    }
+//
+//    if (command == fSetECALCenterWrapSize) {
+//       fDetectorConstruction->SetECALCenterWrapSize(fSetECALCenterWrapSize->GetNew3VectorValue(newValue));
+//    }
+//
+//    if (command == fSetECALCenterSize) {
+//       fDetectorConstruction->SetECALCenterSize(fSetECALCenterSize->GetNew3VectorValue(newValue));
+//    }
+//
+//    if (command == fSetECALCenterModuleNo) {
+//       fDetectorConstruction->SetECALCenterModuleNo(fSetECALCenterModuleNo->GetNew3VectorValue(newValue));
+//    }
+//
+//    /// HCAL
+//
+//    if (command == fSetifHCAL) {
+//        fDetectorConstruction
+//                ->SetifHCAL(fSetifHCAL->GetNewBoolValue(newValue));
+//    }
+//
+//    if (command == fSetHCALWrapSize) {
+//       fDetectorConstruction->SetHCALWrapSize(fSetHCALWrapSize->GetNew3VectorValue(newValue));
+//    }
+//
+//    if (command == fSetHCALSizeDir) {
+//       fDetectorConstruction->SetHCALSizeDir(fSetHCALSizeDir->GetNew3VectorValue(newValue));
+//    }
+//
+//    if (command == fSetHCALModNoDir) {
+//       fDetectorConstruction->SetHCALModNoDir(fSetHCALModNoDir->GetNew3VectorValue(newValue));
+//    }
+//
+//    if (command == fSetHCALModuleNo) {
+//       fDetectorConstruction->SetHCALModuleNo(fSetHCALModuleNo->GetNew3VectorValue(newValue));
+//    }
+//
+//    if (command == fSetHCALModuleGap) {
+//       fDetectorConstruction->SetHCALModuleGap(fSetHCALModuleGap->GetNewDoubleValue(newValue));
+//    }
+//
+//    if (command == fSetHCALAbsorberThickness) {
+//       fDetectorConstruction->SetHCALAbsorberThickness(fSetHCALAbsorberThickness->GetNewDoubleValue(newValue));
+//    }
+//
+//    /// Set Only
+//
+//    if (command == fSetonlyTracker) {
+//        fDetectorConstruction->SetifTarget(false);
+//        fDetectorConstruction->SetifTagTrk(true);
+//        fDetectorConstruction->SetifRecTrk(true);
+//        fDetectorConstruction->SetifECAL(false);
+//        fDetectorConstruction->SetifHCAL(false);
+//    }
+//
+//    if (command == fSetonlyECAL) {
+//        fDetectorConstruction->SetifTarget(false);
+//        fDetectorConstruction->SetifTagTrk(false);
+//        fDetectorConstruction->SetifRecTrk(false);
+//        fDetectorConstruction->SetifECAL(true);
+//        fDetectorConstruction->SetifHCAL(false);
+//    }
+//
+//    if (command == fSetonlyHCAL) {
+//        fDetectorConstruction->SetifTarget(false);
+//        fDetectorConstruction->SetifTagTrk(false);
+//        fDetectorConstruction->SetifRecTrk(false);
+//        fDetectorConstruction->SetifECAL(false);
+//        fDetectorConstruction->SetifHCAL(true);
+//    }
+//
+//    /// ReConstruct
+//
+//    if (command == fReConstruct) {
+//        fDetectorConstruction->ReConstruct();
+//    }
+//
+//    /// Save
+//
+//    if (command == fifSaveGeomCmd) {
+//        if (fifSaveGeomCmd->GetNewBoolValue(newValue))
+//            fDetectorConstruction->SaveGeometry();
+//    }
 
 }
 

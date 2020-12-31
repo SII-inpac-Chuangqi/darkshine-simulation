@@ -42,8 +42,7 @@ RunAction::RunAction(RootManager* rootMng)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-RunAction::~RunAction()
-{}
+RunAction::~RunAction() = default;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -57,9 +56,6 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
     
     G4RunManager::GetRunManager()->SetRandomNumberStore(true);
 
-    frootMng->getDetCon()->setDefineSdOnly(true);
-    frootMng->getDetCon()->ConstructSDandField();
-    G4RunManager::GetRunManager()->GeometryHasBeenModified();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

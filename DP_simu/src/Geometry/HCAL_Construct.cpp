@@ -4,46 +4,37 @@
 
 #include "Geometry/HCAL_Construct.h"
 
-void HCAL_Construct::DefineParameters(const G4ThreeVector &Pos_ECALRegion, const G4ThreeVector &Size_ECALRegion) {
-    HCAL_Absorber_Mat = G4Material::GetMaterial("G4_Fe");
-    HCALRegion_Mat = G4Material::GetMaterial("CarbonFiber");
-    HCAL_Mat = G4Material::GetMaterial("Polystyrene");
-    HCAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
-    //HCAL_Mod_No_Dir = G4ThreeVector( 1, 20, 2 );
+void HCAL_Construct::DefineParameters() {
+    Name = dControl->HCAL_Name;
 
-    Size_HCALRegion = G4ThreeVector(0, 0, 0);
-    Size_HCALRegion.setX(
-            HCAL_Module_No.x() * (HCAL_Size_Dir.x() + HCAL_Wrap_Size.x()) + HCAL_Module_Gap * (HCAL_Module_No.x() - 1) +
-            HCAL_Module_No.x() * 2 * eps);
-    Size_HCALRegion.setY(HCAL_Module_No.y() * HCAL_Mod_No_Dir.y() * (HCAL_Size_Dir.y() + HCAL_Wrap_Size.y()) +
-                         HCAL_Module_Gap * (HCAL_Module_No.y() - 1) + HCAL_Module_No.x() * 2 * eps);
-    Size_HCALRegion.setZ(
-            HCAL_Mod_No_Dir.z() / 2 * (2 * (HCAL_Size_Dir.z() + HCAL_Wrap_Size.z()) + HCAL_Absorber_Thickness) +
-            HCAL_Module_Gap * (HCAL_Module_No.z() - 1) + HCAL_Module_No.x() * 2 * eps);
+    HCAL_Absorber_Mat = dControl->HCAL_Absorber_Mat;
+    HCALRegion_Mat = dControl->HCALRegion_Mat;
+    HCAL_Mat = dControl->HCAL_Mat;
+    HCAL_Wrap_Mat = dControl->HCAL_Wrap_Mat;
 
-    Pos_HCALRegion = G4ThreeVector(0, 0,
-                                   0.5 * Size_HCALRegion.z() + Pos_ECALRegion.z() + 0.5 * Size_ECALRegion.z());
+    HCAL_Wrap_Size = dControl->HCAL_Wrap_Size;
+    HCAL_Size_Dir = dControl->HCAL_Size_Dir;
+    HCAL_Mod_No_Dir = dControl->HCAL_Mod_No_Dir;
+    HCAL_Module_No = dControl->HCAL_Module_No;
+    HCAL_Module_Gap = dControl->HCAL_Module_Gap;
+    HCAL_Absorber_Thickness = dControl->HCAL_Absorber_Thickness;
+
+    Size_HCALRegion = dControl->Size_HCALRegion;
+    Pos_HCALRegion = dControl->Pos_HCALRegion;
 
     G4cout << " ==> HCAL starts from " << Pos_HCALRegion.z() - Size_HCALRegion.z() / 2 << G4endl;
 
     /////////////////////////
     //  APD
     /////////////////////////
-    APD_Mat = G4Material::GetMaterial("G4_Si");
-    APD_Size = G4ThreeVector(1 * cm, 1 * cm, 1 * mm);
+    APD_Mat = dControl->APD_Mat;
+    APD_Size = dControl->APD_Size;
 
-    Glue_Mat = G4Material::GetMaterial("G4_W");
-    Glue_Size = G4ThreeVector(1 * cm, 1 * cm, 0.1 * mm);
+    Glue_Mat = dControl->Glue_Mat;
+    Glue_Size = dControl->Glue_Size;
 }
 
-bool HCAL_Construct::Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng, bool fCheckOverlaps) {
-
-    switch (type) {
-        case -1:
-            return false;
-        default:
-            break;
-    }
+bool HCAL_Construct::Build(G4LogicalVolume *World_LV, RootManager *fRootMng, bool fCheckOverlaps) {
 
     auto HCAL_Box = new G4Box("hcal", Size_HCALRegion.x() / 2, Size_HCALRegion.y() / 2, Size_HCALRegion.z() / 2);
     auto HCAL_LV = new G4LogicalVolume(HCAL_Box, HCALRegion_Mat, "HCAL", nullptr, nullptr, nullptr);
@@ -60,7 +51,7 @@ bool HCAL_Construct::Build(int type, G4LogicalVolume *World_LV, RootManager *fRo
             double wx = -Size_HCALRegion.x() * 0.5 + (Size_HCALRegion.x() / HCAL_Module_No.x() * (0.5 + ix));
             double wy = -Size_HCALRegion.y() * 0.5 + (Size_HCALRegion.y() / HCAL_Module_No.y() * (0.5 + iy));
 
-            auto HCAL = new CALConstruct("HCAL_" + std::to_string((int) (ix + iy * HCAL_Module_No.x())), HCAL_LV, 0,
+            auto HCAL = new CALConstruct(Name + "_" + std::to_string((int) (ix + iy * HCAL_Module_No.x())), HCAL_LV, 0,
                                          true, true, fRootMng->GetOptical(), fCheckOverlaps);
             HCAL->SetSizeXYZ(HCAL_Size_Dir.x() / 2., HCAL_Size_Dir.y() / 2., HCAL_Size_Dir.z() / 2.);
             HCAL->SetWrapSizeXYZ(HCAL_Wrap_Size.x() / 2., HCAL_Wrap_Size.y() / 2., HCAL_Wrap_Size.z() / 2.);
@@ -80,15 +71,14 @@ bool HCAL_Construct::Build(int type, G4LogicalVolume *World_LV, RootManager *fRo
 }
 
 bool HCAL_Construct::BuildSD(RootManager *fRootMng) {
-    //DetectorSD *HCalSD[ (int)(HCAL_Module_No.x() * HCAL_Module_No.y() * HCAL_Module_No.z()) ];
     std::vector<DetectorSD *> HCalSD;
     for (int iy = 0; iy < HCAL_Module_No.y(); iy++) {
         for (int ix = 0; ix < HCAL_Module_No.x(); ix++) {
             int index = (int) (ix + iy * HCAL_Module_No.x());
-            HCalSD.push_back(new DetectorSD(2, "HCAL_" + std::to_string(index), HCAL_Mod_No_Dir, fRootMng));
+            HCalSD.push_back(new DetectorSD(2, Name + "_" + std::to_string(index), HCAL_Mod_No_Dir, fRootMng));
             G4SDManager::GetSDMpointer()->AddNewDetector(HCalSD[index]);
-            for (auto itr_LV = HCAL_SD_LV[index].begin(); itr_LV != HCAL_SD_LV[index].end(); itr_LV++)
-                (*itr_LV)->SetSensitiveDetector(HCalSD[index]);
+            for (auto LV : HCAL_SD_LV[index])
+                LV->SetSensitiveDetector(HCalSD[index]);
         }
     }
     return false;

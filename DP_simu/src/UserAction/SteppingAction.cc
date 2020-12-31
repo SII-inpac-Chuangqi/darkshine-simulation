@@ -30,13 +30,10 @@
 
 #include "DP_simu/SteppingAction.hh"
 #include "DP_simu/RootManager.hh"
+#include "Control.h"
 
 #include "G4Step.hh"
-#include "G4Track.hh"
-#include "G4VProcess.hh"
-#include "G4RunManager.hh"
 #include "G4EventManager.hh"
-#include "G4StackManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4OpticalPhoton.hh"
 
@@ -77,7 +74,8 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
         froot->FillEleak(aStep, Region_name);
     }
     if (!post) return;
-    if (aStep->GetTrack()->GetTrackID() == 1) {
+    if (dControl->save_initial_particle_step
+        && aStep->GetTrack()->GetTrackID() == 1) {
 
         p->setPdg(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
         p->setId(aStep->GetTrack()->GetTrackID());
@@ -90,8 +88,7 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
         p->setVertexZ(post->GetPosition()[2]);
 
         /* Record all steps for certain particle */
-        if (froot->GetRecordStep())
-            froot->FillParticleStep(aStep);
+        froot->FillParticleStep(aStep);
     }
 
     if (aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding() == 22) {
@@ -114,7 +111,7 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     }
 
     /* Optical Photon Detection: APD region */
-    if (froot->GetOptical() && aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "opticalphoton") {
+    if (dControl->if_optical && aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "opticalphoton") {
         if (post->GetPhysicalVolume()) {
             auto Region_name = post->GetPhysicalVolume()->GetName();
             auto kill_flag = froot->FillOptical(aStep, Region_name);

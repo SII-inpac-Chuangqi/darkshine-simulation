@@ -76,7 +76,6 @@ public:
 
 private:
     DetectorConstruction *fDetectorConstruction;
-
     G4UIdirectory *fDirectory;
     G4UIdirectory *fDetDirectory;
     G4UIdirectory *fTargetDirectory;
