@@ -31,13 +31,13 @@ public:
 
     // Setter
 
-    void SetHCALWrapSize(G4ThreeVector in) { HCAL_Wrap_Size = in; };
+    void SetHCALWrapSize(const G4ThreeVector& in) { HCAL_Wrap_Size = in; };
 
-    void SetHCALSizeDir(G4ThreeVector in) { HCAL_Size_Dir = in; };
+    void SetHCALSizeDir(const G4ThreeVector& in) { HCAL_Size_Dir = in; };
 
-    void SetHCALModNoDir(G4ThreeVector in) { HCAL_Mod_No_Dir = in; };
+    void SetHCALModNoDir(const G4ThreeVector& in) { HCAL_Mod_No_Dir = in; };
 
-    void SetHCALModuleNo(G4ThreeVector in) { HCAL_Module_No = in; };
+    void SetHCALModuleNo(const G4ThreeVector& in) { HCAL_Module_No = in; };
 
     void SetHCALModuleGap(G4double in) { HCAL_Module_Gap = in; };
 
@@ -54,8 +54,8 @@ private:
     G4ThreeVector Pos_HCALRegion;
     G4ThreeVector HCAL_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm); // MODIFY
     G4ThreeVector HCAL_Size_Dir = G4ThreeVector(100 * cm + 19 * HCAL_Wrap_Size.x(), 5 * cm, 1 * cm); // MODIFY
-    G4ThreeVector HCAL_Mod_No_Dir = G4ThreeVector(1, 20, 4); // MODIFY
-    G4ThreeVector HCAL_Module_No = G4ThreeVector(1, 1, 1); // MODIFY
+    G4ThreeVector HCAL_Mod_No_Dir = G4ThreeVector(1, 20, 120); // MODIFY
+    G4ThreeVector HCAL_Module_No = G4ThreeVector(3, 3, 1); // MODIFY
     G4double HCAL_Module_Gap = 0.5 * mm; //MODIFY
     G4double HCAL_Absorber_Thickness = 3 * cm; // MODIFY
 
