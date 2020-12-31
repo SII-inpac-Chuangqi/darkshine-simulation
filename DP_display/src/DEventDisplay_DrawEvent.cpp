@@ -33,7 +33,10 @@ bool DEventDisplay::drawEvent(int id, bool resCam) {
     evt = shared_ptr<AnaEvent>(new AnaEvent());
     EvtReader->setEvt(evt);
 
-    EvtReader->ReadEntry(id);
+    if ( !EvtReader->ReadEntry(id) ) {
+        std::cerr<<"[Read Event] ==> No event in current file ..."<<std::endl;
+        return false;
+    }
 
     EvtReader->Convert();
     //evtHistory.emplace_back(evt);

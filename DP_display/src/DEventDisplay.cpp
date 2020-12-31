@@ -57,6 +57,11 @@ void DEventDisplay::Initialize() {
 }
 
 bool DEventDisplay::drawDetector() {
+    if (!gGeoManager) {
+        std::cerr << "[Draw Detector] ==> No available geometry ..." << std::endl;
+        return false;
+    }
+
     // draw the geometry.
     TGeoNode *top_node = gGeoManager->GetTopNode();
     assert(top_node != nullptr);
@@ -260,10 +265,10 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
         hf = new TGHorizontalFrame(frmMain1);
         {
             guiMC_Emin = new TGNumberEntry(hf, MC_Emin, 6, 999,
-                                                          TGNumberFormat::kNESReal,
-                                                          TGNumberFormat::kNEANonNegative,
-                                                          TGNumberFormat::kNELLimitMin,
-                                                          0.);
+                                           TGNumberFormat::kNESReal,
+                                           TGNumberFormat::kNEANonNegative,
+                                           TGNumberFormat::kNELLimitMin,
+                                           0.);
             hf->AddFrame(guiMC_Emin);
             guiMC_Emin->Connect("ValueSet(Long_t)", "DEventDisplay", fh, "guiOptions()");
             lbl = new TGLabel(hf, " min. E for MC Tracks [MeV]");
@@ -273,9 +278,9 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
         hf = new TGHorizontalFrame(frmMain1);
         {
             guiMC_PDG = new TGNumberEntry(hf, MC_PDG, 6, 999, TGNumberFormat::kNESInteger,
-                                         TGNumberFormat::kNEANonNegative,
-                                         TGNumberFormat::kNELLimitMin,
-                                         0);
+                                          TGNumberFormat::kNEANonNegative,
+                                          TGNumberFormat::kNELLimitMin,
+                                          0);
             hf->AddFrame(guiMC_PDG);
             guiMC_PDG->Connect("ValueSet(Long_t)", "DEventDisplay", fh, "guiOptions()");
             lbl = new TGLabel(hf, " Abs of PDG of MC Tracks");
@@ -351,10 +356,11 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
         frmMain1->AddFrame(hf);
         hf = new TGHorizontalFrame(frmMain1);
         {
-            guiScaleFactorSimuCaloBox = new TGNumberEntry(hf, _scale_factor_SimuCaloHits, 6, 999, TGNumberFormat::kNESReal,
-                                             TGNumberFormat::kNEANonNegative,
-                                             TGNumberFormat::kNELLimitMinMax,
-                                             0.0001, 1.0);
+            guiScaleFactorSimuCaloBox = new TGNumberEntry(hf, _scale_factor_SimuCaloHits, 6, 999,
+                                                          TGNumberFormat::kNESReal,
+                                                          TGNumberFormat::kNEANonNegative,
+                                                          TGNumberFormat::kNELLimitMinMax,
+                                                          0.0001, 1.0);
             hf->AddFrame(guiScaleFactorSimuCaloBox);
             guiScaleFactorSimuCaloBox->Connect("ValueSet(Long_t)", "DEventDisplay", fh, "guiOptions()");
             lbl = new TGLabel(hf, " Scale Factor for Calo Box");
@@ -458,7 +464,7 @@ void DEventDisplay::gotoEvent(unsigned int id) {
     ECAL_Emin = guiECAL_Emin->GetNumberEntry()->GetNumber();
     HCAL_Emin = guiHCAL_Emin->GetNumberEntry()->GetNumber();
     _scale_factor_SimuTrkHits = guiScaleFactorSimuTrkHits->GetNumberEntry()->GetNumber();
-    _drawScaleSimuCaloBox =  guiScaleSimuCaloBox->IsOn();
+    _drawScaleSimuCaloBox = guiScaleSimuCaloBox->IsOn();
     _scale_factor_SimuCaloHits = guiScaleFactorSimuCaloBox->GetNumberEntry()->GetNumber();
 
     // CaloHits Lego Options

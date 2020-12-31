@@ -65,8 +65,8 @@ bool ECAL_XYCrossing::Build(int type, G4LogicalVolume *World_LV, RootManager *fR
         int nECAL_Outer;
         nECAL_Outer = ECAL_Outer_Module_No.x() * ECAL_Outer_Module_No.y() * ECAL_Outer_Module_No.z();
         for (int ip = 1; ip <= nECAL_Outer; ip++) {
-            double w1 = pow(-1, (ip % 2)) * Size_ECALRegion.x() / 4.;
-            double w2 = pow(-1, (ip - 1) / 2) * Size_ECALRegion.x() / 4.;
+            //double w1 = pow(-1, (ip % 2)) * Size_ECALRegion.x() / 4.;
+            //double w2 = pow(-1, (ip - 1) / 2) * Size_ECALRegion.x() / 4.;
             auto ECAL_Outer = new CALConstruct("ECAL_Outer_" + std::to_string(ip), ECal_LV, 0, true, true,
                                                fRootMng->GetOptical(), fCheckOverlaps);
             ECAL_Outer->SetSizeXYZ(ECAL_Outer_Size_Dir.x() / 2., ECAL_Outer_Size_Dir.y() / 2.,

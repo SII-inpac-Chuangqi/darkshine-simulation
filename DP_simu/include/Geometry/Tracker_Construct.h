@@ -71,10 +71,6 @@ public:
     double eps = 1*um;
 private:
 
-    /// EM Field
-
-    G4double MagField_y{};
-
     /// Tracker parameters
 
     G4Material *Tracker_Mat = nullptr; 

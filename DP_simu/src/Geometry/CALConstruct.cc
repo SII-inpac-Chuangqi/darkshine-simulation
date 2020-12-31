@@ -426,9 +426,7 @@ G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, con
 void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo, const G4ThreeVector &CentrePos,
                                                  G4double AbsThickness, G4Material *AbsMat) {
 
-    auto Mat = fCALMaterial;
     auto ifwrap = fWrap;
-    auto iVis = fVis;
 
     auto idx = xNo;
     auto idy = yNo;
