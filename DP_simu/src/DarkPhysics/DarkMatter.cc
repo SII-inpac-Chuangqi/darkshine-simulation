@@ -229,7 +229,7 @@ bool DarkMatter::EmissionAllowed(double E0, double DensityMat) {
     if (E0 < 1.001 * MA) return false;
     if (E0 < EThresh) return false;
     //if (NEmissions) return false; // For G4 DM classes, only emmission once
-    //if (fabs(DensityMat - Density) > 0.1) return false;//must hit on target
+    if (fabs(DensityMat - Density) > 0.1) return false;//must hit on target
     //double prob = SigmaNorm * GetSigmaTot(E0) * StepLength;
     //AccumulatedProbability += prob;
     //double tmprandom = G4UniformRand();
