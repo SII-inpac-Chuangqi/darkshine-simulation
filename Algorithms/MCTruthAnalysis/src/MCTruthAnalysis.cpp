@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "TString.h"
+#include "TLorentzVector.h"
 
 
 MCTruthAnalysis::MCTruthAnalysis(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name),
@@ -22,6 +23,7 @@ void MCTruthAnalysis::Begin() {
 
     // Register Parameters
     RegisterIntParameter("Verbose", "Verbosity", &verbose, 0);
+    RegisterIntParameter("Sec_PDG", "PDG of secondary", &Sec_PDG, 500012);
 
     // Register Outputs
     if (EvtWrt) {
@@ -32,6 +34,11 @@ void MCTruthAnalysis::Begin() {
         EvtWrt->RegisterDoubleVariable("Initial_X", &Initial_X, "Initial_X/D");
         EvtWrt->RegisterDoubleVariable("Initial_Y", &Initial_Y, "Initial_Y/D");
         EvtWrt->RegisterDoubleVariable("Initial_Z", &Initial_Z, "Initial_Z/D");
+
+        EvtWrt->RegisterDoubleVariable("Recoil_E", &Recoil_E, "Recoil_E/D");
+        EvtWrt->RegisterDoubleVariable("Recoil_P", Recoil_P, "Recoil_P[3]/D");
+        EvtWrt->RegisterDoubleVariable("Recoil_pT", &Recoil_pT, "Recoil_pT/D");
+        EvtWrt->RegisterDoubleVariable("Recoil_theta", &Recoil_theta, "Recoil_theta/D");
 
         EvtWrt->RegisterDoubleVariable("Parent_E", &Parent_E, "Parent_E/D");
         EvtWrt->RegisterDoubleVariable("Parent_P", Parent_P, "Parent_P[3]/D");
@@ -73,7 +80,7 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
 
         // Find Secondary
         SecFinder->setEvt(evt);
-        auto mcSec = SecFinder->FindSecondary(500012);
+        auto mcSec = SecFinder->FindSecadd ondary(Sec_PDG);
 
         DStep *prev_s = nullptr;
         for (auto s : *steps) {
@@ -86,6 +93,15 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
                 Parent_P[1] = prev_s->getPy();
                 Parent_P[2] = prev_s->getPz();
                 Parent_PVName = TString(prev_s->getPVName());
+
+                Recoil_E = s->getE();
+                Recoil_P[0] = s->getPx();
+                Recoil_P[1] = s->getPy();
+                Recoil_P[2] = s->getPz();
+
+                TLorentzVector l(Recoil_P,Recoil_E);
+                Recoil_pT = l.Perp();
+                Recoil_theta = l.Theta();
             }
 
             prev_s = s;

@@ -32,6 +32,7 @@ public:
 private:
 
     int verbose{0};
+    int Sec_PDG{0};
 
     std::shared_ptr<SecondaryMaxEFinder> SecFinder;
 
@@ -42,6 +43,12 @@ private:
     double Initial_X{};
     double Initial_Y{};
     double Initial_Z{};
+
+    // For Recoiled Electron
+    double Recoil_E{};
+    double Recoil_P[3] = {0};
+    double Recoil_pT{};
+    double Recoil_theta{};
 
     // For Dark Matter
     double Parent_E{};
