@@ -146,7 +146,7 @@ Without any arguments, DSimu will run in graphic mode, which is highly not recom
 **example**
 
 ```
-/DP/Filter/particle 22 0 4 -1000 200 1
+/DP/Filter/particle 22 0 4000 -1000 200 1
 /DP/Filter/process GammaToMuPair 0 1000 -5 600 0
 ```
 
