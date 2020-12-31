@@ -156,10 +156,10 @@ void RootMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
         assert(res.size() == 6);
         froot->SetNew_Particle_Filter(
             std::stoi(res[0]), // pdf
-            std::stod(res[1]), // risingEnergyEdge
-            std::stod(res[2]), // fallingEnergyEdge
-            std::stod(res[3]), // risingScanDistanceEdge 
-            std::stod(res[4]), // fallingScanDistanceEdge
+            std::stod(res[1]), // minEnergy
+            std::stod(res[2]), // maxEnergy
+            std::stod(res[3]), // minScanDistance
+            std::stod(res[4]), // maxScanDistance
             std::stoi(res[5])  // flag
         );
     }
@@ -173,10 +173,10 @@ void RootMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
         assert(res.size() == 6);
         froot->SetNew_Process_Filter(
             res[0],            // processName
-            std::stod(res[1]), // risingEnergyEdge
-            std::stod(res[2]), // fallingEnergyEdge
-            std::stod(res[3]), // risingScanDistanceEdge
-            std::stod(res[4]), // fallingScanDistanceEdge
+            std::stod(res[1]), // minEnergy
+            std::stod(res[2]), // maxEnergy
+            std::stod(res[3]), // minScanDistance
+            std::stod(res[4]), // maxScanDistance
             std::stoi(res[4])  // flag
         );
     }
