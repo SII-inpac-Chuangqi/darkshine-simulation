@@ -85,9 +85,11 @@ void ControlManager::run() {
         // Skip events
         if ( i < SkipNumber ) continue;
 
-        cout << "--------------------------";
-        cout << " Process Event: " << i;
-        cout << " --------------------------" << endl;
+        if (ConfMgr->getEventReaderVerbose() > 1 ) {
+            cout << "--------------------------";
+            cout << " Process Event: " << i;
+            cout << " --------------------------" << endl;
+        }
 
         // convert into DEvent
         EvtReader->Convert();
@@ -103,10 +105,11 @@ void ControlManager::run() {
 
         processed_evt++;
 
-        cout << "--------------------------";
-        cout << " End of Event:  " << i;
-        cout << " --------------------------" << endl;
-
+        if (ConfMgr->getEventReaderVerbose() > 1 ) {
+            cout << "--------------------------";
+            cout << " End of Event:  " << i;
+            cout << " --------------------------" << endl;
+        }
     }
 
     /*
