@@ -39,12 +39,14 @@ public:
     bool save_geometry; // save the geometry in root
     bool check_overlaps; // check the geometry overlap, may be very slow and verbose
 
+    //----------------------------------------
+    // Root Manager Options
     G4String outfile_Name;
     G4String tree_Name;
 
+    /* event_id = id + Run_Number * Total_Event_Number */
     int Run_Number; // run number
     int Total_Event_Number; // event number
-
 
     //----------------------------------------
     // Out Collection Options

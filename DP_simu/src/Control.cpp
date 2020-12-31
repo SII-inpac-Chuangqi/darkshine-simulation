@@ -26,10 +26,11 @@ Control::Control() {
     //========================================
     /* Global Variables */
     //----------------------------------------
-    save_all_mcp = false;
     save_geometry = false;
     check_overlaps = false;
 
+    //----------------------------------------
+    // Root Manager Options
     outfile_Name = "dp_out.root";
     tree_Name = "Dark_Photon";
 
@@ -38,6 +39,7 @@ Control::Control() {
 
     //----------------------------------------
     // Out Collection Options
+    save_all_mcp = false;
     save_MC = true;
     save_initial_particle_step = true;
 
@@ -83,7 +85,7 @@ Control::Control() {
         tag_Pos_Tracker.emplace_back(0 * cm, 0 * cm, (-30. + i * 10.) * cm);
     }
 
-    assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size());
+    assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size()); // Sanity Check
 
     // Recoil Tracker
     rec_Tracker_MagField = G4ThreeVector(0, -0.5 * tesla, 0);
@@ -97,7 +99,7 @@ Control::Control() {
     rec_Pos_Tracker.emplace_back(0 * cm, 0 * cm, -4.25 * mm);
     rec_Pos_Tracker.emplace_back(0 * cm, 0 * cm, 86.25 * mm);
 
-    assert(rec_Size_Tracker.size() == rec_Pos_Tracker.size());
+    assert(rec_Size_Tracker.size() == rec_Pos_Tracker.size());  // Sanity Check
 
     //----------------------------------------
     // Electromagnetic Calorimeter
@@ -138,7 +140,6 @@ Control::Control() {
     BiasProcess = "GammaToMuPair"; // or DMProcessDMBrem
     BiasFactor = 1e20;
     BiasEmin = 4.0 * GeV;
-
 
     //========================================
     /* Optical */
