@@ -1,6 +1,7 @@
 v2.2.0
 Global:
     1. Add a control class, which handle all variables, easy to manage the whole data.
+    2. User can change variables by a yaml file
 
 DSimu:
     1. Add MC Particle Contribution to Simulated Hits; Only the three most contributed particles will be recorded.
