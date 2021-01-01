@@ -33,6 +33,7 @@ find_package(GSL REQUIRED)
 LINK_LIBRARIES(${GSL_LIBRARIES})
 
 # yaml-cpp
+find_package(yaml-cpp REQUIRED)
 LINK_LIBRARIES( yaml-cpp )
 
 find_package(XercesC REQUIRED)
@@ -206,4 +207,5 @@ install(TARGETS DDis DESTINATION bin)
 install(TARGETS DEvent LIBRARY DESTINATION lib )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent_rdict.pcm DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent.rootmap DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/DP_simu/scripts/default.yaml DESTINATION lib )
 
