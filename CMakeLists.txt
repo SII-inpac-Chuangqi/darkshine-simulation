@@ -33,8 +33,10 @@ find_package(GSL REQUIRED)
 LINK_LIBRARIES(${GSL_LIBRARIES})
 
 # yaml-cpp
-find_package(yaml-cpp REQUIRED)
-LINK_LIBRARIES( yaml-cpp )
+find_package(yaml-cpp PATHS $ENV{YAML_CPP_DIR} REQUIRED)
+MESSAGE( "${YAML_CPP_INCLUDE_DIR}" )
+MESSAGE( "${YAML_CPP_LIBRARIES}" )
+LINK_LIBRARIES( ${YAML_CPP_LIBRARIES} )
 
 find_package(XercesC REQUIRED)
 if (XercesC_FOUND)
