@@ -6,14 +6,14 @@
 # Global Variables
 ###########################################
 # save geometry in the output root file
-save_geometry: true
+save_geometry: false
 # check geometry overlap, maybe very slow
 check_overlaps: false
 
 # if signal production is activated, program will automatically
 # bias for DMProcessDMBrem and record all the MC particles
 # A process filter on target region will be applied
-signal_production: true
+signal_production: false
 
 ###########################################
 # Root Manager Settings

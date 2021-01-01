@@ -66,7 +66,7 @@ namespace {
     void PrintUsage() {
         G4cerr << " Usage: " << G4endl;
         G4cerr << " factory [-m macro ] [-o OpticalMacro] [-y yaml.file]" << G4endl;
-        G4cerr << "   note: -t option is available only for multi-threaded mode." << G4endl;
+        G4cerr << "   note: yaml file is necessary." << G4endl;
         G4cerr << G4endl;
     }
 }
@@ -83,11 +83,12 @@ int main(int argc, char **argv) {
 
     G4String macro;
     G4String OpticalMacro;
-    G4String gdmlFileName;
+    G4String yamlFileName;
 
     for (G4int i = 1; i < argc; i = i + 2) {
         if (G4String(argv[i]) == "-m") macro = argv[i + 1];
         else if (G4String(argv[i]) == "-o") OpticalMacro = argv[i + 1];
+        else if (G4String(argv[i]) == "-y") yamlFileName = argv[i + 1];
         else {
             PrintUsage();
             //return 1;
@@ -116,7 +117,7 @@ int main(int argc, char **argv) {
     }
 
     // Read Configuration from YAML
-    auto yaml_valid = dControl->ReadYAML("");
+    auto yaml_valid = dControl->ReadYAML(yamlFileName);
     if (!yaml_valid) {
         std::cerr<<"[Read YAML] ==> Reading Error from YAML file: "<<std::endl;
         return -1;
