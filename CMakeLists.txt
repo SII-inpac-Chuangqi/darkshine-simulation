@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_PLATFORM_INDEPENDENT_CODE ON)
+
+CMAKE_POLICY(SET CMP0072 NEW)
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
