@@ -41,7 +41,7 @@ bool ECAL_XYCrossing::Build(int type, G4LogicalVolume *World_LV, RootManager *fR
      * Module No: 6*6
      */
     if (build_ECAL_Center) {
-        auto ECAL_Center = new CALConstruct("ECAL_Center", ECal_LV, 0, true, true, fRootMng->GetOptical(),
+        auto ECAL_Center = new CALConstruct("ECAL_Center", ECal_LV, 0, true, true, dControl->if_optical,
                                             fCheckOverlaps);
         ECAL_Center->SetSizeXYZ(ECAL_Center_Size.x() / 2., ECAL_Center_Size.y() / 2., ECAL_Center_Size.z() / 2.);
         ECAL_Center->SetWrapSizeXYZ(ECAL_Center_Wrap_Size.x() / 2., ECAL_Center_Wrap_Size.y() / 2.,
@@ -68,7 +68,7 @@ bool ECAL_XYCrossing::Build(int type, G4LogicalVolume *World_LV, RootManager *fR
             //double w1 = pow(-1, (ip % 2)) * Size_ECALRegion.x() / 4.;
             //double w2 = pow(-1, (ip - 1) / 2) * Size_ECALRegion.x() / 4.;
             auto ECAL_Outer = new CALConstruct("ECAL_Outer_" + std::to_string(ip), ECal_LV, 0, true, true,
-                                               fRootMng->GetOptical(), fCheckOverlaps);
+                                               false, fCheckOverlaps);
             ECAL_Outer->SetSizeXYZ(ECAL_Outer_Size_Dir.x() / 2., ECAL_Outer_Size_Dir.y() / 2.,
                                    ECAL_Outer_Size_Dir.z() / 2.);
             ECAL_Outer->SetWrapSizeXYZ(ECAL_Outer_Wrap_Size.x() / 2., ECAL_Outer_Wrap_Size.y() / 2.,

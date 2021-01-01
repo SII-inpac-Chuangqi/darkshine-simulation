@@ -34,27 +34,9 @@ class RootMessenger: public G4UImessenger
 
 	  RootManager*             froot;
 
-	  G4UIdirectory*           fEventDirectory;
-	  G4UIdirectory*           fBiasDirectory;
-	  G4UIdirectory*           fFilterDirectory;
       G4UIdirectory*           fEngDirectory;
 
       G4UIcmdWithAnInteger*    fSetRndEngCmd;
-      G4UIcmdWithAnInteger*    fEvtJobCmd;
-      G4UIcmdWithAnInteger*    fJobNbCmd;
-      G4UIcmdWithABool*        fCleanCmd;
-      G4UIcmdWithABool*        fFilterCmd;
-
-      G4UIcmdWithAString*      fBiasProcessCmd;
-      G4UIcmdWithADouble*      fBiasFactorCmd;
-      G4UIcmdWithABool*        fifBiasTargetCmd;
-      G4UIcmdWithABool*        fifBiasECALCmd;
-      G4UIcmdWithADoubleAndUnit* fBiasEminCmd;
-
-      G4UIcmdWithAString* fSetNewParticleFilter;
-      G4UIcmdWithAString* fSetNewProcessFilter;
-
-      G4UIcmdWithABool*         fifOpticalCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

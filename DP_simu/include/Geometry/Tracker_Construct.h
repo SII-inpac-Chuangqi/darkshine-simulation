@@ -7,7 +7,7 @@
 
 #include "DP_simu/TrkConstruct.hh"
 #include "DP_simu/DetectorConstruction.hh"
-#include "Control.h"
+#include "Control/Control.h"
 
 #include "G4FieldManager.hh"
 #include "G4RunManager.hh"

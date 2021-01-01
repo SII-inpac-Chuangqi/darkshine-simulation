@@ -32,6 +32,9 @@ find_package(HepMC REQUIRED)
 find_package(GSL REQUIRED)
 LINK_LIBRARIES(${GSL_LIBRARIES})
 
+# yaml-cpp
+LINK_LIBRARIES( yaml-cpp )
+
 find_package(XercesC REQUIRED)
 if (XercesC_FOUND)
     INCLUDE_DIRECTORIES( ${XercesC_INCLUDE_DIRS} )

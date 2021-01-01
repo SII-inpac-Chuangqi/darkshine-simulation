@@ -29,7 +29,6 @@
 /// \brief Implementation of the DetectorConstruction class
 
 #include "DP_simu/DetectorConstruction.hh"
-#include "DP_simu/DetectorMessenger.hh"
 #include "DP_simu/RootManager.hh"
 #include "Bias_Filter/BOptrChangeCrossSection.hh"
 #include "Bias_Filter/BOptrMultiParticleChangeCrossSection.hh"
@@ -64,8 +63,6 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorConstruction::DetectorConstruction(RootManager *rootMng) {
-    fMessenger = new DetectorMessenger(this);
-
     // Trackers
     TagTrk = new Tracker_Construct();
     RecTrk = new Tracker_Construct();
@@ -87,7 +84,6 @@ DetectorConstruction::DetectorConstruction(RootManager *rootMng) {
 
 DetectorConstruction::~DetectorConstruction() {
     delete fStepLimit;
-    delete fMessenger;
     delete TagTrk;
     delete RecTrk;
     delete ECAL_Con1;
@@ -145,13 +141,13 @@ G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
     // Build HCAL
     if (dControl->build_HCAL) HCAL_Con->Build(World_LV, fRootMng, fCheckOverlaps);
 
-    // Save Geometry
-    if (dControl->save_geometry) SaveGeometry();
-
     // Book RootMng
     fRootMng->book();
     G4cout << "[Root Manager] ==> Root Manager initialized ..." << G4endl;
-    G4cout << "[Root Manager] ==> Output File " << fRootMng->GetOutFileName() << " created ..." << G4endl;
+    G4cout << "[Root Manager] ==> Output File " << dControl->outfile_Name << " created ..." << G4endl;
+
+    // Save Geometry
+    if (dControl->save_geometry) SaveGeometry();
 
     // Set User Limit 
     G4double maxStep = 10 * mm;

@@ -29,11 +29,10 @@
 /// \brief Implementation of the TrackingAction class
 
 #include "DP_simu/TrackingAction.hh"
-#include "Control.h"
+#include "Control/Control.h"
 
 #include "G4Track.hh"
 #include "G4TrackingManager.hh"
-#include "G4EventManager.hh"
 #include "G4Event.hh"
 #include "DP_simu/RootManager.hh"
 #include "G4SystemOfUnits.hh"
@@ -97,7 +96,7 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
 void TrackingAction::PostUserTrackingAction(const G4Track *aTrack) {
 
     // Find MC in collection
-    auto MCCols = froot->GetEvt()->getMcParticleCollection_Old().at("RawMCParticle");
+    auto MCCols = froot->GetEvt()->getMcParticleCollection_Old().at(dControl->RawMCCollection_Name);
     auto p = McParticle::SearchID(MCCols, aTrack->GetTrackID());
     if (p) {
         p->setERemain(aTrack->GetKineticEnergy());

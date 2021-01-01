@@ -9,11 +9,17 @@
 #include "G4Material.hh"
 #include "G4MaterialTable.hh"
 #include "G4NistManager.hh"
-#include "G4SystemofUnits.hh"
+#include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 
+// yaml-cpp
+#include "yaml-cpp/yaml.h"
+
+#include <vector>
+#include <tuple>
 
 /// \brief The central control class which should store all the data
+
 class Control {
 public:
     Control(const Control &) = delete;
@@ -28,6 +34,9 @@ public:
     // Rebuild all dependent variables
     void RebuildVariables();
 
+    // Read data from yaml
+    bool ReadYAML(const G4String& file_in);
+
 public:
     /*************************************/
     /*  Define all the variables needed  */
@@ -38,6 +47,7 @@ public:
     //----------------------------------------
     bool save_geometry; // save the geometry in root
     bool check_overlaps; // check the geometry overlap, may be very slow and verbose
+    bool signal_production; // production of signal Dark Photon Process
 
     //----------------------------------------
     // Root Manager Options
@@ -78,7 +88,7 @@ public:
     //----------------------------------------
     // World
     G4Material *World_Mat{};
-    G4ThreeVector Size_World;
+    G4ThreeVector Size_World;  // dependent
 
     //----------------------------------------
     // Target
@@ -99,17 +109,17 @@ public:
     // Tagging Tracker
     std::vector<G4ThreeVector> tag_Size_Tracker{};
     std::vector<G4ThreeVector> tag_Pos_Tracker{};
-    int tag_No_Tracker{};
-    G4ThreeVector tag_Size_TrackerRegion;
-    G4ThreeVector tag_Pos_TrackerRegion;
+    int tag_No_Tracker{};  // dependent
+    G4ThreeVector tag_Size_TrackerRegion;  // dependent
+    G4ThreeVector tag_Pos_TrackerRegion;  // dependent
     G4ThreeVector tag_Tracker_MagField;
 
     // Recoil Tracker
     std::vector<G4ThreeVector> rec_Size_Tracker{};
     std::vector<G4ThreeVector> rec_Pos_Tracker{};
-    int rec_No_Tracker{};
-    G4ThreeVector rec_Size_TrackerRegion;
-    G4ThreeVector rec_Pos_TrackerRegion;
+    int rec_No_Tracker{};  // dependent
+    G4ThreeVector rec_Size_TrackerRegion;  // dependent
+    G4ThreeVector rec_Pos_TrackerRegion;  // dependent
     G4ThreeVector rec_Tracker_MagField;
 
     //----------------------------------------
@@ -119,8 +129,8 @@ public:
     G4Material *ECALRegion_Mat{};
     G4Material *ECAL_Center_Mat{};
     G4Material *ECAL_Wrap_Mat{};
-    G4ThreeVector Size_ECALRegion;
-    G4ThreeVector Pos_ECALRegion;
+    G4ThreeVector Size_ECALRegion;  // dependent
+    G4ThreeVector Pos_ECALRegion;  // dependent
     G4ThreeVector ECAL_Center_Wrap_Size;
     G4ThreeVector ECAL_Center_Size;
     G4ThreeVector ECAL_Center_Module_No;
@@ -133,8 +143,8 @@ public:
     G4Material *HCAL_Mat{};
     G4Material *HCAL_Wrap_Mat{};
     G4Material *HCAL_Absorber_Mat{};
-    G4ThreeVector Size_HCALRegion;
-    G4ThreeVector Pos_HCALRegion;
+    G4ThreeVector Size_HCALRegion;  // dependent
+    G4ThreeVector Pos_HCALRegion;  // dependent
     G4ThreeVector HCAL_Wrap_Size;
     G4ThreeVector HCAL_Size_Dir;
     G4ThreeVector HCAL_Mod_No_Dir;
@@ -155,6 +165,14 @@ public:
     double BiasEmin;
 
     //========================================
+    /* Filters */
+    //----------------------------------------
+    bool if_filter;
+
+    std::vector<std::tuple<int, double, double, double, double, bool> > particle_filters_parameters;
+    std::vector<std::tuple<G4String, double, double, double, double, bool> > process_filters_parameters;
+
+    //========================================
     /* Optical */
     //----------------------------------------
     // if to open optical process
@@ -170,9 +188,11 @@ public:
     //----------------------------------------
 
 
-
 private:
     Control();
+
+    static G4ThreeVector readV3(const YAML::Node &n, bool unit=false);
+    static double readV2(const YAML::Node &n);
 };
 
 extern Control *dControl;

@@ -30,7 +30,8 @@
 
 #include "DP_simu/SteppingAction.hh"
 #include "DP_simu/RootManager.hh"
-#include "Control.h"
+#include "Control/Control.h"
+#include "Bias_Filter/FilterManager.hh"
 
 #include "G4Step.hh"
 #include "G4EventManager.hh"
@@ -56,17 +57,16 @@ SteppingAction::~SteppingAction() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void SteppingAction::UserSteppingAction(const G4Step *aStep) {
-    if (froot->GetifFilter_Process()) froot->Filter_Process(aStep);
-    if (froot->GetifFilter_Particle()) {
-        if (!froot->Filter_Particle(aStep)) {
+
+    if (dControl->if_filter) {
+        if (dFilterManager->GetifFilter_Process()) dFilterManager->Filter_Process(aStep);
+        if (dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle(aStep)) {
             G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
             G4EventManager::GetEventManager()->AbortCurrentEvent();
         }
     }
-
     G4StepPoint *prev = aStep->GetPreStepPoint();
     G4StepPoint *post = aStep->GetPostStepPoint();
-    auto *p = new McParticle();
 
     // Get Detector Region
     if (post && post->GetPhysicalVolume()) {
@@ -76,16 +76,6 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     if (!post) return;
     if (dControl->save_initial_particle_step
         && aStep->GetTrack()->GetTrackID() == 1) {
-
-        p->setPdg(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
-        p->setId(aStep->GetTrack()->GetTrackID());
-        p->setEnergy(post->GetTotalEnergy());
-        p->setPx(post->GetMomentum()[0]);
-        p->setPy(post->GetMomentum()[1]);
-        p->setPz(post->GetMomentum()[2]);
-        p->setVertexX(post->GetPosition()[0]);
-        p->setVertexY(post->GetPosition()[1]);
-        p->setVertexZ(post->GetPosition()[2]);
 
         /* Record all steps for certain particle */
         froot->FillParticleStep(aStep);
@@ -120,8 +110,6 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
         }
 
     }
-
-    delete p;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

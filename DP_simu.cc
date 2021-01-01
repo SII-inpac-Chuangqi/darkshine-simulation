@@ -35,7 +35,8 @@
 #include "DP_simu/TrackingAction.hh"
 #include "DP_simu/SteppingAction.hh"
 #include "DP_simu/RootManager.hh"
-#include "Control.h"
+#include "Control/Control.h"
+#include "Bias_Filter/FilterManager.hh"
 
 #include "G4StepLimiterPhysics.hh"  // Geant4.10
 #include "G4GenericBiasingPhysics.hh"
@@ -114,8 +115,19 @@ int main(int argc, char **argv) {
         UImanager->ApplyCommand(command + OpticalMacro);
     }
 
+    // Read Configuration from YAML
+    auto yaml_valid = dControl->ReadYAML("");
+    if (!yaml_valid) {
+        std::cerr<<"[Read YAML] ==> Reading Error from YAML file: "<<std::endl;
+        return -1;
+    }
+
     // Rebuild all dependent variables
+    // All the parameters are locked for now
     dControl->RebuildVariables();
+
+    // Initialize all the self-defined Singletons
+    FilterManager::CreateInstance();
 
     // Construct the default run manager
 
@@ -128,13 +140,13 @@ int main(int argc, char **argv) {
     G4VModularPhysicsList *physicsList = new FTFP_BERT;
 
     // Dark Physics
-    //physicsList->RegisterPhysics(new DarkMatterPhysics());
-    physicsList->ReplacePhysics(new DarkMatterPhysics());
+    if (dControl->signal_production) physicsList->RegisterPhysics(new DarkMatterPhysics());
+    //physicsList->ReplacePhysics(new DarkMatterPhysics());
 
     physicsList->SetVerboseLevel(0);
 
     // Optical Physics
-    if (rootMng->GetOptical()) {
+    if (dControl->if_optical) {
         physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
         auto *opticalPhysics = new G4OpticalPhysics();
         physicsList->RegisterPhysics(opticalPhysics);
@@ -143,11 +155,12 @@ int main(int argc, char **argv) {
     physicsList->RegisterPhysics(new GammaPhysics());
 
     // Biasing
-    auto *biasingPhysics = new G4GenericBiasingPhysics();
-    biasingPhysics->Bias("e-");
-    biasingPhysics->Bias("gamma");
-    physicsList->RegisterPhysics(biasingPhysics);
-
+    if (dControl->if_bias) {
+        auto *biasingPhysics = new G4GenericBiasingPhysics();
+        biasingPhysics->Bias("e-");
+        biasingPhysics->Bias("gamma");
+        physicsList->RegisterPhysics(biasingPhysics);
+    }
     //physicsList->RegisterPhysics( new OpticalPhysics( rootMng ) );
 
     runManager->SetUserInitialization(physicsList);
@@ -174,7 +187,6 @@ int main(int argc, char **argv) {
     // G4VisManager* visManager = new G4VisExecutive("Quiet");
     visManager->Initialize();
 //#endif
-
 
     if (!macro.empty())   // batch mode
     {

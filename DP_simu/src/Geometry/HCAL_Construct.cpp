@@ -52,7 +52,7 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, RootManager *fRootMng, boo
             double wy = -Size_HCALRegion.y() * 0.5 + (Size_HCALRegion.y() / HCAL_Module_No.y() * (0.5 + iy));
 
             auto HCAL = new CALConstruct(Name + "_" + std::to_string((int) (ix + iy * HCAL_Module_No.x())), HCAL_LV, 0,
-                                         true, true, fRootMng->GetOptical(), fCheckOverlaps);
+                                         true, true, dControl->if_optical, fCheckOverlaps);
             HCAL->SetSizeXYZ(HCAL_Size_Dir.x() / 2., HCAL_Size_Dir.y() / 2., HCAL_Size_Dir.z() / 2.);
             HCAL->SetWrapSizeXYZ(HCAL_Wrap_Size.x() / 2., HCAL_Wrap_Size.y() / 2., HCAL_Wrap_Size.z() / 2.);
             HCAL->SetCALMaterial(HCAL_Mat);

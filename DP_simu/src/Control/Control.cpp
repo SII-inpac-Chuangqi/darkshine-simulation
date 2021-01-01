@@ -2,8 +2,10 @@
 // Created by Zhang Yulei on 12/31/20.
 //
 
-#include "Control.h"
+#include "Control/Control.h"
 
+// Geant4
+#include "G4UnitsTable.hh"
 
 // Required by Singleton
 Control *dControl = nullptr;
@@ -28,6 +30,7 @@ Control::Control() {
     //----------------------------------------
     save_geometry = false;
     check_overlaps = false;
+    signal_production = false;
 
     //----------------------------------------
     // Root Manager Options
@@ -142,6 +145,18 @@ Control::Control() {
     BiasEmin = 4.0 * GeV;
 
     //========================================
+    /* Filters */
+    //----------------------------------------
+    if_filter = false;
+    // Example of particle filter
+    // select photon with energy < 4 GeV within range from -1 m to 0.2 m
+    particle_filters_parameters.emplace_back(22, 6 * GeV, 8 * GeV, -1 * m, 0.2 * m, 1);
+
+    // Example of processor filter
+    // exclude event with process of energy < 4 GeV within range from -1 m to 0.2 m
+    process_filters_parameters.emplace_back("GammaToMuPair", 2 * GeV, 4 * GeV, -1 * m, 0.2 * m, 0);
+
+    //========================================
     /* Optical */
     //----------------------------------------
     if_optical = false;
@@ -160,13 +175,29 @@ Control::Control() {
 void Control::RebuildVariables() {
 
     //----------------------------------------
-    // Build Options
-    build_target = !(build_only_tag_tracker || build_only_rec_tracker || build_only_ECAL || build_only_HCAL);
-    build_tag_tracker = !(build_only_target || build_only_rec_tracker || build_only_ECAL || build_only_HCAL);
-    build_rec_tracker = !(build_only_target || build_only_tag_tracker || build_only_ECAL || build_only_HCAL);
-    build_ECAL = !(build_only_target || build_only_tag_tracker || build_only_rec_tracker || build_only_HCAL);
-    build_HCAL = !(build_only_target || build_only_tag_tracker || build_only_rec_tracker || build_only_ECAL);
+    // Filters
+    // if_filter = !particle_filters_parameters.empty() || !process_filters_parameters.empty();
+    if (signal_production) {
+        save_all_mcp = true;
+        save_MC = true;
+        save_initial_particle_step = true;
+        if_bias = true;
+        if_bias_target = true;
+        BiasProcess = "DMProcessDMBrem";
+        if_filter = true;
+        process_filters_parameters.emplace_back("DMProcessDMBrem", 0 * GeV, 0 * GeV, -7.5 * mm, 7.5 * mm, 1);
+    }
 
+    //----------------------------------------
+    // Build Options
+    if (build_only_target || build_only_tag_tracker || build_only_rec_tracker ||
+        build_only_ECAL || build_only_HCAL) {
+        build_target = !(build_only_tag_tracker || build_only_rec_tracker || build_only_ECAL || build_only_HCAL);
+        build_tag_tracker = !(build_only_target || build_only_rec_tracker || build_only_ECAL || build_only_HCAL);
+        build_rec_tracker = !(build_only_target || build_only_tag_tracker || build_only_ECAL || build_only_HCAL);
+        build_ECAL = !(build_only_target || build_only_tag_tracker || build_only_rec_tracker || build_only_HCAL);
+        build_HCAL = !(build_only_target || build_only_tag_tracker || build_only_rec_tracker || build_only_ECAL);
+    }
     //----------------------------------------
     // Tagging Tracker
     assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size());
@@ -326,4 +357,176 @@ void Control::ConstructG4MaterialTable() const {
 
     // Print materials
     //G4cout << *(G4Material::GetMaterialTable()) < < G4endl;
+}
+
+bool Control::ReadYAML(const G4String &file_in) {
+    G4String infile;
+    if (file_in.empty()) infile = "default.yaml";
+    else infile = file_in;
+    auto Node = YAML::LoadFile(infile);
+
+    try {
+        //========================================
+        /* Global Variables */
+        //----------------------------------------
+        save_geometry = Node["save_geometry"].as<bool>();
+        check_overlaps = Node["check_overlaps"].as<bool>();
+        signal_production = Node["signal_production"].as<bool>();
+        //----------------------------------------
+        // Root Manager Options
+        outfile_Name = Node["RootManager"]["outfile_Name"].as<std::string>();
+        tree_Name = Node["RootManager"]["tree_Name"].as<std::string>();
+        Run_Number = Node["RootManager"]["Run_Number"].as<int>();
+        Total_Event_Number = Node["RootManager"]["Total_Event_Number"].as<int>();
+        //----------------------------------------
+        // Out Collection Options
+        save_all_mcp = Node["OutCollection"]["save_all_mcp"].as<bool>();
+        save_MC = Node["OutCollection"]["save_MC"].as<bool>();
+        save_initial_particle_step = Node["OutCollection"]["save_initial_particle_step"].as<bool>();
+        RawMCCollection_Name = Node["OutCollection"]["RawMCCollection_Name"].as<std::string>();
+        InitialParticleStepCollection_Name = Node["OutCollection"]["InitialParticleStepCollection_Name"].as<std::string>();
+        //========================================
+        /* Biasing */
+        //----------------------------------------
+        if_bias = Node["Biasing"]["if_bias"].as<bool>();
+        if_bias_target = Node["Biasing"]["if_bias_target"].as<bool>();
+        if_bias_ECAL = Node["Biasing"]["if_bias_ECAL"].as<bool>();
+        BiasProcess = Node["Biasing"]["BiasProcess"].as<std::string>();
+        BiasFactor = Node["Biasing"]["BiasFactor"].as<double>();
+        BiasEmin = Node["Biasing"]["BiasEmin"][0].as<double>()
+                   * G4UnitDefinition::GetValueOf(Node["Biasing"]["BiasEmin"][1].as<std::string>());
+        //========================================
+        /* Filters */
+        //----------------------------------------
+        if_filter = Node["Filters"]["if_filter"].as<bool>();
+        particle_filters_parameters.clear();
+        auto pfn = Node["Filters"]["particle_filters_parameters"];
+        for (auto i : pfn) {
+            particle_filters_parameters.emplace_back(
+                    i[0].as<int>(),
+                    i[1].as<double>() * G4UnitDefinition::GetValueOf(i[2].as<std::string>()),
+                    i[3].as<double>() * G4UnitDefinition::GetValueOf(i[4].as<std::string>()),
+                    i[5].as<double>() * G4UnitDefinition::GetValueOf(i[6].as<std::string>()),
+                    i[7].as<double>() * G4UnitDefinition::GetValueOf(i[8].as<std::string>()),
+                    i[9].as<bool>());
+        }
+        process_filters_parameters.clear();
+        pfn = Node["Filters"]["process_filters_parameters"];
+        for (auto i : pfn) {
+            process_filters_parameters.emplace_back(
+                    i[0].as<std::string>(),
+                    i[1].as<double>() * G4UnitDefinition::GetValueOf(i[2].as<std::string>()),
+                    i[3].as<double>() * G4UnitDefinition::GetValueOf(i[4].as<std::string>()),
+                    i[5].as<double>() * G4UnitDefinition::GetValueOf(i[6].as<std::string>()),
+                    i[7].as<double>() * G4UnitDefinition::GetValueOf(i[8].as<std::string>()),
+                    i[9].as<bool>());
+        }
+        //========================================
+        /* Geometry */
+        //----------------------------------------
+        // Build Options
+        build_target = Node["Geometry"]["build_target"].as<bool>();
+        build_tag_tracker = Node["Geometry"]["build_tag_tracker"].as<bool>();
+        build_rec_tracker = Node["Geometry"]["build_rec_tracker"].as<bool>();
+        build_ECAL = Node["Geometry"]["build_ECAL"].as<bool>();
+        build_HCAL = Node["Geometry"]["build_HCAL"].as<bool>();
+        build_only_target = Node["Geometry"]["build_only_target"].as<bool>();
+        build_only_tag_tracker = Node["Geometry"]["build_only_tag_tracker"].as<bool>();
+        build_only_rec_tracker = Node["Geometry"]["build_only_rec_tracker"].as<bool>();
+        build_only_ECAL = Node["Geometry"]["build_only_ECAL"].as<bool>();
+        build_only_HCAL = Node["Geometry"]["build_only_HCAL"].as<bool>();
+        //----------------------------------------
+        // Target
+        Target_Mat = G4Material::GetMaterial(Node["Geometry"]["Target"]["Target_Mat"].as<std::string>());
+        Target_Size = readV3(Node["Geometry"]["Target"]["Target_Size"], true);
+        Target_Pos = readV3(Node["Geometry"]["Target"]["Target_Pos"], true);
+        //----------------------------------------
+        // Tracker
+        Trk_Tar_Dis = readV2(Node["Geometry"]["Tracker"]["Trk_Tar_Dis"]);
+        Tracker_Mat = G4Material::GetMaterial(Node["Geometry"]["Tracker"]["Tracker_Mat"].as<std::string>());
+        TrackerRegion_Mat = G4Material::GetMaterial(Node["Geometry"]["Tracker"]["TrackerRegion_Mat"].as<std::string>());
+        Tracker1_Rotation = readV2(Node["Geometry"]["Tracker"]["Tracker1_Rotation"]);
+        Tracker2_Rotation = readV2(Node["Geometry"]["Tracker"]["Tracker2_Rotation"]);
+        Tracker1_Color = readV3(Node["Geometry"]["Tracker"]["Tracker1_Color"]);
+        Tracker2_Color = readV3(Node["Geometry"]["Tracker"]["Tracker2_Color"]);
+        // Tagging Tracker
+        tag_Tracker_MagField = readV3(Node["Geometry"]["Tracker"]["tag_Tracker_MagField"], true);
+        tag_Size_Tracker.clear();
+        tag_Pos_Tracker.clear();
+        for (auto node : Node["Geometry"]["Tracker"]["tag_Size_Tracker"])
+            tag_Size_Tracker.emplace_back(readV3(node, true));
+        for (auto node : Node["Geometry"]["Tracker"]["tag_Pos_Tracker"])
+            tag_Pos_Tracker.emplace_back(readV3(node, true));
+        assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size()); // Sanity Check
+        // Recoil Tracker
+        rec_Tracker_MagField = readV3(Node["Geometry"]["Tracker"]["rec_Tracker_MagField"], true);
+        rec_Size_Tracker.clear();
+        rec_Pos_Tracker.clear();
+        for (auto node : Node["Geometry"]["Tracker"]["rec_Size_Tracker"])
+            rec_Size_Tracker.emplace_back(readV3(node, true));
+        for (auto node : Node["Geometry"]["Tracker"]["rec_Pos_Tracker"])
+            rec_Pos_Tracker.emplace_back(readV3(node, true));
+
+        assert(rec_Size_Tracker.size() == rec_Pos_Tracker.size()); // Sanity Check
+        //----------------------------------------
+        // Electromagnetic Calorimeter
+        ECAL_Name = Node["Geometry"]["ECAL"]["ECAL_Name"].as<std::string>();
+        ECALRegion_Mat = G4Material::GetMaterial(Node["Geometry"]["ECAL"]["ECALRegion_Mat"].as<std::string>());
+        ECAL_Center_Mat = G4Material::GetMaterial(Node["Geometry"]["ECAL"]["ECAL_Center_Mat"].as<std::string>());
+        ECAL_Wrap_Mat = G4Material::GetMaterial(Node["Geometry"]["ECAL"]["ECAL_Wrap_Mat"].as<std::string>());
+        ECAL_Center_Wrap_Size = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Wrap_Size"], true);
+        ECAL_Center_Size = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Size"], true);
+        ECAL_Center_Module_No = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Module_No"]);
+        //----------------------------------------
+        // Hadronic Calorimeter
+        HCAL_Name = Node["Geometry"]["HCAL"]["HCAL_Name"].as<std::string>();
+        HCAL_Absorber_Mat = G4Material::GetMaterial(Node["Geometry"]["HCAL"]["HCAL_Absorber_Mat"].as<std::string>());
+        HCALRegion_Mat = G4Material::GetMaterial(Node["Geometry"]["HCAL"]["HCALRegion_Mat"].as<std::string>());
+        HCAL_Mat = G4Material::GetMaterial(Node["Geometry"]["HCAL"]["HCAL_Mat"].as<std::string>());
+        HCAL_Wrap_Mat = G4Material::GetMaterial(Node["Geometry"]["HCAL"]["HCAL_Wrap_Mat"].as<std::string>());
+        HCAL_Wrap_Size = readV3(Node["Geometry"]["HCAL"]["HCAL_Wrap_Size"], true);
+        HCAL_Size_Dir = readV3(Node["Geometry"]["HCAL"]["HCAL_Size_Dir"], true);
+        HCAL_Mod_No_Dir = readV3(Node["Geometry"]["HCAL"]["HCAL_Mod_No_Dir"]);
+        HCAL_Module_No = readV3(Node["Geometry"]["HCAL"]["HCAL_Module_No"]);
+        HCAL_Module_Gap = readV2(Node["Geometry"]["HCAL"]["HCAL_Module_Gap"]);
+        HCAL_Absorber_Thickness = readV2(Node["Geometry"]["HCAL"]["HCAL_Absorber_Thickness"]);
+    }
+    catch (YAML::BadConversion &e) {
+        std::cerr << "[Read YAML] ==> " << e.msg << std::endl;
+        return false;
+    }
+    catch (YAML::InvalidNode &e) {
+        std::cerr << "[Read YAML] ==> " << e.msg << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+G4ThreeVector Control::readV3(const YAML::Node &n, bool unit) {
+
+    // Sanity Check
+    if ((n.size() != 3 && !unit) || (n.size() != 6 && unit)) {
+        std::cerr << "[Reading Vector from YAML] ==> vector size is incompatible with unit..." << std::endl;
+        return G4ThreeVector();
+    }
+
+    double tmp[3] = {0.};
+    for (unsigned i = 0; i < 3; ++i) {
+        auto extra = unit ? G4UnitDefinition::GetValueOf(n[2 * i + 1].as<std::string>()) : 1;
+        tmp[i] = n[unit ? 2 * i : i].as<double>() * extra;
+    }
+
+    G4ThreeVector res;
+    res.set(tmp[0], tmp[1], tmp[2]);
+    return res;
+}
+
+/// \brief read value from yaml with unit
+double Control::readV2(const YAML::Node &n) {
+    if (n.size() != 2) {
+        std::cerr << "[Reading Value with Unit from YAML] ==> Value size is incompatible with unit..." << std::endl;
+        return -999999;
+    }
+    return n[0].as<double>() * G4UnitDefinition::GetValueOf(n[1].as<std::string>());
 }

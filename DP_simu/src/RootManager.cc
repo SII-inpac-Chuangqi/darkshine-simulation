@@ -4,7 +4,6 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TString.h"
-#include "TInterpreter.h"
 #include "TGeoManager.h"
 
 #include "G4TouchableHistory.hh"
@@ -19,14 +18,12 @@ RootManager::RootManager()
         : rootFile(nullptr), tr(nullptr), if_clean(false) {
 
     fMessenger = new RootMessenger(this);
-    outfilename = dControl->outfile_Name;
+    outfile_name = dControl->outfile_Name;
 
     Evt = new DEvent();
     Evt->Initialization(nALL);
     initialize();
     if_Optical = dControl->if_optical;
-    if_record_ip = true;
-    fFilterMng = std::make_shared<FilterManager>();
 
     fStart = dControl->Run_Number;
     fEvtNb = dControl->Total_Event_Number;
@@ -40,15 +37,10 @@ void RootManager::initialize() {
     Evt->Initialization(nVector);
 
     if (if_Optical) {
-        for (itr_i = Optical_No.begin(); itr_i != Optical_No.end(); itr_i++) itr_i->second = 0;
-        for (itrvec_double = Optical_Time.begin(); itrvec_double != Optical_Time.end(); itrvec_double++)
-            itrvec_double->second->clear();
-
-        for (itrvec_double = Optical_E.begin(); itrvec_double != Optical_E.end(); itrvec_double++)
-            itrvec_double->second->clear();
-
-        for (itrvec_int = Optical_DetID.begin(); itrvec_int != Optical_DetID.end(); itrvec_int++)
-            itrvec_int->second->clear();
+        for (auto o : Optical_No) o.second = 0;
+        for (auto o : Optical_Time) o.second->clear();
+        for (auto o : Optical_E) o.second->clear();
+        for (auto o : Optical_DetID) o.second->clear();
     }
 }
 
@@ -62,7 +54,7 @@ RootManager::~RootManager() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 /// \brief Create rootFile.
 void RootManager::book() {
-    G4String fileName = outfilename;
+    G4String fileName = outfile_name;
     rootFile = new TFile(fileName, "RECREATE");
 
     if (!rootFile) {
@@ -89,7 +81,7 @@ void RootManager::book() {
             Evt->RegisterStepCollection(dControl->InitialParticleStepCollection_Name);
     }
 
-    tr->Branch("DEvent", &Evt, 32000000, 0);
+    tr->Branch("DEvent", &Evt, 320000000, 0);
 
     G4cout << "===> ROOT file is opened in " << fileName << G4endl;
 }
@@ -147,7 +139,6 @@ void RootManager::FillPNE(G4double E1, G4double E2) {
     auto EnergyECAL = Evt->getPnEnergyEcal();
     Evt->setPnEnergyEcal(E2 > EnergyECAL ? E2 : EnergyECAL);
 }
-
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 /// \brief

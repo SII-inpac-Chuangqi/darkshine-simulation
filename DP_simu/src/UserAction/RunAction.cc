@@ -48,8 +48,6 @@ RunAction::~RunAction() = default;
 
 void RunAction::BeginOfRunAction(const G4Run* aRun)
 {
-
-
     G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
     
     //inform the runManager to save random number seed

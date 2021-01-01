@@ -108,9 +108,6 @@ private:
     // Root Manaer
     RootManager *fRootMng;
 
-    // Messenger
-    DetectorMessenger *fMessenger;
-
     /// Tracker Construction Class
 
     Tracker_Construct *TagTrk;

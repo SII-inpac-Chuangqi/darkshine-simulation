@@ -29,7 +29,7 @@ void OpticalPhysics::ConstructProcess()
         
     G4cout<<"[Optical Phyiscs] ==> Initiated..."<<G4endl;
 
-    if ( frootMng->GetOptical() ) {
+    if (true ) {
         G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
         //G4Cerenkov* cerenkov = new G4Cerenkov();
         auto* scintillation = new G4Scintillation();

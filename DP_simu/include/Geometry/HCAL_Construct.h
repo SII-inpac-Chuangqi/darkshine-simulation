@@ -8,7 +8,7 @@
 #include "CALConstruct.hh"
 #include "DP_simu/DetectorConstruction.hh"
 
-#include "Control.h"
+#include "Control/Control.h"
 
 #include "G4SystemOfUnits.hh"
 

@@ -29,6 +29,8 @@ bool DEventDisplay::drawEvent(int id, bool resCam) {
     // Draw Geometry first
     if (_drawDetector) drawDetector();
 
+    if (!gGeoManager) return false;
+
     // read event
     evt = shared_ptr<AnaEvent>(new AnaEvent());
     EvtReader->setEvt(evt);

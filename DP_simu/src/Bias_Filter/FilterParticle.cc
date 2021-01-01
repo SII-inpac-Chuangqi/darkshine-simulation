@@ -53,7 +53,7 @@ G4bool FilterParticle::In_Filter(const G4Step* aStep) {
             aTrack = (*sec_itr);
             // Select particle
             if ( PDG != aTrack->GetParticleDefinition()->GetPDGEncoding() ) continue;
-            // Energy of secondaries reqirement
+            // Energy of secondaries requirement
             energy = aTrack->GetTotalEnergy();
             if(In_Range(energy, Energy_Min, Energy_Max) ) {
                 Found_Result = true;
