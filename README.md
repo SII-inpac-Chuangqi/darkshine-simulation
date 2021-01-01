@@ -41,11 +41,30 @@ Now it's the time to have fun with them. :relaxed:
 ## Running DSimu with macro
 Without any arguments, DSimu will run in graphic mode, which is highly not recommended unless it is running on a computer with great graphic card.
 
-**Batch Mode**: _DSimu [ -y file.yaml] [ -m config.file ]_
+**Batch Mode**: ```DSimu [ -y file.yaml] [ -m config.file ]```
 
 - (**IMPORTANT**)The config file after '-y' is the yaml file, which will control the whole configuration of the program.
   The default yaml file is in ```DP_simu/scripts/```, or it will also be installed to the ```CMAKE_ISNTALL_PREFIX``` path. 
 - The config file after '-m' is the normal configuration, e.g. particle gun, beam on number.
+
+## Running DAna with macro
+There are two commands for **DAna**:
+- ```DAna -c config.txt```
+  - **DAna** will run the config.txt.
+- ```DAna -x``` 
+  - **DAna** will print out all the available processors and their corresponding description
+    and parameters (with the default value). One can simply generate an example config file by the bash command 
+    ```DAna -x > config.txt```
+
+## Running DDis with macro
+Event Display is quite straight forward.
+- ```DDis -h```
+  - print out the help message
+- ```DDis -b```
+  - batch mode, which only print out the detector information
+- ```DDis [-f geometry.root]```
+  - the command ```-f geometry.root``` is not necessary to run the graphic mode. 
+    if no specific root file, **DDis** will automatically run "dp_out.root".  
 
 ## Writing DSimu config file
 

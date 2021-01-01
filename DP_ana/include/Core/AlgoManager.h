@@ -17,20 +17,24 @@ public:
     ~AlgoManager() = default;
 
     // Get Methods
-    const AnaProcessorMap &getAnaProcessors() const {
+    [[nodiscard]] const AnaProcessorMap &getAnaProcessors() const {
         return AnaProcessors;
     }
 
-    int getVerbose() const {
+    [[nodiscard]] int getVerbose() const {
         return Verbose;
     }
 
-    long long int getProcessedEvt() const {
+    [[nodiscard]] long long int getProcessedEvt() const {
         return Processed_Evt;
     }
 
-    const map<std::string, double> &getProcessingAvgTime() const {
+    [[nodiscard]] const map<std::string, double> &getProcessingAvgTime() const {
         return processing_avg_time;
+    }
+
+    [[nodiscard]] const vector<std::string> &getAnaProcessorList() const {
+        return AnaProcessorList;
     }
 
     AnaProcessorVecUniPtr getAllAnaProcessors();
@@ -73,7 +77,7 @@ private:
     std::map<std::string, double> processing_avg_time;
 
     // Verbosity
-    int Verbose{1};
+    int Verbose{0};
 
     AnaProcessorMap AnaProcessors;
     vector<std::string> AnaProcessorList;

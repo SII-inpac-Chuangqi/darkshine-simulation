@@ -12,6 +12,9 @@
 RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name),
                                                                                      std::move(evtwrt)) {
 
+    // Add description for this AnaProcessor
+    Description = "ECAL Reconstruction Processor";
+
     // Register parameters
     RegisterIntParameter("Verbose", "Verbosity Variable", &verbose, 0);
     RegisterDoubleParameter("W0", "W0", &W0, 0.);
@@ -23,9 +26,6 @@ RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProce
 }
 
 void RecECAL::Begin() {
-
-    // Add description for this AnaProcessor
-    Description = "ECAL Reconstruction Processor";
 
     // Register Output Variable
     if (EvtWrt) {

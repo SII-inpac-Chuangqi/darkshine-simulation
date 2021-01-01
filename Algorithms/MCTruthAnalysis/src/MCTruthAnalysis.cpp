@@ -14,9 +14,6 @@ MCTruthAnalysis::MCTruthAnalysis(string name, shared_ptr<EventStoreAndWriter> ev
                                                                                                      std::move(
                                                                                                              evtwrt)) {
     SecFinder = std::shared_ptr<SecondaryMaxEFinder>(new SecondaryMaxEFinder(EvtWrt));
-}
-
-void MCTruthAnalysis::Begin() {
 
     // Add description for this AnaProcessor
     Description = "MC Truth Analysis";
@@ -24,6 +21,9 @@ void MCTruthAnalysis::Begin() {
     // Register Parameters
     RegisterIntParameter("Verbose", "Verbosity", &verbose, 0);
     RegisterIntParameter("Sec_PDG", "PDG of secondary", &Sec_PDG, 500012);
+}
+
+void MCTruthAnalysis::Begin() {
 
     // Register Outputs
     if (EvtWrt) {

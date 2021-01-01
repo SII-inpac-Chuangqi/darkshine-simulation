@@ -25,6 +25,8 @@ public:
 
     void run();
 
+    void PrintConfig();
+
     //
 
     AlgoManager *getAlgo() const {
@@ -91,6 +93,10 @@ public:
         OutName = outName;
     }
 
+    void setOnlyPrintUsage(bool onlyPrintUsage) {
+        Only_PrintUsage = onlyPrintUsage;
+    }
+
 private:
     int RunNumber{0};
     int EventNumber{-1};
@@ -99,9 +105,11 @@ private:
     std::string FileName;
     std::string OutName;
 
-    AlgoManager *algo;
-    EventReader *EvtReader;
-    ConfigManager *ConfMgr;
+    AlgoManager *algo{};
+    EventReader *EvtReader{};
+    ConfigManager *ConfMgr{};
+
+    bool Only_PrintUsage = false;
 
 };
 

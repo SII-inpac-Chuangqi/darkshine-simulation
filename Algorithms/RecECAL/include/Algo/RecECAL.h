@@ -36,6 +36,10 @@ public:
         //ECAL_TF->Clean();
     }
 
+    const string &getDescription() const override {
+        return Description;
+    }
+
 private:
     // output variables
     double E_total{0.};
@@ -46,7 +50,6 @@ private:
     double Moments_Y[4] = {0.};
     double Moments_Z[4] = {0.};
 
-
     // Verbosity
     int verbose{0};
     // Input Parameter
@@ -55,7 +58,6 @@ private:
     double d_cut{1.};
     double r_cut{0.5};
     int n_fraction{1};
-
 
     // Internal Algorithm Processors
 };

@@ -12,6 +12,7 @@ DSimu:
 
 DAna:
     1. Add geometry in config file; One can access to geomerty by gGeoManager, with including header file "TGeoManager.h"
+    2. Add command "DAna -x", which will print out an example config.txt
 
 DDis:
     1. Add the full detector geometry display.
