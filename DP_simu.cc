@@ -65,7 +65,7 @@
 namespace {
     void PrintUsage() {
         G4cerr << " Usage: " << G4endl;
-        G4cerr << " factory [-m macro ] [-o OpticalMacro] [-t nThreads]" << G4endl;
+        G4cerr << " factory [-m macro ] [-o OpticalMacro] [-y yaml.file]" << G4endl;
         G4cerr << "   note: -t option is available only for multi-threaded mode." << G4endl;
         G4cerr << G4endl;
     }
