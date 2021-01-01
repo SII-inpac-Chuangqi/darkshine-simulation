@@ -61,8 +61,8 @@ Without any arguments, DSimu will run in graphic mode, which is highly not recom
 **example**
 
 ```
-/DP/Filter/particle 22 0 4000 -1000 200 1
-/DP/Filter/process GammaToMuPair 0 1000 -5 600 0
+particle_filter_parameter 22 0 4000 -1000 200 1
+process_filter_parameter GammaToMuPair 0 1000 -5 600 0
 ```
 
 Each command will construct a new  ```FilterParticle``` or ```FilterProcess``` class, their pointers are emplace_back to a vector.
@@ -75,7 +75,7 @@ flag = 0: The Event to be computed must not have this secondary particle/process
 
 **usage of "edge":** Use "edge of the square wave" to specify energy range and scan distance range. So we can use 2 parameters to construct 5 types of filter.
 
-| filter type | rising energy edge [MeV] | falling energy edge [MeV] |
+| filter type | Min Energy [MeV] | Max Energy [MeV] |
 | ---| ---| --- |
 | low-pass filter | 0 | 4000 |
 | high-pass filter | 4000 | 0 |
@@ -83,7 +83,7 @@ flag = 0: The Event to be computed must not have this secondary particle/process
 | band-stop filter | 8000 | 4000 |
 | all-pass filter | 0 | 0 |
 
-| filter type | rising scan distance edge [mm] | falling scan distance edge [mm] |
+| filter type | min scan distance [mm] | max scan distance [mm] |
 | ---| ---| --- |
 | band-pass filter | -1000 | 200 |
 | band-stop filter | 200 | -1000 |
