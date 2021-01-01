@@ -131,11 +131,11 @@ MC particles satisfied any one of the following conditions will be recorded in t
 - Momentum > 1 GeV
 - Energy > 1 GeV and Energy < 8 GeV
 - Muon
-- Pion ($`\pi ^0`$ and $`\pi ^\pm`$)
+- Pion
 - Kaon
 - Proton
 - Neutron
-- Neutrino ($`\nu _e`$ and $`\nu _\mu `$)
+- Neutrino 
 
 ## Detector ID
 For detector ID, DetectorID and (DetectorID_x, DetectorID_y, DetectorID_z) are the same. 
