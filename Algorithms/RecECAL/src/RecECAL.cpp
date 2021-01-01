@@ -12,15 +12,13 @@
 RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name),
                                                                                      std::move(evtwrt)) {
 
-    ECAL_cluster = std::shared_ptr<ECAL_Cluster>(new ECAL_Cluster());
-
     // Register parameters
     RegisterIntParameter("Verbose", "Verbosity Variable", &verbose, 0);
     RegisterDoubleParameter("W0", "W0", &W0, 0.);
     RegisterDoubleParameter("d_cut", "Cluster: d_cut", &d_cut, 0.2);
     RegisterDoubleParameter("r_cut", "Cluster: r_cut", &r_cut, 0.5);
-    RegisterIntParameter("Z_Layers", "Nb of Z layers", &nb_z, 1);
-    RegisterIntParameter("E_n_fraction", "the n-th large E fraction", &n_fraction, 1);
+    //RegisterIntParameter("Z_Layers", "Nb of Z layers", &nb_z, 1);
+    RegisterIntParameter("E_n_fraction", "the n-th large E fraction", &n_fraction, 20);
 
 }
 
@@ -66,21 +64,6 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
             Moments_Z[i-1] = cluster_ana->FindMoment(i, 3, true);
 
         }
-
-        // Clustering
-        auto reg_col = evt->RegisterCalorimeterHitCollection("Cluster_Center");
-        ECAL_cluster->setOutCollection(reg_col);
-        ECAL_cluster->ClusterHits(hits, nb_z, d_cut, r_cut);
-
-
-        if (verbose > 0) {
-            std::cout << "-- # of clusters found in ECAL: " << ECAL_cluster->getRawClusters().size() << std::endl;
-            std::cout << "-- # of clustered hits: " << ECAL_cluster->getNbHitsClustered() << std::endl;
-            std::cout << "-- # of not clustered hits: " << ECAL_cluster->getNbHitsNotClustered() << std::endl;
-        }
-
-
-        // ECAL_Wrt->FillHits(hits);
 
     } else {
         // if not exists, print out error

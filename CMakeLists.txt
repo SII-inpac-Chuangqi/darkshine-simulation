@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_PLATFORM_INDEPENDENT_CODE ON)
 
-CMAKE_POLICY(SET CMP0072 NEW)
+set(OpenGL_GL_PREFERENCE GLVND)
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
@@ -35,9 +35,9 @@ find_package(GSL REQUIRED)
 LINK_LIBRARIES(${GSL_LIBRARIES})
 
 # yaml-cpp
-find_package(yaml-cpp PATHS $ENV{YAML_CPP_DIR} REQUIRED)
-MESSAGE( "${YAML_CPP_INCLUDE_DIR}" )
-MESSAGE( "${YAML_CPP_LIBRARIES}" )
+find_package(yaml-cpp REQUIRED)
+# MESSAGE( "${YAML_CPP_INCLUDE_DIR}" )
+# MESSAGE( "${YAML_CPP_LIBRARIES}" )
 LINK_LIBRARIES( ${YAML_CPP_LIBRARIES} )
 
 find_package(XercesC REQUIRED)

@@ -58,7 +58,6 @@ private:
 
 
     // Internal Algorithm Processors
-    shared_ptr<ECAL_Cluster> ECAL_cluster;
 };
 
 
