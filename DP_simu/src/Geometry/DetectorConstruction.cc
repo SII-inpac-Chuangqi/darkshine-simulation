@@ -34,7 +34,6 @@
 #include "Bias_Filter/BOptrMultiParticleChangeCrossSection.hh"
 #include "DP_simu/TrkConstruct.hh"
 
-#include "G4Material.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
@@ -58,8 +57,6 @@
 #include <iterator>
 #include <cstdio>
 #include <filesystem>
-
-//#include "G4ios.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
