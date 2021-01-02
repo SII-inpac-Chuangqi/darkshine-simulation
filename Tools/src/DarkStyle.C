@@ -92,7 +92,7 @@ TStyle *DarkStyle() {
     // Set Legend Attributes
     darkStyle->SetLegendBorderSize(0);
     darkStyle->SetLegendFont(font);
-    darkStyle->SetLegendTextSize(0.03);
+    //darkStyle->SetLegendTextSize(0.03);
 
 
     return darkStyle;
