@@ -196,6 +196,7 @@ related method: ```In_Range()```
 | range | [ bin_x, min_x, max_x ], same as ```TH1``` | [50, 1, 100] |
 | label | variable label to be set as the title of X axis ( TLatex supported ) | "E_{e} [GeV]" |
 | *selection_title** | The third line on the figure texts  | "No Selection" |
+| *log_x** | if to apply log-scale on X axis | true |
 | *log_y** | if to apply log-scale on Y axis | true |
 | *grid_y** | if to draw grid along x axis | false |
 | *normalize** | if to normalize the samples | false |
