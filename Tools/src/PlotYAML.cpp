@@ -138,7 +138,7 @@ void PlotYAML::Plot() {
 
                 // Format X Axis
                 TString x_title;
-                if (var["label"][1].as<std::string>() != "")
+                if (!var["label"][1].as<std::string>().empty())
                     x_title = TString::Format("%s [%s]", var["label"][0].as<std::string>().data(),
                                               var["label"][1].as<std::string>().data());
                 else
