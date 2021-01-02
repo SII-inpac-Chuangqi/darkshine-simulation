@@ -122,15 +122,16 @@ void PlotYAML::Plot() {
             }
             if (i == 0) {
                 // Format Y Axis
+                auto y_label = (normalize) ? "A.U." : "Yields";
                 double bin_size =
                         (var["range"][2].as<double>() - var["range"][1].as<double>()) / var["range"][0].as<int>();
                 TString y_title;
                 if (bin_size - floor(bin_size) == 0.)
-                    y_title = TString::Format("Yield / %.f%s", bin_size, var["label"][1].as<std::string>().data());
+                    y_title = TString::Format("%s / %.f%s",y_label, bin_size, var["label"][1].as<std::string>().data());
                 else if (bin_size - floor(bin_size) > 0. && log(bin_size - floor(bin_size))/log(10) >= -2. )
-                    y_title = TString::Format("Yield / %.2f%s", bin_size, var["label"][1].as<std::string>().data());
+                    y_title = TString::Format("%s / %.2f%s",y_label, bin_size, var["label"][1].as<std::string>().data());
                 else if (bin_size - floor(bin_size) > 0. && log(bin_size - floor(bin_size))/log(10) < -2. )
-                    y_title = TString::Format("Yield / %.5f%s", bin_size, var["label"][1].as<std::string>().data());
+                    y_title = TString::Format("%s / %.5f%s",y_label, bin_size, var["label"][1].as<std::string>().data());
 
                 // Format X Axis
                 auto x_title = TString::Format("%s [%s]", var["label"][0].as<std::string>().data(),
