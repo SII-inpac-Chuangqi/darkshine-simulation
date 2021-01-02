@@ -38,7 +38,7 @@ LINK_LIBRARIES(${GSL_LIBRARIES})
 find_package(yaml-cpp REQUIRED)
 # MESSAGE( "${YAML_CPP_INCLUDE_DIR}" )
 # MESSAGE( "${YAML_CPP_LIBRARIES}" )
-LINK_LIBRARIES( ${YAML_CPP_LIBRARIES} )
+LINK_LIBRARIES( yaml-cpp )
 
 find_package(XercesC REQUIRED)
 if (XercesC_FOUND)
@@ -108,6 +108,7 @@ HEADER_DIRECTORIES(Util_List Util_File "Utility")
 include_directories(DP_simu/include
         DP_ana/include
         DP_display/include
+        Tools/include
         ./
         ${Util_List}
         ${Algo_List}
@@ -130,6 +131,8 @@ FILE(GLOB_RECURSE Algo_headers Algorithms/*/include/*)
 file(GLOB Display_sources DP_display/src/* )
 file(GLOB Display_headers DP_display/include/* )
 
+file(GLOB Tools_sources Tools/src/* )
+file(GLOB Tools_headers Tools/include/* )
 #----------------------------------------------------------------------------
 # Generate ROOT library for DEvent
 #
@@ -186,22 +189,25 @@ add_library(DEvent SHARED ${dict_header_shared} ${dict_source} G__DEvent.cxx)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-link_libraries(DEvent)
-
 add_executable(DSimu DP_simu.cc ${Simu_sources} ${Simu_headers}
         ${Util_sources} ${Util_headers})
 
 target_link_libraries(DSimu ${Geant4_LIBRARIES}
         ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES}
-        ${PYTHIA6_LIBRARIES})
+        ${PYTHIA6_LIBRARIES} DEvent)
 
 add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         ${Util_sources} ${Util_headers}
         ${Algo_sources} ${Algo_headers})
+target_link_libraries(DAna DEvent)
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers} ${Ana_sources} ${Ana_headers}
                                    ${Util_sources} ${Util_headers} ${Algo_sources} ${Algo_headers})
-#target_link_libraries(DDis DEventDisplay)
+target_link_libraries(DDis DEvent)
+
+add_executable(DPlot Tools/DPlot.cpp ${Tools_sources} ${Tools_headers})
+target_link_libraries(DPlot yaml-cpp)
+
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #

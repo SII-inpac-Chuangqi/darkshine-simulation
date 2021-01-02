@@ -19,6 +19,10 @@ DDis:
     2. Add SimulatedHits Collection display; Add initial particle step collection display; Add MC particle tracks display.
     3. Now support Ana Processor module. One can easily visualize the processing of AnaProcessor.
 
+DPlot:
+    1. read yaml file as config file
+    2. Easy to make some comparison plots
+
 v2.1.1
 Added DDis module, which can print out the detector geometry very fast
 

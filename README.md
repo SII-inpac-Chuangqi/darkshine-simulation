@@ -1,14 +1,15 @@
-# Dark SHINE Software: DSimu && DAna
+# Dark SHINE Software Package
 The second version of dark shine simulation. :v:
 
 [[_TOC_]]
 
 # Get Started
-There are three parts of the Dark SHINE Software: **DSimu**, **DAna** and **DDis**.
+There are four parts of the Dark SHINE Software: **DSimu**, **DAna**, **DDis**, **DPlot**.
 
 - **DSimu** is the simulation program based on Geant4 and ROOT, characterized by Dark SHINE detector.
 - **DAna** is a framework for the analysis and reconstruction tools. It requires the output ROOT file from **DSimu**.
 - **DDis** is the event display tool for Dark SHINE specifically.
+- **DPlot** is a basic plotting program for quick plot, which is based on ROOT. 
 
 They could be executed separately, with totally different configuration file format.
 ## Installation
@@ -35,10 +36,15 @@ make -j100  # Just do it!
 make install
 ```
 
-Now in your install directory, there should be two binary files: **DSimu** and **DAna**.
+Now in your install directory, everything should be there.
 Now it's the time to have fun with them. :relaxed:
 
-## Running DSimu with macro
+## Quick guide on DSS
+
+<mark>All the example scripts can be found under the "scripts" folder in their corresponding source directories.<mark>
+
+
+### DSimu
 Without any arguments, DSimu will run in graphic mode, which is highly not recommended unless it is running on a computer with great graphic card.
 
 **Batch Mode**: ```DSimu [ -y file.yaml] [ -m config.file ]```
@@ -47,7 +53,7 @@ Without any arguments, DSimu will run in graphic mode, which is highly not recom
   The default yaml file is in ```DP_simu/scripts/```, or it will also be installed to the ```CMAKE_ISNTALL_PREFIX``` path. 
 - The config file after '-m' is the normal configuration, e.g. particle gun, beam on number.
 
-## Running DAna with macro
+### DAna
 There are two commands for **DAna**:
 - ```DAna -c config.txt```
   - **DAna** will run the config.txt.
@@ -56,7 +62,7 @@ There are two commands for **DAna**:
     and parameters (with the default value). One can simply generate an example config file by the bash command 
     ```DAna -x > config.txt```
 
-## Running DDis with macro
+### DDis
 Event Display is quite straight forward.
 - ```DDis -h```
   - print out the help message
@@ -65,6 +71,15 @@ Event Display is quite straight forward.
 - ```DDis [-f geometry.root]```
   - the command ```-f geometry.root``` is not necessary to run the graphic mode. 
     if no specific root file, **DDis** will automatically run "dp_out.root".  
+
+### DPlot 
+This is a really naive plotting program for newbies and lazy boys.
+- ```DPlot -c config.yaml```
+  - As like other DSS tools, **DPlot** receives yaml file as its configuration. 
+  The execution of **DPlot** will generate all the plots under
+    ```./<name>/```, where ```name``` is the first block in yaml file, 
+    which represents the identifier of the whole job. 
+
 
 ## Writing DSimu config file
 

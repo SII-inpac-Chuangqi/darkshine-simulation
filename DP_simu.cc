@@ -107,15 +107,6 @@ int main(int argc, char **argv) {
     // Initiate Control Class
     Control::CreateInstance();
 
-    // Construct the root manager
-    auto *rootMng = new RootManager;
-
-    if (!OpticalMacro.empty())   // batch mode
-    {
-        G4String command = "/control/execute ";
-        UImanager->ApplyCommand(command + OpticalMacro);
-    }
-
     // Read Configuration from YAML
     auto yaml_valid = dControl->ReadYAML(yamlFileName);
     if (!yaml_valid) {
@@ -129,6 +120,15 @@ int main(int argc, char **argv) {
 
     // Initialize all the self-defined Singletons
     FilterManager::CreateInstance();
+
+    // Construct the root manager
+    auto *rootMng = new RootManager;
+
+    if (!OpticalMacro.empty())   // batch mode
+    {
+        G4String command = "/control/execute ";
+        UImanager->ApplyCommand(command + OpticalMacro);
+    }
 
     // Construct the default run manager
 
