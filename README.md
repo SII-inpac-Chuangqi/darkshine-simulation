@@ -199,8 +199,7 @@ related method: ```In_Range()```
 | *log_y** | if to apply log-scale on Y axis | true |
 | *grid_y** | if to draw grid along x axis | false |
 | *normalize** | if to normalize the samples | false |
-| *
-** | the scale factor to scale Y axis | 2.0 |
+| *y_scale** | the scale factor to scale Y axis | 2.0 |
 
 - *items* with star (*) are optional.
 - The default value of optional items is *false or NULL*.
