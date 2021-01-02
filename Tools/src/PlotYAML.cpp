@@ -57,7 +57,7 @@ void PlotYAML::ReadHists() {
 
             std::string selection = sample["selection"].IsDefined() ? sample["selection"].as<std::string>() : "";
 
-            auto h = std::make_shared<TH1D>(("h_"+std::to_string(n)).data(), name.data(), xbin, xmin, xmax);
+            auto h = std::make_shared<TH1D>(("h_" + std::to_string(n)).data(), name.data(), xbin, xmin, xmax);
             std::string draw_text = var_name + ">>" + std::string(h->GetName());
             tree->Draw(draw_text.data(), selection.data(), "");
             if (auto s = sample["line_attr"]; s.IsDefined()) {
@@ -116,7 +116,7 @@ void PlotYAML::Plot() {
             auto h = hists_list.at(var_name).at(i);
             if (normalize) {
                 double total = h->Integral();
-                h->Scale(1./total);
+                h->Scale(1. / total);
                 y_max /= total;
                 y_min /= total;
             }
@@ -127,15 +127,23 @@ void PlotYAML::Plot() {
                         (var["range"][2].as<double>() - var["range"][1].as<double>()) / var["range"][0].as<int>();
                 TString y_title;
                 if (bin_size - floor(bin_size) == 0.)
-                    y_title = TString::Format("%s / %.f%s",y_label, bin_size, var["label"][1].as<std::string>().data());
-                else if (bin_size - floor(bin_size) > 0. && log(bin_size - floor(bin_size))/log(10) >= -2. )
-                    y_title = TString::Format("%s / %.2f%s",y_label, bin_size, var["label"][1].as<std::string>().data());
-                else if (bin_size - floor(bin_size) > 0. && log(bin_size - floor(bin_size))/log(10) < -2. )
-                    y_title = TString::Format("%s / %.5f%s",y_label, bin_size, var["label"][1].as<std::string>().data());
+                    y_title = TString::Format("%s / %.f%s", y_label, bin_size,
+                                              var["label"][1].as<std::string>().data());
+                else if (bin_size - floor(bin_size) > 0. && log(bin_size - floor(bin_size)) / log(10) >= -2.)
+                    y_title = TString::Format("%s / %.2f%s", y_label, bin_size,
+                                              var["label"][1].as<std::string>().data());
+                else if (bin_size - floor(bin_size) > 0. && log(bin_size - floor(bin_size)) / log(10) < -2.)
+                    y_title = TString::Format("%s / %.5f%s", y_label, bin_size,
+                                              var["label"][1].as<std::string>().data());
 
                 // Format X Axis
-                auto x_title = TString::Format("%s [%s]", var["label"][0].as<std::string>().data(),
-                                                  var["label"][1].as<std::string>().data());
+                TString x_title;
+                if (var["label"][1].as<std::string>() != "")
+                    x_title = TString::Format("%s [%s]", var["label"][0].as<std::string>().data(),
+                                              var["label"][1].as<std::string>().data());
+                else
+                    x_title = TString::Format("%s", var["label"][0].as<std::string>().data());
+
                 h->GetXaxis()->SetTitle((x_title));
                 h->GetYaxis()->SetTitle((y_title));
                 h->GetYaxis()->CenterTitle();
