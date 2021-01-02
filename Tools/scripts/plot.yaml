@@ -10,6 +10,7 @@ variables:
     label: [ "E_{max}", "GeV" ]
     # Optional
     selection_title: "No Selection"
+    y_scale: 2.5
     log_y: false
     normalize: true
     grid_y : true
