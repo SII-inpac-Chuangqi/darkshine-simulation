@@ -20,7 +20,6 @@ void DEventDisplay::RunAnaProcessors() {
     auto recECAL = shared_ptr<RecECAL>(new RecECAL("RecECAL", nullptr));
 
     *((recECAL->getIntParameters()).at("Verbose").second) = 1;
-    *((recECAL->getIntParameters()).at("Z_Layers").second) = ECAL_Cell_Arr[2];
     *((recECAL->getDoubleParameters()).at("W0").second) = RecECAL_W0;
     *((recECAL->getDoubleParameters()).at("d_cut").second) = 0.05;
     *((recECAL->getDoubleParameters()).at("r_cut").second) = RecECAL_r_cut;
