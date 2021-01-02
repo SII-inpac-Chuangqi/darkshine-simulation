@@ -11,7 +11,7 @@ variables:
     # Optional
     selection_title: "No Selection"
     log_y: false
-    normalize: false
+    normalize: true
     grid_y : true
   - name: "Secondary_MaxE"
     range: [ 30, 0., 8000. ] # [bin size, min, max]
