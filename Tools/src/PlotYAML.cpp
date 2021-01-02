@@ -87,7 +87,7 @@ void PlotYAML::Plot() {
     int n = 0;
     for (auto var : node["variables"]) {
         // plot variables and save to corresponding folder
-        auto c1 = new TCanvas("c1", "c1", 2250, 2000);
+        auto c1 = new TCanvas("c1", "c1", 2500, 2000);
 
         bool log_y = (var["log_y"].IsDefined()) ? var["log_y"].as<bool>() : false;
         if (log_y) c1->SetLogy();
