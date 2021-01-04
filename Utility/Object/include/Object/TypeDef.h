@@ -21,6 +21,10 @@ class SimulatedHit;
 
 class CalorimeterHit;
 
+class OpticalHit;
+
+class DigiForm;
+
 class AnaProcessor;
 
 typedef std::vector<DStep *> DStepVec;
@@ -62,6 +66,14 @@ typedef std::map<std::string, CalorimeterHitVecUniPtr> CalorimeterHitMap;
 typedef std::map<std::string, CalorimeterHitVec* > CalorimeterHitMapO;
 typedef std::shared_ptr<CalorimeterHitMap> CalorimeterHitMapUniPtr;
 typedef std::map<std::string, CalorimeterHitVecUniPtr>::iterator CalorimeterHitMapItr;
+
+typedef std::vector<OpticalHit *> OpticalHitVec;
+typedef std::shared_ptr<OpticalHitVec> OpticalHitVecUniPtr;
+
+typedef std::vector<DigiForm *> DigiFormVec;
+typedef std::shared_ptr<DigiFormVec> DigiFormVecUniPtr;
+typedef std::map<std::string, DigiFormVecUniPtr> DigiFormVecMap;
+typedef std::map<std::string, DigiFormVec* > DigiFormMapO;
 
 typedef std::shared_ptr<AnaProcessor> AnaProcessorUniPtr;
 typedef std::vector<AnaProcessorUniPtr> AnaProcessorVec;

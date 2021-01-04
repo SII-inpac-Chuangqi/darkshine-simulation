@@ -74,6 +74,8 @@ private:
     long long Processed_Evt{0};
     clock_t start_processing;
     clock_t end_processing;
+    clock_t global_start;
+    clock_t global_end;
     std::map<std::string, double> processing_avg_time;
 
     // Verbosity

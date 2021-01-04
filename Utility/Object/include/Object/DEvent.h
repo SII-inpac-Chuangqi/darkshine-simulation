@@ -15,6 +15,7 @@
 #include "Object/McParticle.h"
 #include "Object/ReconstructedParticle.h"
 #include "Object/SimulatedHit.h"
+#include "Object/DigiForm.hh"
 #include "DStep.h"
 
 #include "TObject.h"
@@ -57,6 +58,10 @@ public:
         return StepCollection;
     }
 
+    const DigiFormMapO &getOpticalCollection_Old() const {
+        return OpticalCollection;
+    }
+
     const MCParticleMapO &getMcParticleCollection_Old() const {
         return MCParticleCollection;
     }
@@ -96,6 +101,8 @@ public:
 
     // Register Collections
     DStepVec *RegisterStepCollection(const std::string &);
+
+    DigiFormVec *RegisterOpticalCollection(const std::string &str);
 
     MCParticleVec *RegisterMCParticleCollection(const std::string &);
 
@@ -141,12 +148,13 @@ public:
         Eleak_ECAL = eleakEcal;
     }
 
-    McParticle* SearchID(MCParticleVec* mv, int ID) {
+    McParticle *SearchID(MCParticleVec *mv, int ID) {
         for (auto itr : *mv) {
             if (itr->getId() == ID) return itr;
         }
         return nullptr;
     }
+
 protected:
     // run number
     int RunID{0};
@@ -157,7 +165,7 @@ protected:
     /*
      * Miscellaneous (truth)
      */
-    
+
     double Rndm[4]{}; // Random Number Seeds
     double PNEnergy_Target{0.}; // Photon-Nuclear reaction Energy in Target region
     double PNEnergy_ECAL{0.}; // Photon-Nuclear reaction Energy in ECAL region
@@ -175,6 +183,9 @@ protected:
 
     // Step Collection
     DStepMapO StepCollection;
+
+    // Optical Collection
+    DigiFormMapO OpticalCollection;
 
     // Event Physics Quantities
     MCParticleMapO MCParticleCollection;

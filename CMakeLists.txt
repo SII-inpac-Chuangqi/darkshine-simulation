@@ -144,6 +144,8 @@ SET(dict_header_shared
         Utility/Object/include/Object/CalorimeterHit.h
         Utility/Object/include/Object/McParticle.h
         Utility/Object/include/Object/ReconstructedParticle.h
+        Utility/Object/include/Object/DigiForm.hh
+        Utility/Object/include/Object/OpticalHit.hh
         Utility/Object/include/Object/DEvent.h
 
         DP_ana/include/Event/AnaEvent.h
@@ -164,6 +166,8 @@ SET(dict_source
         Utility/Object/src/CalorimeterHit.cpp
         Utility/Object/src/McParticle.cpp
         Utility/Object/src/ReconstructedParticle.cpp
+        Utility/Object/src/DigiForm.cpp
+        Utility/Object/src/OpticalHit.cpp
         Utility/Object/src/DEvent.cpp
 
         DP_ana/src/AnaEvent.cpp

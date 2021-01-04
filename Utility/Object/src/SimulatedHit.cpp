@@ -29,8 +29,6 @@ SimulatedHit::~SimulatedHit() {
     SimHits_Edep.clear();
     SimHits_Edep.shrink_to_fit();
 
-    for (auto p: MCPContribution)
-        delete p;
     MCPContribution.clear();
     MCPContribution.shrink_to_fit();
 
@@ -78,18 +76,18 @@ bool SimulatedHit::operator!=(const SimulatedHit &rhs) const {
 }
 
 // Add the 3 particles with the most energy deposition contributed to this hit
-void SimulatedHit::addParticleContribution(McParticle *mcp, double Edep) {
+void SimulatedHit::addParticleContribution(const McParticle& mcp, double Edep) {
     if (MCPContribution.size() >= 3) {
         assert(SimHits_Edep.size() == MCPContribution.size());
         for (unsigned i = 0; i < SimHits_Edep.size(); ++i) {
-            if (SimHits_Edep.at(i) < Edep) {
-                MCPContribution.at(i) = mcp;
+            if (SimHits_Edep.at(i) < Edep || mcp.getId() == 1) {
+                MCPContribution.at(i) = McParticle(mcp);
                 SimHits_Edep.at(i) = Edep;
                 break;
             }
         }
     } else {
-        MCPContribution.push_back(mcp);
+        MCPContribution.emplace_back(mcp);
         SimHits_Edep.push_back(Edep);
         assert(SimHits_Edep.size() == MCPContribution.size());
     }

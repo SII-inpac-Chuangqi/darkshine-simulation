@@ -9,7 +9,7 @@
 #include <ctime>
 #include <algorithm>
 
-void AlgoManager::RegisterAnaProcessor(const std::shared_ptr<AnaProcessor>& AnaP) {
+void AlgoManager::RegisterAnaProcessor(const std::shared_ptr<AnaProcessor> &AnaP) {
     if (AnaProcessors.count(AnaP->getName()) != 0)
         std::cerr << "[WARNING] ==> Algo Processor Name already exists." << std::endl;
     else
@@ -18,6 +18,7 @@ void AlgoManager::RegisterAnaProcessor(const std::shared_ptr<AnaProcessor>& AnaP
 
 void AlgoManager::BeginAnaProcessors() {
     Processed_Evt = 0;
+    global_start = clock();
 
     if (Verbose > 0) {
         cout << "======================================================================" << endl;
@@ -82,6 +83,7 @@ void AlgoManager::EndAnaProcessors() {
     for (const auto &itr : AnaProcessorList)
         AnaProcessors.at(itr)->End();
 
+    global_end = clock();
 }
 
 AnaProcessorVecUniPtr AlgoManager::getAllAnaProcessors() {
@@ -131,7 +133,9 @@ void AlgoManager::PrintRunLog() {
         total_time += processing_avg_time.at(itr);
     }
     cout << "----------------------------------------------------------------------" << endl;
-    cout << setw(5) << " " << setw(26) << "Total Processed Event(s): " << setw(14) << Processed_Evt;
-    cout << setw(40) << total_time << endl;
+    cout << setw(5) << " " << setw(26) << "Total Processed Event(s): " << setw(14) << Processed_Evt << endl;
+    cout << setw(5) << " " << setw(26) << "Total Processing Time: "
+         << (double) (global_end - global_start) / CLOCKS_PER_SEC;
+    cout << " [sec]" << endl;
     cout << "======================================================================" << endl;
 }
