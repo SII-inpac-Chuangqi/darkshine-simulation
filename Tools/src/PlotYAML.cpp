@@ -84,6 +84,9 @@ void PlotYAML::ReadHists() {
 void PlotYAML::Plot() {
     ReadHists();
 
+    // Some Global Plotting Variables
+    double global_y_max_factor = node["global_y_scale"].IsDefined() ? node["global_y_scale"].as<double>() : 1.5;
+
     int n = 0;
     for (auto var : node["variables"]) {
         // plot variables and save to corresponding folder
@@ -100,7 +103,7 @@ void PlotYAML::Plot() {
         auto var_name = var["name"].as<std::string>();
 
         // Calculate the maximal and minimal y
-        double y_max_factor = var["y_scale"].IsDefined() ? var["y_scale"].as<double>() : 1.5;
+        double y_max_factor = var["y_scale"].IsDefined() ? var["y_scale"].as<double>() : global_y_max_factor;
         double y_max = 1.;
         double min_entries = 1;
         for (const auto &h_var : hists_list.at(var_name)) {

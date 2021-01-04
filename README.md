@@ -189,6 +189,7 @@ related method: ```In_Range()```
 | name | the name of this whole job | "test" |
 | variables | all the variables to be plotted | see **variables** block |
 | samples | plot variables from the selected samples | see **samples** block |
+| *global_y_scale** | global Y axis scale factor | 2.5 |
 
 |  | variables |  |
 | ---| ---| --- |

@@ -3,6 +3,7 @@
 # Example by Yulei Zhang
 
 name: "test_plots"
+global_y_scale: 2.0
 
 variables:
   - name: "ECAL_E_max/1000"

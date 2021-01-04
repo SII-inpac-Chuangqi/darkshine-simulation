@@ -68,9 +68,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
             Moments_X[i-1] = cluster_ana->FindMoment(i, 1, true);
             Moments_Y[i-1] = cluster_ana->FindMoment(i, 2, true);
             Moments_Z[i-1] = cluster_ana->FindMoment(i, 3, true);
-
         }
-
     } else {
         // if not exists, print out error
         cerr << "MCCollection not found" << endl;
