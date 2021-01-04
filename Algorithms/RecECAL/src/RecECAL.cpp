@@ -32,7 +32,7 @@ void RecECAL::Begin() {
         EvtWrt->RegisterDoubleVariable("ECAL_E_total", &E_total, "ECAL_E_total/D");
         EvtWrt->RegisterDoubleVariable("ECAL_E_max", &E_max, "ECAL_E_max/D");
         EvtWrt->RegisterDoubleVariable("ECAL_E_frac", &E_frac, "ECAL_E_frac/D");
-        EvtWrt->RegisterDoubleVariable("ECAL_E_frac_vec", E_frac_vec, "ECAL_E_frac_vec[5]/D");
+        EvtWrt->RegisterDoubleVariable("ECAL_E_frac_vec", E_frac_vec, "ECAL_E_frac_vec[8]/D");
         EvtWrt->RegisterDoubleVariable("ECAL_Moment_R", Moments_R, "ECAL_Moment_R[4]/D");
         EvtWrt->RegisterDoubleVariable("ECAL_Moment_X", Moments_X, "ECAL_Moment_X[4]/D");
         EvtWrt->RegisterDoubleVariable("ECAL_Moment_Y", Moments_Y, "ECAL_Moment_Y[4]/D");
@@ -59,7 +59,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
         E_max = cluster_ana->FindMaxEHit()->getE();
         E_frac = cluster_ana->FindEFraction(n_fraction);
         int j = 0;
-        for (auto i : {5, 10, 20, 50, 100}) {
+        for (auto i : {5, 10, 20, 50, 100, 125, 150, 200}) {
             E_frac_vec[j] = cluster_ana->FindEFraction(i);
             j++;
         }
