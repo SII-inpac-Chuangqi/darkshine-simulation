@@ -50,19 +50,15 @@ G4bool FilterProcess::In_Filter(const G4Step* aStep) {
     pname = post->GetProcessDefinedStep()->GetProcessName();
     post_distance = post->GetPosition()[2];
 
-    if  (In_Range(post_distance, ScanDistance_Min, ScanDistance_Max) ) {
-        if (In_Range(deltaE, Energy_Min, Energy_Max)) {
-            res = pname.contains( Process_Name );
-            if (res) {
-                Found_Result = true;
-                return true;
-            }
-        }
-        else
+    if (pname.contains( Process_Name )) {
+        if (In_Range(post_distance, ScanDistance_Min, ScanDistance_Max)) {
+            if (In_Range(deltaE, Energy_Min, Energy_Max)) {
+                    Found_Result = true;
+                    return true;
+            } else
+                return false;
+        } else
             return false;
     }
-    else
-        return false;
-
     return false;
 }

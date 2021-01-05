@@ -5,6 +5,13 @@
 #include "Object/DEvent.h"
 
 void DEvent::Initialization(CleanType ct) {
+    // clean constant variables
+    PNEnergy_Target = 0.;
+    PNEnergy_ECAL = 0.;
+    Eleak_ECAL = 0.;
+    TotalRecEnergy = 0.;
+    ECALRecEnergy = 0.;
+    HCALRecEnergy = 0.;
 
     for (auto itr : MCParticleCollection) {
         for (auto itr2 : *itr.second) {

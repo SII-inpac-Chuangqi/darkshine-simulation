@@ -90,10 +90,10 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
             && post->GetProcessDefinedStep()->GetProcessSubType() == 121) {
 
             // Target
-            if (post->GetPosition()[2] <= 180. * mm)
+            if (post->GetPosition()[2] <= 100. * mm)
                 PNEnergyTar = deltaE;
             // ECal
-            if (post->GetPosition()[2] > 180. * mm)
+            if (post->GetPosition()[2] > 100. * mm)
                 PNEnergyECAL = deltaE;
 
             froot->FillPNE(PNEnergyTar, PNEnergyECAL);

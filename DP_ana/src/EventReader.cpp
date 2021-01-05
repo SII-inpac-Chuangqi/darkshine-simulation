@@ -27,6 +27,10 @@ void EventReader::RegisterOutput() {
     EvtWrt->RegisterIntVariable("RunNumber", &RunNumber, "RunNumber/I");
     EvtWrt->RegisterIntVariable("EventNumber", &eventProcessedNumber, "EventNumber/I");
     EvtWrt->RegisterDoubleVariable("Rndm", Rndm, "Rndm[4]/D");
+    EvtWrt->RegisterDoubleVariable("PNEnergy_Target", &PNEnergy_Target, "PNEnergy_Target/D");
+    EvtWrt->RegisterDoubleVariable("PNEnergy_ECAL", &PNEnergy_ECAL, "PNEnergy_ECAL/D");
+    EvtWrt->RegisterDoubleVariable("ECAL_Leak", &ECAL_Leak, "ECAL_Leak/D");
+
 
     // Initialized Processed Number
     eventProcessedNumber = 0;
@@ -47,6 +51,10 @@ void EventReader::Convert() {
     RunNumber = evt->getRunId();
     EventNumber = evt->getEventId();
     for (int i = 0; i < 4; ++i) Rndm[i] = evt->getRndm()[i];
+
+    PNEnergy_Target = evt->getPnEnergyTarget();
+    PNEnergy_ECAL = evt->getPnEnergyEcal();
+    ECAL_Leak = evt->getEleakEcal();
 
     eventProcessedNumber++;
     if (Verbose > 1) {

@@ -96,6 +96,10 @@ private:
     int skipNumber{0};
     int eventProcessedNumber{0};
 
+    double ECAL_Leak{0.};
+    double PNEnergy_Target{0.};
+    double PNEnergy_ECAL{0.};
+
     // Verbosity
     int Verbose{0};
 
