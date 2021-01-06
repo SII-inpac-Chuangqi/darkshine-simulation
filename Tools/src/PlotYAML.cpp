@@ -115,7 +115,7 @@ void PlotYAML::Plot() {
         y_max *= y_max_factor;
 
         // Final plot
-        auto x1 = 0.7, x2 = 0.9, y2 = 0.91, y1 = y2 - hists_list.at(var_name).size() * 0.06;
+        auto x1 = 0.65, x2 = 0.9, y2 = 0.91, y1 = y2 - hists_list.at(var_name).size() * 0.06;
         auto leg = new TLegend(x1, y1, x2, y2);
         for (unsigned i = 0; i < hists_list.at(var_name).size(); ++i) {
             auto h = hists_list.at(var_name).at(i);
