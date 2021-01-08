@@ -23,7 +23,6 @@
 // 1 box
 // └-2 abox
 //
-// TODO:
 // Volume relationship:
 // Calometer:
 //   0 Wrap
