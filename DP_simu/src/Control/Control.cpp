@@ -263,12 +263,12 @@ void Control::RebuildVariables() {
 
     //----------------------------------------
     // Electromagnetic Calorimeter
-    Size_ECALRegion.setX((ECAL_Center_Size.x() + ECAL_Center_Wrap_Size.x()) * ECAL_Center_Module_No.x() +
-                         ECAL_Center_Module_No.x() * 2 * eps);
-    Size_ECALRegion.setY((ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y()) * ECAL_Center_Module_No.y() +
-                         ECAL_Center_Module_No.y() * 2 * eps);
-    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z() + APD_Size.z()) * ECAL_Center_Module_No.z() +
-                         ECAL_Center_Module_No.z() * 2 * eps);
+    Size_ECALRegion.setX((ECAL_Center_Size.x() + ECAL_Center_Wrap_Size.x()) * ECAL_Center_Module_No.x());
+                         //+ ECAL_Center_Module_No.x() * 2 * eps);
+    Size_ECALRegion.setY((ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y()) * ECAL_Center_Module_No.y());
+                         //+ ECAL_Center_Module_No.y() * 2 * eps);
+    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z() + APD_Size.z()) * ECAL_Center_Module_No.z());
+                         //+ ECAL_Center_Module_No.z() * 2 * eps);
 
     Pos_ECALRegion = G4ThreeVector(0, 0,
                                    0.5 * Size_ECALRegion.z() + rec_Pos_TrackerRegion.z() +

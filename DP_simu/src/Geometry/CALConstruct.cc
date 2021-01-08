@@ -116,9 +116,9 @@ CALConstruct::~CALConstruct() {
 //   | |  ->||<- ├┬┘ |
 //   | └----|----┘|  |
 //   └------|----||--┘
-//          |  ->||<-APDwZHalfLength
+//          |  ->||<-APDZHalfLength
 //        ->|    |<-CaloZHalfLength
-void CALConstruct::CalZUnitVolume() {
+void CALConstruct::CalZUnitConstruct() {
     if (!CaloXHalfLength || !CaloYHalfLength || !CaloZHalfLength) {
         G4cout << fCALName << " Construction Error: at least size of one dimension is zero." << G4endl;
         return;
@@ -155,18 +155,19 @@ void CALConstruct::CalZUnitVolume() {
     if (fCALSD) CaloLV->SetSensitiveDetector(fCALSD);
 
     // APD
-    auto APDBox = new G4Box(fCALName + "_APDWorld_Box", ADPwXHalfLength, APDwYHalfLength, APDwZHalfLength);
+    auto APDBox = new G4Box(fCALName + "_APDWorld_Box", APDXHalfLength, APDYHalfLength, APDZHalfLength);
     auto APDLV = new G4LogicalVolume(APDBox, G4Material::GetMaterial("vacuum"), fCALName,
                                      nullptr, nullptr, nullptr);
     fAPDWLV = APDLV;
 
-    auto *wVis = new G4VisAttributes(G4Colour(0.5, 0.5, .0));
-    wVis->SetVisibility(true);
-    APDLV->SetVisAttributes(wVis);
+    if (fAPDVis) {
+        fAPDVis->SetVisibility(true);
+        APDLV->SetVisAttributes(fAPDVis);
+    } else APDLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
     /// construct physical volume
     // place crystal
-    auto CaloPV = new G4PVPlacement(nullptr,G4ThreeVector(0, 0, - APDwZHalfLength),
+    auto CaloPV = new G4PVPlacement(nullptr,G4ThreeVector(0, 0, - APDZHalfLength),
                                     fCaloLV, fCALName + "_PV", fWrapLV,
                                     false, fCopyNo, fCheckOverlap);
     PVVector.push_back(CaloPV);
@@ -191,16 +192,16 @@ void CALConstruct::CalZUnitVolume() {
 //   | |            ->||<-           ├┬┘ |
 //   | └--------------|--------------┘|  |
 //   └----------------|--------------||--┘
-//                    |            ->||<-APDwXHalfLength
+//                    |            ->||<-APDXHalfLength
 //                  ->|              |<-CaloXHalfLength
-void CALConstruct::CalXUnitVolume() {
+void CALConstruct::CalXUnitConstruct() {
 
 }
 
 //   0 Wrap
 //   ├-1 box (Crystal)
 //   └-2 abox (APD)
-void CALConstruct::AbsorberUnitVolume() {
+void CALConstruct::AbsorberUnitConstruct() {
 
 }
 
@@ -364,14 +365,9 @@ G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, con
         return TotalHalfSize;
     }
 
-    ADPwXHalfLength = CaloXHalfLength;
-    APDwYHalfLength = CaloYHalfLength;
-    APDwZHalfLength = APDZHalfLength + GlueZHalfLength;
-    //APDwZHalfLength = CaloZHalfLength;
+    fAPDVis = new G4VisAttributes(G4Colour(0.5, 0.5, .0));
 
-    //fWrapVis = new G4VisAttributes(G4Colour(0.5, 0.23, 0.89));
-
-    CalZUnitVolume();
+    CalZUnitConstruct();
 
     auto UnitBox = dynamic_cast<G4Box*>(fWrapLV->GetSolid());
 

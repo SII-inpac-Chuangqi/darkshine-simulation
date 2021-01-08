@@ -28,9 +28,9 @@ public:
 
     // Construct Logical Volume and child Physical Volume
 
-    void CalZUnitVolume();
-    void CalXUnitVolume();
-    void AbsorberUnitVolume();
+    void CalZUnitConstruct();
+    void CalXUnitConstruct();
+    void AbsorberUnitConstruct();
     void ConstructLV();
 
     // Physical Volume placement
@@ -153,6 +153,7 @@ private:
     G4double UnitPosX{0};
     G4double UnitPosY{0};
     G4double UnitPosZ{0};
+    G4VisAttributes *fCaloVis{nullptr};
 
     // For Wrap
     G4double WrapXHalfLength{0};
@@ -186,6 +187,7 @@ private:
     G4double APDPosZ{0.};
     G4Material *APD_Material{nullptr};
     G4Material *Glue_Material{nullptr};
+    G4VisAttributes *fAPDVis{nullptr};
 
     // Absorber
     G4double AbsXHalfLength{0.};
