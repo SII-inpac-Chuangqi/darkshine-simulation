@@ -11,6 +11,7 @@
 #include "G4NistManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
+#include "G4OpticalSurface.hh"
 
 // yaml-cpp
 #include "yaml-cpp/yaml.h"
@@ -177,7 +178,10 @@ public:
     //----------------------------------------
     // if to open optical process
     bool if_optical;
-
+    //----------------------------------------
+    // Wrap related
+    G4MaterialPropertiesTable *Wrap_Surface_Mat;
+    G4OpticalSurface *Wrap_Surface;
     //----------------------------------------
     // APD related
     G4Material *APD_Mat;
@@ -185,6 +189,8 @@ public:
 
     G4Material *Glue_Mat;
     G4ThreeVector Glue_Size;
+    G4MaterialPropertiesTable *APD_Surface_Mat;
+    G4OpticalSurface *APD_Surface;
     //----------------------------------------
 
 

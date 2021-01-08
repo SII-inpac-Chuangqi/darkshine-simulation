@@ -14,6 +14,9 @@ void ECAL_AllZ::DefineParameters() {
     ECAL_Wrap_Mat = dControl->ECAL_Wrap_Mat;
     Size_ECALRegion = dControl->Size_ECALRegion;
     Pos_ECALRegion = dControl->Pos_ECALRegion;
+    ECAL_Center_Wrap_Size = dControl->ECAL_Center_Wrap_Size;
+    ECAL_Center_Size = dControl->ECAL_Center_Size;
+    ECAL_Center_Module_No = dControl->ECAL_Center_Module_No;
 
     G4cout << " ==> ECAL starts from " << Pos_ECALRegion.z() - Size_ECALRegion.z() / 2 << G4endl;
 
@@ -43,8 +46,7 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng
     auto ECAL_Box = new G4Box("ecal", Size_ECALRegion.x() / 2, Size_ECALRegion.y() / 2, Size_ECALRegion.z() / 2);
     auto ECal_LV = new G4LogicalVolume(ECAL_Box, ECALRegion_Mat, "ECAL", nullptr, nullptr, nullptr);
     new G4PVPlacement(nullptr, Pos_ECALRegion, ECal_LV, "ECAL", World_LV, false, 0, fCheckOverlaps);
-    ECal_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
-
+    //ECal_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
     if (build_ECAL_Center) {
         auto ECAL_Center = new CALConstruct("ECAL_Center", ECal_LV, 0, true, true, dControl->if_optical,

@@ -159,8 +159,25 @@ Control::Control() {
     //========================================
     /* Optical */
     //----------------------------------------
-    if_optical = false;
+    if_optical = true;
 
+    //----------------------------------------
+    // Wrap related
+    const G4int cNum = 2;
+    G4double ephoton[cNum] = {1*eV, 7*eV};//overflow and underflow will take first/last bin
+    G4double reflectivity[cNum] = {1.0, 1.0};
+    G4double efficiency[cNum]   = {0.0, 0.0};
+    G4double transmittance[cNum]   = {0.0, 0.0};
+    Wrap_Surface_Mat = new G4MaterialPropertiesTable();
+    Wrap_Surface_Mat->AddProperty("REFLECTIVITY", ephoton, reflectivity, cNum); //reflect fraction, default=1
+    Wrap_Surface_Mat->AddProperty("EFFICIENCY",   ephoton, efficiency,   cNum); //detection  fraction (abs=1-reflet-trans, then at efficiency, detectition(invoke post-step SD)),default=0
+    Wrap_Surface_Mat->AddProperty("TRANSMITTANCE",   ephoton, transmittance,   cNum); //transmission fraction, default=0
+
+    Wrap_Surface = new G4OpticalSurface("WrapSurfaceOptical");
+    Wrap_Surface->SetType(dielectric_LUT);
+    Wrap_Surface->SetModel(LUT);
+    Wrap_Surface->SetFinish(polishedtyvekair);
+    Wrap_Surface->SetMaterialPropertiesTable(Wrap_Surface_Mat);
     //----------------------------------------
     // APD related
     APD_Mat = G4Material::GetMaterial("G4_Si");
@@ -168,6 +185,20 @@ Control::Control() {
 
     Glue_Mat = G4Material::GetMaterial("G4_W");
     Glue_Size = G4ThreeVector(1 * cm, 1 * cm, 0.1 * mm);
+
+    G4double reflectivityAPD[cNum] = {0.0, 0.0};
+    G4double efficiencyAPD[cNum]   = {1.0, 1.0};
+    G4double transmittanceAPD[cNum]   = {0.0, 0.0};
+    APD_Surface_Mat = new G4MaterialPropertiesTable();
+    APD_Surface_Mat->AddProperty("REFLECTIVITY", ephoton, reflectivityAPD, cNum); //reflect fraction, default=1
+    APD_Surface_Mat->AddProperty("EFFICIENCY", ephoton, efficiencyAPD, cNum); //detection  fraction (abs=1-reflet-trans, then at efficiency, detectition(invoke post-step SD)),default=0
+    APD_Surface_Mat->AddProperty("TRANSMITTANCE", ephoton, transmittanceAPD, cNum); //transmission fraction, default=0
+
+    APD_Surface = new G4OpticalSurface("APDSurfaceOptical");
+    APD_Surface->SetType(dielectric_LUT);
+    APD_Surface->SetModel(LUT);
+    APD_Surface->SetFinish(polishedvm2000glue);
+    APD_Surface->SetMaterialPropertiesTable(APD_Surface_Mat);
     //----------------------------------------
 
 }
@@ -236,7 +267,7 @@ void Control::RebuildVariables() {
                          ECAL_Center_Module_No.x() * 2 * eps);
     Size_ECALRegion.setY((ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y()) * ECAL_Center_Module_No.y() +
                          ECAL_Center_Module_No.y() * 2 * eps);
-    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z()) * ECAL_Center_Module_No.z() +
+    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z() + APD_Size.z()) * ECAL_Center_Module_No.z() +
                          ECAL_Center_Module_No.z() * 2 * eps);
 
     Pos_ECALRegion = G4ThreeVector(0, 0,
