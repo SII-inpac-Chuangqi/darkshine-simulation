@@ -18,21 +18,6 @@
 #include <vector>
 
 /// Class decription:
-// NOW:
-// 0 Wrap
-// 1 box
-// └-2 abox
-//
-// Volume relationship:
-// Calometer:
-//   0 Wrap
-//   ├-1 box (Crystal)
-//   └-2 abox (APD)
-// Absorber:
-//   0 Wrap (vacuum)
-//   └-1 box (Crystal)
-//
-
 class CALConstruct {
 public:
     CALConstruct(const G4String&, G4LogicalVolume *, G4int, G4bool, G4bool, G4bool, G4bool);
@@ -41,21 +26,20 @@ public:
 
     virtual ~CALConstruct();
 
-    // Construct Logical Volume
+    // Construct Logical Volume and child Physical Volume
+
     void CalZUnitVolume();
     void CalXUnitVolume();
     void AbsorberUnitVolume();
     void ConstructLV();
 
-    /// \brief main construct
+    // Physical Volume placement
+
     void CalZUnitPlacement(G4LogicalVolume *wrapLV, G4double z_angle = 0.);
 
-    G4ThreeVector
-    CalXUnitPlacement(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4LogicalVolume *aboxLV,
-                      double z_angle = 0.);
+    void CalXUnitPlacement(G4LogicalVolume *wrapLV, G4double z_angle = 0.);
 
-    G4ThreeVector
-    AbsorberUnitPlacement();
+    void AbsorberUnitPlacement(G4LogicalVolume *boxLV, G4double z_angle = 0.);
 
     G4ThreeVector
     Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4LogicalVolume *aboxLV,

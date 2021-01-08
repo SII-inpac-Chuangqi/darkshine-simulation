@@ -103,6 +103,21 @@ CALConstruct::~CALConstruct() {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+// Volume relationship:
+//   0 Wrap
+//   ├-1 box (Crystal)
+//   └-2 abox (APD)
+//         ->|       |<-CaloZHalfLength + APDZHalfLength + WrapZHalfLength
+// ->| |<-   |   ->| |<-WrapZHalfLength
+//   ┌-------|-------┐
+//   |0┌-----|---┐   |
+//   | | 1   |   ├-┐ |
+//   | |    ┌╋   |2| |
+//   | |  ->||<- ├┬┘ |
+//   | └----|----┘|  |
+//   └------|----||--┘
+//          |  ->||<-APDwZHalfLength
+//        ->|    |<-CaloZHalfLength
 void CALConstruct::CalZUnitVolume() {
     if (!CaloXHalfLength || !CaloYHalfLength || !CaloZHalfLength) {
         G4cout << fCALName << " Construction Error: at least size of one dimension is zero." << G4endl;
@@ -164,10 +179,27 @@ void CALConstruct::CalZUnitVolume() {
 
 }
 
+//   0 Wrap
+//   ├-1 box (Crystal)
+//   └-2 abox (APD)
+//                   ->|                 |<-CaloXHalfLength + APDXHalfLength + WrapXHalfLength
+// ->| |<-             |             ->| |<-WrapXHalfLength
+//   ┌-----------------|-----------------┐
+//   |0┌---------------|-------------┐   |
+//   | | 1             |             ├-┐ |
+//   | |              ┌╋             |2| |
+//   | |            ->||<-           ├┬┘ |
+//   | └--------------|--------------┘|  |
+//   └----------------|--------------||--┘
+//                    |            ->||<-APDwXHalfLength
+//                  ->|              |<-CaloXHalfLength
 void CALConstruct::CalXUnitVolume() {
 
 }
 
+//   0 Wrap
+//   ├-1 box (Crystal)
+//   └-2 abox (APD)
 void CALConstruct::AbsorberUnitVolume() {
 
 }
@@ -231,22 +263,7 @@ void CALConstruct::ConstructLV() {
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-// Volume relationship:
-//   0 Wrap
-//   ├-1 box (Crystal)
-//   └-2 abox (APD)
-//         ->|       |<-CaloZHalfLength + APDZHalfLength + WrapZHalfLength
-// ->| |<-   |   ->| |<-WrapZHalfLength
-//   ┌-------|-------┐
-//   |0┌-----|---┐   |
-//   | | 1   |   ├-┐ |
-//   | |    ┌╋   |2| |
-//   | |  ->||<- ├┬┘ |
-//   | └----|----┘|  |
-//   └------|----||--┘
-//          |  ->||<-APDwZHalfLength
-//        ->|    |<-CaloZHalfLength
-//
+
 void CALConstruct::CalZUnitPlacement(G4LogicalVolume *wrapLV, G4double z_angle) {
 
     if (wrapLV == nullptr) {
@@ -268,12 +285,13 @@ void CALConstruct::CalZUnitPlacement(G4LogicalVolume *wrapLV, G4double z_angle) 
     PVVector.push_back(WrapPV);
 }
 
-G4ThreeVector CALConstruct::CalXUnitPlacement(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4LogicalVolume *aboxLV,
-                                              double z_angle) {
+
+void CALConstruct::CalXUnitPlacement(G4LogicalVolume *wrapLV, G4double z_angle) {
 
 }
 
-G4ThreeVector CALConstruct::AbsorberUnitPlacement() {
+
+void CALConstruct::AbsorberUnitPlacement(G4LogicalVolume *boxLV, G4double z_angle) {
 
 }
 
