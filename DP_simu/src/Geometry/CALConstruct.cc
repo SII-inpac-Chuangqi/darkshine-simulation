@@ -146,8 +146,8 @@ void CALConstruct::CalUnit1Construct() {
     if (fCALWrapSD) WrapLV->SetSensitiveDetector(fCALWrapSD);
 
     // Crystal
-    auto Calo = new G4Box(fCALName + "_Box", CaloXHalfLength, CaloYHalfLength, CaloZHalfLength);
-    auto CaloLV = new G4LogicalVolume(Calo, fCALMaterial, fCALName + "_LV",
+    auto CaloBox = new G4Box(fCALName + "_Box", CaloXHalfLength, CaloYHalfLength, CaloZHalfLength);
+    auto CaloLV = new G4LogicalVolume(CaloBox, fCALMaterial, fCALName + "_LV",
                                       nullptr, nullptr, nullptr);
     fCaloLV = CaloLV;
     fCaloLVVector.push_back(CaloLV);
@@ -246,31 +246,6 @@ void CALConstruct::AbsorberUnitConstruct() {
     } else AbsLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 }
 
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//
-//void CALConstruct::UnitPlacement(G4LogicalVolume *unitLV,
-//                                 G4String pName,
-//                                 G4double posX,
-//                                 G4double posY,
-//                                 G4double posZ,
-//                                 G4RotationMatrix *fRot) {
-//
-//    if (unitLV == nullptr) {
-//        G4cerr << "unitLV is empty for " << fCALName << " " << fCopyNo << G4endl;
-//        return;
-//    }
-//
-//    // placement of calorimeter unit
-//    auto Pos = G4ThreeVector(posX, posY, posZ);
-//
-//    // place unit
-//    auto UnitPV = new G4PVPlacement(fRot, Pos, unitLV, fCALName + "_UnitPV", fMotherVolume,
-//                                    false, fCopyNo, fCheckOverlap);
-//    PVVector.push_back(UnitPV);
-//}
-
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, const G4ThreeVector &CentrePos) {
@@ -343,7 +318,8 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
 
     auto TotalHalfSize = G4ThreeVector(UnitZHalfLength,
                                        UnitZHalfLength,
-                                       (zNo - zNo / 3) * UnitXHalfLength + ( zNo / 3 ) * 0.5 * AbsThickness );
+                                       ceil(0.5 * zNo) * 2 * UnitXHalfLength
+                                       + floor(zNo / 2) * 0.5 * AbsThickness) ;
 
     // Construct Absorber LV
     AbsXHalfLength = TotalHalfSize.x();
@@ -355,13 +331,12 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
 
     // Initialize
     ifAbsorber = false;
+    G4int Abs_No = 0;
     G4PVPlacement* CaloUnitPV = nullptr;
     G4PVPlacement* AbsPV = nullptr;
-    auto idz = zNo + zNo / 2;
     // Z layer Loop
-    for (int k = 0; k < idz; k++) {
+    for (int k = 0; k < zNo; k++) {
         // place detector
-        // along y
         if (k % 2 == 0) {
             // along y
             for (int j = 0; j < yNo; j++) {
@@ -373,7 +348,7 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
                 CaloUnitPV = new G4PVPlacement(fRotY90,
                                                G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
                                                fOutlineLV,
-                                           fCALName + "_CaloUnitPV",
+                                               fCALName + "_UnitPV",
                                                fMotherVolume,
                                                false,
                                                fCopyNo,
@@ -391,7 +366,7 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
                 CaloUnitPV = new G4PVPlacement(fRotY90X90,
                                                G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
                                                fOutlineLV,
-                                               fCALName + "_CaloUnitPV",
+                                               fCALName + "_UnitPV",
                                                fMotherVolume,
                                                false,
                                                fCopyNo,
@@ -413,9 +388,10 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
                                       fCALName + "_AbsPV",
                                       fMotherVolume,
                                       false,
-                                      fCopyNo,
+                                      Abs_No,
                                       fCheckOverlap);
             PVVector.push_back(AbsPV);
+            Abs_No++;
         }
     }
 
