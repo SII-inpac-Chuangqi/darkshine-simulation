@@ -107,7 +107,7 @@ CALConstruct::~CALConstruct() {
 
 // Volume relationship:
 //   0 Outline (Wrap)
-//   ├-1 Crystal
+//   ├-1 Calo
 //   └-2 APD
 //                   ->|                 |<- CaloZHalfLength + APDZHalfLength + WrapZHalfLength
 // ->| |<-             |             ->| |<- WrapZHalfLength
@@ -190,7 +190,7 @@ void CALConstruct::CalUnit1Construct() {
 
 //   0 Outline (vacuum)
 //   ├-1 Wrap
-//   ├-2 Crystal
+//   ├-2 Calo
 //   └-3 APD
 //                   ->|                 |<- CaloZHalfLength + APDZHalfLength + WrapZHalfLength
 // ->| |<-             |             ->| |<- WrapZHalfLength
@@ -211,7 +211,7 @@ void CALConstruct::CalUnit2Construct() {
 
 // Volume relationship:
 //   0 Wrap
-//   └-1 Crystal
+//   └-1 Calo
 //     ├-2 WLS fiber
 //     └-3 SiPM
 //                   ->|               |<- CaloZHalfLength + WrapZHalfLength
@@ -321,166 +321,18 @@ G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, con
     return TotalHalfSize;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-//void
-//CALConstruct::MatrixPlacementXYRemoved(G4int xNo, G4int yNo, G4int zNo, const G4ThreeVector &CentrePos, G4int NoRemoved,
-//                                       G4int type) {
-//    /* Type:
-//     * 1) Left Bottom Corner
-//     * 4) Right Top Corner
-//     * 2) Right Bottom Corner
-//     * 3) Left Top Corner
-//     */
-//    auto idx = xNo;
-//    auto idy = yNo;
-//    auto idz = zNo;
-//
-//    auto iSizeX = CaloXHalfLength;
-//    auto iSizeY = CaloYHalfLength;
-//
-//    auto TotalSize = G4ThreeVector(xNo * (CaloXHalfLength + fWrap * WrapXHalfLength),
-//                                   yNo * (CaloYHalfLength + fWrap * WrapYHalfLength),
-//                                   zNo * (CaloZHalfLength + fWrap * WrapZHalfLength));
-//
-//    for (int k = 0; k < idz; k++) {
-//        // along x direction
-//        if (k % 2 == 0) {
-//            idx = xNo;
-//            idy = yNo;
-//            CaloXHalfLength = iSizeX;
-//            CaloYHalfLength = iSizeY;
-//        }
-//        // along y direction
-//        if (k % 2 == 1) {
-//            idx = yNo;
-//            idy = xNo;
-//            CaloXHalfLength = iSizeY;
-//            CaloYHalfLength = iSizeX;
-//        }
-//        for (int j = 0; j < idy; j++) {
-//            for (int i = 0; i < idx; i++) {
-//                auto tmpX = ((k % 2 == 0) ? iSizeX : iSizeY);
-//                auto tmpY = ((k % 2 == 1) ? iSizeX : iSizeY);
-//
-//
-//                UnitPosX = -1. * TotalSize.x() + (2 * i + 1) * (tmpX + fWrap * WrapXHalfLength) + CentrePos.x();
-//                UnitPosY = -1. * TotalSize.y() + (2 * j + 1) * (tmpY + fWrap * WrapYHalfLength) + CentrePos.y();
-//                UnitPosZ = -1. * TotalSize.z() + (2 * k + 1) * (CaloZHalfLength + fWrap * WrapZHalfLength) + CentrePos.z();
-//
-//                double w1 = 0;
-//                double w2 = 0;
-//                double w3 = 0;
-//                double w4 = 0;
-//                double w5 = 0;
-//                double w6 = 0;
-//
-//                if (type == 1) {
-//                    w1 = 1;
-//                    w2 = -1;
-//                    w3 = NoRemoved;
-//                    w4 = -1;
-//                    w5 = 1;
-//                    w6 = -(idx - NoRemoved - 1);
-//                }
-//                if (type == 4) {
-//                    w1 = -1;
-//                    w2 = 1;
-//                    w3 = -(idy - NoRemoved - 1);
-//                    w4 = 1;
-//                    w5 = -1;
-//                    w6 = NoRemoved;
-//                }
-//                if (type == 2) {
-//                    w1 = 1;
-//                    w2 = 1;
-//                    w3 = NoRemoved;
-//                    w4 = 1;
-//                    w5 = 1;
-//                    w6 = NoRemoved;
-//                }
-//                if (type == 3) {
-//                    w1 = -1;
-//                    w2 = -1;
-//                    w3 = -(idy - NoRemoved - 1);
-//                    w4 = -1;
-//                    w5 = -1;
-//                    w6 = -(idx - NoRemoved - 1);
-//                }
-//
-//                if (k % 2 == 0) {
-//                    CaloXHalfLength = iSizeX - (((w1 * j) < w3) ? NoRemoved * (iSizeY + fWrap * WrapYHalfLength) : 0.);
-//                    UnitPosX = UnitPosX + w2 * (((w1 * j) < w3) ? NoRemoved * (iSizeY + fWrap * WrapYHalfLength) : 0.);
-//                } else {
-//                    CaloYHalfLength = iSizeX - (((w4 * i) < w6) ? NoRemoved * (iSizeY + fWrap * WrapXHalfLength) : 0.);
-//                    UnitPosY = UnitPosY + w5 * (((w4 * i) < w6) ? NoRemoved * (iSizeY + fWrap * WrapXHalfLength) : 0.);
-//                }
-//
-//                /* APD */
-//                double f1 = 0, f2 = 0;
-//                if (type == 1) {
-//                    f1 = -1;
-//                    f2 = 1;
-//                }
-//                if (type == 2) {
-//                    f1 = 1;
-//                    f2 = 1;
-//                }
-//                if (type == 3) {
-//                    f1 = -1;
-//                    f2 = -1;
-//                }
-//                if (type == 4) {
-//                    f1 = 1;
-//                    f2 = -1;
-//                }
-//
-//                APDwZHalfLength = CaloZHalfLength;
-//                APDPosZ = 0.;
-//                if (k % 2 == 0) {
-//                    ADPwXHalfLength = APDZHalfLength + GlueZHalfLength;
-//                    APDwYHalfLength = CaloYHalfLength;
-//                    APDPosY = 0.;
-//
-//                    APDPosX = f1 * CaloXHalfLength - f1 * 0.5 * ADPwXHalfLength;
-//                } else if (k % 2 == 1) {
-//                    ADPwXHalfLength = CaloXHalfLength;
-//                    APDwYHalfLength = APDZHalfLength + GlueZHalfLength;
-//                    APDPosX = 0.;
-//
-//                    APDPosY = f2 * CaloYHalfLength - f2 * 0.5 * APDwYHalfLength;
-//                }
-//
-//
-//                Construct();
-//                fCopyNo++;
-//            }
-//        }
-//    }
-//
-//}
-
 void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo, const G4ThreeVector &CentrePos,
                                                  G4double AbsThickness, G4Material *AbsMat) {
 
     // rotation matrix
-    auto fRotationZ0 = new G4RotationMatrix();
-    fRotationZ0->rotateY(90 * degree);
-    auto fRotationZ90 = new G4RotationMatrix();
-    fRotationZ90->rotateY(90 * degree);
-    fRotationZ90->rotateZ(90 * degree);
-
-    auto ifwrap = fWrap;
-
-    auto idx = xNo;
-    auto idy = yNo;
-    auto idz = zNo + zNo / 2;
-
-//    auto TotalSize = G4ThreeVector(xNo * (CaloXHalfLength + fWrap * WrapXHalfLength),
-//                                   yNo * (CaloYHalfLength + fWrap * WrapYHalfLength),
-//                                   zNo * (CaloZHalfLength + fWrap * WrapZHalfLength) + zNo / 2. * AbsThickness / 2.);
+    auto fRotY90 = new G4RotationMatrix();
+    fRotY90->rotateY(- 90 * degree);
+    auto fRotY90X90 = new G4RotationMatrix();
+    fRotY90X90->rotateY(90 * degree);
+    fRotY90X90->rotateX(90 * degree);
 
     // Construct Detector LV
+    fAPDVis = new G4VisAttributes(G4Colour(0.5, 0.5, .0));
     CalUnit1Construct();
 
     // Calculate total size
@@ -489,9 +341,9 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
     auto UnitYHalfLength = UnitBox->GetYHalfLength();
     auto UnitZHalfLength = UnitBox->GetZHalfLength();
 
-    auto TotalHalfSize = G4ThreeVector(xNo * UnitZHalfLength,
-                                       yNo * UnitYHalfLength,
-                                       zNo * UnitXHalfLength + 0.5 * zNo * 0.5 * AbsThickness );
+    auto TotalHalfSize = G4ThreeVector(UnitZHalfLength,
+                                       UnitZHalfLength,
+                                       (zNo - zNo / 3) * UnitXHalfLength + ( zNo / 3 ) * 0.5 * AbsThickness );
 
     // Construct Absorber LV
     AbsXHalfLength = TotalHalfSize.x();
@@ -503,76 +355,69 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
 
     // Initialize
     ifAbsorber = false;
-    auto Abs_No = 0;
-
+    G4PVPlacement* CaloUnitPV = nullptr;
+    G4PVPlacement* AbsPV = nullptr;
+    auto idz = zNo + zNo / 2;
     // Z layer Loop
     for (int k = 0; k < idz; k++) {
         // place detector
-        // along x direction
-        if (k % 3 == 0) {
+        // along y
+        if (k % 2 == 0) {
+            // along y
             for (int j = 0; j < yNo; j++) {
-                for (int i = 0; i < xNo; i++) {
+                UnitPosX = CentrePos.x();
+                UnitPosY = -1. * TotalHalfSize.y() + (2 * j + 1) * UnitYHalfLength + CentrePos.y();
+                UnitPosZ = -1. * TotalHalfSize.z() + (k / 2) * (4 * UnitXHalfLength + AbsThickness)
+                           + UnitXHalfLength + CentrePos.z();
 
-                }
+                CaloUnitPV = new G4PVPlacement(fRotY90,
+                                               G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                               fOutlineLV,
+                                           fCALName + "_CaloUnitPV",
+                                               fMotherVolume,
+                                               false,
+                                               fCopyNo,
+                                               fCheckOverlap);
+                PVVector.push_back(CaloUnitPV);
+                fCopyNo++;
             }
-        }
-        // along y direction
-        if (k % 3 == 1) {
-            idx = yNo;
-            idy = xNo;
-            for (int j = 0; j < xNo; j++) {
-                for (int i = 0; i < yNo; i++) {
+            // along x
+            for (int i = 0; i < xNo; i++) {
+                UnitPosX = -1. * TotalHalfSize.x() + (2 * i + 1) * UnitYHalfLength + CentrePos.x();
+                UnitPosY = CentrePos.y();
+                UnitPosZ = -1. * TotalHalfSize.z() + (k / 2) * (4 * UnitXHalfLength + AbsThickness)
+                           + 3 * UnitXHalfLength + CentrePos.z();
 
-                }
+                CaloUnitPV = new G4PVPlacement(fRotY90X90,
+                                               G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                               fOutlineLV,
+                                               fCALName + "_CaloUnitPV",
+                                               fMotherVolume,
+                                               false,
+                                               fCopyNo,
+                                               fCheckOverlap);
+                PVVector.push_back(CaloUnitPV);
+                fCopyNo++;
             }
         }
         // place absorber
-        if (k % 3 == 2) {
-            idx = 1;
-            idy = 1;
-            Abs_No++;
+        if (k % 2 == 1) {
+            UnitPosX = CentrePos.x();
+            UnitPosY = CentrePos.z();
+            UnitPosZ = -1. * TotalHalfSize.z() + ((k / 2) + 1) * (4 * UnitXHalfLength + AbsThickness)
+                       - 0.5 * AbsThickness + CentrePos.z();
+
+            AbsPV = new G4PVPlacement(nullptr,
+                                      G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                      fAbsLV,
+                                      fCALName + "_AbsPV",
+                                      fMotherVolume,
+                                      false,
+                                      fCopyNo,
+                                      fCheckOverlap);
+            PVVector.push_back(AbsPV);
         }
     }
 
-        // Y layer Loop
-//        for (int j = 0; j < idy; j++) {
-//            // X layer Loop
-//            for (int i = 0; i < idx; i++) {
-//                auto tmpX = ((k % 3 == 0) ? UnitXHalfLength : UnitYHalfLength);
-//                auto tmpY = ((k % 3 == 1) ? UnitXHalfLength : UnitYHalfLength);
-
-//                UnitPosX = -1. * TotalHalfSize.x() + (2 * i + 1) * (tmpX + fWrap * WrapXHalfLength) + CentrePos.x();
-//                UnitPosY = -1. * TotalHalfSize.y() + (2 * j + 1) * (tmpY + fWrap * WrapYHalfLength) + CentrePos.y();
-//                UnitPosZ = -1. * TotalHalfSize.z() + (2 * (k - Abs_No) + 1) * (CaloZHalfLength + fWrap * WrapZHalfLength) +
-//                        Abs_No * AbsThickness + CentrePos.z();
-//
-//                if (k % 3 == 2) {
-//                    Abs_No++;
-//                    UnitPosX = CentrePos.x();
-//                    UnitPosY = CentrePos.y();
-//                    UnitPosZ = -1. * TotalSize.z() + (2 * (k - Abs_No) + 2) * (CaloZHalfLength + fWrap * WrapZHalfLength) +
-//                            (Abs_No - 0.5) * AbsThickness + CentrePos.z();
-//
-//                    ifAbsorber = true;
-//                    fWrap = false;
-//
-//
-//                    CaloZHalfLength = AbsThickness / 2.;
-//                    Construct(fAbsLV, nullptr, nullptr);
-//                } else {
-//                    ifAbsorber = false;
-//                    if (k % 3 == 0) // along x
-//                        Construct(fCaloLV, fWrapLV, fAPDWLV, 0. * degree);
-//                    if (k % 3 == 1) // along y
-//                        Construct(fCaloLV, fWrapLV, fAPDWLV, 90 * degree);
-//
-//                }
-//                fWrap = ifwrap;
-//                CaloZHalfLength = iSizeZ;
-//
-//                if (!ifAbsorber) fCopyNo++;
-//            }
-//        }
-//    }
 }
 

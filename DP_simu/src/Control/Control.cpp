@@ -279,14 +279,12 @@ void Control::RebuildVariables() {
     //----------------------------------------
     // Hadronic Calorimeter
     Size_HCALRegion.setX(
-            HCAL_Module_No.x() * (HCAL_Size_Dir.x() + HCAL_Wrap_Size.x())
+            HCAL_Module_No.x() * (HCAL_Size_Dir.z() + HCAL_Wrap_Size.z() + APD_Size.z())
             + HCAL_Module_Gap * (HCAL_Module_No.x() - 1)
             + HCAL_Module_No.x() * 2 * eps);
-    Size_HCALRegion.setY(
-            HCAL_Module_No.y() * HCAL_Mod_No_Dir.y() * (HCAL_Size_Dir.y() + HCAL_Wrap_Size.y())
-            + HCAL_Module_Gap * (HCAL_Module_No.y() - 1) + HCAL_Module_No.x() * 2 * eps);
+    Size_HCALRegion.setY(Size_HCALRegion.x());
     Size_HCALRegion.setZ(
-            HCAL_Mod_No_Dir.z() / 2 * (2 * (HCAL_Size_Dir.z() + HCAL_Wrap_Size.z()) + HCAL_Absorber_Thickness)
+            HCAL_Mod_No_Dir.z() / 2 * (2 * (HCAL_Size_Dir.x() + HCAL_Wrap_Size.x()) + HCAL_Absorber_Thickness)
             + HCAL_Module_Gap * (HCAL_Module_No.z() - 1) + HCAL_Module_No.x() * 2 * eps);
 
     Pos_HCALRegion = G4ThreeVector(0, 0,
