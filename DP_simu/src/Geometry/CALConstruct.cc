@@ -208,11 +208,22 @@ void CALConstruct::CalUnit2Construct() {
 
 }
 
-//   0 Wrap
-//   ├-1 box (Crystal)
-//   └-2 abox (APD)
+//   0 Absorber
 void CALConstruct::AbsorberUnitConstruct() {
+    if (!AbsXHalfLength || !AbsYHalfLength || !AbsZHalfLength) {
+        G4cout << fCALName << "Construction Error: at least size of one dimension is zero." << G4endl;
+        return;
+    }
 
+    auto AbsBox = new G4Box(fCALName + "_AbsBox", AbsXHalfLength, AbsYHalfLength, AbsZHalfLength);
+    auto AbsLV = new G4LogicalVolume(AbsBox, fCALMaterial, fCALName + "_AbsLV",
+                                     nullptr, nullptr, nullptr);
+    fAbsLV = AbsLV;
+
+    if (fVis) {
+        fVis->SetVisibility(true);
+        AbsLV->SetVisAttributes(fVis);
+    } else AbsLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 }
 
 void CALConstruct::ConstructLV() {
@@ -289,10 +300,10 @@ void CALConstruct::UnitPlacement(G4LogicalVolume *unitLV,
     // placement of calorimeter unit
     auto Pos = G4ThreeVector(posX, posY, posZ);
 
-    // place wrap
-    auto WrapPV = new G4PVPlacement(fRot, Pos, unitLV, fCALName + "_PVW", fMotherVolume,
+    // place unit
+    auto UnitPV = new G4PVPlacement(fRot, Pos, unitLV, fCALName + "_UnitPV", fMotherVolume,
                                     false, fCopyNo, fCheckOverlap);
-    PVVector.push_back(WrapPV);
+    PVVector.push_back(UnitPV);
 }
 
 G4ThreeVector
