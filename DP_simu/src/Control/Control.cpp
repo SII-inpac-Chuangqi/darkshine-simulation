@@ -127,7 +127,8 @@ Control::Control() {
     HCAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
 
     HCAL_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
-    HCAL_Size_Dir = G4ThreeVector(100 * cm + 19 * HCAL_Wrap_Size.x(), 5 * cm, 1 * cm);
+    //HCAL_Size_Dir = G4ThreeVector(100 * cm + 19 * HCAL_Wrap_Size.x(), 5 * cm, 1 * cm);
+    HCAL_Size_Dir = G4ThreeVector(1 * cm, 5 * cm, 100 * cm);
     HCAL_Mod_No_Dir = G4ThreeVector(1, 20, 120);
     HCAL_Module_No = G4ThreeVector(3, 3, 1);
     HCAL_Module_Gap = 0.5 * mm;

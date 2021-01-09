@@ -275,15 +275,19 @@ void CALConstruct::ConstructLV() {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void CALConstruct::UnitPlacement(G4LogicalVolume *unitLV, G4RotationMatrix *fRot) {
+void CALConstruct::UnitPlacement(G4LogicalVolume *unitLV,
+                                 G4double posX,
+                                 G4double posY,
+                                 G4double posZ,
+                                 G4RotationMatrix *fRot) {
 
     if (unitLV == nullptr) {
-        G4cerr << "warpLV is empty for " << fCALName << " " << fCopyNo << G4endl;
+        G4cerr << "unitLV is empty for " << fCALName << " " << fCopyNo << G4endl;
         return;
     }
 
     // placement of calorimeter unit
-    auto Pos = G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ);
+    auto Pos = G4ThreeVector(posX, posY, posZ);
 
     // place wrap
     auto WrapPV = new G4PVPlacement(fRot, Pos, unitLV, fCALName + "_PVW", fMotherVolume,
@@ -328,22 +332,22 @@ CALConstruct::Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4Logic
 
         TotalSize = G4ThreeVector(CaloXHalfLength + WrapXHalfLength, CaloYHalfLength + WrapYHalfLength, CaloZHalfLength + WrapZHalfLength);
 
-        if (fOptical) {
-            /* Set Optical Porperties for boundary surface */
-            //new G4LogicalSkinSurface( fCALName+"WrapSurface", WrapLV, WrapSurface );
-            new G4LogicalBorderSurface(fCALName + "WrapSurface", boxPV, WrapPV, dControl->Wrap_Surface);
-
-            /* Placement of APD */
-            if (aboxLV == nullptr) {
-                G4cerr << "APDboxLV is empty for " << fCALName << " " << fCopyNo << G4endl;
-                return G4ThreeVector();
-            }
-            auto APDPV = new G4PVPlacement(nullptr, G4ThreeVector(APDPosX, APDPosY, APDPosZ), aboxLV,
-                                           fCALName + "_APDWorld_PV", boxLV,
-                                           false, fCopyNo, fCheckOverlap);
-
-            PVVector.push_back(APDPV);
-        }
+//        if (fOptical) {
+//            /* Set Optical Porperties for boundary surface */
+//            //new G4LogicalSkinSurface( fCALName+"WrapSurface", WrapLV, WrapSurface );
+//            new G4LogicalBorderSurface(fCALName + "WrapSurface", boxPV, WrapPV, dControl->Wrap_Surface);
+//
+//            /* Placement of APD */
+//            if (aboxLV == nullptr) {
+//                G4cerr << "APDboxLV is empty for " << fCALName << " " << fCopyNo << G4endl;
+//                return G4ThreeVector();
+//            }
+//            auto APDPV = new G4PVPlacement(nullptr, G4ThreeVector(APDPosX, APDPosY, APDPosZ), aboxLV,
+//                                           fCALName + "_APDWorld_PV", boxLV,
+//                                           false, fCopyNo, fCheckOverlap);
+//
+//            PVVector.push_back(APDPV);
+//        }
 
     }
 
@@ -377,7 +381,7 @@ G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, con
                 UnitPosY = -1. * TotalHalfSize.y() + (2 * j + 1) * UnitBox->GetYHalfLength() + CentrePos.y();
                 UnitPosZ = -1. * TotalHalfSize.z() + (2 * k + 1) * UnitBox->GetZHalfLength() + CentrePos.z();
 
-                UnitPlacement(fWrapLV);
+                UnitPlacement(fWrapLV, UnitPosX, UnitPosY, UnitPosZ);
 
                 fCopyNo++;
             }
@@ -531,10 +535,10 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
 
     // rotation matrix
     auto fRotationZ0 = new G4RotationMatrix();
-    fRotationZ0->rotateX(90);
+    fRotationZ0->rotateY(90 * degree);
     auto fRotationZ90 = new G4RotationMatrix();
-    fRotationZ90->rotateX(90);
-    fRotationZ90->rotateZ(90);
+    fRotationZ90->rotateY(90 * degree);
+    fRotationZ90->rotateZ(90 * degree);
 
     auto ifwrap = fWrap;
 

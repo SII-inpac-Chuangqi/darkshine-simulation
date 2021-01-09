@@ -35,7 +35,11 @@ public:
 
     // Physical Volume placement
 
-    void UnitPlacement(G4LogicalVolume *unitLV, G4RotationMatrix *fRot = nullptr);
+    void UnitPlacement(G4LogicalVolume *unitLV,
+                       G4double posX,
+                       G4double posY,
+                       G4double posZ,
+                       G4RotationMatrix *fRot = nullptr);
 
     G4ThreeVector
     Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4LogicalVolume *aboxLV,
