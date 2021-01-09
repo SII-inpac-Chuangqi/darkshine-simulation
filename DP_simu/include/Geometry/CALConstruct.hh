@@ -28,18 +28,14 @@ public:
 
     // Construct Logical Volume and child Physical Volume
 
-    void CalZUnitConstruct();
-    void CalXUnitConstruct();
+    void CalUnit1Construct();
+    void CalUnit2Construct();
     void AbsorberUnitConstruct();
     void ConstructLV();
 
     // Physical Volume placement
 
-    void CalZUnitPlacement(G4LogicalVolume *wrapLV, G4double z_angle = 0.);
-
-    void CalXUnitPlacement(G4LogicalVolume *wrapLV, G4double z_angle = 0.);
-
-    void AbsorberUnitPlacement(G4LogicalVolume *boxLV, G4double z_angle = 0.);
+    void UnitPlacement(G4LogicalVolume *unitLV, G4RotationMatrix *fRot = nullptr);
 
     G4ThreeVector
     Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4LogicalVolume *aboxLV,
@@ -202,6 +198,7 @@ private:
     G4LogicalVolume *fWrapLV{nullptr}; // Wrapper
     G4LogicalVolume *fAPDWLV{nullptr}; // APD world
     G4LogicalVolume *fAbsLV{nullptr}; // Absorber world
+    G4LogicalVolume *fOutlineLV{nullptr}; // outline of unit
 
     // For Matrix Placement Output
     std::vector<G4LogicalVolume *> fCaloLVVector{};

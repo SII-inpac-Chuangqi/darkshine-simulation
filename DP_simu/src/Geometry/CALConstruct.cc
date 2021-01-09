@@ -87,6 +87,8 @@ CALConstruct::~CALConstruct() {
     delete fCALSD;
     delete fCALWrapSD;
     delete fWrapVis;
+    delete fAPDVis;
+    delete fOutlineLV;
 
     fCaloLVVector.clear();
     fCaloLVVector.shrink_to_fit();
@@ -105,20 +107,22 @@ CALConstruct::~CALConstruct() {
 
 // Volume relationship:
 //   0 Wrap
-//   ├-1 box (Crystal)
-//   └-2 abox (APD)
-//         ->|       |<-CaloZHalfLength + APDZHalfLength + WrapZHalfLength
-// ->| |<-   |   ->| |<-WrapZHalfLength
-//   ┌-------|-------┐
-//   |0┌-----|---┐   |
-//   | | 1   |   ├-┐ |
-//   | |    ┌╋   |2| |
-//   | |  ->||<- ├┬┘ |
-//   | └----|----┘|  |
-//   └------|----||--┘
-//          |  ->||<-APDZHalfLength
-//        ->|    |<-CaloZHalfLength
-void CALConstruct::CalZUnitConstruct() {
+//   ├-1 Calo
+//   └-2 APD
+//                   ->|                 |<- CaloZHalfLength + APDZHalfLength + WrapZHalfLength
+// ->| |<-             |             ->| |<- WrapZHalfLength
+//   ┌-----------------|-----------------┐
+//   |0┌---------------|-------------┐   |
+//   | | 1             |             |   |
+//   | |               |             ├-┐ |
+//   | |              ┌╋             |2| |
+//   | |            ->||<- APDZHalf  ├┬┘ |
+//   | |              |    Length    ||  |
+//   | └--------------|--------------┘|  |
+//   └----------------|--------------||--┘
+//                    |            ->||<- APDZHalfLength
+//                  ->|              |<- CaloZHalfLength
+void CALConstruct::CalUnit1Construct() {
     if (!CaloXHalfLength || !CaloYHalfLength || !CaloZHalfLength) {
         G4cout << fCALName << " Construction Error: at least size of one dimension is zero." << G4endl;
         return;
@@ -144,8 +148,6 @@ void CALConstruct::CalZUnitConstruct() {
     auto CaloLV = new G4LogicalVolume(Calo, fCALMaterial, fCALName + "_LV",
                                       nullptr, nullptr, nullptr);
     fCaloLV = CaloLV;
-    if (fOptical) new G4LogicalSkinSurface("WrapSkinSurface", fCaloLV, dControl->Wrap_Surface);
-
     fCaloLVVector.push_back(CaloLV);
     if (fVis) {
         fVis->SetVisibility(true);
@@ -176,25 +178,33 @@ void CALConstruct::CalZUnitConstruct() {
                                    fAPDWLV, fCALName + "_APDWorld_PV", fWrapLV,
                                    false, fCopyNo, fCheckOverlap);
     PVVector.push_back(APDPV);
-    if (fOptical) new G4LogicalBorderSurface(fCALName + "APDGlueSurface", CaloPV, APDPV, dControl->APD_Surface);
+
+    // optical surface
+    if (fOptical) {
+        new G4LogicalSkinSurface(fCALName + "_WrapSkinSurface", fCaloLV, dControl->Wrap_Surface);
+        new G4LogicalBorderSurface(fCALName + "_APDGlueSurface", CaloPV, APDPV, dControl->APD_Surface);
+    }
 
 }
 
-//   0 Wrap
-//   ├-1 box (Crystal)
-//   └-2 abox (APD)
-//                   ->|                 |<-CaloXHalfLength + APDXHalfLength + WrapXHalfLength
-// ->| |<-             |             ->| |<-WrapXHalfLength
+//   0 Outline (vacuum)
+//   ├-1 Wrap
+//   ├-2 Calo
+//   └-3 APD
+//                   ->|                 |<- CaloZHalfLength + APDZHalfLength + WrapZHalfLength
+// ->| |<-             |             ->| |<- WrapZHalfLength
 //   ┌-----------------|-----------------┐
-//   |0┌---------------|-------------┐   |
-//   | | 1             |             ├-┐ |
-//   | |              ┌╋             |2| |
-//   | |            ->||<-           ├┬┘ |
-//   | └--------------|--------------┘|  |
+//   |1┌---------------|-------------┬-┐ |
+//   | |               |             |0| |
+//   | | 2             |             ├-┤ |
+//   | |              ┌╋             |3| |
+//   | |            ->||<- APDZHalf  ├-┤ |
+//   | |              |    Length    | | |
+//   | └--------------|--------------┴┬┘ |
 //   └----------------|--------------||--┘
-//                    |            ->||<-APDXHalfLength
-//                  ->|              |<-CaloXHalfLength
-void CALConstruct::CalXUnitConstruct() {
+//                    |            ->||<- APDZHalfLength
+//                  ->|              |<- CaloZHalfLength
+void CALConstruct::CalUnit2Construct() {
 
 }
 
@@ -265,9 +275,9 @@ void CALConstruct::ConstructLV() {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void CALConstruct::CalZUnitPlacement(G4LogicalVolume *wrapLV, G4double z_angle) {
+void CALConstruct::UnitPlacement(G4LogicalVolume *unitLV, G4RotationMatrix *fRot) {
 
-    if (wrapLV == nullptr) {
+    if (unitLV == nullptr) {
         G4cerr << "warpLV is empty for " << fCALName << " " << fCopyNo << G4endl;
         return;
     }
@@ -275,25 +285,10 @@ void CALConstruct::CalZUnitPlacement(G4LogicalVolume *wrapLV, G4double z_angle) 
     // placement of calorimeter unit
     auto Pos = G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ);
 
-    // rotation matrix
-    HepRot = new G4RotationMatrix();
-    HepRot->rotateZ(z_angle);
-    G4RotationMatrix *fRotate = (z_angle == 0) ? nullptr : HepRot;
-
     // place wrap
-    auto WrapPV = new G4PVPlacement(fRotate, Pos, wrapLV, fCALName + "_PVW", fMotherVolume,
+    auto WrapPV = new G4PVPlacement(fRot, Pos, unitLV, fCALName + "_PVW", fMotherVolume,
                                     false, fCopyNo, fCheckOverlap);
     PVVector.push_back(WrapPV);
-}
-
-
-void CALConstruct::CalXUnitPlacement(G4LogicalVolume *wrapLV, G4double z_angle) {
-
-}
-
-
-void CALConstruct::AbsorberUnitPlacement(G4LogicalVolume *boxLV, G4double z_angle) {
-
 }
 
 G4ThreeVector
@@ -365,12 +360,12 @@ G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, con
         return TotalHalfSize;
     }
 
+    // construct unit
     fAPDVis = new G4VisAttributes(G4Colour(0.5, 0.5, .0));
+    CalUnit1Construct();
 
-    CalZUnitConstruct();
-
+    // calculate total size
     auto UnitBox = dynamic_cast<G4Box*>(fWrapLV->GetSolid());
-
     TotalHalfSize = G4ThreeVector(xNo * UnitBox->GetXHalfLength(),
                               yNo * UnitBox->GetYHalfLength(),
                               zNo * UnitBox->GetZHalfLength());
@@ -382,7 +377,7 @@ G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, con
                 UnitPosY = -1. * TotalHalfSize.y() + (2 * j + 1) * UnitBox->GetYHalfLength() + CentrePos.y();
                 UnitPosZ = -1. * TotalHalfSize.z() + (2 * k + 1) * UnitBox->GetZHalfLength() + CentrePos.z();
 
-                CalZUnitPlacement(fWrapLV);
+                UnitPlacement(fWrapLV);
 
                 fCopyNo++;
             }
@@ -533,6 +528,13 @@ G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, con
 
 void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo, const G4ThreeVector &CentrePos,
                                                  G4double AbsThickness, G4Material *AbsMat) {
+
+    // rotation matrix
+    auto fRotationZ0 = new G4RotationMatrix();
+    fRotationZ0->rotateX(90);
+    auto fRotationZ90 = new G4RotationMatrix();
+    fRotationZ90->rotateX(90);
+    fRotationZ90->rotateZ(90);
 
     auto ifwrap = fWrap;
 
