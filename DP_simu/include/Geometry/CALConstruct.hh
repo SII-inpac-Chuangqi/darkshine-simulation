@@ -30,20 +30,11 @@ public:
 
     void CalUnit1Construct();
     void CalUnit2Construct();
+    void CalWLSUnitConstruct();
     void AbsorberUnitConstruct();
-    void ConstructLV();
 
     // Physical Volume placement
 
-    void UnitPlacement(G4LogicalVolume *unitLV,
-                       G4double posX,
-                       G4double posY,
-                       G4double posZ,
-                       G4RotationMatrix *fRot = nullptr);
-
-    G4ThreeVector
-    Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4LogicalVolume *aboxLV,
-              double z_angle = 0.);
 
     G4ThreeVector MatrixPlacement(G4int, G4int, G4int, const G4ThreeVector &);
 
@@ -153,6 +144,7 @@ private:
     G4double UnitPosX{0};
     G4double UnitPosY{0};
     G4double UnitPosZ{0};
+    G4Material *fCALMaterial{nullptr};
     G4VisAttributes *fCaloVis{nullptr};
 
     // For Wrap
@@ -168,8 +160,6 @@ private:
     DetectorSD *fCALWrapSD{nullptr};
     G4VisAttributes *fVis{nullptr};
     G4VisAttributes *fWrapVis{nullptr};
-
-    G4Material *fCALMaterial{nullptr};
     G4Material *fWrapMaterial{nullptr};
 
     // APD Stuff (Optical Photon)
@@ -193,6 +183,7 @@ private:
     G4double AbsXHalfLength{0.};
     G4double AbsYHalfLength{0.};
     G4double AbsZHalfLength{0.};
+    G4Material *fAbsMaterial{nullptr};
 
     G4RotationMatrix *HepRot{nullptr};
 
