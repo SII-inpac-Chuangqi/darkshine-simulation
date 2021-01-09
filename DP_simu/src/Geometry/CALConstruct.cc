@@ -337,7 +337,8 @@ G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, con
 
     // construct unit
     fAPDVis = new G4VisAttributes(G4Colour(0.5, 0.5, .0));
-    CalUnit1Construct();
+    //CalUnit1Construct();
+    CalUnit2Construct();
 
     // calculate total size
     auto UnitBox = dynamic_cast<G4Box*>(fOutlineLV->GetSolid());
