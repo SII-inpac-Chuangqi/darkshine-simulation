@@ -207,6 +207,85 @@ void CALConstruct::CalUnit1Construct() {
 //                  ->|              |<- CaloZHalfLength
 void CALConstruct::CalUnit2Construct() {
 
+    if (!CaloXHalfLength || !CaloYHalfLength || !CaloZHalfLength) {
+        G4cout << fCALName << " Construction Error: at least size of one dimension is zero." << G4endl;
+        return;
+    }
+    /// construct logical volume
+    // Outline
+    auto OutlineBox = new G4Box(fCALName + "_OutlineBox",
+                                CaloXHalfLength + WrapXHalfLength,
+                                CaloYHalfLength + WrapYHalfLength,
+                                CaloZHalfLength + WrapZHalfLength + APDZHalfLength);
+    auto OutlineLV = new G4LogicalVolume(OutlineBox, G4Material::GetMaterial("vacuum"),
+                                         fCALName + "_OutlineLV",
+                                         nullptr, nullptr, nullptr);
+    fOutlineLV = OutlineLV;
+    OutlineLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    // Wrap
+    auto InnerBox = new G4Box(fCALName + "+iBox",
+                              CaloXHalfLength,
+                              CaloYHalfLength,
+                              CaloZHalfLength + APDZHalfLength);
+    auto WrapBox = new G4SubtractionSolid(fCALName + "_WrapBox", OutlineBox, InnerBox);
+    auto WrapLV = new G4LogicalVolume(WrapBox, fWrapMaterial, fCALName + "_LVW",
+                                      nullptr, nullptr, nullptr);
+    fWrapLV = WrapLV;
+
+    if (fWrapVis) {
+        fWrapVis->SetVisibility(true);
+        WrapLV->SetVisAttributes(fWrapVis);
+    } else WrapLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    if (fCALWrapSD) WrapLV->SetSensitiveDetector(fCALWrapSD);
+
+    // Crystal
+    auto CaloBox = new G4Box(fCALName + "_Box", CaloXHalfLength, CaloYHalfLength, CaloZHalfLength);
+    auto CaloLV = new G4LogicalVolume(CaloBox, fCALMaterial, fCALName + "_LV",
+                                      nullptr, nullptr, nullptr);
+    fCaloLV = CaloLV;
+    fCaloLVVector.push_back(CaloLV);
+    if (fVis) {
+        fVis->SetVisibility(true);
+        CaloLV->SetVisAttributes(fVis);
+    } else CaloLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    if (fCALSD) CaloLV->SetSensitiveDetector(fCALSD);
+
+    // APD
+    auto APDBox = new G4Box(fCALName + "_APDWorld_Box", APDXHalfLength, APDYHalfLength, APDZHalfLength);
+    auto APDLV = new G4LogicalVolume(APDBox, G4Material::GetMaterial("vacuum"), fCALName,
+                                     nullptr, nullptr, nullptr);
+    fAPDWLV = APDLV;
+
+    if (fAPDVis) {
+        fAPDVis->SetVisibility(true);
+        APDLV->SetVisAttributes(fAPDVis);
+    } else APDLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    /// construct physical volume
+    // place wrap
+    auto WrapPV = new G4PVPlacement(nullptr, G4ThreeVector(0,0,0),
+                                    fWrapLV, fCALName + "_WrapPV", fOutlineLV,
+                                    false, fCopyNo, fCheckOverlap);
+    PVVector.push_back(WrapPV);
+    // place crystal
+    auto CaloPV = new G4PVPlacement(nullptr,G4ThreeVector(0, 0, - APDZHalfLength),
+                                    fCaloLV, fCALName + "_PV", fWrapLV,
+                                    false, fCopyNo, fCheckOverlap);
+    PVVector.push_back(CaloPV);
+    // place APD
+    auto APDPV = new G4PVPlacement(nullptr, G4ThreeVector(0, 0, CaloZHalfLength),
+                                   fAPDWLV, fCALName + "_APDWorld_PV", fWrapLV,
+                                   false, fCopyNo, fCheckOverlap);
+    PVVector.push_back(APDPV);
+
+    // optical surface
+    if (fOptical) {
+        new G4LogicalBorderSurface(fCALName + "_WrapSurface", CaloPV, WrapPV, dControl->Wrap_Surface);
+        new G4LogicalBorderSurface(fCALName + "_APDGlueSurface", CaloPV, APDPV, dControl->APD_Surface);
+    }
 }
 
 // Volume relationship:
