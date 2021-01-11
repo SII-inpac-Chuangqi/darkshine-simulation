@@ -143,7 +143,7 @@ void CALConstruct::CalUnit1Construct() {
         WrapLV->SetVisAttributes(fWrapVis);
     } else WrapLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-    if (fCALWrapSD) WrapLV->SetSensitiveDetector(fCALWrapSD);
+    if(fCALWrapSD) WrapLV->SetSensitiveDetector(fCALWrapSD);
 
     // Crystal
     auto CaloBox = new G4Box(fCALName + "_Box", CaloXHalfLength, CaloYHalfLength, CaloZHalfLength);
@@ -238,7 +238,7 @@ void CALConstruct::CalUnit2Construct() {
         WrapLV->SetVisAttributes(fWrapVis);
     } else WrapLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-    if (fCALWrapSD) WrapLV->SetSensitiveDetector(fCALWrapSD);
+    if(fCALWrapSD) WrapLV->SetSensitiveDetector(fCALWrapSD);
 
     // Crystal
     auto CaloBox = new G4Box(fCALName + "_Box", CaloXHalfLength, CaloYHalfLength, CaloZHalfLength);
@@ -272,12 +272,12 @@ void CALConstruct::CalUnit2Construct() {
     PVVector.push_back(WrapPV);
     // place crystal
     auto CaloPV = new G4PVPlacement(nullptr,G4ThreeVector(0, 0, - APDZHalfLength),
-                                    fCaloLV, fCALName + "_PV", fWrapLV,
+                                    fCaloLV, fCALName + "_PV", fOutlineLV,
                                     false, fCopyNo, fCheckOverlap);
     PVVector.push_back(CaloPV);
     // place APD
     auto APDPV = new G4PVPlacement(nullptr, G4ThreeVector(0, 0, CaloZHalfLength),
-                                   fAPDWLV, fCALName + "_APDWorld_PV", fWrapLV,
+                                   fAPDWLV, fCALName + "_APDWorld_PV", fOutlineLV,
                                    false, fCopyNo, fCheckOverlap);
     PVVector.push_back(APDPV);
 
