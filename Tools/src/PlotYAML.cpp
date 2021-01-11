@@ -92,12 +92,12 @@ void PlotYAML::Plot() {
         // plot variables and save to corresponding folder
         auto c1 = new TCanvas("c1", "c1", 2500, 2000);
 
-        bool log_x = (var["log_x"].IsDefined()) ? var["log_x"].as<bool>() : false;
+        bool log_x = (var["log_x"].IsDefined()) && var["log_x"].as<bool>();
         if (log_x) c1->SetLogx();
-        bool log_y = (var["log_y"].IsDefined()) ? var["log_y"].as<bool>() : false;
+        bool log_y = (var["log_y"].IsDefined()) && var["log_y"].as<bool>();
         if (log_y) c1->SetLogy();
-        bool normalize = (var["normalize"].IsDefined()) ? var["normalize"].as<bool>() : false;
-        bool grid_y = (var["grid_y"].IsDefined()) ? var["grid_y"].as<bool>() : false;
+        bool normalize = (var["normalize"].IsDefined()) && var["normalize"].as<bool>();
+        bool grid_y = (var["grid_y"].IsDefined()) && var["grid_y"].as<bool>();
         if (grid_y) c1->SetGridy();
 
         auto var_name = var["name"].as<std::string>();

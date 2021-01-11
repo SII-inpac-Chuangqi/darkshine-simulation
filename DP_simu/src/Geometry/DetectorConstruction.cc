@@ -147,7 +147,7 @@ G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
     // Save Geometry
     if (dControl->save_geometry) SaveGeometry();
 
-    // Set User Limit 
+    // Set User Limit
     G4double maxStep = 10 * mm;
     fStepLimit = new G4UserLimits(maxStep, DBL_MAX, 200 * s);
 
