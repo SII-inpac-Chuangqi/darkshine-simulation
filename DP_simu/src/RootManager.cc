@@ -197,17 +197,17 @@ void RootManager::FillSimHit(const G4String &cIn, SimulatedHit *hit) {
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 
-void RootManager::FillEleak(const G4Step *in, G4String type) {
+void RootManager::FillEleak(const G4Step *in, const G4String& type) {
     auto deltaE = in->GetTotalEnergyDeposit();
 
     if (type == "ECAL") Evt->setEleakEcal(Evt->getEleakEcal() + deltaE);
-    else if (type.contains("_PVW")) {
-        auto cin = type.remove(type.index("_PVW"));
-
-        //auto SimHits = Evt->getSimulatedHitCollection_Old();
-        //auto itr = SimHits.at(cin)->end() - 1;
-        //(*itr)->setELeakWrapper( (*itr)->getELeakWrapper() + deltaE);
-    }
+//    else if (type.contains("_PVW")) {
+//        auto cin = type.remove(type.index("_PVW"));
+//
+//        auto SimHits = Evt->getSimulatedHitCollection_Old();
+//        auto itr = SimHits.at(cin)->end() - 1;
+//        (*itr)->setELeakWrapper( (*itr)->getELeakWrapper() + deltaE);
+//    }
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......

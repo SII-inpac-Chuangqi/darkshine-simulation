@@ -76,7 +76,7 @@ public:
 
     void FillPNE(G4double E1, G4double E2);
 
-    void FillEleak(const G4Step *, G4String);
+    void FillEleak(const G4Step *, const G4String&);
 
     bool FillOptical(const G4Step *, G4String);
 
