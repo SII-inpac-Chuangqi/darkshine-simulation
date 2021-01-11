@@ -143,6 +143,8 @@ void CALConstruct::CalUnit1Construct() {
         WrapLV->SetVisAttributes(fWrapVis);
     } else WrapLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
+    if(fCALWrapSD) WrapLV->SetSensitiveDetector(fCALWrapSD);
+
     // Crystal
     auto CaloBox = new G4Box(fCALName + "_Box", CaloXHalfLength, CaloYHalfLength, CaloZHalfLength);
     auto CaloLV = new G4LogicalVolume(CaloBox, fCALMaterial, fCALName + "_LV",
@@ -235,6 +237,8 @@ void CALConstruct::CalUnit2Construct() {
         fWrapVis->SetVisibility(true);
         WrapLV->SetVisAttributes(fWrapVis);
     } else WrapLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    if(fCALWrapSD) WrapLV->SetSensitiveDetector(fCALWrapSD);
 
     // Crystal
     auto CaloBox = new G4Box(fCALName + "_Box", CaloXHalfLength, CaloYHalfLength, CaloZHalfLength);
