@@ -89,17 +89,8 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
 
     auto *touchable = (G4TouchableHistory *) (step->GetPreStepPoint()->GetTouchable());
 
-    // Get calorimeter cell id 
-    G4int reNumber = touchable->GetReplicaNumber();
-
-    // Only for Calorimeters
-    if (fType > 0) {
-        reNumber = touchable->GetReplicaNumber(1);
-    }
-
-    // DEBUG
-    //auto pname = touchable->GetVolume()->GetName();
-    //G4cout << "[DEBUG]Mother CopyNo:" << reNumber << ", volume:" << pname << G4endl;
+    // Get calorimeter cell id
+    reNumber = touchable->GetReplicaNumber( fType > 0 ? 1 : 0); // for Tracker, depth=0; for calo, depth=1
 
     auto xID = (int) fCellID.x();
     auto yID = (int) fCellID.y();
