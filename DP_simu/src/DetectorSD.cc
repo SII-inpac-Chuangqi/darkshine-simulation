@@ -91,6 +91,13 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
 
     // Get calorimeter cell id 
     G4int reNumber = touchable->GetReplicaNumber();
+
+    // Only for Calorimeters
+    if (fType > 0) {
+        touchable->MoveUpHistory();
+        reNumber = touchable->GetReplicaNumber();
+    }
+
     auto xID = (int) fCellID.x();
     auto yID = (int) fCellID.y();
     //G4int zID = (int)fCellID.z();
