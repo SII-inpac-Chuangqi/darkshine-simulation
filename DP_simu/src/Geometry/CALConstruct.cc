@@ -19,7 +19,7 @@ CALConstruct::CALConstruct(const G4String &CALName,
                            G4bool Wrap,
                            G4bool Optical,  /* if simulate optical photon */
                            G4bool CheckOverlap) {
-    fCALName = std::move(CALName);
+    fCALName = CALName;
     fMotherVolume = MotherVolume;
     fCopyNo = CopyNo;
     fType = Type;
