@@ -127,7 +127,8 @@ Control::Control() {
     HCAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
 
     HCAL_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
-    HCAL_Size_Dir = G4ThreeVector(100 * cm + 19 * HCAL_Wrap_Size.x(), 5 * cm, 1 * cm);
+    //HCAL_Size_Dir = G4ThreeVector(100 * cm + 19 * HCAL_Wrap_Size.x(), 5 * cm, 1 * cm);
+    HCAL_Size_Dir = G4ThreeVector(1 * cm, 5 * cm, 100 * cm);
     HCAL_Mod_No_Dir = G4ThreeVector(1, 20, 120);
     HCAL_Module_No = G4ThreeVector(3, 3, 1);
     HCAL_Module_Gap = 0.5 * mm;
@@ -159,8 +160,25 @@ Control::Control() {
     //========================================
     /* Optical */
     //----------------------------------------
-    if_optical = false;
+    if_optical = true;
 
+    //----------------------------------------
+    // Wrap related
+    const G4int cNum = 2;
+    G4double ephoton[cNum] = {1*eV, 7*eV};//overflow and underflow will take first/last bin
+    G4double reflectivity[cNum] = {1.0, 1.0};
+    G4double efficiency[cNum]   = {0.0, 0.0};
+    G4double transmittance[cNum]   = {0.0, 0.0};
+    Wrap_Surface_Mat = new G4MaterialPropertiesTable();
+    Wrap_Surface_Mat->AddProperty("REFLECTIVITY", ephoton, reflectivity, cNum); //reflect fraction, default=1
+    Wrap_Surface_Mat->AddProperty("EFFICIENCY",   ephoton, efficiency,   cNum); //detection  fraction (abs=1-reflet-trans, then at efficiency, detectition(invoke post-step SD)),default=0
+    Wrap_Surface_Mat->AddProperty("TRANSMITTANCE",   ephoton, transmittance,   cNum); //transmission fraction, default=0
+
+    Wrap_Surface = new G4OpticalSurface("WrapSurfaceOptical");
+    Wrap_Surface->SetType(dielectric_LUT);
+    Wrap_Surface->SetModel(LUT);
+    Wrap_Surface->SetFinish(polishedtyvekair);
+    Wrap_Surface->SetMaterialPropertiesTable(Wrap_Surface_Mat);
     //----------------------------------------
     // APD related
     APD_Mat = G4Material::GetMaterial("G4_Si");
@@ -168,6 +186,20 @@ Control::Control() {
 
     Glue_Mat = G4Material::GetMaterial("G4_W");
     Glue_Size = G4ThreeVector(1 * cm, 1 * cm, 0.1 * mm);
+
+    G4double reflectivityAPD[cNum] = {0.0, 0.0};
+    G4double efficiencyAPD[cNum]   = {1.0, 1.0};
+    G4double transmittanceAPD[cNum]   = {0.0, 0.0};
+    APD_Surface_Mat = new G4MaterialPropertiesTable();
+    APD_Surface_Mat->AddProperty("REFLECTIVITY", ephoton, reflectivityAPD, cNum); //reflect fraction, default=1
+    APD_Surface_Mat->AddProperty("EFFICIENCY", ephoton, efficiencyAPD, cNum); //detection  fraction (abs=1-reflet-trans, then at efficiency, detectition(invoke post-step SD)),default=0
+    APD_Surface_Mat->AddProperty("TRANSMITTANCE", ephoton, transmittanceAPD, cNum); //transmission fraction, default=0
+
+    APD_Surface = new G4OpticalSurface("APDSurfaceOptical");
+    APD_Surface->SetType(dielectric_LUT);
+    APD_Surface->SetModel(LUT);
+    APD_Surface->SetFinish(polishedvm2000glue);
+    APD_Surface->SetMaterialPropertiesTable(APD_Surface_Mat);
     //----------------------------------------
 
 }
@@ -232,12 +264,12 @@ void Control::RebuildVariables() {
 
     //----------------------------------------
     // Electromagnetic Calorimeter
-    Size_ECALRegion.setX((ECAL_Center_Size.x() + ECAL_Center_Wrap_Size.x()) * ECAL_Center_Module_No.x() +
-                         ECAL_Center_Module_No.x() * 2 * eps);
-    Size_ECALRegion.setY((ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y()) * ECAL_Center_Module_No.y() +
-                         ECAL_Center_Module_No.y() * 2 * eps);
-    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z()) * ECAL_Center_Module_No.z() +
-                         ECAL_Center_Module_No.z() * 2 * eps);
+    Size_ECALRegion.setX((ECAL_Center_Size.x() + ECAL_Center_Wrap_Size.x()) * ECAL_Center_Module_No.x());
+                         //+ ECAL_Center_Module_No.x() * 2 * eps);
+    Size_ECALRegion.setY((ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y()) * ECAL_Center_Module_No.y());
+                         //+ ECAL_Center_Module_No.y() * 2 * eps);
+    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z() + APD_Size.z()) * ECAL_Center_Module_No.z());
+                         //+ ECAL_Center_Module_No.z() * 2 * eps);
 
     Pos_ECALRegion = G4ThreeVector(0, 0,
                                    0.5 * Size_ECALRegion.z() + rec_Pos_TrackerRegion.z() +
@@ -247,14 +279,13 @@ void Control::RebuildVariables() {
     //----------------------------------------
     // Hadronic Calorimeter
     Size_HCALRegion.setX(
-            HCAL_Module_No.x() * (HCAL_Size_Dir.x() + HCAL_Wrap_Size.x())
+            HCAL_Module_No.x() * (HCAL_Size_Dir.z() + HCAL_Wrap_Size.z() + APD_Size.z())
             + HCAL_Module_Gap * (HCAL_Module_No.x() - 1)
             + HCAL_Module_No.x() * 2 * eps);
-    Size_HCALRegion.setY(
-            HCAL_Module_No.y() * HCAL_Mod_No_Dir.y() * (HCAL_Size_Dir.y() + HCAL_Wrap_Size.y())
-            + HCAL_Module_Gap * (HCAL_Module_No.y() - 1) + HCAL_Module_No.x() * 2 * eps);
+    Size_HCALRegion.setY(Size_HCALRegion.x());
     Size_HCALRegion.setZ(
-            HCAL_Mod_No_Dir.z() / 2 * (2 * (HCAL_Size_Dir.z() + HCAL_Wrap_Size.z()) + HCAL_Absorber_Thickness)
+            ceil(HCAL_Mod_No_Dir.z() * 0.5) * 2 * (HCAL_Size_Dir.x() + HCAL_Wrap_Size.x())
+            + floor(HCAL_Mod_No_Dir.z() / 2) * HCAL_Absorber_Thickness
             + HCAL_Module_Gap * (HCAL_Module_No.z() - 1) + HCAL_Module_No.x() * 2 * eps);
 
     Pos_HCALRegion = G4ThreeVector(0, 0,
@@ -264,8 +295,27 @@ void Control::RebuildVariables() {
     //----------------------------------------
     // World
     World_Mat = G4Material::GetMaterial("vacuum");
-    G4double l = 2.0 * (Pos_HCALRegion.z() + Size_HCALRegion.x());;
-    Size_World = G4ThreeVector(l, l, l);
+    //G4double l = 2.0 * (Pos_HCALRegion.z() + Size_HCALRegion.x());
+    G4double borderX[5] = {0.2 * m,
+                           build_rec_tracker * ( fabs( rec_Pos_TrackerRegion.x() ) + rec_Size_TrackerRegion.x() ),
+                           build_tag_tracker * ( fabs( tag_Pos_TrackerRegion.x() ) + tag_Size_TrackerRegion.x() ),
+                           build_ECAL * ( fabs( Pos_ECALRegion.x() ) + Size_ECALRegion.x() ),
+                           build_HCAL * ( fabs( Pos_HCALRegion.x() ) + Size_HCALRegion.x() )};
+    G4double borderY[5] = {0.2 * m,
+                           build_rec_tracker * ( fabs( rec_Pos_TrackerRegion.y() ) + rec_Size_TrackerRegion.y() ),
+                           build_tag_tracker * ( fabs( tag_Pos_TrackerRegion.y() ) + tag_Size_TrackerRegion.y() ),
+                           build_ECAL * ( fabs( Pos_ECALRegion.y() ) + Size_ECALRegion.y() ),
+                           build_HCAL * ( fabs( Pos_HCALRegion.y() ) + Size_HCALRegion.y() )};
+    G4double borderZ[5] = {0.2 * m,
+                           build_rec_tracker * ( fabs( rec_Pos_TrackerRegion.z() ) + rec_Size_TrackerRegion.z() ),
+                           build_tag_tracker * ( fabs( tag_Pos_TrackerRegion.z() ) + tag_Size_TrackerRegion.z() ),
+                           build_ECAL * ( fabs( Pos_ECALRegion.z() ) + Size_ECALRegion.z() ),
+                           build_HCAL * ( fabs( Pos_HCALRegion.z() ) + Size_HCALRegion.z() )};
+    G4double lx = *std::max_element(borderX, borderX + 5);
+    G4double ly = *std::max_element(borderY, borderY + 5);
+    G4double lz = *std::max_element(borderZ, borderZ + 5);
+    G4double lzoom = 2;
+    Size_World = G4ThreeVector(lzoom * lx, lzoom * ly, lzoom * lz);
 }
 
 

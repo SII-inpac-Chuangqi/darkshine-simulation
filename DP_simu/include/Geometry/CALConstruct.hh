@@ -17,6 +17,7 @@
 #include <utility>
 #include <vector>
 
+/// Class decription:
 class CALConstruct {
 public:
     CALConstruct(const G4String&, G4LogicalVolume *, G4int, G4bool, G4bool, G4bool, G4bool);
@@ -25,16 +26,19 @@ public:
 
     virtual ~CALConstruct();
 
-    void ConstructLV();
+    // Construct Logical Volume and child Physical Volume
 
-    /// \brief main construct
-    G4ThreeVector
-    Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4LogicalVolume *aboxLV,
-              double z_angle = 0.);
+    void CalUnit1Construct();
+    void CalUnit2Construct();
+    void CalWLSUnitConstruct();
+    void AbsorberUnitConstruct();
+
+    // Physical Volume placement
+
 
     G4ThreeVector MatrixPlacement(G4int, G4int, G4int, const G4ThreeVector &);
 
-    void MatrixPlacementXYRemoved(G4int, G4int, G4int, const G4ThreeVector &, G4int, G4int);
+    //void MatrixPlacementXYRemoved(G4int, G4int, G4int, const G4ThreeVector &, G4int, G4int);
 
     void MatrixPlacementXYwithAbsorber(G4int, G4int, G4int, const G4ThreeVector &, G4double, G4Material *);
 
@@ -51,23 +55,23 @@ public:
 
     void SetCheckOverlap(G4bool in) { fCheckOverlap = in; };
 
-    void SetSizeX(G4double in) { fSizeX = in; };
+    void SetSizeX(G4double in) { CaloXHalfLength = in; };
 
-    void SetSizeY(G4double in) { fSizeY = in; };
+    void SetSizeY(G4double in) { CaloYHalfLength = in; };
 
-    void SetSizeZ(G4double in) { fSizeZ = in; };
+    void SetSizeZ(G4double in) { CaloZHalfLength = in; };
 
-    void SetPosX(G4double in) { fPosX = in; };
+    void SetPosX(G4double in) { UnitPosX = in; };
 
-    void SetPosY(G4double in) { fPosY = in; };
+    void SetPosY(G4double in) { UnitPosY = in; };
 
-    void SetPosZ(G4double in) { fPosZ = in; };
+    void SetPosZ(G4double in) { UnitPosZ = in; };
 
-    void SetWrapSizeX(G4double in) { fWrapSizeX = in; };
+    void SetWrapSizeX(G4double in) { WrapXHalfLength = in; };
 
-    void SetWrapSizeY(G4double in) { fWrapSizeY = in; };
+    void SetWrapSizeY(G4double in) { WrapYHalfLength = in; };
 
-    void SetWrapSizeZ(G4double in) { fWrapSizeZ = in; };
+    void SetWrapSizeZ(G4double in) { WrapZHalfLength = in; };
 
     void SetCopyNo(G4int in) { fCopyNo = in; };
 
@@ -88,30 +92,30 @@ public:
     void SetWrapMaterial(G4Material *in) { fWrapMaterial = in; };
 
     void SetSizeXYZ(G4double x, G4double y, G4double z) {
-        fSizeX = x;
-        fSizeY = y;
-        fSizeZ = z;
+        CaloXHalfLength = x;
+        CaloYHalfLength = y;
+        CaloZHalfLength = z;
     };
 
     void SetPosXYZ(G4double x, G4double y, G4double z) {
-        fPosX = x;
-        fPosY = y;
-        fPosZ = z;
+        UnitPosX = x;
+        UnitPosY = y;
+        UnitPosZ = z;
     };
 
     void SetWrapSizeXYZ(G4double x, G4double y, G4double z) {
-        fWrapSizeX = x;
-        fWrapSizeY = y;
-        fWrapSizeZ = z;
+        WrapXHalfLength = x;
+        WrapYHalfLength = y;
+        WrapZHalfLength = z;
     };
 
     void SetAPDSize(const G4ThreeVector &apd, const G4ThreeVector &glue) {
-        aSizeX = apd.x();
-        aSizeY = apd.y();
-        aSizeZ = apd.z();
-        gSizeX = glue.x();
-        gSizeY = glue.y();
-        gSizeZ = glue.z();
+        APDXHalfLength = apd.x() * 0.5;
+        APDYHalfLength = apd.y() * 0.5;
+        APDZHalfLength = apd.z() * 0.5;
+        GlueXHalfLength = glue.x() * 0.5;
+        GlueYHalfLength = glue.y() * 0.5;
+        GlueZHalfLength = glue.z() * 0.5;
     };
 
     void SetAPDMat(G4Material *apd, G4Material *glue) {
@@ -134,17 +138,19 @@ private:
     G4bool ifAbsorber{false};
 
     // For Inner part
-    G4double fSizeX{0};
-    G4double fSizeY{0};
-    G4double fSizeZ{0};
-    G4double fPosX{0};
-    G4double fPosY{0};
-    G4double fPosZ{0};
+    G4double CaloXHalfLength{0};
+    G4double CaloYHalfLength{0};
+    G4double CaloZHalfLength{0};
+    G4double UnitPosX{0};
+    G4double UnitPosY{0};
+    G4double UnitPosZ{0};
+    G4Material *fCALMaterial{nullptr};
+    G4VisAttributes *fCaloVis{nullptr};
 
     // For Wrap
-    G4double fWrapSizeX{0};
-    G4double fWrapSizeY{0};
-    G4double fWrapSizeZ{0};
+    G4double WrapXHalfLength{0};
+    G4double WrapYHalfLength{0};
+    G4double WrapZHalfLength{0};
 
     G4int fCopyNo{0};
     G4String fCALName;
@@ -154,25 +160,30 @@ private:
     DetectorSD *fCALWrapSD{nullptr};
     G4VisAttributes *fVis{nullptr};
     G4VisAttributes *fWrapVis{nullptr};
-
-    G4Material *fCALMaterial{nullptr};
     G4Material *fWrapMaterial{nullptr};
 
     // APD Stuff (Optical Photon)
-    G4double wSizeX{0.};
-    G4double wSizeY{0.};
-    G4double wSizeZ{0.};
-    G4double aSizeX{0.};
-    G4double aSizeY{0.};
-    G4double aSizeZ{0.};
-    G4double gSizeX{0.};
-    G4double gSizeY{0.};
-    G4double gSizeZ{0.};
-    G4double wPosX{0.};
-    G4double wPosY{0.};
-    G4double wPosZ{0.};
+    G4double ADPwXHalfLength{0.};
+    G4double APDwYHalfLength{0.};
+    G4double APDwZHalfLength{0.};
+    G4double APDXHalfLength{0.};
+    G4double APDYHalfLength{0.};
+    G4double APDZHalfLength{0.};
+    G4double GlueXHalfLength{0.};
+    G4double GlueYHalfLength{0.};
+    G4double GlueZHalfLength{0.};
+    G4double APDPosX{0.};
+    G4double APDPosY{0.};
+    G4double APDPosZ{0.};
     G4Material *APD_Material{nullptr};
     G4Material *Glue_Material{nullptr};
+    G4VisAttributes *fAPDVis{nullptr};
+
+    // Absorber
+    G4double AbsXHalfLength{0.};
+    G4double AbsYHalfLength{0.};
+    G4double AbsZHalfLength{0.};
+    G4Material *fAbsMaterial{nullptr};
 
     G4RotationMatrix *HepRot{nullptr};
 
@@ -182,6 +193,7 @@ private:
     G4LogicalVolume *fWrapLV{nullptr}; // Wrapper
     G4LogicalVolume *fAPDWLV{nullptr}; // APD world
     G4LogicalVolume *fAbsLV{nullptr}; // Absorber world
+    G4LogicalVolume *fOutlineLV{nullptr}; // outline of unit
 
     // For Matrix Placement Output
     std::vector<G4LogicalVolume *> fCaloLVVector{};

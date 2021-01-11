@@ -27,15 +27,15 @@ CALConstruct::CALConstruct(const G4String &CALName,
     fOptical = Optical;
     fCheckOverlap = CheckOverlap;
 
-    fSizeX = 0.;
-    fSizeY = 0.;
-    fSizeZ = 0.;
-    fPosX = 0.;
-    fPosY = 0.;
-    fPosZ = 0.;
-    fWrapSizeX = 0.;
-    fWrapSizeY = 0.;
-    fWrapSizeZ = 0.;
+    CaloXHalfLength = 0.;
+    CaloYHalfLength = 0.;
+    CaloZHalfLength = 0.;
+    UnitPosX = 0.;
+    UnitPosY = 0.;
+    UnitPosZ = 0.;
+    WrapXHalfLength = 0.;
+    WrapYHalfLength = 0.;
+    WrapZHalfLength = 0.;
 
     fCALSD = nullptr;
     fCALWrapSD = nullptr;
@@ -58,15 +58,15 @@ CALConstruct::CALConstruct(const CALConstruct &in) {
     fWrap = in.fWrap;
     fOptical = in.fOptical;
     fCheckOverlap = in.fCheckOverlap;
-    fSizeX = in.fSizeX;
-    fSizeY = in.fSizeY;
-    fSizeZ = in.fSizeZ;
-    fPosX = in.fPosX;
-    fPosY = in.fPosY;
-    fPosZ = in.fPosZ;
-    fWrapSizeX = in.fWrapSizeX;
-    fWrapSizeY = in.fWrapSizeY;
-    fWrapSizeZ = in.fWrapSizeZ;
+    CaloXHalfLength = in.CaloXHalfLength;
+    CaloYHalfLength = in.CaloYHalfLength;
+    CaloZHalfLength = in.CaloZHalfLength;
+    UnitPosX = in.UnitPosX;
+    UnitPosY = in.UnitPosY;
+    UnitPosZ = in.UnitPosZ;
+    WrapXHalfLength = in.WrapXHalfLength;
+    WrapYHalfLength = in.WrapYHalfLength;
+    WrapZHalfLength = in.WrapZHalfLength;
     fCALMaterial = in.fCALMaterial;
     fWrapMaterial = in.fWrapMaterial;
     fCALSD = in.fCALSD;
@@ -87,6 +87,8 @@ CALConstruct::~CALConstruct() {
     delete fCALSD;
     delete fCALWrapSD;
     delete fWrapVis;
+    delete fAPDVis;
+    delete fOutlineLV;
 
     fCaloLVVector.clear();
     fCaloLVVector.shrink_to_fit();
@@ -102,438 +104,376 @@ CALConstruct::~CALConstruct() {
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void CALConstruct::ConstructLV() {
-    // check consistency
-    if (!fSizeX || !fSizeY || !fSizeZ) {
+
+// Volume relationship:
+//   0 Outline (Wrap)
+//   ├-1 Calo
+//   └-2 APD
+//                   ->|                 |<- CaloZHalfLength + APDZHalfLength + WrapZHalfLength
+// ->| |<-             |             ->| |<- WrapZHalfLength
+//   ┌-----------------|-----------------┐
+//   |0┌---------------|-------------┐   |
+//   | | 1             |             |   |
+//   | |               |             ├-┐ |
+//   | |              ┌╋             |2| |
+//   | |            ->||<- APDZHalf  ├┬┘ |
+//   | |              |    Length    ||  |
+//   | └--------------|--------------┘|  |
+//   └----------------|--------------||--┘
+//                    |            ->||<- APDZHalfLength
+//                  ->|              |<- CaloZHalfLength
+void CALConstruct::CalUnit1Construct() {
+    if (!CaloXHalfLength || !CaloYHalfLength || !CaloZHalfLength) {
         G4cout << fCALName << " Construction Error: at least size of one dimension is zero." << G4endl;
         return;
     }
+    /// construct logical volume
+    // Wrap
+    auto WrapBox = new G4Box(fCALName + "_WrapBox",
+                             CaloXHalfLength + WrapXHalfLength,
+                             CaloYHalfLength + WrapYHalfLength,
+                             CaloZHalfLength + WrapZHalfLength + APDZHalfLength);
+    auto WrapLV = new G4LogicalVolume(WrapBox, fWrapMaterial, fCALName + "_LVW",
+                                      nullptr, nullptr, nullptr);
+    fWrapLV = WrapLV;
+    fOutlineLV = WrapLV;
 
-    // Core Detector Region
-    auto fName = ifAbsorber ? fCALName + "Abs" : fCALName;
-    auto box = new G4Box(fName + "_Box", fSizeX-eps, fSizeY-eps, fSizeZ-eps);
-    auto box_Large = new G4Box(fName + "_Box", fSizeX, fSizeY, fSizeZ);
+    if (fWrapVis) {
+        fWrapVis->SetVisibility(true);
+        WrapLV->SetVisAttributes(fWrapVis);
+    } else WrapLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-    auto boxLV = new G4LogicalVolume(box, fCALMaterial, fName + "_LV", nullptr, nullptr, nullptr);
-    if (ifAbsorber) fAbsLV = boxLV;
-    else fCaloLV = boxLV;
+    if (fCALWrapSD) WrapLV->SetSensitiveDetector(fCALWrapSD);
 
-    if (fRecordLV) fCaloLVVector.push_back(boxLV);
+    // Crystal
+    auto CaloBox = new G4Box(fCALName + "_Box", CaloXHalfLength, CaloYHalfLength, CaloZHalfLength);
+    auto CaloLV = new G4LogicalVolume(CaloBox, fCALMaterial, fCALName + "_LV",
+                                      nullptr, nullptr, nullptr);
+    fCaloLV = CaloLV;
+    fCaloLVVector.push_back(CaloLV);
     if (fVis) {
         fVis->SetVisibility(true);
-        boxLV->SetVisAttributes(fVis);
-    } else boxLV->SetVisAttributes(G4VisAttributes::GetInvisible());
-    if (fCALSD) boxLV->SetSensitiveDetector(fCALSD);
+        CaloLV->SetVisAttributes(fVis);
+    } else CaloLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-    // Wrapper
-    if (fWrap) {
-        auto boxL = new G4Box(fCALName + "_BoxL", fSizeX + fWrapSizeX,
-                              fSizeY + fWrapSizeY,
-                              fSizeZ + fWrapSizeZ);
-        auto WrapBox = new G4SubtractionSolid(fCALName + "_BoxW", boxL, box_Large);
-        auto WrapLV = new G4LogicalVolume(WrapBox, fWrapMaterial, fCALName + "_LVW", nullptr, nullptr, nullptr);
-        fWrapLV = WrapLV;
-
-        if (fWrapVis) {
-            fWrapVis->SetVisibility(true);
-            WrapLV->SetVisAttributes(fWrapVis);
-        } else WrapLV->SetVisAttributes(G4VisAttributes::GetInvisible());
-
-        if (fCALWrapSD) WrapLV->SetSensitiveDetector(fCALWrapSD);
-    }
+    if (fCALSD) CaloLV->SetSensitiveDetector(fCALSD);
 
     // APD
-    if (fWrap && fOptical) {
-        wSizeX -= eps;
-        wSizeY -= eps;
-        wSizeZ -= eps;
+    auto APDBox = new G4Box(fCALName + "_APDWorld_Box", APDXHalfLength, APDYHalfLength, APDZHalfLength);
+    auto APDLV = new G4LogicalVolume(APDBox, G4Material::GetMaterial("vacuum"), fCALName,
+                                     nullptr, nullptr, nullptr);
+    fAPDWLV = APDLV;
 
-        auto abox = new G4Box(fCALName + "_APDWorld_Box", wSizeX, wSizeY, wSizeZ);
-        auto aboxLV = new G4LogicalVolume(abox, G4Material::GetMaterial("vacuum"), fCALName + "_APDWorld_LV", nullptr,
-                                          nullptr, nullptr);
-        fAPDWLV = aboxLV;
+    if (fAPDVis) {
+        fAPDVis->SetVisibility(true);
+        APDLV->SetVisAttributes(fAPDVis);
+    } else APDLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-        auto *wVis = new G4VisAttributes(G4Colour(0.5, 0.5, .0));
-        wVis->SetVisibility(true);
-        aboxLV->SetVisAttributes(wVis);
+    /// construct physical volume
+    // place crystal
+    auto CaloPV = new G4PVPlacement(nullptr,G4ThreeVector(0, 0, - APDZHalfLength),
+                                    fCaloLV, fCALName + "_PV", fWrapLV,
+                                    false, fCopyNo, fCheckOverlap);
+    PVVector.push_back(CaloPV);
+    // place APD
+    auto APDPV = new G4PVPlacement(nullptr, G4ThreeVector(0, 0, CaloZHalfLength),
+                                   fAPDWLV, fCALName + "_APDWorld_PV", fWrapLV,
+                                   false, fCopyNo, fCheckOverlap);
+    PVVector.push_back(APDPV);
+
+    // optical surface
+    if (fOptical) {
+        new G4LogicalSkinSurface(fCALName + "_WrapSkinSurface", fCaloLV, dControl->Wrap_Surface);
+        new G4LogicalBorderSurface(fCALName + "_APDGlueSurface", CaloPV, APDPV, dControl->APD_Surface);
     }
 }
 
+//   0 Outline (vacuum)
+//   ├-1 Wrap
+//   ├-2 Calo
+//   └-3 APD
+//                   ->|                 |<- CaloZHalfLength + APDZHalfLength + WrapZHalfLength
+// ->| |<-             |             ->| |<- WrapZHalfLength
+//   ┌-----------------|-----------------┐
+//   |1┌---------------|-------------┬-┐ |
+//   | |               |             |0| |
+//   | | 2             |             ├-┤ |
+//   | |              ┌╋             |3| |
+//   | |            ->||<- APDZHalf  ├-┤ |
+//   | |              |    Length    | | |
+//   | └--------------|--------------┴┬┘ |
+//   └----------------|--------------||--┘
+//                    |            ->||<- APDZHalfLength
+//                  ->|              |<- CaloZHalfLength
+void CALConstruct::CalUnit2Construct() {
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-G4ThreeVector
-CALConstruct::Construct(G4LogicalVolume *boxLV, G4LogicalVolume *WrapLV, G4LogicalVolume *aboxLV,
-                        double z_angle) {
-    auto TotalSize = G4ThreeVector(0, 0, 0);
-
-    // Placement of Calorimeter
-    auto pos = G4ThreeVector(fPosX, fPosY, fPosZ);
-
-    // Calculate Rotation Matrix
-    HepRot = new G4RotationMatrix();
-    HepRot->rotateZ(z_angle);
-
-
-    G4RotationMatrix *fRotate = (z_angle == 0) ? nullptr : HepRot;
-
-    auto fName = ifAbsorber ? fCALName + "Abs" : fCALName;
-    if (boxLV == nullptr) {
-        G4cerr << "boxLV is empty for " << fName << " " << fCopyNo << G4endl;
-        return G4ThreeVector();
+    if (!CaloXHalfLength || !CaloYHalfLength || !CaloZHalfLength) {
+        G4cout << fCALName << " Construction Error: at least size of one dimension is zero." << G4endl;
+        return;
     }
-    auto boxPV = new G4PVPlacement(fRotate, pos, boxLV, fName + "_PV", fMotherVolume, false, fCopyNo, fCheckOverlap);
-    PVVector.push_back(boxPV);
+    /// construct logical volume
+    // Outline
+    auto OutlineBox = new G4Box(fCALName + "_OutlineBox",
+                                CaloXHalfLength + WrapXHalfLength,
+                                CaloYHalfLength + WrapYHalfLength,
+                                CaloZHalfLength + WrapZHalfLength + APDZHalfLength);
+    auto OutlineLV = new G4LogicalVolume(OutlineBox, G4Material::GetMaterial("vacuum"),
+                                         fCALName + "_OutlineLV",
+                                         nullptr, nullptr, nullptr);
+    fOutlineLV = OutlineLV;
+    OutlineLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-    TotalSize = G4ThreeVector(fSizeX, fSizeY, fSizeZ);
+    // Wrap
+    auto InnerBox = new G4Box(fCALName + "+iBox",
+                              CaloXHalfLength,
+                              CaloYHalfLength,
+                              CaloZHalfLength + APDZHalfLength);
+    auto WrapBox = new G4SubtractionSolid(fCALName + "_WrapBox", OutlineBox, InnerBox);
+    auto WrapLV = new G4LogicalVolume(WrapBox, fWrapMaterial, fCALName + "_LVW",
+                                      nullptr, nullptr, nullptr);
+    fWrapLV = WrapLV;
 
-    // Placement of Wrap
-    if (fWrap) {
-        if (WrapLV == nullptr) {
-            G4cerr << "WarpLV is empty for " << fCALName << " " << fCopyNo << G4endl;
-            return G4ThreeVector();
-        }
-        auto WrapPV = new G4PVPlacement(fRotate, pos, WrapLV, fCALName + "_PVW", fMotherVolume, false, fCopyNo,
-                                        fCheckOverlap);
-        PVVector.push_back(WrapPV);
+    if (fWrapVis) {
+        fWrapVis->SetVisibility(true);
+        WrapLV->SetVisAttributes(fWrapVis);
+    } else WrapLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-        TotalSize = G4ThreeVector(fSizeX + fWrapSizeX, fSizeY + fWrapSizeY, fSizeZ + fWrapSizeZ);
+    if (fCALWrapSD) WrapLV->SetSensitiveDetector(fCALWrapSD);
 
-        if (fOptical) {
-            /* Set Optical Porperties for boundary surface */
-            auto *WrapSurface = new G4OpticalSurface(fCALName + "WrapSurface");
-            //WrapSurface->SetType(dielectric_dielectric);
-            //WrapSurface->SetFinish(polished);
-            //WrapSurface->SetModel(glisur);
+    // Crystal
+    auto CaloBox = new G4Box(fCALName + "_Box", CaloXHalfLength, CaloYHalfLength, CaloZHalfLength);
+    auto CaloLV = new G4LogicalVolume(CaloBox, fCALMaterial, fCALName + "_LV",
+                                      nullptr, nullptr, nullptr);
+    fCaloLV = CaloLV;
+    fCaloLVVector.push_back(CaloLV);
+    if (fVis) {
+        fVis->SetVisibility(true);
+        CaloLV->SetVisAttributes(fVis);
+    } else CaloLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-            WrapSurface->SetType(dielectric_LUT);
-            WrapSurface->SetFinish(polishedtyvekair);
-            WrapSurface->SetModel(LUT);
-            //new G4LogicalSkinSurface( fCALName+"WrapSurface", WrapLV, WrapSurface );
-            new G4LogicalBorderSurface(fCALName + "WrapSurface", boxPV, WrapPV, WrapSurface);
+    if (fCALSD) CaloLV->SetSensitiveDetector(fCALSD);
 
-            // test
-            const G4int num = 2;
-            G4double ephoton[num] = {1 * eV, 7 * eV};
-            G4double reflectivity[num] = {1.0, 1.0};
-            G4double efficiency[num] = {1.0, 1.0};
+    // APD
+    auto APDBox = new G4Box(fCALName + "_APDWorld_Box", APDXHalfLength, APDYHalfLength, APDZHalfLength);
+    auto APDLV = new G4LogicalVolume(APDBox, G4Material::GetMaterial("vacuum"), fCALName,
+                                     nullptr, nullptr, nullptr);
+    fAPDWLV = APDLV;
 
-            auto *myST2 = new G4MaterialPropertiesTable();
-            myST2->AddProperty("REFLECTIVITY", ephoton, reflectivity, num);
-            myST2->AddProperty("EFFICIENCY", ephoton, efficiency, num);
+    if (fAPDVis) {
+        fAPDVis->SetVisibility(true);
+        APDLV->SetVisAttributes(fAPDVis);
+    } else APDLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-            //WrapSurface->SetMaterialPropertiesTable(myST2);
+    /// construct physical volume
+    // place wrap
+    auto WrapPV = new G4PVPlacement(nullptr, G4ThreeVector(0,0,0),
+                                    fWrapLV, fCALName + "_WrapPV", fOutlineLV,
+                                    false, fCopyNo, fCheckOverlap);
+    PVVector.push_back(WrapPV);
+    // place crystal
+    auto CaloPV = new G4PVPlacement(nullptr,G4ThreeVector(0, 0, - APDZHalfLength),
+                                    fCaloLV, fCALName + "_PV", fWrapLV,
+                                    false, fCopyNo, fCheckOverlap);
+    PVVector.push_back(CaloPV);
+    // place APD
+    auto APDPV = new G4PVPlacement(nullptr, G4ThreeVector(0, 0, CaloZHalfLength),
+                                   fAPDWLV, fCALName + "_APDWorld_PV", fWrapLV,
+                                   false, fCopyNo, fCheckOverlap);
+    PVVector.push_back(APDPV);
 
-            /* Placement of APD */
-            if (aboxLV == nullptr) {
-                G4cerr << "APDboxLV is empty for " << fCALName << " " << fCopyNo << G4endl;
-                return G4ThreeVector();
-            }
-            auto APDPV = new G4PVPlacement(nullptr, G4ThreeVector(wPosX, wPosY, wPosZ), aboxLV,
-                                           fCALName + "_APDWorld_PV", boxLV,
-                                           false, fCopyNo, fCheckOverlap);
+    // optical surface
+    if (fOptical) {
+        new G4LogicalBorderSurface(fCALName + "_WrapSurface", CaloPV, WrapPV, dControl->Wrap_Surface);
+        new G4LogicalBorderSurface(fCALName + "_APDGlueSurface", CaloPV, APDPV, dControl->APD_Surface);
+    }
+}
 
-            PVVector.push_back(APDPV);
-        }
+// Volume relationship:
+//   0 Wrap
+//   └-1 Calo
+//     ├-2 WLS fiber
+//     └-3 SiPM
+//                   ->|               |<- CaloZHalfLength + WrapZHalfLength
+// ->| |<-             |           ->| |<- WrapZHalfLength
+//   ┌---------------------------------┐
+//   |0┌-----------------------------┐ |
+//   | | 1                           | |
+//   | |========2===================3╡ |
+//   | |                           ->║<- APDZHalfLength
+//   | └-----------------------------┘ |
+//   └-------------------------------|-┘
+//                   ->|             |<- CaloZHalfLength
+void CALConstruct::CalWLSUnitConstruct() {
 
+}
+
+//   0 Absorber
+void CALConstruct::AbsorberUnitConstruct() {
+    if (!AbsXHalfLength || !AbsYHalfLength || !AbsZHalfLength) {
+        G4cout << fCALName << "Construction Error: at least size of one dimension is zero." << G4endl;
+        return;
     }
 
-    return TotalSize;
+    auto AbsBox = new G4Box(fCALName + "_AbsBox", AbsXHalfLength, AbsYHalfLength, AbsZHalfLength);
+    auto AbsLV = new G4LogicalVolume(AbsBox, fAbsMaterial, fCALName + "_AbsLV",
+                                     nullptr, nullptr, nullptr);
+    fAbsLV = AbsLV;
+
+    if (fVis) {
+        fVis->SetVisibility(true);
+        AbsLV->SetVisAttributes(fVis);
+    } else AbsLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, const G4ThreeVector &CentrePos) {
-    auto TotalSize = G4ThreeVector(0, 0, 0);
+    auto TotalHalfSize = G4ThreeVector(0, 0, 0);
     // check consistency
     if (!xNo || !yNo || !zNo) {
         G4cout << fCALName << " Construction Error: at least one of the matrix element is zero." << G4endl;
-        return TotalSize;
+        return TotalHalfSize;
     }
 
-    wSizeX = fSizeX;
-    wSizeY = fSizeY;
-    wSizeZ = aSizeZ + gSizeZ;
-    //wSizeZ = fSizeZ;
+    // construct unit
+    fAPDVis = new G4VisAttributes(G4Colour(0.5, 0.5, .0));
+    //CalUnit1Construct();
+    CalUnit2Construct();
 
-    ConstructLV();
+    // calculate total size
+    auto UnitBox = dynamic_cast<G4Box*>(fOutlineLV->GetSolid());
+    auto UnitXHalfLength = UnitBox->GetXHalfLength();
+    auto UnitYHalfLength = UnitBox->GetYHalfLength();
+    auto UnitZHalfLength = UnitBox->GetZHalfLength();
 
-    TotalSize = G4ThreeVector(xNo * (fSizeX + fWrap * fWrapSizeX),
-                              yNo * (fSizeY + fWrap * fWrapSizeY),
-                              zNo * (fSizeZ + fWrap * fWrapSizeZ));
+    TotalHalfSize = G4ThreeVector(xNo * UnitXHalfLength,
+                              yNo * UnitYHalfLength,
+                              zNo * UnitZHalfLength);
 
+    G4PVPlacement* UnitPV = nullptr;
     for (int k = 0; k < zNo; k++) {
         for (int j = 0; j < yNo; j++) {
             for (int i = 0; i < xNo; i++) {
-                fPosX = -1. * TotalSize.x() + (2 * i + 1) * (fSizeX + fWrap * fWrapSizeX) + CentrePos.x();
-                fPosY = -1. * TotalSize.y() + (2 * j + 1) * (fSizeY + fWrap * fWrapSizeY) + CentrePos.y();
-                fPosZ = -1. * TotalSize.z() + (2 * k + 1) * (fSizeZ + fWrap * fWrapSizeZ) + CentrePos.z();
+                UnitPosX = -1. * TotalHalfSize.x() + (2 * i + 1) * UnitXHalfLength + CentrePos.x();
+                UnitPosY = -1. * TotalHalfSize.y() + (2 * j + 1) * UnitYHalfLength + CentrePos.y();
+                UnitPosZ = -1. * TotalHalfSize.z() + (2 * k + 1) * UnitZHalfLength + CentrePos.z();
 
-                wPosX = 0.;
-                wPosY = 0.;
-                wPosZ = fSizeZ - wSizeZ - eps;
-                //wPosZ = fSizeZ;
-
-                Construct(fCaloLV, fWrapLV, fAPDWLV);
+                UnitPV = new G4PVPlacement(nullptr,
+                                  G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                  fOutlineLV,
+                                  fCALName + "_UnitPV",
+                                  fMotherVolume,
+                                  false,
+                                  fCopyNo,
+                                  fCheckOverlap);
+                PVVector.push_back(UnitPV);
 
                 fCopyNo++;
             }
         }
     }
 
-    return TotalSize;
+    return TotalHalfSize;
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-//void
-//CALConstruct::MatrixPlacementXYRemoved(G4int xNo, G4int yNo, G4int zNo, const G4ThreeVector &CentrePos, G4int NoRemoved,
-//                                       G4int type) {
-//    /* Type:
-//     * 1) Left Bottom Corner
-//     * 4) Right Top Corner
-//     * 2) Right Bottom Corner
-//     * 3) Left Top Corner
-//     */
-//    auto idx = xNo;
-//    auto idy = yNo;
-//    auto idz = zNo;
-//
-//    auto iSizeX = fSizeX;
-//    auto iSizeY = fSizeY;
-//
-//    auto TotalSize = G4ThreeVector(xNo * (fSizeX + fWrap * fWrapSizeX),
-//                                   yNo * (fSizeY + fWrap * fWrapSizeY),
-//                                   zNo * (fSizeZ + fWrap * fWrapSizeZ));
-//
-//    for (int k = 0; k < idz; k++) {
-//        // along x direction
-//        if (k % 2 == 0) {
-//            idx = xNo;
-//            idy = yNo;
-//            fSizeX = iSizeX;
-//            fSizeY = iSizeY;
-//        }
-//        // along y direction
-//        if (k % 2 == 1) {
-//            idx = yNo;
-//            idy = xNo;
-//            fSizeX = iSizeY;
-//            fSizeY = iSizeX;
-//        }
-//        for (int j = 0; j < idy; j++) {
-//            for (int i = 0; i < idx; i++) {
-//                auto tmpX = ((k % 2 == 0) ? iSizeX : iSizeY);
-//                auto tmpY = ((k % 2 == 1) ? iSizeX : iSizeY);
-//
-//
-//                fPosX = -1. * TotalSize.x() + (2 * i + 1) * (tmpX + fWrap * fWrapSizeX) + CentrePos.x();
-//                fPosY = -1. * TotalSize.y() + (2 * j + 1) * (tmpY + fWrap * fWrapSizeY) + CentrePos.y();
-//                fPosZ = -1. * TotalSize.z() + (2 * k + 1) * (fSizeZ + fWrap * fWrapSizeZ) + CentrePos.z();
-//
-//                double w1 = 0;
-//                double w2 = 0;
-//                double w3 = 0;
-//                double w4 = 0;
-//                double w5 = 0;
-//                double w6 = 0;
-//
-//                if (type == 1) {
-//                    w1 = 1;
-//                    w2 = -1;
-//                    w3 = NoRemoved;
-//                    w4 = -1;
-//                    w5 = 1;
-//                    w6 = -(idx - NoRemoved - 1);
-//                }
-//                if (type == 4) {
-//                    w1 = -1;
-//                    w2 = 1;
-//                    w3 = -(idy - NoRemoved - 1);
-//                    w4 = 1;
-//                    w5 = -1;
-//                    w6 = NoRemoved;
-//                }
-//                if (type == 2) {
-//                    w1 = 1;
-//                    w2 = 1;
-//                    w3 = NoRemoved;
-//                    w4 = 1;
-//                    w5 = 1;
-//                    w6 = NoRemoved;
-//                }
-//                if (type == 3) {
-//                    w1 = -1;
-//                    w2 = -1;
-//                    w3 = -(idy - NoRemoved - 1);
-//                    w4 = -1;
-//                    w5 = -1;
-//                    w6 = -(idx - NoRemoved - 1);
-//                }
-//
-//                if (k % 2 == 0) {
-//                    fSizeX = iSizeX - (((w1 * j) < w3) ? NoRemoved * (iSizeY + fWrap * fWrapSizeY) : 0.);
-//                    fPosX = fPosX + w2 * (((w1 * j) < w3) ? NoRemoved * (iSizeY + fWrap * fWrapSizeY) : 0.);
-//                } else {
-//                    fSizeY = iSizeX - (((w4 * i) < w6) ? NoRemoved * (iSizeY + fWrap * fWrapSizeX) : 0.);
-//                    fPosY = fPosY + w5 * (((w4 * i) < w6) ? NoRemoved * (iSizeY + fWrap * fWrapSizeX) : 0.);
-//                }
-//
-//                /* APD */
-//                double f1 = 0, f2 = 0;
-//                if (type == 1) {
-//                    f1 = -1;
-//                    f2 = 1;
-//                }
-//                if (type == 2) {
-//                    f1 = 1;
-//                    f2 = 1;
-//                }
-//                if (type == 3) {
-//                    f1 = -1;
-//                    f2 = -1;
-//                }
-//                if (type == 4) {
-//                    f1 = 1;
-//                    f2 = -1;
-//                }
-//
-//                wSizeZ = fSizeZ;
-//                wPosZ = 0.;
-//                if (k % 2 == 0) {
-//                    wSizeX = aSizeZ + gSizeZ;
-//                    wSizeY = fSizeY;
-//                    wPosY = 0.;
-//
-//                    wPosX = f1 * fSizeX - f1 * 0.5 * wSizeX;
-//                } else if (k % 2 == 1) {
-//                    wSizeX = fSizeX;
-//                    wSizeY = aSizeZ + gSizeZ;
-//                    wPosX = 0.;
-//
-//                    wPosY = f2 * fSizeY - f2 * 0.5 * wSizeY;
-//                }
-//
-//
-//                Construct();
-//                fCopyNo++;
-//            }
-//        }
-//    }
-//
-//}
 
 void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo, const G4ThreeVector &CentrePos,
                                                  G4double AbsThickness, G4Material *AbsMat) {
 
-    auto ifwrap = fWrap;
-
-    auto idx = xNo;
-    auto idy = yNo;
-    auto idz = zNo + zNo / 2;
-
-    auto iSizeX = fSizeX;
-    auto iSizeY = fSizeY;
-    auto iSizeZ = fSizeZ;
-
-    auto TotalSize = G4ThreeVector(xNo * (fSizeX + fWrap * fWrapSizeX),
-                                   yNo * (fSizeY + fWrap * fWrapSizeY),
-                                   zNo * (fSizeZ + fWrap * fWrapSizeZ) + zNo / 2. * AbsThickness / 2.);
+    // rotation matrix
+    auto fRotY90 = new G4RotationMatrix();
+    fRotY90->rotateY(- 90 * degree);
+    auto fRotY90X90 = new G4RotationMatrix();
+    fRotY90X90->rotateY(90 * degree);
+    fRotY90X90->rotateX(90 * degree);
 
     // Construct Detector LV
-    ifAbsorber = false;
-    fRecordLV = true;
-    /* APD Size */
-    wSizeX = aSizeZ + gSizeZ;
-    wSizeY = fSizeY;
-    wSizeZ = fSizeZ;
-    ConstructLV();
+    fAPDVis = new G4VisAttributes(G4Colour(0.5, 0.5, .0));
+    CalUnit1Construct();
+
+    // Calculate total size
+    auto UnitBox = dynamic_cast<G4Box*>(fOutlineLV->GetSolid());
+    auto UnitXHalfLength = UnitBox->GetXHalfLength();
+    auto UnitYHalfLength = UnitBox->GetYHalfLength();
+    auto UnitZHalfLength = UnitBox->GetZHalfLength();
+
+    auto TotalHalfSize = G4ThreeVector(UnitZHalfLength,
+                                       UnitZHalfLength,
+                                       ceil(0.5 * zNo) * 2 * UnitXHalfLength
+                                       + floor(zNo / 2) * 0.5 * AbsThickness) ;
 
     // Construct Absorber LV
-    ifAbsorber = true;
-    fWrap = false;
-    fCALMaterial = AbsMat;
+    AbsXHalfLength = TotalHalfSize.x();
+    AbsYHalfLength = TotalHalfSize.y();
+    AbsZHalfLength = 0.5 * AbsThickness;
+    fAbsMaterial = AbsMat;
     fVis = new G4VisAttributes(G4Colour(0.5, 0.23, 0.89));
-    fRecordLV = false;
-
-    fSizeX = xNo * (iSizeX + fWrap * fWrapSizeX);
-    fSizeY = yNo * (iSizeY + fWrap * fWrapSizeY);
-    fSizeZ = AbsThickness / 2.;
-    ConstructLV();
+    AbsorberUnitConstruct();
 
     // Initialize
     ifAbsorber = false;
-    fRecordLV = true;
-    fWrap = ifwrap;
-    fSizeX = iSizeX;
-    fSizeY = iSizeY;
-    fSizeZ = iSizeZ;
-
-    auto Abs_No = 0;
+    G4int Abs_No = 0;
+    G4PVPlacement* CaloUnitPV = nullptr;
+    G4PVPlacement* AbsPV = nullptr;
     // Z layer Loop
-    for (int k = 0; k < idz; k++) {
+    for (int k = 0; k < zNo; k++) {
         // place detector
-        // along x direction
-        if (k % 3 == 0) {
-            idx = xNo;
-            idy = yNo;
-            fSizeX = iSizeX;
-            fSizeY = iSizeY;
-        }
-        // along y direction
-        if (k % 3 == 1) {
-            idx = yNo;
-            idy = xNo;
-            fSizeX = iSizeY;
-            fSizeY = iSizeX;
-        }
-        // place absorber
-        if (k % 3 == 2) {
-            idx = 1;
-            idy = 1;
-            fSizeX = xNo * (iSizeX + fWrap * fWrapSizeX);
-            fSizeY = yNo * (iSizeY + fWrap * fWrapSizeY);
-        }
+        if (k % 2 == 0) {
+            // along y
+            for (int j = 0; j < yNo; j++) {
+                UnitPosX = CentrePos.x();
+                UnitPosY = -1. * TotalHalfSize.y() + (2 * j + 1) * UnitYHalfLength + CentrePos.y();
+                UnitPosZ = -1. * TotalHalfSize.z() + (k / 2) * (4 * UnitXHalfLength + AbsThickness)
+                           + UnitXHalfLength + CentrePos.z();
 
-        // Y layer Loop
-        for (int j = 0; j < idy; j++) {
-            // X layer Loop
-            for (int i = 0; i < idx; i++) {
-                auto tmpX = ((k % 3 == 0) ? iSizeX : iSizeY);
-                auto tmpY = ((k % 3 == 1) ? iSizeX : iSizeY);
+                CaloUnitPV = new G4PVPlacement(fRotY90,
+                                               G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                               fOutlineLV,
+                                               fCALName + "_UnitPV",
+                                               fMotherVolume,
+                                               false,
+                                               fCopyNo,
+                                               fCheckOverlap);
+                PVVector.push_back(CaloUnitPV);
+                fCopyNo++;
+            }
+            // along x
+            for (int i = 0; i < xNo; i++) {
+                UnitPosX = -1. * TotalHalfSize.x() + (2 * i + 1) * UnitYHalfLength + CentrePos.x();
+                UnitPosY = CentrePos.y();
+                UnitPosZ = -1. * TotalHalfSize.z() + (k / 2) * (4 * UnitXHalfLength + AbsThickness)
+                           + 3 * UnitXHalfLength + CentrePos.z();
 
-                fPosX = -1. * TotalSize.x() + (2 * i + 1) * (tmpX + fWrap * fWrapSizeX) + CentrePos.x();
-                fPosY = -1. * TotalSize.y() + (2 * j + 1) * (tmpY + fWrap * fWrapSizeY) + CentrePos.y();
-                fPosZ = -1. * TotalSize.z() + (2 * (k - Abs_No) + 1) * (fSizeZ + fWrap * fWrapSizeZ) +
-                        Abs_No * AbsThickness + CentrePos.z();
-
-                if (k % 3 == 2) {
-                    Abs_No++;
-                    fPosX = CentrePos.x();
-                    fPosY = CentrePos.y();
-                    fPosZ = -1. * TotalSize.z() + (2 * (k - Abs_No) + 2) * (fSizeZ + fWrap * fWrapSizeZ) +
-                            (Abs_No - 0.5) * AbsThickness + CentrePos.z();
-
-                    ifAbsorber = true;
-                    fWrap = false;
-
-
-                    fSizeZ = AbsThickness / 2.;
-                    Construct(fAbsLV, nullptr, nullptr);
-                } else {
-                    ifAbsorber = false;
-                    if (k % 3 == 0) // along x
-                        Construct(fCaloLV, fWrapLV, fAPDWLV, 0. * degree);
-                    if (k % 3 == 1) // along y
-                        Construct(fCaloLV, fWrapLV, fAPDWLV, 90 * degree);
-
-                }
-                fWrap = ifwrap;
-                fSizeZ = iSizeZ;
-
-                if (!ifAbsorber) fCopyNo++;
+                CaloUnitPV = new G4PVPlacement(fRotY90X90,
+                                               G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                               fOutlineLV,
+                                               fCALName + "_UnitPV",
+                                               fMotherVolume,
+                                               false,
+                                               fCopyNo,
+                                               fCheckOverlap);
+                PVVector.push_back(CaloUnitPV);
+                fCopyNo++;
             }
         }
+        // place absorber
+        if (k % 2 == 1) {
+            UnitPosX = CentrePos.x();
+            UnitPosY = CentrePos.z();
+            UnitPosZ = -1. * TotalHalfSize.z() + ((k / 2) + 1) * (4 * UnitXHalfLength + AbsThickness)
+                       - 0.5 * AbsThickness + CentrePos.z();
+
+            AbsPV = new G4PVPlacement(nullptr,
+                                      G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                      fAbsLV,
+                                      fCALName + "_AbsPV",
+                                      fMotherVolume,
+                                      false,
+                                      Abs_No,
+                                      fCheckOverlap);
+            PVVector.push_back(AbsPV);
+            Abs_No++;
+        }
     }
+
 }
 
