@@ -313,8 +313,16 @@ TEveBox *DEventDisplay::makeBox(const double *abs_pos, const double *half_size) 
 TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) const {
     auto cur_node = gGeoManager->FindNode(hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10);
     auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
+
+    auto *mother_node = gGeoManager->GetMother();
+    auto RotationMatrix = mother_node->GetMatrix()->GetRotationMatrix();
+
+    double hx = fabs(cur_shape->GetDX() * RotationMatrix[0] + cur_shape->GetDY() * RotationMatrix[1] + cur_shape->GetDZ() * RotationMatrix[2]);
+    double hy = fabs(cur_shape->GetDX() * RotationMatrix[3] + cur_shape->GetDY() * RotationMatrix[4] + cur_shape->GetDZ() * RotationMatrix[5]);
+    double hz = fabs(cur_shape->GetDX() * RotationMatrix[6] + cur_shape->GetDY() * RotationMatrix[7] + cur_shape->GetDZ() * RotationMatrix[8]);
+
     double abs_pos[3] = {hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10};
-    double half_size[3] = {cur_shape->GetDX(), cur_shape->GetDY(), cur_shape->GetDZ()};
+    double half_size[3] = {hx, hy, hz};
 
     if (_drawScaleSimuCaloBox) {
         double ratio =
