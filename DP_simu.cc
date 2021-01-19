@@ -148,7 +148,7 @@ int main(int argc, char **argv) {
 
     // Optical Physics
     if (dControl->if_optical) {
-        physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
+        //physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
         auto *opticalPhysics = new G4OpticalPhysics();
         physicsList->RegisterPhysics(opticalPhysics);
     }
