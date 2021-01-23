@@ -4,6 +4,8 @@
 
 #include "Object/SimulatedHit.h"
 
+#include <cassert>
+
 SimulatedHit::SimulatedHit() = default;
 
 SimulatedHit::SimulatedHit(const SimulatedHit &rhs) : DHit(rhs) {
@@ -16,11 +18,24 @@ SimulatedHit &SimulatedHit::operator=(const SimulatedHit &rhs) {
     ELeak_Wrapper = rhs.ELeak_Wrapper;
     EdepEm = rhs.EdepEm;
     EdepHad = rhs.EdepHad;
-    //PContribution_TrackID = rhs.PContribution_TrackID;
-    PContribution = rhs.PContribution;
+    MCPContribution = rhs.MCPContribution;
+    SimHits_Edep = rhs.SimHits_Edep;
     CaloHits = rhs.CaloHits;
     return *this;
 }
+
+
+SimulatedHit::~SimulatedHit() {
+    SimHits_Edep.clear();
+    SimHits_Edep.shrink_to_fit();
+
+    MCPContribution.clear();
+    MCPContribution.shrink_to_fit();
+
+    CaloHits.clear();
+    CaloHits.shrink_to_fit();
+}
+
 
 double SimulatedHit::getEdepEm() const {
     return EdepEm;
@@ -30,28 +45,12 @@ double SimulatedHit::getEdepHad() const {
     return EdepHad;
 }
 
-const MCParticleVec& SimulatedHit::getPContribution() const {
-    return PContribution;
-}
-
-const CalorimeterHitVec &SimulatedHit::getCaloHits() const {
-    return CaloHits;
-}
-
 void SimulatedHit::setEdepEm(double edepEm) {
     EdepEm = edepEm;
 }
 
 void SimulatedHit::setEdepHad(double edepHad) {
     EdepHad = edepHad;
-}
-
-void SimulatedHit::setPContribution(const MCParticleVec &pContribution) {
-    PContribution = pContribution;
-}
-
-void SimulatedHit::setCaloHits(const CalorimeterHitVec &caloHits) {
-    CaloHits = caloHits;
 }
 
 void SimulatedHit::setELeakWrapper(double eLeakWrapper) {
@@ -68,10 +67,28 @@ bool SimulatedHit::operator==(const SimulatedHit &rhs) const {
            EdepEm == rhs.EdepEm &&
            EdepHad == rhs.EdepHad &&
            //PContribution_TrackID == rhs.PContribution_TrackID &&
-           PContribution == rhs.PContribution &&
+           MCPContribution == rhs.MCPContribution &&
            CaloHits == rhs.CaloHits;
 }
 
 bool SimulatedHit::operator!=(const SimulatedHit &rhs) const {
     return !(rhs == *this);
+}
+
+// Add the 3 particles with the most energy deposition contributed to this hit
+void SimulatedHit::addParticleContribution(const McParticle& mcp, double Edep) {
+    if (MCPContribution.size() >= 3) {
+        assert(SimHits_Edep.size() == MCPContribution.size());
+        for (unsigned i = 0; i < SimHits_Edep.size(); ++i) {
+            if (SimHits_Edep.at(i) < Edep || mcp.getId() == 1) {
+                MCPContribution.at(i) = McParticle(mcp);
+                SimHits_Edep.at(i) = Edep;
+                break;
+            }
+        }
+    } else {
+        MCPContribution.emplace_back(mcp);
+        SimHits_Edep.push_back(Edep);
+        assert(SimHits_Edep.size() == MCPContribution.size());
+    }
 }

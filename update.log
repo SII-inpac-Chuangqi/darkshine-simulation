@@ -1,3 +1,28 @@
+v2.2.0
+Global:
+    1. Add a control class, which handle all variables, easy to manage the whole data.
+    2. User can change variables by a yaml file
+
+DSimu:
+    1. Add MC Particle Contribution to Simulated Hits; Only the three most contributed particles will be recorded.
+    2. Tracker Hits is pixelized along trackers z position. (hit position z is fixed for each tracker layer).
+    3. Detector Overlay has been solved.
+    4. new Filter is added. (See readme for more details)
+    5. Dark Physics is added, still under validation.
+
+DAna:
+    1. Add geometry in config file; One can access to geomerty by gGeoManager, with including header file "TGeoManager.h"
+    2. Add command "DAna -x", which will print out an example config.txt
+
+DDis:
+    1. Add the full detector geometry display.
+    2. Add SimulatedHits Collection display; Add initial particle step collection display; Add MC particle tracks display.
+    3. Now support Ana Processor module. One can easily visualize the processing of AnaProcessor.
+
+DPlot:
+    1. read yaml file as config file
+    2. Easy to make some comparison plots
+
 v2.1.1
 Added DDis module, which can print out the detector geometry very fast
 

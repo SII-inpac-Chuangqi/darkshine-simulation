@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_PLATFORM_INDEPENDENT_CODE ON)
+
+set(OpenGL_GL_PREFERENCE GLVND)
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
@@ -28,6 +30,13 @@ include(${Geant4_USE_FILE})
 # Find required packages)
 #
 find_package(HepMC REQUIRED)
+
+find_package(GSL REQUIRED)
+LINK_LIBRARIES(${GSL_LIBRARIES})
+
+# yaml-cpp
+find_package(yaml-cpp REQUIRED)
+LINK_LIBRARIES( yaml-cpp )
 
 find_package(XercesC REQUIRED)
 if (XercesC_FOUND)
@@ -97,14 +106,16 @@ HEADER_DIRECTORIES(Util_List Util_File "Utility")
 include_directories(DP_simu/include
         DP_ana/include
         DP_display/include
+        Tools/include
         ./
         ${Util_List}
         ${Algo_List}
         ${Geant4_INCLUDE_DIR}
         ${HEPMC_INCLUDE_DIR})
 
-file(GLOB Simu_sources DP_simu/src/* DP_simu/src/Geometry/*)
-file(GLOB Simu_headers DP_simu/include/*)
+file(GLOB_RECURSE Simu_sources DP_simu/src/*)
+
+file(GLOB_RECURSE Simu_headers DP_simu/include/*)
 
 file(GLOB Ana_sources DP_ana/src/*.cpp)
 file(GLOB Ana_headers DP_ana/include/*)
@@ -118,10 +129,13 @@ FILE(GLOB_RECURSE Algo_headers Algorithms/*/include/*)
 file(GLOB Display_sources DP_display/src/* )
 file(GLOB Display_headers DP_display/include/* )
 
+file(GLOB Tools_sources Tools/src/* )
+file(GLOB Tools_headers Tools/include/* )
 #----------------------------------------------------------------------------
 # Generate ROOT library for DEvent
 #
-SET(dict_header_shared
+# Header
+SET(DEvent_header_shared
         Utility/Object/include/Object/DHit.h
         Utility/Object/include/Object/DParticle.h
         Utility/Object/include/Object/DStep.h
@@ -129,75 +143,104 @@ SET(dict_header_shared
         Utility/Object/include/Object/CalorimeterHit.h
         Utility/Object/include/Object/McParticle.h
         Utility/Object/include/Object/ReconstructedParticle.h
+        Utility/Object/include/Object/DigiForm.hh
+        Utility/Object/include/Object/OpticalHit.hh
         Utility/Object/include/Object/DEvent.h
-
+        )
+SET(AnaEvent_header_shared
         DP_ana/include/Event/AnaEvent.h
         DP_ana/include/Event/EventStoreAndWriter.h
         DP_ana/include/Core/AnaProcessor.h
+
+        # include All Running Ana Processors
+        Algorithms/RecECAL/include/Algo/ECAL_Cluster.h
+        Algorithms/RecECAL/include/Algo/Cluster_Analysis.h
+        Algorithms/RecECAL/include/Algo/RecECAL.h
+        )
+SET(Display_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DEventDisplay.h
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DEventReader_dis.h
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DSMagneticField.h
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/CaloHitsDisplay.h
-
-        # include All Running Ana Processors
-        Algorithms/RecECAL/include/Algo/RecECAL.h
-        Algorithms/RecECAL/include/Algo/ECAL_Cluster.h
         )
-SET(dict_source
+
+# Source
+SET(DEvent_source
         Utility/Object/src/SimulatedHit.cpp
         Utility/Object/src/CalorimeterHit.cpp
         Utility/Object/src/McParticle.cpp
         Utility/Object/src/ReconstructedParticle.cpp
+        Utility/Object/src/DigiForm.cpp
+        Utility/Object/src/OpticalHit.cpp
         Utility/Object/src/DEvent.cpp
-
+        )
+SET(AnaEvent_source
         DP_ana/src/AnaEvent.cpp
         DP_ana/src/EventStoreAndWriter.cpp
         DP_ana/src/AnaProcessor.cpp
+
+        # include All Running Ana Processors
+        Algorithms/RecECAL/src/ECAL_Cluster.cpp
+        Algorithms/RecECAL/src/Cluster_Analysis.cpp
+        Algorithms/RecECAL/src/RecECAL.cpp
+        )
+SET(Display_source
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_Processor.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_DetInfo.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_DrawEvent.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventReader_dis.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/CaloHitsDisplay.cpp
-
-        # include All Running Ana Processors
-        Algorithms/RecECAL/src/RecECAL.cpp
-        Algorithms/RecECAL/src/ECAL_Cluster.cpp
         )
-root_generate_dictionary(G__DEvent ${dict_header_shared} LINKDEF Utility/UTIL/include/Utility/DEventLinkDef.h)
-add_library(DEvent SHARED ${dict_header_shared} ${dict_source} G__DEvent.cxx)
-#target_include_directories(DEvent PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-#target_link_libraries(DEvent PUBLIC ROOT::Core)
+root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DEventLinkDef.h)
+add_library(DEvent SHARED ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx)
+
+root_generate_dictionary(G__DAnaEvent ${AnaEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DAnaEventLinkDef.h)
+add_library(DAnaEvent SHARED ${AnaEvent_header_shared} ${AnaEvent_source} G__DAnaEvent.cxx)
+target_link_libraries(DAnaEvent PUBLIC DEvent)
+
+root_generate_dictionary(G__Display ${Display_header_shared} LINKDEF Utility/UTIL/include/Utility/DisplayLinkDef.h)
+add_library(Display SHARED ${Display_header_shared} ${Display_source} G__Display.cxx)
+target_link_libraries(Display PUBLIC DEvent DAnaEvent)
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
+link_libraries(DEvent)
 add_executable(DSimu DP_simu.cc ${Simu_sources} ${Simu_headers}
         ${Util_sources} ${Util_headers})
 
 target_link_libraries(DSimu ${Geant4_LIBRARIES}
         ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES}
-        ${PYTHIA6_LIBRARIES}
-        DEvent)
+        ${PYTHIA6_LIBRARIES})
 
-link_libraries(DEvent)
 add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         ${Util_sources} ${Util_headers}
         ${Algo_sources} ${Algo_headers})
+target_link_libraries(DAna DAnaEvent)
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers} ${Ana_sources} ${Ana_headers}
                                    ${Util_sources} ${Util_headers} ${Algo_sources} ${Algo_headers})
-#target_link_libraries(DDis DEventDisplay)
+target_link_libraries(DDis Display)
+
+add_executable(DPlot Tools/DPlot.cpp ${Tools_sources} ${Tools_headers})
+target_link_libraries(DPlot yaml-cpp)
+
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
 install(TARGETS DSimu DESTINATION bin)
 install(TARGETS DAna DESTINATION bin)
 install(TARGETS DDis DESTINATION bin)
+install(TARGETS DPlot DESTINATION bin)
 install(TARGETS DEvent LIBRARY DESTINATION lib )
+install(TARGETS DAnaEvent LIBRARY DESTINATION lib )
+install(TARGETS Display LIBRARY DESTINATION lib )
+
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent_rdict.pcm DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent.rootmap DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent_rdict.pcm DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent.rootmap DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDisplay_rdict.pcm DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDisplay.rootmap DESTINATION lib)
 
-#install(TARGETS DEventDisplay LIBRARY DESTINATION lib )
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEventDisplay.rootmap DESTINATION lib)
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEventDisplay_rdict.pcm DESTINATION lib)

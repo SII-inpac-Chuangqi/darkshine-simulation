@@ -42,22 +42,24 @@ DetectorSD::DetectorSD(G4int Type,
                        const G4String &name,
                        const G4ThreeVector &CellID,
                        RootManager *rootMng
-)
-        : G4VSensitiveDetector(name) {
+) : G4VSensitiveDetector(name) {
     fRootMng = rootMng;
     fCellID = CellID;
     fType = Type;
     fname = name;
 
     fRootMng->bookCollection(name);
-
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorSD::~DetectorSD() {
-    //delete fHitsCollection;
-    //delete vHitsCollection;
+    for (auto simhit : fSimHitVec) {
+        delete simhit;
+    }
+
+    fSimHitVec.clear();
+    fSimHitVec.shrink_to_fit();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -85,11 +87,11 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
 
     if (edep == 0. && stepLength == 0.) return false;
 
-    auto *touchable
-            = (G4TouchableHistory *) (step->GetPreStepPoint()->GetTouchable());
+    auto *touchable = (G4TouchableHistory *) (step->GetPreStepPoint()->GetTouchable());
 
-    // Get calorimeter cell id 
-    G4int reNumber = touchable->GetReplicaNumber();
+    // Get calorimeter cell id
+    reNumber = touchable->GetReplicaNumber( fType > 0 ? 1 : 0); // for Tracker, depth=0; for calo, depth=1
+
     auto xID = (int) fCellID.x();
     auto yID = (int) fCellID.y();
     //G4int zID = (int)fCellID.z();
@@ -133,13 +135,24 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     hit->setCellIdY(static_cast<int>(CellID.y()));
     hit->setCellIdZ(static_cast<int>(CellID.z()));
 
-    //hit->addPContribution_TrackID(step->GetTrack()->GetTrackID());
+    // Add MC particle contribution
+//    auto fMC = new McParticle();
+//    fMC->setPdg(step->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
+//    fMC->setId(step->GetTrack()->GetTrackID());
+//    fMC->setEnergy(step->GetTrack()->GetKineticEnergy());
+//    fMC->setPx(step->GetTrack()->GetMomentum()[0]);
+//    fMC->setPy(step->GetTrack()->GetMomentum()[1]);
+//    fMC->setPz(step->GetTrack()->GetMomentum()[2]);
+//    if (step->GetTrack()->GetCreatorProcess())
+//        fMC->setCreateProcess(step->GetTrack()->GetCreatorProcess()->GetProcessName());
+//    hit->addParticleContribution(*fMC, edep);
+//    delete fMC;
 
     hit->setCellId(reNumber + 1); // replica start from 0 in DetectorConstruction
     if (!fType) {
         hit->setX(HitPoint.x());
         hit->setY(HitPoint.y());
-        hit->setZ(HitPoint.z());
+        hit->setZ(CellPosition.z());
         fRootMng->FillSimHit(fname, hit);
 
         delete hit;
@@ -148,7 +161,7 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
         hit->setY(CellPosition.y());
         hit->setZ(CellPosition.z());
     }
-    
+
     //G4cout<<fname<<", "<<reNumber<<", "<<hit->GetEdep()<<", Edep "<<edep<<G4endl;
 
     return true;
@@ -158,9 +171,9 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
 
 void DetectorSD::EndOfEvent(G4HCofThisEvent *) {
     if (fType != 0) {
-        for (itr = fSimHitVec.begin(); itr != fSimHitVec.end(); itr++) {
-            if ((*itr)->getE() >= 1e-10) fRootMng->FillSimHit(fname, (*itr));
-            delete (*itr);
+        for (auto simhit : fSimHitVec) {
+            if (simhit->getE() >= 1e-10) fRootMng->FillSimHit(fname, simhit);
+            delete simhit;
         }
     }
     fSimHitVec.clear();

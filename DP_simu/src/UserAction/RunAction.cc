@@ -42,20 +42,18 @@ RunAction::RunAction(RootManager* rootMng)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-RunAction::~RunAction()
-{}
+RunAction::~RunAction() = default;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void RunAction::BeginOfRunAction(const G4Run* aRun)
 {
-
-
     G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
     
     //inform the runManager to save random number seed
     
     G4RunManager::GetRunManager()->SetRandomNumberStore(true);
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

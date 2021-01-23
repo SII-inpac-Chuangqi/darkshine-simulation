@@ -24,21 +24,22 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    bool PrintUsage = false;
     std::string configfile;
     if (std::string(argv[1]) == "-c") configfile = argv[2];
-    else if (std::string(argv[1]) == "-x") {
-        // unused right now
-        return 0;
+    else if (std::string(argv[1]) == "-x"){
+        PrintUsage = true;
     } else return -1;
 
     auto control = new ControlManager();
+    control->setOnlyPrintUsage(PrintUsage);
 
     auto evtrdr = new EventReader();
     control->setEvtReader(evtrdr);
 
     auto algo = new AlgoManager();
     control->setAlgo(algo);
-    control->setConfMgr(new ConfigManager(configfile, algo));
+    if (!PrintUsage) control->setConfMgr(new ConfigManager(configfile, algo));
     control->run();
 
     delete control;

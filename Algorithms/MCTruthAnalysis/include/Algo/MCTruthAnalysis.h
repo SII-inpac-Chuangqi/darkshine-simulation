@@ -28,21 +28,33 @@ public:
 
     void End() override;
 
-    // Define some functions here if necessary
 
 private:
 
     int verbose{0};
+    int Sec_PDG{0};
 
     std::shared_ptr<SecondaryMaxEFinder> SecFinder;
 
-    int Initial_PDG;
-    double Initial_Px;
-    double Initial_Py;
-    double Initial_Pz;
-    double Initial_X;
-    double Initial_Y;
-    double Initial_Z;
+    int Initial_PDG{};
+    double Initial_Px{};
+    double Initial_Py{};
+    double Initial_Pz{};
+    double Initial_X{};
+    double Initial_Y{};
+    double Initial_Z{};
+
+    // For Recoiled Electron
+    double Recoil_E{};
+    double Recoil_P[3] = {0};
+    double Recoil_pT{};
+    double Recoil_theta{};
+
+    // For Dark Matter
+    double Parent_E{};
+    double Parent_P[3] = {0};
+    TString Parent_PVName{};
+
 };
 
 

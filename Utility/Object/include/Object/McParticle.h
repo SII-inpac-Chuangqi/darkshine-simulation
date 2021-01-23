@@ -10,6 +10,8 @@
 #include "Object/SimulatedHit.h"
 #include "DParticle.h"
 
+class SimulatedHit;
+
 /// class description:
 /// \brief Secondary particles. TRUTH information which is known only in simulation.
 class McParticle : public DParticle {
@@ -67,7 +69,7 @@ public:
     }
 
     // Search Methods
-    McParticle* SearchID(MCParticleVec* mv, int ID) {
+    static McParticle* SearchID(MCParticleVec* mv, int ID) {
         for (auto itr : *mv) {
             if (itr->getId() == ID) return itr;
         }
@@ -78,15 +80,16 @@ public:
     void addChildren(McParticle* mcp) {
         Children->emplace_back(mcp);
     }
+
 private:
 
     // the remaining energy while leaving the world
     double ERemain{0.};
 
-    McParticle* Parents;
-    MCParticleVec* Children;
+    McParticle* Parents{};
+    MCParticleVec* Children{};
 
-    ReconstructedParticle* RecParticles;
+    ReconstructedParticle* RecParticles{};
     SimulatedHitVec SimHits;
 
 ClassDefOverride(McParticle,10)

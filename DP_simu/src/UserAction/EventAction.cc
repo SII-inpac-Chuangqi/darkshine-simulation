@@ -30,6 +30,7 @@
 
 #include "DP_simu/EventAction.hh"
 #include "DP_simu/RootManager.hh"
+#include "Bias_Filter/FilterManager.hh"
 
 #include "G4Event.hh"
 #include "G4SDManager.hh"
@@ -45,12 +46,11 @@
 using namespace std;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-EventAction::EventAction(RootManager* rootMng)
-: G4UserEventAction(),
-  fPrintModulo(100),
-  fStartID(0),
-  fEvtNb(1e8)
-{
+EventAction::EventAction(RootManager *rootMng)
+        : G4UserEventAction(),
+          fPrintModulo(100),
+          fStartID(0),
+          fEvtNb(1e8) {
     frootMng = rootMng;
 }
 
@@ -62,28 +62,30 @@ EventAction::~EventAction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void EventAction::BeginOfEventAction(const G4Event* event)
-{  
-  fPrintModulo = frootMng->GetNbEvent()/100;
+void EventAction::BeginOfEventAction(const G4Event *event) {
+    fPrintModulo = frootMng->GetNbEvent() / 100;
 
-  G4int eventID = event->GetEventID();
-  if ( eventID < 100 || eventID % fPrintModulo == 0) { 
-    G4cout << "\n---> Begin of event: " << eventID << G4endl;
-    //CLHEP::HepRandom::showEngineStatus();
-  }
+    G4int eventID = event->GetEventID();
+    if (eventID < 100 || eventID % fPrintModulo == 0) {
+        G4cout << "\n---> Begin of event: " << eventID << G4endl;
+        //CLHEP::HepRandom::showEngineStatus();
+    }
 
-   G4RunManager* fRunManager = G4RunManager::GetRunManager();
-   fRunManager->StoreRandomNumberStatusToG4Event(1);
+    G4RunManager::GetRunManager()->StoreRandomNumberStatusToG4Event(1);
 
-   frootMng->Filter_Event_Initialize();
-										  
+    dFilterManager->Filter_Event_Initialize();
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void EventAction::EndOfEventAction(const G4Event* event)
-{
-    if ( frootMng->GetifFilter_Process() && !frootMng->GetFilter_Process_Result() ) {
+void EventAction::EndOfEventAction(const G4Event *event) {
+    if (dFilterManager->GetifFilter_Process() &&
+        (!dFilterManager->GetFilter_Process_Result() || !dFilterManager->Filter_Process_Found_Result())) {
+        frootMng->initialize();
+        return;
+    }
+    if (dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle_Found_Result()) {
         frootMng->initialize();
         return;
     }
@@ -92,48 +94,35 @@ void EventAction::EndOfEventAction(const G4Event* event)
         return;
     }
 
-    G4RunManager* fRunManager = G4RunManager::GetRunManager();
-    const G4String& RndmS = fRunManager->GetRandomNumberStatusForThisEvent();
-    const char* rn = RndmS.data();
-    
+    const G4String &RndmS = G4RunManager::GetRunManager()->GetRandomNumberStatusForThisEvent();
+    const char *rn = RndmS.data();
+
     long double r1 = 0;
     int Nr = 0;
     double nr = 10000;
     double rndm[4];
-    for(int i = 24; i < 100; i++) {
-        if( Nr > 3) break;
-        if( (int)rn[i]-(int)'0' == -38) {
-            rndm[Nr] = r1*pow(10, -1-(log(nr)/log(10)));
+    for (int i = 24; i < 100; i++) {
+        if (Nr > 3) break;
+        if ((int) rn[i] - (int) '0' == -38) {
+            rndm[Nr] = r1 * pow(10, -1 - (log(nr) / log(10)));
             nr = 10000;
             r1 = 0;
             Nr++;
             //G4cout<<"RR: "<<rndm[Nr-1]<<G4endl;
             continue;
         }
-    
-        r1 = r1+nr* (double)((int)rn[i]-(int)'0');
-        nr/=10.0;
+
+        r1 = r1 + nr * (double) ((int) rn[i] - (int) '0');
+        nr /= 10.0;
     }
-    
+
     // print per event (modulo n)
-    
+
     G4int eventID = event->GetEventID();
-    if ( eventID <100 || eventID % fPrintModulo == 0) {
-      G4cout << "---> End of event: " << eventID << G4endl;
+    if (eventID < 100 || eventID % fPrintModulo == 0) {
+        G4cout << "---> End of event: " << eventID << G4endl;
     }
 
     frootMng->FillSim(eventID, rndm);
-    
-}  
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void EventAction::SetStartID(int startID)
-{
-  fStartID = startID; 
-}
-
-void EventAction::SetEvtNb(int evtNb)
-{
-  fEvtNb = evtNb; 
 }

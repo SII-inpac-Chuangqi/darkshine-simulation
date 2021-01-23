@@ -10,6 +10,7 @@
 #include <TFile.h>
 #include "TTreeReader.h"
 #include "TTreeReaderValue.h"
+#include "TGeoManager.h"
 
 #include "Event/AnaEvent.h"
 #include "EventStoreAndWriter.h"
@@ -29,9 +30,9 @@ public:
     bool ReadNextEntry() const;
     bool ReadEntry(int i) const;
 
-
     Int_t ReadFile(const std::string &filename);
-    Int_t ReadTree(const std::string &treename, TFile* f);
+    Int_t ReadTree(const std::string &treename, TFile* tfile);
+    void ReadGeometry(const std::string &filename);
 
     AnaEvent *getEvt() const {
         return evt;
@@ -94,6 +95,10 @@ private:
     int eventNumber{-1};
     int skipNumber{0};
     int eventProcessedNumber{0};
+
+    double ECAL_Leak{0.};
+    double PNEnergy_Target{0.};
+    double PNEnergy_ECAL{0.};
 
     // Verbosity
     int Verbose{0};

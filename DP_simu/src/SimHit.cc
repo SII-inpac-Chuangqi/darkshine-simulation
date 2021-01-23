@@ -31,9 +31,7 @@
 #include "DP_simu/SimHit.hh"
 #include "G4UnitsTable.hh"
 #include "G4VVisManager.hh"
-#include "G4Circle.hh"
 #include "G4Colour.hh"
-#include "G4VisAttributes.hh"
 
 #include <iomanip>
 
@@ -42,84 +40,79 @@ G4Allocator<SimHit> SimHitAllocator;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 SimHit::SimHit()
- : G4VHit(),
-   fEdep(0.),
-   fEdepEM(0.),
-   fEdepHad(0.),
-   fTrackLength(0.),
-   ft(0.),
-   fx(0.0),
-   fy(0.0),
-   fz(0.0),
-   fID(-1),
-   fPDG(0),
-   fDetectorID( G4ThreeVector() ),
-   fDetectorRepNo(0)
-{}
+        : G4VHit(),
+          fEdep(0.),
+          fEdepEM(0.),
+          fEdepHad(0.),
+          fTrackLength(0.),
+          ft(0.),
+          fx(0.0),
+          fy(0.0),
+          fz(0.0),
+          fID(-1),
+          fPDG(0),
+          fDetectorID(G4ThreeVector()),
+          fDetectorRepNo(0) {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-SimHit::~SimHit() {}
+SimHit::~SimHit() = default;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-SimHit::SimHit(const SimHit& right)
-  : G4VHit()
-{
-  fEdep        = right.fEdep;
-  fTrackLength = right.fTrackLength;
-  ft           = right.ft;
-  fx           = right.fx;
-  fy           = right.fy;
-  fz           = right.fz;
+SimHit::SimHit(const SimHit &right)
+        : G4VHit() {
+    fEdep = right.fEdep;
+    fTrackLength = right.fTrackLength;
+    ft = right.ft;
+    fx = right.fx;
+    fy = right.fy;
+    fz = right.fz;
 
-  fEdepEM      = right.fEdepEM;
-  fEdepHad     = right.fEdepHad;
-  fID          = right.fID;
-  fPDG         = right.fPDG;
-  fDetectorID  = right.fDetectorID;
-  fDetectorRepNo = right.fDetectorRepNo;
+    fEdepEM = right.fEdepEM;
+    fEdepHad = right.fEdepHad;
+    fID = right.fID;
+    fPDG = right.fPDG;
+    fDetectorID = right.fDetectorID;
+    fDetectorRepNo = right.fDetectorRepNo;
 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-const SimHit& SimHit::operator=(const SimHit& right)
-{
-  fEdep        = right.fEdep;
-  fTrackLength = right.fTrackLength;
-  ft           = right.ft;
-  fx           = right.fx;
-  fy           = right.fy;
-  fz           = right.fz;
+SimHit &SimHit::operator=(const SimHit &right) {
+    fEdep = right.fEdep;
+    fTrackLength = right.fTrackLength;
+    ft = right.ft;
+    fx = right.fx;
+    fy = right.fy;
+    fz = right.fz;
 
-  fEdepEM      = right.fEdepEM;
-  fEdepHad     = right.fEdepHad;
-  fID          = right.fID;
-  fPDG         = right.fPDG;
-  fDetectorID  = right.fDetectorID;
-  fDetectorRepNo = right.fDetectorRepNo;
+    fEdepEM = right.fEdepEM;
+    fEdepHad = right.fEdepHad;
+    fID = right.fID;
+    fPDG = right.fPDG;
+    fDetectorID = right.fDetectorID;
+    fDetectorRepNo = right.fDetectorRepNo;
 
-  return *this;
+    return *this;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4int SimHit::operator==(const SimHit& right) const
-{
-  return ( this == &right ) ? 1 : 0;
+G4int SimHit::operator==(const SimHit &right) const {
+    return (this == &right) ? 1 : 0;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void SimHit::Print()
-{
-  G4cout
-     << "Edep: " 
-     << std::setw(7) << G4BestUnit(fEdep,"Energy")
-     << " track length: " 
-     << std::setw(7) << G4BestUnit( fTrackLength,"Length")
-     << G4endl;
+void SimHit::Print() {
+    G4cout
+            << "Edep: "
+            << std::setw(7) << G4BestUnit(fEdep, "Energy")
+            << " track length: "
+            << std::setw(7) << G4BestUnit(fTrackLength, "Length")
+            << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -35,6 +35,8 @@
 #include "RootManager.hh"
 #include "globals.hh"
 
+class DetectorConstruction;
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class G4Run;
@@ -44,11 +46,11 @@ class G4Run;
 class RunAction : public G4UserRunAction
 {
   public:
-    RunAction( RootManager* );
-    virtual ~RunAction();
+    explicit RunAction( RootManager* );
+    ~RunAction() override;
 
-    virtual void BeginOfRunAction(const G4Run* run);
-    virtual void   EndOfRunAction(const G4Run* run);
+    void BeginOfRunAction(const G4Run* run) override;
+    void   EndOfRunAction(const G4Run* run) override;
 
   private:
     RootManager* frootMng;

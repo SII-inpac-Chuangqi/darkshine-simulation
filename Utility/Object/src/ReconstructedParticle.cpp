@@ -12,7 +12,9 @@ ReconstructedParticle::ReconstructedParticle(const ReconstructedParticle &rhs) :
     *this = rhs;
 }
 
-ReconstructedParticle::~ReconstructedParticle() {}
+ReconstructedParticle::~ReconstructedParticle() {
+
+}
 
 bool ReconstructedParticle::operator==(const ReconstructedParticle &rhs) const {
     return static_cast<const DParticle &>(*this) == static_cast<const DParticle &>(rhs) &&

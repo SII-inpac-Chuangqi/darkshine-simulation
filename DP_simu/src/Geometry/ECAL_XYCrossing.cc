@@ -41,7 +41,7 @@ bool ECAL_XYCrossing::Build(int type, G4LogicalVolume *World_LV, RootManager *fR
      * Module No: 6*6
      */
     if (build_ECAL_Center) {
-        auto ECAL_Center = new CALConstruct("ECAL_Center", ECal_LV, 0, true, true, fRootMng->GetOptical(),
+        auto ECAL_Center = new CALConstruct("ECAL_Center", ECal_LV, 0, true, true, dControl->if_optical,
                                             fCheckOverlaps);
         ECAL_Center->SetSizeXYZ(ECAL_Center_Size.x() / 2., ECAL_Center_Size.y() / 2., ECAL_Center_Size.z() / 2.);
         ECAL_Center->SetWrapSizeXYZ(ECAL_Center_Wrap_Size.x() / 2., ECAL_Center_Wrap_Size.y() / 2.,
@@ -65,10 +65,10 @@ bool ECAL_XYCrossing::Build(int type, G4LogicalVolume *World_LV, RootManager *fR
         int nECAL_Outer;
         nECAL_Outer = ECAL_Outer_Module_No.x() * ECAL_Outer_Module_No.y() * ECAL_Outer_Module_No.z();
         for (int ip = 1; ip <= nECAL_Outer; ip++) {
-            double w1 = pow(-1, (ip % 2)) * Size_ECALRegion.x() / 4.;
-            double w2 = pow(-1, (ip - 1) / 2) * Size_ECALRegion.x() / 4.;
+            //double w1 = pow(-1, (ip % 2)) * Size_ECALRegion.x() / 4.;
+            //double w2 = pow(-1, (ip - 1) / 2) * Size_ECALRegion.x() / 4.;
             auto ECAL_Outer = new CALConstruct("ECAL_Outer_" + std::to_string(ip), ECal_LV, 0, true, true,
-                                               fRootMng->GetOptical(), fCheckOverlaps);
+                                               false, fCheckOverlaps);
             ECAL_Outer->SetSizeXYZ(ECAL_Outer_Size_Dir.x() / 2., ECAL_Outer_Size_Dir.y() / 2.,
                                    ECAL_Outer_Size_Dir.z() / 2.);
             ECAL_Outer->SetWrapSizeXYZ(ECAL_Outer_Wrap_Size.x() / 2., ECAL_Outer_Wrap_Size.y() / 2.,
@@ -78,8 +78,8 @@ bool ECAL_XYCrossing::Build(int type, G4LogicalVolume *World_LV, RootManager *fR
             ECAL_Outer->SetVis(new G4VisAttributes(G4Colour(0.4, 0.57, 0.6)));
             ECAL_Outer->SetAPDSize(APD_Size, Glue_Size);
             ECAL_Outer->SetAPDMat(APD_Mat, Glue_Mat);
-            ECAL_Outer->MatrixPlacementXYRemoved(ECAL_Outer_Mod_No_Dir.x(), ECAL_Outer_Mod_No_Dir.y(),
-                                                 ECAL_Outer_Mod_No_Dir.z(), G4ThreeVector(w1, w2, 0), 3, ip);
+//            ECAL_Outer->MatrixPlacementXYRemoved(ECAL_Outer_Mod_No_Dir.x(), ECAL_Outer_Mod_No_Dir.y(),
+//                                                 ECAL_Outer_Mod_No_Dir.z(), G4ThreeVector(w1, w2, 0), 3, ip);
 
             auto tmp_LV = ECAL_Outer->GetCaloLVVector();
             //ECAL_Outer_LV.insert( ECAL_Outer_LV.end(), tmp_LV.begin(), tmp_LV.end() );

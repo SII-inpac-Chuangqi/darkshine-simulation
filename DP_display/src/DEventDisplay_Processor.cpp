@@ -20,7 +20,6 @@ void DEventDisplay::RunAnaProcessors() {
     auto recECAL = shared_ptr<RecECAL>(new RecECAL("RecECAL", nullptr));
 
     *((recECAL->getIntParameters()).at("Verbose").second) = 1;
-    *((recECAL->getIntParameters()).at("Z_Layers").second) = ECAL_Cell_Arr[2];
     *((recECAL->getDoubleParameters()).at("W0").second) = RecECAL_W0;
     *((recECAL->getDoubleParameters()).at("d_cut").second) = 0.05;
     *((recECAL->getDoubleParameters()).at("r_cut").second) = RecECAL_r_cut;
@@ -64,7 +63,7 @@ void DEventDisplay::makeGUIProcessor(DEventDisplay *fh) {
     TGTextButton *tb = nullptr;
 
     browser->StartEmbedding(TRootBrowser::kLeft);
-    auto *frmMain1 = new TGMainFrame(gClient->GetRoot(), 1000, 600);
+    auto *frmMain1 = new TGMainFrame(gClient->GetRoot(), 1200, 800);
     frmMain1->SetWindowName("XX GUI");
     frmMain1->SetCleanup(kDeepCleanup);
     TGHorizontalFrame *hf = nullptr;
@@ -79,7 +78,7 @@ void DEventDisplay::makeGUIProcessor(DEventDisplay *fh) {
         hf = new TGHorizontalFrame(frmMain1);
         {
             guiRecECAL = new TGCheckButton(hf, "Run RecECAL");
-            if (guiRecECAL) guiRecECAL->Toggle();
+            //if (guiRecECAL) guiRecECAL->Toggle();
             hf->AddFrame(guiRecECAL);
             guiRecECAL->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptionsAna()");
         }
@@ -120,7 +119,7 @@ void DEventDisplay::makeGUIProcessor(DEventDisplay *fh) {
     browser->SetTabTitle("Ana Processors", 0);
 }
 
-void DEventDisplay::guiOptionsAna() {
+[[maybe_unused]] void DEventDisplay::guiOptionsAna() {
     // Ana Processors
     RecECAL_ = guiRecECAL->IsOn();
     RecECAL_W0 = guiRecECAL_W0->GetNumberEntry()->GetNumber();

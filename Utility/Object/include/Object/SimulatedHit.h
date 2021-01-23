@@ -11,6 +11,9 @@
 #include "DHit.h"
 
 #include <vector>
+
+class McParticle;
+
 /// class description:
 /// \brief Deposit energy. TRUTH information which is known only in simulation.
 class SimulatedHit : public DHit {
@@ -20,10 +23,7 @@ public:
 
     SimulatedHit(const SimulatedHit &);
 
-    ~SimulatedHit() override {
-        //PContribution_TrackID.clear();
-        //PContribution_TrackID.shrink_to_fit();
-    };
+    ~SimulatedHit() override;
 
     bool operator==(const SimulatedHit &rhs) const;
 
@@ -36,22 +36,30 @@ public:
 
     double getEdepHad() const;
 
-    const MCParticleVec &getPContribution() const;
-
-    const CalorimeterHitVec &getCaloHits() const;
-
     double getELeakWrapper() const;
+
+    const std::vector<McParticle > &getPContribution() const {
+        return MCPContribution;
+    }
+
+    const CalorimeterHitVec &getCaloHits() const {
+        return CaloHits;
+    }
 
     // Set Methods
     void setEdepEm(double edepEm);
 
     void setEdepHad(double edepHad);
 
-    void setPContribution(const MCParticleVec &pContribution);
-
-    void setCaloHits(const CalorimeterHitVec &caloHits);
-
     void setELeakWrapper(double eLeakWrapper);
+
+    void setPContribution(const std::vector<McParticle> &pContribution) {
+        MCPContribution = pContribution;
+    }
+
+    void setCaloHits(const CalorimeterHitVec &caloHits) {
+        CaloHits = caloHits;
+    }
 
     // Add Methods
     void addEdep(double EEm, double EHad) {
@@ -61,9 +69,7 @@ public:
         E += (EEm + EHad);
     };
 
-    //void addPContribution_TrackID(int ID) {
-    //    PContribution_TrackID.emplace_back(ID);
-    //}
+    void addParticleContribution(const McParticle& mcp, double Edep);
 
 private:
     double ELeak_Wrapper{0.};
@@ -71,13 +77,14 @@ private:
     double EdepHad{0.};
 
     // the corresponding MC particle contributing to this hit
-    // std::vector<int> PContribution_TrackID;
-    MCParticleVec PContribution;
+    std::vector<McParticle > MCPContribution;
+    // the corresponding Edep for this MC particle in this hit
+    std::vector<double> SimHits_Edep;
+
     CalorimeterHitVec CaloHits;
 
 ClassDefOverride(SimulatedHit, 11)
 
 };
-
 
 #endif //DSIMU_SIMULATEDHIT_H

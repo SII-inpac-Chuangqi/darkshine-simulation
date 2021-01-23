@@ -40,7 +40,9 @@
 #include <iterator>
 
 class G4Step;
+
 class RootManager;
+
 class G4HCofThisEvent;
 
 /// Calorimeter sensitive detector class
@@ -51,29 +53,31 @@ class G4HCofThisEvent;
 /// The values are accounted in hits in ProcessHits() function which is called
 /// by Geant4 kernel at each step.
 
-class DetectorSD : public G4VSensitiveDetector
-{
-  public:
-    DetectorSD(      G4int,
-               const G4String& name, 
-                     const G4ThreeVector&,
-                     RootManager*);
-    virtual ~DetectorSD();
-  
+class DetectorSD : public G4VSensitiveDetector {
+public:
+    DetectorSD(G4int,
+               const G4String &name,
+               const G4ThreeVector &,
+               RootManager *);
+
+    ~DetectorSD() override;
+
     // methods from base class
-    virtual void   Initialize(G4HCofThisEvent* hitCollection);
-    virtual G4bool ProcessHits(G4Step* step, G4TouchableHistory* history);
-    virtual void   EndOfEvent(G4HCofThisEvent* hitCollection);
+    void Initialize(G4HCofThisEvent *hitCollection) override;
 
-  private:
+    G4bool ProcessHits(G4Step *step, G4TouchableHistory *history) override;
+
+    void EndOfEvent(G4HCofThisEvent *hitCollection) override;
+
+private:
     G4ThreeVector fCellID;
-    G4int         fType; // 0: Tracker 1: ECAL_Center 2: ECAL_Outer
-    G4String      fname;
-    
-    std::vector<SimulatedHit* > fSimHitVec;
-    std::vector<SimulatedHit* >::iterator itr;
+    G4int fType; // 0: Tracker 1: ECAL_Center 2: ECAL_Outer
+    G4String fname;
+    G4int reNumber; // replical number of PV
 
-    RootManager* fRootMng;
+    std::vector<SimulatedHit *> fSimHitVec;
+
+    RootManager *fRootMng;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

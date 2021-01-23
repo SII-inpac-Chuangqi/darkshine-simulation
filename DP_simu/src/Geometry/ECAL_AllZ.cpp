@@ -4,32 +4,30 @@
 
 #include "Geometry/ECAL_AllZ.h"
 
-void ECAL_AllZ::DefineParameters(const G4ThreeVector &Pos_RecRegion, const G4ThreeVector &Size_RecRegion) {
-    ECALRegion_Mat = G4Material::GetMaterial("CarbonFiber");
-    //ECAL_Center_Mat = G4Material::GetMaterial("LYSO");
-    ECAL_Center_Mat = G4Material::GetMaterial("PWO4"); // X0 = 0.92 cm
-    ECAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
+#include "G4SDManager.hh"
 
-    ECAL_Module_Gap = 0.5 * mm;
+void ECAL_AllZ::DefineParameters() {
+    Name = dControl->ECAL_Name;
 
-    Size_ECALRegion = G4ThreeVector(0, 0, 0);
-    Size_ECALRegion.setX((ECAL_Center_Size.x() + ECAL_Center_Wrap_Size.x()) * ECAL_Center_Module_No.x());
-    Size_ECALRegion.setY((ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y()) * ECAL_Center_Module_No.y());
-    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z()) * ECAL_Center_Module_No.z());
-
-    Pos_ECALRegion = G4ThreeVector(0, 0,
-                                   0.5 * Size_ECALRegion.z() + Pos_RecRegion.z() + 0.5 * Size_RecRegion.z() + 1.0 * mm);
+    ECALRegion_Mat = dControl->ECALRegion_Mat;
+    ECAL_Center_Mat = dControl->ECAL_Center_Mat;
+    ECAL_Wrap_Mat = dControl->ECAL_Wrap_Mat;
+    Size_ECALRegion = dControl->Size_ECALRegion;
+    Pos_ECALRegion = dControl->Pos_ECALRegion;
+    ECAL_Center_Wrap_Size = dControl->ECAL_Center_Wrap_Size;
+    ECAL_Center_Size = dControl->ECAL_Center_Size;
+    ECAL_Center_Module_No = dControl->ECAL_Center_Module_No;
 
     G4cout << " ==> ECAL starts from " << Pos_ECALRegion.z() - Size_ECALRegion.z() / 2 << G4endl;
 
     /////////////////////////
     //  APD
     /////////////////////////
-    APD_Mat = G4Material::GetMaterial("G4_Si");
-    APD_Size = G4ThreeVector(1 * cm, 1 * cm, 1 * mm);
+    APD_Mat = dControl->APD_Mat;
+    APD_Size = dControl->APD_Size;
 
-    Glue_Mat = G4Material::GetMaterial("G4_W");
-    Glue_Size = G4ThreeVector(1 * cm, 1 * cm, 0.1 * mm);
+    Glue_Mat = dControl->Glue_Mat;
+    Glue_Size = dControl->Glue_Size;
 }
 
 bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng, bool fCheckOverlaps) {
@@ -50,9 +48,8 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng
     new G4PVPlacement(nullptr, Pos_ECALRegion, ECal_LV, "ECAL", World_LV, false, 0, fCheckOverlaps);
     ECal_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-
     if (build_ECAL_Center) {
-        auto ECAL_Center = new CALConstruct("ECAL_Center", ECal_LV, 0, true, true, fRootMng->GetOptical(),
+        auto ECAL_Center = new CALConstruct("ECAL_Center", ECal_LV, 0, true, true, dControl->if_optical,
                                             fCheckOverlaps);
         ECAL_Center->SetSizeXYZ(ECAL_Center_Size.x() / 2., ECAL_Center_Size.y() / 2., ECAL_Center_Size.z() / 2.);
         ECAL_Center->SetWrapSizeXYZ(ECAL_Center_Wrap_Size.x() / 2., ECAL_Center_Wrap_Size.y() / 2.,
@@ -73,7 +70,7 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng
 
 bool ECAL_AllZ::BuildSD(RootManager *fRootMng) {
     // ECAL Center SD
-    auto *ECalSD = new DetectorSD(1, "ECAL_Center", ECAL_Center_Module_No, fRootMng);
+    auto *ECalSD = new DetectorSD(1, Name, ECAL_Center_Module_No, fRootMng);
     G4SDManager::GetSDMpointer()->AddNewDetector(ECalSD);
     for (auto &itr_LV : ECAL_Center_LV)
         itr_LV->SetSensitiveDetector(ECalSD);
@@ -85,4 +82,5 @@ bool ECAL_AllZ::BuildBias(BOptrMultiParticleChangeCrossSection *bias) {
     for (auto &itr_LV : ECAL_Center_LV)
         bias->AttachTo(itr_LV);
 
-    return false;}
+    return false;
+}

@@ -1,0 +1,48 @@
+---
+# Begin of file
+# Example by Yulei Zhang
+
+name: "test_plots"
+global_y_scale: 2.0
+
+variables:
+  - name: "ECAL_E_max/1000"
+    range: [ 50, 0., 1. ] # [bin size, min, max]
+    label: [ "E_{max}", "GeV" ]
+    # Optional
+    selection_title: "No Selection"
+    y_scale: 2.5
+    log_y: false
+    normalize: true
+    grid_y : true
+  - name: "Secondary_MaxE"
+    range: [ 30, 0., 8000. ] # [bin size, min, max]
+    label: [ "E_{sec}_{max}", "MeV" ]
+    log_y: true
+    normalize: true
+    grid_y : false
+
+samples:
+  - name: "Inclusive"
+    # Mandatory
+    file_name: "dp_ana_1.root"
+    tree_name: "dp"
+    # Optional
+    selection: "1"
+    line_attr: [ 4, 5 ] # [ color, width ]
+    # marker_attr: [ 2, 0.95 , 3, 1 ] #[ color, transparency, width, style ]
+    fill_attr: [ 4, 0.6, 1001 ] # [ color, transparency, style ]
+
+  - name: "Signal"
+    # Mandatory
+    file_name: "dp_ana_2.root"
+    tree_name: "dp"
+    # Optional
+    selection: "1"
+    line_attr: [ 6, 4 ] # [ color, width ]
+    # marker_attr: [ 2, 3 ] #[ color, width, style ]
+    fill_attr: [ 6, 0.6, 1001 ] # [ color, transparency, style ]
+
+
+# End Of File
+...

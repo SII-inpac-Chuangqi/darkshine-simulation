@@ -45,7 +45,7 @@
 #include "G4Colour.hh"
 
 #include "RootManager.hh"
-#include "BOptrMultiParticleChangeCrossSection.hh"
+#include "Bias_Filter/BOptrMultiParticleChangeCrossSection.hh"
 
 #include "Geometry/ECAL_XYCrossing.h"
 #include "Geometry/ECAL_AllZ.h"
@@ -53,7 +53,6 @@
 #include "Geometry/Tracker_Construct.h"
 
 #include <vector>
-#include <iterator>
 
 class G4VPhysicalVolume;
 
@@ -75,149 +74,39 @@ class ECAL_AllZ;
 
 class HCAL_Construct;
 
-/// Detector construction class to define materials and geometry.
-///
-/// In addition a transverse uniform magnetic field is defined in
-/// SetMagField() method which can be activated via a command
-/// defined in the DetectorMessenger class. 
-
 class DetectorConstruction : public G4VUserDetectorConstruction {
 public:
     explicit DetectorConstruction(RootManager *);
 
     ~DetectorConstruction() override;
 
+    void ConstructSDandField() override; // build SD in run action
+
 public:
     G4VPhysicalVolume *Construct() override;
 
+    /// \brief Save Geometry to ROOT file
     void SaveGeometry();
-
-    /// Target Setter
-
-    void SetifTarget(G4bool);
-
-    /// Tracker Setter
-
-    void SetTrkTarDis(G4double in) { Trk_Tar_Dis = in; };
-
-    /// Tagging Tracker Setter
-
-    void SetifTagTrk(G4bool);
-
-    void AddNewTagTrkSize(const G4ThreeVector& in);
-
-    void AddNewTagTrkPos(const G4ThreeVector& in);
-
-    void DelTagTrk(G4bool);
-
-    void SetTagTrk1Rotation(G4double in);
-
-    void SetTagTrk2Rotation(G4double in);
-
-    void SetTagTrk1Color(const G4ThreeVector& in);
-
-    void SetTagTrk2Color(const G4ThreeVector& in);
-
-    void SetTagTrkMagField(G4double in);
-
-    /// Recoil Tracker Setter
-
-    void SetifRecTrk(G4bool);
-
-    void AddNewRecTrkSize(const G4ThreeVector& in);
-
-    void AddNewRecTrkPos(const G4ThreeVector& in);
-
-    void DelRecTrk(G4bool);
-
-    void SetRecTrk1Rotation(G4double in);
-
-    void SetRecTrk2Rotation(G4double in);
-
-    void SetRecTrk1Color(const G4ThreeVector& in);
-
-    void SetRecTrk2Color(const G4ThreeVector& in);
-
-    void SetRecTrkMagField(G4double in);
-
-    /// Bias Setter
-
-    void SetifBias(G4bool);
-
-    void SetBiasLayer();
-
-    /// Optical Setter
-
-    void SetOptical(G4bool);
-
-    /// ECAL Setter
-
-    void SetifECAL(G4bool);
-
-    /// \brief Select build-in ECAL Configuration.
-    /// \param[in] id 1=ECAL_XYCrossing,
-    /// 2=ECAL_ALLZ
-    void SetECALSelection(unsigned int id);    
-
-    void SetECALCenterWrapSize(const G4ThreeVector& in);
-
-    void SetECALCenterSize(const G4ThreeVector& in);
-
-    void SetECALCenterModuleNo(const G4ThreeVector& in);
-
-    /// HCAL Setter
-
-    void SetifHCAL(G4bool);
-
-    void SetHCALWrapSize(const G4ThreeVector& in);
-
-    void SetHCALSizeDir(const G4ThreeVector& in);
-
-    void SetHCALModNoDir(const G4ThreeVector& in);
-
-    void SetHCALModuleNo(const G4ThreeVector& in);
-
-    void SetHCALModuleGap(G4double in);
-
-    void SetHCALAbsorberThickness(G4double in);
-
-    /// Getter
-
-    G4ThreeVector GetTargetSize() {return Target_Size; };
 
     /// \brief Clean-up previous geometry.
     /// \param[in] clean If it is true,G4SolidStore, G4LogicalVolumeStore
     /// and G4PhysicalVolumeStore will be cleaned up
-    static void CleanGeometry(G4bool clean=true);
-
-    /// \brief USAGE: Called in DetectorMessenger::SetNewValue().
-    /// SHOULD be called after modifing geometry at runtime.
-    /// \param[in] flag If is false, supress call of CleanGeometry().
-    void ReConstruct(G4bool flag=true);
+    [[maybe_unused]] static void CleanGeometry(G4bool clean=true);
 
 private:
     // methods
     G4VPhysicalVolume *DefineVolumes();
 
-    void ConstructSDandField() override;
-
-    void DefineMaterials();
-
     void DefineParameters();
 
     void DefineTarget();
 
-    void DefineTagTracker();
-
-    void DefineRecTracker();
-
     void DefineWorld();
+
+    void SetBiasLayer();
 
     // Root Manaer
     RootManager *fRootMng;
-
-    // Messenger
-    DetectorMessenger *fMessenger;
 
     /// Tracker Construction Class
 
@@ -227,7 +116,6 @@ private:
     // ECAL Construction Class
     ECAL_XYCrossing *ECAL_Con1;
     ECAL_AllZ *ECAL_Con2;
-    G4int ECAL_Selection = 1; 
 
     // HCAL Construction Class
     HCAL_Construct *HCAL_Con;
@@ -235,28 +123,6 @@ private:
     //global option
     G4UserLimits *fStepLimit; // pointer to user step limits
     G4bool fCheckOverlaps;   // option to activate checking of volumes overlaps
-    std::vector<G4LogicalVolume *>::iterator itr_LV;
-
-    G4bool reconstruct = false; // flag. Set to true when it is not the first-time construction of geometry.
-    
-    G4bool build_Target = true; // build Target if it is ture.
-    G4bool build_TagTrk = true; // build Tagging trackir if it is true.
-    G4bool build_RecTrk = true; // build Recoil Tracker if it is ture.
-    G4bool build_ECAL = true; // build ECAL if it is ture.
-    G4bool build_HCAL = true; // build HCAL if it is true.
-    /////////////////////////
-    //  EM Field
-    /////////////////////////
-    G4double TagTrk_MagField_y = -1.5 * tesla;
-    G4double RecTrk_MagField_y = -0.5 * tesla;
-
-    /////////////////////////
-    //  APD stuff
-    /////////////////////////
-    G4Material *APD_Mat{};
-    G4Material *Glue_Mat{};
-    G4ThreeVector APD_Size;
-    G4ThreeVector Glue_Size;
 
     /////////////////////////
     //  World
@@ -272,35 +138,8 @@ private:
     G4Material *Target_Mat{};
     G4ThreeVector Target_Size;
     G4ThreeVector Target_Pos;
-    G4double Trk_Tar_Dis = 7.5 * mm ;
 
     std::vector<G4LogicalVolume *> Target_LV;
-
-    /////////////////////////
-    //  Tagging Tracker
-    /////////////////////////
-    G4ThreeVector Size_TagRegion;
-    G4ThreeVector Pos_TagRegion;
-
-    /////////////////////////
-    //  Recoil Tracker
-    /////////////////////////
-    G4ThreeVector Size_RecRegion;
-    G4ThreeVector Pos_RecRegion;
-    
-    /////////////////////////
-    //  ECAL
-    //////////////////////////
-    G4ThreeVector Pos_ECAL;
-    G4ThreeVector Size_ECAL;
-
-    G4double Rec_Angle{};
-
-    G4LogicalVolume *RecRegion_LV{};
-    std::vector<G4LogicalVolume *> RecTrk_LV1;
-    std::vector<G4LogicalVolume *> RecTrk_LV2;
-
-
 };
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

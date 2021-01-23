@@ -28,21 +28,22 @@
 #pragma link C++ class CalorimeterHit+;
 #pragma link C++ class std::vector<CalorimeterHit*>+;
 
-#pragma link C++ class SimulatedHit+;
-#pragma link C++ class std::vector<SimulatedHit*>+;
-
 #pragma link C++ class McParticle+;
 #pragma link C++ class std::vector<McParticle*>+;
+
+#pragma link C++ class SimulatedHit+;
+#pragma link C++ class std::vector<SimulatedHit*>+;
 
 #pragma link C++ class ReconstructedParticle+;
 #pragma link C++ class std::vector<ReconstructedParticle*>+;
 
+#pragma link C++ class OpticalHit+;
+#pragma link C++ class std::vector<OpticalHit*>+;
+
+#pragma link C++ class DigiForm+;
+#pragma link C++ class std::vector<DigiForm*>+;
+
 #pragma link C++ class DEvent+;
-#pragma link C++ class AnaEvent+;
-#pragma link C++ class EventReader_D+;
-#pragma link C++ class DSMagneticField+;
-#pragma link C++ class CaloHitsDisplay+;
-#pragma link C++ class DEventDisplay+;
 
 #endif
 

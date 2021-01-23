@@ -5,17 +5,20 @@
 #ifndef DSIMU_CALOHITSDISPLAY_H
 #define DSIMU_CALOHITSDISPLAY_H
 
-
 #include "DEventDisplay.h"
 #include "TGLViewer.h"
-
 
 #include <algorithm>
 
 class DEventDisplay;
 
-enum ProjectionPlane {dXY, dXZ, dYZ};
+/// \brief define Lego Plane, only support 3 types
+enum ProjectionPlane {
+    dXY, dXZ, dYZ
+};
 
+/// \brief in order to display different data types,
+///        create a specific type for LEGO use
 struct CaloHit {
     double X = 0;
     double Y = 0;
@@ -28,6 +31,7 @@ struct CaloHit {
     int id_z = 0;
     int id = 0;
 
+    /// \brief Check if two hits are in the same plane
     [[nodiscard]] bool inSamePlane(CaloHit h2, ProjectionPlane plane) const {
         if (plane == dXY)
             return (X == h2.X) && (Y == h2.Y);
@@ -35,21 +39,29 @@ struct CaloHit {
             return (X == h2.X) && (Z == h2.Z);
         if (plane == dYZ)
             return (Z == h2.Z) && (Y == h2.Y);
+        return false;
     }
 };
 
+/// \brief The control class to display CaloHits Lego
+/// \Initialization Initialize Class with TEveElementList to store all the display elements
+/// \Usage Explicitly assign the 3D CaloHits(data) to the class and then makeLego()
+///        with corresponding Viewer, Scener and its projection plane
 class CaloHitsDisplay : public TObject {
-    // Class to display lego plot
 public:
     CaloHitsDisplay();
 
     ~CaloHitsDisplay() override;
 
+    // data vector to store all the input hits
     std::vector<std::vector<CaloHit> > calovec;
+
+    // Not Implemented yet
     vector<TString> name;
     vector<float> E_thre;
     vector<Color_t> color;
 
+    // Explicitly Assign grid value for the following variables
     unsigned xbin = 0;
     double xmin = 0;
     double xmax = 0;
@@ -59,30 +71,38 @@ public:
     unsigned zbin = 0;
     double zmin = 0;
     double zmax = 0;
+
+    // makeGrid will recalculate these steps
+    // which is the size of lego box
     double delta_x = 0;
     double delta_y = 0;
     double delta_z = 0;
 
-    double scale_factor = 0.1;
-    bool if_log = false;
+    double scale_factor = 0.1; // scale_factor of the height of Lego box, the smaller the higher
+    bool if_log = false; // if to use log scale to display lego box
     bool if_drawLego = true;
 
     TEveElementList *CaloHitsDisplayList{nullptr};
     TEveElementList *CaloHitsList{nullptr};
-    TGListTreeItem* LegoListTree{nullptr};
+    TGListTreeItem *LegoListTree{nullptr};
 
+    // Line Set to contain grids
     TEveStraightLineSet *grid_line{nullptr};
 
-    void makeGrid(ProjectionPlane plane, Color_t grid_color = kWhite, float grid_alpha = 1.0);
+    /// \brief base function to create grid lines given the projection plane
+    /// \error Currently no used, otherwise will raise GL exception
+    void makeGrid(ProjectionPlane plane, Color_t grid_color = kWhite);
 
-    void makeLego(TEveViewer* v, TEveScene* s, ProjectionPlane plane);
+    /// \brief Core function to display Lego
+    /// \arguments v and s are the user-defined TEve elements, which have to be explicitly defined.
+    void makeLego(TEveViewer *v, TEveScene *s, ProjectionPlane plane);
 
     // Clear TListTree
-    TEveElementList *getCaloHitsDisplayList() {
+    [[nodiscard]] TEveElementList *getCaloHitsDisplayList() const {
         return CaloHitsDisplayList;
     }
 
-    TGListTreeItem *getLegoListTree() {
+    [[nodiscard]] TGListTreeItem *getLegoListTree() const {
         return LegoListTree;
     }
 

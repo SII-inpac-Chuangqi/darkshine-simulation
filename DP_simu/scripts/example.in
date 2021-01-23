@@ -1,60 +1,3 @@
-########## Pre_Init  ############
-###
- #################################
- ### Detector Geometry Setting ###
- #################################
-###
-# Magnetic Field in Tracker Region
-/DP/det/setTByField                 -1.5 tesla
-/DP/det/setRByField                 -0.5 tesla
-
-# ECAL Type: 1: XYcorssing 2: All Z
-/DP/det/selectECAL                   2
-
-# if to build component
-/DP/det/ifTarget                     1
-/DP/det/ifTagTracker                 1
-/DP/det/ifRecTracker                 1
-/DP/det/ifECAL                       1
-/DP/det/ifHCAL                       1
-
-#################
-# ECAL Settings #
-#################
-/DP/det/ECAL/centerSize              2.0 2.0 2.0 cm
-/DP/det/ECAL/centerModuleNo          10 10 10
-
-# if to build only
-#/DP/det/onlyTracker
-#/DP/det/onlyECAL
-#/DP/det/onlyHCAL
-
-# IMPORTANT, just leave it alone at the last
-/DP/det/reConstruct
-
-######## Save Geometry #########
-/DP/ifSaveGeometry                  0
-
-########## Biasing ############
-/DP/Bias/Process                    GammaToMuPair
-/DP/Bias/Factor                     1e10
-/DP/Bias/Emin                       1 GeV
-/DP/Bias/if_bias_target             1
-/DP/Bias/if_bias_ecal               1
-/DP/setifBias                       0
-
-########## Filter ############
-# HardBrem
-/DP/Filter/if_filter_HardBrem       0
-/DP/Filter/HardBrem_GammaEmin       4 GeV
-/DP/Filter/HardBrem_ScanDistance    20 cm
-# Process
-/DP/Filter/if_filter_Process        0
-/DP/Filter/Process_Name             GammaToMuPair
-/DP/Filter/Process_Emin             1 GeV
-/DP/Filter/Process_MinScanDistance  -5 mm
-/DP/Filter/Process_MaxScanDistance  +600 mm
-
 ########## Verbose ############
 /tracking/verbose                   0
 /event/verbose                      0
@@ -83,9 +26,7 @@
 /gps/direction                      0. 0. 1.
 /gps/position                       0. 0.01 -610. mm
 
-########## Other Setting ############
-/DP/Event/StartID                   0
-/DP/Event/NbEvent                   10000
+########## Random Engine Setting ############
 
 /DP/Engine/randomSeed               1051
 #/random/resetEngineFrom            currentEvent.rndm
@@ -93,7 +34,7 @@
 #####################################
 ########## RUN !!!!!!!!!!############
 #####################################
-/run/beamOn                         1
+/run/beamOn                         20
 
 
 exit

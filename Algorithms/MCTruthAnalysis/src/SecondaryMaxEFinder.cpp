@@ -2,6 +2,8 @@
 // Created by Zhang Yulei on 9/24/20.
 //
 
+#include "TGeoManager.h"
+
 #include "Algo/SecondaryMaxEFinder.h"
 
 void SecondaryMaxEFinder::RegisterParameters() {
@@ -34,6 +36,10 @@ McParticle *SecondaryMaxEFinder::FindSecondary(int PDG, double Emin, McParticle 
         Secondary_PDG = MCP_Emax->getPdg();
         Secondary_MaxE = EMax;
         Secondary_MaxE_Process = MCP_Emax->getCreateProcess();
+        if (gGeoManager)
+            Secondary_MaxE_PVName = gGeoManager->FindNode(MCP_Emax->getVertexX() / 10.,
+                                                          MCP_Emax->getVertexY() / 10.,
+                                                          MCP_Emax->getVertexZ() / 10.)->GetVolume()->GetName();
     }
 
     return MCP_Emax;

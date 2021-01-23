@@ -45,15 +45,15 @@ class G4Track;
 class TrackingAction : public G4UserTrackingAction
 {
   public:
-    TrackingAction(RootManager* rootMng);
-    virtual ~TrackingAction();
+    explicit TrackingAction(RootManager* rootMng);
+    ~TrackingAction() override;
 
-    virtual void  PreUserTrackingAction(const G4Track* aTrack);
-    virtual void PostUserTrackingAction(const G4Track* aTrack);
+    void  PreUserTrackingAction(const G4Track* aTrack) override;
+    void PostUserTrackingAction(const G4Track* aTrack) override;
 
   private:
     RootManager* froot;
-    McParticle* fMC;
+    McParticle* fMC{};
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

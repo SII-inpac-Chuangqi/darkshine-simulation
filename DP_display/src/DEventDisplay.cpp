@@ -7,6 +7,7 @@
 #include "TFile.h"
 #include <TApplication.h>
 #include <TEveBrowser.h>
+#include "TEveWindowManager.h"
 #include <TEveManager.h>
 #include <TEveEventManager.h>
 #include <TEveGeoNode.h>
@@ -31,17 +32,22 @@ void DEventDisplay::Initialize() {
         std::cout << "In DEventDisplay ctor: gApplication not found, creating..." << std::flush;
         new TApplication("ROOT_application", nullptr, nullptr);
         std::cout << "done!" << std::endl;
+
     }
     if (!gEve) {
         std::cout << "In DEventDisplay ctor: gEve not found, creating..." << std::flush;
         TEveManager::Create();
         std::cout << "done!" << std::endl;
+
+        gEve->GetWindowManager()->SetName("Dark SHINE Event Display");
+        gEve->GetWindowManager()->SetTitle("Dark SHINE Event Display");
+        gEve->GetBrowser()->SetTabTitle("Main 3D Event Display");
     }
 
     // Set Camera
     auto *v = gEve->GetDefaultGLViewer();
     v->CurrentCamera().SetExternalCenter(kTRUE);
-    v->CurrentCamera().SetCenterVec(0, 0, 0);
+    v->CurrentCamera().SetCenterVec(0, 0, 30.);
 
     // Set TApplication Termination
     gEve->GetBrowser()->Connect("CloseWindow()", "TApplication", gApplication, "Terminate()");
@@ -51,6 +57,11 @@ void DEventDisplay::Initialize() {
 }
 
 bool DEventDisplay::drawDetector() {
+    if (!gGeoManager) {
+        std::cerr << "[Draw Detector] ==> No available geometry ..." << std::endl;
+        return false;
+    }
+
     // draw the geometry.
     TGeoNode *top_node = gGeoManager->GetTopNode();
     assert(top_node != nullptr);
@@ -62,7 +73,7 @@ bool DEventDisplay::drawDetector() {
         auto name = TString(volume->GetName());
         assert(volume != nullptr);
         if (name == "Target_LV") {
-            volume->SetLineColor(2);
+            volume->SetLineColor(46);
             volume->SetTransparency(20);
         } else if (name.Contains("TagTrk")) {
             volume->SetLineColor(30);
@@ -75,7 +86,7 @@ bool DEventDisplay::drawDetector() {
             volume->SetTransparency(75);
             volume->SetVisibility(kTRUE);
         } else if (name == "HCAL") {
-            volume->SetLineColor(39);
+            volume->SetLineColor(40);
             volume->SetTransparency(75);
             volume->SetVisibility(kTRUE);
         }
@@ -167,7 +178,7 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
     TGTextButton *tb = nullptr;
 
     browser->StartEmbedding(TRootBrowser::kLeft);
-    auto *frmMain1 = new TGMainFrame(gClient->GetRoot(), 1000, 600);
+    auto *frmMain1 = new TGMainFrame(gClient->GetRoot(), 1200, 800);
     frmMain1->SetWindowName("XX GUI");
     frmMain1->SetCleanup(kDeepCleanup);
     TGHorizontalFrame *hf = nullptr;
@@ -241,7 +252,43 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
             guidrawCaloHitsLego->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptions()");
         }
         frmMain1->AddFrame(hf);
-    }
+    }// Draw Options
+
+    // MC Tracks Options
+    {
+        hf = new TGHorizontalFrame(frmMain1);
+        {
+            lbl = new TGLabel(hf, "\n MC Tracks Options");
+            hf->AddFrame(lbl);
+        }
+        frmMain1->AddFrame(hf);
+        hf = new TGHorizontalFrame(frmMain1);
+        {
+            guiMC_Emin = new TGNumberEntry(hf, MC_Emin, 6, 999,
+                                           TGNumberFormat::kNESReal,
+                                           TGNumberFormat::kNEANonNegative,
+                                           TGNumberFormat::kNELLimitMin,
+                                           0.);
+            hf->AddFrame(guiMC_Emin);
+            guiMC_Emin->Connect("ValueSet(Long_t)", "DEventDisplay", fh, "guiOptions()");
+            lbl = new TGLabel(hf, " min. E for MC Tracks [MeV]");
+            hf->AddFrame(lbl);
+        }
+        frmMain1->AddFrame(hf);
+        hf = new TGHorizontalFrame(frmMain1);
+        {
+            guiMC_PDG = new TGNumberEntry(hf, MC_PDG, 6, 999, TGNumberFormat::kNESInteger,
+                                          TGNumberFormat::kNEANonNegative,
+                                          TGNumberFormat::kNELLimitMin,
+                                          0);
+            hf->AddFrame(guiMC_PDG);
+            guiMC_PDG->Connect("ValueSet(Long_t)", "DEventDisplay", fh, "guiOptions()");
+            lbl = new TGLabel(hf, " Abs of PDG of MC Tracks");
+            hf->AddFrame(lbl);
+        }
+        frmMain1->AddFrame(hf);
+    }// MC Tracks Options
+
     // Calo Options
     {
         hf = new TGHorizontalFrame(frmMain1);
@@ -299,7 +346,29 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
             hf->AddFrame(lbl);
         }
         frmMain1->AddFrame(hf);
-    }
+        hf = new TGHorizontalFrame(frmMain1);
+        {
+            guiScaleSimuCaloBox = new TGCheckButton(hf, "Scale Simulated CaloHits Box by Energy");
+            //if (guiScaleSimuCaloBox) guiScaleSimuCaloBox->Toggle();
+            hf->AddFrame(guiScaleSimuCaloBox);
+            guiScaleSimuCaloBox->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptions()");
+        }
+        frmMain1->AddFrame(hf);
+        hf = new TGHorizontalFrame(frmMain1);
+        {
+            guiScaleFactorSimuCaloBox = new TGNumberEntry(hf, _scale_factor_SimuCaloHits, 6, 999,
+                                                          TGNumberFormat::kNESReal,
+                                                          TGNumberFormat::kNEANonNegative,
+                                                          TGNumberFormat::kNELLimitMinMax,
+                                                          0.0001, 1.0);
+            hf->AddFrame(guiScaleFactorSimuCaloBox);
+            guiScaleFactorSimuCaloBox->Connect("ValueSet(Long_t)", "DEventDisplay", fh, "guiOptions()");
+            lbl = new TGLabel(hf, " Scale Factor for Calo Box");
+            hf->AddFrame(lbl);
+        }
+        frmMain1->AddFrame(hf);
+    }// Calo Options
+
     // CaloHit Display Options
     {
         hf = new TGHorizontalFrame(frmMain1);
@@ -330,7 +399,7 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
             hf->AddFrame(lbl);
         }
         frmMain1->AddFrame(hf);
-    }
+    }// CaloHit Display Options
 
 
     frmMain1->MapSubwindows();
@@ -343,7 +412,7 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
 }
 
 
-void DEventDisplay::guiGoto() {
+[[maybe_unused]] void DEventDisplay::guiGoto() {
     Long_t n = guiEvent->GetNumberEntry()->GetIntNumber();
     //guiEvent->SetIntNumber(n);
     gotoEvent(n);
@@ -378,7 +447,7 @@ void DEventDisplay::gotoEvent(unsigned int id) {
 
 }
 
-void DEventDisplay::guiOptions() {
+[[maybe_unused]] void DEventDisplay::guiOptions() {
     // Draw Options
     _drawDetector = guidrawDetector->IsOn();
     _drawSimuCaloHits = guidrawSimuCaloHits->IsOn();
@@ -386,11 +455,17 @@ void DEventDisplay::guiOptions() {
     _drawSimuTrkHits = guidrawSimuTrkHits->IsOn();
     _drawSimuCaloLego = guidrawCaloHitsLego->IsOn();
 
+    // MC Track Options
+    MC_Emin = guiMC_Emin->GetNumberEntry()->GetNumber();
+    MC_PDG = guiMC_PDG->GetNumberEntry()->GetNumber();
+
     // Calo Options
     r_min = guiR_min->GetNumberEntry()->GetNumber();
     ECAL_Emin = guiECAL_Emin->GetNumberEntry()->GetNumber();
     HCAL_Emin = guiHCAL_Emin->GetNumberEntry()->GetNumber();
     _scale_factor_SimuTrkHits = guiScaleFactorSimuTrkHits->GetNumberEntry()->GetNumber();
+    _drawScaleSimuCaloBox = guiScaleSimuCaloBox->IsOn();
+    _scale_factor_SimuCaloHits = guiScaleFactorSimuCaloBox->GetNumberEntry()->GetNumber();
 
     // CaloHits Lego Options
     _drawLogSacle = guiLogCaloHitsLego->IsOn();

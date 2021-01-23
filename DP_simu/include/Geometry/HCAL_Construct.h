@@ -5,8 +5,12 @@
 #ifndef DSIMU_HCAL_CONSTRUCT_H
 #define DSIMU_HCAL_CONSTRUCT_H
 
-#include "DP_simu/CALConstruct.hh"
+#include "CALConstruct.hh"
 #include "DP_simu/DetectorConstruction.hh"
+
+#include "Control/Control.h"
+
+#include "G4SystemOfUnits.hh"
 
 class HCAL_Construct {
 public:
@@ -14,35 +18,15 @@ public:
 
     virtual ~HCAL_Construct() = default;
 
-    const G4ThreeVector &getSizeHcalRegion() const {
-        return Size_HCALRegion;
-    }
+    void DefineParameters();
 
-    const G4ThreeVector &getPosHcalRegion() const {
-        return Pos_HCALRegion;
-    }
-
-    void DefineParameters(const G4ThreeVector &Pos_ECALRegion, const G4ThreeVector &Size_ECALRegion);
-
-    bool Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng, bool fCheckOverlaps);
+    bool Build(G4LogicalVolume *World_LV, RootManager *fRootMng, bool fCheckOverlaps);
 
     bool BuildSD(RootManager *fRootMng);
 
-    // Setter
-
-    void SetHCALWrapSize(G4ThreeVector in) { HCAL_Wrap_Size = in; };
-
-    void SetHCALSizeDir(G4ThreeVector in) { HCAL_Size_Dir = in; };
-
-    void SetHCALModNoDir(G4ThreeVector in) { HCAL_Mod_No_Dir = in; };
-
-    void SetHCALModuleNo(G4ThreeVector in) { HCAL_Module_No = in; };
-
-    void SetHCALModuleGap(G4double in) { HCAL_Module_Gap = in; };
-
-    void SetHCALAbsorberThickness(G4double in) { HCAL_Absorber_Thickness = in; };
-
+    double eps = dControl->eps;
 private:
+    G4String Name;
 
     G4Material *HCALRegion_Mat{};
     G4Material *HCAL_Mat{};

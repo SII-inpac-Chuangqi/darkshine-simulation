@@ -51,7 +51,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 #ifdef G4LIB_USE_PYTHIA
     fPythiaGen = new HepMCG4PythiaInterface();
 #else
-    fPythiaGen = 0;
+    fPythiaGen = nullptr;
 #endif
     fGentypeMap["particleGun"] = fParticleGun;
     fGentypeMap["GPS"] = fGPS;
@@ -66,6 +66,7 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction() {
     delete fMessenger;
     delete fCurrentGenerator;
     delete fPythiaGen;
+    delete fHepmcAscii;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

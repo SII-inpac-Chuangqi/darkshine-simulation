@@ -39,17 +39,22 @@
 #include "DSMagneticField.h"
 #include "CaloHitsDisplay.h"
 
-typedef vector<TH2F *> CaloHitsVec;
-
 class CaloHitsDisplay;
 
-namespace {
+/*
+ * Importance: Unit in TEve is [cm], [GeV]
+ */
+
+/// \brief
+class DEventDisplay : public TNamed {
+public:
+
     enum Det_Type {
         DNone, DTarget, DTracker, DECAL, DHCAL
     };
 
-    std::map<int, Color_t> PDG_Color = {
-            // Leptons
+    static inline std::map<int, Color_t> PDG_Color{
+// Leptons
             {11,    kGreen},
             {-11,   kBlue},
             {12,    kCyan},
@@ -59,20 +64,20 @@ namespace {
             {14,    kCyan + 2},
             {-14,   kCyan + 2},
             {22,    kPink + 9},
-            // Hadrons
+// Hadrons
             {2212,  kYellow},
             {-2212, kYellow}, // proton
-            {2112,  kYellow - 7},
-            {-2112, kYellow - 7}, // neutron
+            {2112,  kOrange + 7},
+            {-2112, kOrange - 7}, // neutron
             {111,   kMagenta},
             {-111,  kMagenta}, // pion0
-            {321,   kYellow + 2},
-            {-321,  kYellow + 2}, // kaon
+            {321,   kViolet - 9},
+            {-321,  kViolet - 8}, // kaon
             {211,   kMagenta - 9},
             {-211,  kMagenta - 9}  // pion +-
     };
 
-    std::map<double, Color_t> Energy_Color = {
+    static inline std::map<double, Color_t> Energy_Color{
             // Energy Color Represent [MeV]
             {0.001, kBlue},
             {0.005, kBlue - 4},
@@ -85,7 +90,7 @@ namespace {
             {1.00,  kRed},
     };
 
-    Color_t FindColor(double E, double EMax) {
+    [[nodiscard]] static Color_t FindColor(double E, double EMax) {
         double r = E / EMax;
         double prev = 1e-7;
         for (auto c_map : Energy_Color) {
@@ -94,12 +99,7 @@ namespace {
         }
         return kRed + 2;
     }
-}
-/*
- * Importance: Unit in TEve is [cm], [GeV]
- */
-class DEventDisplay : public TNamed {
-public:
+
     DEventDisplay() = default;
 
     ~DEventDisplay() override = default;
@@ -117,12 +117,21 @@ public:
     // Draw Detector Geometry
     bool drawDetector();
 
+    /* Draw Event Components */
+    void drawInitialParticleStep();
+
+    void drawMCParticles();
+
+    void drawSimuTrkHits(TEveElementList *SimHitsList);
+
+    void drawSimuCaloHits(TEveElementList *SimHitsList);
+
     // Load Event
     bool readEntry(int i);
 
     bool drawEvent(int id, bool resCam = false);
 
-    // Draw Class
+    // Draw Utility Class
     static void makeLines(TEveStraightLineSet *lineSet, const TVector3 &start, const TVector3 &end,
                           const Color_t &color, const Style_t &style, bool drawMarkers, double lineWidth,
                           int markerPos);
@@ -134,7 +143,7 @@ public:
 
     // I dont know why not to make it template function
     // get Error if not
-    static TEveBox *makeSimuCaloBox(SimulatedHit *hit, double EMax);
+    TEveBox *makeSimuCaloBox(SimulatedHit *hit, double EMax) const;
 
     static TEveBox *makeRecCaloBox(CalorimeterHit *hit, double EMax);
 
@@ -158,11 +167,11 @@ public:
     // Navigator && GUI commands
     void gotoEvent(unsigned int id);
 
-    void guiGoto();
+    [[maybe_unused]] void guiGoto();
 
-    void guiOptions();
+    [[maybe_unused]] void guiOptions();
 
-    void guiOptionsAna();
+    [[maybe_unused]] void guiOptionsAna();
 
     void bookSlot();
 
@@ -175,6 +184,7 @@ public:
 
 
 private:
+    // Common GUI
     TGNumberEntry *guiEvent{nullptr};
     TGNumberEntry *guiR_min{nullptr};
     TGNumberEntry *guiECAL_Emin{nullptr};
@@ -187,11 +197,19 @@ private:
     TGCheckButton *guiLogCaloHitsLego{nullptr};
     TGNumberEntry *guiScaleFactorLego{nullptr};
     TGNumberEntry *guiScaleFactorSimuTrkHits{nullptr};
+    TGNumberEntry *guiScaleFactorSimuCaloBox{nullptr};
+    TGCheckButton *guiScaleSimuCaloBox{nullptr};
+
+    // MC Tracker GUI
+    TGNumberEntry *guiMC_Emin{nullptr};
+    TGNumberEntry *guiMC_PDG{nullptr};
+
 
     // Core Manager from ROOT
     // gEve
     // gGeoManager
     // gApplication
+
     TFile *f{nullptr};
 
     shared_ptr<TGeoNode> world_node;
@@ -214,7 +232,12 @@ private:
     bool _drawSimuCaloHits = true;
     bool _drawSimuTrkHits = true;
     bool _drawMCTracks = true;
+    bool _drawScaleSimuCaloBox = false;
     bool _drawSimuCaloLego = true;
+
+    // MC Tracks Option
+    double MC_Emin = 0.0;
+    int MC_PDG = 0;
 
     // Calo Options
     double r_min = 0.;
@@ -222,9 +245,10 @@ private:
     double HCAL_Emin = 0.;
     double Trk_Emin = 0.;
     double _scale_factor_SimuTrkHits = 1e-2;
+    double _scale_factor_SimuCaloHits = 1.0;
 
     // CaloHits Lego Options
-    CaloHitsDisplay* CaloDisplay;
+    CaloHitsDisplay *CaloDisplay{nullptr};
     bool ECALslice_calo = false; // if to slice ECAL hits w.r.t Z layer
     bool _drawECAL_calo = true;
     bool _drawHCAL_calo = false;
@@ -243,7 +267,7 @@ private:
     //   ProcessorName_Variable
 
     // Part One: Variables
-    bool   RecECAL_ = true;
+    bool RecECAL_ = false;
     double RecECAL_W0 = 3.2;
     double RecECAL_r_cut = 0.01;
 
@@ -253,8 +277,8 @@ private:
     TGNumberEntry *guiRecECAL_r_cut{nullptr};
 
 
-
 ClassDefOverride(DEventDisplay, 0);
 };
+
 
 #endif //DSIMU_DEVENTDISPLAY_H

@@ -62,7 +62,8 @@ bool EventReader_D::ReadNextEntry() const {
 
 bool EventReader_D::ReadEntry(int i) const {
     if (!treeReader) return false;
-    if (!treeReader->SetEntry(i)) return false;
+    if (treeReader->SetEntry(i) != TTreeReader::kEntryValid) return false;
+    if ( i >= treeReader->GetEntries() ) return false;
 
     return true;
 }

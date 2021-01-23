@@ -35,14 +35,16 @@
 #include "DP_simu/TrackingAction.hh"
 #include "DP_simu/SteppingAction.hh"
 #include "DP_simu/RootManager.hh"
+#include "Control/Control.h"
+#include "Bias_Filter/FilterManager.hh"
 
-//#include "G4StepLimiterBuilder.hh"  // Geant4.9
 #include "G4StepLimiterPhysics.hh"  // Geant4.10
 #include "G4GenericBiasingPhysics.hh"
 #include "DP_simu/GammaPhysics.h"
 #include "DP_simu/OpticalPhysics.h"
 #include "G4OpticalPhysics.hh"
 #include "G4EmStandardPhysics_option4.hh"
+#include "DarkPhysics/DarkMatterPhysics.hh"
 
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
@@ -63,8 +65,8 @@
 namespace {
     void PrintUsage() {
         G4cerr << " Usage: " << G4endl;
-        G4cerr << " factory [-m macro ] [-o OpticalMacro] [-t nThreads]" << G4endl;
-        G4cerr << "   note: -t option is available only for multi-threaded mode." << G4endl;
+        G4cerr << " factory [-m macro ] [-o OpticalMacro] [-y yaml.file]" << G4endl;
+        G4cerr << "   note: yaml file is necessary." << G4endl;
         G4cerr << G4endl;
     }
 }
@@ -81,11 +83,12 @@ int main(int argc, char **argv) {
 
     G4String macro;
     G4String OpticalMacro;
-    G4String gdmlFileName;
+    G4String yamlFileName;
 
     for (G4int i = 1; i < argc; i = i + 2) {
         if (G4String(argv[i]) == "-m") macro = argv[i + 1];
         else if (G4String(argv[i]) == "-o") OpticalMacro = argv[i + 1];
+        else if (G4String(argv[i]) == "-y") yamlFileName = argv[i + 1];
         else {
             PrintUsage();
             //return 1;
@@ -101,6 +104,23 @@ int main(int argc, char **argv) {
     // Choose the Random engine
     CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine);
 
+    // Initiate Control Class
+    Control::CreateInstance();
+
+    // Read Configuration from YAML
+    auto yaml_valid = dControl->ReadYAML(yamlFileName);
+    if (!yaml_valid) {
+        std::cerr<<"[Read YAML] ==> Reading Error from YAML file: "<<std::endl;
+        return -1;
+    }
+
+    // Rebuild all dependent variables
+    // All the parameters are locked for now
+    dControl->RebuildVariables();
+
+    // Initialize all the self-defined Singletons
+    FilterManager::CreateInstance();
+
     // Construct the root manager
     auto *rootMng = new RootManager;
 
@@ -109,6 +129,7 @@ int main(int argc, char **argv) {
         G4String command = "/control/execute ";
         UImanager->ApplyCommand(command + OpticalMacro);
     }
+
     // Construct the default run manager
 
     auto *runManager = new G4RunManager;
@@ -118,24 +139,32 @@ int main(int argc, char **argv) {
     runManager->SetUserInitialization(new DetectorConstruction(rootMng));
 
     G4VModularPhysicsList *physicsList = new FTFP_BERT;
+
+    // Dark Physics
+    if (dControl->signal_production) physicsList->RegisterPhysics(new DarkMatterPhysics());
+    //physicsList->ReplacePhysics(new DarkMatterPhysics());
+
     physicsList->SetVerboseLevel(0);
-    if (rootMng->GetOptical()) {
-        physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
+
+    // Optical Physics
+    if (dControl->if_optical) {
+        //physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
         auto *opticalPhysics = new G4OpticalPhysics();
         physicsList->RegisterPhysics(opticalPhysics);
     }
     physicsList->RegisterPhysics(new G4StepLimiterPhysics());
     physicsList->RegisterPhysics(new GammaPhysics());
-    auto *biasingPhysics = new G4GenericBiasingPhysics();
-    biasingPhysics->Bias("e-");
-    biasingPhysics->Bias("gamma");
-    physicsList->RegisterPhysics(biasingPhysics);
 
-
+    // Biasing
+    if (dControl->if_bias) {
+        auto *biasingPhysics = new G4GenericBiasingPhysics();
+        biasingPhysics->Bias("e-");
+        biasingPhysics->Bias("gamma");
+        physicsList->RegisterPhysics(biasingPhysics);
+    }
     //physicsList->RegisterPhysics( new OpticalPhysics( rootMng ) );
 
     runManager->SetUserInitialization(physicsList);
-
 
     // Set user action classes
     auto *run_action = new RunAction(rootMng);
@@ -159,7 +188,6 @@ int main(int argc, char **argv) {
     // G4VisManager* visManager = new G4VisExecutive("Quiet");
     visManager->Initialize();
 //#endif
-
 
     if (!macro.empty())   // batch mode
     {

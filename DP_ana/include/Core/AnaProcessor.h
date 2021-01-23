@@ -66,7 +66,7 @@ public:
         return Verbose;
     }
 
-    const string &getDescription() const {
+    virtual const string &getDescription() const {
         return Description;
     }
 

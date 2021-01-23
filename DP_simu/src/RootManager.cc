@@ -4,7 +4,6 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TString.h"
-#include "TInterpreter.h"
 #include "TGeoManager.h"
 
 #include "G4TouchableHistory.hh"
@@ -16,16 +15,18 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 RootManager::RootManager()
-        : rootFile(nullptr), tr(nullptr), fStart(0), fEvtNb(100000), if_clean(false) {
+        : rootFile(nullptr), tr(nullptr), if_clean(false) {
 
     fMessenger = new RootMessenger(this);
-    outfilename = "dp_out.root";
+    outfile_name = dControl->outfile_Name;
 
     Evt = new DEvent();
     Evt->Initialization(nALL);
     initialize();
-    if_Optical = false;
-    if_record_ip = true;
+    if_Optical = dControl->if_optical;
+
+    fStart = dControl->Run_Number;
+    fEvtNb = dControl->Total_Event_Number;
 }
 
 /// \brief Clean Optical stuff.
@@ -36,15 +37,10 @@ void RootManager::initialize() {
     Evt->Initialization(nVector);
 
     if (if_Optical) {
-        for (itr_i = Optical_No.begin(); itr_i != Optical_No.end(); itr_i++) itr_i->second = 0;
-        for (itrvec_double = Optical_Time.begin(); itrvec_double != Optical_Time.end(); itrvec_double++)
-            itrvec_double->second->clear();
-
-        for (itrvec_double = Optical_E.begin(); itrvec_double != Optical_E.end(); itrvec_double++)
-            itrvec_double->second->clear();
-
-        for (itrvec_int = Optical_DetID.begin(); itrvec_int != Optical_DetID.end(); itrvec_int++)
-            itrvec_int->second->clear();
+        for (auto o : Optical_No) o.second = 0;
+        for (auto o : Optical_Time) o.second->clear();
+        for (auto o : Optical_E) o.second->clear();
+        for (auto o : Optical_DetID) o.second->clear();
     }
 }
 
@@ -58,7 +54,7 @@ RootManager::~RootManager() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 /// \brief Create rootFile.
 void RootManager::book() {
-    G4String fileName = outfilename;
+    G4String fileName = outfile_name;
     rootFile = new TFile(fileName, "RECREATE");
 
     if (!rootFile) {
@@ -69,8 +65,8 @@ void RootManager::book() {
     }
 
     rnd.SetSeed(fStart + fEvtNb);
-    tr = new TTree("Dark_Photon", "Dark_Photon");
-    // tr->SetAutoSave();
+    tr = new TTree(dControl->tree_Name, dControl->tree_Name);
+    tr->SetAutoSave();
     if (if_clean) {
         G4cout << "Clean Mode..." << G4endl;
     } else {
@@ -79,12 +75,13 @@ void RootManager::book() {
         tr->Branch("Rndm", &Rndm, "Rndm[4]/D");
 
         // truth
-        Evt->RegisterMCParticleCollection("RawMCParticle");
-        if (if_record_ip)
-            Evt->RegisterStepCollection("Initial_Particle_Step");
+        if (dControl->save_MC)
+            Evt->RegisterMCParticleCollection(dControl->RawMCCollection_Name);
+        if (dControl->save_initial_particle_step)
+            Evt->RegisterStepCollection(dControl->InitialParticleStepCollection_Name);
     }
 
-    tr->Branch("DEvent", &Evt, 32000000, 0);
+    tr->Branch("DEvent", &Evt, 320000000, 0);
 
     G4cout << "===> ROOT file is opened in " << fileName << G4endl;
 }
@@ -143,16 +140,17 @@ void RootManager::FillPNE(G4double E1, G4double E2) {
     Evt->setPnEnergyEcal(E2 > EnergyECAL ? E2 : EnergyECAL);
 }
 
-
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 /// \brief
 /// \param[in] mc
 /// \param[in] ParentID
-void RootManager::FillMC(McParticle *mc, int ParentID) {
+void RootManager::FillMC(McParticle *fMC, int ParentID) {
     if (if_clean) return;
 
-    auto mcps = Evt->getMcParticleCollection_Old().at("RawMCParticle");
-    mc->setParents(mc->SearchID(mcps, ParentID));
+    auto mc = new McParticle(*fMC);
+
+    auto mcps = Evt->getMcParticleCollection_Old().at(dControl->RawMCCollection_Name);
+    mc->setParents(McParticle::SearchID(mcps, ParentID));
 
     auto tmp1 = G4String(mc->getCreateProcess());
     const char *tmp2;
@@ -162,7 +160,7 @@ void RootManager::FillMC(McParticle *mc, int ParentID) {
         tmp2 = tmp1.data();
     mc->setCreateProcess(std::string(tmp2));
 
-    mcps->push_back(mc);
+    mcps->emplace_back(mc);
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
@@ -199,17 +197,17 @@ void RootManager::FillSimHit(const G4String &cIn, SimulatedHit *hit) {
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 
-void RootManager::FillEleak(const G4Step *in, G4String type) {
+void RootManager::FillEleak(const G4Step *in, const G4String& type) {
     auto deltaE = in->GetTotalEnergyDeposit();
 
     if (type == "ECAL") Evt->setEleakEcal(Evt->getEleakEcal() + deltaE);
-    else if (type.contains("_PVW")) {
-        auto cin = type.remove(type.index("_PVW"));
-
-        //auto SimHits = Evt->getSimulatedHitCollection_Old();
-        //auto itr = SimHits.at(cin)->end() - 1;
-        //(*itr)->setELeakWrapper( (*itr)->getELeakWrapper() + deltaE);
-    }
+//    else if (type.contains("_PVW")) {
+//        auto cin = type.remove(type.index("_PVW"));
+//
+//        auto SimHits = Evt->getSimulatedHitCollection_Old();
+//        auto itr = SimHits.at(cin)->end() - 1;
+//        (*itr)->setELeakWrapper( (*itr)->getELeakWrapper() + deltaE);
+//    }
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
@@ -238,7 +236,7 @@ void RootManager::FillParticleStep(const G4Step *aStep) {
     G4StepPoint *prev = aStep->GetPreStepPoint();
     G4StepPoint *post = aStep->GetPostStepPoint();
 
-    auto Steps = Evt->getStepCollection_Old().at("Initial_Particle_Step");
+    auto Steps = Evt->getStepCollection_Old().at(dControl->InitialParticleStepCollection_Name);
     auto step = new DStep();
     step->setId(static_cast<int>(Steps->size()));
     if (Steps->empty()) {
@@ -278,7 +276,7 @@ void RootManager::FillParticleStep(const G4Step *aStep) {
     Steps->emplace_back(step);
 }
 
-void RootManager::FillGeometry(const G4String& filename) {
+void RootManager::FillGeometry(const G4String &filename) {
 
     auto geoM = new TGeoManager();
     TGeoManager::Import(filename);

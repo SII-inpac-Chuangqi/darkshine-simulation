@@ -21,7 +21,7 @@ namespace {
 
 int main(int argc, char **argv) {
 
-    if (argc > 3) {
+    if (argc > 3 || argc < 1) {
         PrintUsage();
         return 1;
     }
@@ -36,8 +36,6 @@ int main(int argc, char **argv) {
             batch_mode = true;
         else if (std::string(argv[i]) == "-h")
             PrintUsage();
-        else
-            return -1;
     }
 
     auto EvtDisplay = new DEventDisplay();
