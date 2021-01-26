@@ -76,7 +76,7 @@ Filters:
 ###########################################
 Optical:
   # if to start optical simualtion
-  if_optical: true
+  if_optical: false
   # Global Optical Yield Factor: photon yields = material photon yields * Optical_YieldFactor
   Optical_YieldFactor: 0.001
 
