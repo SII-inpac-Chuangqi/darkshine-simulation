@@ -82,9 +82,13 @@ Optical:
 
   SiPM:
     Optical_pulseFilePath: "SiPM_g2_pulse.root"
+    # On cluster bl-0.inpac.sjtu.edu.cn
+    # Optical_pulseFilePath: "/lustre/collider/zhangyulei/dark_photon/Simulation/DP/SiPM_g2_pulse"
 
   LUT:
     LUT_FilePath: "ECAL_LUT.dat"
+    # On cluster bl-0.inpac.sjtu.edu.cn
+    # LUT_FilePath: "/lustre/collider/zhangyulei/dark_photon/Simulation/DP/ECAL_LUT.dat"
     LUT_Name: "ECAL_cube_2.5_2.5_2_v1"
 
 ###########################################
