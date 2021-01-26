@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(DSimu)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_PLATFORM_INDEPENDENT_CODE ON)
@@ -144,7 +144,6 @@ SET(DEvent_header_shared
         Utility/Object/include/Object/McParticle.h
         Utility/Object/include/Object/ReconstructedParticle.h
         Utility/Object/include/Object/DigiForm.hh
-        #Utility/Object/include/Object/OpticalHit.hh
         Utility/Object/include/Object/DEvent.h
         )
 SET(AnaEvent_header_shared
@@ -171,7 +170,6 @@ SET(DEvent_source
         Utility/Object/src/McParticle.cpp
         Utility/Object/src/ReconstructedParticle.cpp
         Utility/Object/src/DigiForm.cpp
-        #Utility/Object/src/OpticalHit.cpp
         Utility/Object/src/DEvent.cpp
         )
 SET(AnaEvent_source

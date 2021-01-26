@@ -59,54 +59,52 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 OpticalPhysicsMessenger::OpticalPhysicsMessenger(
-                                            OpticalPhysics* opticalPhysics)
-  : G4UImessenger(),
-    fOpticalPhysics(opticalPhysics),
-    fSelectedProcessIndex(kNoProcess),
-    fActivateProcessCmd(nullptr),
-    fVerboseCmd(nullptr),
-    fTrackSecondariesFirstCmd(nullptr),
+        OpticalPhysics *opticalPhysics)
+        : G4UImessenger(),
+          fOpticalPhysics(opticalPhysics),
+          fSelectedProcessIndex(kNoProcess),
+          fActivateProcessCmd(nullptr),
+          fVerboseCmd(nullptr),
+          fTrackSecondariesFirstCmd(nullptr),
 
-    fCerenkovMaxPhotonsCmd(nullptr),
-    fCerenkovMaxPhotons1Cmd(nullptr),
-    fCerenkovMaxBetaChangeCmd(nullptr),
-    fCerenkovMaxBetaChange1Cmd(nullptr),
-    fCerenkovStackPhotonsCmd(nullptr),
-    fCerenkovStackPhotons1Cmd(nullptr),
-    fCerenkovTrackSecondariesFirstCmd(nullptr),
-    fCerenkovVerbosityCmd(nullptr),
+          fCerenkovMaxPhotonsCmd(nullptr),
+          fCerenkovMaxPhotons1Cmd(nullptr),
+          fCerenkovMaxBetaChangeCmd(nullptr),
+          fCerenkovMaxBetaChange1Cmd(nullptr),
+          fCerenkovStackPhotonsCmd(nullptr),
+          fCerenkovStackPhotons1Cmd(nullptr),
+          fCerenkovTrackSecondariesFirstCmd(nullptr),
+          fCerenkovVerbosityCmd(nullptr),
 
-    fScintYieldFactorCmd(nullptr),
-    fScintYieldFactor1Cmd(nullptr),
-    fScintByParticleTypeCmd(nullptr),
-    fScintByParticleType1Cmd(nullptr),
-    fScintTrackInfoCmd(nullptr),
-    fScintTrackInfo1Cmd(nullptr),
-    fScintStackPhotonsCmd(nullptr),
-    fScintStackPhotons1Cmd(nullptr),
-    fScintTrackSecondariesFirstCmd(nullptr),
-    fScintFiniteRiseTimeCmd(nullptr),
-    fScintFiniteRiseTime1Cmd(nullptr),
-    fScintVerbosityCmd(nullptr),
+          fScintYieldFactorCmd(nullptr),
+          fScintYieldFactor1Cmd(nullptr),
+          fScintByParticleTypeCmd(nullptr),
+          fScintByParticleType1Cmd(nullptr),
+          fScintTrackInfoCmd(nullptr),
+          fScintTrackInfo1Cmd(nullptr),
+          fScintStackPhotonsCmd(nullptr),
+          fScintStackPhotons1Cmd(nullptr),
+          fScintTrackSecondariesFirstCmd(nullptr),
+          fScintFiniteRiseTimeCmd(nullptr),
+          fScintFiniteRiseTime1Cmd(nullptr),
+          fScintVerbosityCmd(nullptr),
 
-    fWLSTimeProfileCmd(nullptr),
-    fWLSTimeProfile1Cmd(nullptr),
-    fWLSVerbosityCmd(nullptr),
+          fWLSTimeProfileCmd(nullptr),
+          fWLSTimeProfile1Cmd(nullptr),
+          fWLSVerbosityCmd(nullptr),
 
-    fBoundaryInvokeSDCmd(nullptr),
-    fBoundaryInvokeSD1Cmd(nullptr),
-    fBoundaryVerbosityCmd(nullptr),
+          fBoundaryInvokeSDCmd(nullptr),
+          fBoundaryInvokeSD1Cmd(nullptr),
+          fBoundaryVerbosityCmd(nullptr),
 
-    fAbsorptionVerbosityCmd(nullptr),
-    fRayleighVerbosityCmd(nullptr),
-    fMieVerbosityCmd(nullptr)
-
-{
+          fAbsorptionVerbosityCmd(nullptr),
+          fRayleighVerbosityCmd(nullptr),
+          fMieVerbosityCmd(nullptr) {
     G4cout << "[OpticalPhysics] ==> Messenger Loaded" << G4endl;
     G4bool toBeBroadcasted = false;
-    fDir = new G4UIdirectory("/process/optical/defaults/",toBeBroadcasted);
+    fDir = new G4UIdirectory("/process/optical/defaults/", toBeBroadcasted);
     fDir->SetGuidance("DEPRECATED Commands related to the optical physics simulation engine.");
-    fDir2 = new G4UIdirectory("/process/optical/",toBeBroadcasted);
+    fDir2 = new G4UIdirectory("/process/optical/", toBeBroadcasted);
     fDir2->SetGuidance("Commands related to the optical physics simulation engine.");
 
     CreateDirectory("/process/optical/defaults/cerenkov/", "DEPRECATED Cerenkov process commands");
@@ -123,29 +121,30 @@ OpticalPhysicsMessenger::OpticalPhysicsMessenger(
     CreateDirectory("/process/optical/rayleigh/", "Rayleigh scattering commands");
 
     // general commands
-    fActivateProcessCmd= new G4UIcommand("/process/optical/processActivation", this);
+    fActivateProcessCmd = new G4UIcommand("/process/optical/processActivation", this);
     fActivateProcessCmd->SetGuidance("Activate/deactivate the specified optical process");
-    G4UIparameter* par = new G4UIparameter("proc_name",'s',false);
+    auto *par = new G4UIparameter("proc_name", 's', false);
     G4String candidates;
-    for ( G4int i=0; i<kNoProcess; i++ ) {
+    for (G4int i = 0; i < kNoProcess; i++) {
         candidates += G4OpticalProcessName(i);
         candidates += G4String(" ");
     }
     par->SetParameterCandidates(candidates);
     par->SetGuidance("the process name");
     fActivateProcessCmd->SetParameter(par);
-    par = new G4UIparameter("flag",'b',true);
+    par = new G4UIparameter("flag", 'b', true);
     par->SetDefaultValue(true);
     par->SetGuidance("activation flag");
     fActivateProcessCmd->SetParameter(par);
     fActivateProcessCmd->AvailableForStates(G4State_PreInit);
 
     fTrackSecondariesFirstCmd = new G4UIcommand("/process/optical/setTrackSecondariesFirst", this);
-    fTrackSecondariesFirstCmd->SetGuidance("Activate/deactivate tracking of secondaries before finishing their parent track");
-    par = new G4UIparameter("proc_name",'s',false);
+    fTrackSecondariesFirstCmd->SetGuidance(
+            "Activate/deactivate tracking of secondaries before finishing their parent track");
+    par = new G4UIparameter("proc_name", 's', false);
     par->SetParameterCandidates(candidates);
     fTrackSecondariesFirstCmd->SetParameter(par);
-    par = new G4UIparameter("flag",'b',false);
+    par = new G4UIparameter("flag", 'b', false);
     par->SetDefaultValue(true);
     fTrackSecondariesFirstCmd->SetParameter(par);
     fTrackSecondariesFirstCmd->AvailableForStates(G4State_PreInit);
@@ -206,7 +205,8 @@ OpticalPhysicsMessenger::OpticalPhysicsMessenger(
     fCerenkovStackPhotonsCmd->SetGuidance("if process is not active command will not have effect.");
     fCerenkovStackPhotonsCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-    fCerenkovTrackSecondariesFirstCmd = new G4UIcmdWithABool("/process/optical/cerenkov/setTrackSecondariesFirst", this);
+    fCerenkovTrackSecondariesFirstCmd = new G4UIcmdWithABool("/process/optical/cerenkov/setTrackSecondariesFirst",
+                                                             this);
     fCerenkovTrackSecondariesFirstCmd->SetGuidance("Whether to track secondary Cerenkov photons before the primary.");
     fCerenkovTrackSecondariesFirstCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
@@ -302,7 +302,8 @@ OpticalPhysicsMessenger::OpticalPhysicsMessenger(
     fScintStackPhotonsCmd->SetParameterName("ScintillationStackPhotons", true);
     fScintStackPhotonsCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-    fScintTrackSecondariesFirstCmd = new G4UIcmdWithABool("/process/optical/scintillation/setTrackSecondariesFirst", this);
+    fScintTrackSecondariesFirstCmd = new G4UIcmdWithABool("/process/optical/scintillation/setTrackSecondariesFirst",
+                                                          this);
     fScintTrackSecondariesFirstCmd->SetGuidance("Whether to track scintillation secondaries before primary.");
     fScintTrackSecondariesFirstCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
@@ -370,235 +371,199 @@ OpticalPhysicsMessenger::OpticalPhysicsMessenger(
     fMieVerbosityCmd->AvailableForStates(G4State_Idle);
 }
 
-OpticalPhysicsMessenger::~OpticalPhysicsMessenger()
-{
-  delete fDir;
-  delete fDir2;
-  delete fActivateProcessCmd;
-  delete fVerboseCmd;
-  delete fCerenkovMaxPhotonsCmd;
-  delete fCerenkovMaxPhotons1Cmd;
-  delete fCerenkovMaxBetaChangeCmd;
-  delete fCerenkovMaxBetaChange1Cmd;
-  delete fCerenkovStackPhotonsCmd;
-  delete fCerenkovStackPhotons1Cmd;
-  delete fCerenkovTrackSecondariesFirstCmd;
-  delete fCerenkovVerbosityCmd;
-  delete fScintYieldFactorCmd;
-  delete fScintYieldFactor1Cmd;
-  delete fScintByParticleTypeCmd;
-  delete fScintByParticleType1Cmd;
-  delete fScintTrackInfoCmd;
-  delete fScintTrackInfo1Cmd;
-  delete fScintStackPhotonsCmd;
-  delete fScintStackPhotons1Cmd;
-  delete fScintExcitationRatioCmd;
-  delete fScintVerbosityCmd;
-  delete fScintFiniteRiseTimeCmd;
-  delete fScintFiniteRiseTime1Cmd;
-  delete fScintTrackSecondariesFirstCmd;
-  delete fWLSTimeProfileCmd;
-  delete fWLSTimeProfile1Cmd;
-  delete fWLSVerbosityCmd;
-  delete fAbsorptionVerbosityCmd;
-  delete fRayleighVerbosityCmd;
-  delete fMieVerbosityCmd;
-  delete fBoundaryVerbosityCmd;
-  delete fTrackSecondariesFirstCmd;
-  delete fBoundaryInvokeSDCmd;
-  delete fBoundaryInvokeSD1Cmd;
+OpticalPhysicsMessenger::~OpticalPhysicsMessenger() {
+    delete fDir;
+    delete fDir2;
+    delete fActivateProcessCmd;
+    delete fVerboseCmd;
+    delete fCerenkovMaxPhotonsCmd;
+    delete fCerenkovMaxPhotons1Cmd;
+    delete fCerenkovMaxBetaChangeCmd;
+    delete fCerenkovMaxBetaChange1Cmd;
+    delete fCerenkovStackPhotonsCmd;
+    delete fCerenkovStackPhotons1Cmd;
+    delete fCerenkovTrackSecondariesFirstCmd;
+    delete fCerenkovVerbosityCmd;
+    delete fScintYieldFactorCmd;
+    delete fScintYieldFactor1Cmd;
+    delete fScintByParticleTypeCmd;
+    delete fScintByParticleType1Cmd;
+    delete fScintTrackInfoCmd;
+    delete fScintTrackInfo1Cmd;
+    delete fScintStackPhotonsCmd;
+    delete fScintStackPhotons1Cmd;
+    delete fScintExcitationRatioCmd;
+    delete fScintVerbosityCmd;
+    delete fScintFiniteRiseTimeCmd;
+    delete fScintFiniteRiseTime1Cmd;
+    delete fScintTrackSecondariesFirstCmd;
+    delete fWLSTimeProfileCmd;
+    delete fWLSTimeProfile1Cmd;
+    delete fWLSVerbosityCmd;
+    delete fAbsorptionVerbosityCmd;
+    delete fRayleighVerbosityCmd;
+    delete fMieVerbosityCmd;
+    delete fBoundaryVerbosityCmd;
+    delete fTrackSecondariesFirstCmd;
+    delete fBoundaryInvokeSDCmd;
+    delete fBoundaryInvokeSD1Cmd;
 }
 
-void OpticalPhysicsMessenger::SetNewValue(G4UIcommand* command,
-                                            G4String newValue)
-{
+void OpticalPhysicsMessenger::SetNewValue(G4UIcommand *command,
+                                          G4String newValue) {
 /// Apply command to the associated object.
-  if (command == fActivateProcessCmd) {
-    std::istringstream is(newValue.data());
-    G4String pn;
-    G4String flag;
-    is >> pn >> flag;
-    if  ( pn == "Cerenkov" )        {
-        fSelectedProcessIndex = kCerenkov;
-    } else if ( pn == "Scintillation" ) {
-        fSelectedProcessIndex = kScintillation;
-    } else if ( pn == "OpAbsorption" )  {
-        fSelectedProcessIndex = kAbsorption;
-    } else if ( pn == "OpRayleigh" )    {
-        fSelectedProcessIndex = kRayleigh;
-    } else if ( pn == "OpMieHG" )       {
-        fSelectedProcessIndex = kMieHG;
-    } else if ( pn == "OpBoundary" )    {
-        fSelectedProcessIndex = kBoundary;
-    } else if ( pn == "OpWLS" )         {
-        fSelectedProcessIndex = kWLS;
-    } else {
-        G4ExceptionDescription msg;
-        msg << "Not allowed process name: "<<pn<<" (UI: "<<newValue<<")";
-        G4Exception("OpticalPhysicsMessenger::SetNewValue(...)","Optical001",FatalException,msg);
-    }
-    G4bool value = G4UIcommand::ConvertToBool(flag);
-    fOpticalPhysics->Configure(fSelectedProcessIndex,value);
-  }
-  else if (command == fTrackSecondariesFirstCmd )
-  {
-      std::istringstream is(newValue.data());
-      G4String pn;
-      G4String flag;
-      is >> pn >> flag;
-      if ( pn == "Cerenkov" )        {
-        fSelectedProcessIndex = kCerenkov;
-      } else if ( pn == "Scintillation" ) {
-        fSelectedProcessIndex = kScintillation;
-      } else if ( pn == "OpAbsorption" )  {
-        fSelectedProcessIndex = kAbsorption;
-      } else if ( pn == "OpRayleigh" )    {
-        fSelectedProcessIndex = kRayleigh;
-      } else if ( pn == "OpMieHG" )       {
-        fSelectedProcessIndex = kMieHG;
-      } else if ( pn == "OpBoundary" )    {
-        fSelectedProcessIndex = kBoundary;
-      } else if ( pn == "OpWLS" )         {
-        fSelectedProcessIndex = kWLS;
-      } else {
-          G4ExceptionDescription msg;
-          msg << "Not allowed process name: "<<pn<<" (UI: "<<newValue<<")";
-          G4Exception("OpticalPhysicsMessenger::SetNewValue(...)","Optical001",FatalException,msg);
-      }
-      G4bool value = G4UIcommand::ConvertToBool(flag);
-      fOpticalPhysics->SetTrackSecondariesFirst(fSelectedProcessIndex,value);
-  }
-  else if (command == fVerboseCmd) {
+    if (command == fActivateProcessCmd) {
+        std::istringstream is(newValue.data());
+        G4String pn;
+        G4String flag;
+        is >> pn >> flag;
+        if (pn == "Cerenkov") {
+            fSelectedProcessIndex = kCerenkov;
+        } else if (pn == "Scintillation") {
+            fSelectedProcessIndex = kScintillation;
+        } else if (pn == "OpAbsorption") {
+            fSelectedProcessIndex = kAbsorption;
+        } else if (pn == "OpRayleigh") {
+            fSelectedProcessIndex = kRayleigh;
+        } else if (pn == "OpMieHG") {
+            fSelectedProcessIndex = kMieHG;
+        } else if (pn == "OpBoundary") {
+            fSelectedProcessIndex = kBoundary;
+        } else if (pn == "OpWLS") {
+            fSelectedProcessIndex = kWLS;
+        } else {
+            G4ExceptionDescription msg;
+            msg << "Not allowed process name: " << pn << " (UI: " << newValue << ")";
+            G4Exception("OpticalPhysicsMessenger::SetNewValue(...)", "Optical001", FatalException, msg);
+        }
+        G4bool value = G4UIcommand::ConvertToBool(flag);
+        fOpticalPhysics->Configure(fSelectedProcessIndex, value);
+    } else if (command == fTrackSecondariesFirstCmd) {
+        std::istringstream is(newValue.data());
+        G4String pn;
+        G4String flag;
+        is >> pn >> flag;
+        if (pn == "Cerenkov") {
+            fSelectedProcessIndex = kCerenkov;
+        } else if (pn == "Scintillation") {
+            fSelectedProcessIndex = kScintillation;
+        } else if (pn == "OpAbsorption") {
+            fSelectedProcessIndex = kAbsorption;
+        } else if (pn == "OpRayleigh") {
+            fSelectedProcessIndex = kRayleigh;
+        } else if (pn == "OpMieHG") {
+            fSelectedProcessIndex = kMieHG;
+        } else if (pn == "OpBoundary") {
+            fSelectedProcessIndex = kBoundary;
+        } else if (pn == "OpWLS") {
+            fSelectedProcessIndex = kWLS;
+        } else {
+            G4ExceptionDescription msg;
+            msg << "Not allowed process name: " << pn << " (UI: " << newValue << ")";
+            G4Exception("OpticalPhysicsMessenger::SetNewValue(...)", "Optical001", FatalException, msg);
+        }
+        G4bool value = G4UIcommand::ConvertToBool(flag);
+        fOpticalPhysics->SetTrackSecondariesFirst(fSelectedProcessIndex, value);
+    } else if (command == fVerboseCmd) {
         fOpticalPhysics->SetVerboseLevel(fVerboseCmd->GetNewIntValue(newValue));
-  }
-  else if (command == fCerenkovMaxPhotons1Cmd) {
-    fOpticalPhysics->SetMaxNumPhotonsPerStep(
-          fCerenkovMaxPhotons1Cmd->GetNewIntValue(newValue));
-    Deprecated();
-  }
-  else if (command == fCerenkovMaxPhotonsCmd) {
-    fOpticalPhysics->SetMaxNumPhotonsPerStep(
-          fCerenkovMaxPhotonsCmd->GetNewIntValue(newValue));
-  }
-  else if (command == fCerenkovMaxBetaChange1Cmd) {
-    fOpticalPhysics->SetMaxBetaChangePerStep(
-          fCerenkovMaxBetaChange1Cmd->GetNewDoubleValue(newValue));
-    Deprecated();
-  }
-  else if (command == fCerenkovMaxBetaChangeCmd) {
-    fOpticalPhysics->SetMaxBetaChangePerStep(
-          fCerenkovMaxBetaChangeCmd->GetNewDoubleValue(newValue));
-  }
-  else if (command == fCerenkovStackPhotons1Cmd) {
-    fOpticalPhysics->SetCerenkovStackPhotons(
-          fCerenkovStackPhotons1Cmd->GetNewBoolValue(newValue));
-    Deprecated();
-  }
-  else if (command == fCerenkovStackPhotonsCmd) {
-    fOpticalPhysics->SetCerenkovStackPhotons(
-          fCerenkovStackPhotonsCmd->GetNewBoolValue(newValue));
-  }
-  else if (command == fCerenkovTrackSecondariesFirstCmd) {
-    fOpticalPhysics->SetCerenkovTrackSecondariesFirst(
-          fCerenkovTrackSecondariesFirstCmd->GetNewBoolValue(newValue));
-  }
-  else if (command == fCerenkovVerbosityCmd) {
-    fOpticalPhysics->SetCerenkovVerbosity(
-          fCerenkovVerbosityCmd->GetNewIntValue(newValue));
-  }
-  else if (command == fScintYieldFactor1Cmd) {
-    fOpticalPhysics->SetScintillationYieldFactor(
-          fScintYieldFactor1Cmd->GetNewDoubleValue(newValue));
-    Deprecated();
-  }
-  else if (command == fScintYieldFactorCmd) {
-    fOpticalPhysics->SetScintillationYieldFactor(
-          fScintYieldFactorCmd->GetNewDoubleValue(newValue));
-  }
-  else if (command == fScintByParticleType1Cmd) {
-    fOpticalPhysics->SetScintillationByParticleType(
-         fScintByParticleType1Cmd->GetNewBoolValue(newValue));
-    Deprecated();
-  }
-  else if (command == fScintByParticleTypeCmd) {
-    fOpticalPhysics->SetScintillationByParticleType(
-         fScintByParticleTypeCmd->GetNewBoolValue(newValue));
-  }
-  else if (command == fScintTrackInfo1Cmd) {
-    fOpticalPhysics->SetScintillationTrackInfo(
-         fScintTrackInfo1Cmd->GetNewBoolValue(newValue));
-    Deprecated();
-  }
-  else if (command == fScintTrackInfoCmd) {
-    fOpticalPhysics->SetScintillationTrackInfo(
-         fScintTrackInfoCmd->GetNewBoolValue(newValue));
-  }
-  else if (command == fScintFiniteRiseTime1Cmd) {
-    fOpticalPhysics->SetFiniteRiseTime(
-         fScintFiniteRiseTime1Cmd->GetNewBoolValue(newValue));
-    Deprecated();
-  }
-  else if (command == fScintFiniteRiseTimeCmd) {
-    fOpticalPhysics->SetFiniteRiseTime(
-         fScintFiniteRiseTimeCmd->GetNewBoolValue(newValue));
-  }
-  else if (command == fScintStackPhotons1Cmd) {
-    fOpticalPhysics->SetScintillationStackPhotons(
-          fScintStackPhotons1Cmd->GetNewBoolValue(newValue));
-    Deprecated();
-  }
-  else if (command == fScintStackPhotonsCmd) {
-    fOpticalPhysics->SetScintillationStackPhotons(
-          fScintStackPhotonsCmd->GetNewBoolValue(newValue));
-  }
-  else if (command == fScintExcitationRatioCmd) {
-    fOpticalPhysics->SetScintillationExcitationRatio(
-          fScintExcitationRatioCmd->GetNewDoubleValue(newValue));
-  }
-  else if (command == fScintTrackSecondariesFirstCmd) {
-    fOpticalPhysics->SetScintillationTrackSecondariesFirst(
-          fScintTrackSecondariesFirstCmd->GetNewBoolValue(newValue));
-  }
-  else if (command == fScintVerbosityCmd) {
-    fOpticalPhysics->SetScintillationVerbosity(
-          fScintVerbosityCmd->GetNewIntValue(newValue));
-  }
-  else if (command == fWLSTimeProfile1Cmd) {
-    fOpticalPhysics->SetWLSTimeProfile(newValue);
-    Deprecated();
-  }
-  else if (command == fWLSTimeProfileCmd) {
-    fOpticalPhysics->SetWLSTimeProfile(newValue);
-  }
-  else if (command == fWLSVerbosityCmd) {
-    fOpticalPhysics->SetWLSVerbosity(fWLSVerbosityCmd->GetNewIntValue(newValue));
-  }
-  else if (command == fAbsorptionVerbosityCmd) {
-    fOpticalPhysics->SetAbsorptionVerbosity(fAbsorptionVerbosityCmd->GetNewIntValue(newValue));
-  }
-  else if (command == fRayleighVerbosityCmd) {
-    fOpticalPhysics->SetRayleighVerbosity(fRayleighVerbosityCmd->GetNewIntValue(newValue));
-  }
-  else if (command == fMieVerbosityCmd) {
-    fOpticalPhysics->SetMieVerbosity(fMieVerbosityCmd->GetNewIntValue(newValue));
-  }
-  else if (command == fBoundaryVerbosityCmd) {
-    fOpticalPhysics->SetBoundaryVerbosity(fBoundaryVerbosityCmd->GetNewIntValue(newValue));
-  }
-  else if (command == fBoundaryInvokeSD1Cmd) {
-    fOpticalPhysics->SetInvokeSD(fBoundaryInvokeSD1Cmd->GetNewBoolValue(newValue));
-    Deprecated();
-  }
-  else if (command == fBoundaryInvokeSDCmd) {
-    fOpticalPhysics
-      ->SetInvokeSD(fBoundaryInvokeSDCmd->GetNewBoolValue(newValue));
-  }
+    } else if (command == fCerenkovMaxPhotons1Cmd) {
+        fOpticalPhysics->SetMaxNumPhotonsPerStep(
+                fCerenkovMaxPhotons1Cmd->GetNewIntValue(newValue));
+        Deprecated();
+    } else if (command == fCerenkovMaxPhotonsCmd) {
+        fOpticalPhysics->SetMaxNumPhotonsPerStep(
+                fCerenkovMaxPhotonsCmd->GetNewIntValue(newValue));
+    } else if (command == fCerenkovMaxBetaChange1Cmd) {
+        fOpticalPhysics->SetMaxBetaChangePerStep(
+                fCerenkovMaxBetaChange1Cmd->GetNewDoubleValue(newValue));
+        Deprecated();
+    } else if (command == fCerenkovMaxBetaChangeCmd) {
+        fOpticalPhysics->SetMaxBetaChangePerStep(
+                fCerenkovMaxBetaChangeCmd->GetNewDoubleValue(newValue));
+    } else if (command == fCerenkovStackPhotons1Cmd) {
+        fOpticalPhysics->SetCerenkovStackPhotons(
+                fCerenkovStackPhotons1Cmd->GetNewBoolValue(newValue));
+        Deprecated();
+    } else if (command == fCerenkovStackPhotonsCmd) {
+        fOpticalPhysics->SetCerenkovStackPhotons(
+                fCerenkovStackPhotonsCmd->GetNewBoolValue(newValue));
+    } else if (command == fCerenkovTrackSecondariesFirstCmd) {
+        fOpticalPhysics->SetCerenkovTrackSecondariesFirst(
+                fCerenkovTrackSecondariesFirstCmd->GetNewBoolValue(newValue));
+    } else if (command == fCerenkovVerbosityCmd) {
+        fOpticalPhysics->SetCerenkovVerbosity(
+                fCerenkovVerbosityCmd->GetNewIntValue(newValue));
+    } else if (command == fScintYieldFactor1Cmd) {
+        fOpticalPhysics->SetScintillationYieldFactor(
+                fScintYieldFactor1Cmd->GetNewDoubleValue(newValue));
+        Deprecated();
+    } else if (command == fScintYieldFactorCmd) {
+        fOpticalPhysics->SetScintillationYieldFactor(
+                fScintYieldFactorCmd->GetNewDoubleValue(newValue));
+    } else if (command == fScintByParticleType1Cmd) {
+        fOpticalPhysics->SetScintillationByParticleType(
+                fScintByParticleType1Cmd->GetNewBoolValue(newValue));
+        Deprecated();
+    } else if (command == fScintByParticleTypeCmd) {
+        fOpticalPhysics->SetScintillationByParticleType(
+                fScintByParticleTypeCmd->GetNewBoolValue(newValue));
+    } else if (command == fScintTrackInfo1Cmd) {
+        fOpticalPhysics->SetScintillationTrackInfo(
+                fScintTrackInfo1Cmd->GetNewBoolValue(newValue));
+        Deprecated();
+    } else if (command == fScintTrackInfoCmd) {
+        fOpticalPhysics->SetScintillationTrackInfo(
+                fScintTrackInfoCmd->GetNewBoolValue(newValue));
+    } else if (command == fScintFiniteRiseTime1Cmd) {
+        fOpticalPhysics->SetFiniteRiseTime(
+                fScintFiniteRiseTime1Cmd->GetNewBoolValue(newValue));
+        Deprecated();
+    } else if (command == fScintFiniteRiseTimeCmd) {
+        fOpticalPhysics->SetFiniteRiseTime(
+                fScintFiniteRiseTimeCmd->GetNewBoolValue(newValue));
+    } else if (command == fScintStackPhotons1Cmd) {
+        fOpticalPhysics->SetScintillationStackPhotons(
+                fScintStackPhotons1Cmd->GetNewBoolValue(newValue));
+        Deprecated();
+    } else if (command == fScintStackPhotonsCmd) {
+        fOpticalPhysics->SetScintillationStackPhotons(
+                fScintStackPhotonsCmd->GetNewBoolValue(newValue));
+    } else if (command == fScintExcitationRatioCmd) {
+        fOpticalPhysics->SetScintillationExcitationRatio(
+                fScintExcitationRatioCmd->GetNewDoubleValue(newValue));
+    } else if (command == fScintTrackSecondariesFirstCmd) {
+        fOpticalPhysics->SetScintillationTrackSecondariesFirst(
+                fScintTrackSecondariesFirstCmd->GetNewBoolValue(newValue));
+    } else if (command == fScintVerbosityCmd) {
+        fOpticalPhysics->SetScintillationVerbosity(
+                fScintVerbosityCmd->GetNewIntValue(newValue));
+    } else if (command == fWLSTimeProfile1Cmd) {
+        fOpticalPhysics->SetWLSTimeProfile(newValue);
+        Deprecated();
+    } else if (command == fWLSTimeProfileCmd) {
+        fOpticalPhysics->SetWLSTimeProfile(newValue);
+    } else if (command == fWLSVerbosityCmd) {
+        fOpticalPhysics->SetWLSVerbosity(fWLSVerbosityCmd->GetNewIntValue(newValue));
+    } else if (command == fAbsorptionVerbosityCmd) {
+        fOpticalPhysics->SetAbsorptionVerbosity(fAbsorptionVerbosityCmd->GetNewIntValue(newValue));
+    } else if (command == fRayleighVerbosityCmd) {
+        fOpticalPhysics->SetRayleighVerbosity(fRayleighVerbosityCmd->GetNewIntValue(newValue));
+    } else if (command == fMieVerbosityCmd) {
+        fOpticalPhysics->SetMieVerbosity(fMieVerbosityCmd->GetNewIntValue(newValue));
+    } else if (command == fBoundaryVerbosityCmd) {
+        fOpticalPhysics->SetBoundaryVerbosity(fBoundaryVerbosityCmd->GetNewIntValue(newValue));
+    } else if (command == fBoundaryInvokeSD1Cmd) {
+        fOpticalPhysics->SetInvokeSD(fBoundaryInvokeSD1Cmd->GetNewBoolValue(newValue));
+        Deprecated();
+    } else if (command == fBoundaryInvokeSDCmd) {
+        fOpticalPhysics
+                ->SetInvokeSD(fBoundaryInvokeSDCmd->GetNewBoolValue(newValue));
+    }
 }
 
-void OpticalPhysicsMessenger::Deprecated()
-{
+void OpticalPhysicsMessenger::Deprecated() {
     G4ExceptionDescription ed;
-    ed <<" This command has been deprecated and will be removed in the next" << G4endl
+    ed << " This command has been deprecated and will be removed in the next" << G4endl
        << "major release. Use the same command without /defaults/ instead.";
     G4Exception("OpticalPhysicsMessenger", "optical001", JustWarning, ed);
 }

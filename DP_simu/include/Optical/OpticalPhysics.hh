@@ -53,155 +53,181 @@
 #include "DP_simu/RootManager.hh"
 
 class G4VProcess;
+
 class G4EmSaturation;
+
 // class G4Scintillation;
 class ScintillationLUT;
+
 // class OpticalLUTManager;
 class G4Cerenkov;
+
 class G4OpWLS;
+
 class G4OpRayleigh;
+
 class G4OpMieHG;
+
 class G4OpBoundaryProcess;
+
 class G4OpAbsorption;
 
 class RootManager; //exchange global information
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class OpticalPhysics : public G4VPhysicsConstructor
-{
-  public:
+class OpticalPhysics : public G4VPhysicsConstructor {
+public:
 
-    OpticalPhysics(RootManager *rootMgr=nullptr, G4int verbose = 0, const G4String& name = "Optical");   
+    OpticalPhysics(RootManager *rootMgr = nullptr, G4int verbose = 0, const G4String &name = "Optical");
+
     virtual ~OpticalPhysics();
 
-  protected:
+protected:
 
     // construct particle and physics
     virtual void ConstructParticle();
+
     virtual void ConstructProcess();
 
-  private:
+private:
 
     /// Not implemented
-    OpticalPhysics(const OpticalPhysics& right);
+    OpticalPhysics(const OpticalPhysics &right);
+
     /// Not implemented
-    OpticalPhysics& operator=(const OpticalPhysics& right);
+    OpticalPhysics &operator=(const OpticalPhysics &right);
+
     // Load Root mgr for IO
-    RootManager* fRootMgr;
-  public:
+    RootManager *fRootMgr;
+public:
 
     // configure OpticalPhysics builder
-    void Configure(G4OpticalProcessIndex, G4bool );
+    void Configure(G4OpticalProcessIndex, G4bool);
 
-    void SetTrackSecondariesFirst(G4OpticalProcessIndex, G4bool );
+    void SetTrackSecondariesFirst(G4OpticalProcessIndex, G4bool);
 
     // Cerenkov
     void SetMaxNumPhotonsPerStep(G4int);
+
     void SetMaxBetaChangePerStep(G4double);
+
     void SetCerenkovStackPhotons(G4bool);
+
     void SetCerenkovTrackSecondariesFirst(G4bool);
+
     void SetCerenkovVerbosity(G4int);
 
     // Scintillation
-    void SetScintillationYieldFactor(G4double );
-    void SetScintillationExcitationRatio(G4double );
-    void SetScintillationByParticleType(G4bool );
-    void SetScintillationTrackInfo(G4bool );
+    void SetScintillationYieldFactor(G4double);
+
+    void SetScintillationExcitationRatio(G4double);
+
+    void SetScintillationByParticleType(G4bool);
+
+    void SetScintillationTrackInfo(G4bool);
+
     void SetScintillationTrackSecondariesFirst(G4bool);
-    void SetFiniteRiseTime(G4bool );
-    void SetScintillationStackPhotons(G4bool );
+
+    void SetFiniteRiseTime(G4bool);
+
+    void SetScintillationStackPhotons(G4bool);
+
     void SetScintillationVerbosity(G4int);
     //void AddScintillationSaturation(G4EmSaturation* );
     // ScintLUT
     // void SetScintillationLUT_LUTbaseDir(G4String);
 
     // WLS
-    void SetWLSTimeProfile(G4String );
+    void SetWLSTimeProfile(G4String);
+
     void SetWLSVerbosity(G4int);
 
     //boundary
     void SetBoundaryVerbosity(G4int);
-    void SetInvokeSD(G4bool );
+
+    void SetInvokeSD(G4bool);
 
     void SetAbsorptionVerbosity(G4int);
+
     void SetRayleighVerbosity(G4int);
+
     void SetMieVerbosity(G4int);
 
-  private:
+private:
 
     // methods
     void PrintStatistics() const;
 
     // messenger
-    OpticalPhysicsMessenger* fMessenger;
+    OpticalPhysicsMessenger *fMessenger;
 
     // The vector of process configuration
-    std::vector<G4bool>         fProcessUse;
+    std::vector<G4bool> fProcessUse;
 
     // The vector of track secondaries options;
     // the option to track secondaries before finishing their parent track
-    std::vector<G4bool>         fProcessTrackSecondariesFirst;
+    std::vector<G4bool> fProcessTrackSecondariesFirst;
 
     // scintillation /////////////////
     // static G4ThreadLocal G4Scintillation* fScintillationProcess;
-    static G4ThreadLocal ScintillationLUT* fScintillationProcess;
+    static G4ThreadLocal ScintillationLUT *fScintillationProcess;
     /// scintillation yield factor
-    G4double                    fYieldFactor;
+    G4double fYieldFactor;
 
     /// scintillation excitation ratio
-    G4double                    fExcitationRatio;
+    G4double fExcitationRatio;
 
     /// option to set a finite rise-time; Note: the G4Scintillation
     /// process expects the user to have set the constant material
     /// property FAST/SLOWSCINTILLATIONRISETIME
-    G4bool                      fFiniteRiseTime;
+    G4bool fFiniteRiseTime;
 
     /// option to  allow for the light yield to be a function of
     /// particle type and deposited energy in case of non-linear
     /// light emission in scintillators
-    G4bool                      fScintillationByParticleType;
+    G4bool fScintillationByParticleType;
 
     /// option to allow for G4ScintillationTrackInformation
     /// to be attached to a scintillation photon's track
-    G4bool                      fScintillationTrackInfo;
+    G4bool fScintillationTrackInfo;
 
     /// option to allow stacking of secondary Scintillation photons
-    G4bool                      fScintillationStackPhotons;
+    G4bool fScintillationStackPhotons;
 
-    G4int                       fScintillationVerbosity;
+    G4int fScintillationVerbosity;
 
     //LUT
     // G4String fScintillationLUTBaseDir;
 
     ////////////////// Cerenkov
-    static G4ThreadLocal G4Cerenkov* fCerenkovProcess;
+    static G4ThreadLocal G4Cerenkov *fCerenkovProcess;
     /// max number of Cerenkov photons per step
-    G4int                       fMaxNumPhotons;
+    G4int fMaxNumPhotons;
     /// max change of beta per step
-    G4double                    fMaxBetaChange;
+    G4double fMaxBetaChange;
     /// option to allow stacking of secondary Cerenkov photons
-    G4bool                      fCerenkovStackPhotons;
-    G4int                       fCerenkovVerbosity;
+    G4bool fCerenkovStackPhotons;
+    G4int fCerenkovVerbosity;
 
     ///////////////// WLS
-    static G4ThreadLocal G4OpWLS* fWLSProcess;
-    G4String                    fWLSTimeProfileName;
-    G4int                       fWLSVerbosity;
+    static G4ThreadLocal G4OpWLS *fWLSProcess;
+    G4String fWLSTimeProfileName;
+    G4int fWLSVerbosity;
 
-    static G4ThreadLocal G4OpAbsorption* fAbsorptionProcess;
-    G4int                       fAbsorptionVerbosity;
+    static G4ThreadLocal G4OpAbsorption *fAbsorptionProcess;
+    G4int fAbsorptionVerbosity;
 
-    static G4ThreadLocal G4OpRayleigh* fRayleighProcess;
-    G4int                       fRayleighVerbosity;
+    static G4ThreadLocal G4OpRayleigh *fRayleighProcess;
+    G4int fRayleighVerbosity;
 
-    static G4ThreadLocal G4OpMieHG*                  fMieProcess;
-    G4int                       fMieVerbosity;
+    static G4ThreadLocal G4OpMieHG *fMieProcess;
+    G4int fMieVerbosity;
 
-    static G4ThreadLocal G4OpBoundaryProcess* fBoundaryProcess;
+    static G4ThreadLocal G4OpBoundaryProcess *fBoundaryProcess;
     /// G4OpBoundaryProcess to call InvokeSD method
-    G4bool                      fInvokeSD;
-    G4int                       fBoundaryVerbosity;
+    G4bool fInvokeSD;
+    G4int fBoundaryVerbosity;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

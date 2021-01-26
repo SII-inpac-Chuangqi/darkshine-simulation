@@ -23,47 +23,41 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+#include <utility>
+
 #include "Optical/OpticalLUTManager.hh"
 
-std::map<G4String , std::shared_ptr<OpticalLUT>> OpticalLUTManager::fLUTs;
+std::map<G4String, std::shared_ptr<OpticalLUT>> OpticalLUTManager::fLUTs;
 // G4String OpticalLUTManager::baseDir="./";
 
-OpticalLUTManager::OpticalLUTManager()
-{;}
+OpticalLUTManager::OpticalLUTManager() { ; }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-OpticalLUTManager::~OpticalLUTManager(){;}
+OpticalLUTManager::~OpticalLUTManager() { ; }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 //now this is not used since no good way to validate LUT
-std::shared_ptr<OpticalLUT> OpticalLUTManager::getLUT(G4String unitName, G4String path, G4String unitID)
-{
-    if (fLUTs.find(unitName) != fLUTs.end())
-    {
+std::shared_ptr<OpticalLUT> OpticalLUTManager::getLUT(const G4String &unitName, G4String path, const G4String &unitID) {
+    if (fLUTs.find(unitName) != fLUTs.end()) {
         if (fLUTs[unitName]->isReady())
             return fLUTs[unitName];
-        else
-        {
+        else {
             G4cerr << "Error: LUT invalid! require unit ID= " << unitID << G4endl;
             fLUTs[unitName]->Print();
             return nullptr;
         }
-    }
-    else
-    {
+    } else {
         //Lets load one
         // OpticalLUT &LUT = *(new OpticalLUT());
         auto LUT = std::shared_ptr<OpticalLUT>(new OpticalLUT());
-        LUT->initialize(path,unitID); //hard-coded convention: unitName_LUT.dat
-        if (LUT->isReady()){
+        LUT->initialize(std::move(path), unitID); //hard-coded convention: unitName_LUT.dat
+        if (LUT->isReady()) {
             fLUTs[unitName] = LUT;
-            G4cout << "Load LUT ok! validated ok: request ID= "  << unitID << G4endl;
+            G4cout << "Load LUT ok! validated ok: request ID= " << unitID << G4endl;
             fLUTs[unitName]->Print();
             return fLUTs[unitName];
-        }
-        else
-        {
+        } else {
             G4cerr << "Error: LUT not validated, request ID=" << unitID << G4endl;
             fLUTs[unitName] = LUT;
             fLUTs[unitName]->Print();
@@ -73,31 +67,12 @@ std::shared_ptr<OpticalLUT> OpticalLUTManager::getLUT(G4String unitName, G4Strin
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-std::shared_ptr<OpticalLUT> OpticalLUTManager::getLUT(G4String unitName) // no validation
+std::shared_ptr<OpticalLUT> OpticalLUTManager::getLUT(const G4String &unitName) // no validation
 {
-    if (fLUTs.find(unitName) != fLUTs.end())
-    {
+    if (fLUTs.find(unitName) != fLUTs.end()) {
         return fLUTs[unitName];
-    }
-    else
-    {
-        // //Lets load one
-        // // OpticalLUT &LUT = *(new OpticalLUT());
-        // auto LUT = std::shared_ptr<OpticalLUT>(new OpticalLUT());
-        // LUT->initialize(path); //hard-coded convention: unitName_LUT.dat 
-        // if (LUT->isReady()){
-        //     fLUTs[unitName] = LUT;
-        //     G4cerr << "Load LUT ok! (no validation) "<< G4endl;
-        //     fLUTs[unitName]->Print();
-        //     return fLUTs[unitName];
-        // }
-        // else
-        // {
-        //     G4cerr << "Error: LUT not validated" << G4endl;
-        //     fLUTs[unitName]->Print();
-        //     return nullptr;
-        // }
-        G4cerr << "Error: LUT not loaded! cIn=" <<unitName<< G4endl;
+    } else {
+        G4cerr << "Error: LUT not loaded! cIn=" << unitName << G4endl;
         return nullptr;
     }
 }

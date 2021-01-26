@@ -48,15 +48,18 @@
 #include <map>
 #include <memory>
 
-class OpticalLUTManager {  
+class OpticalLUTManager {
 public:
     OpticalLUTManager();
+
     ~OpticalLUTManager();
-    static std::shared_ptr<OpticalLUT> getLUT(G4String unitName); //get LUT and no validation
-    static std::shared_ptr<OpticalLUT> getLUT(G4String unitName, G4String path, G4String unitID); //get LUT and validate the maxDepth?? other way to validate?
-     
+
+    static std::shared_ptr<OpticalLUT> getLUT(const G4String &unitName); //get LUT and no validation
+    static std::shared_ptr<OpticalLUT> getLUT(const G4String &unitName, G4String path,
+                                              const G4String &unitID); //get LUT and validate the maxDepth?? other way to validate?
+
 private:
-    static std::map<G4String ,std::shared_ptr<OpticalLUT>> fLUTs;    
+    static std::map<G4String, std::shared_ptr<OpticalLUT>> fLUTs;
     // static G4String baseDir;     
 };
 

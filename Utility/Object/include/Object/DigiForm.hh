@@ -45,81 +45,42 @@ public:
 
     ~DigiForm() override;
 
-    // int getFadcMax() const;
+    bool operator==(const DigiForm &rhs) const {
+        return fDigiScheme == rhs.fDigiScheme &&
+               fNsPerTick == rhs.fNsPerTick &&
+               fVoltageToADC == rhs.fVoltageToADC &&
+               fRangeMin == rhs.fRangeMin &&
+               fRangeMax == rhs.fRangeMax &&
+               fPedestal == rhs.fPedestal &&
+               fDetID == rhs.fDetID &&
+               fDetType == rhs.fDetType &&
+               fWaveform == rhs.fWaveform &&
+               fNoAheadOfTime == rhs.fNoAheadOfTime &&
+               fNoOutOfTime == rhs.fNoOutOfTime &&
+               fTimeSeq == rhs.fTimeSeq &&
+               fTimeSeqZero == rhs.fTimeSeqZero &&
+               fOpticalGen == rhs.fOpticalGen;
+    }
 
-    // void setFadcMax(int fAdcMax);
-
-    // double getFAnalogMax() const;
-
-    // void setFAnalogMax(double fAnalogmax);
-
-    // int getFSamplePoints() const;
-
-    // void setFSamplePoints(int fSamplepoints);
-
-    // int getFSampleTime() const;
-
-    // void setFSampleTime(int fSampletime);
-
-    // int getFDigiScheme() const;
-
-    // void setFDigiScheme(int fDigischeme);
-
-    // int getFSampleLength() const;
-
-    // void setFSampleLength(int fSampleLength);
-
-    // int getFDetId() const;
-
-    // void setFDetId(int fDetId);
-
-    // int getFDetType() const;
-
-    // void setFDetType(int fDetType);
-
-    // int getFCellIdX() const;
-
-    // void setFCellIdX(int fCellIdX);
-
-    // int getFCellIdY() const;
-
-    // void setFCellIdY(int fCellIdY);
-
-    // int getFCellIdZ() const;
-
-    // void setFCellIdZ(int fCellIdZ);
-
-    // const std::vector<int> &getFWaveform() const;
-
-    // void setFWaveform(const std::vector<int> &fWaveform);
-
-    // double getFStartTime() const;
-
-    // void setFStartTime(double fStartTime);
-
-    // double getFDetectedEnergy() const;
-
-    // void setFDetectedEnergy(double fDetectedEnergy);
-
-    // double getFTruthEnergy() const;
-
-    // void setFTruthEnergy(double fTruthEnergy);
-
-    // bool isFIsOverflow() const;
-
-    // void setFIsOverflow(bool fIsOverflow);
-
-    // bool isFIsUnderflow() const;
-
-    // void setFIsUnderflow(bool fIsUnderflow);
-
-    // bool isFIsOutOfTime() const;
-
-    // void setFIsOutOfTime(bool fIsOutOfTime);
-
-    // const std::vector<OpticalHit *> &getFRawOpticalHits() const;
-
-    // void setFRawOpticalHits(const std::vector<OpticalHit *> &fRawOpticalHits);
+    DigiForm &operator=(const DigiForm &rhs) {
+        if (&rhs == this) { return *this; }
+        TObject::operator=(rhs);
+        fDigiScheme = rhs.fDigiScheme;
+        fNsPerTick = rhs.fNsPerTick;
+        fVoltageToADC = rhs.fVoltageToADC;
+        fRangeMin = rhs.fRangeMin;
+        fRangeMax = rhs.fRangeMax;
+        fPedestal = rhs.fPedestal;
+        fDetID = rhs.fDetID;
+        fDetType = rhs.fDetType;
+        fWaveform = rhs.fWaveform;
+        fNoAheadOfTime = rhs.fNoAheadOfTime;
+        fNoOutOfTime = rhs.fNoOutOfTime;
+        fTimeSeq = rhs.fTimeSeq;
+        fTimeSeqZero = rhs.fTimeSeqZero;
+        fOpticalGen = rhs.fOpticalGen;
+        return *this;
+    }
 
     //main filler
     void AddTimeSeq(double arrivalT);
@@ -143,7 +104,7 @@ public:
     void AddOpticalGen(int v){fOpticalGen+=v;};
 
     //handle used by digitizer
-    std::vector<double>& GetWaveForm(){return fWaveform;};
+    std::vector<double>* GetWaveForm(){return &fWaveform;};
     void SetNo_AheadOfTime(std::pair<int,int> vs){fNoAheadOfTime=vs.first;fNoOutOfTime=vs.second;};
 
     //simple getter
@@ -213,7 +174,7 @@ private:
     double fNoOutOfTime{-1};
     // std::vector<OpticalHit*> fRawOpticalHits; //we will not save the raw hits since impossible for storage
     
-    std::vector<int> fTimeSeq{0,0}; //instead, we save the time sliced result, with underflow and overflow bin at first and last
+    std::vector<int> fTimeSeq; //instead, we save the time sliced result, with underflow and overflow bin at first and last
     double fTimeSeqZero{0}; //actually this is the trigger time. Now we fixed to 0, but still save this for each unit
     int fOpticalGen{0};
     // double fDetectedEnergy{}; //effective energy after conversion  // we calculate this by integral waveform

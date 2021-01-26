@@ -58,7 +58,10 @@ void DigiForm::AddTimeSeq(double arrivalT)
     double rT = arrivalT - fTimeSeqZero;
     auto _TimeBase = GetTimeSeqBase(true); //with PU effect
     if (fTimeSeq.size() != _TimeBase.size())
-        fTimeSeq = std::vector<int>(_TimeBase.size(), 0);
+    {
+        auto temp = std::vector<int>(_TimeBase.size(), 0);
+        fTimeSeq.assign(temp.begin(), temp.end());
+    }
     auto const itl = std::lower_bound(_TimeBase.begin(), _TimeBase.end(), rT);
     fTimeSeq[std::distance(_TimeBase.begin(), itl)]++;
 }

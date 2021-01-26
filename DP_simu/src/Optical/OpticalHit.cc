@@ -36,182 +36,118 @@
 
 #include <iomanip>
 
-G4ThreadLocal G4Allocator<OpticalHit>* OpticalHitAllocator=0;
+G4ThreadLocal G4Allocator<OpticalHit> *OpticalHitAllocator = nullptr;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 OpticalHit::OpticalHit(G4int detID)
- : G4VHit(),fDetID(detID)
-{;}
+        : G4VHit(), fDetID(detID) { ; }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-OpticalHit::~OpticalHit() {}
+OpticalHit::~OpticalHit() = default;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-OpticalHit::OpticalHit(const OpticalHit& right)
-        : G4VHit()
-{
-    fDetID=right.fDetID;
+OpticalHit::OpticalHit(const OpticalHit &right)
+        : G4VHit() {
+    fDetID = right.fDetID;
 //    fCellID=right.fCellID;
     // fPos=right.fPos;
-    fDetectedFlag=right.fDetectedFlag;
-    fIsLUT=right.fIsLUT;
+    fDetectedFlag = right.fDetectedFlag;
+    fIsLUT = right.fIsLUT;
     // fDepth=right.fDepth;
     // fCosTheta=right.fCosTheta;
-    fE2=right.fE2;
+    fE2 = right.fE2;
     // fE1=right.fE1;
-    fT2=right.fT2;
+    fT2 = right.fT2;
     // fT1=right.fT1;
     // fT0=right.fT0;
-    fType=right.fType;
+    fType = right.fType;
 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-const OpticalHit& OpticalHit::operator=(const OpticalHit& right)
-{
-    fDetID=right.fDetID;
+const OpticalHit &OpticalHit::operator=(const OpticalHit &right) {
+    fDetID = right.fDetID;
 //    fCellID=right.fCellID;
     // fPos=right.fPos;
-    fDetectedFlag=right.fDetectedFlag;
-    fIsLUT=right.fIsLUT;
+    fDetectedFlag = right.fDetectedFlag;
+    fIsLUT = right.fIsLUT;
     // fDepth=right.fDepth;
     // fCosTheta=right.fCosTheta;
-    fE2=right.fE2;
+    fE2 = right.fE2;
     // fE1=right.fE1;
-    fT2=right.fT2;
+    fT2 = right.fT2;
     // fT1=right.fT1;
     // fT0=right.fT0;
-    fType=right.fType;
-  return *this;
+    fType = right.fType;
+    return *this;
 }
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4bool OpticalHit::operator==(const OpticalHit& right) const
-{
-  return ( this == &right ) ? true : false;
+G4bool OpticalHit::operator==(const OpticalHit &right) const {
+    return (this == &right);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-bool OpticalHit::BuildLUTHit(OpticalLUT &LUT, G4double depth, G4double cosTheta,  G4double creationT, G4double creationE, G4ThreeVector creationP, G4double rand1, G4double rand2,G4EmProcessSubType Type)
-{
-  if (!LUT.isReady())
-  {
-    G4cerr << "Error: Not valid LUT, should not happen." << G4endl;
-    return false;
-  }
-  //basic info
-  fType=Type;
-  // Find efficiency and then isdetected
-  double efficiency = LUT.efficiency(depth, cosTheta);
-  fDetectedFlag = (rand1 < efficiency);
-  fIsLUT = true;
+bool OpticalHit::BuildLUTHit(OpticalLUT &LUT, G4double depth, G4double cosTheta, G4double creationT, G4double creationE,
+                             const G4ThreeVector& creationP, G4double rand1, G4double rand2, G4EmProcessSubType Type) {
+    if (!LUT.isReady()) {
+        G4cerr << "Error: Not valid LUT, should not happen." << G4endl;
+        return false;
+    }
+    //basic info
+    fType = Type;
+    // Find efficiency and then isdetected
+    double efficiency = LUT.efficiency(depth, cosTheta);
+    fDetectedFlag = (rand1 < efficiency);
+    fIsLUT = true;
 
     // fDepth = depth;
     // fCosTheta = cosTheta;
-  // Find deltaT and arrival time
-  // fCreationT = creationT;
-  // fT1=creationT;
-  fT2 = creationT + LUT.transitTime(depth, cosTheta, rand2);
+    // Find deltaT and arrival time
+    // fCreationT = creationT;
+    // fT1=creationT;
+    fT2 = creationT + LUT.transitTime(depth, cosTheta, rand2);
 
-  //Deal with energy change (shift?)
-  // Dummy now
-  // fE1 = creationE;
-  fE2 = creationE + 0;
+    //Deal with energy change (shift?)
+    // Dummy now
+    // fE1 = creationE;
+    fE2 = creationE + 0;
 
-  //Pos set to center?
-  // fPos=creationP;
+    //Pos set to center?
+    // fPos=creationP;
 
-  return fDetectedFlag;
-}
-
-//No need for real ph anbd gen ph. We move them to standalone FW
-/*
-bool OpticalHit::BuildREALHit(OpticalTrackData *AUX, G4double arrivalT, G4double arrivalE,G4ThreeVector arrivalP, G4EmProcessSubType Type)
-{
-  //DEV mode since you provide AUX track information
-  fIsLUT = false;
-  fDetectedFlag = true;
-    //basic info
-    fType=Type;
-
-    //retrive depth and theta
-    fDepth = AUX->GetDepth();
-    fCosTheta = AUX->GetCosTheta();
-    //cal deltaT
-    fE2 = arrivalE;
-    fE1 = AUX->GetCreationE();
-    //cal deltaE
-    fT2 = arrivalT;
-    fT1 = AUX->GetCreationT();
-    //record pos
-    fPos = arrivalP;
-    //DO not touch with the AUX as it will be cleared with the G4 track axu information manager.
-//    delete AUX;
     return fDetectedFlag;
 }
 
-bool OpticalHit::BuildGENHit(G4double depth, G4double cosTheta,G4double creationT,  G4double creationE,G4ThreeVector creationP,G4EmProcessSubType Type)
-{
-  //save generated photons
-  fIsLUT = false;
-  fDetectedFlag = -1;
-  //basic info
-    fType=Type;
-
-    fE1 = creationE;
-    fT1 = creationT;
-    fDepth = depth;
-    fCosTheta = cosTheta;
-    //record pos
-    fPos = creationP;
-    return fDetectedFlag;
-
-}
-*/
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //for minimum storagr, we removed the Pos storage. Sorry we couldnot draw you!
 
-void OpticalHit::Draw()
-{
-  // G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();
-  // if(pVVisManager)
-  // {
-  //   G4Circle circle(fPos);
-  //   circle.SetScreenSize(4.);
-  //   circle.SetFillStyle(G4Circle::filled);
-  //   G4Colour colour(1.,0.,0.);
-  //   G4VisAttributes attribs(colour);
-  //   circle.SetVisAttributes(attribs);
-  //   pVVisManager->Draw(circle);
-  // }
-  ;
-}
+void OpticalHit::Draw() {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void OpticalHit::Print()
-{
-  G4cout
-     << " detID: " << fDetID
-     << " isLUT:" << fIsLUT
-     << " IsDetected:" << fDetectedFlag
-//     << " CellID:" << fCellID
-    //  << " Pos:" << G4BestUnit(fPos,"Length")
-    //  << " Depth:" << G4BestUnit(fDepth,"Length")
-    //  << " CosTheta:" << fCosTheta
-     << " ArrivalE:" << G4BestUnit(fE2,"Energy")
-    //  << " DeltaE:" << G4BestUnit(GetDeltaE(),"Energy")
-     << " ArrivalT:" << G4BestUnit(fT2, "Length")
-    //  << " DeltaT:" << G4BestUnit(GetDeltaT(),"Time")
-     << " Type:" << GetType()
-     << G4endl;
+void OpticalHit::Print() {
+    G4cout
+            << " detID: " << fDetID
+            << " isLUT:" << fIsLUT
+            << " IsDetected:" << fDetectedFlag
+            //     << " CellID:" << fCellID
+            //  << " Pos:" << G4BestUnit(fPos,"Length")
+            //  << " Depth:" << G4BestUnit(fDepth,"Length")
+            //  << " CosTheta:" << fCosTheta
+            << " ArrivalE:" << G4BestUnit(fE2, "Energy")
+            //  << " DeltaE:" << G4BestUnit(GetDeltaE(),"Energy")
+            << " ArrivalT:" << G4BestUnit(fT2, "Length")
+            //  << " DeltaT:" << G4BestUnit(GetDeltaT(),"Time")
+            << " Type:" << GetType()
+            << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

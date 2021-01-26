@@ -48,7 +48,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
     const auto &HitCollection = evt->getSimulatedHitCollection();
 
     // define the collection name (RawMCParticle) to find.
-    std::string HitCollectionName = "ECAL_Center";
+    std::string HitCollectionName = "ECAL";
 
     // IMPORTANT: check if the collection exists
     if (HitCollection.count(HitCollectionName) != 0) {

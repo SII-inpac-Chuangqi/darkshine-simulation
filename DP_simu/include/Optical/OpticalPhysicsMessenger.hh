@@ -48,123 +48,131 @@
 #include "globals.hh"
 
 class G4VProcess;
+
 class OpticalPhysics;
 
 class G4UIdirectory;
+
 class G4UIcmdWithABool;
+
 class G4UIcmdWithADouble;
+
 class G4UIcmdWithAString;
+
 class G4UIcmdWithAnInteger;
+
 class G4UIcommand;
 
 // Messenger class that defines commands for the optical physics
 
-class OpticalPhysicsMessenger: public G4UImessenger
-{
-  public:
+class OpticalPhysicsMessenger : public G4UImessenger {
+public:
 
-    OpticalPhysicsMessenger(OpticalPhysics*);
+    OpticalPhysicsMessenger(OpticalPhysics *);
+
     virtual ~OpticalPhysicsMessenger();
 
     // methods
-    virtual void SetNewValue(G4UIcommand*, G4String);
-    
+    virtual void SetNewValue(G4UIcommand *, G4String);
+
 private:
 
-  /// Not implemented
-  OpticalPhysicsMessenger();
-  /// Not implemented
-  OpticalPhysicsMessenger(const OpticalPhysicsMessenger& right);
-  /// Not implemented
-  OpticalPhysicsMessenger& operator=(const OpticalPhysicsMessenger& right);
+    /// Not implemented
+    OpticalPhysicsMessenger();
 
-  void Deprecated(void);
+    /// Not implemented
+    OpticalPhysicsMessenger(const OpticalPhysicsMessenger &right);
 
-  // data members
+    /// Not implemented
+    OpticalPhysicsMessenger &operator=(const OpticalPhysicsMessenger &right);
 
-  /// associated class
-  OpticalPhysics*      fOpticalPhysics;
+    void Deprecated(void);
 
-  /// command directory
-  G4UIdirectory*         fDir;
-  G4UIdirectory*         fDir2;
+    // data members
 
-  /// selected optical process
-  G4OpticalProcessIndex  fSelectedProcessIndex;
+    /// associated class
+    OpticalPhysics *fOpticalPhysics;
 
-  /// selectOpProcess command
-  G4UIcommand*           fActivateProcessCmd;
+    /// command directory
+    G4UIdirectory *fDir;
+    G4UIdirectory *fDir2;
 
-  /// setProcessVerbose command
-  G4UIcmdWithAnInteger*  fVerboseCmd;
+    /// selected optical process
+    G4OpticalProcessIndex fSelectedProcessIndex;
 
-  /// setTrackSecondariesFirst command
-  G4UIcommand*           fTrackSecondariesFirstCmd;
+    /// selectOpProcess command
+    G4UIcommand *fActivateProcessCmd;
 
-  // Cerenkov
+    /// setProcessVerbose command
+    G4UIcmdWithAnInteger *fVerboseCmd;
 
-  /// setCerenkovMaxPhotons command
-  G4UIcmdWithAnInteger*  fCerenkovMaxPhotonsCmd;
-  G4UIcmdWithAnInteger*  fCerenkovMaxPhotons1Cmd;
+    /// setTrackSecondariesFirst command
+    G4UIcommand *fTrackSecondariesFirstCmd;
 
-  /// setCerenkovMaxBetaChange command
-  G4UIcmdWithADouble*    fCerenkovMaxBetaChangeCmd;
-  G4UIcmdWithADouble*    fCerenkovMaxBetaChange1Cmd;
+    // Cerenkov
 
-  /// setStackPhotons command
-  G4UIcmdWithABool*      fCerenkovStackPhotonsCmd;
-  G4UIcmdWithABool*      fCerenkovStackPhotons1Cmd;
+    /// setCerenkovMaxPhotons command
+    G4UIcmdWithAnInteger *fCerenkovMaxPhotonsCmd;
+    G4UIcmdWithAnInteger *fCerenkovMaxPhotons1Cmd;
 
-  G4UIcmdWithABool*      fCerenkovTrackSecondariesFirstCmd;
-  G4UIcmdWithAnInteger*  fCerenkovVerbosityCmd;
+    /// setCerenkovMaxBetaChange command
+    G4UIcmdWithADouble *fCerenkovMaxBetaChangeCmd;
+    G4UIcmdWithADouble *fCerenkovMaxBetaChange1Cmd;
 
-  // Scintillation
+    /// setStackPhotons command
+    G4UIcmdWithABool *fCerenkovStackPhotonsCmd;
+    G4UIcmdWithABool *fCerenkovStackPhotons1Cmd;
 
-  /// setScintillationYieldFactor command
-  G4UIcmdWithADouble*    fScintYieldFactorCmd;
-  G4UIcmdWithADouble*    fScintYieldFactor1Cmd;
+    G4UIcmdWithABool *fCerenkovTrackSecondariesFirstCmd;
+    G4UIcmdWithAnInteger *fCerenkovVerbosityCmd;
 
-  /// setScintillationByParticleType command
-  G4UIcmdWithABool*      fScintByParticleTypeCmd;
-  G4UIcmdWithABool*      fScintByParticleType1Cmd;
+    // Scintillation
 
-  /// setScintillationTrackInfo command
-  G4UIcmdWithABool*      fScintTrackInfoCmd;
-  G4UIcmdWithABool*      fScintTrackInfo1Cmd;
+    /// setScintillationYieldFactor command
+    G4UIcmdWithADouble *fScintYieldFactorCmd;
+    G4UIcmdWithADouble *fScintYieldFactor1Cmd;
 
-  /// setStackPhotons command
-  G4UIcmdWithABool*      fScintStackPhotonsCmd;
-  G4UIcmdWithABool*      fScintStackPhotons1Cmd;
+    /// setScintillationByParticleType command
+    G4UIcmdWithABool *fScintByParticleTypeCmd;
+    G4UIcmdWithABool *fScintByParticleType1Cmd;
 
-  G4UIcmdWithADouble*    fScintExcitationRatioCmd;
+    /// setScintillationTrackInfo command
+    G4UIcmdWithABool *fScintTrackInfoCmd;
+    G4UIcmdWithABool *fScintTrackInfo1Cmd;
 
-  G4UIcmdWithABool*      fScintTrackSecondariesFirstCmd;
-  G4UIcmdWithAnInteger*  fScintillationVerbosityCmd;
+    /// setStackPhotons command
+    G4UIcmdWithABool *fScintStackPhotonsCmd;
+    G4UIcmdWithABool *fScintStackPhotons1Cmd;
 
-  /// setFiniteRiseTime command
-  G4UIcmdWithABool*      fScintFiniteRiseTimeCmd;
-  G4UIcmdWithABool*      fScintFiniteRiseTime1Cmd;
+    G4UIcmdWithADouble *fScintExcitationRatioCmd;
 
-  G4UIcmdWithAnInteger*  fScintVerbosityCmd;
+    G4UIcmdWithABool *fScintTrackSecondariesFirstCmd;
+    G4UIcmdWithAnInteger *fScintillationVerbosityCmd;
 
-  //Sci LUT related
-  // G4UIcmdWithAString*  fScintLUTBaseDirCmd; //scint LUT baseDir
+    /// setFiniteRiseTime command
+    G4UIcmdWithABool *fScintFiniteRiseTimeCmd;
+    G4UIcmdWithABool *fScintFiniteRiseTime1Cmd;
 
-  // WLS
+    G4UIcmdWithAnInteger *fScintVerbosityCmd;
 
-  /// setWLSTimeProfile command
-  G4UIcmdWithAString*    fWLSTimeProfileCmd;
-  G4UIcmdWithAString*    fWLSTimeProfile1Cmd;
-  G4UIcmdWithAnInteger*  fWLSVerbosityCmd;
+    //Sci LUT related
+    // G4UIcmdWithAString*  fScintLUTBaseDirCmd; //scint LUT baseDir
 
-  /// setInvokeSD command
-  G4UIcmdWithABool*      fBoundaryInvokeSDCmd;
-  G4UIcmdWithABool*      fBoundaryInvokeSD1Cmd;
-  G4UIcmdWithAnInteger*  fBoundaryVerbosityCmd;
+    // WLS
 
-  G4UIcmdWithAnInteger*  fAbsorptionVerbosityCmd;
-  G4UIcmdWithAnInteger*  fRayleighVerbosityCmd;
-  G4UIcmdWithAnInteger*  fMieVerbosityCmd;
+    /// setWLSTimeProfile command
+    G4UIcmdWithAString *fWLSTimeProfileCmd;
+    G4UIcmdWithAString *fWLSTimeProfile1Cmd;
+    G4UIcmdWithAnInteger *fWLSVerbosityCmd;
+
+    /// setInvokeSD command
+    G4UIcmdWithABool *fBoundaryInvokeSDCmd;
+    G4UIcmdWithABool *fBoundaryInvokeSD1Cmd;
+    G4UIcmdWithAnInteger *fBoundaryVerbosityCmd;
+
+    G4UIcmdWithAnInteger *fAbsorptionVerbosityCmd;
+    G4UIcmdWithAnInteger *fRayleighVerbosityCmd;
+    G4UIcmdWithAnInteger *fMieVerbosityCmd;
 
 };
 

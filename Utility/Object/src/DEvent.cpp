@@ -58,6 +58,9 @@ void DEvent::Initialization(CleanType ct) {
     if (ct == nALL) StepCollection.clear();
 
     for (auto itr : OpticalCollection) {
+        for (auto itr2 : *itr.second) {
+            delete itr2;
+        }
         (itr.second)->clear();
         (itr.second)->shrink_to_fit();
     }

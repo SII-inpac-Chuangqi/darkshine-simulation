@@ -41,8 +41,6 @@
 #include "G4StepLimiterPhysics.hh"  // Geant4.10
 #include "G4GenericBiasingPhysics.hh"
 #include "DP_simu/GammaPhysics.h"
-// #include "DP_simu/OpticalPhysics.h"
-// #include "G4OpticalPhysics.hh"
 #include "Optical/OpticalPhysics.hh"
 #include "G4EmStandardPhysics_option4.hh"
 #include "DarkPhysics/DarkMatterPhysics.hh"
@@ -149,11 +147,8 @@ int main(int argc, char **argv) {
 
     // Optical Physics
     if (dControl->if_optical) {
-        //physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
-        // auto *opticalPhysics = new G4OpticalPhysics();
         std::cout<<"[Main] ==> Optical Physics Init... "<<std::endl;
         auto *opticalPhysics = new OpticalPhysics(rootMng,dControl->Optical_PhysicsVerbose);
-        // physicsList->RegisterPhysics(opticalPhysics);
         physicsList->ReplacePhysics(opticalPhysics);
     }
     physicsList->RegisterPhysics(new G4StepLimiterPhysics());

@@ -77,7 +77,7 @@ void OpticalLUT::Print(){
 }
 
 
-void OpticalLUT::initialize(std::string filename, std::string unitID)
+void OpticalLUT::initialize(const std::string& filename, const std::string& unitID)
 {
   // open the file given by the stream 'filename'
   std::ifstream infile;

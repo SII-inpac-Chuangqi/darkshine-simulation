@@ -72,6 +72,22 @@ Filters:
     # - [ "GammaToMuPair", 2, "GeV", 4, "GeV", -10, "cm", 2, "cm", false ]
 
 ###########################################
+# Optical Options
+###########################################
+Optical:
+  # if to start optical simualtion
+  if_optical: true
+  # Global Optical Yield Factor: photon yields = material photon yields * Optical_YieldFactor
+  Optical_YieldFactor: 0.001
+
+  SiPM:
+    Optical_pulseFilePath: "SiPM_g2_pulse.root"
+
+  LUT:
+    LUT_FilePath: "ECAL_LUT.dat"
+    LUT_Name: "ECAL_cube_2.5_2.5_2_v1"
+
+###########################################
 # Detector Geometry
 ###########################################
 Geometry:
@@ -139,12 +155,13 @@ Geometry:
       - [ 0 , "cm", 0 , "cm", -4.25  , "mm" ] # Layer 5
       - [ 0 , "cm", 0 , "cm", 86.25  , "mm" ] # Layer 6
   ECAL:
-    ECAL_Name: "ECAL_Center"
+    ECAL_Name: "ECAL"
 
     # ECAL Main Region Material
     ECALRegion_Mat: "CarbonFiber"
     # ECAL Scintillator Material
-    ECAL_Center_Mat: "PWO4" # X0 = 0.92 cm
+    # ECAL_Center_Mat: "PWO4" # X0 = 0.92 cm
+    ECAL_Center_Mat: "LYSO" # Opitcal Module only supports LYSO
     # Wrapper Material
     ECAL_Wrap_Mat: "G4_Al"
 

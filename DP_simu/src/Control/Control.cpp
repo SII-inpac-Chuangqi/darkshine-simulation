@@ -161,8 +161,8 @@ Control::Control() {
     /* Optical */
     //----------------------------------------
     if_optical = true;
-    Optical_UseLUT = if_optical && true; //if disabled, nothing will happen in the optical!
-    Optical_YieldFactor = 1.0 ; //used to 
+    Optical_UseLUT = true; //if disabled, nothing will happen in the optical!
+    Optical_YieldFactor = 1e-3; //used to
     Optical_PhysicsVerbose = 0;
     //digitizer
     Optical_digitizerDebug = false;
@@ -182,16 +182,21 @@ Control::Control() {
     Optical_pulseTimeZero = -5.; // appropriate t0 value?
     // hadrware parameters:ADC and FE (now we only save the analog waveform in voltage.)
     Optical_nBits = 4096; // 2^12 ADC bits
-    Optical_fullRangeMV = 5000. ; //full range voltage in mV
+    Optical_fullRangeMV = 5000.; //full range voltage in mV
     Optical_range_min = -2047; // -(2^12 - 1)
     Optical_range_max = 2048;  // +(2^12)
     Optical_pedestalLevel = 0;          // [ADC count]
     Optical_noiseSigma = 4;                  // [ADC count]
-    Optical_clockJitterSigma =  0.05;      // [ns]
+    Optical_clockJitterSigma = 0.05;      // [ns]
     Optical_apertureJitterSigma = 0.0001; // [ns]
     // scaling factor to allow for two overlapped 3.1 GeV positrons to be in ADC's
     // range,need calibration
     Optical_pulseScaleFactor = 1; //dummy, can be setted later in DEvent or here.
+
+    //----------------------------------------
+    // LUT
+    LUT_FilePath = "ECAL_LUT.dat";
+    LUT_Name = "ECAL_cube_2.5_2.5_2_v1";
 
     //----------------------------------------
     // Wrap related
@@ -233,7 +238,6 @@ Control::Control() {
     APD_Surface->SetModel(LUT);
     APD_Surface->SetFinish(polishedvm2000glue);
     APD_Surface->SetMaterialPropertiesTable(APD_Surface_Mat);
-    //----------------------------------------
 
 }
 
@@ -349,6 +353,10 @@ void Control::RebuildVariables() {
     G4double lz = *std::max_element(borderZ, borderZ + 5);
     G4double lzoom = 2;
     Size_World = G4ThreeVector(lzoom * lx, lzoom * ly, lzoom * lz);
+
+    //----------------------------------------
+    // Optical
+    Optical_UseLUT = if_optical;
 }
 
 
@@ -413,7 +421,7 @@ void Control::ConstructG4MaterialTable() const {
         //
         // ------------ Generate & Add Material Properties Table ------------
         //
-        std::cout<<"[Control] ==> optical enabled. "<<std::endl;
+        std::cout << "[Control] ==> optical enabled. " << std::endl;
         double photonEnergy[] = {0.1 * eV, 2.21 * eV, 2.58 * eV, 2.82 * eV, 2.95 * eV, 3.10 * eV, 4.00 * eV};
 
         const int nEntries = sizeof(photonEnergy) / sizeof(G4double);
@@ -430,7 +438,7 @@ void Control::ConstructG4MaterialTable() const {
 
         MPT->AddProperty("FASTCOMPONENT", ScintEnergy, ScintFast, nEntries);
 
-        MPT->AddConstProperty("SCINTILLATIONYIELD", 200. / MeV);
+        MPT->AddConstProperty("SCINTILLATIONYIELD", 20000. / MeV);
         MPT->AddConstProperty("RESOLUTIONSCALE", 1.0);
         MPT->AddConstProperty("FASTTIMECONSTANT", 40. * ns);
         MPT->AddConstProperty("YIELDRATIO", 1.);
@@ -573,6 +581,19 @@ bool Control::ReadYAML(const G4String &file_in) {
         HCAL_Module_No = readV3(Node["Geometry"]["HCAL"]["HCAL_Module_No"]);
         HCAL_Module_Gap = readV2(Node["Geometry"]["HCAL"]["HCAL_Module_Gap"]);
         HCAL_Absorber_Thickness = readV2(Node["Geometry"]["HCAL"]["HCAL_Absorber_Thickness"]);
+
+        //========================================
+        /* Optical */
+        //----------------------------------------
+        if_optical = Node["Optical"]["if_optical"].as<bool>();
+        Optical_YieldFactor = Node["Optical"]["Optical_YieldFactor"].as<double>();
+        //----------------------------------------
+        // SiPM
+        Optical_pulseFilePath = Node["Optical"]["SiPM"]["Optical_pulseFilePath"].as<std::string>();
+        //----------------------------------------
+        // LUT
+        LUT_FilePath = Node["Optical"]["LUT"]["LUT_FilePath"].as<std::string>();
+        LUT_Name = Node["Optical"]["LUT"]["LUT_Name"].as<std::string>();
     }
     catch (YAML::BadConversion &e) {
         std::cerr << "[Read YAML] ==> " << e.msg << std::endl;
@@ -615,24 +636,24 @@ double Control::readV2(const YAML::Node &n) {
 }
 
 //Optical LUT loader//simplified implementation
-std::map<G4String,std::pair<G4String, G4String>> Control::Optical_GetLUTDefinations(){
-    auto ret = std::map<G4String,std::pair<G4String, G4String>>();
-    ret["ECAL"]=std::pair<G4String, G4String>({"ECAL_LUT.dat","ECAL_cube_2.5_2.5_2_v1"}); //this id is embeded when making LUT,
+std::map<G4String, std::pair<G4String, G4String>> Control::Optical_GetLUTDefinations() {
+    auto ret = std::map<G4String, std::pair<G4String, G4String>>();
+    ret["ECAL"] = std::pair<G4String, G4String>({LUT_FilePath, LUT_Name}); //this id is embeded when making LUT,
     //used to check and match the actual crystal.
     return ret;
 }
 
-DetUnitType Control::Optical_GetDetType(const G4String& cIn){
+DetUnitType Control::Optical_GetDetType(const G4String &cIn) {
     if (cIn == "ECAL")
         return ECAL_cube_v1;
     else
         return UnknownDet;
 }
 
-DigiScheme Control::Optical_GetDigiScheme(const G4String& cIn){
+DigiScheme Control::Optical_GetDigiScheme(const G4String &cIn) {
     if (cIn == "ECAL")
         return DigiDebug;
-         // return SIPM_g2_v1_20210124;
+        // return SIPM_g2_v1_20210124;
     else
-        return UnknownDigi;  
+        return UnknownDigi;
 }

@@ -185,6 +185,8 @@ public:
     double Optical_YieldFactor;
     int Optical_PhysicsVerbose = 0;
     //LUT loader
+    G4String LUT_FilePath;
+    G4String LUT_Name;
     std::map<G4String,std::pair<G4String, G4String>> Optical_GetLUTDefinations();
     DigiScheme Optical_GetDigiScheme(const G4String& cIn);
     DetUnitType Optical_GetDetType(const G4String& cIn);

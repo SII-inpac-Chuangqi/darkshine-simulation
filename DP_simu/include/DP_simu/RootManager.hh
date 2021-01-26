@@ -84,8 +84,8 @@ public:
     void FillEleak(const G4Step *, const G4String&);
 
     // bool FillOptical(const G4Step *, G4String);
-    bool SetOpticalTimeZero(G4double T0, G4String cIn);
-    bool FillOpticalLUTs(std::vector<OpticalHit *>& hits,   G4int GenNo, G4String cIn, int copyNum);
+    bool SetOpticalTimeZero(G4double T0, const G4String& cIn);
+    bool FillOpticalLUTs(std::vector<OpticalHit *>& hits,   G4int GenNo, const G4String& cIn, int copyNum);
     bool FinalizeOptical();
 
 
@@ -94,16 +94,10 @@ public:
     void FillGeometry(const G4String &filename);
 
 private:
-    /*                   */
-    /* Control Variables */
-    /*                   */
-
-    // Bool_t if_Optical; // flag of Optical Process. //move to dControl
 
     RootMessenger *fMessenger;
-    std::map<G4String, OpticalDigitizer> fDigitizers; //lets try use stacked object.
+    std::map<G4String, OpticalDigitizer*> fDigitizers;
 
-    /* Filter Variables */
 
     /*              */
     /* Root Outputs */
