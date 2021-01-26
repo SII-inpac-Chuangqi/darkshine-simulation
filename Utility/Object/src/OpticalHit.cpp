@@ -1,7 +1,8 @@
 //
 // Created by Zhang Yulei on 1/4/21.
 //
-
+//we now not use the opticalHit in DEvent
+/*
 #include "Object/OpticalHit.hh"
 
 bool OpticalHit::isFIsDetected() const {
@@ -139,3 +140,4 @@ double OpticalHit::getFDeltaT() const {
 void OpticalHit::setFDeltaT(double fdeltaT) {
     OpticalHit::fDeltaT = fdeltaT;
 }
+*/

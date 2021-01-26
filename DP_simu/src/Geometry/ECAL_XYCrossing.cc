@@ -41,7 +41,7 @@ bool ECAL_XYCrossing::Build(int type, G4LogicalVolume *World_LV, RootManager *fR
      * Module No: 6*6
      */
     if (build_ECAL_Center) {
-        auto ECAL_Center = new CALConstruct("ECAL_Center", ECal_LV, 0, true, true, dControl->if_optical,
+        auto ECAL_Center = new CALConstruct("ECAL", ECal_LV, 0, true, true, dControl->if_optical,
                                             fCheckOverlaps);
         ECAL_Center->SetSizeXYZ(ECAL_Center_Size.x() / 2., ECAL_Center_Size.y() / 2., ECAL_Center_Size.z() / 2.);
         ECAL_Center->SetWrapSizeXYZ(ECAL_Center_Wrap_Size.x() / 2., ECAL_Center_Wrap_Size.y() / 2.,
@@ -95,7 +95,8 @@ void ECAL_XYCrossing::DefineParameters(const G4ThreeVector &Pos_RecRegion, const
 
     ECALRegion_Mat = G4Material::GetMaterial("CarbonFiber");
     ECAL_Center_Mat = G4Material::GetMaterial("LYSO");
-    ECAL_Outer_Mat = G4Material::GetMaterial("PWO4");
+    // ECAL_Outer_Mat = G4Material::GetMaterial("PWO4");
+    ECAL_Outer_Mat = G4Material::GetMaterial("LYSO");
     ECAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
 
     ECAL_Outer_Wrap_Size = ECAL_Center_Wrap_Size;

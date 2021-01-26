@@ -106,11 +106,11 @@ Control::Control() {
 
     //----------------------------------------
     // Electromagnetic Calorimeter
-    ECAL_Name = "ECAL_Center";
+    ECAL_Name = "ECAL";
 
     ECALRegion_Mat = G4Material::GetMaterial("CarbonFiber");
-    //ECAL_Center_Mat = G4Material::GetMaterial("LYSO");
-    ECAL_Center_Mat = G4Material::GetMaterial("PWO4"); // X0 = 0.92 cm
+    ECAL_Center_Mat = G4Material::GetMaterial("LYSO");
+    // ECAL_Center_Mat = G4Material::GetMaterial("PWO4"); // X0 = 0.92 cm
     ECAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
 
     ECAL_Center_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
@@ -160,7 +160,38 @@ Control::Control() {
     //========================================
     /* Optical */
     //----------------------------------------
-    if_optical = false;
+    if_optical = true;
+    Optical_UseLUT = if_optical && true; //if disabled, nothing will happen in the optical!
+    Optical_YieldFactor = 1.0 ; //used to 
+    Optical_PhysicsVerbose = 0;
+    //digitizer
+    Optical_digitizerDebug = false;
+    Optical_usePositivePolarity = false;// "false" will use negative polarity
+    Optical_addClockJitter = true;// "false" will not clock jitters
+    Optical_injectNoise = true;// "false" will not add digitization noise
+    Optical_sampleInterval = 1.25; // [ns]
+    Optical_maxTime = 100.;        // [ns]
+    // hadrware parameters:SIPM response
+    // 16 channels, 3600 pixels per channel
+    Optical_nPixels = 16 * 3600 - 1;       // counting from zero
+    Optical_pixelRecoveryTau = 50.;    // [ns]
+    Optical_pixelRecoveryCutoff = 10.; // [sigma]
+    // hardware parameters: SIPM pulse
+    Optical_pulseFilePath = "SiPM_g2_pulse.root";
+    Optical_splineName = "pulseShapeSpline";
+    Optical_pulseTimeZero = -5.; // appropriate t0 value?
+    // hadrware parameters:ADC and FE (now we only save the analog waveform in voltage.)
+    Optical_nBits = 4096; // 2^12 ADC bits
+    Optical_fullRangeMV = 5000. ; //full range voltage in mV
+    Optical_range_min = -2047; // -(2^12 - 1)
+    Optical_range_max = 2048;  // +(2^12)
+    Optical_pedestalLevel = 0;          // [ADC count]
+    Optical_noiseSigma = 4;                  // [ADC count]
+    Optical_clockJitterSigma =  0.05;      // [ns]
+    Optical_apertureJitterSigma = 0.0001; // [ns]
+    // scaling factor to allow for two overlapped 3.1 GeV positrons to be in ADC's
+    // range,need calibration
+    Optical_pulseScaleFactor = 1; //dummy, can be setted later in DEvent or here.
 
     //----------------------------------------
     // Wrap related
@@ -382,7 +413,7 @@ void Control::ConstructG4MaterialTable() const {
         //
         // ------------ Generate & Add Material Properties Table ------------
         //
-
+        std::cout<<"[Control] ==> optical enabled. "<<std::endl;
         double photonEnergy[] = {0.1 * eV, 2.21 * eV, 2.58 * eV, 2.82 * eV, 2.95 * eV, 3.10 * eV, 4.00 * eV};
 
         const int nEntries = sizeof(photonEnergy) / sizeof(G4double);
@@ -581,4 +612,27 @@ double Control::readV2(const YAML::Node &n) {
         return -999999;
     }
     return n[0].as<double>() * G4UnitDefinition::GetValueOf(n[1].as<std::string>());
+}
+
+//Optical LUT loader//simplified implementation
+std::map<G4String,std::pair<G4String, G4String>> Control::Optical_GetLUTDefinations(){
+    auto ret = std::map<G4String,std::pair<G4String, G4String>>();
+    ret["ECAL"]=std::pair<G4String, G4String>({"ECAL_LUT.dat","ECAL_cube_2.5_2.5_2_v1"}); //this id is embeded when making LUT,
+    //used to check and match the actual crystal.
+    return ret;
+}
+
+DetUnitType Control::Optical_GetDetType(const G4String& cIn){
+    if (cIn == "ECAL")
+        return ECAL_cube_v1;
+    else
+        return UnknownDet;
+}
+
+DigiScheme Control::Optical_GetDigiScheme(const G4String& cIn){
+    if (cIn == "ECAL")
+        return DigiDebug;
+         // return SIPM_g2_v1_20210124;
+    else
+        return UnknownDigi;  
 }

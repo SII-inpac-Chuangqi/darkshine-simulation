@@ -37,8 +37,8 @@
 #pragma link C++ class ReconstructedParticle+;
 #pragma link C++ class std::vector<ReconstructedParticle*>+;
 
-#pragma link C++ class OpticalHit+;
-#pragma link C++ class std::vector<OpticalHit*>+;
+// #pragma link C++ class OpticalHit+;
+// #pragma link C++ class std::vector<OpticalHit*>+;
 
 #pragma link C++ class DigiForm+;
 #pragma link C++ class std::vector<DigiForm*>+;

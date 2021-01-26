@@ -58,13 +58,11 @@ void DEvent::Initialization(CleanType ct) {
     if (ct == nALL) StepCollection.clear();
 
     for (auto itr : OpticalCollection) {
-        for (auto itr2 : *itr.second) {
-            delete itr2;
-        }
         (itr.second)->clear();
         (itr.second)->shrink_to_fit();
     }
     if (ct == nALL) OpticalCollection.clear();
+
 }
 
 DStepVec *DEvent::RegisterStepCollection(const std::string &str) {
@@ -90,6 +88,7 @@ DigiFormVec *DEvent::RegisterOpticalCollection(const std::string &str) {
         return nullptr;
     }
     auto tmpVec = new DigiFormVec();
+    tmpVec->clear();
     OpticalCollection.emplace(std::pair<std::string, DigiFormVec *>(str, tmpVec));
 
     if (Verbose > 1) {

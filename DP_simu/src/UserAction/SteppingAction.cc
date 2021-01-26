@@ -100,16 +100,17 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
         }
     }
 
-    /* Optical Photon Detection: APD region */
-    if (dControl->if_optical && aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "opticalphoton") {
-        if (post->GetPhysicalVolume()) {
-            auto Region_name = post->GetPhysicalVolume()->GetName();
-            auto kill_flag = froot->FillOptical(aStep, Region_name);
+    // /* Optical Photon Detection: APD region */
+    //no need for real photon, since LUT is default
+    // if (dControl->if_optical && aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "opticalphoton") {
+    //     if (post->GetPhysicalVolume()) {
+    //         auto Region_name = post->GetPhysicalVolume()->GetName();
+    //         auto kill_flag = froot->FillOptical(aStep, Region_name);
 
-            if (kill_flag) aStep->GetTrack()->SetTrackStatus(fKillTrackAndSecondaries);
-        }
+    //         if (kill_flag) aStep->GetTrack()->SetTrackStatus(fKillTrackAndSecondaries);
+    //     }
 
-    }
+    // }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

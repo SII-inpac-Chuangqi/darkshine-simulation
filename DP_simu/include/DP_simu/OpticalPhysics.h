@@ -1,4 +1,4 @@
-
+/* //we moved to Optical Folder
 #ifndef OPTICALPHYSICS_H_
 #define OPTICALPHYSICS_H 1_
 
@@ -20,3 +20,4 @@ class OpticalPhysics: public G4VPhysicsConstructor
 };
 
 #endif
+*/

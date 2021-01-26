@@ -32,6 +32,9 @@
 #include "Object/DEvent.h"
 #include "Bias_Filter/FilterManager.hh"
 
+
+#include "Optical/OpticalDigitizer.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class TFile;
@@ -43,6 +46,8 @@ class TRandom3;
 class RootMessenger;
 
 class DetectorConstruction;
+
+class OpticalDigitizer;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // class description:
@@ -78,7 +83,11 @@ public:
 
     void FillEleak(const G4Step *, const G4String&);
 
-    bool FillOptical(const G4Step *, G4String);
+    // bool FillOptical(const G4Step *, G4String);
+    bool SetOpticalTimeZero(G4double T0, G4String cIn);
+    bool FillOpticalLUTs(std::vector<OpticalHit *>& hits,   G4int GenNo, G4String cIn, int copyNum);
+    bool FinalizeOptical();
+
 
     void FillParticleStep(const G4Step *);
 
@@ -89,9 +98,10 @@ private:
     /* Control Variables */
     /*                   */
 
-    Bool_t if_Optical; // flag of Optical Process.
+    // Bool_t if_Optical; // flag of Optical Process. //move to dControl
 
     RootMessenger *fMessenger;
+    std::map<G4String, OpticalDigitizer> fDigitizers; //lets try use stacked object.
 
     /* Filter Variables */
 

@@ -122,7 +122,7 @@ void EventAction::EndOfEventAction(const G4Event *event) {
     if (eventID < 100 || eventID % fPrintModulo == 0) {
         G4cout << "---> End of event: " << eventID << G4endl;
     }
+    if(dControl->if_optical) frootMng->FinalizeOptical();
 
-    frootMng->FillSim(eventID, rndm);
-
+    frootMng->FillSim(eventID, rndm); //refresh event level data, so any fill should before this!
 }

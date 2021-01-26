@@ -239,8 +239,8 @@ void DetectorConstruction::SaveGeometry() {
 
     /* Save GDML to ROOT File */
     auto filename = "geometry.gdml";
-    if (std::filesystem::exists(filename))
-        std::remove(filename);
+//    if (std::filesystem::exists(filename))
+//        std::remove(filename);
 
     G4GDMLParser parser;
     parser.Write(filename, World_PV);

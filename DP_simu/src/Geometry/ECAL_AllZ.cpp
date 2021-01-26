@@ -49,7 +49,7 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng
     ECal_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
     if (build_ECAL_Center) {
-        auto ECAL_Center = new CALConstruct("ECAL_Center", ECal_LV, 0, true, true, dControl->if_optical,
+        auto ECAL_Center = new CALConstruct("ECAL", ECal_LV, 0, true, true, dControl->if_optical,
                                             fCheckOverlaps);
         ECAL_Center->SetSizeXYZ(ECAL_Center_Size.x() / 2., ECAL_Center_Size.y() / 2., ECAL_Center_Size.z() / 2.);
         ECAL_Center->SetWrapSizeXYZ(ECAL_Center_Wrap_Size.x() / 2., ECAL_Center_Wrap_Size.y() / 2.,

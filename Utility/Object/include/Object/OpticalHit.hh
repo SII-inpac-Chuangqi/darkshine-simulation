@@ -1,8 +1,8 @@
 
 /// \file OpticalHit.hh
 /// \brief Definition of the OpticalHit class, per hit
-
-
+//we now not use the opticalHit in DEvent
+/*
 #ifndef OpticalHit_h
 #define OpticalHit_h 1
 
@@ -123,3 +123,4 @@ ClassDefOverride(OpticalHit,1);
 };
 
 #endif
+*/

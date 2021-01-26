@@ -19,6 +19,8 @@
 #include <vector>
 #include <tuple>
 
+#include "Object/DigiForm.hh"
+
 /// \brief The central control class which should store all the data
 
 class Control {
@@ -161,6 +163,7 @@ public:
     bool if_bias_target;
     bool if_bias_ECAL;
 
+
     G4String BiasProcess;
     double BiasFactor;
     double BiasEmin;
@@ -177,7 +180,39 @@ public:
     /* Optical */
     //----------------------------------------
     // if to open optical process
-    bool if_optical;
+    bool if_optical=true;
+    bool Optical_UseLUT;
+    double Optical_YieldFactor;
+    int Optical_PhysicsVerbose = 0;
+    //LUT loader
+    std::map<G4String,std::pair<G4String, G4String>> Optical_GetLUTDefinations();
+    DigiScheme Optical_GetDigiScheme(const G4String& cIn);
+    DetUnitType Optical_GetDetType(const G4String& cIn);
+    //Digitizer
+    bool Optical_digitizerDebug;
+    bool Optical_usePositivePolarity;
+    bool Optical_addClockJitter;
+    bool Optical_injectNoise;
+    double Optical_sampleInterval;
+    double Optical_maxTime;
+    int Optical_nPixels;
+    double Optical_pixelRecoveryTau;
+    double Optical_pixelRecoveryCutoff;
+    G4String Optical_pulseFilePath;
+    G4String Optical_splineName;
+    double Optical_pulseTimeZero;
+    int Optical_nBits;
+    double Optical_fullRangeMV;
+    double Optical_voltageToADC(){return Optical_fullRangeMV/Optical_nBits;};
+    // double Optical_voltageToADC;
+    int Optical_range_min;
+    int Optical_range_max; 
+    int Optical_pedestalLevel;          
+    int Optical_noiseSigma;
+    double Optical_clockJitterSigma;
+    double Optical_apertureJitterSigma;
+    double Optical_pulseScaleFactor;
+
     //----------------------------------------
     // Wrap related
     G4MaterialPropertiesTable *Wrap_Surface_Mat;
