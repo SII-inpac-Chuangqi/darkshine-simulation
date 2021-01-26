@@ -50,6 +50,15 @@ void AnaEvent::Initialization(CleanType ct) {
         (itr.second)->shrink_to_fit();
     }
     if (ct == nALL) StepCollectionSP.clear();
+
+    for (const auto &itr : OpticalCollectionSP) {
+        for (auto itr2 : *itr.second) {
+            delete itr2;
+        }
+        (itr.second)->clear();
+        (itr.second)->shrink_to_fit();
+    }
+    if (ct == nALL) OpticalCollectionSP.clear();
 }
 
 void AnaEvent::ConvertTreeValuePtr(const std::shared_ptr<TTreeReaderValue<DEvent>> &evt) {
@@ -101,6 +110,14 @@ void AnaEvent::ConvertTreeValuePtr(const std::shared_ptr<TTreeReaderValue<DEvent
         if (!tmpVec->empty())
             RecParticleCollectionSP.emplace(std::make_pair(i.first, tmpVec));
     }
+
+    for (const auto &i : (*evt)->getOpticalCollection_Old()) {
+        DigiFormVecUniPtr tmpVec = std::make_shared<DigiFormVec>();
+        for (auto j : *(i.second)) tmpVec->emplace_back(j);
+
+        if (!tmpVec->empty())
+            OpticalCollectionSP.emplace(std::make_pair(i.first, tmpVec));
+    }
 }
 
 std::vector<std::string> *AnaEvent::ListAllCollections() {
@@ -123,6 +140,10 @@ std::vector<std::string> *AnaEvent::ListAllCollections() {
     delete s;
 
     s = ListCollections(CalorimeterHitCollectionSP);
+    tmp->insert(tmp->end(), s->begin(), s->end());
+    delete s;
+
+    s = ListCollections(OpticalCollectionSP);
     tmp->insert(tmp->end(), s->begin(), s->end());
     delete s;
 
@@ -210,6 +231,22 @@ CalorimeterHitVecUniPtr AnaEvent::RegisterCalorimeterHitCollection(const std::st
     }
     auto tmpVec = std::shared_ptr<CalorimeterHitVec>(new CalorimeterHitVec());
     CalorimeterHitCollectionSP.emplace(std::pair<std::string, CalorimeterHitVecUniPtr >(str, tmpVec));
+
+    if (Verbose > 1) {
+        std::cout << "[REC REGISTER] : (Verbosity 2) ==> A new collection " + str +
+                     " has been successfully added to CalorimterHit Collection" << std::endl;
+    }
+
+    return tmpVec;
+}
+
+DigiFormVecUniPtr AnaEvent::RegisterOpticalCollection(const std::string &str) {
+    if (OpticalCollectionSP.count(str) != 0) {
+        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key value." << std::endl;
+        return nullptr;
+    }
+    auto tmpVec = std::shared_ptr<DigiFormVec>(new DigiFormVec());
+    OpticalCollectionSP.emplace(std::pair<std::string, DigiFormVecUniPtr >(str, tmpVec));
 
     if (Verbose > 1) {
         std::cout << "[REC REGISTER] : (Verbosity 2) ==> A new collection " + str +

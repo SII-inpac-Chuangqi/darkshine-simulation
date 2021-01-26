@@ -29,6 +29,8 @@ public:
 
     CalorimeterHitVecUniPtr RegisterCalorimeterHitCollection(const std::string &);
 
+    DigiFormVecUniPtr RegisterOpticalCollection(const std::string &);
+
     std::vector<std::string> *ListAllCollections() override;
 
     const DStepMap &getStepCollection() const  {
@@ -51,6 +53,10 @@ public:
         return CalorimeterHitCollectionSP;
     }
 
+    const DigiFormVecMap &getOpticalCollection() const {
+        return OpticalCollectionSP;
+    }
+
     // Link Parent && Children
     void LinkChildren();
 
@@ -63,6 +69,7 @@ private:
     RecParticleMap RecParticleCollectionSP;
     SimulatedHitMap SimulatedHitCollectionSP;
     CalorimeterHitMap CalorimeterHitCollectionSP;
+    DigiFormVecMap OpticalCollectionSP;
 
     ClassDefOverride(AnaEvent,1);
 };
