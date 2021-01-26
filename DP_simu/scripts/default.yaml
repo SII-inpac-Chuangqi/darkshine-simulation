@@ -83,7 +83,7 @@ Optical:
   SiPM:
     Optical_pulseFilePath: "SiPM_g2_pulse.root"
     # On cluster bl-0.inpac.sjtu.edu.cn
-    # Optical_pulseFilePath: "/lustre/collider/zhangyulei/dark_photon/Simulation/DP/SiPM_g2_pulse"
+    # Optical_pulseFilePath: "/lustre/collider/zhangyulei/dark_photon/Simulation/DP/SiPM_g2_pulse.root"
 
   LUT:
     LUT_FilePath: "ECAL_LUT.dat"
