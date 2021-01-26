@@ -60,7 +60,7 @@ void Digitizer::ProcessEvt(AnaEvent *evt) {
         }
     } else {
         // if not exists, print out error
-        cerr << "MCCollection not found" << endl;
+        cerr << "OpticalCollection not found" << endl;
     }
 }
 
