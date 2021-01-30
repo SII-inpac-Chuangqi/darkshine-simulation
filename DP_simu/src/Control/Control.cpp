@@ -512,6 +512,7 @@ bool Control::ReadYAML(const G4String &file_in) {
                     i[7].as<double>() * G4UnitDefinition::GetValueOf(i[8].as<std::string>()),
                     i[9].as<bool>());
         }
+
         //========================================
         /* Geometry */
         //----------------------------------------
