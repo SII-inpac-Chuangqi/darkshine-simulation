@@ -4,6 +4,12 @@
 
 #include "Bias_Filter/FilterParticle.hh"
 #include "Bias_Filter/FilterProcess.hh"
+#include "Bias_Filter/ParticleEBandFilter.hh"
+#include "Bias_Filter/ParticleHighEFilter.hh"
+#include "Bias_Filter/ParticleLowEFilter.hh"
+#include "Bias_Filter/ProcessEBandFilter.hh"
+#include "Bias_Filter/ProcessHighEFilter.hh"
+#include "Bias_Filter/ProcessLowEFilter.hh"
 
 /// \brief Class Description:
 ///  Take particle filter as an example. 
@@ -52,6 +58,12 @@ private:
     G4bool ifFilter_Process = false;
     std::vector<std::shared_ptr<FilterParticle>> Filter_Particle_List{};
     std::vector<std::shared_ptr<FilterProcess>> Filter_Process_List{};
+    std::vector<std::shared_ptr<ParticleEBandFilter>> Particle_EBand_Filter_List{};
+    std::vector<std::shared_ptr<ParticleHighEFilter>> Particle_HighE_Filter_List{};
+    std::vector<std::shared_ptr<ParticleLowEFilter>> Particle_LowE_Filter_List{};
+    std::vector<std::shared_ptr<ProcessEBandFilter>> Process_EBand_Filter_List{};
+    std::vector<std::shared_ptr<ProcessHighEFilter>> Process_HighE_Filter_List{};
+    std::vector<std::shared_ptr<ProcessLowEFilter>> Process_LowE_Filter_List{};
 
     G4bool Filter_Particle_Result{};
     G4bool Filter_Process_Result{};
