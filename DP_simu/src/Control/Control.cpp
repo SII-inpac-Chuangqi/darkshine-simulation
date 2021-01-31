@@ -501,6 +501,9 @@ bool Control::ReadYAML(const G4String &file_in) {
                     i[5].as<double>() * G4UnitDefinition::GetValueOf(i[6].as<std::string>()),
                     i[7].as<double>() * G4UnitDefinition::GetValueOf(i[8].as<std::string>()),
                     i[9].as<bool>());
+            region_of_interest.emplace_back(
+                    i[5].as<double>() * G4UnitDefinition::GetValueOf(i[6].as<std::string>()),
+                    i[7].as<double>() * G4UnitDefinition::GetValueOf(i[8].as<std::string>()));
         }
         process_filters_parameters.clear();
         pfn = Node["Filters"]["process_filters_parameters"];
@@ -523,6 +526,9 @@ bool Control::ReadYAML(const G4String &file_in) {
                 node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()),
                 node[7].as<double>() * G4UnitDefinition::GetValueOf(node[8].as<std::string>()),
                 node[9].as<bool>());
+            region_of_interest.emplace_back(
+                node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()),
+                node[7].as<double>() * G4UnitDefinition::GetValueOf(node[8].as<std::string>()));
         }
         for (auto node: Node["Filters"]["particle_high_energy_filters"]) {
             particle_high_energy_filters.emplace_back(
@@ -531,6 +537,9 @@ bool Control::ReadYAML(const G4String &file_in) {
                 node[3].as<double>() * G4UnitDefinition::GetValueOf(node[4].as<std::string>()),
                 node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()),
                 node[7].as<bool>());
+            region_of_interest.emplace_back(
+                node[3].as<double>() * G4UnitDefinition::GetValueOf(node[4].as<std::string>()),
+                node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()));
         }
         for (auto node: Node["Filters"]["particle_low_energy_filters"]) {
             particle_low_energy_filters.emplace_back(
@@ -539,6 +548,9 @@ bool Control::ReadYAML(const G4String &file_in) {
                 node[3].as<double>() * G4UnitDefinition::GetValueOf(node[4].as<std::string>()),
                 node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()),
                 node[7].as<bool>());
+            region_of_interest.emplace_back(
+                node[3].as<double>() * G4UnitDefinition::GetValueOf(node[4].as<std::string>()),
+                node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()));
         }
         // process filters
         for (auto node: Node["Filters"]["process_energy_band_filters"]) {
