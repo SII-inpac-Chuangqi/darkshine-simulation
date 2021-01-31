@@ -181,7 +181,7 @@ SET(AnaEvent_source
         Algorithms/RecECAL/src/ECAL_Cluster.cpp
         Algorithms/RecECAL/src/Cluster_Analysis.cpp
         Algorithms/RecECAL/src/RecECAL.cpp
-        DP_simu/include/DP_simu/StackingAction.hh)
+        )
 SET(Display_source
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_Processor.cpp
@@ -206,7 +206,7 @@ target_link_libraries(Display PUBLIC DEvent DAnaEvent)
 #
 link_libraries(DEvent)
 add_executable(DSimu DP_simu.cc ${Simu_sources} ${Simu_headers}
-        ${Util_sources} ${Util_headers} DP_simu/src/UserAction/StackingAction.cc)
+        ${Util_sources} ${Util_headers})
 
 target_link_libraries(DSimu ${Geant4_LIBRARIES}
         ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES}
