@@ -491,6 +491,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         //----------------------------------------
         if_filter = Node["Filters"]["if_filter"].as<bool>();
         particle_filters_parameters.clear();
+        // old filters
         auto pfn = Node["Filters"]["particle_filters_parameters"];
         for (auto i : pfn) {
             particle_filters_parameters.emplace_back(
@@ -512,7 +513,27 @@ bool Control::ReadYAML(const G4String &file_in) {
                     i[7].as<double>() * G4UnitDefinition::GetValueOf(i[8].as<std::string>()),
                     i[9].as<bool>());
         }
-
+        // NEW filters
+        // particle filters
+        for (auto node: Node["Filters"]["particle_energy_band_filters"]) {
+            particle_energy_band_filters.emplace_back();
+        }
+        for (auto node: Node["Filters"]["particle_high_energy_filters"]) {
+            particle_high_energy_filters.emplace_back();
+        }
+        for (auto node: Node["Filters"]["particle_low_energy_filters"]) {
+            particle_low_energy_filters.emplace_back();
+        }
+        // process filters
+        for (auto node: Node["Filters"]["process_energy_band_filters"]) {
+            process_energy_band_filters.emplace_back();
+        }
+        for (auto node: Node["Filters"]["process_high_energy_filters"]) {
+            process_high_energy_filters.emplace_back();
+        }
+        for (auto node: Node["Filters"]["process_low_energy_filters"]) {
+            process_low_energy_filters.emplace_back();
+        }
         //========================================
         /* Geometry */
         //----------------------------------------
