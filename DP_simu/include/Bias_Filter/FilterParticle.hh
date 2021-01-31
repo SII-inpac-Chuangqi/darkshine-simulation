@@ -34,7 +34,7 @@ public:
     [[nodiscard]] G4bool GetFlag() const { return Flag; };
 
     [[nodiscard]] G4bool GetFoundResult() const { return Found_Result; };
-private:
+protected:
     G4StepPoint *prev{};
     G4StepPoint *post{};
     G4double post_distance{};
