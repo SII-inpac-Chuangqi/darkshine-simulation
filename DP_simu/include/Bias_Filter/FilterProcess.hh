@@ -19,7 +19,7 @@ public:
 
     virtual ~FilterProcess() = default;
 
-    static G4bool In_Range(G4double val, G4double lowerBound, G4double upperBound);
+    //static G4bool In_Range(G4double val, G4double lowerBound, G4double upperBound);
 
     G4bool In_Filter(const G4Step *aStep);
 
@@ -37,6 +37,7 @@ protected:
     G4StepPoint *post{};
     G4double post_distance{};
     G4double deltaE{};
+    G4double prev_E{};
     G4double Energy_Min;
     G4double Energy_Max;
 

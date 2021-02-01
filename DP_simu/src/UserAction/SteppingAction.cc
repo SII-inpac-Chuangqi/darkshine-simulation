@@ -57,9 +57,11 @@ SteppingAction::~SteppingAction() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void SteppingAction::UserSteppingAction(const G4Step *aStep) {
-    if (dControl->if_filter) {
+    if (dControl->if_filter && dControl->fStage !=2) {
+        // process filters
         if (dFilterManager->GetifFilter_Process()) dFilterManager->Filter_Process(aStep);
-        if (dFilterManager->GetifFilter_Particle() && dControl->fStage != 2 && !dFilterManager->Filter_Particle(aStep)) {
+        // particle filters
+        if (dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle(aStep)) {
             G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
             G4EventManager::GetEventManager()->AbortCurrentEvent();
         }
