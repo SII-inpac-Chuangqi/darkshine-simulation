@@ -4,8 +4,6 @@
 
 #include "Bias_Filter/FilterParticle.hh"
 #include "Bias_Filter/FilterProcess.hh"
-#include "Bias_Filter/FilterHighEParticle.hh"
-#include "Bias_Filter/FilterHighEProcess.hh"
 
 /// \brief Class Description:
 ///  Take particle filter as an example. 
