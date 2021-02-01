@@ -57,7 +57,8 @@ SteppingAction::~SteppingAction() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void SteppingAction::UserSteppingAction(const G4Step *aStep) {
-
+    /// DEBUG
+    G4cerr << "SteppingAction called, now stage" << dControl->fStage << G4endl;
     if (dControl->if_filter) {
         if (dFilterManager->GetifFilter_Process()) dFilterManager->Filter_Process(aStep);
         if (dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle(aStep)) {
