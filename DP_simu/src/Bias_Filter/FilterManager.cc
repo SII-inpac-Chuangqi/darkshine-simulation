@@ -53,6 +53,8 @@ FilterManager::FilterManager() {
 /// \return true - keep event,
 /// false - abort evet.
 G4bool FilterManager::Filter_Particle(const G4Step* aStep) {
+    /// DEBUG
+    G4cerr << "Filter_Particle called" << G4endl;
     for (const auto& particle_filter : Filter_Particle_List) {
         const std::shared_ptr<FilterParticle>& fFilterParticle = particle_filter;
         if (fFilterParticle->In_Filter(aStep) ) { // found particle in particular range.

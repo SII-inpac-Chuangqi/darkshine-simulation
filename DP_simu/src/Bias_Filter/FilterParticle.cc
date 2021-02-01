@@ -3,6 +3,7 @@
 //
 
 #include "Bias_Filter/FilterParticle.hh"
+#include "Control/Control.h"
 
 FilterParticle::FilterParticle(G4int pdg,
                                G4double minEnergy,
@@ -18,25 +19,25 @@ FilterParticle::FilterParticle(G4int pdg,
     Flag = flag;
 }
 
-/// \brief judge if val is in the range.
-/// lowerBound < upperBound: band-pass;
-/// lowerBound > upperBound : band-stop;
-/// lowerBound = upperBound : all-pass.
-/// \return true - in the range, false - out of range.
-G4bool FilterParticle::In_Range(G4double val, G4double lowerBound, G4double upperBound) {
-    if (upperBound <= lowerBound) {
-        if (val >= lowerBound || val < upperBound)
-            return true;
-        else
-            return false;
-    }
-    else { // lowerBound < upperBound
-        if (val >= lowerBound && val < upperBound)
-            return true;
-        else
-            return false;
-    }
-}
+///// \brief judge if val is in the range.
+///// lowerBound < upperBound: band-pass;
+///// lowerBound > upperBound : band-stop;
+///// lowerBound = upperBound : all-pass.
+///// \return true - in the range, false - out of range.
+//G4bool FilterParticle::In_Range(G4double val, G4double lowerBound, G4double upperBound) {
+//    if (upperBound <= lowerBound) {
+//        if (val >= lowerBound || val < upperBound)
+//            return true;
+//        else
+//            return false;
+//    }
+//    else { // lowerBound < upperBound
+//        if (val >= lowerBound && val < upperBound)
+//            return true;
+//        else
+//            return false;
+//    }
+//}
 
 /// \brief Check if one particular Particle is in particular energy range and distance range.
 /// \return true - in the range,
@@ -44,7 +45,9 @@ G4bool FilterParticle::In_Range(G4double val, G4double lowerBound, G4double uppe
 G4bool FilterParticle::In_Filter(const G4Step* aStep) {
     post = aStep->GetPostStepPoint();
     post_distance = post->GetPosition()[2];
-    if (In_Range(post_distance, ScanDistance_Min, ScanDistance_Max)) {
+    deltaE = fabs(prev->GetKineticEnergy() - post->GetKineticEnergy());
+
+    if (deltaE >= Energy_Min && post_distance >= ScanDistance_Min && post_distance < ScanDistance_Max) {
         prev = aStep->GetPreStepPoint();
         // search for all the secondary particles produced in this step
         secondary = aStep->GetSecondaryInCurrentStep();
@@ -55,7 +58,7 @@ G4bool FilterParticle::In_Filter(const G4Step* aStep) {
             if ( PDG != aTrack->GetParticleDefinition()->GetPDGEncoding() ) continue;
             // Energy of secondaries requirement
             energy = aTrack->GetTotalEnergy();
-            if(In_Range(energy, Energy_Min, Energy_Max) ) {
+            if(energy >= Energy_Min && energy < Energy_Max) {
                 Found_Result = true;
                 return true;
             }

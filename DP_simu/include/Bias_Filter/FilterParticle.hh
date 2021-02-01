@@ -18,7 +18,7 @@ public:
 
     virtual ~FilterParticle() = default;
 
-    static  G4bool In_Range(G4double val, G4double lowerBound, G4double upperBound);
+    //static  G4bool In_Range(G4double val, G4double lowerBound, G4double upperBound);
 
     G4bool In_Filter(const G4Step *aStep);
 
