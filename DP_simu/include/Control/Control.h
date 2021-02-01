@@ -182,6 +182,8 @@ public:
     std::vector<std::tuple<G4String, double, double, double, bool> > process_high_energy_filters;
     std::vector<std::tuple<G4String, double, double, double, bool> > process_low_energy_filters;
     std::vector<std::tuple<double, double> > region_of_interest;
+
+    G4int fStage;
     //========================================
     /* Optical */
     //----------------------------------------

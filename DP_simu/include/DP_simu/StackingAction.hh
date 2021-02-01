@@ -26,6 +26,7 @@ public:
 
 private:
     G4bool InsideRoI(const G4Track* aTrack);
+
 };
 
 #endif //DSIMU_STACKINGACTION_HH
