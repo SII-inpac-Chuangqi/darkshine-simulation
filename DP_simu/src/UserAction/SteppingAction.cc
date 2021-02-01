@@ -61,7 +61,7 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     G4cerr << "SteppingAction called, now stage" << dControl->fStage << G4endl;
     if (dControl->if_filter) {
         if (dFilterManager->GetifFilter_Process()) dFilterManager->Filter_Process(aStep);
-        if (dFilterManager->GetifFilter_Particle() && dControl->fStage == 1 && !dFilterManager->Filter_Particle(aStep)) {
+        if (dFilterManager->GetifFilter_Particle() && dControl->fStage != 2 && !dFilterManager->Filter_Particle(aStep)) {
             G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
             G4EventManager::GetEventManager()->AbortCurrentEvent();
         }

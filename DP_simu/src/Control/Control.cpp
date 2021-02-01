@@ -491,7 +491,6 @@ bool Control::ReadYAML(const G4String &file_in) {
         //----------------------------------------
         if_filter = Node["Filters"]["if_filter"].as<bool>();
         particle_filters_parameters.clear();
-        // old filters
         auto pfn = Node["Filters"]["particle_filters_parameters"];
         for (auto i : pfn) {
             particle_filters_parameters.emplace_back(
@@ -516,22 +515,12 @@ bool Control::ReadYAML(const G4String &file_in) {
                     i[5].as<double>() * G4UnitDefinition::GetValueOf(i[6].as<std::string>()),
                     i[7].as<double>() * G4UnitDefinition::GetValueOf(i[8].as<std::string>()),
                     i[9].as<bool>());
-        }
-        // NEW filters
-        // particle filters
-        for (auto node: Node["Filters"]["particle_energy_band_filters"]) {
-            particle_energy_band_filters.emplace_back(
-                node[0].as<int>(),
-                node[1].as<double>() * G4UnitDefinition::GetValueOf(node[2].as<std::string>()),
-                node[3].as<double>() * G4UnitDefinition::GetValueOf(node[4].as<std::string>()),
-                node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()),
-                node[7].as<double>() * G4UnitDefinition::GetValueOf(node[8].as<std::string>()),
-                node[9].as<bool>());
             region_of_interest.emplace_back(
-                node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()),
-                node[7].as<double>() * G4UnitDefinition::GetValueOf(node[8].as<std::string>()));
+                    i[5].as<double>() * G4UnitDefinition::GetValueOf(i[6].as<std::string>()),
+                    i[7].as<double>() * G4UnitDefinition::GetValueOf(i[8].as<std::string>()));
             exist_region_of_interest = true;
         }
+        // NEW filters
         for (auto node: Node["Filters"]["particle_high_energy_filters"]) {
             particle_high_energy_filters.emplace_back(
                 node[0].as<int>(),
@@ -544,16 +533,6 @@ bool Control::ReadYAML(const G4String &file_in) {
                 node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()));
             exist_region_of_interest = true;
         }
-        // process filters
-        for (auto node: Node["Filters"]["process_energy_band_filters"]) {
-            process_energy_band_filters.emplace_back(
-                node[0].as<std::string>(),
-                node[1].as<double>() * G4UnitDefinition::GetValueOf(node[2].as<std::string>()),
-                node[3].as<double>() * G4UnitDefinition::GetValueOf(node[4].as<std::string>()),
-                node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()),
-                node[7].as<double>() * G4UnitDefinition::GetValueOf(node[8].as<std::string>()),
-                node[9].as<bool>());
-        }
         for (auto node: Node["Filters"]["process_high_energy_filters"]) {
             process_high_energy_filters.emplace_back(
                 node[0].as<std::string>(),
@@ -561,6 +540,10 @@ bool Control::ReadYAML(const G4String &file_in) {
                 node[3].as<double>() * G4UnitDefinition::GetValueOf(node[4].as<std::string>()),
                 node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()),
                 node[7].as<bool>());
+            region_of_interest.emplace_back(
+                    node[3].as<double>() * G4UnitDefinition::GetValueOf(node[4].as<std::string>()),
+                    node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()));
+            exist_region_of_interest = true;
         }
         //========================================
         /* Geometry */

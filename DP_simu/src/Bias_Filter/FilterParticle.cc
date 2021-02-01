@@ -43,6 +43,7 @@ FilterParticle::FilterParticle(G4int pdg,
 /// \return true - in the range,
 /// false - out of range.
 G4bool FilterParticle::In_Filter(const G4Step* aStep) {
+    prev = aStep->GetPreStepPoint();
     post = aStep->GetPostStepPoint();
     post_distance = post->GetPosition()[2];
     deltaE = fabs(prev->GetKineticEnergy() - post->GetKineticEnergy());
@@ -53,6 +54,8 @@ G4bool FilterParticle::In_Filter(const G4Step* aStep) {
         secondary = aStep->GetSecondaryInCurrentStep();
         sec_end = (*secondary).end();
         for ( sec_itr = (*secondary).begin(); sec_itr != sec_end; sec_itr++ ) {
+            /// DEBUG
+            G4cerr << "secondaries at stage" << dControl->fStage << G4endl;
             aTrack = (*sec_itr);
             // Select particle
             if ( PDG != aTrack->GetParticleDefinition()->GetPDGEncoding() ) continue;
