@@ -10,13 +10,18 @@ FilterParticle::FilterParticle(G4int pdg,
                                G4double maxEnergy,
                                G4double minScanDistance,
                                G4double maxScanDistance,
-                               G4bool flag) {
+                               G4bool flag,
+                               G4bool fStage0,
+                               G4bool fStage1) {
     PDG = pdg;
     Energy_Min = minEnergy;
     Energy_Max = maxEnergy;
     ScanDistance_Min = minScanDistance;
     ScanDistance_Max = maxScanDistance;
     Flag = flag;
+    ifStage0 = fStage0;
+    ifStage1 = fStage1;
+    if (maxEnergy < 0) infty_maxE = true;
 }
 
 ///// \brief judge if val is in the range.
@@ -43,6 +48,7 @@ FilterParticle::FilterParticle(G4int pdg,
 /// \return true - in the range,
 /// false - out of range.
 G4bool FilterParticle::In_Filter(const G4Step* aStep) {
+    if ((dControl->fStage == 0 && !ifStage0) && (dControl->fStage == 1 && !ifStage1)) return false;
     prev = aStep->GetPreStepPoint();
     prev_E = prev->GetKineticEnergy();
     if (prev_E < Energy_Min) return false;
@@ -62,7 +68,7 @@ G4bool FilterParticle::In_Filter(const G4Step* aStep) {
             if ( PDG != aTrack->GetParticleDefinition()->GetPDGEncoding() ) continue;
             // Energy of secondaries requirement
             energy = aTrack->GetTotalEnergy();
-            if(energy >= Energy_Min && energy < Energy_Max) {
+            if(energy >= Energy_Min && (infty_maxE || energy < Energy_Max) ) {
                 Found_Result = true;
                 return true;
             }

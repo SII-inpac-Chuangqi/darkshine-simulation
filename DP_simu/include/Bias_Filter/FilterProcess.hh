@@ -15,7 +15,9 @@ public:
                   G4double maxEnergy,
                   G4double minScanDistance,
                   G4double maxScanDistance,
-                  G4bool flag);
+                  G4bool flag,
+                  G4bool fStage0,
+                  G4bool fStage1);
 
     virtual ~FilterProcess() = default;
 
@@ -40,6 +42,7 @@ protected:
     G4double prev_E{};
     G4double Energy_Min;
     G4double Energy_Max;
+    G4bool infty_maxE = false;
 
     G4double ScanDistance_Min;
     G4double ScanDistance_Max;
@@ -49,6 +52,8 @@ protected:
     G4bool res = false;
     G4bool Flag;
     G4bool Found_Result = false; // true if found this process in the range.
+    G4bool ifStage0;
+    G4bool ifStage1;
 };
 
 #endif

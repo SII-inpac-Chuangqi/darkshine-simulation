@@ -151,11 +151,11 @@ Control::Control() {
     if_filter = false;
     // Example of particle filter
     // select photon with energy < 4 GeV within range from -1 m to 0.2 m
-    particle_filters_parameters.emplace_back(22, 6 * GeV, 8 * GeV, -1 * m, 0.2 * m, 1);
+    particle_filters_parameters.emplace_back(22, 6 * GeV, 8 * GeV, -1 * m, 0.2 * m, 1, 1, 1);
 
     // Example of processor filter
     // exclude event with process of energy < 4 GeV within range from -1 m to 0.2 m
-    process_filters_parameters.emplace_back("GammaToMuPair", 2 * GeV, 4 * GeV, -1 * m, 0.2 * m, 0);
+    process_filters_parameters.emplace_back("GammaToMuPair", 2 * GeV, 4 * GeV, -1 * m, 0.2 * m, 0, 1, 1);
 
     //========================================
     /* Optical */
@@ -254,7 +254,7 @@ void Control::RebuildVariables() {
         if_bias_target = true;
         BiasProcess = "DMProcessDMBrem";
         if_filter = true;
-        process_filters_parameters.emplace_back("DMProcessDMBrem", 0 * GeV, 0 * GeV, -7.5 * mm, 7.5 * mm, 1);
+        process_filters_parameters.emplace_back("DMProcessDMBrem", 0 * GeV, 0 * GeV, -7.5 * mm, 7.5 * mm, 1, 1, 1);
     }
 
     //----------------------------------------
@@ -499,7 +499,9 @@ bool Control::ReadYAML(const G4String &file_in) {
                     i[3].as<double>() * G4UnitDefinition::GetValueOf(i[4].as<std::string>()),
                     i[5].as<double>() * G4UnitDefinition::GetValueOf(i[6].as<std::string>()),
                     i[7].as<double>() * G4UnitDefinition::GetValueOf(i[8].as<std::string>()),
-                    i[9].as<bool>());
+                    i[9].as<bool>(),
+                    i[10].as<bool>(),
+                    i[11].as<bool>());
             region_of_interest.emplace_back(
                     i[5].as<double>() * G4UnitDefinition::GetValueOf(i[6].as<std::string>()),
                     i[7].as<double>() * G4UnitDefinition::GetValueOf(i[8].as<std::string>()));
@@ -514,35 +516,12 @@ bool Control::ReadYAML(const G4String &file_in) {
                     i[3].as<double>() * G4UnitDefinition::GetValueOf(i[4].as<std::string>()),
                     i[5].as<double>() * G4UnitDefinition::GetValueOf(i[6].as<std::string>()),
                     i[7].as<double>() * G4UnitDefinition::GetValueOf(i[8].as<std::string>()),
-                    i[9].as<bool>());
+                    i[9].as<bool>(),
+                    i[10].as<bool>(),
+                    i[11].as<bool>());
             region_of_interest.emplace_back(
                     i[5].as<double>() * G4UnitDefinition::GetValueOf(i[6].as<std::string>()),
                     i[7].as<double>() * G4UnitDefinition::GetValueOf(i[8].as<std::string>()));
-            exist_region_of_interest = true;
-        }
-        // NEW filters
-        for (auto node: Node["Filters"]["particle_high_energy_filters"]) {
-            particle_high_energy_filters.emplace_back(
-                node[0].as<int>(),
-                node[1].as<double>() * G4UnitDefinition::GetValueOf(node[2].as<std::string>()),
-                node[3].as<double>() * G4UnitDefinition::GetValueOf(node[4].as<std::string>()),
-                node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()),
-                node[7].as<bool>());
-            region_of_interest.emplace_back(
-                node[3].as<double>() * G4UnitDefinition::GetValueOf(node[4].as<std::string>()),
-                node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()));
-            exist_region_of_interest = true;
-        }
-        for (auto node: Node["Filters"]["process_high_energy_filters"]) {
-            process_high_energy_filters.emplace_back(
-                node[0].as<std::string>(),
-                node[1].as<double>() * G4UnitDefinition::GetValueOf(node[2].as<std::string>()),
-                node[3].as<double>() * G4UnitDefinition::GetValueOf(node[4].as<std::string>()),
-                node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()),
-                node[7].as<bool>());
-            region_of_interest.emplace_back(
-                    node[3].as<double>() * G4UnitDefinition::GetValueOf(node[4].as<std::string>()),
-                    node[5].as<double>() * G4UnitDefinition::GetValueOf(node[6].as<std::string>()));
             exist_region_of_interest = true;
         }
         //========================================

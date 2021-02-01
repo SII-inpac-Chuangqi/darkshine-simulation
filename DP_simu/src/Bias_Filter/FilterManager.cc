@@ -31,7 +31,9 @@ FilterManager::FilterManager() {
                                                                            std::get<2>(para),
                                                                            std::get<3>(para),
                                                                            std::get<4>(para),
-                                                                           std::get<5>(para)));
+                                                                           std::get<5>(para),
+                                                                           std::get<6>(para),
+                                                                           std::get<7>(para)));
     }
 
     /// \brief Setup a new process filter.
@@ -45,7 +47,9 @@ FilterManager::FilterManager() {
                                                                          std::get<2>(para),
                                                                          std::get<3>(para),
                                                                          std::get<4>(para),
-                                                                         std::get<5>(para)));
+                                                                         std::get<5>(para),
+                                                                         std::get<6>(para),
+                                                                         std::get<7>(para)));
     }
 }
 

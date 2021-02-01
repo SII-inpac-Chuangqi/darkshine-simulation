@@ -5,19 +5,25 @@
 #include <utility>
 
 #include "Bias_Filter/FilterProcess.hh"
+#include "Control/Control.h"
 
 FilterProcess::FilterProcess(G4String processName,
                              G4double minEnergy,
                              G4double maxEnergy,
                              G4double minScanDistance,
                              G4double maxScanDistance,
-                             G4bool flag) {
+                             G4bool flag,
+                             G4bool fStage0,
+                             G4bool fStage1) {
     Process_Name = std::move(processName);
     Energy_Min = minEnergy;
     Energy_Max = maxEnergy;
     ScanDistance_Min = minScanDistance;
     ScanDistance_Max = maxScanDistance;
     Flag = flag;
+    ifStage0 = fStage0;
+    ifStage1 = fStage1;
+    if (maxEnergy < 0) infty_maxE = true;
 }
 
 ///// \brief judge if val is in the range.
@@ -44,6 +50,7 @@ FilterProcess::FilterProcess(G4String processName,
 /// \return true - in the range,
 /// fasle - out of range.
 G4bool FilterProcess::In_Filter(const G4Step* aStep) {
+    if ((dControl->fStage == 0 && !ifStage0) && (dControl->fStage == 1 && !ifStage1)) return false;
     prev = aStep->GetPreStepPoint();
     prev_E = prev->GetKineticEnergy();
     if (prev_E < Energy_Min) return false;
@@ -54,7 +61,7 @@ G4bool FilterProcess::In_Filter(const G4Step* aStep) {
     post_distance = post->GetPosition()[2];
 
     if(deltaE >= Energy_Min
-       && deltaE < Energy_Max
+       && (infty_maxE || deltaE < Energy_Max)
        && post_distance >= ScanDistance_Min
        && post_distance < ScanDistance_Max
        && pname.contains( Process_Name )) {

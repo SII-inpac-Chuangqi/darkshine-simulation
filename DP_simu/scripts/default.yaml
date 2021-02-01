@@ -63,11 +63,11 @@ Biasing:
 Filters:
   # if to apply filters
   if_filter: false
-  # Set max Energy to minus value meas infinity
-  # PDG, min Energy [Unit], max Energy [Unit] , min Distance [Unit], max Distance [Unit], flag
+  # Set max Energy to a minus value meas Infinity
+  # PDG, min Energy [Unit], max Energy [Unit] , min Distance [Unit], max Distance [Unit], flag, Apply in stage 0, Apply in stage 1
   particle_filters_parameters:
-    # - [ 22, 6, "GeV", 8, "GeV", -1, "m", 0.2, "m", true ]
-    # - [ 11, 2, "GeV", 3, "GeV", -1, "m", 0.2, "m", false ]
+    # - [ 22, 6, "GeV", 8, "GeV", -1, "m", 0.2, "m", true, true, true ]
+    # - [ 11, 2, "GeV", 3, "GeV", -1, "m", 0.2, "m", false, true, true ]
   # Process Name, min Energy [Unit], max Energy [Unit], min Distance [Unit], max Distance [Unit], flag
   process_filters_parameters:
     # - [ "GammaToMuPair", 2, "GeV", 4, "GeV", -10, "cm", 2, "cm", false ]
