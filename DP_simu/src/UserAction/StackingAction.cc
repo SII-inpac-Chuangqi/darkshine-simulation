@@ -28,12 +28,10 @@ StackingAction::~StackingAction() {
 }
 
 G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track *aTrack) {
-    /// DEBUG
-    G4cerr << "ClassifyNewTrack called, now stage" << dControl->fStage << G4endl;
     G4ClassificationOfNewTrack classification = fWaiting;
     switch(dControl->fStage)
     {
-        case 0: // Stage 0 : Accept primary track
+        case 0: // Stage 0 : Only accept primary track
             if(aTrack->GetParentID()==0) {
                 classification = fUrgent;
             }
@@ -44,7 +42,7 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track *aTrac
             }
             break;
         default: // Stage 2 : Accept all primaries
-                 // Accept all secondaries
+                 //           Accept all secondaries
             classification = fUrgent;
             break;
     }
@@ -53,8 +51,6 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track *aTrac
 
 G4bool StackingAction::InsideRoI(const G4Track *aTrack) {
     const G4double trPos = aTrack->GetPosition()[2];
-    /// DEBUG
-    G4cerr << "Now pos" << trPos << G4endl;
     if (dControl->exist_region_of_interest) {
         for (const auto& roi : dControl->region_of_interest) {
             const G4double minDist = std::get<0>(roi);
@@ -71,8 +67,6 @@ G4bool StackingAction::InsideRoI(const G4Track *aTrack) {
 void StackingAction::NewStage() {
     dControl->fStage++;
     stackManager->ReClassify();
-    /// DEBUG
-    G4cerr << "NewStage called, now stage" << dControl->fStage << G4endl;
 }
 
 void StackingAction::PrepareNewEvent() {

@@ -38,6 +38,7 @@ protected:
     G4StepPoint *prev{};
     G4StepPoint *post{};
     G4double post_distance{};
+    G4double prev_E{};
     G4double deltaE{};
     G4double Energy_Min;
     G4double Energy_Max;
