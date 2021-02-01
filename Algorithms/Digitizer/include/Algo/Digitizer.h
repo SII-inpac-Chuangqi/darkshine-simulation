@@ -34,9 +34,16 @@ private:
     // IMPORTANT: variables need to be registered by their types:
     // Currently supported: int, double, string
     double scale_factor{0.};
+    double voltageToADC{0.};
+    int rangeMin{0};
+    int rangeMax{0};
+    int pedestal{0};
 
     // Some output variables which would be recorded in the output root file
     double digitized_total_energy{0.};
+    double digitized_total_energy_digitized{0.};
+    int digitized_total_No{0};
+    int digitized_total_NoGen{0};
 };
 
 

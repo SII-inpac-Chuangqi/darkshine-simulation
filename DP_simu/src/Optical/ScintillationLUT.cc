@@ -196,7 +196,6 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
         nscnt = 2;
 
     G4double ScintillationYield = 0.;
-    fYieldFactor = dControl->Optical_YieldFactor;
 
     // Scintillation depends on particle type, energy deposited
     if (fScintillationByParticleType) {
@@ -210,9 +209,9 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
         ScintillationYield = aMaterialPropertiesTable->GetConstProperty(kSCINTILLATIONYIELD);
 
         // Units: [# scintillation photons / MeV]
-        // ScintillationYield *= fYieldFactor; //yield factor is set by messenger
+        ScintillationYield *= fYieldFactor; //yield factor set by messenger (compatible with G4Scint.)
     }
-    ScintillationYield *= fYieldFactor; //yield factor is set by messenger
+    ScintillationYield *= dControl->Optical_YieldFactor; //yield factor set by control
 
     G4double ResolutionScale = aMaterialPropertiesTable->GetConstProperty(kRESOLUTIONSCALE);
 

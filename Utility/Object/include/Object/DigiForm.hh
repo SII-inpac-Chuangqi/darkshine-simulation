@@ -59,7 +59,8 @@ public:
                fNoOutOfTime == rhs.fNoOutOfTime &&
                fTimeSeq == rhs.fTimeSeq &&
                fTimeSeqZero == rhs.fTimeSeqZero &&
-               fOpticalGen == rhs.fOpticalGen;
+               fOpticalGen == rhs.fOpticalGen &&
+               fYieldFactor == rhs.fYieldFactor;
     }
 
     DigiForm &operator=(const DigiForm &rhs) {
@@ -79,6 +80,7 @@ public:
         fTimeSeq = rhs.fTimeSeq;
         fTimeSeqZero = rhs.fTimeSeqZero;
         fOpticalGen = rhs.fOpticalGen;
+        fYieldFactor = rhs.fYieldFactor ;
         return *this;
     }
 
@@ -125,14 +127,17 @@ public:
 
 
     //simple setter&getter
-    void SetVoltageToADC(int v){fVoltageToADC=v;};
-    int GetVoltageToADC(){return fVoltageToADC;};
+    void SetVoltageToADC(double v){fVoltageToADC=v;};
+    double GetVoltageToADC(){return fVoltageToADC;};
+    void SetYieldFactor(double v){fYieldFactor=v;}; //process in analysis level
+    double GetYieldFactor(){return fYieldFactor;};
     void SetRangeMin(int v){fRangeMin=v;};
     int GetRangeMin(){return fRangeMin;};
     void SetRangeMax(int v){fRangeMax=v;};
     int GetRangeMax(){return fRangeMax;};
     void SetPedestal(int v){fPedestal=v;};
     int GetPedestal(){return fPedestal;};
+
     // void SetTimeSeqZero(int v) //now we use global TimeSeqZero=0, later it can be trig time.
     // {
     //     if (fTimeSeqZero >= 0)
@@ -157,6 +162,7 @@ private:
 
     // Digitization parameter II: needed in calculating the final digitized waveform
     double fVoltageToADC{5000./4096}; // [mv/ADC], e.g. 2^12 ADC
+    double fYieldFactor{1.};
     int fRangeMin{-2047};
     int fRangeMax{2048};
     int fPedestal{0};

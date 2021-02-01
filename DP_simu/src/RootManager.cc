@@ -230,7 +230,8 @@ bool RootManager::FillOpticalLUTs(std::vector<OpticalHit *> &hits, G4int GenNo, 
 
     for (auto *h:hits)
         DiGi->AddTimeSeq(h->GetArrivalT());
-    DiGi->SetVoltageToADC(static_cast<int>(dControl->Optical_voltageToADC()));
+    DiGi->SetVoltageToADC(dControl->Optical_voltageToADC());
+    DiGi->SetYieldFactor(dControl->Optical_YieldFactor);
     DiGi->SetRangeMin(dControl->Optical_range_min);
     DiGi->SetRangeMax(dControl->Optical_range_max);
     DiGi->SetPedestal(dControl->Optical_pedestalLevel);
