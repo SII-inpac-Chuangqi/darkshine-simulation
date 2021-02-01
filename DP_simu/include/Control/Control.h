@@ -177,11 +177,10 @@ public:
     std::vector<std::tuple<G4String, double, double, double, double, bool> > process_filters_parameters;
     std::vector<std::tuple<G4String, double, double, double, double, bool> > particle_energy_band_filters;
     std::vector<std::tuple<G4String, double, double, double, bool> > particle_high_energy_filters;
-    std::vector<std::tuple<G4String, double, double, double, bool> > particle_low_energy_filters;
     std::vector<std::tuple<G4String, double, double, double, double, bool>> process_energy_band_filters;
     std::vector<std::tuple<G4String, double, double, double, bool> > process_high_energy_filters;
-    std::vector<std::tuple<G4String, double, double, double, bool> > process_low_energy_filters;
     std::vector<std::tuple<double, double> > region_of_interest;
+    bool exist_region_of_interest = false;
 
     G4int fStage;
     //========================================

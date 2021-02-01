@@ -83,10 +83,6 @@ Filters:
   particle_high_energy_filters:
     # - [22, 8, "GeV", -1, "m", 0.2, "m", false]
 
-  # PDG ID, max Energy [Unit] (min Energy = 0), min Distance [Unit], max Distance [Unit], flag
-  particle_low_energy_filters:
-  # - [22, 6, "GeV", -1, "m", 0.2, "m", false]
-
   # Process Name, min Energy [Unit], max Energy [Unit], min Distance [Unit], max Distance [Unit], flag
   process_energy_band_filters:
     # - [ "GammaToMuPair", 2, "GeV", 4, "GeV", -10, "cm", 2, "cm", false]
@@ -95,9 +91,6 @@ Filters:
   process_high_energy_filters:
     # - [ "GammaToMuPair", 4, "GeV", -10, "cm", 2, "cm", false ]
 
-  # Process Name, max Energy [Unit] (min Energy = 0), min Distance [Unit], max Distance [Unit], flag
-  process_low_energy_filters:
-  # - [ "GammaToMuPair", 2, "GeV", -10, "cm", 2, "cm", false ]
 ###########################################
 # Optical Options
 ###########################################
