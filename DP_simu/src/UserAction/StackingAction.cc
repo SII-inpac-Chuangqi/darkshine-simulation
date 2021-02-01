@@ -33,12 +33,17 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track *aTrac
     G4ClassificationOfNewTrack classification = fWaiting;
     switch(dControl->fStage)
     {
-        case 0: // Stage 0 : Tracks in RoI only
+        case 0: // Stage 0 : Accept primary track
+            if(aTrack->GetParentID()==0) {
+                classification = fUrgent;
+            }
+            break;
+        case 1: // Stage 1 : Only accept secondaries in region of interest
             if(InsideRoI(aTrack)) {
                 classification = fUrgent;
             }
             break;
-        default: //Stage 1 : Accept all primaries
+        default: // Stage 2 : Accept all primaries
                  // Accept all secondaries
             classification = fUrgent;
             break;
@@ -50,13 +55,16 @@ G4bool StackingAction::InsideRoI(const G4Track *aTrack) {
     const G4double trPos = aTrack->GetPosition()[2];
     /// DEBUG
     G4cerr << "Now pos" << trPos << G4endl;
-    for (const auto& roi : dControl->region_of_interest) {
-        const G4double minDist = std::get<0>(roi);
-        const G4double maxDist = std::get<1>(roi);
-        if(minDist < trPos && trPos < maxDist) {
-            return true;
+    if (dControl->exist_region_of_interest) {
+        for (const auto& roi : dControl->region_of_interest) {
+            const G4double minDist = std::get<0>(roi);
+            const G4double maxDist = std::get<1>(roi);
+            if(minDist < trPos && trPos < maxDist) {
+                return true;
+            }
         }
     }
+
     return false;
 }
 
