@@ -157,7 +157,6 @@ void FilterManager::Filter_Event_Initialize() {
 
 G4bool FilterManager::InsideRoI(const G4Track *aTrack) {
     const G4double trPos = aTrack->GetPosition()[2];
-    G4cerr << trPos << G4endl;
     if (exist_region_of_interest) {
         for (const auto& roi : region_of_interest) {
             const G4double minDist = std::get<0>(roi);

@@ -26,7 +26,7 @@ public:
     virtual void PrepareNewEvent();
 
 private:
-    G4bool InsideRoI(const G4Track* aTrack) { dFilterManager->InsideRoI(aTrack); };
+    G4bool InsideRoI(const G4Track* aTrack) { return dFilterManager->InsideRoI(aTrack); };
 
 };
 
