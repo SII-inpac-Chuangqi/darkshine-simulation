@@ -506,6 +506,7 @@ bool Control::ReadYAML(const G4String &file_in) {
                     i[5].as<double>() * G4UnitDefinition::GetValueOf(i[6].as<std::string>()),
                     i[7].as<double>() * G4UnitDefinition::GetValueOf(i[8].as<std::string>()));
             exist_region_of_interest = true;
+            if (i[9].as<bool>() && i[11].as<bool>()) filter_check_stage = 2;
         }
         process_filters_parameters.clear();
         pfn = Node["Filters"]["process_filters_parameters"];

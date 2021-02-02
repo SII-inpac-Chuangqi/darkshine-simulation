@@ -179,6 +179,7 @@ public:
     bool exist_region_of_interest = false;
 
     G4int fStage;
+    G4int filter_check_stage = 1;
     //========================================
     /* Optical */
     //----------------------------------------

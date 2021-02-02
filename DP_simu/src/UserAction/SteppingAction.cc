@@ -58,14 +58,14 @@ SteppingAction::~SteppingAction() {
 
 void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     if (dControl->if_filter) {
-        if (dControl->fStage !=2) { // check excluding filters
+        if (dControl->fStage < dControl->filter_check_stage) { // check excluding filters
             if ( ( dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process(aStep) ) // Process filters
                ||( dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle(aStep) ) ) { // Particle filters
                 G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
                 G4EventManager::GetEventManager()->AbortCurrentEvent();
             }
         }
-        else { // fStage = 2 (at the end of stage 1) check including filters result
+        else if (dControl->fStage == dControl->filter_check_stage) { // check including filters result
             if ( ( dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process_Found_Result() )
                ||( dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle_Found_Result() ) ) {
                 G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
