@@ -65,7 +65,7 @@ Filters:
   if_filter: false
   # Parameters description:
   # max Energy -  set to a minus value = Infinity
-  # fInclude - true: including filter, save particle/process in the filter; false: excluding filter, abort particle/process in the filter
+  # fInclude - true: including filter, only save event when particle/process is in the filter; false: excluding filter, abort particle/process in the filter
   # fStage0 - true: apply filter on primary track; false: not apply on primary track
   # fStage1 - true: apply filter on secondaries track; false: not apply on secondary track
   # PDG, min Energy [Unit], max Energy [Unit] , min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
