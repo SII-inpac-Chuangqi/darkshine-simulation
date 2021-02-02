@@ -68,6 +68,7 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
         else if ( dFilterManager->GetifCheckIncludeResult()
                  && dControl->fStage == dFilterManager->GetCheckIncludeStage() )
         { // check including filters result
+            dFilterManager->SetifCheckIncludeResult(false);
             if ( ( dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process_Found_Result() )
                ||( dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle_Found_Result() ) ) {
                 G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();

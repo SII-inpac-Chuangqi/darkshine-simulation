@@ -42,6 +42,9 @@ public:
 
     G4bool InsideRoI(const G4Track* aTrack);
 
+    /// Setter
+
+    void SetifCheckIncludeResult(G4bool in) { if_check_include_result = in; };
 
     /// Getter
     [[nodiscard]] G4bool GetifFilter_Particle() const { return ifFilter_Particle; };
