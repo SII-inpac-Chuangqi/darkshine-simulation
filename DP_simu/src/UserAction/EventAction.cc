@@ -63,6 +63,7 @@ EventAction::~EventAction()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::BeginOfEventAction(const G4Event *event) {
+    dFilterManager->SetifCheckIncludeResult(true);
     fPrintModulo = frootMng->GetNbEvent() / 100;
 
     G4int eventID = event->GetEventID();

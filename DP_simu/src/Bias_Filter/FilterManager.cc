@@ -46,10 +46,7 @@ FilterManager::FilterManager() {
                                                                            std::get<7>(para)));
         exist_region_of_interest = true;
         region_of_interest.emplace_back(minDist, maxDist);
-        if(fInclude) {
-            if_check_include_result = true;
-            if(fStage1) check_include_stage = 2;
-        }
+        if(fInclude && fStage1) check_include_stage = 2;
     }
 
     /// \brief Setup a new process filter.
@@ -74,10 +71,7 @@ FilterManager::FilterManager() {
                                                                          std::get<7>(para)));
         exist_region_of_interest = true;
         region_of_interest.emplace_back(minDist, maxDist);
-        if(fInclude) {
-            if_check_include_result = true;
-            if(fStage1) check_include_stage = 2;
-        }
+        if(fInclude && fStage1) check_include_stage = 2;
     }
 }
 
