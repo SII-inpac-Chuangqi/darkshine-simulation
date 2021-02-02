@@ -58,7 +58,6 @@ G4bool FilterParticle::In_Filter(const G4Step* aStep) {
     deltaE = fabs(prev_E - post->GetKineticEnergy());
 
     if (deltaE >= Energy_Min && post_distance >= ScanDistance_Min && post_distance < ScanDistance_Max) {
-        prev = aStep->GetPreStepPoint();
         // search for all the secondary particles produced in this step
         secondary = aStep->GetSecondaryInCurrentStep();
         sec_end = (*secondary).end();
