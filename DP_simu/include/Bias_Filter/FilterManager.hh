@@ -48,8 +48,6 @@ public:
 
     [[nodiscard]] G4bool GetifFilter_Process() const { return ifFilter_Process; };
 
-    [[nodiscard]] G4bool GetExistRoI() const { return exist_region_of_interest; };
-
     [[nodiscard]] G4bool GetifCheckIncludeResult() const { return if_check_include_result; };
 
     [[nodiscard]] G4bool GetCheckIncludeStage() const { return check_include_stage; };
