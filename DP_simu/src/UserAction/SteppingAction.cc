@@ -58,8 +58,7 @@ SteppingAction::~SteppingAction() {
 
 void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     if (dControl->if_filter) {
-        if ( dControl->fStage == 0
-            || ( dControl->fStage == 1 && dFilterManager->GetCheckIncludeStage() == 1) )
+        if ( dControl->fStage < dFilterManager->GetCheckIncludeStage() )
         { // check excluding filters
             if ( ( dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process(aStep) ) // Process filters
                ||( dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle(aStep) ) ) { // Particle filters

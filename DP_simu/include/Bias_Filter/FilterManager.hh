@@ -56,7 +56,7 @@ public:
 
     [[nodiscard]] G4bool GetifCheckIncludeResult() const { return if_check_include_result; };
 
-    [[nodiscard]] G4bool GetCheckIncludeStage() const { return check_include_stage; };
+    [[nodiscard]] G4int GetCheckIncludeStage() const { return check_include_stage; };
 
 private:
     G4bool ifFilter_Particle = false;
