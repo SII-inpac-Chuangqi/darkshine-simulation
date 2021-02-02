@@ -12,6 +12,9 @@
 ///  initialize PDG, Energy range, Scan Distance range, etc.
 ///  The pointer to this class is stored in vector Filter_Particle_List.
 ///  Second, these class will be traversed in SteppingAction.
+
+class G4Track;
+
 class FilterManager {
 private:
     FilterManager();
