@@ -49,21 +49,6 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track *aTrac
     return classification;
 }
 
-G4bool StackingAction::InsideRoI(const G4Track *aTrack) {
-    const G4double trPos = aTrack->GetPosition()[2];
-    if (dControl->exist_region_of_interest) {
-        for (const auto& roi : dControl->region_of_interest) {
-            const G4double minDist = std::get<0>(roi);
-            const G4double maxDist = std::get<1>(roi);
-            if(minDist < trPos && trPos < maxDist) {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
 void StackingAction::NewStage() {
     dControl->fStage++;
     stackManager->ReClassify();

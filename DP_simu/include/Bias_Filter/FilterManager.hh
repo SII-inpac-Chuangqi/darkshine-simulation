@@ -4,6 +4,7 @@
 
 #include "Bias_Filter/FilterParticle.hh"
 #include "Bias_Filter/FilterProcess.hh"
+#include "G4Track.hh"
 
 /// \brief Class Description:
 ///  Take particle filter as an example. 
@@ -39,24 +40,33 @@ public:
 
     [[nodiscard]] G4bool Filter_Process_Found_Result(); /// check whether found must-have process.
 
+    G4bool InsideRoI(const G4Track* aTrack);
+
 
     /// Getter
     [[nodiscard]] G4bool GetifFilter_Particle() const { return ifFilter_Particle; };
 
     [[nodiscard]] G4bool GetifFilter_Process() const { return ifFilter_Process; };
 
-    // [[nodiscard]] G4bool GetFilter_Process_Result() const { return Filter_Process_Result; };
+    [[nodiscard]] G4bool GetExistRoI() const { return exist_region_of_interest; };
+
+    [[nodiscard]] G4bool GetifCheckIncludeResult() const { return if_check_include_result; };
+
+    [[nodiscard]] G4bool GetCheckIncludeStage() const { return check_include_stage; };
 
 private:
     G4bool ifFilter_Particle = false;
     G4bool ifFilter_Process = false;
     std::vector<std::shared_ptr<FilterParticle>> Filter_Particle_List{};
     std::vector<std::shared_ptr<FilterProcess>> Filter_Process_List{};
-//    std::vector<std::shared_ptr<FilterHighEParticle>> Particle_HighE_Filter_List{};
-//    std::vector<std::shared_ptr<FilterHighEProcess>> Process_HighE_Filter_List{};
 
     G4bool Filter_Particle_Result{};
     G4bool Filter_Process_Result{};
+
+    std::vector<std::tuple<double, double> > region_of_interest;
+    G4bool exist_region_of_interest = false;
+    G4bool if_check_include_result = false;
+    G4int check_include_stage = 1;
 };
 
 extern FilterManager *dFilterManager;

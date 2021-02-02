@@ -24,8 +24,19 @@ FilterManager::FilterManager() {
     /// \param pdg  PDG ID of secondary particle.
     /// \param flag  1: The Event to be computed must have this particle in particular range.
     ///              0: The Event to be computed must not have this particle in particular range.
+    G4double minDist;
+    G4double maxDist;
+    G4bool fInclude;
+    G4bool fStage0;
+    G4bool fStage1;
     for (auto para : dControl->particle_filters_parameters) {
+        minDist = std::get<3>(para);
+        maxDist = std::get<4>(para);
+        fInclude = std::get<5>(para);
+        fStage0 = std::get<6>(para);
+        fStage1 = std::get<7>(para);
         ifFilter_Particle = true;
+        assert(fStage0 || fStage1);
         Filter_Particle_List.emplace_back(std::make_shared<FilterParticle>(std::get<0>(para),
                                                                            std::get<1>(para),
                                                                            std::get<2>(para),
@@ -34,6 +45,12 @@ FilterManager::FilterManager() {
                                                                            std::get<5>(para),
                                                                            std::get<6>(para),
                                                                            std::get<7>(para)));
+        exist_region_of_interest = true;
+        region_of_interest.emplace_back(minDist, maxDist);
+        if(fInclude) {
+            if_check_include_result = true;
+            if(fStage1) check_include_stage = 2;
+        }
     }
 
     /// \brief Setup a new process filter.
@@ -41,7 +58,13 @@ FilterManager::FilterManager() {
     /// \param flag  1: The Event to be computed must have this process in particular range.
     ///              0: The Event to be computed must not have this process in particular range.
     for (auto para : dControl->process_filters_parameters) {
+        minDist = std::get<3>(para);
+        maxDist = std::get<4>(para);
+        fInclude = std::get<5>(para);
+        fStage0 = std::get<6>(para);
+        fStage1 = std::get<7>(para);
         ifFilter_Process = true;
+        assert(fStage0 || fStage1 );
         Filter_Process_List.emplace_back(std::make_shared<FilterProcess>(std::get<0>(para),
                                                                          std::get<1>(para),
                                                                          std::get<2>(para),
@@ -50,6 +73,12 @@ FilterManager::FilterManager() {
                                                                          std::get<5>(para),
                                                                          std::get<6>(para),
                                                                          std::get<7>(para)));
+        exist_region_of_interest = true;
+        region_of_interest.emplace_back(minDist, maxDist);
+        if(fInclude) {
+            if_check_include_result = true;
+            if(fStage1) check_include_stage = 2;
+        }
     }
 }
 
@@ -125,5 +154,20 @@ void FilterManager::Filter_Event_Initialize() {
     for (const auto& process_filter : Filter_Process_List) {
         process_filter->SetFoundResult(false);
     }
+}
+
+G4bool FilterManager::InsideRoI(const G4Track *aTrack) {
+    const G4double trPos = aTrack->GetPosition()[2];
+    if (exist_region_of_interest) {
+        for (const auto& roi : region_of_interest) {
+            const G4double minDist = std::get<0>(roi);
+            const G4double maxDist = std::get<1>(roi);
+            if(minDist < trPos && trPos < maxDist) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
