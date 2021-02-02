@@ -19,16 +19,15 @@ FilterManager *FilterManager::CreateInstance() {
 }
 
 FilterManager::FilterManager() {
-
-    /// \brief Setup a new particle filter.
-    /// \param pdg  PDG ID of secondary particle.
-    /// \param flag  1: The Event to be computed must have this particle in particular range.
-    ///              0: The Event to be computed must not have this particle in particular range.
     G4double minDist;
     G4double maxDist;
     G4bool fInclude;
     G4bool fStage0;
     G4bool fStage1;
+    /// \brief Setup a new particle filter.
+    /// \param pdg  PDG ID of secondary particle.
+    /// \param flag  1: The Event to be computed must have this particle in particular range.
+    ///              0: The Event to be computed must not have this particle in particular range.
     for (auto para : dControl->particle_filters_parameters) {
         minDist = std::get<3>(para);
         maxDist = std::get<4>(para);
