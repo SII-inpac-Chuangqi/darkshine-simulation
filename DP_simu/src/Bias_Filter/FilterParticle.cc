@@ -24,31 +24,12 @@ FilterParticle::FilterParticle(G4int pdg,
     if (maxEnergy < 0) infty_maxE = true;
 }
 
-///// \brief judge if val is in the range.
-///// lowerBound < upperBound: band-pass;
-///// lowerBound > upperBound : band-stop;
-///// lowerBound = upperBound : all-pass.
-///// \return true - in the range, false - out of range.
-//G4bool FilterParticle::In_Range(G4double val, G4double lowerBound, G4double upperBound) {
-//    if (upperBound <= lowerBound) {
-//        if (val >= lowerBound || val < upperBound)
-//            return true;
-//        else
-//            return false;
-//    }
-//    else { // lowerBound < upperBound
-//        if (val >= lowerBound && val < upperBound)
-//            return true;
-//        else
-//            return false;
-//    }
-//}
-
 /// \brief Check if one particular Particle is in particular energy range and distance range.
 /// \return true - in the range,
 /// false - out of range.
 G4bool FilterParticle::In_Filter(const G4Step* aStep) {
-    if ((dControl->fStage == 0 && !ifStage0) && (dControl->fStage == 1 && !ifStage1)) return false;
+    if (dControl->fStage == 1 && !ifStage1) return false;
+    if (dControl->fStage == 0 && !ifStage0) return false;
     prev = aStep->GetPreStepPoint();
     prev_E = prev->GetKineticEnergy();
     if (prev_E < Energy_Min) return false;

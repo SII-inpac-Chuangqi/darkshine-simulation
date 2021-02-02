@@ -50,7 +50,8 @@ FilterProcess::FilterProcess(G4String processName,
 /// \return true - in the range,
 /// fasle - out of range.
 G4bool FilterProcess::In_Filter(const G4Step* aStep) {
-    if ((dControl->fStage == 0 && !ifStage0) && (dControl->fStage == 1 && !ifStage1)) return false;
+    if (dControl->fStage == 1 && !ifStage1) return false;
+    if (dControl->fStage == 0 && !ifStage0) return false;
     prev = aStep->GetPreStepPoint();
     prev_E = prev->GetKineticEnergy();
     if (prev_E < Energy_Min) return false;
