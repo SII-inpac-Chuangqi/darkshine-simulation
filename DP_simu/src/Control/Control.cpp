@@ -254,7 +254,7 @@ void Control::RebuildVariables() {
         if_bias_target = true;
         BiasProcess = "DMProcessDMBrem";
         if_filter = true;
-        process_filters_parameters.emplace_back("DMProcessDMBrem", 0 * GeV, 0 * GeV, -7.5 * mm, 7.5 * mm, 1, 1, 1);
+        process_filters_parameters.emplace_back("DMProcessDMBrem", 0 * GeV, -1 * GeV, -7.5 * mm, 7.5 * mm, 1, 1, 1);
     }
 
     //----------------------------------------
