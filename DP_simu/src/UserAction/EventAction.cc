@@ -80,15 +80,6 @@ void EventAction::BeginOfEventAction(const G4Event *event) {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::EndOfEventAction(const G4Event *event) {
-    if (dFilterManager->GetifFilter_Process() &&
-        (!dFilterManager->GetFilter_Process_Result() || !dFilterManager->Filter_Process_Found_Result())) {
-        frootMng->initialize();
-        return;
-    }
-    if (dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle_Found_Result()) {
-        frootMng->initialize();
-        return;
-    }
     if (event->IsAborted()) {
         frootMng->initialize();
         return;

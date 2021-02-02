@@ -64,7 +64,6 @@ G4bool FilterManager::Filter_Particle(const G4Step* aStep) {
                 Filter_Particle_Result = false;
                 return false;
             }
-            // else
         }
     }
     Filter_Particle_Result = true; // No particle we don't want.
@@ -89,17 +88,18 @@ G4bool FilterManager::Filter_Particle_Found_Result() {
 
 /// \brief Filter Process method. Scan every FilterProcess->Filter().
 /// Store result in Filter_Process_Result.
-void FilterManager::Filter_Process(const G4Step* aStep) {
+G4bool FilterManager::Filter_Process(const G4Step* aStep) {
     for (const auto& process_filter : Filter_Process_List) {
         const std::shared_ptr<FilterProcess>& fFilterProcess = process_filter;
         if (fFilterProcess->In_Filter(aStep) ) { // found process in particular range.
             if ( !fFilterProcess->GetFlag() ) { // don't want this process
                 Filter_Process_Result = false;
-                return;
+                return false;
             }
         }
     }
     Filter_Process_Result = true;
+    return Filter_Process_Result;
 }
 
 G4bool FilterManager::Filter_Process_Found_Result() {

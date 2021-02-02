@@ -33,7 +33,7 @@ public:
 
     G4bool Filter_Particle(const G4Step *aStep);
 
-    void Filter_Process(const G4Step *aStep);
+    G4bool Filter_Process(const G4Step *aStep);
 
     [[nodiscard]] G4bool Filter_Particle_Found_Result(); /// check whether found must-have particle.
 
@@ -45,7 +45,7 @@ public:
 
     [[nodiscard]] G4bool GetifFilter_Process() const { return ifFilter_Process; };
 
-    [[nodiscard]] G4bool GetFilter_Process_Result() const { return Filter_Process_Result; };
+    // [[nodiscard]] G4bool GetFilter_Process_Result() const { return Filter_Process_Result; };
 
 private:
     G4bool ifFilter_Particle = false;
