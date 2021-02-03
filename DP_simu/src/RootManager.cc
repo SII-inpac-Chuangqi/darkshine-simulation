@@ -171,8 +171,6 @@ void RootManager::FillSim(Int_t eventID, const Double_t *Rnd) {
     tr->Fill();
 
     initialize();
-
-    double a = 1;
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
