@@ -534,8 +534,10 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
                     // fRootMgr->FillOpticalLUT(newHit, cIn); //save the hit one-by-one
                     Hits.emplace_back(newHit); //buffered
                     LUT_saved_counter++;
+                }else{
+                     delete newHit; // delete the hit one-by-one
                 }
-                // delete newHit; // delete the hit one-by-one
+
             }
             //////////////////////////////////////////////////////
         }
@@ -552,10 +554,14 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
 
     //Now save the Hits// now we save it one-by-one, not using this for memory
     if (!Hits.empty())
-        fRootMgr->FillOpticalLUTs(Hits, fNumPhotonsLUTGen, cIn, copyNum);
-    //now clear all hits inside digitizer since, we need all sorted hits for digitizer!!
-    // for(auto *h: Hits)
-    //   delete h;
+        if(! fRootMgr->FillOpticalLUTs(Hits, fNumPhotonsLUTGen, cIn, copyNum))
+        {
+            //now clear all hits inside digitizer since, we need all sorted hits for digitizer!!
+             for(auto *h: Hits)
+               delete h;
+//             Hits.clear(); //local vector will be deleted auto
+        }
+
 
     return G4VRestDiscreteProcess::PostStepDoIt(aTrack, aStep);
 }
