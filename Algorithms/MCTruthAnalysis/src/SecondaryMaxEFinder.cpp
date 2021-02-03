@@ -10,6 +10,7 @@ void SecondaryMaxEFinder::RegisterParameters() {
     // Register Output Variables
     EvtWrt->RegisterIntVariable("Secondary_PDG", &Secondary_PDG, "Secondary_PDG/I");
     EvtWrt->RegisterDoubleVariable("Secondary_MaxE", &Secondary_MaxE, "Secondary_MaxE/D");
+    EvtWrt->RegisterDoubleVariable("Secondary_MaxE_P", Secondary_MaxE_P, "Secondary_MaxE_P[3]/D");
     EvtWrt->RegisterStrVariable("Secondary_MaxE_PVName", &Secondary_MaxE_PVName);
     EvtWrt->RegisterStrVariable("Secondary_MaxE_Process", &Secondary_MaxE_Process);
 }
@@ -35,6 +36,9 @@ McParticle *SecondaryMaxEFinder::FindSecondary(int PDG, double Emin, McParticle 
     if (MCP_Emax) {
         Secondary_PDG = MCP_Emax->getPdg();
         Secondary_MaxE = EMax;
+        Secondary_MaxE_P[0] = MCP_Emax->getPx();
+        Secondary_MaxE_P[1] = MCP_Emax->getPy();
+        Secondary_MaxE_P[2] = MCP_Emax->getPz();
         Secondary_MaxE_Process = MCP_Emax->getCreateProcess();
         if (gGeoManager)
             Secondary_MaxE_PVName = gGeoManager->FindNode(MCP_Emax->getVertexX() / 10.,

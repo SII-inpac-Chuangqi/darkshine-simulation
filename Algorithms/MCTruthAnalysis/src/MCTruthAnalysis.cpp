@@ -84,29 +84,31 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
 
         DStep *prev_s = nullptr;
         for (auto s : *steps) {
-            if (s->getProcessName() == "DMProcessDMBrem" && prev_s != nullptr) {
-                if (mcSec->getEnergy() > prev_s->getE())
-                    cout << "E_parent: " << prev_s->getE() << ", E_remain: " << s->getE() << ", DM_E: "
-                         << mcSec->getEnergy() << endl;
-                Parent_E = prev_s->getE();
-                Parent_P[0] = prev_s->getPx();
-                Parent_P[1] = prev_s->getPy();
-                Parent_P[2] = prev_s->getPz();
-                Parent_PVName = TString(prev_s->getPVName());
+            if (s->getProcessName() == mcSec->getCreateProcess() && prev_s != nullptr) {
+                if (s->getX() == mcSec->getVertexX()
+                    && s->getY() == mcSec->getVertexY()
+                    && s->getZ() == mcSec->getVertexZ()) {
+                    Parent_E = prev_s->getE();
+                    Parent_P[0] = prev_s->getPx();
+                    Parent_P[1] = prev_s->getPy();
+                    Parent_P[2] = prev_s->getPz();
+                    Parent_PVName = TString(prev_s->getPVName());
 
-                Recoil_E = s->getE();
-                Recoil_P[0] = s->getPx();
-                Recoil_P[1] = s->getPy();
-                Recoil_P[2] = s->getPz();
+                    Recoil_E = s->getE();
+                    Recoil_P[0] = s->getPx();
+                    Recoil_P[1] = s->getPy();
+                    Recoil_P[2] = s->getPz();
 
-                TLorentzVector l(Recoil_P,Recoil_E);
-                Recoil_pT = l.Perp();
-                Recoil_theta = l.Theta();
+                    TLorentzVector l(Recoil_P, Recoil_E);
+                    Recoil_pT = l.Perp();
+                    Recoil_theta = l.Theta();
+
+                    break;
+                }
             }
 
             prev_s = s;
         }
-
 
     } else {
         // if not exists, print out error

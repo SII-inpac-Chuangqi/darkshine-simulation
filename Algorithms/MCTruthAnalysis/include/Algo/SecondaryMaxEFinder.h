@@ -78,6 +78,7 @@ private:
 
     int Secondary_PDG{0};
     double Secondary_MaxE{0.};
+    double Secondary_MaxE_P[3];
     TString Secondary_MaxE_PVName;
     TString Secondary_MaxE_Process;
 
