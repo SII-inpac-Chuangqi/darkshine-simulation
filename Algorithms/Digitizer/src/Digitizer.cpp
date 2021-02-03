@@ -64,7 +64,7 @@ void Digitizer::ProcessEvt(AnaEvent *evt) {
         for (auto itr : *optical) {
             //get yieldFactor to recover full yield
             const double YieldFactor = itr->GetYieldFactor();
-            double SF = scale_factor * YieldFactor;
+            double SF = scale_factor / YieldFactor;
             //integral as energy
             double energy = itr->GetIntegral(false) * SF; //half-dgitized
             digitized_total_energy += energy;
