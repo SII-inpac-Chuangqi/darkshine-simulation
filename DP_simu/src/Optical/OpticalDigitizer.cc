@@ -152,7 +152,7 @@ std::pair<int, int> OpticalDigitizer::addPixelResponse(const std::vector<Optical
     // ----- for step 1
     // Find or create pixelMap
     if (fpixelHitMaps.find(cId) == fpixelHitMaps.end())
-        fpixelHitMaps.insert(std::pair<int, std::map<int, double>>(cId,std::map<int, double>()));
+        fpixelHitMaps.insert(std::pair<int, std::map<int, double>>(cId, std::map<int, double>()));
     auto pixelHitMap = fpixelHitMaps[cId];
 
     //create pixelRand

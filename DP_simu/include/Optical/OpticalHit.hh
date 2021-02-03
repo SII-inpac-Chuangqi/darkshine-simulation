@@ -50,9 +50,9 @@
 //TODO: consider which variables really need and simplify the storage!!
 //TODO: and determine which use constructor, which use setter??
 //class OpticalHit : public G4VHit {
-class OpticalHit{
+class OpticalHit {
 public:
-    OpticalHit(G4int detID);
+    explicit OpticalHit(G4int detID);
 
     OpticalHit(const OpticalHit &);
 
@@ -65,7 +65,7 @@ public:
 
 
     // operators
-    const OpticalHit &operator=(const OpticalHit &);
+    OpticalHit &operator=(const OpticalHit &);
 
     G4bool operator==(const OpticalHit &) const;
     // bool operator < (const OpticalHit h) const
@@ -181,27 +181,5 @@ private:
     G4EmProcessSubType fType{fGammaGeneralProcess};
 
 };
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-//typedef G4THitsCollection<OpticalHit> OpticalHitsCollection;
-//
-//extern G4ThreadLocal G4Allocator<OpticalHit> *OpticalHitAllocator;
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//
-//inline void *OpticalHit::operator new(size_t) {
-//    if (!OpticalHitAllocator)
-//        OpticalHitAllocator = new G4Allocator<OpticalHit>;
-//    return (void *) OpticalHitAllocator->MallocSingle();
-//}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-//inline void OpticalHit::operator delete(void *hit) {
-//    OpticalHitAllocator->FreeSingle((OpticalHit *) hit);
-//}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif

@@ -40,7 +40,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-OpticalHit::OpticalHit(G4int detID): fDetID(detID) { ; }
+OpticalHit::OpticalHit(G4int detID) : fDetID(detID) { ; }
 //        : G4VHit(), fDetID(detID) { ; }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -49,7 +49,7 @@ OpticalHit::~OpticalHit() = default;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-OpticalHit::OpticalHit(const OpticalHit &right){
+OpticalHit::OpticalHit(const OpticalHit &right) {
 //        : G4VHit() {
     fDetID = right.fDetID;
 //    fCellID=right.fCellID;
@@ -69,7 +69,7 @@ OpticalHit::OpticalHit(const OpticalHit &right){
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-const OpticalHit &OpticalHit::operator=(const OpticalHit &right) {
+OpticalHit &OpticalHit::operator=(const OpticalHit &right) {
     fDetID = right.fDetID;
 //    fCellID=right.fCellID;
     // fPos=right.fPos;
@@ -96,7 +96,7 @@ G4bool OpticalHit::operator==(const OpticalHit &right) const {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 bool OpticalHit::BuildLUTHit(OpticalLUT &LUT, G4double depth, G4double cosTheta, G4double creationT, G4double creationE,
-                             const G4ThreeVector& creationP, G4double rand1, G4double rand2, G4EmProcessSubType Type) {
+                             const G4ThreeVector &creationP, G4double rand1, G4double rand2, G4EmProcessSubType Type) {
     if (!LUT.isReady()) {
         G4cerr << "Error: Not valid LUT, should not happen." << G4endl;
         return false;
