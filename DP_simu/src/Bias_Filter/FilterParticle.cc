@@ -27,7 +27,7 @@ FilterParticle::FilterParticle(G4int pdg,
 /// \brief Check if one particular Particle is in particular energy range and distance range.
 /// \return true - in the range,
 /// false - out of range.
-G4bool FilterParticle::In_Filter(const G4Step* aStep) {
+G4bool FilterParticle::In_Filter(const G4Step *aStep) {
     if (dControl->fStage == 1 && !ifStage1) return false;
     if (dControl->fStage == 0 && !ifStage0) return false;
     prev = aStep->GetPreStepPoint();
@@ -42,19 +42,18 @@ G4bool FilterParticle::In_Filter(const G4Step* aStep) {
         // search for all the secondary particles produced in this step
         secondary = aStep->GetSecondaryInCurrentStep();
         sec_end = (*secondary).end();
-        for ( sec_itr = (*secondary).begin(); sec_itr != sec_end; sec_itr++ ) {
+        for (sec_itr = (*secondary).begin(); sec_itr != sec_end; sec_itr++) {
             aTrack = (*sec_itr);
             // Select particle
-            if ( PDG != aTrack->GetParticleDefinition()->GetPDGEncoding() ) continue;
+            if (PDG != aTrack->GetParticleDefinition()->GetPDGEncoding()) continue;
             // Energy of secondaries requirement
             energy = aTrack->GetTotalEnergy();
-            if(energy >= Energy_Min && (infty_maxE || energy < Energy_Max) ) {
+            if (energy >= Energy_Min && (infty_maxE || energy < Energy_Max)) {
                 Found_Result = true;
                 return true;
             }
         }
         return false;
-    }
-    else
+    } else
         return false;
 }

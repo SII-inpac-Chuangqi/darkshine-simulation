@@ -49,7 +49,7 @@ FilterProcess::FilterProcess(G4String processName,
 /// \brief Check if one particular process is in particular energy range and distance range.
 /// \return true - in the range,
 /// fasle - out of range.
-G4bool FilterProcess::In_Filter(const G4Step* aStep) {
+G4bool FilterProcess::In_Filter(const G4Step *aStep) {
     if (dControl->fStage == 1 && !ifStage1) return false;
     if (dControl->fStage == 0 && !ifStage0) return false;
     prev = aStep->GetPreStepPoint();
@@ -57,18 +57,17 @@ G4bool FilterProcess::In_Filter(const G4Step* aStep) {
     if (prev_E < Energy_Min) return false;
 
     post = aStep->GetPostStepPoint();
-    deltaE = fabs( prev_E - post->GetKineticEnergy() );
+    deltaE = fabs(prev_E - post->GetKineticEnergy());
     pname = post->GetProcessDefinedStep()->GetProcessName();
     post_distance = post->GetPosition()[2];
 
-    if(deltaE >= Energy_Min
-       && (infty_maxE || deltaE < Energy_Max)
-       && post_distance >= ScanDistance_Min
-       && post_distance < ScanDistance_Max
-       && pname.contains( Process_Name )) {
-            Found_Result = true;
-            return true;
-    }
-    else
+    if (deltaE >= Energy_Min
+        && (infty_maxE || deltaE < Energy_Max)
+        && post_distance >= ScanDistance_Min
+        && post_distance < ScanDistance_Max
+        && pname.contains(Process_Name)) {
+        Found_Result = true;
+        return true;
+    } else
         return false;
 }

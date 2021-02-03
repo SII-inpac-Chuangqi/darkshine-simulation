@@ -46,7 +46,7 @@ FilterManager::FilterManager() {
                                                                            std::get<7>(para)));
         exist_region_of_interest = true;
         region_of_interest.emplace_back(minDist, maxDist);
-        if(fInclude && fStage1) check_include_stage = 2;
+        if (fInclude && fStage1) check_include_stage = 2;
     }
 
     /// \brief Setup a new process filter.
@@ -60,7 +60,7 @@ FilterManager::FilterManager() {
         fStage0 = std::get<6>(para);
         fStage1 = std::get<7>(para);
         ifFilter_Process = true;
-        assert(fStage0 || fStage1 );
+        assert(fStage0 || fStage1);
         Filter_Process_List.emplace_back(std::make_shared<FilterProcess>(std::get<0>(para),
                                                                          std::get<1>(para),
                                                                          std::get<2>(para),
@@ -71,18 +71,17 @@ FilterManager::FilterManager() {
                                                                          std::get<7>(para)));
         exist_region_of_interest = true;
         region_of_interest.emplace_back(minDist, maxDist);
-        if(fInclude && fStage1) check_include_stage = 2;
+        if (fInclude && fStage1) check_include_stage = 2;
     }
 }
 
 /// \brief Filter Particle method. Scan every FilterParticle->Filter().
 /// \return true - keep event,
 /// false - abort evet.
-G4bool FilterManager::Filter_Particle(const G4Step* aStep) {
-    for (const auto& particle_filter : Filter_Particle_List) {
-        const std::shared_ptr<FilterParticle>& fFilterParticle = particle_filter;
-        if (fFilterParticle->In_Filter(aStep) ) { // found particle in particular range.
-            if ( !fFilterParticle->GetFlag() ) { // don't want this particle.
+G4bool FilterManager::Filter_Particle(const G4Step *aStep) {
+    for (const auto &particle_filter : Filter_Particle_List) {
+        if (particle_filter->In_Filter(aStep)) { // found particle in particular range.
+            if (!particle_filter->GetFlag()) { // don't want this particle.
                 Filter_Particle_Result = false;
                 return false;
             }
@@ -93,9 +92,8 @@ G4bool FilterManager::Filter_Particle(const G4Step* aStep) {
 }
 
 G4bool FilterManager::Filter_Particle_Found_Result() {
-    for (const auto& particle_filter : Filter_Particle_List) {
-        const std::shared_ptr<FilterParticle>& fFilterParticle = particle_filter;
-        if ( fFilterParticle->GetFlag() && !fFilterParticle->GetFoundResult() ) {
+    for (const auto &particle_filter : Filter_Particle_List) {
+        if (particle_filter->GetFlag() && !particle_filter->GetFoundResult()) {
             return false; // user want this particle but not found, abort.
         }
     }
@@ -110,11 +108,10 @@ G4bool FilterManager::Filter_Particle_Found_Result() {
 
 /// \brief Filter Process method. Scan every FilterProcess->Filter().
 /// Store result in Filter_Process_Result.
-G4bool FilterManager::Filter_Process(const G4Step* aStep) {
-    for (const auto& process_filter : Filter_Process_List) {
-        const std::shared_ptr<FilterProcess>& fFilterProcess = process_filter;
-        if (fFilterProcess->In_Filter(aStep) ) { // found process in particular range.
-            if ( !fFilterProcess->GetFlag() ) { // don't want this process
+G4bool FilterManager::Filter_Process(const G4Step *aStep) {
+    for (const auto &process_filter : Filter_Process_List) {
+        if (process_filter->In_Filter(aStep)) { // found process in particular range.
+            if (!process_filter->GetFlag()) { // don't want this process
                 Filter_Process_Result = false;
                 return false;
             }
@@ -125,9 +122,8 @@ G4bool FilterManager::Filter_Process(const G4Step* aStep) {
 }
 
 G4bool FilterManager::Filter_Process_Found_Result() {
-    for (const auto& process_filter : Filter_Process_List) {
-        const std::shared_ptr<FilterProcess>& fFilterProcess = process_filter;
-        if ( fFilterProcess->GetFlag() && !fFilterProcess->GetFoundResult() ) {
+    for (const auto &process_filter : Filter_Process_List) {
+        if (process_filter->GetFlag() && !process_filter->GetFoundResult()) {
             return false; // user want this process but not found, abort.
         }
     }
@@ -140,11 +136,11 @@ void FilterManager::Filter_Event_Initialize() {
     Filter_Particle_Result = true;
     Filter_Process_Result = true;
     // set Found_Result of particle to false
-    for (const auto& process_particle : Filter_Particle_List) {
+    for (const auto &process_particle : Filter_Particle_List) {
         process_particle->SetFoundResult(false);
     }
     // set Found_Result of process to false
-    for (const auto& process_filter : Filter_Process_List) {
+    for (const auto &process_filter : Filter_Process_List) {
         process_filter->SetFoundResult(false);
     }
 }
@@ -152,10 +148,10 @@ void FilterManager::Filter_Event_Initialize() {
 G4bool FilterManager::InsideRoI(const G4Track *aTrack) {
     const G4double trPos = aTrack->GetPosition()[2];
     if (exist_region_of_interest) {
-        for (const auto& roi : region_of_interest) {
+        for (const auto &roi : region_of_interest) {
             const G4double minDist = std::get<0>(roi);
             const G4double maxDist = std::get<1>(roi);
-            if(minDist < trPos && trPos < maxDist) {
+            if (minDist < trPos && trPos < maxDist) {
                 return true;
             }
         }

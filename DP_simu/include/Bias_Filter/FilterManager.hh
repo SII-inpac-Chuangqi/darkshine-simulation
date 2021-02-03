@@ -43,7 +43,7 @@ public:
 
     [[nodiscard]] G4bool Filter_Process_Found_Result(); /// check whether found must-have process.
 
-    G4bool InsideRoI(const G4Track* aTrack);
+    G4bool InsideRoI(const G4Track *aTrack);
 
     /// Setter
 
