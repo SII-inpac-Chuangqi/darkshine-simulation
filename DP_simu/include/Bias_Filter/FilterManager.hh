@@ -49,6 +49,8 @@ public:
 
     void SetifCheckIncludeResult(G4bool in) { if_check_include_result = in; };
 
+    void SetHardbremFound(G4bool hardbremFound) { hardbrem_found = hardbremFound; };
+
     /// Getter
     [[nodiscard]] G4bool GetifFilter_Particle() const { return ifFilter_Particle; };
 
@@ -58,7 +60,12 @@ public:
 
     [[nodiscard]] G4int GetCheckIncludeStage() const { return check_include_stage; };
 
+    [[nodiscard]] G4bool GetHardbremFound() const { return hardbrem_found; };
+
 private:
+    // for hardbrem filter
+    G4bool hardbrem_found = false;
+
     G4bool ifFilter_Particle = false;
     G4bool ifFilter_Process = false;
     std::vector<std::shared_ptr<FilterParticle>> Filter_Particle_List{};

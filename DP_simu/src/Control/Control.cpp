@@ -149,6 +149,8 @@ Control::Control() {
     /* Filters */
     //----------------------------------------
     if_filter = false;
+    // to filter hardbrem events
+    if_HardBrem = false;
     // Example of particle filter
     // select photon with energy < 4 GeV within range from -1 m to 0.2 m
     particle_filters_parameters.emplace_back(22, 6 * GeV, 8 * GeV, -1 * m, 0.2 * m, 1, 1, 1);
@@ -490,9 +492,9 @@ bool Control::ReadYAML(const G4String &file_in) {
         /* Filters */
         //----------------------------------------
         if_filter = Node["Filters"]["if_filter"].as<bool>();
+        if_HardBrem = Node["Filters"]["if_HardBrem"].as<bool>();
         particle_filters_parameters.clear();
-        auto pfn = Node["Filters"]["particle_filters_parameters"];
-        for (auto i : pfn) {
+        for (auto i : Node["Filters"]["particle_filters_parameters"]) {
             particle_filters_parameters.emplace_back(
                     i[0].as<int>(),
                     i[1].as<double>() * G4UnitDefinition::GetValueOf(i[2].as<std::string>()),
@@ -504,8 +506,7 @@ bool Control::ReadYAML(const G4String &file_in) {
                     i[11].as<bool>());
         }
         process_filters_parameters.clear();
-        pfn = Node["Filters"]["process_filters_parameters"];
-        for (auto i : pfn) {
+        for (auto i : Node["Filters"]["process_filters_parameters"]) {
             process_filters_parameters.emplace_back(
                     i[0].as<std::string>(),
                     i[1].as<double>() * G4UnitDefinition::GetValueOf(i[2].as<std::string>()),

@@ -57,28 +57,47 @@ SteppingAction::~SteppingAction() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void SteppingAction::UserSteppingAction(const G4Step *aStep) {
-    if (dControl->if_filter) {
-        if ( dControl->fStage < dFilterManager->GetCheckIncludeStage() )
-        { // check excluding filters
-            if ( ( dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process(aStep) ) // Process filters
-               ||( dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle(aStep) ) ) { // Particle filters
+    G4StepPoint *prev = aStep->GetPreStepPoint();
+    G4StepPoint *post = aStep->GetPostStepPoint();
+
+    // For default hardbrem filter
+    // Requirement: gamma from initial electron with energy larger than 4 GeV in tracker region
+    if (aStep->GetTrack()->GetTrackID() == 1 && dControl->if_HardBrem && dControl->if_filter) {
+        // If out of selection region, check event status
+        if (prev->GetTotalEnergy() < 4 * GeV || prev->GetPosition()[2] >= 180 * mm) {
+            if (!dFilterManager->GetHardbremFound()) {
                 G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
                 G4EventManager::GetEventManager()->AbortCurrentEvent();
             }
+        } else if(fabs(prev->GetKineticEnergy() - post->GetKineticEnergy()) >= 4 *GeV) {
+            // Search for all secondaries in current step
+            for (auto sec : *(aStep->GetSecondaryInCurrentStep())) {
+                if (sec->GetParticleDefinition()->GetPDGEncoding() == 22
+                    && sec->GetTotalEnergy() >= 4 * GeV){
+                    dFilterManager->SetHardbremFound(true);
+                }
+            }
         }
-        else if ( dFilterManager->GetifCheckIncludeResult()
-                 && dControl->fStage == dFilterManager->GetCheckIncludeStage() )
-        { // check including filters result
+    }
+
+    if (dControl->if_filter) {
+        if (dControl->fStage < dFilterManager->GetCheckIncludeStage()) { // check excluding filters
+            if ((dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process(aStep)) // Process filters
+                || (dFilterManager->GetifFilter_Particle() &&
+                    !dFilterManager->Filter_Particle(aStep))) { // Particle filters
+                G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
+                G4EventManager::GetEventManager()->AbortCurrentEvent();
+            }
+        } else if (dFilterManager->GetifCheckIncludeResult()
+                   && dControl->fStage == dFilterManager->GetCheckIncludeStage()) { // check including filters result
             dFilterManager->SetifCheckIncludeResult(false);
-            if ( ( dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process_Found_Result() )
-               ||( dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle_Found_Result() ) ) {
+            if ((dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process_Found_Result())
+                || (dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle_Found_Result())) {
                 G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
                 G4EventManager::GetEventManager()->AbortCurrentEvent();
             }
         }
     }
-    G4StepPoint *prev = aStep->GetPreStepPoint();
-    G4StepPoint *post = aStep->GetPostStepPoint();
 
     // Get Detector Region
     if (post && post->GetPhysicalVolume()) {

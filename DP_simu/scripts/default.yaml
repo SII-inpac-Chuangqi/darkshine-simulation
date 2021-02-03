@@ -63,6 +63,8 @@ Biasing:
 Filters:
   # if to apply filters
   if_filter: false
+  # if to apply filter on hard-brem event
+  if_HardBrem: false
   # Parameters description:
   # max Energy -  set to a minus value = Infinity
   # fInclude - true: including filter, only save event when particle/process is in the filter; false: excluding filter, abort particle/process in the filter

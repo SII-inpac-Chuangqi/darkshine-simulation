@@ -143,6 +143,8 @@ void FilterManager::Filter_Event_Initialize() {
     for (const auto &process_filter : Filter_Process_List) {
         process_filter->SetFoundResult(false);
     }
+
+    hardbrem_found = false;
 }
 
 G4bool FilterManager::InsideRoI(const G4Track *aTrack) {
