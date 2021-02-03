@@ -177,7 +177,7 @@ public:
     std::vector<std::tuple<int, double, double, double, double, bool, bool, bool> > particle_filters_parameters;
     std::vector<std::tuple<G4String, double, double, double, double, bool, bool, bool> > process_filters_parameters;
 
-    G4int fStage;
+    G4int fStage{};
     //========================================
     /* Optical */
     //----------------------------------------

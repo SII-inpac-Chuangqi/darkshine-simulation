@@ -13,15 +13,19 @@ Digitizer::Digitizer(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaP
     Description = "Digitizer for Calorimeter(ECAL) with optical process";
 
     // Register Double parameter
-    RegisterDoubleParameter("Calibration_Factor", "Calibration_Factor", &scale_factor, 1.); //this is for post-calibration
-    RegisterDoubleParameter("voltageToADC", "voltageToADC: fullRangeMV/ADCbits", &voltageToADC, 5000./4096); //this is for digitization study
-    RegisterIntParameter("rangeMin", "rangeMin", &rangeMin, -2047); 
-    RegisterIntParameter("rangeMax", "rangeMax", &rangeMax, 2048); 
-    RegisterIntParameter("pedestal", "pedestal", &pedestal, 0); 
+    RegisterDoubleParameter("Calibration_Factor", "Calibration_Factor", &scale_factor,
+                            1.); //this is for post-calibration
+    RegisterDoubleParameter("voltageToADC", "voltageToADC: fullRangeMV/ADCbits", &voltageToADC,
+                            5000. / 4096); //this is for digitization study
+    RegisterIntParameter("rangeMin", "rangeMin", &rangeMin, -2047);
+    RegisterIntParameter("rangeMax", "rangeMax", &rangeMax, 2048);
+    RegisterIntParameter("pedestal", "pedestal", &pedestal, 0);
 
     if (EvtWrt) {
-        EvtWrt->RegisterDoubleVariable("Digitized_Signal", &digitized_total_energy, "Digitized_Signal/D"); //sum up for all ECAL
-        EvtWrt->RegisterDoubleVariable("Digitized_Signal_digitized", &digitized_total_energy_digitized, "Digitized_Signal_digitized/D");
+        EvtWrt->RegisterDoubleVariable("Digitized_Signal", &digitized_total_energy,
+                                       "Digitized_Signal/D"); //sum up for all ECAL
+        EvtWrt->RegisterDoubleVariable("Digitized_Signal_digitized", &digitized_total_energy_digitized,
+                                       "Digitized_Signal_digitized/D");
         EvtWrt->RegisterIntVariable("Digitized_Signal_No", &digitized_total_No, "Digitized_Signal_No/I");
         EvtWrt->RegisterIntVariable("Digitized_Signal_NoGen", &digitized_total_NoGen, "Digitized_Signal_NoGen/I");
     }
@@ -49,7 +53,6 @@ void Digitizer::ProcessEvt(AnaEvent *evt) {
     // IMPORTANT: check if the collection exists
     if (OpticalCollection.count(CollectionName) != 0) {
         const auto &optical = OpticalCollection.at(CollectionName);
-        // if exists, then do something
 
         auto DigitizedCollection = evt->RegisterCalorimeterHitCollection(CollectionName);
 
@@ -63,18 +66,18 @@ void Digitizer::ProcessEvt(AnaEvent *evt) {
             const double YieldFactor = itr->GetYieldFactor();
             double SF = scale_factor * YieldFactor;
             //integral as energy
-            double energy = itr->GetIntegral(false) *SF; //half-dgitized
+            double energy = itr->GetIntegral(false) * SF; //half-dgitized
             digitized_total_energy += energy;
             //re-digitization with setting parameter
             itr->SetVoltageToADC(voltageToADC);
             itr->SetRangeMin(rangeMin);
             itr->SetRangeMax(rangeMax);
             itr->SetPedestal(pedestal);
-            double energy_digit = itr->GetIntegral(true) *SF;
+            double energy_digit = itr->GetIntegral(true) * SF;
             digitized_total_energy_digitized += energy_digit;
             //Hit number as truth energy
-            int No = itr->GetOpticalNo(false) *SF;
-            int NoGen = itr->GetOpticalNo(true) *SF; 
+            int No = static_cast<int>(itr->GetOpticalNo(false) * SF);
+            int NoGen = static_cast<int>(itr->GetOpticalNo(true) * SF);
             digitized_total_No += No;
             digitized_total_NoGen += NoGen;
 
@@ -82,7 +85,7 @@ void Digitizer::ProcessEvt(AnaEvent *evt) {
             auto hit = new CalorimeterHit();
             hit->setE(energy);
             hit->setCellId(itr->GetDetID());
-            DigitizedCollection->push_back(hit);         
+            DigitizedCollection->push_back(hit);
         }
     } else {
         // if not exists, print out error
