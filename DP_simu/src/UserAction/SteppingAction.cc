@@ -57,12 +57,24 @@ SteppingAction::~SteppingAction() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void SteppingAction::UserSteppingAction(const G4Step *aStep) {
-
     if (dControl->if_filter) {
-        if (dFilterManager->GetifFilter_Process()) dFilterManager->Filter_Process(aStep);
-        if (dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle(aStep)) {
-            G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
-            G4EventManager::GetEventManager()->AbortCurrentEvent();
+        if ( dControl->fStage < dFilterManager->GetCheckIncludeStage() )
+        { // check excluding filters
+            if ( ( dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process(aStep) ) // Process filters
+               ||( dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle(aStep) ) ) { // Particle filters
+                G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
+                G4EventManager::GetEventManager()->AbortCurrentEvent();
+            }
+        }
+        else if ( dFilterManager->GetifCheckIncludeResult()
+                 && dControl->fStage == dFilterManager->GetCheckIncludeStage() )
+        { // check including filters result
+            dFilterManager->SetifCheckIncludeResult(false);
+            if ( ( dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process_Found_Result() )
+               ||( dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle_Found_Result() ) ) {
+                G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
+                G4EventManager::GetEventManager()->AbortCurrentEvent();
+            }
         }
     }
     G4StepPoint *prev = aStep->GetPreStepPoint();

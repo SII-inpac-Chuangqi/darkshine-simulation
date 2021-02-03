@@ -63,6 +63,7 @@ EventAction::~EventAction()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::BeginOfEventAction(const G4Event *event) {
+    dFilterManager->SetifCheckIncludeResult(true);
     fPrintModulo = frootMng->GetNbEvent() / 100;
 
     G4int eventID = event->GetEventID();
@@ -80,20 +81,15 @@ void EventAction::BeginOfEventAction(const G4Event *event) {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::EndOfEventAction(const G4Event *event) {
-    if (dFilterManager->GetifFilter_Process() &&
-        (!dFilterManager->GetFilter_Process_Result() || !dFilterManager->Filter_Process_Found_Result())) {
-        frootMng->initialize();
-        return;
-    }
-    if (dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle_Found_Result()) {
-        frootMng->initialize();
-        return;
-    }
     if (event->IsAborted()) {
         frootMng->initialize();
         return;
     }
-
+    if ( ( dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process_Found_Result() )
+         ||( dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle_Found_Result() ) ) {
+        frootMng->initialize();
+        return;
+    }
     const G4String &RndmS = G4RunManager::GetRunManager()->GetRandomNumberStatusForThisEvent();
     const char *rn = RndmS.data();
 

@@ -33,6 +33,7 @@
 #include "DP_simu/RunAction.hh"
 #include "DP_simu/EventAction.hh"
 #include "DP_simu/TrackingAction.hh"
+#include "DP_simu/StackingAction.hh"
 #include "DP_simu/SteppingAction.hh"
 #include "DP_simu/RootManager.hh"
 #include "Control/Control.h"
@@ -174,6 +175,7 @@ int main(int argc, char **argv) {
 
     runManager->SetUserAction(new PrimaryGeneratorAction());
     runManager->SetUserAction(new TrackingAction(rootMng));
+    runManager->SetUserAction(new StackingAction);
     auto *stepping_action = new SteppingAction(rootMng);
     runManager->SetUserAction(stepping_action);
 

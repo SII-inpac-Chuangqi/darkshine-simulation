@@ -63,13 +63,18 @@ Biasing:
 Filters:
   # if to apply filters
   if_filter: false
-  # PDG, low Energy [Unit], high Energy [Unit], min Distance [Unit], max Distance [Unit], flag
+  # Parameters description:
+  # max Energy -  set to a minus value = Infinity
+  # fInclude - true: including filter, only save event when particle/process is in the filter; false: excluding filter, abort particle/process in the filter
+  # fStage0 - true: apply filter on primary track; false: not apply on primary track
+  # fStage1 - true: apply filter on secondaries track; false: not apply on secondary track
+  # PDG, min Energy [Unit], max Energy [Unit] , min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
   particle_filters_parameters:
-    # - [ 22, 6, "GeV", 8, "GeV", -1, "m", 0.2, "m", true ]
-    # - [ 11, 2, "GeV", 3, "GeV", -1, "m", 0.2, "m", false ]
-  # Process Name, low Energy [Unit], high Energy [Unit], min Distance [Unit], max Distance [Unit], flag
+    # - [ 22, 6, "GeV", 8, "GeV", -1, "m", 0.2, "m", true, true, true ]
+    # - [ 11, 2, "GeV", 3, "GeV", -1, "m", 0.2, "m", false, true, true ]
+  # Process Name, min Energy [Unit], max Energy [Unit], min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
   process_filters_parameters:
-    # - [ "GammaToMuPair", 2, "GeV", 4, "GeV", -10, "cm", 2, "cm", false ]
+    # - [ "GammaToMuPair", 2, "GeV", 4, "GeV", -10, "cm", 2, "cm", false, true, true]
 
 ###########################################
 # Optical Options
