@@ -196,7 +196,6 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
         nscnt = 2;
 
     G4double ScintillationYield = 0.;
-    fYieldFactor = dControl->Optical_YieldFactor;
 
     // Scintillation depends on particle type, energy deposited
     if (fScintillationByParticleType) {
@@ -210,9 +209,9 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
         ScintillationYield = aMaterialPropertiesTable->GetConstProperty(kSCINTILLATIONYIELD);
 
         // Units: [# scintillation photons / MeV]
-        // ScintillationYield *= fYieldFactor; //yield factor is set by messenger
+        ScintillationYield *= fYieldFactor; //yield factor set by messenger (compatible with G4Scint.)
     }
-    ScintillationYield *= fYieldFactor; //yield factor is set by messenger
+    ScintillationYield *= dControl->Optical_YieldFactor; //yield factor set by control
 
     G4double ResolutionScale = aMaterialPropertiesTable->GetConstProperty(kRESOLUTIONSCALE);
 
@@ -535,8 +534,10 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
                     // fRootMgr->FillOpticalLUT(newHit, cIn); //save the hit one-by-one
                     Hits.emplace_back(newHit); //buffered
                     LUT_saved_counter++;
+                }else{
+                     delete newHit; // delete the hit one-by-one
                 }
-                // delete newHit; // delete the hit one-by-one
+
             }
             //////////////////////////////////////////////////////
         }
@@ -553,10 +554,14 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
 
     //Now save the Hits// now we save it one-by-one, not using this for memory
     if (!Hits.empty())
-        fRootMgr->FillOpticalLUTs(Hits, fNumPhotonsLUTGen, cIn, copyNum);
-    //now clear all hits inside digitizer since, we need all sorted hits for digitizer!!
-    // for(auto *h: Hits)
-    //   delete h;
+        if(! fRootMgr->FillOpticalLUTs(Hits, fNumPhotonsLUTGen, cIn, copyNum))
+        {
+            //now clear all hits inside digitizer since, we need all sorted hits for digitizer!!
+             for(auto *h: Hits)
+               delete h;
+//             Hits.clear(); //local vector will be deleted auto
+        }
+
 
     return G4VRestDiscreteProcess::PostStepDoIt(aTrack, aStep);
 }

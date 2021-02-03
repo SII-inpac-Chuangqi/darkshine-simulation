@@ -36,12 +36,12 @@
 
 #include <iomanip>
 
-G4ThreadLocal G4Allocator<OpticalHit> *OpticalHitAllocator = nullptr;
+//G4ThreadLocal G4Allocator<OpticalHit> *OpticalHitAllocator = nullptr;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-OpticalHit::OpticalHit(G4int detID)
-        : G4VHit(), fDetID(detID) { ; }
+OpticalHit::OpticalHit(G4int detID): fDetID(detID) { ; }
+//        : G4VHit(), fDetID(detID) { ; }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -49,8 +49,8 @@ OpticalHit::~OpticalHit() = default;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-OpticalHit::OpticalHit(const OpticalHit &right)
-        : G4VHit() {
+OpticalHit::OpticalHit(const OpticalHit &right){
+//        : G4VHit() {
     fDetID = right.fDetID;
 //    fCellID=right.fCellID;
     // fPos=right.fPos;

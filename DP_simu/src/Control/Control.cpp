@@ -168,7 +168,7 @@ Control::Control() {
     Optical_PhysicsVerbose = 0;
     //digitizer
     Optical_digitizerDebug = false;
-    Optical_usePositivePolarity = false;// "false" will use negative polarity
+    Optical_usePositivePolarity = true;// "false" will use negative polarity
     Optical_addClockJitter = true;// "false" will not clock jitters
     Optical_injectNoise = true;// "false" will not add digitization noise
     Optical_sampleInterval = 1.25; // [ns]
@@ -193,7 +193,7 @@ Control::Control() {
     Optical_apertureJitterSigma = 0.0001; // [ns]
     // scaling factor to allow for two overlapped 3.1 GeV positrons to be in ADC's
     // range,need calibration
-    Optical_pulseScaleFactor = 1; //dummy, can be setted later in DEvent or here.
+    Optical_pulseScaleFactor = 1./1000; //dummy, can be setted later in DEvent or here. This is for pre-calibration for pulshShape file. output unit is mV
 
     //----------------------------------------
     // LUT
@@ -595,6 +595,10 @@ bool Control::ReadYAML(const G4String &file_in) {
         //----------------------------------------
         // SiPM
         Optical_pulseFilePath = Node["Optical"]["SiPM"]["Optical_pulseFilePath"].as<std::string>();
+        Optical_pulseScaleFactor = Node["Optical"]["SiPM"]["Optical_pulseScaleFactor"].as<double>();
+        // Digitizer
+        //----------------------------------------
+        //now all can be change in analysis level.
         //----------------------------------------
         // LUT
         LUT_FilePath = Node["Optical"]["LUT"]["LUT_FilePath"].as<std::string>();

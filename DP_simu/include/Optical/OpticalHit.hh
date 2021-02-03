@@ -30,12 +30,12 @@
 #ifndef OpticalHit_h
 #define OpticalHit_h 1
 
-#include "G4VHit.hh"
-#include "G4THitsCollection.hh"
-#include "G4Allocator.hh"
+//#include "G4VHit.hh"
+//#include "G4THitsCollection.hh"
+//#include "G4Allocator.hh"
 #include "G4ThreeVector.hh"
-#include "tls.hh"
-#include "G4ios.hh"
+//#include "tls.hh"
+//#include "G4ios.hh"
 
 #include "OpticalLUT.hh"
 // #include "OpticalTrackData.hh"
@@ -49,7 +49,8 @@
 /// - fDepth, fcosTheta, fE, fT, 
 //TODO: consider which variables really need and simplify the storage!!
 //TODO: and determine which use constructor, which use setter??
-class OpticalHit : public G4VHit {
+//class OpticalHit : public G4VHit {
+class OpticalHit{
 public:
     OpticalHit(G4int detID);
 
@@ -59,7 +60,9 @@ public:
     //            G4double fDepth, G4double fCosTheta, G4double fE2, G4double fE1, G4double fT2, G4double fT1,
     //            G4EmProcessSubType fType);
 
-    virtual ~OpticalHit();
+//    virtual ~OpticalHit();
+    ~OpticalHit();
+
 
     // operators
     const OpticalHit &operator=(const OpticalHit &);
@@ -74,9 +77,9 @@ public:
     //     return (fT2 > h.fT2);
     // }
 
-    inline void *operator new(size_t);
-
-    inline void operator delete(void *);
+//    inline void *operator new(size_t);
+//
+//    inline void operator delete(void *);
 
     // methods from base class
     virtual void Draw();
@@ -181,23 +184,23 @@ private:
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-typedef G4THitsCollection<OpticalHit> OpticalHitsCollection;
+//typedef G4THitsCollection<OpticalHit> OpticalHitsCollection;
+//
+//extern G4ThreadLocal G4Allocator<OpticalHit> *OpticalHitAllocator;
 
-extern G4ThreadLocal G4Allocator<OpticalHit> *OpticalHitAllocator;
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//
+//inline void *OpticalHit::operator new(size_t) {
+//    if (!OpticalHitAllocator)
+//        OpticalHitAllocator = new G4Allocator<OpticalHit>;
+//    return (void *) OpticalHitAllocator->MallocSingle();
+//}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-inline void *OpticalHit::operator new(size_t) {
-    if (!OpticalHitAllocator)
-        OpticalHitAllocator = new G4Allocator<OpticalHit>;
-    return (void *) OpticalHitAllocator->MallocSingle();
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-inline void OpticalHit::operator delete(void *hit) {
-    OpticalHitAllocator->FreeSingle((OpticalHit *) hit);
-}
+//inline void OpticalHit::operator delete(void *hit) {
+//    OpticalHitAllocator->FreeSingle((OpticalHit *) hit);
+//}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
