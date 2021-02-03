@@ -82,12 +82,12 @@ DigiForm *OpticalDigitizer::GetDiGi(int cId) {
 }
 
 
-int OpticalDigitizer::AddHits(std::vector<OpticalHit *> hits, int cId) {
+int OpticalDigitizer::AddHits(std::vector<OpticalHit *> *hits, int cId) {
     if (fOpticalHits.find(cId) == fOpticalHits.end()) {
-        fOpticalHits.insert(std::pair<int, std::vector<OpticalHit *>>(cId, hits));
+        fOpticalHits.insert(std::pair<int, std::vector<OpticalHit *>>(cId, *hits));
         //fOpticalHits.at(cId).swap(hits);
     } else {//append
-        fOpticalHits.at(cId).insert(fOpticalHits.at(cId).end(), hits.begin(), hits.end());
+        fOpticalHits.at(cId).insert(fOpticalHits.at(cId).end(), hits->begin(), hits->end());
         //hits.clear();
         //hits.shrink_to_fit();
     }
@@ -97,7 +97,7 @@ int OpticalDigitizer::AddHits(std::vector<OpticalHit *> hits, int cId) {
 int OpticalDigitizer::DigitizeAll() {
     int valid = 0;
     unsigned counter = 0;
-    for (auto *d:fDiGis) {
+    for (auto d : fDiGis) {
         if (d && d->GetDetID() >= 0) {
             valid++;
             Digitize(d, static_cast<int>(counter));

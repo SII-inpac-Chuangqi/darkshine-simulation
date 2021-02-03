@@ -85,7 +85,7 @@ public:
 
     // bool FillOptical(const G4Step *, G4String);
     bool SetOpticalTimeZero(G4double T0, const G4String& cIn);
-    bool FillOpticalLUTs(std::vector<OpticalHit *>& hits,   G4int GenNo, const G4String& cIn, int copyNum);
+    bool FillOpticalLUTs(std::vector<OpticalHit *>* hits,   G4int GenNo, const G4String& cIn, int copyNum);
     bool FinalizeOptical();
 
 

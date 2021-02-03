@@ -60,9 +60,7 @@ public:
     //            G4double fDepth, G4double fCosTheta, G4double fE2, G4double fE1, G4double fT2, G4double fT1,
     //            G4EmProcessSubType fType);
 
-//    virtual ~OpticalHit();
     ~OpticalHit();
-
 
     // operators
     OpticalHit &operator=(const OpticalHit &);
@@ -82,9 +80,7 @@ public:
 //    inline void operator delete(void *);
 
     // methods from base class
-    virtual void Draw();
-
-    virtual void Print();
+    void Print() const;
 
     // Build methods
     bool BuildLUTHit(OpticalLUT &LUT, G4double depth, G4double cosTheta,

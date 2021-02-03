@@ -35,7 +35,7 @@ public:
 
     void applyRiderBehavior(std::vector<double> *waveform);
 
-    void SetWaveformInitial(std::vector<double> *wf) {
+    void SetWaveformInitial(std::vector<double> *wf) const {
         wf->clear();
         wf->insert(wf->end(), nClockTicks_, 0.);
     };
@@ -44,7 +44,7 @@ public:
 
     int DigitizeAll();
 
-    int AddHits(std::vector<OpticalHit *> hits, int cId);
+    int AddHits(std::vector<OpticalHit *>* hits, int cId);
 
     DigiForm *GetDiGi(int cId); //initilize or return
 

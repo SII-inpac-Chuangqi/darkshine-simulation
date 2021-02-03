@@ -69,23 +69,7 @@ OpticalHit::OpticalHit(const OpticalHit &right) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-OpticalHit &OpticalHit::operator=(const OpticalHit &right) {
-    fDetID = right.fDetID;
-//    fCellID=right.fCellID;
-    // fPos=right.fPos;
-    fDetectedFlag = right.fDetectedFlag;
-    fIsLUT = right.fIsLUT;
-    // fDepth=right.fDepth;
-    // fCosTheta=right.fCosTheta;
-    fE2 = right.fE2;
-    // fE1=right.fE1;
-    fT2 = right.fT2;
-    // fT1=right.fT1;
-    // fT0=right.fT0;
-    fType = right.fType;
-    return *this;
-}
-
+OpticalHit &OpticalHit::operator=(const OpticalHit &right) = default;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -129,11 +113,9 @@ bool OpticalHit::BuildLUTHit(OpticalLUT &LUT, G4double depth, G4double cosTheta,
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //for minimum storagr, we removed the Pos storage. Sorry we couldnot draw you!
 
-void OpticalHit::Draw() {}
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void OpticalHit::Print() {
+void OpticalHit::Print() const {
     G4cout
             << " detID: " << fDetID
             << " isLUT:" << fIsLUT

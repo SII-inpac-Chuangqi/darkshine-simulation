@@ -99,8 +99,7 @@ void RootManager::bookCollection(const G4String &cIn) {  //run level initilize b
             auto v = Evt->RegisterOpticalCollection(cIn);
             auto Placeholder = dControl->ECAL_Center_Module_No;
             G4int No = Placeholder.x() * Placeholder.y() * Placeholder.z();
-//            v->insert(v->begin(), No, nullptr);
-//            G4cout << "Initized Unit Number: " << v->size() << G4endl;
+
             fDigitizers.insert(std::pair<G4String, OpticalDigitizer*>(cIn, new OpticalDigitizer(cIn, No)));
             fDigitizers["ECAL"]->Print();
         } else if (cIn == "HCAL");
@@ -172,6 +171,8 @@ void RootManager::FillSim(Int_t eventID, const Double_t *Rnd) {
     tr->Fill();
 
     initialize();
+
+    double a = 1;
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
@@ -208,7 +209,7 @@ bool RootManager::SetOpticalTimeZero(G4double T0, const G4String &cIn) { //globa
     return true;
 }
 
-bool RootManager::FillOpticalLUTs(std::vector<OpticalHit *> &hits, G4int GenNo, const G4String &cIn,
+bool RootManager::FillOpticalLUTs(std::vector<OpticalHit *> *hits, G4int GenNo, const G4String &cIn,
                                   int copyNum) //or we can fill as a whole, like a vector, how about memory???
 {
     //check collection
@@ -228,7 +229,7 @@ bool RootManager::FillOpticalLUTs(std::vector<OpticalHit *> &hits, G4int GenNo, 
         return false;
     }
 
-    for (auto *h:hits)
+    for (auto h:*hits)
         DiGi->AddTimeSeq(h->GetArrivalT());
     DiGi->SetVoltageToADC(dControl->Optical_voltageToADC());
     DiGi->SetYieldFactor(dControl->Optical_YieldFactor);
@@ -236,7 +237,7 @@ bool RootManager::FillOpticalLUTs(std::vector<OpticalHit *> &hits, G4int GenNo, 
     DiGi->SetRangeMax(dControl->Optical_range_max);
     DiGi->SetPedestal(dControl->Optical_pedestalLevel);
     DiGi->AddOpticalGen(GenNo);
-    fDigitizers[cIn]->AddHits(hits, copyNum); //hits are swap to digitizer, then cleared there.
+    fDigitizers[cIn]->AddHits(hits, copyNum);
     return true;
 }
 

@@ -339,7 +339,7 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
 
     // MAIN LOOP
     //  here scnt means scitinlation type:
-    std::vector<OpticalHit *> Hits; //used to buffer hits
+    auto *Hits = new std::vector<OpticalHit *>(); //used to buffer hits
     G4int materialIndex = aMaterial->GetIndex();
     Long64_t LUT_counter = 0;
     Long64_t LUT_saved_counter = 0;
@@ -532,7 +532,7 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
                 // newHit->SetT0(t0);
                 if (newHit->isDetected()) {
                     // fRootMgr->FillOpticalLUT(newHit, cIn); //save the hit one-by-one
-                    Hits.emplace_back(newHit); //buffered
+                    Hits->emplace_back(newHit); //buffered
                     LUT_saved_counter++;
                 }else{
                      delete newHit; // delete the hit one-by-one
@@ -549,19 +549,20 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
         G4cout << "\n LUT hits mean yields(no scaling): " << fNumPhotonsLUTGen << G4endl;
         G4cout << "\n LUT hits generated: " << LUT_counter << G4endl;
         G4cout << "\n LUT hits saved: " << LUT_saved_counter << G4endl;
-        G4cout << "\n LUT hits buffered: " << Hits.size() << G4endl;
+        G4cout << "\n LUT hits buffered: " << Hits->size() << G4endl;
     }
 
     //Now save the Hits// now we save it one-by-one, not using this for memory
-    if (!Hits.empty())
+    if (!Hits->empty())
         if(! fRootMgr->FillOpticalLUTs(Hits, fNumPhotonsLUTGen, cIn, copyNum))
         {
             //now clear all hits inside digitizer since, we need all sorted hits for digitizer!!
-             for(auto *h: Hits)
+             for(auto h: *Hits)
                delete h;
-//             Hits.clear(); //local vector will be deleted auto
         }
-
+    Hits->clear();
+    Hits->shrink_to_fit();
+    delete Hits;
 
     return G4VRestDiscreteProcess::PostStepDoIt(aTrack, aStep);
 }
@@ -749,7 +750,7 @@ G4double ScintillationLUT::sample_time(G4double tau1, G4double tau2) {
     // tau1: rise time and tau2: decay time
 
     // Loop checking, 07-Aug-2015, Vladimir Ivanchenko
-    while (1) {
+    while (true) {
         // two random numbers
         G4double ran1 = G4UniformRand();
         G4double ran2 = G4UniformRand();
