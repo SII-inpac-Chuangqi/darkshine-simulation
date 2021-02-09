@@ -81,6 +81,7 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
         // Find Secondary
         SecFinder->setEvt(evt);
         auto mcSec = SecFinder->FindSecondary(Sec_PDG);
+        if (!mcSec) return;
 
         DStep *prev_s = nullptr;
         for (auto s : *steps) {

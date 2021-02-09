@@ -8,6 +8,7 @@
 
 void SecondaryMaxEFinder::RegisterParameters() {
     // Register Output Variables
+    EvtWrt->RegisterIntVariable("Secondary_Found", &Secondary_Found, "Secondary_Found/I");
     EvtWrt->RegisterIntVariable("Secondary_PDG", &Secondary_PDG, "Secondary_PDG/I");
     EvtWrt->RegisterDoubleVariable("Secondary_MaxE", &Secondary_MaxE, "Secondary_MaxE/D");
     EvtWrt->RegisterDoubleVariable("Secondary_MaxE_P", Secondary_MaxE_P, "Secondary_MaxE_P[3]/D");
@@ -16,6 +17,7 @@ void SecondaryMaxEFinder::RegisterParameters() {
 }
 
 McParticle *SecondaryMaxEFinder::FindSecondary(int PDG, double Emin, McParticle *mcp) {
+    Secondary_Found = 0;
 
     bool PDG_all = (PDG == 0);
     bool Emin_all = (Emin == 0.);
@@ -34,6 +36,7 @@ McParticle *SecondaryMaxEFinder::FindSecondary(int PDG, double Emin, McParticle 
     }
 
     if (MCP_Emax) {
+        Secondary_Found = 1;
         Secondary_PDG = MCP_Emax->getPdg();
         Secondary_MaxE = EMax;
         Secondary_MaxE_P[0] = MCP_Emax->getPx();

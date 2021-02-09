@@ -76,6 +76,7 @@ private:
 
     int Verbose{0};
 
+    int Secondary_Found{0};
     int Secondary_PDG{0};
     double Secondary_MaxE{0.};
     double Secondary_MaxE_P[3];
