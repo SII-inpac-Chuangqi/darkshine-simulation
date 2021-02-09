@@ -88,7 +88,7 @@ CALConstruct::~CALConstruct() {
     delete fCALWrapSD;
     delete fWrapVis;
     delete fAPDVis;
-    delete fOutlineLV;
+    //delete fOutlineLV;
 
     fCaloLVVector.clear();
     fCaloLVVector.shrink_to_fit();
@@ -96,8 +96,6 @@ CALConstruct::~CALConstruct() {
     fWrapLVVector.clear();
     fWrapLVVector.shrink_to_fit();
 
-    for (auto pv : PVVector)
-        delete pv;
     PVVector.clear();
     PVVector.shrink_to_fit();
 }

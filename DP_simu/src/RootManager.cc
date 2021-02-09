@@ -37,8 +37,9 @@ void RootManager::initialize() { //event level init
     Evt->Initialization(nVector);
 
     // Initialize fDigits in Digitizer
-    for (auto dig: fDigitizers)
-        dig.second->ClearDigits();
+    if (dControl->if_optical) {
+        for (auto dig: fDigitizers) dig.second->ClearDigits();
+    }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

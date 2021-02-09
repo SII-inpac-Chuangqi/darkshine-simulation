@@ -74,7 +74,7 @@ void EventAction::BeginOfEventAction(const G4Event *event) {
 
     G4RunManager::GetRunManager()->StoreRandomNumberStatusToG4Event(1);
 
-    dFilterManager->Filter_Event_Initialize();
+    if(dControl->if_filter) dFilterManager->Filter_Event_Initialize();
 
 }
 

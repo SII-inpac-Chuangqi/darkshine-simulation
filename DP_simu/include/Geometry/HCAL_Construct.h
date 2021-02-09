@@ -12,11 +12,13 @@
 
 #include "G4SystemOfUnits.hh"
 
+class CALConstruct;
+
 class HCAL_Construct {
 public:
     HCAL_Construct() = default;
 
-    virtual ~HCAL_Construct() = default;
+    ~HCAL_Construct();
 
     void DefineParameters();
 
@@ -41,7 +43,8 @@ private:
     G4double HCAL_Module_Gap = 0.5 * mm; //MODIFY
     G4double HCAL_Absorber_Thickness = 3 * cm; // MODIFY
 
-    std::vector<G4LogicalVolume *> HCAL_SD_LV[9];
+    std::vector<CALConstruct* > HCAL_vec;
+    std::vector<std::vector<G4LogicalVolume *> > HCAL_SD_LV;
 
     /////////////////////////
     //  APD stuff

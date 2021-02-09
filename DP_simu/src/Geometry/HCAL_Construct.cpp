@@ -45,7 +45,6 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, RootManager *fRootMng, boo
      * Cell Size: 2*100*1 cm^3 or 100*2*1 cm^3
      * Totally 3*3*1 modules
      */
-
     for (int iy = 0; iy < HCAL_Module_No.y(); iy++) {
         for (int ix = 0; ix < HCAL_Module_No.x(); ix++) {
             double wx = -Size_HCALRegion.x() * 0.5 + (Size_HCALRegion.x() / HCAL_Module_No.x() * (0.5 + ix));
@@ -53,6 +52,8 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, RootManager *fRootMng, boo
 
             auto HCAL = new CALConstruct(Name + "_" + std::to_string((int) (ix + iy * HCAL_Module_No.x())), HCAL_LV, 0,
                                          true, true, dControl->if_optical, fCheckOverlaps);
+            HCAL_vec.push_back(HCAL);
+
             HCAL->SetSizeXYZ(HCAL_Size_Dir.x() / 2., HCAL_Size_Dir.y() / 2., HCAL_Size_Dir.z() / 2.);
             HCAL->SetWrapSizeXYZ(HCAL_Wrap_Size.x() / 2., HCAL_Wrap_Size.y() / 2., HCAL_Wrap_Size.z() / 2.);
             HCAL->SetCALMaterial(HCAL_Mat);
@@ -63,7 +64,8 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, RootManager *fRootMng, boo
             HCAL->MatrixPlacementXYwithAbsorber(HCAL_Mod_No_Dir.x(), HCAL_Mod_No_Dir.y(), HCAL_Mod_No_Dir.z(),
                                                 G4ThreeVector(wx, wy, 0), HCAL_Absorber_Thickness, HCAL_Absorber_Mat);
 
-            HCAL_SD_LV[(int) (ix + iy * HCAL_Module_No.x())] = HCAL->GetCaloLVVector();
+            //HCAL_SD_LV[(int) (ix + iy * HCAL_Module_No.x())] = HCAL->GetCaloLVVector();
+            HCAL_SD_LV.push_back(HCAL->GetCaloLVVector());
         }
     }
 
@@ -82,4 +84,20 @@ bool HCAL_Construct::BuildSD(RootManager *fRootMng) {
         }
     }
     return false;
+}
+
+HCAL_Construct::~HCAL_Construct() {
+    for (auto i : HCAL_vec) {
+        delete i;
+    }
+    HCAL_vec.clear();
+    HCAL_vec.shrink_to_fit();
+
+    for (auto i : HCAL_SD_LV) {
+        i.clear();
+        i.shrink_to_fit();
+    }
+    HCAL_SD_LV.clear();
+    HCAL_SD_LV.shrink_to_fit();
+
 }
