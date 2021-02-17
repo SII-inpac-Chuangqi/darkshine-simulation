@@ -149,6 +149,7 @@ void ControlManager::PrintConfig() {
 
     cout << "### Basic Settings" << endl << left;
     cout << setw(15) << "InputFile" << "= dp_out.root" << endl;
+    cout << setw(15) << "InputGeoFile" << "= dp_out.root" << endl;
     cout << setw(15) << "OutputFile" << "= dp_ana.root" << endl;
     cout << setw(15) << "RunNumber" << "= 0" << endl;
     cout << setw(15) << "EventNumber" << "= -1" << endl;
@@ -174,11 +175,14 @@ void ControlManager::PrintConfig() {
     cout << endl << "### Algorithm Configuration" << endl << left;
     for (const auto &p : algo->getAnaProcessors()) {
         cout << endl;
-        for (const auto& para : p.second->getIntParameters())
-            cout<<p.first<<"."<<para.first<<" = "<<*(para.second.second)<<"  # "<<para.second.first<<endl;
-        for (const auto& para : p.second->getDoubleParameters())
-            cout<<p.first<<"."<<para.first<<" = "<<*(para.second.second)<<"  # "<<para.second.first<<endl;
-        for (const auto& para : p.second->getStringParameters())
-            cout<<p.first<<"."<<para.first<<" = "<<*(para.second.second)<<"  # "<<para.second.first<<endl;
+        for (const auto &para : p.second->getIntParameters())
+            cout << p.first << "." << para.first << " = " << *(para.second.second) << "  # " << para.second.first
+                 << endl;
+        for (const auto &para : p.second->getDoubleParameters())
+            cout << p.first << "." << para.first << " = " << *(para.second.second) << "  # " << para.second.first
+                 << endl;
+        for (const auto &para : p.second->getStringParameters())
+            cout << p.first << "." << para.first << " = " << *(para.second.second) << "  # " << para.second.first
+                 << endl;
     }
 }
