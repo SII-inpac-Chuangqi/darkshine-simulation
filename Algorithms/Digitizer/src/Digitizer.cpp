@@ -13,8 +13,10 @@ Digitizer::Digitizer(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaP
     Description = "Digitizer for Calorimeter(ECAL) with optical process";
 
     // Register Double parameter
-    RegisterDoubleParameter("Calibration_Factor", "Calibration_Factor", &scale_factor,
+    RegisterDoubleParameter("Calibration_Factor", "Calibration Factor", &scale_factor,
                             1.); //this is for post-calibration
+    RegisterDoubleParameter("Nominal_Yield", "Nominal Yield of material, like 20000/MeV for LYSO", &nominal_yield,
+                            20000.); 
     RegisterDoubleParameter("voltageToADC", "voltageToADC: fullRangeMV/ADCbits", &voltageToADC,
                             5000. / 4096); //this is for digitization study
     RegisterIntParameter("rangeMin", "rangeMin", &rangeMin, -2047);
@@ -22,10 +24,10 @@ Digitizer::Digitizer(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaP
     RegisterIntParameter("pedestal", "pedestal", &pedestal, 0);
 
     if (EvtWrt) {
-        EvtWrt->RegisterDoubleVariable("Digitized_Signal", &digitized_total_energy,
-                                       "Digitized_Signal/D"); //sum up for all ECAL
-        EvtWrt->RegisterDoubleVariable("Digitized_Signal_digitized", &digitized_total_energy_digitized,
-                                       "Digitized_Signal_digitized/D");
+        // EvtWrt->RegisterDoubleVariable("Digitized_Signal", &digitized_total_energy,
+        //                                "Digitized_Signal/D"); //sum up for all ECAL
+        // EvtWrt->RegisterDoubleVariable("Digitized_Signal_digitized", &digitized_total_energy_digitized,
+        //                                "Digitized_Signal_digitized/D");
         EvtWrt->RegisterIntVariable("Digitized_Signal_No", &digitized_total_No, "Digitized_Signal_No/I");
         EvtWrt->RegisterIntVariable("Digitized_Signal_NoGen", &digitized_total_NoGen, "Digitized_Signal_NoGen/I");
     }
@@ -64,7 +66,7 @@ void Digitizer::ProcessEvt(AnaEvent *evt) {
         for (auto itr : *optical) {
             //get yieldFactor to recover full yield
             const double YieldFactor = itr->GetYieldFactor();
-            double SF = scale_factor / YieldFactor;
+            double SF = scale_factor / (nominal_yield * YieldFactor);
             //integral as energy
             double energy = itr->GetIntegral(false) * SF; //half-dgitized
             digitized_total_energy += energy;
@@ -83,7 +85,9 @@ void Digitizer::ProcessEvt(AnaEvent *evt) {
 
             //covert to calorimeter hit
             auto hit = new CalorimeterHit();
-            hit->setE(energy);
+            // hit->setE(energy); 
+            //disable digitization for debug
+            hit->setE(No);
             hit->setCellId(itr->GetDetID());
             DigitizedCollection->push_back(hit);
         }

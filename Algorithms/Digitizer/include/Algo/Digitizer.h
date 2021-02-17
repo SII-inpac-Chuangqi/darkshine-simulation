@@ -34,6 +34,7 @@ private:
     // IMPORTANT: variables need to be registered by their types:
     // Currently supported: int, double, string
     double scale_factor{0.};
+    double nominal_yield{0.};
     double voltageToADC{0.};
     int rangeMin{0};
     int rangeMax{0};
