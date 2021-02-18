@@ -14,7 +14,7 @@ namespace {
         std::cerr << "  DDis [ -b ] [ -f dp_out.root] [ -g geometry.root] [ -h ]" << std::endl;
         std::cerr << " -- [-b] : only print out detector geometry information" << std::endl;
         std::cerr << " -- [-g] : read the geometry from input root file" << std::endl;
-        std::cerr << " -- [-f] : read the event infomation from input root file" << std::endl;
+        std::cerr << " -- [-f] : read the event information from input root file" << std::endl;
         std::cerr << " -- [-h] : show this help usage" << std::endl;
         std::cerr << std::endl;
     }
