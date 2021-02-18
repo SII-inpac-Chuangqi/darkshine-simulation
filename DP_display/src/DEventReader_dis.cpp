@@ -84,6 +84,8 @@ Int_t EventReader_D::ReadTree(const string &treename, TFile* tfile) {
         std::cout << "[ READ FILE ] : (Verbosity 0)" << std::endl;
         std::cout << left;
         std::cout << std::setw(5) << " " << std::setw(30);
+        std::cout << "==> Input File: " << std::setw(30) << tfile->GetName() << std::endl;
+        std::cout << std::setw(5) << " " << std::setw(30);
         std::cout << "==> Input Tree: " << std::setw(30) << treename << std::endl;
 
         std::cout << std::setw(5) << " " << std::setw(30);

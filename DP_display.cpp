@@ -11,9 +11,10 @@
 namespace {
     void PrintUsage() {
         std::cerr << "Usage: " << std::endl;
-        std::cerr << "  DAna [ -b ] [ -f geometry.root] [ -h ]" << std::endl;
+        std::cerr << "  DAna [ -b ] [ -f dp_out.root] [ -g geometry.root] [ -h ]" << std::endl;
         std::cerr << " -- [-b] : only print out detector geometry information" << std::endl;
-        std::cerr << " -- [-f] : read the geometry from input root file" << std::endl;
+        std::cerr << " -- [-g] : read the geometry from input root file" << std::endl;
+        std::cerr << " -- [-f] : read the event infomation from input root file" << std::endl;
         std::cerr << " -- [-h] : show this help usage" << std::endl;
         std::cerr << std::endl;
     }
@@ -21,17 +22,20 @@ namespace {
 
 int main(int argc, char **argv) {
 
-    if (argc > 3 || argc < 1) {
+    if (argc < 1) {
         PrintUsage();
         return 1;
     }
 
     bool batch_mode = false;
     auto file_in = TString("dp_out.root");
+    auto geo_file_in = TString("dp_out.root");
 
     for (int i = 1; i < argc; ++i) {
         if (std::string(argv[i]) == "-f")
             file_in = TString(argv[i+1]);
+        else if (std::string(argv[i]) == "-g")
+            geo_file_in = TString(argv[i+1]);
         else if (std::string(argv[i]) == "-b")
             batch_mode = true;
         else if (std::string(argv[i]) == "-h")
@@ -40,7 +44,7 @@ int main(int argc, char **argv) {
 
     auto EvtDisplay = new DEventDisplay();
     EvtDisplay->readFile(file_in);
-    EvtDisplay->readGeo();
+    EvtDisplay->readGeo(geo_file_in);
 
     EvtDisplay->inspectMainRegion();
     if (batch_mode)
