@@ -75,6 +75,7 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
         fMC = new McParticle();
         fMC->setPdg(pdg);
         fMC->setId(aTrack->GetTrackID());
+        fMC->setMass(aTrack->GetParticleDefinition()->GetPDGMass());
         fMC->setEnergy(energy);
         fMC->setPx(aTrack->GetMomentum()[0]);
         fMC->setPy(aTrack->GetMomentum()[1]);

@@ -1,3 +1,8 @@
+v2.3.0
+DSimu:
+    1. Add Signal (Dark Photon) Mass in yaml file
+
+
 v2.2.0
 Global:
     1. Add a control class, which handle all variables, easy to manage the whole data.

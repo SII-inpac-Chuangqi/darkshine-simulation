@@ -299,7 +299,7 @@ double DarkMatter::SimulateEmissionWithAngle(double E0, double *angles) {
     //std::cout<<"E0: "<<E0<<", MA: "<<MA<<std::endl;
 
     double Xmin = MA / E0;
-    double Xmax = 1.0 - Xmin; // Misha,  For E0~1 GeV and MA~500 MeV its rather small!
+    double Xmax = 1.0; // - Xmin; // Misha,  For E0~1 GeV and MA~500 MeV its rather small!
     //double ThetaMaxA = 0.0001*sqrt((MA/E0)/(0.001/100.));
     double ThetaMaxA = 0.0001 * sqrt(MA / 0.001) * (100. / E0);
     double UThetaMaxA = 0.5 * ThetaMaxA * ThetaMaxA; // Nota Bene !!! this is maximum of u= 0.5*theta^2 variable!!

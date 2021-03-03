@@ -85,8 +85,8 @@ Event Display is quite straight forward.
     - print out the help message
 - ```DDis -b```
     - batch mode, which only print out the detector information
-- ```DDis [-f geometry.root]```
-    - the command ```-f geometry.root``` is not necessary to run the graphic mode. if no specific root file, **DDis**
+- ```DDis [-g geometry.root] [-f event.root]```
+    - the command is not necessary to run the graphic mode. if no specific root file, **DDis**
       will automatically run "dp_out.root".
 
 </details>

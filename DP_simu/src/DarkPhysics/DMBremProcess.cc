@@ -49,7 +49,7 @@ G4VParticleChange *DMBremProcess::PostStepDoIt(const G4Track &aTrack, const G4St
 //    std::cout << "Dark Process!!" << std::endl;
 
     const G4double incidentE = aTrack.GetKineticEnergy();
-    //const G4double DMMass = theDMParticleAPrimePtr->GetPDGMass();
+    const G4double DMMass = theDMParticlePtr->GetPDGMass();
     const G4ThreeVector &incidentDir = aTrack.GetMomentumDirection();
 
     G4double XAcc, angles[2];
@@ -80,7 +80,7 @@ G4VParticleChange *DMBremProcess::PostStepDoIt(const G4Track &aTrack, const G4St
         projDirection.rotateUz(incidentDir);
     }
 
-    auto *movingDM = new G4DynamicParticle(theDMParticlePtr, DMDirection, DME);
+    auto *movingDM = new G4DynamicParticle(theDMParticlePtr, DMDirection, DME - DMMass );
     aParticleChange.Initialize(aTrack);
 
     // Set DM:

@@ -3,6 +3,7 @@
 //
 
 #include "TGeoManager.h"
+#include "TLorentzVector.h"
 
 #include "Algo/SecondaryMaxEFinder.h"
 
@@ -29,9 +30,13 @@ McParticle *SecondaryMaxEFinder::FindSecondary(int PDG, double Emin, McParticle 
     auto itrp = (mcp == nullptr) ? mcps->at(0) : mcp;
     // Loop Children
     for (auto p : *(itrp->getChildren())) {
-        if ((PDG_all || p->getPdg() == PDG) && (Emin_all || p->getP() >= Emin)) {
-            MCP_Emax = (p->getP() > EMax) ? p : MCP_Emax;
-            EMax = (p->getP() > EMax) ? p->getP() : EMax;
+
+        TLorentzVector pV;
+        pV.SetXYZM(p->getPx(), p->getPy(), p->getPz(), p->getMass());
+
+        if ((PDG_all || p->getPdg() == PDG) && (Emin_all || pV.E() >= Emin)) {
+            MCP_Emax = (pV.E() > EMax) ? p : MCP_Emax;
+            EMax = (pV.E() > EMax) ? pV.E() : EMax;
         }
     }
 

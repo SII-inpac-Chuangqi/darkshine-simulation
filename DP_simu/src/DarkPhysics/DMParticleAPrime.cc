@@ -7,6 +7,8 @@
 #include "G4DalitzDecayChannel.hh"
 #include "G4DecayTable.hh"
 
+#include "Control/Control.h"
+
 DMParticleAPrime *DMParticleAPrime::theInstance = nullptr;
 
 DMParticleAPrime *DMParticleAPrime::Definition() {
@@ -23,7 +25,7 @@ DMParticleAPrime *DMParticleAPrime::Definition() {
         anInstance = new G4ParticleDefinition(
                 /* Name ..................... */ name,
                 // /* Mass ..................... */ 16.7 * MeV,
-                /* Mass ..................... */ 16.7 * MeV,
+                /* Mass ..................... */ dControl->signal_mass,
                 /* Decay width .............. */ 0.,
                 /* Charge ................... */ 0.,
                 /* 2*spin ................... */ 0,

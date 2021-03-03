@@ -53,6 +53,10 @@ public:
     bool signal_production; // production of signal Dark Photon Process
 
     //----------------------------------------
+    // Signal Option
+    double signal_mass;
+
+    //----------------------------------------
     // Root Manager Options
     G4String outfile_Name;
     G4String tree_Name;

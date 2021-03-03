@@ -17,6 +17,8 @@ check_overlaps: false
 # bias for DMProcessDMBrem and record all the MC particles
 # A process filter on target region will be applied
 signal_production: false
+# Dark Photon Mass
+signal_mass: [ 1.0, "GeV" ]
 
 ###########################################
 # Root Manager Settings

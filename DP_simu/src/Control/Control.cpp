@@ -33,6 +33,10 @@ Control::Control() {
     signal_production = false;
 
     //----------------------------------------
+    // Signal Option
+    signal_mass = 17 * MeV;
+
+    //----------------------------------------
     // Root Manager Options
     outfile_Name = "dp_out.root";
     tree_Name = "Dark_Photon";
@@ -465,6 +469,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         save_geometry = Node["save_geometry"].as<bool>();
         check_overlaps = Node["check_overlaps"].as<bool>();
         signal_production = Node["signal_production"].as<bool>();
+        if (Node["signal_mass"].IsDefined()) signal_mass = readV2(Node["signal_mass"]);
         //----------------------------------------
         // Root Manager Options
         outfile_Name = Node["RootManager"]["outfile_Name"].as<std::string>();
