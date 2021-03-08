@@ -1,0 +1,174 @@
+//................................................................................//
+//CPP STL
+#include <iostream>
+#include <map>
+#include <vector>
+#include <algorithm>
+
+//................................................................................//
+//ROOT
+#include "TMath.h"
+#include "TString.h"
+#include "TGeoManager.h"
+
+//................................................................................//
+//Framework
+#include "Object/SimulatedHit.h"
+
+//................................................................................//
+//GenFit
+#include "KalmanFittedStateOnPlane.h"
+#include "KalmanFitterInfo.h"
+
+//................................................................................//
+//Tracking
+#include "Algo/TrkHit.h"
+#include "Algo/KalmanFitting.h"
+
+//................................................................................//
+//Constructor
+KalmanFitting::KalmanFitting(const TrkHitPVec &track, double prePp, double B) : hitCov(2)
+{
+    try
+    {
+        if(track.size() < 3) throw -1;
+        
+        Init(track, prePp, B);
+        Fit (track);
+        Fill(track);
+    }
+    catch(int e)
+    {
+        std::cerr << "Less than 3 hits" << std::endl;
+        pp = 0.3*B*prePp;
+    }
+    catch(genfit::Exception& e)
+    {
+        std::cerr << e.what();
+        std::cerr <<"Exception, next track" << std::endl;
+        pp = 0.3*B*prePp;
+    }
+}
+
+//................................................................................//
+//Processor
+//................................................................................//
+//Initialize the fitter, set up magnetic, material manager, track representation, fitter and track model
+void KalmanFitting::Init(const TrkHitPVec &track, double prePp, double B)
+{
+    int pdg = -GetSign(track)*11;              //pdg id, e- hypothesis
+    pos = TVector3((*track.at(0)).GetX()*0.1,  //pre fitting results --postion,  mm->cm
+                   (*track.at(0)).GetY()*0.1,  //
+                   (*track.at(0)).GetZ()*0.1); //
+    mom = TVector3(0, 0, 0.3*B*prePp*0.001);   //                    --momentum, MeV->GeV
+    hitCov.UnitMatrix();                       //covariance matrix
+    hitCov(0, 0) = 0.0006*0.0006;              //resolution, cm --x 6µm
+    hitCov(1, 1) = 0.006*0.006;                //               --y 60µm
+
+    genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
+    genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., B*10., 0.)); //Magnet, T->kGs
+
+    rep = new genfit::RKTrackRep(pdg);
+    fitter = std::make_unique<genfit::KalmanFitterRefTrack>();
+    fitTrack = new genfit::Track(rep, pos, mom);
+}
+
+//................................................................................//
+//Do the fit
+void KalmanFitting::Fit(const TrkHitPVec &track)
+{
+    //Create vitual detector planes and fill the track
+    int detId = 0;   //virtual detector
+    int planeId = 0; //virtual plane
+    int hitId = 0;
+    TVectorD hitCoords(2);
+    genfit::PlanarMeasurement* measurement = nullptr;
+    for(int i = 0; i < static_cast<int>(track.size()); i++)
+    {
+        hitCoords[0] = 0.1*(*track.at(i)).GetX();
+        hitCoords[1] = 0.1*(*track.at(i)).GetY();
+        //virtual plane
+        measurement = new genfit::PlanarMeasurement(hitCoords,
+                                                    hitCov,
+                                                    detId,
+                                                    ++hitId,
+                                                    nullptr);  //TrackPoint* trackPoint
+        measurement->setPlane(genfit::SharedPlanePtr(new genfit::DetPlane(TVector3(0.,          //origin vector
+                                                                                   0.,
+                                                                                   (*track.at(i)).GetZ()*0.1),
+                                                                          TVector3(1, 0, 0),   //spanning vector u
+                                                                          TVector3(0, 1, 0))), //spanning vector v
+                                                                          ++planeId);
+        fitTrack->insertPoint(new genfit::TrackPoint(measurement, fitTrack));
+    }
+
+    //check
+    fitTrack->checkConsistency();
+    //fit
+    fitter->processTrack(fitTrack);
+ 
+}
+
+//................................................................................//
+//Fill results
+void KalmanFitting::Fill(const TrkHitPVec &track)
+{
+    fitTrack->getFittedState().getPosMomCov(pos, mom, hitCov);
+    pp = sqrt(mom.Pz()*mom.Pz() + mom.Px()*mom.Px())*1000.; //MeV
+    pl = mom.Py()*1000;
+
+    double bChi2;
+    double bNdf;
+    double fNdf;
+    fitter->getChiSquNdf(fitTrack, rep, bChi2, fChi2, bNdf, fNdf);
+
+    genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
+    genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
+    genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
+                                                               0.,
+                                                               (*track.at(0)).GetZ()*0.1),
+                                                      TVector3(1, 0, 0),
+                                                      TVector3(0, 1, 0)));
+    rep->extrapolateToPlane(kfsop, plane);
+    const TVectorD& state = kfsop.getState();
+    //std::cout << "dimension of state: " << state.GetNoElements() << std::endl;
+    //std::cout << "momemtum error: " << 1/abs(state[0])*1000 - sqrt(pp*pp + pl*pl) << std::endl;
+    xSigma = state[3]*10 - (*track.at(0)).GetX();
+    //std::cout << "position error: " << xSigma << std::endl;
+    ySigma = state[4]*10 - (*track.at(0)).GetY();
+}
+
+//................................................................................//
+//Get
+//................................................................................//
+//Calculate sign of charge of input track
+int KalmanFitting::GetSign(const TrkHitPVec &track)
+{
+    double xl  = track.at(track.size() - 1)->GetX();
+    double xlr = track.at(track.size() - 2)->GetX();
+    double xr  = track.at(0)->GetX();
+    double xrl = track.at(1)->GetX();
+
+    double zl  = track.at(track.size() - 1)->GetZ();
+    double zlr = track.at(track.size() - 2)->GetZ();
+    double zr  = track.at(0)->GetZ();
+    double zrl = track.at(1)->GetZ();
+
+    //for(auto hit : track) std::cout << hit->GetZ() << std::endl;
+
+    //std::cout << "xl: " << xl << "	xr: " << xr << std::endl;
+
+    if(zr < zl)
+    {
+        std::swap(xl,  xr );
+        std::swap(xlr, xrl);
+        std::swap(zl,  zr );
+        std::swap(zlr, zrl);
+    }
+
+    int s = 0;
+    s = (xr - xrl)/sqrt((xr - xrl)*(xr - xrl) + (zr - zrl)*(zr - zrl)) >
+        (xlr - xl)/sqrt((xl - xlr)*(xl - xlr) + (zl - zlr)*(zl - zlr)) ? 1 : -1;
+    //std::cout << "s: " << s << std::endl;
+    return s;
+}

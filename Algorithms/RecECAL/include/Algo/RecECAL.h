@@ -45,11 +45,13 @@ private:
     double E_total{0.};
     double E_max{0.};
     double E_frac{0.};
+    double Moments_Lat{0.};
     double E_frac_vec[8] = {0.}; // 5 10 20 50 100 125 150 200
     double Moments_R[4] = {0.};
     double Moments_X[4] = {0.};
     double Moments_Y[4] = {0.};
     double Moments_Z[4] = {0.};
+    //double E_CellXY[400] = {0.}; // Energy deposited in each cell without Z resolution ([20*Xid + Yid])
 
     // Verbosity
     int verbose{0};

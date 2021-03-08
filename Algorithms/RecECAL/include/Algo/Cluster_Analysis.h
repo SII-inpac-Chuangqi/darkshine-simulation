@@ -6,7 +6,6 @@
 #define DSIMU_CLUSTER_ANALYSIS_H
 
 #include "Core/AnaProcessor.h"
-#include "Algo/Trk_LineFit.h"
 
 #include <vector>
 #include <utility>
@@ -60,6 +59,10 @@ public:
     /// \param type: 0-all, 1-x, 2-y, 3-z
     double FindMoment(unsigned n, int type, bool center = false);
 
+    /// Find the lateral moment of the cluster
+    double FindLatMoment();
+
+    bool FineECellXY(double *ECell); //ECell must be the address of the first element in array double[400]
 
 private:
     // data

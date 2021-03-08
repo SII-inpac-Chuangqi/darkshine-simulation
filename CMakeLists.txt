@@ -9,6 +9,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_PLATFORM_INDEPENDENT_CODE ON)
 
 set(OpenGL_GL_PREFERENCE GLVND)
+
+# define path to macros and settings
+LIST( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
@@ -51,6 +54,8 @@ if (USE_GENFIT)
     INCLUDE_DIRECTORIES($ENV{GENFIT_INCLUDE_DIR})
     LINK_LIBRARIES( genfit2 )
     LINK_DIRECTORIES($ENV{GENFIT_LIB_DIR})
+    MESSAGE("-- Genfit2 Include Dir: $ENV{GENFIT_INCLUDE_DIR}")
+    MESSAGE("-- Genfit2 Library Dir: $ENV{GENFIT_LIB_DIR}")
 
     FIND_PACKAGE(Eigen3 REQUIRED)
         INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})

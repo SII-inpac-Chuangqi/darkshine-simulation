@@ -89,24 +89,59 @@ double Cluster_Analysis::FindMoment(unsigned n, int type, bool center) {
     //for (auto &i : pos_vec) i /= 10.;
 
     double sum_layer = std::accumulate(pos_vec.begin(), pos_vec.end(), 0.);
-    // If to calculate centralized moments
-    double mean = (center && n != 1) ? sum_layer / layer_vec.size() : 0.;
     double out_moment = 0.;
-
+    if (!center || n == 1){
+        // Calculate the n-th power sum, weighted by energy
+        out_moment = std::inner_product(pos_vec.begin(), pos_vec.end(), layer_vec.begin(), out_moment,
+                                        std::plus<>(),
+                                        [n](double x, double e) { return e * std::pow(x, n); });
+        // Divided by total Energy to normalize weight
+        out_moment /= E_Tot;
+        return out_moment;
+    }
+    // If to calculate centralized moments
+    double mean = std::inner_product(pos_vec.begin(), pos_vec.end(), layer_vec.begin(), 0.);
+    mean /= E_Tot;
     // define temp variable
     std::vector<double> diff(layer_vec.size());
     // calculate distance to mean and store in the temp variable vector
     std::transform(pos_vec.begin(), pos_vec.end(), diff.begin(), [mean](double x) { return x - mean; });
-    // Calculate the n-th power sum, weighted by energy
     out_moment = std::inner_product(diff.begin(), diff.end(), layer_vec.begin(), out_moment,
                                     std::plus<>(),
                                     [n](double x, double e) { return e * std::pow(x, n); });
-    // Divided by total Energy to normalize weight
-    out_moment /= (E_Tot * layer_vec.size());
-
+    out_moment /= E_Tot;
     return out_moment;
 }
 
+double Cluster_Analysis::FindLatMoment(){
+    double center_x = FindMoment(1, 1, false);
+    double center_y = FindMoment(1, 2, false);
+    //Temperarily let central axis be parallel to z axis
+
+    //too few hits
+    if (ClusterVec->size() <= 2) return 0;
+
+    double lat = 0;
+    for (auto h : *ClusterVec){
+        double diffX = h->getX()-center_x;
+        double diffY = h->getY()-center_y;
+        lat += h->getE() * std::pow((std::pow(diffX, 2) + std::pow(diffY, 2)), 0.5);
+    }
+    lat /= E_Tot;
+    return lat;
+}
+
+bool Cluster_Analysis::FineECellXY(double *ECell){
+    if (ECell == NULL) return false;
+    double temp[400] = {0.};
+    for (auto hit : *ClusterVec){
+        int Xid = hit->getCellIdX()-1;
+        int Yid = hit->getCellIdY()-1;
+        temp[20*Xid + Yid] += hit->getE();
+    }
+    for (int i=0; i<400; ++i) ECell[i] = temp[i];
+    return true;
+}
 
 
 
