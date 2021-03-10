@@ -50,11 +50,11 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
     const auto &HitCollection = evt->getSimulatedHitCollection();
 
     // define the collection name (RawMCParticle) to find.
-    std::string HitCollectionName = "ECAL_Center";
+    std::string HitCollectionName = "ECAL";
 
     // IMPORTANT: check if the collection exists
     if (HitCollection.count(HitCollectionName) != 0) {
-        const auto& hits = HitCollection.at(HitCollectionName);
+        const auto &hits = HitCollection.at(HitCollectionName);
         // Calculate some cluster parameters ( moments...)
         auto cluster_ana = std::shared_ptr<Cluster_Analysis>(new Cluster_Analysis(hits));
         E_total = cluster_ana->FindETotal();
@@ -68,14 +68,14 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
             j++;
         }
         for (unsigned i = 1; i <= 4; ++i) {
-            Moments_R[i-1] = cluster_ana->FindMoment(i, 0, true);
-            Moments_X[i-1] = cluster_ana->FindMoment(i, 1, true);
-            Moments_Y[i-1] = cluster_ana->FindMoment(i, 2, true);
-            Moments_Z[i-1] = cluster_ana->FindMoment(i, 3, true);
+            Moments_R[i - 1] = cluster_ana->FindMoment(i, 0, true);
+            Moments_X[i - 1] = cluster_ana->FindMoment(i, 1, true);
+            Moments_Y[i - 1] = cluster_ana->FindMoment(i, 2, true);
+            Moments_Z[i - 1] = cluster_ana->FindMoment(i, 3, true);
         }
     } else {
         // if not exists, print out error
-        cerr << "MCCollection not found" << endl;
+        cerr << HitCollectionName << " not found" << endl;
     }
 }
 

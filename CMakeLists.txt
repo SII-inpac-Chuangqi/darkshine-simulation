@@ -48,18 +48,17 @@ if (XercesC_FOUND)
 endif ()
 
 # GenFit2
-option(USE_GENFIT "USE_GENFIT" OFF)
+option(USE_GENFIT "USE_GENFIT" ON)
 if (USE_GENFIT)
     MESSAGE("-- USING GenFit2: ${USE_GENFIT}")
     INCLUDE_DIRECTORIES($ENV{GENFIT_INCLUDE_DIR})
-    LINK_LIBRARIES( genfit2 )
     LINK_DIRECTORIES($ENV{GENFIT_LIB_DIR})
     MESSAGE("-- Genfit2 Include Dir: $ENV{GENFIT_INCLUDE_DIR}")
     MESSAGE("-- Genfit2 Library Dir: $ENV{GENFIT_LIB_DIR}")
 
     FIND_PACKAGE(Eigen3 REQUIRED)
-        INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
-        MESSAGE("-- Eigen Dir: ${EIGEN3_INCLUDE_DIR}")
+    INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
+    MESSAGE("-- Eigen Dir: ${EIGEN3_INCLUDE_DIR}")
 else()
     INCLUDE_DIRECTORIES(Utility/)
 endif ()
@@ -220,11 +219,11 @@ target_link_libraries(DSimu ${Geant4_LIBRARIES}
 add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         ${Util_sources} ${Util_headers}
         ${Algo_sources} ${Algo_headers})
-target_link_libraries(DAna DAnaEvent)
+target_link_libraries(DAna DAnaEvent genfit2)
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers} ${Ana_sources} ${Ana_headers}
                                    ${Util_sources} ${Util_headers} ${Algo_sources} ${Algo_headers})
-target_link_libraries(DDis Display)
+target_link_libraries(DDis Display genfit2)
 
 add_executable(DPlot Tools/DPlot.cpp ${Tools_sources} ${Tools_headers})
 target_link_libraries(DPlot yaml-cpp)
@@ -246,4 +245,3 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent_rdict.pcm DESTINATION lib
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent.rootmap DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDisplay_rdict.pcm DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDisplay.rootmap DESTINATION lib)
-

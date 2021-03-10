@@ -12,6 +12,7 @@
 #include "Algo/MCTruthAnalysis.h"
 #include "Algo/RecECAL.h"
 #include "Algo/Digitizer.h"
+#include "Algo/TrackingProcessor.h"
 
 void ControlManager::run() {
 
@@ -53,6 +54,7 @@ void ControlManager::run() {
     algo->RegisterAnaProcessor(shared_ptr<Digitizer>(new Digitizer("Digitizer", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)));
+    algo->RegisterAnaProcessor(shared_ptr<TrackingProcessor>(new TrackingProcessor("Tracking",EvtWrt)));
 
     if (ConfMgr) {
         ConfMgr->ReadAlgoList();
