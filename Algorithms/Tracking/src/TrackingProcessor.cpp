@@ -123,11 +123,13 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
 
         vector<TrkHit> rawTagTrkHits;
         auto simuTagHit = simuHitCollection.at("TagTrk2");
-        for(auto itSimuHit : *simuTagHit) rawTagTrkHits.emplace_back(*itSimuHit);
+        for(auto itSimuHit : *simuTagHit)
+            rawTagTrkHits.emplace_back(*itSimuHit);
 
         vector<TrkHit> rawRecTrkHits;
         auto simuRecHit = simuHitCollection.at("RecTrk2");
-        for(auto itSimuHit : *simuRecHit) rawRecTrkHits.emplace_back(*itSimuHit);
+        for(auto itSimuHit : *simuRecHit)
+            rawRecTrkHits.emplace_back(*itSimuHit);
 
         if(rawTagTrkHits.size() < 20 && rawTagTrkHits.size() > 2 &&
            rawRecTrkHits.size() < 20 && rawRecTrkHits.size() > 2)

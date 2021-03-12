@@ -76,8 +76,8 @@ bool SimulatedHit::operator!=(const SimulatedHit &rhs) const {
 }
 
 // Add the 3 particles with the most energy deposition contributed to this hit
-void SimulatedHit::addParticleContribution(const McParticle& mcp, double Edep) {
-    if (MCPContribution.size() >= 3) {
+void SimulatedHit::addParticleContribution(const McParticle& mcp, double Edep, bool record_all) {
+    if (MCPContribution.size() >= 3 && !record_all) {
         assert(SimHits_Edep.size() == MCPContribution.size());
         for (unsigned i = 0; i < SimHits_Edep.size(); ++i) {
             if (SimHits_Edep.at(i) < Edep || mcp.getId() == 1) {
