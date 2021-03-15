@@ -1,5 +1,5 @@
-#ifndef CLUSTER_H
-#define CLUSTER_H
+#ifndef DIGITIZATION_H
+#define DIGITIZATION_H
 
 //................................................................................//
 //CPP STL
@@ -23,5 +23,7 @@
 //................................................................................//
 //Separate tracker hits into vectors by layers
 void Cluster(const std::vector<TrkHit> &trkHits, TrkHitPVecMap &clusTrkHitMap);
+
+void Digitization(std::vector<TrkHit> &rawHits);
 
 #endif

@@ -1,0 +1,821 @@
+======================================================================
+[ READ FILE ] : (Verbosity 0)
+     ==> Input File:               /lustre/collider/hepmc/DarkSHINE_Production/Baseline_1/noOptical/Inclusive_noOptical_Feb10_out_1.root
+     ==> Input Tree:               Dark_Photon                   
+     ==> Total Event(s):           4000000                       
+     ==> Skip Event(s):            2000000                       
+     ==> Process Event(s):         1000000                       
+[ READ Geometry ] ==> reading geometry from file: /home/zhuyifan/DarkShine/Simulation/darkshine-simulation/binana/geometry.root
+Info in <TGeoManager::CloseGeometry>: Geometry loaded from file...
+Info in <TGeoManager::SetTopVolume>: Top volume is World_LV. Master volume is World_LV
+Info in <TGeoNavigator::BuildCache>: --- Maximum geometry depth set to 100
+Info in <TGeoManager::Voxelize>: Voxelizing...
+Info in <TGeoManager::CountLevels>: max level = 3, max placements = 22140
+Info in <TGeoManager::CloseGeometry>: 86972 nodes/ 48 volume UID's in Geometry imported from GDML
+Info in <TGeoManager::CloseGeometry>: ----------------modeler ready----------------
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.31497 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.43706 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.49158 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.46586 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.27928 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 0.379186 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.4656 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.26431 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.69517 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.17746 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.38132 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.10765 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.43 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.33358 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.89422 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.16871 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.18342 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.33379 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.95813 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.47419 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.96668 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.53553 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.36502 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.93069 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.88939 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.47355 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.36154 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.11822 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.57687 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.45071 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.83798 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.66239 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.44377 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.09411 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.86885 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.5059 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.86066 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.84537 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.99397 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.64924 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.99578 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.86283 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.39596 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.76361 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.47494 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.48738 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.08858 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.83002 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.746 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.22888 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.20796 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.23931 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.76838 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.98683 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.99338 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.82124 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.46278 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.12078 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.70087 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.43963 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.3577 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.80603 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.98071 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.85877 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.9139 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.26899 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.20224 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.94531 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.46635 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.35232 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.30901 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.67237 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.92352 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.95433 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.01176 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.07194 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.34823 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.06945 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.64987 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.71196 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 0.00532398 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.74235 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.70277 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.7721 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.20376 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.21222 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.0412 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.3974 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.63342 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.38283 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.15665 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.73369 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.07647 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.04042 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.63831 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.29237 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.05507 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.7803 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 3.14945 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.63064 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 2.67772 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+genfit::Exception thrown with excString:
+RKTrackRep::RKutta ==> momentum too low: 1.67401 MeV
+in line: 1847 in file: /home/zhuyifan/Software/GenFit/source/trackReps/src/RKTrackRep.cc
+with fatal flag 0
+Exception, next track
+Error in <TDecompChol::Decompose()>: matrix not positive definite
+genfit::Exception thrown with excString:
+KalmanFitterInfo::calcAverageState: ill-conditioned covariance matrix.
+in line: 149 in file: /home/zhuyifan/Software/GenFit/source/core/src/MeasuredStateOnPlane.cc
+with fatal flag 0
+======================================================================
+---------------------------> Run Summary <----------------------------
+     Processor Name                     Execution Time / Event [sec]            
+     MCTruthAnalysis                         0.00000552                              
+     Tracking                                0.00076615                              
+----------------------------------------------------------------------
+     Total Processed Event(s): 1000000       
+     Total Processing Time:    1247.05000000 [sec]
+======================================================================
+
+ ==> Done ...

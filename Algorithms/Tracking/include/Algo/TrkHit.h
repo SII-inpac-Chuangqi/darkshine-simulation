@@ -42,19 +42,27 @@ public:
     void SetY(double newY) {setY(newY);}
     void SetZ(double newZ) {setZ(newZ);}
     void SetE(double newE) {setE(newE);}
+
+    void SetU(double newU) {u = newU;}
+    void SetV(double newV) {v = newV;}
 //................................................................................//
 //Get
 //................................................................................//
-    int GetId() {return getId();}
-    int GetCellIdZ() {return getCellIdZ();}
+    int GetId() const {return getId();}
+    int GetCellIdZ() const {return getCellIdZ();}
 
-    double GetX() {return getX();}
-    double GetY() {return getY();}
-    double GetZ() {return getZ();}
-    std::vector<double> GetXYZ();
-    double GetE() {return getE();}
+    double GetX() const {return getX();}
+    double GetY() const {return getY();}
+    double GetZ() const {return getZ();}
+    double GetE() const {return getE();}
+
+    double GetU() const {return u;}
+    double GetV() const {return v;}
 
 protected:
+
+    double u = -999999.;
+    double v = -999999.;
 
 private:
 };

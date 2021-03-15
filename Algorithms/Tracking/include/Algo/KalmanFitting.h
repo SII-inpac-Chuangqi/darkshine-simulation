@@ -41,18 +41,18 @@ public:
 
 //................................................................................//
 //Processor
-    void Init(const TrkHitPVec &track, double prePp, double B) override;
-    void Fit (const TrkHitPVec &track) override;
-    void Fill(const TrkHitPVec &track) override;
+    virtual void Init(const TrkHitPVec &track, double prePp, double B) override;
+    virtual void Fit (const TrkHitPVec &track) override;
+    virtual void Fill(const TrkHitPVec &track) override;
 
 //................................................................................//
 //Get
-    double GetPp() const override {return pp;}
-    double GetPl() const override {return pl;}
+    virtual double GetPp() const override {return pp;}
+    virtual double GetPl() const override {return pl;}
 
-    double GetChi2() const override {return fChi2;}
-    double GetXSigma() const override {return xSigma;}
-    double GetYSigma() const override {return ySigma;}
+    virtual double GetChi2() const override {return fChi2;}
+    virtual double GetXSigma() const override {return xSigma;}
+    virtual double GetYSigma() const override {return ySigma;}
 
     int GetSign(const TrkHitPVec &track);
 

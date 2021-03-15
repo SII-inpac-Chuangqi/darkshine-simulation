@@ -2,6 +2,7 @@
 //CPP STL
 #include <vector>
 #include <map>
+#include <malloc.h>
 #include <memory>
 #include <string>
 
@@ -23,8 +24,8 @@
 #include "Algo/TypeDef.h"
 #include "Algo/Util.h"
 #include "Algo/TrkHit.h"
-#include "Algo/Cluster.h"
-#include "Algo/Finding.h"
+#include "Algo/Digitization.h"
+#include "Algo/GreedyFinding.h"
 #include "Algo/KalmanFitting.h"
 
 void TrackingProcessor::Begin()
@@ -112,8 +113,11 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
     const auto &simuHitCollection = evt->getSimulatedHitCollection();
 
     auto itFindStep = stepCollection.find("Initial_Particle_Step");
-    auto itFindSimu = simuHitCollection.find("RecTrk2");
-    if(itFindStep != stepCollection.end() && itFindSimu != simuHitCollection.end())
+    auto itFindRec1 = simuHitCollection.find("RecTrk1");
+    auto itFindRec2 = simuHitCollection.find("RecTrk2");
+    if(itFindStep != stepCollection.end() &&
+       itFindRec1 != simuHitCollection.end() &&
+       itFindRec2 != simuHitCollection.end())
     {
 //................................................................................//
 //Read
@@ -122,14 +126,12 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
         const auto &stepIni = stepCollection.at("Initial_Particle_Step");
 
         vector<TrkHit> rawTagTrkHits;
-        auto simuTagHit = simuHitCollection.at("TagTrk2");
-        for(auto itSimuHit : *simuTagHit)
-            rawTagTrkHits.emplace_back(*itSimuHit);
+        auto tag2Hits = simuHitCollection.at("TagTrk2");
+        for(auto hit : *tag2Hits) rawTagTrkHits.emplace_back(*hit);
 
         vector<TrkHit> rawRecTrkHits;
-        auto simuRecHit = simuHitCollection.at("RecTrk2");
-        for(auto itSimuHit : *simuRecHit)
-            rawRecTrkHits.emplace_back(*itSimuHit);
+        auto rec2Hits = simuHitCollection.at("RecTrk2");
+        for(auto hit : *rec2Hits) rawRecTrkHits.emplace_back(*hit);
 
         if(rawTagTrkHits.size() < 20 && rawTagTrkHits.size() > 2 &&
            rawRecTrkHits.size() < 20 && rawRecTrkHits.size() > 2)
@@ -137,7 +139,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
         {
 
 //................................................................................//
-//Cluster, depends on further hardware setting
+//Digitization, depends on further hardware setting
+            Digitization(rawTagTrkHits);
+            Digitization(rawRecTrkHits); 
+
             TrkHitPVecMap clusTagTrkHitMap;
             Cluster(rawTagTrkHits, clusTagTrkHitMap);
             TrkHitPVecMap clusRecTrkHitMap;
@@ -146,12 +151,12 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
 //................................................................................//
 //Finding, by pre-fitting
             vector<TrkHitPVec> VecTagTrack;
-            Finding findTag(clusTagTrkHitMap);
-            VecTagTrack.assign(findTag.Begin(), findTag.End());
+            GreedyFinding findTag(clusTagTrkHitMap);
+            VecTagTrack.assign(findTag.First(), findTag.Last());
 
             vector<TrkHitPVec> VecRecTrack;
-            Finding findRec(clusRecTrkHitMap);
-            VecRecTrack.assign(findRec.Begin(), findRec.End());
+            GreedyFinding findRec(clusRecTrkHitMap);
+            VecRecTrack.assign(findRec.First(), findRec.Last());
 
 //................................................................................//
 //Fitting, by Genfit, Kalman filter/by Riemann fitting

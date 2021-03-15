@@ -15,16 +15,16 @@
 //TRACKING
 #include "Algo/TypeDef.h"
 #include "Algo/TrkHit.h"
-#include "Algo/Finding.h"
+#include "Algo/GreedyFinding.h"
 
 //................................................................................//
 //public:
 //................................................................................//
 //Constructor
 //
-Finding::Finding(TrkHitPVecMap &clusteredTrkHitsInLayer)
+GreedyFinding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer)
 {
-    GreedyFinding(clusteredTrkHitsInLayer);
+    GreedyLooping(clusteredTrkHitsInLayer);
 }
 
 //................................................................................//
@@ -32,33 +32,33 @@ Finding::Finding(TrkHitPVecMap &clusteredTrkHitsInLayer)
 //................................................................................//
 //Calculate deflection
 //................................................................................//
-void Finding::Theta(int cirNo)
+void GreedyFinding::Theta(int cirNo)
 {
-    if(hitChosen.empty()) return;
+    if(hitChosen.size() < 1) return;
     if(r[cirNo] <= 0)        return;
 
     double a1, a2, b1, b2;
-    a1 = (*hitChosen.at(0)).GetX() - centerX[cirNo];
+    a1 = (*hitChosen.at(0)).GetU() - centerX[cirNo];
     a2 = (*hitChosen.at(0)).GetZ() - centerY[cirNo];
-    b1 = (*hitChosen.at(hitChosen.size() - 1)).GetX() - centerX[cirNo];
+    b1 = (*hitChosen.at(hitChosen.size() - 1)).GetU() - centerX[cirNo];
     b2 = (*hitChosen.at(hitChosen.size() - 1)).GetZ() - centerY[cirNo];
 
     double phi;
     phi = acos((a1*b1 + a2*b2)/r[cirNo]/r[cirNo]);
-    theta[cirNo] = atan(phi*r[cirNo]/((*hitChosen.at(0)).GetY() - (*hitChosen.at(hitChosen.size() - 1)).GetY()));
+    theta[cirNo] = atan(phi*r[cirNo]/((*hitChosen.at(0)).GetV() - (*hitChosen.at(hitChosen.size() - 1)).GetV()));
 }
 
 //................................................................................//
 //Fitting method
 //................................................................................//
 //Fitting control
-void Finding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer)
+void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
 {
     TrkHitPVecMap tempClusteredTrkHitsInLayer = clusteredTrkHitsInLayer;
     for(;;)
     {
         auto itMap = tempClusteredTrkHitsInLayer.end();
-        GreedyFinding(tempClusteredTrkHitsInLayer, itMap, circleNo);
+        GreedyLooping(tempClusteredTrkHitsInLayer, itMap, circleNo);
         if(goodness[circleNo] > 0.99 && hitChosen.size() > 3)
         {
             VecHitChosen.push_back(hitChosen);
@@ -74,7 +74,7 @@ void Finding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer)
             it_eraseMap = tempClusteredTrkHitsInLayer.begin();
             while(it_eraseMap != tempClusteredTrkHitsInLayer.end())
             {
-                if(it_eraseMap->second.empty()) tempClusteredTrkHitsInLayer.erase(it_eraseMap++);
+                if(it_eraseMap->second.size() == 0) tempClusteredTrkHitsInLayer.erase(it_eraseMap++);
                 else                                ++it_eraseMap;
             }
 
@@ -95,7 +95,7 @@ void Finding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer)
 
 }
 
-void Finding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer,
+void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                             TrkHitPVecMap::iterator itMap,
                             int cirNo)
 {
@@ -104,7 +104,7 @@ void Finding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer,
     {
         for(int hitsNo = 0; hitsNo < static_cast<int>(itMap->second.size()); hitsNo++)
         {
-            xStore.push_back((*itMap->second.at(hitsNo)).GetX());
+            xStore.push_back((*itMap->second.at(hitsNo)).GetU());
             yStore.push_back((*itMap->second.at(hitsNo)).GetZ());
             hitStore.emplace_back(itMap->second.at(hitsNo));
             hitNoStore.push_back(hitsNo);
@@ -134,10 +134,10 @@ void Finding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer,
     {
         hitNoStore.push_back(hitsNo);
         hitStore.emplace_back(itMap->second.at(hitsNo));
-        xStore.push_back((*itMap->second.at(hitsNo)).GetX());
+        xStore.push_back((*itMap->second.at(hitsNo)).GetU());
 	yStore.push_back((*itMap->second.at(hitsNo)).GetZ());
 
-        GreedyFinding(clusteredTrkHitsInLayer, itMap--, cirNo);
+        GreedyLooping(clusteredTrkHitsInLayer, itMap--, cirNo);
 
         hitNoStore.erase(hitNoStore.end() - 1);
         hitStore.erase(hitStore.end() - 1);
@@ -146,11 +146,12 @@ void Finding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer,
         itMap++; 
     }
 
+    return;
 }
 
 //................................................................................//
 //Kasa method
-void Finding::MethodKasa(std::vector<double> xVec, std::vector<double> yVec)
+void GreedyFinding::MethodKasa(std::vector<double> xVec, std::vector<double> yVec)
 {
     if(xVec.size() != yVec.size())
     {

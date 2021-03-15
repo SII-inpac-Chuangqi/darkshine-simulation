@@ -1,0 +1,36 @@
+############################
+###
+### Example Config File
+###
+############################
+
+### Basic Config
+#InputFile       = /lustre/collider/zhangyulei/dark_photon/Simulation/ROOT/signal_out.root
+#InputFile       = /lustre/collider/zhuyifan/DarkShine/Data/20210104_1e6.root
+InputFile       = /lustre/collider/hepmc/DarkSHINE_Production/Baseline_1/noOptical/Inclusive_noOptical_Feb10_out_1.root
+InputGeoFile    = /home/zhuyifan/DarkShine/Simulation/darkshine-simulation/binana/geometry.root
+OutputFile      = /lustre/collider/zhuyifan/DarkShine/AnaInc/20210210_inc_20210309_dg_2.root
+#OutputFile      = dp_ana.root
+RunNumber       = 0
+EventNumber     = 1000000
+SkipNumber      = 1000000
+
+### Verbosity
+AlgoManager.Verbose         = 0
+EventReader.Verbose         = 0
+Event.Verbose               = 0
+EventStoreAndWriter.Verbose = 0
+
+
+### Algorithm Usage
+Algorithm.List = MCTruthAnalysis Tracking
+
+### Algorithm Config
+###
+### Formate: [AlgoProcessor_Name].[Variable_Name] = [Value]
+###
+Tracking.Verbose = 0
+MCTruthAnalysis.Sec_PDG = 22
+MCTruthAnalysis.Verbose = 0
+
+

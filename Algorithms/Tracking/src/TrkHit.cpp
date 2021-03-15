@@ -18,14 +18,20 @@
 //TrkHit
 //................................................................................//
 //Constructor
-//................................................................................//    
-TrkHit::TrkHit(const TrkHit &newTrkHit) : SimulatedHit(newTrkHit)
+//................................................................................//
+TrkHit::TrkHit(const TrkHit &newTrkHit) : SimulatedHit(newTrkHit),
+                                          u(newTrkHit.u),
+                                          v(newTrkHit.v)
 {}
 
-TrkHit::TrkHit(TrkHit &&newTrkHit) : SimulatedHit(newTrkHit)
+TrkHit::TrkHit(TrkHit &&newTrkHit) : SimulatedHit(newTrkHit),
+                                     u(newTrkHit.u),
+                                     v(newTrkHit.v)
 {}
 
-TrkHit::TrkHit(const SimulatedHit &newSimuHit) : SimulatedHit(newSimuHit)
+TrkHit::TrkHit(const SimulatedHit &newSimuHit) : SimulatedHit(newSimuHit),
+                                                 u(-999999.),
+                                                 v(-999999.)
 {}
 
 void TrkHit::operator =(const TrkHit &oldTrkHit)
@@ -39,14 +45,11 @@ void TrkHit::operator =(const TrkHit &oldTrkHit)
         X = oldTrkHit.X;       Y = oldTrkHit.Y;        Z = oldTrkHit.Z;
         T = oldTrkHit.T;
         E = oldTrkHit.E;
+
+        u = oldTrkHit.u;       v = oldTrkHit.v;
     }
 }
 
 //................................................................................//
 //Get
 //................................................................................//
-std::vector<double> TrkHit::GetXYZ()
-{
-    std::vector<double> temp = {X, Y, Z};
-    return temp;
-}
