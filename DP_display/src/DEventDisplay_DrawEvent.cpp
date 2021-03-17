@@ -72,7 +72,7 @@ bool DEventDisplay::drawEvent(int id, bool resCam) {
     /************************************/
     /*   Reconstruction Visualization   */
     /************************************/
-    RunAnaProcessors();
+    //RunAnaProcessors();
 
     /*********************/
     /*   Finalization   */

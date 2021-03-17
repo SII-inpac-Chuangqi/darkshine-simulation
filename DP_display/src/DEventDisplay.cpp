@@ -169,7 +169,7 @@ bool DEventDisplay::readEntry(int i) {
 
 void DEventDisplay::Open(DEventDisplay *evtDis) {
     makeGUIRaw(evtDis);
-    makeGUIProcessor(evtDis);
+    //makeGUIProcessor(evtDis);
 
     gEve->Redraw3D(kTRUE);
     gApplication->Run(kFALSE);
