@@ -43,6 +43,8 @@ void MCTruthAnalysis::Begin() {
         EvtWrt->RegisterDoubleVariable("Parent_E", &Parent_E, "Parent_E/D");
         EvtWrt->RegisterDoubleVariable("Parent_P", Parent_P, "Parent_P[3]/D");
         EvtWrt->RegisterStrVariable("Parent_Volume", &Parent_PVName);
+
+        EvtWrt->RegisterOutBranch("test_vec",&test_vec);
     }
 
     SecFinder->RegisterParameters();
@@ -117,6 +119,10 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
             cerr << "MCCollection not found" << endl;
 
     }
+
+    test_vec.clear();
+    test_vec.push_back(0.2);
+    test_vec.push_back(Parent_E);
 }
 
 void MCTruthAnalysis::CheckEvt(AnaEvent *evt) {

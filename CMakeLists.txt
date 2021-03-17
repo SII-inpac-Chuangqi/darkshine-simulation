@@ -219,7 +219,8 @@ target_link_libraries(DSimu ${Geant4_LIBRARIES}
 add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         ${Util_sources} ${Util_headers}
         ${Algo_sources} ${Algo_headers})
-target_link_libraries(DAna DAnaEvent genfit2)
+#target_link_libraries(DAna DAnaEvent genfit2)
+target_link_libraries(DAna genfit2)
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers} ${Ana_sources} ${Ana_headers}
                                    ${Util_sources} ${Util_headers} ${Algo_sources} ${Algo_headers})

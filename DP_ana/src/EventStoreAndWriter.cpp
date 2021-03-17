@@ -57,7 +57,7 @@ void EventStoreAndWriter::RegisterStrVariable(const string &VarName, TString *ad
         std::cerr << "[WARNING] ==> String Variable " << VarName << " already exists." << std::endl;
     } else {
         //std::pair<std::string, TString *> tmp(LeafType, address);
-        StringVariables.insert(std::pair<std::string, TString * >(VarName, address));
+        StringVariables.insert(std::pair<std::string, TString *>(VarName, address));
 
         tout->Branch(VarName.c_str(), address);
     }
@@ -77,22 +77,22 @@ void EventStoreAndWriter::PrintTree() {
         cout << "----------------------------------------------------------------------" << endl;
     }
     if (Verbose > 1) {
-        for (const auto& itr : IntVariables){
+        for (const auto &itr : IntVariables) {
             std::cout << std::setw(5) << " " << std::setw(40);
             std::cout << "==> Registered Int Variable: " << std::setw(30) << itr.first << std::endl;
         }
-        for (const auto& itr : DoubleVariables){
+        for (const auto &itr : DoubleVariables) {
             std::cout << std::setw(5) << " " << std::setw(40);
             std::cout << "==> Registered Double Variable: " << std::setw(30) << itr.first << std::endl;
         }
-        for (const auto& itr : StringVariables){
+        for (const auto &itr : StringVariables) {
             std::cout << std::setw(5) << " " << std::setw(40);
             std::cout << "==> Registered String Variable: " << std::setw(30) << itr.first << std::endl;
         }
     }
 }
 
-void EventStoreAndWriter::FillTree(AnaEvent* Evt) {
+void EventStoreAndWriter::FillTree(AnaEvent *Evt) {
 
     tout->Fill();
     Initialization();
@@ -101,13 +101,29 @@ void EventStoreAndWriter::FillTree(AnaEvent* Evt) {
 void EventStoreAndWriter::CloseFile() {
     if (fout) {
         fout->cd();
-        tout->Write("",TObject::kOverwrite);
+        tout->Write("", TObject::kOverwrite);
         fout->Close();
     }
 
     IntVariables.clear();
     DoubleVariables.clear();
     StringVariables.clear();
+
+    RegisteredBranch.clear();
+}
+
+template<class data_type>
+void EventStoreAndWriter::RegisterOutBranch(const string &VarName, data_type *address, const string &LeafType) {
+    if (std::find(RegisteredBranch.begin(), RegisteredBranch.end(), VarName) != RegisteredBranch.end()) {
+        std::cerr << "[WARNING] ==> Variable " << VarName << " already registered." << std::endl;
+    } else {
+        if (LeafType.empty())
+            tout->Branch(VarName.c_str(), address);
+        else
+            tout->Branch(VarName.c_str(), address, LeafType.c_str());
+
+        RegisteredBranch.push_back(VarName);
+    }
 }
 
 

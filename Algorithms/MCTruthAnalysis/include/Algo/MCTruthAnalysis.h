@@ -55,6 +55,7 @@ private:
     double Parent_P[3] = {0};
     TString Parent_PVName{};
 
+    std::vector<double> test_vec;
 };
 
 

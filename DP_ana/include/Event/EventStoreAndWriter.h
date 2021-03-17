@@ -28,7 +28,7 @@ public:
     ~EventStoreAndWriter() {
         //delete tout;
         //delete fout;
-    } ;
+    };
 
     // Get Methods
     const std::string &getOutputFileName() const {
@@ -60,16 +60,23 @@ public:
     void PrintTree();
 
     // Fill Methods
-    void FillTree(AnaEvent* );
+    void FillTree(AnaEvent *);
+
     void Initialization();
+
     void CloseFile();
 
     // Register Methods
-    void RegisterTree(const std::string& treename = "dp");
+    void RegisterTree(const std::string &treename = "dp");
 
-    void RegisterIntVariable(const std::string& VarName, int *address, const std::string& LeafType);
-    void RegisterDoubleVariable(const std::string& VarName, double *address, const std::string& LeafType);
-    void RegisterStrVariable(const std::string& VarName, TString *address);
+    template<class data_type>
+    void RegisterOutBranch(const std::string &VarName, data_type *address, const std::string &LeafType = "");
+
+    void RegisterIntVariable(const std::string &VarName, int *address, const std::string &LeafType);
+
+    void RegisterDoubleVariable(const std::string &VarName, double *address, const std::string &LeafType);
+
+    void RegisterStrVariable(const std::string &VarName, TString *address);
 
 private:
 
@@ -81,13 +88,15 @@ private:
     std::string TreeName{"dp"};
 
     // File and Tree components
-    TFile* fout{nullptr};
-    TTree* tout{nullptr};
+    TFile *fout{nullptr};
+    TTree *tout{nullptr};
 
     // Registered Variables
     std::map<std::string, std::pair<std::string, int *> > IntVariables;
     std::map<std::string, std::pair<std::string, double *> > DoubleVariables;
-    std::map<std::string, TString *>  StringVariables;
+    std::map<std::string, TString *> StringVariables;
+
+    std::vector<std::string> RegisteredBranch;
 };
 
 
