@@ -31,6 +31,9 @@ void EventStoreAndWriter::RegisterTree(const std::string &treename) {
 }
 
 void EventStoreAndWriter::RegisterIntVariable(const std::string &VarName, int *address, const std::string &LeafType) {
+    std::cerr<<"[RegisterIntVariable] ==> This method will be deprecated soon. "<<std::endl;
+    std::cerr<<"                          Please use the new method: RegisterOutVariable() "<<std::endl;
+
     if (IntVariables.count(VarName) != 0) {
         std::cerr << "[WARNING] ==> Int Variable " << VarName << " already exists." << std::endl;
     } else {
@@ -42,6 +45,9 @@ void EventStoreAndWriter::RegisterIntVariable(const std::string &VarName, int *a
 }
 
 void EventStoreAndWriter::RegisterDoubleVariable(const string &VarName, double *address, const string &LeafType) {
+    std::cerr<<"[RegisterDoubleVariable] ==> This method will be deprecated soon. "<<std::endl;
+    std::cerr<<"                             Please use the new method: RegisterOutVariable() "<<std::endl;
+
     if (DoubleVariables.count(VarName) != 0) {
         std::cerr << "[WARNING] ==> double Variable " << VarName << " already exists." << std::endl;
     } else {
@@ -53,6 +59,9 @@ void EventStoreAndWriter::RegisterDoubleVariable(const string &VarName, double *
 }
 
 void EventStoreAndWriter::RegisterStrVariable(const string &VarName, TString *address) {
+    std::cerr<<"[RegisterStrVariable] ==> This method will be deprecated soon. "<<std::endl;
+    std::cerr<<"                          Please use the new method: RegisterOutVariable() "<<std::endl;
+
     if (StringVariables.count(VarName) != 0) {
         std::cerr << "[WARNING] ==> String Variable " << VarName << " already exists." << std::endl;
     } else {
@@ -89,6 +98,10 @@ void EventStoreAndWriter::PrintTree() {
             std::cout << std::setw(5) << " " << std::setw(40);
             std::cout << "==> Registered String Variable: " << std::setw(30) << itr.first << std::endl;
         }
+        for (const auto &itr : RegisteredBranch) {
+            std::cout << std::setw(5) << " " << std::setw(40);
+            std::cout << "==> Registered Out Branch: " << std::setw(30) << itr << std::endl;
+        }
     }
 }
 
@@ -110,20 +123,6 @@ void EventStoreAndWriter::CloseFile() {
     StringVariables.clear();
 
     RegisteredBranch.clear();
-}
-
-template<class data_type>
-void EventStoreAndWriter::RegisterOutBranch(const string &VarName, data_type *address, const string &LeafType) {
-    if (std::find(RegisteredBranch.begin(), RegisteredBranch.end(), VarName) != RegisteredBranch.end()) {
-        std::cerr << "[WARNING] ==> Variable " << VarName << " already registered." << std::endl;
-    } else {
-        if (LeafType.empty())
-            tout->Branch(VarName.c_str(), address);
-        else
-            tout->Branch(VarName.c_str(), address, LeafType.c_str());
-
-        RegisteredBranch.push_back(VarName);
-    }
 }
 
 

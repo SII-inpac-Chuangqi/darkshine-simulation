@@ -71,7 +71,7 @@ private:
     CalorimeterHitMap CalorimeterHitCollectionSP;
     DigiFormVecMap OpticalCollectionSP;
 
-    ClassDefOverride(AnaEvent,1);
+    //ClassDefOverride(AnaEvent,1);
 };
 
 

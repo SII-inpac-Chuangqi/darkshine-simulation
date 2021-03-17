@@ -11,7 +11,7 @@
 // Processor
 #include "Algo/RecECAL.h"
 
-
+/*
 void DEventDisplay::RunAnaProcessors() {
     auto *AnaList = new TEveElementList("AnaProcessor Lists");
     gEve->AddElement(AnaList);
@@ -127,3 +127,5 @@ void DEventDisplay::makeGUIProcessor(DEventDisplay *fh) {
 
     gotoEvent(_eventID);
 }
+
+*/

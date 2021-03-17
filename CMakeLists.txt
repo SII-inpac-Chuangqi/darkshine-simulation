@@ -150,22 +150,22 @@ SET(DEvent_header_shared
         Utility/Object/include/Object/DigiForm.hh
         Utility/Object/include/Object/DEvent.h
         )
-SET(AnaEvent_header_shared
-        DP_ana/include/Event/AnaEvent.h
-        DP_ana/include/Event/EventStoreAndWriter.h
-        DP_ana/include/Core/AnaProcessor.h
-
-        # include All Running Ana Processors
-        Algorithms/RecECAL/include/Algo/ECAL_Cluster.h
-        Algorithms/RecECAL/include/Algo/Cluster_Analysis.h
-        Algorithms/RecECAL/include/Algo/RecECAL.h
-        )
-SET(Display_header_shared
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DEventDisplay.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DEventReader_dis.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DSMagneticField.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/CaloHitsDisplay.h
-        )
+#SET(AnaEvent_header_shared
+#        DP_ana/include/Event/AnaEvent.h
+#        DP_ana/include/Event/EventStoreAndWriter.h
+#        DP_ana/include/Core/AnaProcessor.h
+#
+#        # include All Running Ana Processors
+#        Algorithms/RecECAL/include/Algo/ECAL_Cluster.h
+#        Algorithms/RecECAL/include/Algo/Cluster_Analysis.h
+#        Algorithms/RecECAL/include/Algo/RecECAL.h
+#        )
+#SET(Display_header_shared
+#        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DEventDisplay.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DEventReader_dis.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DSMagneticField.h
+#        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/CaloHitsDisplay.h
+#        )
 
 # Source
 SET(DEvent_source
@@ -176,34 +176,34 @@ SET(DEvent_source
         Utility/Object/src/DigiForm.cpp
         Utility/Object/src/DEvent.cpp
         )
-SET(AnaEvent_source
-        DP_ana/src/AnaEvent.cpp
-        DP_ana/src/EventStoreAndWriter.cpp
-        DP_ana/src/AnaProcessor.cpp
-
-        # include All Running Ana Processors
-        Algorithms/RecECAL/src/ECAL_Cluster.cpp
-        Algorithms/RecECAL/src/Cluster_Analysis.cpp
-        Algorithms/RecECAL/src/RecECAL.cpp
-        )
-SET(Display_source
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_Processor.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_DetInfo.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_DrawEvent.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventReader_dis.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/CaloHitsDisplay.cpp
-        )
+#SET(AnaEvent_source
+#        DP_ana/src/AnaEvent.cpp
+#        DP_ana/src/EventStoreAndWriter.cpp
+#        DP_ana/src/AnaProcessor.cpp
+#
+#        # include All Running Ana Processors
+#        Algorithms/RecECAL/src/ECAL_Cluster.cpp
+#        Algorithms/RecECAL/src/Cluster_Analysis.cpp
+#        Algorithms/RecECAL/src/RecECAL.cpp
+#        )
+#SET(Display_source
+#        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_Processor.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_DetInfo.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_DrawEvent.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventReader_dis.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/CaloHitsDisplay.cpp
+#        )
 root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DEventLinkDef.h)
 add_library(DEvent SHARED ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx)
 
-root_generate_dictionary(G__DAnaEvent ${AnaEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DAnaEventLinkDef.h)
-add_library(DAnaEvent SHARED ${AnaEvent_header_shared} ${AnaEvent_source} G__DAnaEvent.cxx)
-target_link_libraries(DAnaEvent PUBLIC DEvent)
-
-root_generate_dictionary(G__Display ${Display_header_shared} LINKDEF Utility/UTIL/include/Utility/DisplayLinkDef.h)
-add_library(Display SHARED ${Display_header_shared} ${Display_source} G__Display.cxx)
-target_link_libraries(Display PUBLIC DEvent DAnaEvent)
+#root_generate_dictionary(G__DAnaEvent ${AnaEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DAnaEventLinkDef.h)
+#add_library(DAnaEvent SHARED ${AnaEvent_header_shared} ${AnaEvent_source} G__DAnaEvent.cxx)
+#target_link_libraries(DAnaEvent PUBLIC DEvent)
+#
+#root_generate_dictionary(G__Display ${Display_header_shared} LINKDEF Utility/UTIL/include/Utility/DisplayLinkDef.h)
+#add_library(Display SHARED ${Display_header_shared} ${Display_source} G__Display.cxx)
+#target_link_libraries(Display PUBLIC DEvent DAnaEvent)
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
@@ -224,7 +224,8 @@ target_link_libraries(DAna genfit2)
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers} ${Ana_sources} ${Ana_headers}
                                    ${Util_sources} ${Util_headers} ${Algo_sources} ${Algo_headers})
-target_link_libraries(DDis Display genfit2)
+#target_link_libraries(DDis Display genfit2)
+target_link_libraries(DDis genfit2)
 
 add_executable(DPlot Tools/DPlot.cpp ${Tools_sources} ${Tools_headers})
 target_link_libraries(DPlot yaml-cpp)
@@ -237,12 +238,12 @@ install(TARGETS DAna DESTINATION bin)
 install(TARGETS DDis DESTINATION bin)
 install(TARGETS DPlot DESTINATION bin)
 install(TARGETS DEvent LIBRARY DESTINATION lib )
-install(TARGETS DAnaEvent LIBRARY DESTINATION lib )
-install(TARGETS Display LIBRARY DESTINATION lib )
+#install(TARGETS DAnaEvent LIBRARY DESTINATION lib )
+#install(TARGETS Display LIBRARY DESTINATION lib )
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent_rdict.pcm DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent.rootmap DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent_rdict.pcm DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent.rootmap DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDisplay_rdict.pcm DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDisplay.rootmap DESTINATION lib)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent_rdict.pcm DESTINATION lib)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent.rootmap DESTINATION lib)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDisplay_rdict.pcm DESTINATION lib)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDisplay.rootmap DESTINATION lib)

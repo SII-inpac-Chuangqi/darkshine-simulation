@@ -70,7 +70,18 @@ public:
     void RegisterTree(const std::string &treename = "dp");
 
     template<class data_type>
-    void RegisterOutBranch(const std::string &VarName, data_type *address, const std::string &LeafType = "");
+    void RegisterOutVariable(const std::string &VarName, data_type *address, const std::string &LeafType = "") {
+        if (std::find(RegisteredBranch.begin(), RegisteredBranch.end(), VarName) != RegisteredBranch.end()) {
+            std::cerr << "[WARNING] ==> Variable " << VarName << " has already been registered." << std::endl;
+        } else {
+            if (LeafType.empty())
+                tout->Branch(VarName.c_str(), address);
+            else
+                tout->Branch(VarName.c_str(), address, LeafType.c_str());
+
+            RegisteredBranch.push_back(VarName);
+        }
+    }
 
     void RegisterIntVariable(const std::string &VarName, int *address, const std::string &LeafType);
 

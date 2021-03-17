@@ -27,24 +27,21 @@ void MCTruthAnalysis::Begin() {
 
     // Register Outputs
     if (EvtWrt) {
-        //EvtWrt->RegisterIntVariable("Initial_PDG", &Initial_PDG, "Initial_PDG/D");
-        EvtWrt->RegisterDoubleVariable("Initial_Px", &Initial_Px, "Initial_Px/D");
-        EvtWrt->RegisterDoubleVariable("Initial_Py", &Initial_Py, "Initial_Py/D");
-        EvtWrt->RegisterDoubleVariable("Initial_Pz", &Initial_Pz, "Initial_Pz/D");
-        EvtWrt->RegisterDoubleVariable("Initial_X", &Initial_X, "Initial_X/D");
-        EvtWrt->RegisterDoubleVariable("Initial_Y", &Initial_Y, "Initial_Y/D");
-        EvtWrt->RegisterDoubleVariable("Initial_Z", &Initial_Z, "Initial_Z/D");
+        EvtWrt->RegisterOutVariable("Initial_Px", &Initial_Px, "Initial_Px/D");
+        EvtWrt->RegisterOutVariable("Initial_Py", &Initial_Py, "Initial_Py/D");
+        EvtWrt->RegisterOutVariable("Initial_Pz", &Initial_Pz, "Initial_Pz/D");
+        EvtWrt->RegisterOutVariable("Initial_X", &Initial_X, "Initial_X/D");
+        EvtWrt->RegisterOutVariable("Initial_Y", &Initial_Y, "Initial_Y/D");
+        EvtWrt->RegisterOutVariable("Initial_Z", &Initial_Z, "Initial_Z/D");
 
-        EvtWrt->RegisterDoubleVariable("Recoil_E", &Recoil_E, "Recoil_E/D");
-        EvtWrt->RegisterDoubleVariable("Recoil_P", Recoil_P, "Recoil_P[3]/D");
-        EvtWrt->RegisterDoubleVariable("Recoil_pT", &Recoil_pT, "Recoil_pT/D");
-        EvtWrt->RegisterDoubleVariable("Recoil_theta", &Recoil_theta, "Recoil_theta/D");
+        EvtWrt->RegisterOutVariable("Recoil_E", &Recoil_E, "Recoil_E/D");
+        EvtWrt->RegisterOutVariable("Recoil_P", Recoil_P, "Recoil_P[3]/D");
+        EvtWrt->RegisterOutVariable("Recoil_pT", &Recoil_pT, "Recoil_pT/D");
+        EvtWrt->RegisterOutVariable("Recoil_theta", &Recoil_theta, "Recoil_theta/D");
 
-        EvtWrt->RegisterDoubleVariable("Parent_E", &Parent_E, "Parent_E/D");
-        EvtWrt->RegisterDoubleVariable("Parent_P", Parent_P, "Parent_P[3]/D");
-        EvtWrt->RegisterStrVariable("Parent_Volume", &Parent_PVName);
-
-        EvtWrt->RegisterOutBranch("test_vec",&test_vec);
+        EvtWrt->RegisterOutVariable("Parent_E", &Parent_E, "Parent_E/D");
+        EvtWrt->RegisterOutVariable("Parent_P", Parent_P, "Parent_P[3]/D");
+        EvtWrt->RegisterOutVariable("Parent_Volume", &Parent_PVName);
     }
 
     SecFinder->RegisterParameters();
@@ -120,9 +117,6 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
 
     }
 
-    test_vec.clear();
-    test_vec.push_back(0.2);
-    test_vec.push_back(Parent_E);
 }
 
 void MCTruthAnalysis::CheckEvt(AnaEvent *evt) {
