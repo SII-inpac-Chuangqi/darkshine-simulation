@@ -39,6 +39,8 @@ void RecECAL::Begin() {
         EvtWrt->RegisterDoubleVariable("ECAL_Moment_Y", Moments_Y, "ECAL_Moment_Y[4]/D");
         EvtWrt->RegisterDoubleVariable("ECAL_Moment_Z", Moments_Z, "ECAL_Moment_Z[4]/D");
         //EvtWrt->RegisterDoubleVariable("ECAL_E_CellXY", E_CellXY, "ECAL_E_CellXY[400]/D");
+        EvtWrt->RegisterDoubleVariable("HCAL_E_total", &HCAL_total, "HCAL_E_total/D");
+        EvtWrt->RegisterDoubleVariable("HCAL_E_Max_Cell", &HCAL_E_Max_Cell, "HCAL_E_Max_Cell/D");
     }
 }
 
@@ -76,6 +78,20 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
     } else {
         // if not exists, print out error
         cerr << HitCollectionName << " not found" << endl;
+    }
+
+    // temporary HCAL Analyzer
+    for (int i = 0; i < 16; i++) {
+        std::string HCAL_Collection_Name = "HCAL_" + to_string(i);
+
+        if (HitCollection.count(HCAL_Collection_Name) != 0) {
+            const auto &hits = HitCollection.at(HCAL_Collection_Name);
+
+            for (auto hit : *hits) {
+                HCAL_total += hit->getE();
+                HCAL_E_Max_Cell = (HCAL_E_Max_Cell >= hit->getE()) ? HCAL_E_Max_Cell : hit->getE();
+            }
+        }
     }
 }
 

@@ -33,14 +33,20 @@ public:
 
     // Define some functions here if necessary
     void initialization() {
+        HCAL_total = 0.;
+        HCAL_E_Max_Cell = 0.;
         //ECAL_TF->Clean();
     }
 
-    const string &getDescription() const override {
+    [[nodiscard]] const string &getDescription() const override {
         return Description;
     }
 
 private:
+
+    double HCAL_total{0.};
+    double HCAL_E_Max_Cell{0.};
+
     // output variables
     double E_total{0.};
     double E_max{0.};
