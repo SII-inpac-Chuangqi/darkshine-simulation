@@ -29,7 +29,6 @@ public:
     double eps = dControl->eps;
 private:
     G4String Name;
-
     G4Material *ECALRegion_Mat{};
     G4Material *ECAL_Center_Mat{};
     G4Material *ECAL_Wrap_Mat{};
@@ -39,6 +38,7 @@ private:
     G4ThreeVector ECAL_Center_Size = G4ThreeVector(2.5 * cm, 2.5 * cm, 2.0 * cm);
     G4ThreeVector ECAL_Center_Module_No = G4ThreeVector(20, 20, 18);
 
+    G4LogicalVolume* ECal_LV;
     std::vector<G4LogicalVolume *> ECAL_Center_LV;
 
     /////////////////////////

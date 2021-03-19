@@ -44,7 +44,7 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng
     }
 
     auto ECAL_Box = new G4Box("ecal", Size_ECALRegion.x() / 2, Size_ECALRegion.y() / 2, Size_ECALRegion.z() / 2);
-    auto ECal_LV = new G4LogicalVolume(ECAL_Box, ECALRegion_Mat, "ECAL", nullptr, nullptr, nullptr);
+    ECal_LV = new G4LogicalVolume(ECAL_Box, ECALRegion_Mat, "ECAL", nullptr, nullptr, nullptr);
     new G4PVPlacement(nullptr, Pos_ECALRegion, ECal_LV, "ECAL", World_LV, false, 0, fCheckOverlaps);
     ECal_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
@@ -81,6 +81,7 @@ bool ECAL_AllZ::BuildSD(RootManager *fRootMng) {
 bool ECAL_AllZ::BuildBias(BOptrMultiParticleChangeCrossSection *bias) {
     for (auto &itr_LV : ECAL_Center_LV)
         bias->AttachTo(itr_LV);
+    //bias->AttachTo(ECal_LV);
 
-    return false;
+    return true;
 }

@@ -228,7 +228,9 @@ void DetectorConstruction::SetBiasLayer() {
     }
 
     if (dControl->build_ECAL && dControl->if_bias_ECAL) {
-        ECAL_Con2->BuildBias(bias);
+        auto ECAL_LV = G4LogicalVolumeStore::GetInstance()->GetVolume("ECAL_LV");
+        //ECAL_Con2->BuildBias(bias);
+        bias->AttachTo(ECAL_LV);
     }
 
 }

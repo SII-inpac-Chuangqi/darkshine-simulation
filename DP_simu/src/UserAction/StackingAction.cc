@@ -15,8 +15,7 @@ StackingAction::StackingAction()
     dControl->fStage = 0;
 }
 
-StackingAction::~StackingAction() {
-}
+StackingAction::~StackingAction() = default;
 
 G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track *aTrack) {
     G4ClassificationOfNewTrack classification = fWaiting;

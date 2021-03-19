@@ -175,7 +175,8 @@ int main(int argc, char **argv) {
 
     runManager->SetUserAction(new PrimaryGeneratorAction());
     runManager->SetUserAction(new TrackingAction(rootMng));
-    runManager->SetUserAction(new StackingAction);
+    if (dControl->if_filter)
+        runManager->SetUserAction(new StackingAction);
     auto *stepping_action = new SteppingAction(rootMng);
     runManager->SetUserAction(stepping_action);
 
