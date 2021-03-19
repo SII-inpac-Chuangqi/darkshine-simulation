@@ -85,10 +85,12 @@ void EventAction::EndOfEventAction(const G4Event *event) {
         frootMng->initialize();
         return;
     }
-    if ( ( dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process_Found_Result() )
-         ||( dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle_Found_Result() ) ) {
-        frootMng->initialize();
-        return;
+    if (dControl->if_filter) {
+        if ((dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process_Found_Result())
+            || (dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle_Found_Result())) {
+            frootMng->initialize();
+            return;
+        }
     }
     const G4String &RndmS = G4RunManager::GetRunManager()->GetRandomNumberStatusForThisEvent();
     const char *rn = RndmS.data();
