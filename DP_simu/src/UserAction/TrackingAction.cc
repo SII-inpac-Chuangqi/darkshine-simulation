@@ -54,7 +54,9 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
     /* Initialize Filter */
 
     auto pdg = aTrack->GetParticleDefinition()->GetPDGEncoding();
-    auto energy = aTrack->GetKineticEnergy();
+    auto energy = aTrack->GetTotalEnergy();
+    auto kin_energy = aTrack->GetKineticEnergy();
+
 
     G4double pm = sqrt(aTrack->GetMomentum()[0] * aTrack->GetMomentum()[0] +
                        aTrack->GetMomentum()[1] * aTrack->GetMomentum()[1] +
@@ -62,7 +64,7 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
 
     if (dControl->save_all_mcp || (aTrack->GetTrackID() == 1
                                    || pm >= 1. * GeV
-                                   || (energy >= 1. * GeV && energy <= 8. * GeV)
+                                   || (kin_energy >= 1. * GeV && kin_energy <= 10. * GeV)
                                    || abs(pdg) == 13   // Muon
                                    || abs(pdg) == 111  // Pion0
                                    || abs(pdg) == 211  // Pion+-
@@ -71,6 +73,8 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
                                    || abs(pdg) == 2112 // neutron
                                    || abs(pdg) == 14   // muon neutrino
                                    || abs(pdg) == 12   // electron neutrino
+                                   || (abs(pdg) >= 100 &&  abs(pdg) <= 10000) // inclusive hadrons
+
     )) {
         fMC = new McParticle();
         fMC->setPdg(pdg);
@@ -100,7 +104,8 @@ void TrackingAction::PostUserTrackingAction(const G4Track *aTrack) {
     auto MCCols = froot->GetEvt()->getMcParticleCollection_Old().at(dControl->RawMCCollection_Name);
     auto p = McParticle::SearchID(MCCols, aTrack->GetTrackID());
     if (p) {
-        p->setERemain(aTrack->GetKineticEnergy());
+        //p->setERemain(aTrack->GetKineticEnergy());
+        p->setERemain(aTrack->GetTotalEnergy());
         p->setEndPointX(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[0]);
         p->setEndPointY(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[1]);
         p->setEndPointZ(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[2]);
