@@ -2,7 +2,7 @@
 //CPP STL
 #include <vector>
 #include <map>
-#include <stdlib.h>
+#include <cstdlib>
 #include <memory>
 #include <string>
 
