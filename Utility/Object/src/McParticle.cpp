@@ -15,11 +15,12 @@ McParticle::McParticle(const McParticle &rhs) : DParticle(rhs) {
 }
 
 McParticle::~McParticle() {
-    if (Children) {
+    if (Children && !Children->empty()) {
         Children->clear();
         Children->shrink_to_fit();
+
+        delete Children;
     }
-    delete Children;
 }
 
 McParticle &McParticle::operator=(const McParticle &rhs) {

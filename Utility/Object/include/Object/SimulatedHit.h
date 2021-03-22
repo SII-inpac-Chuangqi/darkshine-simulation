@@ -69,7 +69,7 @@ public:
         E += (EEm + EHad);
     };
 
-    void addParticleContribution(const McParticle& mcp, double Edep);
+    void addParticleContribution(const McParticle& mcp, double Edep, bool record_all = false);
 
 private:
     double ELeak_Wrapper{0.};

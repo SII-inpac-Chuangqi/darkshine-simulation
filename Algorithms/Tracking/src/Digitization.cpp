@@ -14,7 +14,7 @@
 //................................................................................//
 //Tracking
 #include "Algo/TrkHit.h"
-#include "Algo/Cluster.h"
+#include "Algo/Digitization.h"
 
 //................................................................................//
 //Control
@@ -24,7 +24,6 @@
 //Realization
 //................................................................................//
 //Separate trkHits into vectors by layers
-//
 void Cluster(const std::vector<TrkHit> &trkHits, TrkHitPVecMap &clusTrkHitMap)
 {
 //No clustering
@@ -40,4 +39,10 @@ void Cluster(const std::vector<TrkHit> &trkHits, TrkHitPVecMap &clusTrkHitMap)
             clusTrkHitMap.insert(std::pair(itTrkHit.GetCellIdZ(), tempNewLayer));
         }
     }
+}
+
+void Digitization(std::vector<TrkHit> &rawHits)
+{
+    for(auto &hit : rawHits) hit.SetU(((int)(hit.GetX()/0.02))*0.02 + 0.01);
+    for(auto &hit : rawHits) hit.SetV(((int)(hit.GetY()/0.2))*0.2 + 0.1);
 }

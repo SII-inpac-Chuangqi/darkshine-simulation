@@ -57,8 +57,8 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, double prePp, double B) : 
 void KalmanFitting::Init(const TrkHitPVec &track, double prePp, double B)
 {
     int pdg = -GetSign(track)*11;              //pdg id, e- hypothesis
-    pos = TVector3((*track.at(0)).GetX()*0.1,  //pre fitting results --postion,  mm->cm
-                   (*track.at(0)).GetY()*0.1,  //
+    pos = TVector3((*track.at(0)).GetU()*0.1,  //pre fitting results --postion,  mm->cm
+                   (*track.at(0)).GetV()*0.1,  //
                    (*track.at(0)).GetZ()*0.1); //
     mom = TVector3(0, 0, 0.3*B*prePp*0.001);   //                    --momentum, MeV->GeV
     hitCov.UnitMatrix();                       //covariance matrix
@@ -85,8 +85,8 @@ void KalmanFitting::Fit(const TrkHitPVec &track)
     genfit::PlanarMeasurement* measurement = nullptr;
     for(int i = 0; i < static_cast<int>(track.size()); i++)
     {
-        hitCoords[0] = 0.1*(*track.at(i)).GetX();
-        hitCoords[1] = 0.1*(*track.at(i)).GetY();
+        hitCoords[0] = 0.1*(*track.at(i)).GetU();
+        hitCoords[1] = 0.1*(*track.at(i)).GetV();
         //virtual plane
         measurement = new genfit::PlanarMeasurement(hitCoords,
                                                     hitCov,
@@ -133,9 +133,9 @@ void KalmanFitting::Fill(const TrkHitPVec &track)
     const TVectorD& state = kfsop.getState();
     //std::cout << "dimension of state: " << state.GetNoElements() << std::endl;
     //std::cout << "momemtum error: " << 1/abs(state[0])*1000 - sqrt(pp*pp + pl*pl) << std::endl;
-    xSigma = state[3]*10 - (*track.at(0)).GetX();
+    xSigma = state[3]*10 - (*track.at(0)).GetU();
     //std::cout << "position error: " << xSigma << std::endl;
-    ySigma = state[4]*10 - (*track.at(0)).GetY();
+    ySigma = state[4]*10 - (*track.at(0)).GetV();
 }
 
 //................................................................................//
@@ -144,10 +144,10 @@ void KalmanFitting::Fill(const TrkHitPVec &track)
 //Calculate sign of charge of input track
 int KalmanFitting::GetSign(const TrkHitPVec &track)
 {
-    double xl  = track.at(track.size() - 1)->GetX();
-    double xlr = track.at(track.size() - 2)->GetX();
-    double xr  = track.at(0)->GetX();
-    double xrl = track.at(1)->GetX();
+    double xl  = track.at(track.size() - 1)->GetU();
+    double xlr = track.at(track.size() - 2)->GetU();
+    double xr  = track.at(0)->GetU();
+    double xrl = track.at(1)->GetU();
 
     double zl  = track.at(track.size() - 1)->GetZ();
     double zlr = track.at(track.size() - 2)->GetZ();

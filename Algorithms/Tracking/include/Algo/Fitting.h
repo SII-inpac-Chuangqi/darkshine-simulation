@@ -27,6 +27,9 @@ public:
     Fitting() {}
     virtual ~Fitting() {}
 
+    Fitting(const Fitting&) = delete;
+    Fitting& operator =(const Fitting&) = delete;
+
 //................................................................................//
 //Processor
     virtual void Init(const TrkHitPVec &track, double prePp, double B) = 0;
