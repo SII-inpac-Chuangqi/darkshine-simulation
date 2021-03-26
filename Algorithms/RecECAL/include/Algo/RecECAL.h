@@ -21,21 +21,25 @@ public:
     // No need to change anything here
     // Must initialized with Name
     explicit RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt);
+
     ~RecECAL() override = default;
 
     void Begin() override;
 
-    void ProcessEvt(AnaEvent* evt) override;
+    void ProcessEvt(AnaEvent *evt) override;
 
-    void CheckEvt(AnaEvent* evt) override;
+    void CheckEvt(AnaEvent *evt) override;
 
     void End() override;
 
     // Define some functions here if necessary
     void initialization() {
+        E_total = 0.;
+        E_max = 0.;
+        E_frac = 0.;
+        Moments_Lat = 0.;
         HCAL_total = 0.;
         HCAL_E_Max_Cell = 0.;
-        //ECAL_TF->Clean();
     }
 
     [[nodiscard]] const string &getDescription() const override {

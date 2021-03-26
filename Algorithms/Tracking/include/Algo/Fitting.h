@@ -7,6 +7,11 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <cmath>
+
+#ifndef RETURN
+#define RETURN INFINITY
+#endif
 
 //................................................................................//
 //ROOT
@@ -32,18 +37,22 @@ public:
 
 //................................................................................//
 //Processor
-    virtual void Init(const TrkHitPVec &track, double prePp, double B) = 0;
-    virtual void Fit (const TrkHitPVec &track)                         = 0;
-    virtual void Fill(const TrkHitPVec &track)                         = 0;
+    virtual void Init(const TrkHitPVec&, double, double) {}
+    virtual void Fit (const TrkHitPVec&)                 {}
+    virtual void Fill(const TrkHitPVec&)                 {}
 
 //................................................................................//
 //Get
-    virtual double GetPp() const = 0;
-    virtual double GetPl() const = 0;
+    virtual double GetPx() const {return RETURN;}
+    virtual double GetPy() const {return RETURN;}
+    virtual double GetPz() const {return RETURN;}
+    virtual double GetPp() const {return RETURN;}
+    virtual double GetPl() const {return RETURN;}
 
-    virtual double GetChi2() const = 0;
-    virtual double GetXSigma() const = 0;
-    virtual double GetYSigma() const = 0;
+    virtual double GetChi2() const {return RETURN;}
+    virtual double GetXSigma() const {return RETURN;}
+    virtual double GetYSigma() const {return RETURN;}
+
 };
 
 #endif

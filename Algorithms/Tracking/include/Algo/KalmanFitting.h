@@ -33,6 +33,7 @@ class KalmanFitting : public Fitting
 public:
 //................................................................................//
 //Constructor
+    KalmanFitting() {}
     KalmanFitting(const TrkHitPVec &track, double prePp, double B);
     ~KalmanFitting() {};
 
@@ -47,6 +48,9 @@ public:
 
 //................................................................................//
 //Get
+    virtual double GetPx() const override {return px;}
+    virtual double GetPy() const override {return py;}
+    virtual double GetPz() const override {return pz;}
     virtual double GetPp() const override {return pp;}
     virtual double GetPl() const override {return pl;}
 
@@ -59,8 +63,11 @@ public:
 private:
 //................................................................................//
 //Results
-    double pp = -999.;
-    double pl = -999.;
+    double px = -999999.;
+    double py = -999999.;
+    double pz = -999999.;
+    double pp = -999999.;
+    double pl = -999999.;
 
     double fChi2 = -999.;
     double xSigma = -999.;

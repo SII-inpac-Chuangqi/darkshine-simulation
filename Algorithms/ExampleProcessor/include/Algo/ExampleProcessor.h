@@ -33,14 +33,14 @@ private:
     // Define some variables if necessary
     // IMPORTANT: variables need to be registered by their types:
     // Currently supported: int, double, string
-    int intVar;
-    int verbose;
-    double doubleVar;
+    int intVar{};
+    int verbose{};
+    double doubleVar{};
     std::string strVar;
 
     // Some output variables which would be recorded in the output root file
-    int Output_Var1;
-    double Output_Var2;
+    int Output_Var1{};
+    double Output_Var2{};
 };
 
 

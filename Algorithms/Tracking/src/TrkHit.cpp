@@ -24,9 +24,9 @@ TrkHit::TrkHit(const TrkHit &newTrkHit) : SimulatedHit(newTrkHit),
                                           v(newTrkHit.v)
 {}
 
-TrkHit::TrkHit(TrkHit &&newTrkHit) : SimulatedHit(newTrkHit),
-                                     u(newTrkHit.u),
-                                     v(newTrkHit.v)
+TrkHit::TrkHit(TrkHit &&newTrkHit) : SimulatedHit(std::move(newTrkHit)),
+                                     u(std::move(newTrkHit.u)),
+                                     v(std::move(newTrkHit.v))
 {}
 
 TrkHit::TrkHit(const SimulatedHit &newSimuHit) : SimulatedHit(newSimuHit),

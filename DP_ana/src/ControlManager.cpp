@@ -5,14 +5,15 @@
 #include "Core/ControlManager.h"
 
 // System
+#include "Event/AnaEvent.h"
 
 // Processors
 #include "Algo/ExampleProcessor.h"
-#include "Event/AnaEvent.h"
 #include "Algo/MCTruthAnalysis.h"
 #include "Algo/RecECAL.h"
 #include "Algo/Digitizer.h"
 #include "Algo/TrackingProcessor.h"
+#include "Algo/CutFlowAnalysis.h"
 
 void ControlManager::run() {
 
@@ -51,10 +52,11 @@ void ControlManager::run() {
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
     /* DEFINE ALGO PROCESSOR HERE */
-    algo->RegisterAnaProcessor(shared_ptr<Digitizer>(new Digitizer("Digitizer", EvtWrt)));
+    //algo->RegisterAnaProcessor(shared_ptr<Digitizer>(new Digitizer("Digitizer", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)));
-    algo->RegisterAnaProcessor(shared_ptr<TrackingProcessor>(new TrackingProcessor("Tracking",EvtWrt)));
+    algo->RegisterAnaProcessor(shared_ptr<TrackingProcessor>(new TrackingProcessor("Tracking", EvtWrt)));
+    algo->RegisterAnaProcessor(shared_ptr<CutFlowAnalysis>(new CutFlowAnalysis("CutFlowAnalysis", EvtWrt)));
 
     if (ConfMgr) {
         ConfMgr->ReadAlgoList();
@@ -166,11 +168,14 @@ void ControlManager::PrintConfig() {
     // Print Algorithm List
     cout << endl << "### Algorithm List" << endl << left;
     cout << "###" << endl;
-    for (const auto &p : algo->getAnaProcessors())
-        cout << "# " << p.first << ": " << p.second->getDescription() << endl;
+    for (const auto &pl : algo->getAnaProcessorListDefault()) {
+        auto p = algo->getAnaProcessors().at(pl);
+        cout << "# " << pl << ": " << p->getDescription() << endl;
+    }
     cout << "###" << endl;
-    cout << "Algorithm.List" << "= ";
-    for (const auto &p : algo->getAnaProcessors()) cout << p.first << " ";
+    cout << "Algorithm.List" << " = ";
+    for (const auto &pl : algo->getAnaProcessorListDefault())
+        cout << pl << " ";
     cout << endl;
 
     // Print Algorithm Parameters

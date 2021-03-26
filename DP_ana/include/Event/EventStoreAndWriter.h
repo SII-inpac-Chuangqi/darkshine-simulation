@@ -43,6 +43,10 @@ public:
         return Verbose;
     }
 
+    [[nodiscard]] TTree *getTout() const {
+        return tout;
+    }
+
     // Set Methods
     void setOutputFileName(const std::string &outputFileName) {
         OutputFileName = outputFileName;
@@ -71,6 +75,8 @@ public:
 
     template<class data_type>
     void RegisterOutVariable(const std::string &VarName, data_type *address, const std::string &LeafType = "") {
+        std::cerr << "[RegisterOutVariable] ==> The variable will not registered in CutFlow. " << std::endl;
+
         if (std::find(RegisteredBranch.begin(), RegisteredBranch.end(), VarName) != RegisteredBranch.end()) {
             std::cerr << "[WARNING] ==> Variable " << VarName << " has already been registered." << std::endl;
         } else {
@@ -88,6 +94,25 @@ public:
     void RegisterDoubleVariable(const std::string &VarName, double *address, const std::string &LeafType);
 
     void RegisterStrVariable(const std::string &VarName, TString *address);
+
+    void SaveObjectToFile(TObject *o, const TString &name);
+
+    // Find method
+    int *FindIntVar(const std::string &name) {
+        if (IntVariables.count(name) != 0) return IntVariables.at(name).second;
+        return nullptr;
+    };
+
+    double *FindDoubleVar(const std::string &name){
+        if (DoubleVariables.count(name) != 0) return DoubleVariables.at(name).second;
+        return nullptr;
+    };
+
+    TString *FindStrVar(const std::string &name){
+        if (StringVariables.count(name) != 0) return StringVariables.at(name);
+        return nullptr;
+    };
+
 
 private:
 

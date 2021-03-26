@@ -114,13 +114,17 @@ void KalmanFitting::Fit(const TrkHitPVec &track)
 void KalmanFitting::Fill(const TrkHitPVec &track)
 {
     fitTrack->getFittedState().getPosMomCov(pos, mom, hitCov);
-    pp = sqrt(mom.Pz()*mom.Pz() + mom.Px()*mom.Px())*1000.; //MeV
-    pl = mom.Py()*1000;
+    px = mom.Px()*1000;                                     //GeV->MeV
+    py = mom.Py()*1000;                                     //
+    pz = mom.Pz()*1000;                                     //
+    pp = sqrt(mom.Pz()*mom.Pz() + mom.Px()*mom.Px())*1000.; //
+    pl = mom.Py()*1000;                                     //
 
     double bChi2;
     double bNdf;
     double fNdf;
     fitter->getChiSquNdf(fitTrack, rep, bChi2, fChi2, bNdf, fNdf);
+    //std::cout << bChi2 << std::endl;
 
     genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
     genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
@@ -133,9 +137,9 @@ void KalmanFitting::Fill(const TrkHitPVec &track)
     const TVectorD& state = kfsop.getState();
     //std::cout << "dimension of state: " << state.GetNoElements() << std::endl;
     //std::cout << "momemtum error: " << 1/abs(state[0])*1000 - sqrt(pp*pp + pl*pl) << std::endl;
-    xSigma = state[3]*10 - (*track.at(0)).GetU();
+    xSigma = state[3]*10 - (*track.at(0)).GetX();
     //std::cout << "position error: " << xSigma << std::endl;
-    ySigma = state[4]*10 - (*track.at(0)).GetV();
+    ySigma = state[4]*10 - (*track.at(0)).GetY();
 }
 
 //................................................................................//

@@ -19,7 +19,7 @@ class TrackingProcessor : public AnaProcessor
 {
 public:
     // Must initialized with Name
-    explicit TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name), std::move(evtwrt)){};
+    explicit TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt);
     ~TrackingProcessor() {};
 
     void Begin() override;
@@ -31,6 +31,13 @@ public:
     void End() override;
 
 private:
+
+//................................................................................//
+//Parameters from config file
+//................................................................................//
+    int clean = 0;
+    double RecTrk_B = 1.5;
+
 //................................................................................//
 //Truth
 //................................................................................//
@@ -53,9 +60,9 @@ private:
 //................................................................................//
 //Reconstructed
 //................................................................................//
-    int TagTrk2_trackNo = -1;
-    int TagTrk2_recNo = -1;
-    int TagTrk2_rechitNo[250] = {-1};
+    int TagTrk2_track_No = -1;
+    int TagTrk2_rechit_No = -1;
+    int TagTrk2_rectrk_hit_No[250] = {-1};
     double TagTrk2_pp[250] = {-999.};
     double TagTrk2_pl[250] = {-999.};
     double TagTrk2_track_r[250] = {-999.};
@@ -74,9 +81,9 @@ private:
     double TagTrk2_goodness_pre[250] = {-999.};
 
 //................................................................................//
-    int RecTrk2_trackNo = -1;
-    int RecTrk2_recNo = -1;
-    int RecTrk2_rechitNo[250] = {-1};
+    int RecTrk2_track_No = -1;
+    int RecTrk2_rechit_No = -1;
+    int RecTrk2_rectrk_hit_No[250] = {-1};
     double RecTrk2_pp[250] = {-999.};
     double RecTrk2_pl[250] = {-999.};
     double RecTrk2_track_r[250] = {-999.};

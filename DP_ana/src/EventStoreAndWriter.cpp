@@ -31,8 +31,8 @@ void EventStoreAndWriter::RegisterTree(const std::string &treename) {
 }
 
 void EventStoreAndWriter::RegisterIntVariable(const std::string &VarName, int *address, const std::string &LeafType) {
-    std::cerr<<"[RegisterIntVariable] ==> This method will be deprecated soon. "<<std::endl;
-    std::cerr<<"                          Please use the new method: RegisterOutVariable() "<<std::endl;
+//    std::cerr<<"[RegisterIntVariable] ==> This method will be deprecated soon. "<<std::endl;
+//    std::cerr<<"                          Please use the new method: RegisterOutVariable() "<<std::endl;
 
     if (IntVariables.count(VarName) != 0) {
         std::cerr << "[WARNING] ==> Int Variable " << VarName << " already exists." << std::endl;
@@ -45,8 +45,8 @@ void EventStoreAndWriter::RegisterIntVariable(const std::string &VarName, int *a
 }
 
 void EventStoreAndWriter::RegisterDoubleVariable(const string &VarName, double *address, const string &LeafType) {
-    std::cerr<<"[RegisterDoubleVariable] ==> This method will be deprecated soon. "<<std::endl;
-    std::cerr<<"                             Please use the new method: RegisterOutVariable() "<<std::endl;
+//    std::cerr<<"[RegisterDoubleVariable] ==> This method will be deprecated soon. "<<std::endl;
+//    std::cerr<<"                             Please use the new method: RegisterOutVariable() "<<std::endl;
 
     if (DoubleVariables.count(VarName) != 0) {
         std::cerr << "[WARNING] ==> double Variable " << VarName << " already exists." << std::endl;
@@ -59,8 +59,8 @@ void EventStoreAndWriter::RegisterDoubleVariable(const string &VarName, double *
 }
 
 void EventStoreAndWriter::RegisterStrVariable(const string &VarName, TString *address) {
-    std::cerr<<"[RegisterStrVariable] ==> This method will be deprecated soon. "<<std::endl;
-    std::cerr<<"                          Please use the new method: RegisterOutVariable() "<<std::endl;
+//    std::cerr<<"[RegisterStrVariable] ==> This method will be deprecated soon. "<<std::endl;
+//    std::cerr<<"                          Please use the new method: RegisterOutVariable() "<<std::endl;
 
     if (StringVariables.count(VarName) != 0) {
         std::cerr << "[WARNING] ==> String Variable " << VarName << " already exists." << std::endl;
@@ -123,6 +123,13 @@ void EventStoreAndWriter::CloseFile() {
     StringVariables.clear();
 
     RegisteredBranch.clear();
+}
+
+void EventStoreAndWriter::SaveObjectToFile(TObject* o, const TString& name) {
+    if (fout) {
+        fout->cd();
+        o->Write(name, TObject::kOverwrite);
+    }
 }
 
 

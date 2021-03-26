@@ -27,8 +27,9 @@
 #include "Algo/Digitization.h"
 #include "Algo/GreedyFinding.h"
 #include "Algo/KalmanFitting.h"
+#include "Algo/DTrack.h"
 
-void TrackingProcessor::Begin()
+TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name), std::move(evtwrt))
 {
     /*
      *
@@ -38,71 +39,73 @@ void TrackingProcessor::Begin()
      *
      */
 
+    RegisterIntParameter   ("clean",    "Clean mode",               &clean,    0);
+    RegisterDoubleParameter("RecTrk_B", "Magnet in recoil tracker", &RecTrk_B, 1.5);
+}
+
+void TrackingProcessor::Begin()
+{
+   
     // Add description for this AnaProcessor
     Description = "Tracking.";
 
-    // Register Int parameter
-    //RegisterIntParameter("intVar", "Int Variable", &intVar, 0);
-
-    // Register Double parameter
-    //RegisterDoubleParameter("DoubleVar", "Double Var", &doubleVar, 0.);
-
-    // Register String Parameter
-    //RegisterStringParameter("StrVar", "String Variable", &strVar, "test");
-    
     // Register dp_ana.root
 //................................................................................//
 //Truth
 //................................................................................//
-    EvtWrt->RegisterIntVariable("TagTrk2_No", &TagTrk2_No, "TagTrk2_No/I");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_ini", &TagTrk2_pp_truth_ini, "TagTrk2_pp_truth_ini/D");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_fin", &TagTrk2_pp_truth_fin, "TagTrk2_pp_truth_fin/D");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_x", TagTrk2_x, "TagTrk2_x[TagTrk2_No]/D");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_y", TagTrk2_y, "TagTrk2_y[TagTrk2_No]/D");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_z", TagTrk2_z, "TagTrk2_z[TagTrk2_No]/D");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_e", TagTrk2_e, "TagTrk2_e[TagTrk2_No]/D");
+    if(!clean)
+    {
+        EvtWrt->RegisterIntVariable("TagTrk2_No", &TagTrk2_No, "TagTrk2_No/I");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_ini", &TagTrk2_pp_truth_ini, "TagTrk2_pp_truth_ini/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_fin", &TagTrk2_pp_truth_fin, "TagTrk2_pp_truth_fin/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_x", TagTrk2_x, "TagTrk2_x[TagTrk2_No]/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_y", TagTrk2_y, "TagTrk2_y[TagTrk2_No]/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_z", TagTrk2_z, "TagTrk2_z[TagTrk2_No]/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_e", TagTrk2_e, "TagTrk2_e[TagTrk2_No]/D");
 
-    EvtWrt->RegisterIntVariable("RecTrk2_No", &RecTrk2_No, "RecTrk2_No/I");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_ini", &RecTrk2_pp_truth_ini, "RecTrk2_pp_truth_ini/D");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_fin", &RecTrk2_pp_truth_fin, "RecTrk2_pp_truth_fin/D");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_x", RecTrk2_x, "RecTrk2_x[RecTrk2_No]/D");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_y", RecTrk2_y, "RecTrk2_y[RecTrk2_No]/D");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_z", RecTrk2_z, "RecTrk2_z[RecTrk2_No]/D");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_e", RecTrk2_e, "RecTrk2_e[RecTrk2_No]/D");
-
+        EvtWrt->RegisterIntVariable("RecTrk2_No", &RecTrk2_No, "RecTrk2_No/I");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_ini", &RecTrk2_pp_truth_ini, "RecTrk2_pp_truth_ini/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_fin", &RecTrk2_pp_truth_fin, "RecTrk2_pp_truth_fin/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_x", RecTrk2_x, "RecTrk2_x[RecTrk2_No]/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_y", RecTrk2_y, "RecTrk2_y[RecTrk2_No]/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_z", RecTrk2_z, "RecTrk2_z[RecTrk2_No]/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_e", RecTrk2_e, "RecTrk2_e[RecTrk2_No]/D");
+    }
 //................................................................................//
 //Reconstructed
 //................................................................................//
-    EvtWrt->RegisterIntVariable("TagTrk2_trackNo",          &TagTrk2_trackNo,       "TagTrk2_trackNo/I");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_pp",            TagTrk2_pp,             "TagTrk2_pp[TagTrk2_trackNo]/D");
+    EvtWrt->RegisterIntVariable("TagTrk2_track_No", &TagTrk2_track_No,  "TagTrk2_track_No/I");
+    EvtWrt->RegisterDoubleVariable("TagTrk2_pp",    TagTrk2_pp,         "TagTrk2_pp[TagTrk2_track_No]/D");
 
-    EvtWrt->RegisterIntVariable("TagTrk2_recNo",      &TagTrk2_recNo,   "TagTrk2_recNo/I");
-    EvtWrt->RegisterIntVariable("TagTrk2_rechitNo",   TagTrk2_rechitNo, "TagTrk2_rechitNo[TagTrk2_trackNo]/I");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_track_x", TagTrk2_track_x,  "TagTrk2_track_x[TagTrk2_recNo]/D");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_track_y", TagTrk2_track_y,  "TagTrk2_track_y[TagTrk2_recNo]/D");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_track_z", TagTrk2_track_z,  "TagTrk2_track_z[TagTrk2_recNo]/D");
+    if(!clean)
+    {
+        EvtWrt->RegisterIntVariable("TagTrk2_rechit_No", &TagTrk2_rechit_No,   "TagTrk2_rechit_No/I");
+        EvtWrt->RegisterIntVariable("TagTrk2_rectrk_hit_No", TagTrk2_rectrk_hit_No, "TagTrk2_rectrk_hit_No[TagTrk2_track_No]/I");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_track_x", TagTrk2_track_x,  "TagTrk2_track_x[TagTrk2_rechit_No]/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_track_y", TagTrk2_track_y,  "TagTrk2_track_y[TagTrk2_rechit_No]/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_track_z", TagTrk2_track_z,  "TagTrk2_track_z[TagTrk2_rechit_No]/D");
 
-    EvtWrt->RegisterDoubleVariable("TagTrk2_track_chi2",    TagTrk2_track_chi2,    "TagTrk2_track_chi2[TagTrk2_trackNo]/D");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_track_x_sigma", TagTrk2_track_x_sigma, "TagTrk2_track_x_sigma[TagTrk2_trackNo]/D");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_track_y_sigma", TagTrk2_track_y_sigma, "TagTrk2_track_y_sigma[TagTrk2_trackNo]/D");
-
-    //EvtWrt->RegisterDoubleVariable("TagTrk2_pp_pre",  TagTrk2_pp_pre,   "TagTrk2_pp_pre[TagTrk2_trackNo]/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_track_chi2",    TagTrk2_track_chi2,    "TagTrk2_track_chi2[TagTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_track_x_sigma", TagTrk2_track_x_sigma, "TagTrk2_track_x_sigma[TagTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_track_y_sigma", TagTrk2_track_y_sigma, "TagTrk2_track_y_sigma[TagTrk2_track_No]/D");
+    }
 
 //................................................................................//
-    EvtWrt->RegisterIntVariable("RecTrk2_trackNo",          &RecTrk2_trackNo,       "RecTrk2_trackNo/I");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_pp",            RecTrk2_pp,             "RecTrk2_pp[RecTrk2_trackNo]/D");
+    EvtWrt->RegisterIntVariable("RecTrk2_track_No", &RecTrk2_track_No,       "RecTrk2_track_No/I");
+    EvtWrt->RegisterDoubleVariable("RecTrk2_pp",    RecTrk2_pp,             "RecTrk2_pp[RecTrk2_track_No]/D");
 
-    EvtWrt->RegisterIntVariable("RecTrk2_recNo",      &RecTrk2_recNo,   "RecTrk2_recNo/I");
-    EvtWrt->RegisterIntVariable("RecTrk2_rechitNo",   RecTrk2_rechitNo, "RecTrk2_rechitNo[RecTrk2_trackNo]/I");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_track_x", RecTrk2_track_x,  "RecTrk2_track_x[RecTrk2_recNo]/D");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_track_y", RecTrk2_track_y,  "RecTrk2_track_y[RecTrk2_recNo]/D");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_track_z", RecTrk2_track_z,  "RecTrk2_track_z[RecTrk2_recNo]/D");
+    if(!clean)
+    {
+        EvtWrt->RegisterIntVariable("RecTrk2_rechit_No", &RecTrk2_rechit_No,   "RecTrk2_rechit_No/I");
+        EvtWrt->RegisterIntVariable("RecTrk2_rectrk_hit_No", RecTrk2_rectrk_hit_No, "RecTrk2_rectrk_hit_No[RecTrk2_track_No]/I");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_track_x", RecTrk2_track_x,  "RecTrk2_track_x[RecTrk2_rechit_No]/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_track_y", RecTrk2_track_y,  "RecTrk2_track_y[RecTrk2_rechit_No]/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_track_z", RecTrk2_track_z,  "RecTrk2_track_z[RecTrk2_rechit_No]/D");
 
-    EvtWrt->RegisterDoubleVariable("RecTrk2_track_chi2",    RecTrk2_track_chi2,     "RecTrk2_track_chi2[RecTrk2_trackNo]/D");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_track_x_sigma", RecTrk2_track_x_sigma, "RecTrk2_track_x_sigma[RecTrk2_trackNo]/D");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_track_y_sigma", RecTrk2_track_y_sigma, "RecTrk2_track_y_sigma[RecTrk2_trackNo]/D");
-
-    //EvtWrt->RegisterDoubleVariable("RecTrk2_pp_pre",  RecTrk2_pp_pre,   "RecTrk2_pp_pre[RecTrk2_trackNo]/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_track_chi2",    RecTrk2_track_chi2,     "RecTrk2_track_chi2[RecTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_track_x_sigma", RecTrk2_track_x_sigma, "RecTrk2_track_x_sigma[RecTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_track_y_sigma", RecTrk2_track_y_sigma, "RecTrk2_track_y_sigma[RecTrk2_track_No]/D");
+    }
 }
 
 void TrackingProcessor::ProcessEvt(AnaEvent* evt)
@@ -160,52 +163,62 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
 
 //................................................................................//
 //Fitting, by Genfit, Kalman filter/by Riemann fitting
-            TagTrk2_trackNo = findTag.GetTrackNo();
-            RecTrk2_trackNo = findRec.GetTrackNo();
+            TagTrk2_track_No = findTag.GetTrackNo();
+            RecTrk2_track_No = findRec.GetTrackNo();
 
-            TagTrk2_recNo = 0;
-            RecTrk2_recNo = 0;
+            TagTrk2_rechit_No = 0;
+            RecTrk2_rechit_No = 0;
 
             for (int i = 0; i < findTag.GetTrackNo(); i++)
             {
-                vector<shared_ptr<TrkHit>> tagTrack;
-                tagTrack.assign((*(VecTagTrack.begin() + i)).begin(), (*(VecTagTrack.begin() + i)).end());
-                KalmanFitting fitTag(tagTrack, findTag.GetR(i), 1.5);
-                
-                TagTrk2_pp[i] = fitTag.GetPp();
-                TagTrk2_track_chi2[i] = fitTag.GetChi2();
-                TagTrk2_track_x_sigma[i] = fitTag.GetXSigma();
-                TagTrk2_track_y_sigma[i] = fitTag.GetYSigma();
+                TrkHitPVec tagTrack((*(VecTagTrack.begin() + i)).begin(), (*(VecTagTrack.begin() + i)).end());
+                DTrack track(tagTrack,
+                             findTag.GetR(i),       //used in Kalman filter
+                             findTag.GetCenterX(i), //not used in Kalman filter, reserved for future
+                             findTag.GetCenterY(i), //not used in Kalman filter, reserved for future
+                             1.5);                  //magnetic in the volume where track lies
+                track.Fit(dKalman);                 //choose fitting method: Kalman filter
 
-                for(int hitno = 0; hitno < static_cast<int>(tagTrack.size()); hitno++)
+                TagTrk2_pp[i] = track.GetPp();
+                TagTrk2_track_chi2[i] = track.GetChi2();
+                TagTrk2_track_x_sigma[i] = track.GetXSigma();
+                TagTrk2_track_y_sigma[i] = track.GetYSigma();
+
+                for(int hitno = 0; hitno < track.GetSize(); hitno++)
                 {
-                    TagTrk2_track_x[hitno + TagTrk2_recNo] = tagTrack.at(hitno)->GetX();
-                    TagTrk2_track_y[hitno + TagTrk2_recNo] = tagTrack.at(hitno)->GetY();
-                    TagTrk2_track_z[hitno + TagTrk2_recNo] = tagTrack.at(hitno)->GetZ();
+                    TagTrk2_track_x[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetX();
+                    TagTrk2_track_y[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetY();
+                    TagTrk2_track_z[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetZ();
                 }
-                TagTrk2_recNo += tagTrack.size();
-                TagTrk2_rechitNo[i] = tagTrack.size();
+                TagTrk2_rechit_No += track.GetSize();
+                TagTrk2_rectrk_hit_No[i] = track.GetSize();
             }
 
             for(int i = 0; i < findRec.GetTrackNo(); i++)
             {
-                vector<shared_ptr<TrkHit>> recTrack;
-                recTrack.assign((*(VecRecTrack.begin() + i)).begin(), (*(VecRecTrack.begin() + i)).end());
-                KalmanFitting fitRec(recTrack, findRec.GetR(i), 1.5);
+                TrkHitPVec recTrack((*(VecRecTrack.begin() + i)).begin(), (*(VecRecTrack.begin() + i)).end());
+                DTrack track(recTrack,
+                             findRec.GetR(i),       //used in Kalman filter
+                             findRec.GetCenterX(i), //not used in Kalman filter, reserved for future
+                             findRec.GetCenterY(i), //not used in Kalman filter, reserved for future
+                             RecTrk_B);             //magnetic in the volume where track lies
+                track.Fit(dKalman);                 //choose fitting method: Kalman filter
                 
-                RecTrk2_pp[i] = fitRec.GetPp();
-                RecTrk2_track_chi2[i] = fitRec.GetChi2();
-                RecTrk2_track_x_sigma[i] = fitRec.GetXSigma();
-                RecTrk2_track_y_sigma[i] = fitRec.GetYSigma();
+                RecTrk2_pp[i] = track.GetPp();
+                RecTrk2_track_chi2[i] = track.GetChi2();
+                RecTrk2_track_x_sigma[i] = track.GetXSigma();
+                RecTrk2_track_y_sigma[i] = track.GetYSigma();
 
-                for(int hitno = 0; hitno < static_cast<int>(recTrack.size()); hitno++)
+                for(int hitno = 0; hitno < track.GetSize(); hitno++)
                 {
-                    RecTrk2_track_x[hitno + RecTrk2_recNo] = recTrack.at(hitno)->GetX();
-                    RecTrk2_track_y[hitno + RecTrk2_recNo] = recTrack.at(hitno)->GetY();
-                    RecTrk2_track_z[hitno + RecTrk2_recNo] = recTrack.at(hitno)->GetZ();
+                    RecTrk2_track_x[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetX();
+                    RecTrk2_track_y[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetY();
+                    RecTrk2_track_z[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetZ();
                 }
-                RecTrk2_recNo += recTrack.size();
-                RecTrk2_rechitNo[i] = recTrack.size();
+                RecTrk2_rechit_No += track.GetSize();
+                RecTrk2_rectrk_hit_No[i] = track.GetSize();
+
+                
             }
 
 //................................................................................//
@@ -215,11 +228,11 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
         }
         else
         {
-            TagTrk2_trackNo = 0;
-            RecTrk2_trackNo = 0;
+            TagTrk2_track_No = 0;
+            RecTrk2_track_No = 0;
 
-            TagTrk2_recNo = 0;
-            RecTrk2_recNo = 0;
+            TagTrk2_rechit_No = 0;
+            RecTrk2_rechit_No = 0;
         }
 
         TagTrk2_No = rawTagTrkHits.size();
@@ -290,6 +303,7 @@ void TrackingProcessor::CheckEvt(AnaEvent* evt)
 
 void TrackingProcessor::End()
 {
+    cout << "magnet: " << RecTrk_B << endl;
     //for(auto it : ProSum) cout << it << endl;
 
     //cout<<"End!"<<endl;

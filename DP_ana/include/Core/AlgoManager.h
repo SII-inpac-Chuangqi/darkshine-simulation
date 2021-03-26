@@ -37,6 +37,10 @@ public:
         return AnaProcessorList;
     }
 
+    [[nodiscard]] const vector<std::string> &getAnaProcessorListDefault() const {
+        return AnaProcessorList_default;
+    }
+
     AnaProcessorVecUniPtr getAllAnaProcessors();
 
     // Set Methods
@@ -83,6 +87,8 @@ private:
 
     AnaProcessorMap AnaProcessors;
     vector<std::string> AnaProcessorList;
+
+    vector<std::string> AnaProcessorList_default;
 };
 
 

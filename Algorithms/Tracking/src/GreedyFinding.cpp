@@ -61,7 +61,7 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
         GreedyLooping(tempClusteredTrkHitsInLayer, itMap, circleNo);
         if(goodness[circleNo] > 0.99 && hitChosen.size() > 3)
         {
-            VecHitChosen.push_back(hitChosen);
+            VecHitChosen.emplace_back(hitChosen);
             Theta(circleNo);
 
             auto it_eraseMap = tempClusteredTrkHitsInLayer.end();

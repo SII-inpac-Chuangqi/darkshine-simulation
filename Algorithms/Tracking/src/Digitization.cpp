@@ -3,6 +3,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <cmath>
 
 //................................................................................//
 //ROOT
@@ -43,6 +44,8 @@ void Cluster(const std::vector<TrkHit> &trkHits, TrkHitPVecMap &clusTrkHitMap)
 
 void Digitization(std::vector<TrkHit> &rawHits)
 {
-    for(auto &hit : rawHits) hit.SetU(((int)(hit.GetX()/0.02))*0.02 + 0.01);
-    for(auto &hit : rawHits) hit.SetV(((int)(hit.GetY()/0.2))*0.2 + 0.1);
+    for(auto &hit : rawHits) hit.SetU(hit.GetX());
+    for(auto &hit : rawHits) hit.SetV(hit.GetY());
+    //for(auto &hit : rawHits) hit.SetU((int)(hit.GetX()/0.02)*0.02 + std::copysign(1.0, hit.GetX())*0.01);
+    //for(auto &hit : rawHits) hit.SetV((int)(hit.GetY()/0.2)*0.2 + std::copysign(1.0, hit.GetY())*0.1);
 }
