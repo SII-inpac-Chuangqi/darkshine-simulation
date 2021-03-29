@@ -42,6 +42,9 @@ void MCTruthAnalysis::Begin() {
         EvtWrt->RegisterDoubleVariable("Parent_E", &Parent_E, "Parent_E/D");
         EvtWrt->RegisterDoubleVariable("Parent_P", Parent_P, "Parent_P[3]/D");
         EvtWrt->RegisterStrVariable("Parent_Volume", &Parent_PVName);
+
+        EvtWrt->RegisterDoubleVariable("Truth_Pi", &Pi, "Truth_Pi/D");
+        EvtWrt->RegisterDoubleVariable("Truth_Pf", &Pf, "Truth_Pf/D");
     }
 
     SecFinder->RegisterParameters();
@@ -108,6 +111,19 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
             }
 
             prev_s = s;
+        }
+
+        // Search for truth Pi && Pf for initial electron
+        Pi = -999.;
+        Pf = -999.;
+        TLorentzVector electron;
+        for (auto s: *steps) {
+            electron.SetPxPyPzE(s->getPx(), s->getPy(), s->getPz(), s->getE());
+            if ( s->getZ() < -7.5 ) {
+                Pi = electron.P();
+            } else if ( s->getZ() < 180.0 ) {
+                Pf = electron.P();
+            }
         }
 
     } else {

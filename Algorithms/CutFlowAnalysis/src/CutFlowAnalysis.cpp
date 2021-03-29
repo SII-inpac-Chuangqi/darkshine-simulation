@@ -40,11 +40,13 @@ void CutFlowAnalysis::Begin() {
         h_cut->Fill(cut_chain.at(i).data(), 0.);
     }
 
-    TagTrk2_track_No = EvtWrt->FindIntVar("TagTrk2_track_No");
-    RecTrk2_track_No = EvtWrt->FindIntVar("RecTrk2_track_No");
+//    TagTrk2_track_No = EvtWrt->FindIntVar("TagTrk2_track_No");
+//    RecTrk2_track_No = EvtWrt->FindIntVar("RecTrk2_track_No");
+//    TagTrk2_pp = EvtWrt->FindDoubleVar("TagTrk2_pp");
+//    RecTrk2_pp = EvtWrt->FindDoubleVar("RecTrk2_pp");
 
-    TagTrk2_pp = EvtWrt->FindDoubleVar("TagTrk2_pp");
-    RecTrk2_pp = EvtWrt->FindDoubleVar("RecTrk2_pp");
+    TagTrk2_pp = EvtWrt->FindDoubleVar("Truth_Pi");
+    RecTrk2_pp = EvtWrt->FindDoubleVar("Truth_Pf");
     ECAL_E_total = EvtWrt->FindDoubleVar("ECAL_E_total");
     HCAL_E_total = EvtWrt->FindDoubleVar("HCAL_E_total");
     HCAL_E_Max_Cell = EvtWrt->FindDoubleVar("HCAL_E_Max_Cell");
@@ -54,7 +56,8 @@ void CutFlowAnalysis::ProcessEvt(AnaEvent *evt) {
     // Raw Events
     h_cut->Fill(cut_chain.at(0).data(), 1.);
 
-    auto c1 = (*TagTrk2_track_No == 1 && *RecTrk2_track_No == 1);
+    //auto c1 = (*TagTrk2_track_No == 1 && *RecTrk2_track_No == 1);
+    auto c1 = (1);
     auto c2 = ((*TagTrk2_pp - *RecTrk2_pp) >= momentum_diff);
     auto c3 = (*ECAL_E_total <= ECAL_E_Min);
     auto c4 = (*HCAL_E_total <= HCAL_E_Max);

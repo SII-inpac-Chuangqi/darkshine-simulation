@@ -55,6 +55,10 @@ private:
     double Parent_P[3] = {0};
     TString Parent_PVName{};
 
+    // For initial particle analysis
+    double Pi{0.};
+    double Pf{0.};
+
 };
 
 
