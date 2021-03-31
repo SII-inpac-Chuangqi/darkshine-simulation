@@ -20,7 +20,7 @@ MCTruthAnalysis::MCTruthAnalysis(string name, shared_ptr<EventStoreAndWriter> ev
 
     // Register Parameters
     RegisterIntParameter("Verbose", "Verbosity", &verbose, 0);
-    RegisterIntParameter("Sec_PDG", "PDG of secondary", &Sec_PDG, 500012);
+    RegisterIntParameter("Sec_PDG", "PDG of secondary", &Sec_PDG, 0);
 }
 
 void MCTruthAnalysis::Begin() {
@@ -83,36 +83,34 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
         // Find Secondary
         SecFinder->setEvt(evt);
         auto mcSec = SecFinder->FindSecondary(Sec_PDG);
-        if (!mcSec) return;
+        if (mcSec) {
+            DStep *prev_s = nullptr;
+            for (auto s : *steps) {
+                if (s->getProcessName() == mcSec->getCreateProcess() && prev_s != nullptr) {
+                    if (s->getX() == mcSec->getVertexX()
+                        && s->getY() == mcSec->getVertexY()
+                        && s->getZ() == mcSec->getVertexZ()) {
+                        Parent_E = prev_s->getE();
+                        Parent_P[0] = prev_s->getPx();
+                        Parent_P[1] = prev_s->getPy();
+                        Parent_P[2] = prev_s->getPz();
+                        Parent_PVName = TString(prev_s->getPVName());
 
-        DStep *prev_s = nullptr;
-        for (auto s : *steps) {
-            if (s->getProcessName() == mcSec->getCreateProcess() && prev_s != nullptr) {
-                if (s->getX() == mcSec->getVertexX()
-                    && s->getY() == mcSec->getVertexY()
-                    && s->getZ() == mcSec->getVertexZ()) {
-                    Parent_E = prev_s->getE();
-                    Parent_P[0] = prev_s->getPx();
-                    Parent_P[1] = prev_s->getPy();
-                    Parent_P[2] = prev_s->getPz();
-                    Parent_PVName = TString(prev_s->getPVName());
+                        Recoil_E = s->getE();
+                        Recoil_P[0] = s->getPx();
+                        Recoil_P[1] = s->getPy();
+                        Recoil_P[2] = s->getPz();
 
-                    Recoil_E = s->getE();
-                    Recoil_P[0] = s->getPx();
-                    Recoil_P[1] = s->getPy();
-                    Recoil_P[2] = s->getPz();
+                        TLorentzVector l(Recoil_P, Recoil_E);
+                        Recoil_pT = l.Perp();
+                        Recoil_theta = l.Theta();
 
-                    TLorentzVector l(Recoil_P, Recoil_E);
-                    Recoil_pT = l.Perp();
-                    Recoil_theta = l.Theta();
-
-                    break;
+                        break;
+                    }
                 }
+                prev_s = s;
             }
-
-            prev_s = s;
         }
-
         // Search for truth Pi && Pf for initial electron
         Pi = -999.;
         Pf = -999.;
