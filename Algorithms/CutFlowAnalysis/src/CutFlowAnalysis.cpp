@@ -26,7 +26,7 @@ CutFlowAnalysis::CutFlowAnalysis(string name, shared_ptr<EventStoreAndWriter> ev
     RegisterDoubleParameter("momentum_diff", "Pi - Pf", &momentum_diff, 4000.);
     RegisterDoubleParameter("ECAL_E_Min", "Min. ECAL Energy", &ECAL_E_Min, 4000.);
     RegisterDoubleParameter("HCAL_E_Max", "Max. HCAL Energy", &HCAL_E_Max, 10.);
-    RegisterDoubleParameter("HCAL_E_Cell_Max", "Max. HCAL Energy per Cell", &HCAL_E_Cell_Max, 0.5);
+    RegisterDoubleParameter("HCAL_E_Cell_Max", "Max. HCAL Energy per Cell", &HCAL_E_Cell_Max, 1.0);
 
     RegisterStringParameter("weight", "event weight", &weight, "1");
     RegisterIntParameter("SaveToNewRoot", "Save Result to a new File", &save_new, 0);
@@ -35,7 +35,10 @@ CutFlowAnalysis::CutFlowAnalysis(string name, shared_ptr<EventStoreAndWriter> ev
 
 
 void CutFlowAnalysis::Begin() {
-    h_cut = new TH1F("cutflow", "cutflow", 7, 0, 7);
+    h_cut = new TH1F("cutflow_total", "cutflow_total", 7, 0, 7);
+
+    h_tmp = new TH1F("cutflow_ex", "cutflow_tx", 400, 0, 8000.);
+
     for (int i = 0; i < 6; ++i) {
         h_cut->Fill(cut_chain.at(i).data(), 0.);
     }
@@ -73,6 +76,10 @@ void CutFlowAnalysis::ProcessEvt(AnaEvent *evt) {
         h_cut->Fill(cut_chain.at(4).data(), 1.);
     if (c1 && c2 && c3 && c4 && c5)
         h_cut->Fill(cut_chain.at(5).data(), 1.);
+
+    // For extrapolation
+    if (c4 && c5)
+        h_tmp->Fill(*ECAL_E_total);
 }
 
 void CutFlowAnalysis::CheckEvt(AnaEvent *evt) {
@@ -81,12 +88,16 @@ void CutFlowAnalysis::CheckEvt(AnaEvent *evt) {
 }
 
 void CutFlowAnalysis::End() {
+    auto h_cumulative = h_tmp->GetCumulative();
+
     if (save_new) {
         TFile fout("dp_cutflow.root","RECREATE");
         fout.cd();
         h_cut->Write("",TObject::kOverwrite);
+        h_cumulative->Write("",TObject::kOverwrite);
         fout.Close();
     } else {
         EvtWrt->SaveObjectToFile(h_cut, "");
+        EvtWrt->SaveObjectToFile(h_cumulative, "");
     }
 }

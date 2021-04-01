@@ -51,6 +51,7 @@ private:
     std::string weight;
 
     TH1F *h_cut{};
+    TH1F *h_tmp{};
     vector<std::string> cut_chain;
 
     int save_new{};
