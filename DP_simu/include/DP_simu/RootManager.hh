@@ -138,6 +138,7 @@ private:
 
 };
 
+extern RootManager *dRootMng;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif

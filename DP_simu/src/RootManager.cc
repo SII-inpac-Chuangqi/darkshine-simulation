@@ -15,14 +15,14 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 // Required by Singleton
-RootManager *fRootMng = nullptr;
+RootManager *dRootMng = nullptr;
 
 // Get Instance Class
 RootManager *RootManager::CreateInstance() {
-    if (fRootMng == nullptr)
-        fRootMng = new RootManager();
+    if (dRootMng == nullptr)
+        dRootMng = new RootManager();
 
-    return fRootMng;
+    return dRootMng;
 }
 
 RootManager::RootManager()
