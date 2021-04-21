@@ -41,7 +41,7 @@
 
 class G4Step;
 
-class RootManager;
+// class RootManager;
 
 class G4HCofThisEvent;
 

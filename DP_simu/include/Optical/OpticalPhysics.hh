@@ -72,7 +72,7 @@ class G4OpBoundaryProcess;
 
 class G4OpAbsorption;
 
-class RootManager; //exchange global information
+// class RootManager; //exchange global information
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

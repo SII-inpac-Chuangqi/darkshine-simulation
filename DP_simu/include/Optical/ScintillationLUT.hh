@@ -90,7 +90,7 @@ class OpticalTrackData;
 
 class OpticalLUTManager;
 
-class RootManager;
+// class RootManager;
 
 class G4VSensitiveDetector;
 

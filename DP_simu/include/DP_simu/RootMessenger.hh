@@ -15,7 +15,7 @@
 
 #include <sstream>
 
-class RootManager;
+// class RootManager;
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
