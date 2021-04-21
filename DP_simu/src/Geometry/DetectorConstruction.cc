@@ -60,7 +60,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-DetectorConstruction::DetectorConstruction(RootManager *rootMng) {
+DetectorConstruction::DetectorConstruction() {
     // Trackers
     TagTrk = new Tracker_Construct();
     RecTrk = new Tracker_Construct();
@@ -72,7 +72,6 @@ DetectorConstruction::DetectorConstruction(RootManager *rootMng) {
     // Build-in HCAL Configuration definition
     HCAL_Con = new HCAL_Construct();
 
-    fRootMng = rootMng;
     fCheckOverlaps = dControl->check_overlaps;
     fStepLimit = nullptr;
 
@@ -135,12 +134,12 @@ G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
     // Build Recoil Tracker
     if (dControl->build_rec_tracker) RecTrk->Build(dRecoil, World_LV, fCheckOverlaps);
     // Build ECAL
-    if (dControl->build_ECAL) ECAL_Con2->Build(0, World_LV, fRootMng, fCheckOverlaps);
+    if (dControl->build_ECAL) ECAL_Con2->Build(0, World_LV, fCheckOverlaps);
     // Build HCAL
-    if (dControl->build_HCAL) HCAL_Con->Build(World_LV, fRootMng, fCheckOverlaps);
+    if (dControl->build_HCAL) HCAL_Con->Build(World_LV, fCheckOverlaps);
 
     // Book RootMng
-    fRootMng->book();
+    dRootMng->book();
     G4cout << "[Root Manager] ==> Root Manager initialized ..." << G4endl;
     G4cout << "[Root Manager] ==> Output File " << dControl->outfile_Name << " created ..." << G4endl;
 
@@ -247,7 +246,7 @@ void DetectorConstruction::SaveGeometry() {
     G4GDMLParser parser;
     parser.Write(filename, World_PV);
 
-    fRootMng->FillGeometry(filename);
+    dRootMng->FillGeometry(filename);
 
 }
 

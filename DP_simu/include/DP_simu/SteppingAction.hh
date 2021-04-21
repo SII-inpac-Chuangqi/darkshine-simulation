@@ -54,8 +54,6 @@ public:
 
 private:
 
-    RootManager *froot;
-
     G4double PNEnergyTar{0.}; // PN reaction in Target Region
     G4double PNEnergyECAL{0.}; // PN reaction in ECal Region
 };

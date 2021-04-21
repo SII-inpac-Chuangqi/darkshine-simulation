@@ -30,7 +30,7 @@ void ECAL_AllZ::DefineParameters() {
     Glue_Size = dControl->Glue_Size;
 }
 
-bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng, bool fCheckOverlaps) {
+bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, bool fCheckOverlaps) {
 
     bool build_ECAL_Center = false;
     switch (type) {
@@ -68,9 +68,9 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng
     return true;
 }
 
-bool ECAL_AllZ::BuildSD(RootManager *fRootMng) {
+bool ECAL_AllZ::BuildSD() {
     // ECAL Center SD
-    auto *ECalSD = new DetectorSD(1, Name, ECAL_Center_Module_No, fRootMng);
+    auto *ECalSD = new DetectorSD(1, Name, ECAL_Center_Module_No);
     G4SDManager::GetSDMpointer()->AddNewDetector(ECalSD);
     for (auto &itr_LV : ECAL_Center_LV)
         itr_LV->SetSensitiveDetector(ECalSD);

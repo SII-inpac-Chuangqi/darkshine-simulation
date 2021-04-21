@@ -53,7 +53,6 @@ class RunAction : public G4UserRunAction
     void   EndOfRunAction(const G4Run* run) override;
 
   private:
-    RootManager* frootMng;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

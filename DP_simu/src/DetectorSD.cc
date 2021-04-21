@@ -40,15 +40,13 @@
 
 DetectorSD::DetectorSD(G4int Type,
                        const G4String &name,
-                       const G4ThreeVector &CellID,
-                       RootManager *rootMng
+                       const G4ThreeVector &CellID
 ) : G4VSensitiveDetector(name) {
-    fRootMng = rootMng;
     fCellID = CellID;
     fType = Type;
     fname = name;
 
-    fRootMng->bookCollection(name);
+    dRootMng->bookCollection(name);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -153,7 +151,7 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
         hit->setX(HitPoint.x());
         hit->setY(HitPoint.y());
         hit->setZ(CellPosition.z());
-        fRootMng->FillSimHit(fname, hit);
+        dRootMng->FillSimHit(fname, hit);
 
         delete hit;
     } else {
@@ -172,7 +170,7 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
 void DetectorSD::EndOfEvent(G4HCofThisEvent *) {
     if (fType != 0) {
         for (auto simhit : fSimHitVec) {
-            if (simhit->getE() >= 1e-10) fRootMng->FillSimHit(fname, simhit);
+            if (simhit->getE() >= 1e-10) dRootMng->FillSimHit(fname, simhit);
             delete simhit;
         }
     }

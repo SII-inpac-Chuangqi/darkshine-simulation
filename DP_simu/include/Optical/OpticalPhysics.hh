@@ -98,8 +98,6 @@ private:
     /// Not implemented
     OpticalPhysics &operator=(const OpticalPhysics &right);
 
-    // Load Root mgr for IO
-    RootManager *fRootMgr;
 public:
 
     // configure OpticalPhysics builder

@@ -32,8 +32,6 @@ class RootMessenger: public G4UImessenger
 
   private:
 
-	  RootManager*             froot;
-
       G4UIdirectory*           fEngDirectory;
 
       G4UIcmdWithAnInteger*    fSetRndEngCmd;

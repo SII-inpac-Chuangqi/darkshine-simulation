@@ -55,10 +55,10 @@ void RootManager::initialize() { //event level init
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-RootManager::~RootManager() {
-    delete fMessenger;
-    delete rootFile;
-}
+// RootManager::~RootManager() {
+//     delete fMessenger;
+//     delete rootFile;
+// }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 /// \brief Create rootFile.

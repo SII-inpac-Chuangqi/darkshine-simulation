@@ -57,8 +57,7 @@ class DetectorSD : public G4VSensitiveDetector {
 public:
     DetectorSD(G4int,
                const G4String &name,
-               const G4ThreeVector &,
-               RootManager *);
+               const G4ThreeVector &);
 
     ~DetectorSD() override;
 
@@ -77,7 +76,6 @@ private:
 
     std::vector<SimulatedHit *> fSimHitVec;
 
-    RootManager *fRootMng;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

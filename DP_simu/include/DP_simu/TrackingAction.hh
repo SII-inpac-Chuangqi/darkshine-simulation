@@ -52,7 +52,6 @@ class TrackingAction : public G4UserTrackingAction
     void PostUserTrackingAction(const G4Track* aTrack) override;
 
   private:
-    RootManager* froot;
     McParticle* fMC{};
 };
 
