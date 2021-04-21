@@ -170,7 +170,7 @@ int main(int argc, char **argv) {
     auto *run_action = new RunAction();
     runManager->SetUserAction(run_action);
 
-    auto *event_action = new EventAction(rootMng);
+    auto *event_action = new EventAction();
     runManager->SetUserAction(event_action);
 
     runManager->SetUserAction(new PrimaryGeneratorAction());

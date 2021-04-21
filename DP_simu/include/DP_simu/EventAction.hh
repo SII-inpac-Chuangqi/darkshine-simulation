@@ -44,7 +44,7 @@ class RootManager;
 class EventAction : public G4UserEventAction
 {
   public:
-    explicit EventAction(RootManager*);
+    explicit EventAction();
     ~EventAction() override;
 
     void  BeginOfEventAction(const G4Event* ) override;
