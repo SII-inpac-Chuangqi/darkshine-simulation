@@ -96,7 +96,7 @@ public:
 
     void FillGeometry(const G4String &filename);
 
-public:
+private:
 
     RootMessenger *fMessenger;
     std::map<G4String, OpticalDigitizer*> fDigitizers;

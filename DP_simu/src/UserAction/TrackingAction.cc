@@ -41,8 +41,7 @@ class MCParticle;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-TrackingAction::TrackingAction(RootManager *rootMng) : G4UserTrackingAction() {
-    froot = rootMng;
+TrackingAction::TrackingAction() : G4UserTrackingAction() {
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -91,7 +90,7 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
         if (aTrack->GetCreatorProcess())
             fMC->setCreateProcess(aTrack->GetCreatorProcess()->GetProcessName());
 
-        froot->FillMC(fMC, aTrack->GetParentID());
+        dRootMng->FillMC(fMC, aTrack->GetParentID());
 
     }
 }
@@ -101,7 +100,7 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
 void TrackingAction::PostUserTrackingAction(const G4Track *aTrack) {
 
     // Find MC in collection
-    auto MCCols = froot->GetEvt()->getMcParticleCollection_Old().at(dControl->RawMCCollection_Name);
+    auto MCCols = dRootMng->GetEvt()->getMcParticleCollection_Old().at(dControl->RawMCCollection_Name);
     auto p = McParticle::SearchID(MCCols, aTrack->GetTrackID());
     if (p) {
         //p->setERemain(aTrack->GetKineticEnergy());

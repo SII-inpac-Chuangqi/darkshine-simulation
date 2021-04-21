@@ -45,7 +45,7 @@ class G4Track;
 class TrackingAction : public G4UserTrackingAction
 {
   public:
-    explicit TrackingAction(RootManager* rootMng);
+    explicit TrackingAction();
     ~TrackingAction() override;
 
     void  PreUserTrackingAction(const G4Track* aTrack) override;
