@@ -167,7 +167,7 @@ int main(int argc, char **argv) {
     runManager->SetUserInitialization(physicsList);
 
     // Set user action classes
-    auto *run_action = new RunAction(rootMng);
+    auto *run_action = new RunAction();
     runManager->SetUserAction(run_action);
 
     auto *event_action = new EventAction(rootMng);

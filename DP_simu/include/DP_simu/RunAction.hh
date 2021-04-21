@@ -46,7 +46,7 @@ class G4Run;
 class RunAction : public G4UserRunAction
 {
   public:
-    explicit RunAction( RootManager* );
+    explicit RunAction();
     ~RunAction() override;
 
     void BeginOfRunAction(const G4Run* run) override;
