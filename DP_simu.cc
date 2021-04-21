@@ -114,6 +114,7 @@ int main(int argc, char **argv) {
         return -1;
     }
 
+    // Initiate RootManager Class
     RootManager::CreateInstance();
 
     // Rebuild all dependent variables
@@ -122,9 +123,6 @@ int main(int argc, char **argv) {
 
     // Initialize all the self-defined Singletons
     FilterManager::CreateInstance();
-
-    // Construct the root manager
-    auto *rootMng = new RootManager;
 
     if (!OpticalMacro.empty())   // batch mode
     {
@@ -222,7 +220,6 @@ int main(int argc, char **argv) {
 //#ifdef G4VIS_USE
     delete visManager;
 //#endif
-    delete rootMng;
     delete runManager;
 
     return 0;
