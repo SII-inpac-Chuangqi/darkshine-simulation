@@ -55,9 +55,12 @@ class OpticalDigitizer;
 
 class RootManager {
 public:
-    RootManager();
 
-    ~RootManager();
+    RootManager(const RootManager &) = delete;
+
+    RootManager &operator=(RootManager const &) = delete;
+
+    static RootManager *CreateInstance();
 
     void book();
 
@@ -93,7 +96,7 @@ public:
 
     void FillGeometry(const G4String &filename);
 
-private:
+public:
 
     RootMessenger *fMessenger;
     std::map<G4String, OpticalDigitizer*> fDigitizers;
@@ -129,6 +132,9 @@ private:
 
     // DEvent Collection
     DEvent *Evt;
+
+private:
+    RootManager();
 
 };
 

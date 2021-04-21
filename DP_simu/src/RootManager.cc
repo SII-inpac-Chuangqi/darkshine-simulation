@@ -14,6 +14,17 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+// Required by Singleton
+RootManager *fRootMng = nullptr;
+
+// Get Instance Class
+RootManager *RootManager::CreateInstance() {
+    if (fRootMng == nullptr)
+        fRootMng = new RootManager();
+
+    return fRootMng;
+}
+
 RootManager::RootManager()
         : rootFile(nullptr), tr(nullptr), if_clean(false) {
 

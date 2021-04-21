@@ -114,6 +114,8 @@ int main(int argc, char **argv) {
         return -1;
     }
 
+    RootManager::CreateInstance();
+
     // Rebuild all dependent variables
     // All the parameters are locked for now
     dControl->RebuildVariables();
