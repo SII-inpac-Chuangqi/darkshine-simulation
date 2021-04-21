@@ -112,8 +112,7 @@ public:
     // Constructors and Destructor
     ////////////////////////////////
 
-    explicit ScintillationLUT(RootManager *rootMgr,
-                              const G4String &processName = "ScintillationLUT",
+    explicit ScintillationLUT(const G4String &processName = "ScintillationLUT",
                               G4ProcessType type = fElectromagnetic);
 
     ~ScintillationLUT();
@@ -282,8 +281,6 @@ private:
 
     // OpticalLUT* lookupTable;
     std::shared_ptr<OpticalLUT> lookupTable;
-
-    RootManager *fRootMgr;
 
 #ifdef G4DEBUG_SCINTILLATION
     G4double ScintTrackEDep, ScintTrackYield;

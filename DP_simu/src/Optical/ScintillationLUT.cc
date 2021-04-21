@@ -51,11 +51,9 @@
 
 #include "Optical/ScintillationLUT.hh"
 
-ScintillationLUT::ScintillationLUT(RootManager *rootMgr,
-                                   const G4String &processName,
+ScintillationLUT::ScintillationLUT(const G4String &processName,
                                    G4ProcessType type)
         : G4VRestDiscreteProcess(processName, type),
-          fRootMgr(rootMgr),
           fTrackSecondariesFirst(false),
           fFiniteRiseTime(false),
           fYieldFactor(1.0),
@@ -334,7 +332,7 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
     // #############################################################
 
     //save T0
-    fRootMgr->SetOpticalTimeZero(t0, cIn); //global for one unit / event
+    dRootMng->SetOpticalTimeZero(t0, cIn); //global for one unit / event
     //used for trig simulation. Bu now not implemented. So global timeZero=0 for now.
 
     // MAIN LOOP
@@ -554,7 +552,7 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
 
     //Now save the Hits// now we save it one-by-one, not using this for memory
     if (!Hits->empty())
-        if(! fRootMgr->FillOpticalLUTs(Hits, fNumPhotonsLUTGen, cIn, copyNum))
+        if(! dRootMng->FillOpticalLUTs(Hits, fNumPhotonsLUTGen, cIn, copyNum))
         {
             //now clear all hits inside digitizer since, we need all sorted hits for digitizer!!
              for(auto h: *Hits)

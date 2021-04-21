@@ -136,7 +136,7 @@ int main(int argc, char **argv) {
 
     // Set mandatory initialization classes
 
-    runManager->SetUserInitialization(new DetectorConstruction(rootMng));
+    runManager->SetUserInitialization(new DetectorConstruction());
 
     G4VModularPhysicsList *physicsList = new FTFP_BERT;
 
@@ -149,7 +149,7 @@ int main(int argc, char **argv) {
     // Optical Physics
     if (dControl->if_optical) {
         std::cout<<"[Main] ==> Optical Physics Init... "<<std::endl;
-        auto *opticalPhysics = new OpticalPhysics(rootMng,dControl->Optical_PhysicsVerbose);
+        auto *opticalPhysics = new OpticalPhysics(dControl->Optical_PhysicsVerbose);
         physicsList->ReplacePhysics(opticalPhysics);
     }
     physicsList->RegisterPhysics(new G4StepLimiterPhysics());

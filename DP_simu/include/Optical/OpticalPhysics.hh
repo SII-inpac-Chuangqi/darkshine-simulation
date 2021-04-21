@@ -79,7 +79,7 @@ class RootManager; //exchange global information
 class OpticalPhysics : public G4VPhysicsConstructor {
 public:
 
-    OpticalPhysics(RootManager *rootMgr = nullptr, G4int verbose = 0, const G4String &name = "Optical");
+    OpticalPhysics(G4int verbose = 0, const G4String &name = "Optical");
 
     virtual ~OpticalPhysics();
 

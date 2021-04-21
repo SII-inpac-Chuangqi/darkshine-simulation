@@ -76,7 +76,7 @@ G4ThreadLocal G4OpBoundaryProcess *OpticalPhysics::fBoundaryProcess = nullptr;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-OpticalPhysics::OpticalPhysics(RootManager *rootMgr, G4int verbose, const G4String &name)
+OpticalPhysics::OpticalPhysics(G4int verbose, const G4String &name)
         : G4VPhysicsConstructor(name),
           fYieldFactor(1.),
           fExcitationRatio(0.0),
@@ -96,8 +96,8 @@ OpticalPhysics::OpticalPhysics(RootManager *rootMgr, G4int verbose, const G4Stri
           fRayleighVerbosity(0),
           fMieVerbosity(0),
           fInvokeSD(true),
-          fBoundaryVerbosity(0),
-          fRootMgr(rootMgr) {
+          fBoundaryVerbosity(0)
+          {
     verboseLevel = verbose;
     fMessenger = new OpticalPhysicsMessenger(this);
     G4cout << "[OpticalPhysics] ==> Loaded Ok, verbose= " << verboseLevel << G4endl;
@@ -107,7 +107,7 @@ OpticalPhysics::OpticalPhysics(RootManager *rootMgr, G4int verbose, const G4Stri
         fProcessTrackSecondariesFirst.push_back(true);
     }
 
-    if (fRootMgr)
+    if (dRootMng)
         G4cout << "[OpticalPhysics] ==> RootMgr Loaded Ok" << G4endl;
 }
 
@@ -148,7 +148,7 @@ void OpticalPhysics::PrintStatistics() const {
                 } else {
                     G4cout << "    Track secondaries first:  inactivated" << G4endl;
                 }
-                if (fRootMgr) {
+                if (dRootMng) {
                     G4cout << "    RootMgr loaded" << G4endl;
                     //printout LUT information
                 }
@@ -215,7 +215,7 @@ void OpticalPhysics::ConstructProcess() {
     }
 
 //   fScintillationProcess = new G4Scintillation();
-    fScintillationProcess = new ScintillationLUT(fRootMgr, "ScintillationLUT");
+    fScintillationProcess = new ScintillationLUT("ScintillationLUT");
     fScintillationProcess->SetScintillationYieldFactor(fYieldFactor);
     fScintillationProcess->SetScintillationExcitationRatio(fExcitationRatio);
     fScintillationProcess->SetFiniteRiseTime(fFiniteRiseTime);
