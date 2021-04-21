@@ -46,7 +46,7 @@ class G4Step;
 
 class SteppingAction : public G4UserSteppingAction {
 public:
-    explicit SteppingAction(RootManager *);
+    explicit SteppingAction();
 
     ~SteppingAction() override;
 

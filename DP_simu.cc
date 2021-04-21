@@ -177,7 +177,7 @@ int main(int argc, char **argv) {
     runManager->SetUserAction(new TrackingAction());
     if (dControl->if_filter)
         runManager->SetUserAction(new StackingAction);
-    auto *stepping_action = new SteppingAction(rootMng);
+    auto *stepping_action = new SteppingAction();
     runManager->SetUserAction(stepping_action);
 
     // Initialize G4 kernel
