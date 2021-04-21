@@ -193,10 +193,10 @@ void DetectorConstruction::ConstructSDandField() {
     /* Construct Sensitive Detector */
     /*                              */
 
-    if (dControl->build_tag_tracker) TagTrk->BuildSDandField(dTagging, fRootMng);
-    if (dControl->build_rec_tracker) RecTrk->BuildSDandField(dRecoil, fRootMng);
-    if (dControl->build_ECAL) ECAL_Con2->BuildSD(fRootMng);
-    if (dControl->build_HCAL) HCAL_Con->BuildSD(fRootMng);
+    if (dControl->build_tag_tracker) TagTrk->BuildSDandField(dTagging);
+    if (dControl->build_rec_tracker) RecTrk->BuildSDandField(dRecoil);
+    if (dControl->build_ECAL) ECAL_Con2->BuildSD();
+    if (dControl->build_HCAL) HCAL_Con->BuildSD();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

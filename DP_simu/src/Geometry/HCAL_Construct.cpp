@@ -34,7 +34,7 @@ void HCAL_Construct::DefineParameters() {
     Glue_Size = dControl->Glue_Size;
 }
 
-bool HCAL_Construct::Build(G4LogicalVolume *World_LV, RootManager *fRootMng, bool fCheckOverlaps) {
+bool HCAL_Construct::Build(G4LogicalVolume *World_LV, bool fCheckOverlaps) {
 
     auto HCAL_Box = new G4Box("hcal", Size_HCALRegion.x() / 2, Size_HCALRegion.y() / 2, Size_HCALRegion.z() / 2);
     auto HCAL_LV = new G4LogicalVolume(HCAL_Box, HCALRegion_Mat, "HCAL", nullptr, nullptr, nullptr);
@@ -72,12 +72,12 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, RootManager *fRootMng, boo
     return true;
 }
 
-bool HCAL_Construct::BuildSD(RootManager *fRootMng) {
+bool HCAL_Construct::BuildSD() {
     std::vector<DetectorSD *> HCalSD;
     for (int iy = 0; iy < HCAL_Module_No.y(); iy++) {
         for (int ix = 0; ix < HCAL_Module_No.x(); ix++) {
             int index = (int) (ix + iy * HCAL_Module_No.x());
-            HCalSD.push_back(new DetectorSD(2, Name + "_" + std::to_string(index), HCAL_Mod_No_Dir, fRootMng));
+            HCalSD.push_back(new DetectorSD(2, Name + "_" + std::to_string(index), HCAL_Mod_No_Dir));
             G4SDManager::GetSDMpointer()->AddNewDetector(HCalSD[index]);
             for (auto LV : HCAL_SD_LV[index])
                 LV->SetSensitiveDetector(HCalSD[index]);

@@ -34,7 +34,7 @@ public:
 
     bool Build(G4int type, G4LogicalVolume *World_LV, G4bool fCheckOverlaps);
 
-    bool BuildSDandField(G4int type, RootManager *fRootMng);
+    bool BuildSDandField(G4int type);
 
     double eps = dControl->eps;
 
