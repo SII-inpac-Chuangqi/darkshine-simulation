@@ -28,7 +28,7 @@ RootManager *RootManager::CreateInstance() {
 RootManager::RootManager()
         : rootFile(nullptr), tr(nullptr), if_clean(false) {
 
-    fMessenger = new RootMessenger(this);
+    fMessenger = new RootMessenger();
     outfile_name = dControl->outfile_Name;
 
     Evt = new DEvent();
