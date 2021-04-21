@@ -38,7 +38,7 @@
 
 #include <fstream>
 
-class RootManager;
+// class RootManager;
 /// Utility action class
 
 class EventAction : public G4UserEventAction

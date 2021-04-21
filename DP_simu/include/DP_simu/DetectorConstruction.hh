@@ -62,7 +62,7 @@ class G4Material;
 
 class G4UserLimits;
 
-class RootManager;
+// class RootManager;
 
 class DetectorMessenger;
 

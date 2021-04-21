@@ -12,8 +12,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //
 
-RootMessenger::RootMessenger(RootManager* rootMng)
-	 : G4UImessenger(), froot(rootMng)
+RootMessenger::RootMessenger()
+	 : G4UImessenger()
 {
     // Rndm Setting
     fEngDirectory = new G4UIdirectory("/DP/Engine/");
