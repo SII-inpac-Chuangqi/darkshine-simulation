@@ -30,7 +30,6 @@ Before installing, several dependencies need to be checked.
 - ROOT 6
 - HepMC
 - gsl
-- GenFit 2
 - yaml-cpp
 
 With everything needed, it's ready to install :v:
@@ -60,12 +59,14 @@ would configure the build of DSS for installation under <some-directory> and bui
   
    - If set to ON, build Tracking Algorithms.
     
-    **Requires:**  [GeneralBrokenLines](https://github.com/GeneralBrokenLines/GeneralBrokenLines) and [Developed GenFit for Dark Shine](https://gitlab.com/Biblehome/developed-genfit-for-dark-shine)
+  **Requires:**  [GeneralBrokenLines](https://github.com/GeneralBrokenLines/GeneralBrokenLines) 
 
 
 - ```USE_GENFIT : (DEFAUTL : ON)```
 
    - Used by Tracking Algorithms only.
+    
+  **Requires:** [Developed GenFit for Dark Shine](https://gitlab.com/Biblehome/developed-genfit-for-dark-shine)
 
 </details>
 
