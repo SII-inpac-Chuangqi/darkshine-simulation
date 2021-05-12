@@ -39,7 +39,7 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
      *
      */
 
-    RegisterIntParameter   ("clean",    "Clean mode",               &clean,    0);
+    RegisterIntParameter   ("clean",    "Clean mode",               &clean,    1);
     RegisterIntParameter   ("Tag_fit_method",
                             "Specify fitting method: 0, no fine fitting; 1, Kalman fitting(memory leak!!!); 2, Riemann fitting; 3, GBL",
                             &Tag_fit_method, 0);
