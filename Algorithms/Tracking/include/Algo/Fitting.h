@@ -8,9 +8,10 @@
 #include <vector>
 #include <memory>
 #include <cmath>
+#include <initializer_list>
 
 #ifndef RETURN
-#define RETURN INFINITY
+#define RETURN -INFINITY
 #endif
 
 //................................................................................//
@@ -37,9 +38,9 @@ public:
 
 //................................................................................//
 //Processor
-    virtual void Init(const TrkHitPVec&, double, double) {}
-    virtual void Fit (const TrkHitPVec&)                 {}
-    virtual void Fill(const TrkHitPVec&)                 {}
+    virtual void Init(const TrkHitPVec&, std::initializer_list<double>) {}
+    virtual void Fit (const TrkHitPVec&, std::initializer_list<double>) {}
+    virtual void Fill(const TrkHitPVec&, std::initializer_list<double>) {}
 
 //................................................................................//
 //Get
@@ -53,6 +54,18 @@ public:
     virtual double GetXSigma() const {return RETURN;}
     virtual double GetYSigma() const {return RETURN;}
 
+protected:
+//................................................................................//
+//Results
+    double px = RETURN;
+    double py = RETURN;
+    double pz = RETURN;
+    double pp = RETURN;
+    double pl = RETURN;
+
+    double fChi2 = RETURN;
+    double xSigma = RETURN;
+    double ySigma = RETURN;
 };
 
 #endif

@@ -2,7 +2,7 @@
 #define DTRACK_H
 
 #ifndef RETURN
-#define RETURN INFINITY
+#define RETURN -INFINITY
 #endif
 
 //................................................................................//
@@ -21,7 +21,10 @@
 //Tracking
 #include "Algo/TypeDef.h"
 
-enum FittingMethods {dKalman};
+//................................................................................//
+//Fitting methods implemented in Dark Shine tracking
+//--dNone: No method specified, return pre-fitting results from track finding
+enum FittingMethods {dNone, dKalman, dRiemann, dGBL};
 
 class DTrack
 {
@@ -44,11 +47,12 @@ public:
     double GetPx() const {return px;}
     double GetPy() const {return py;}
     double GetPz() const {return pz;}
-    double GetPp() const {return sqrt(px*px + pz*pz);}
+    double GetPp() const {return pp;}
     double GetPl() const {return py;}
 
     int GetSize() const {return hits.size();}
     TrkHitP At(int i) {return hits.at(i);}
+    double GetQuality() const {return quality;}
 
     double GetChi2() const {return chi2;}
     double GetXSigma() const {return xSigma;}
@@ -68,36 +72,38 @@ public:
 //Processor
 //................................................................................//
     void Fit(int method);
+    void Evaluate();
 
 private:
 //................................................................................//
 //Physical properties
     int pdg = 11;
     int sign = -1;
-    double px = INFINITY;
-    double py = INFINITY;
-    double pz = INFINITY;
-    double pp = INFINITY;
-    double pl = INFINITY;
+    double px = RETURN;
+    double py = RETURN;
+    double pz = RETURN;
+    double pp = RETURN;
+    double pl = RETURN;
 
 //................................................................................//
 //Track properties
+    double quality = RETURN;
 
 //................................................................................//
 //Detector properties, better to read from framework
-    double By = INFINITY;
+    double By = RETURN;
 
 //................................................................................//
 //Fitting properties
-    double chi2 = INFINITY;
-    double xSigma = INFINITY;
-    double ySigma = INFINITY;
+    double chi2 = RETURN;
+    double xSigma = RETURN;
+    double ySigma = RETURN;
 
 //................................................................................//
 //Prefitting properties
-    double preR = INFINITY;
-    double preXc = INFINITY;
-    double preYc = INFINITY;
+    double preR = RETURN;
+    double preXc = RETURN;
+    double preYc = RETURN;
  
 //................................................................................//
 //Hits collection

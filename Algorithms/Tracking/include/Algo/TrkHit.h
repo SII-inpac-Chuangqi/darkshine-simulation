@@ -1,6 +1,10 @@
 #ifndef TRKHIT_H
 #define TRKHIT_H
 
+#ifndef RETURN
+#define RETURN -INFINITY
+#endif
+
 //................................................................................//
 //CPP STL
 #include <iostream>
@@ -61,8 +65,8 @@ public:
 
 protected:
 
-    double u = -999999.;
-    double v = -999999.;
+    double u = RETURN;
+    double v = RETURN;
 
 private:
 };

@@ -35,7 +35,6 @@ public:
 //Get
 //................................................................................//
     virtual double GetR      (int i) const override {return r[i];       }
-    virtual double GetTheta  (int i) const override {return theta[i];   }
     virtual double GetCenterX(int i) const override {return centerX[i]; } //x direction in detector!
     virtual double GetCenterY(int i) const override {return centerY[i]; } //z direction in detector!
     virtual double GetChi2   (int i) const override {return goodness[i];}
@@ -47,7 +46,6 @@ private:
 //................................................................................//
 //Calculate deflection
 //................................................................................//
-    void Theta(int cirNo);
 
 //................................................................................//
 //Finding method
@@ -72,7 +70,6 @@ private:
 //Global choice
     int circleNo = 0;
     double r[NUM] = {-999.};
-    double theta[NUM] = {-999.};
     double centerX[NUM] = {-999.};
     double centerY[NUM] = {-999.};
     double goodness[NUM] = {-999.};

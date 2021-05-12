@@ -30,23 +30,6 @@ GreedyFinding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer)
 //................................................................................//
 //private:
 //................................................................................//
-//Calculate deflection
-//................................................................................//
-void GreedyFinding::Theta(int cirNo)
-{
-    if(hitChosen.size() < 1) return;
-    if(r[cirNo] <= 0)        return;
-
-    double a1, a2, b1, b2;
-    a1 = (*hitChosen.at(0)).GetU() - centerX[cirNo];
-    a2 = (*hitChosen.at(0)).GetZ() - centerY[cirNo];
-    b1 = (*hitChosen.at(hitChosen.size() - 1)).GetU() - centerX[cirNo];
-    b2 = (*hitChosen.at(hitChosen.size() - 1)).GetZ() - centerY[cirNo];
-
-    double phi;
-    phi = acos((a1*b1 + a2*b2)/r[cirNo]/r[cirNo]);
-    theta[cirNo] = atan(phi*r[cirNo]/((*hitChosen.at(0)).GetV() - (*hitChosen.at(hitChosen.size() - 1)).GetV()));
-}
 
 //................................................................................//
 //Fitting method
@@ -62,7 +45,6 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
         if(goodness[circleNo] > 0.99 && hitChosen.size() > 3)
         {
             VecHitChosen.emplace_back(hitChosen);
-            Theta(circleNo);
 
             auto it_eraseMap = tempClusteredTrkHitsInLayer.end();
             for(int i = 0; i < static_cast<int>(hitChosen.size()); i++)

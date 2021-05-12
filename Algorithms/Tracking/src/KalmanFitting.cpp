@@ -27,26 +27,34 @@
 
 //................................................................................//
 //Constructor
-KalmanFitting::KalmanFitting(const TrkHitPVec &track, double prePp, double B) : hitCov(2)
+KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<double> list) : hitCov(2)
 {
     try
     {
         if(track.size() < 3) throw -1;
         
-        Init(track, prePp, B);
-        Fit (track);
-        Fill(track);
+        Init(track, list);
+        Fit (track, {});
+        Fill(track, {});
     }
     catch(int e)
     {
         std::cerr << "Less than 3 hits" << std::endl;
-        pp = 0.3*B*prePp;
+
+        auto it = list.begin();
+        double preR = *it; it++;
+        double B = *it;
+        pp = 0.3*B*preR;
     }
     catch(genfit::Exception& e)
     {
         std::cerr << e.what();
         std::cerr <<"Exception, next track" << std::endl;
-        pp = 0.3*B*prePp;
+
+        auto it = list.begin();
+        double preR = *it; it++;
+        double B = *it;
+        pp = 0.3*B*preR;
     }
 }
 
@@ -54,13 +62,18 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, double prePp, double B) : 
 //Processor
 //................................................................................//
 //Initialize the fitter, set up magnetic, material manager, track representation, fitter and track model
-void KalmanFitting::Init(const TrkHitPVec &track, double prePp, double B)
+//void KalmanFitting::Init(const TrkHitPVec &track, double preR, double B)
+void KalmanFitting::Init(const TrkHitPVec &track, std::initializer_list<double> list)
 {
+    auto it = list.begin();
+    double preR = *it; it++;
+    double B = *it;
+
     int pdg = -GetSign(track)*11;              //pdg id, e- hypothesis
     pos = TVector3((*track.at(0)).GetU()*0.1,  //pre fitting results --postion,  mm->cm
                    (*track.at(0)).GetV()*0.1,  //
                    (*track.at(0)).GetZ()*0.1); //
-    mom = TVector3(0, 0, 0.3*B*prePp*0.001);   //                    --momentum, MeV->GeV
+    mom = TVector3(0, 0, 0.3*B*preR*0.001);   //                    --momentum, MeV->GeV
     hitCov.UnitMatrix();                       //covariance matrix
     hitCov(0, 0) = 0.0006*0.0006;              //resolution, cm --x 6µm
     hitCov(1, 1) = 0.006*0.006;                //               --y 60µm
@@ -69,20 +82,21 @@ void KalmanFitting::Init(const TrkHitPVec &track, double prePp, double B)
     genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., B*10., 0.)); //Magnet, T->kGs
 
     rep = new genfit::RKTrackRep(pdg);
+    //fitter = new genfit::KalmanFitterRefTrack();
     fitter = std::make_unique<genfit::KalmanFitterRefTrack>();
     fitTrack = new genfit::Track(rep, pos, mom);
 }
 
 //................................................................................//
 //Do the fit
-void KalmanFitting::Fit(const TrkHitPVec &track)
+void KalmanFitting::Fit(const TrkHitPVec &track, std::initializer_list<double>)
 {
     //Create vitual detector planes and fill the track
     int detId = 0;   //virtual detector
     int planeId = 0; //virtual plane
     int hitId = 0;
     TVectorD hitCoords(2);
-    genfit::PlanarMeasurement* measurement = nullptr;
+    //genfit::PlanarMeasurement* measurement = nullptr;
     for(int i = 0; i < static_cast<int>(track.size()); i++)
     {
         hitCoords[0] = 0.1*(*track.at(i)).GetU();
@@ -111,7 +125,7 @@ void KalmanFitting::Fit(const TrkHitPVec &track)
 
 //................................................................................//
 //Fill results
-void KalmanFitting::Fill(const TrkHitPVec &track)
+void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
 {
     fitTrack->getFittedState().getPosMomCov(pos, mom, hitCov);
     px = mom.Px()*1000;                                     //GeV->MeV
@@ -140,6 +154,8 @@ void KalmanFitting::Fill(const TrkHitPVec &track)
     xSigma = state[3]*10 - (*track.at(0)).GetX();
     //std::cout << "position error: " << xSigma << std::endl;
     ySigma = state[4]*10 - (*track.at(0)).GetY();
+
+    delete tp; tp = nullptr;
 }
 
 //................................................................................//

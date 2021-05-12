@@ -33,7 +33,6 @@ public:
 //................................................................................//
 //Get
     virtual double GetR      (int i) const = 0;
-    virtual double GetTheta  (int i) const = 0;
     virtual double GetCenterX(int i) const = 0;
     virtual double GetCenterY(int i) const = 0;
     virtual double GetChi2   (int i) const = 0;

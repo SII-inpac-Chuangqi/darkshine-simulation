@@ -30,8 +30,8 @@ TrkHit::TrkHit(TrkHit &&newTrkHit) : SimulatedHit(std::move(newTrkHit)),
 {}
 
 TrkHit::TrkHit(const SimulatedHit &newSimuHit) : SimulatedHit(newSimuHit),
-                                                 u(-999999.),
-                                                 v(-999999.)
+                                                 u(RETURN),
+                                                 v(RETURN)
 {}
 
 void TrkHit::operator =(const TrkHit &oldTrkHit)

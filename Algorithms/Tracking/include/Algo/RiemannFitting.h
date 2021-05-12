@@ -1,5 +1,5 @@
-#ifndef KALMAN_FITTING_H
-#define KALMAN_FITTING_H
+#ifndef RIEMANN_FITTING_H
+#define RIEMANN_FITTING_H
 
 //................................................................................//
 //CPP STL
@@ -16,10 +16,6 @@
 #include "TMatrixDSym.h"
 
 //................................................................................//
-//GenFit
-#include "GenFitInclude.h"
-
-//................................................................................//
 //Framework
 
 //................................................................................//
@@ -28,21 +24,17 @@
 #include "Algo/TrkHit.h"
 #include "Algo/Fitting.h"
 
-class KalmanFitting : public Fitting
+class RiemannFitting : public Fitting
 {
 public:
 //................................................................................//
 //Constructor
-    KalmanFitting() {}
-    KalmanFitting(const TrkHitPVec &track, std::initializer_list<double>);
-    ~KalmanFitting()
-    {
-        delete measurement; measurement = nullptr;
-        //delete fitter; fitter = nullptr;
-    };
+    RiemannFitting() {}
+    RiemannFitting(const TrkHitPVec &track, std::initializer_list<double>);
+    ~RiemannFitting() {};
 
-    KalmanFitting(const KalmanFitting&) = delete;
-    KalmanFitting& operator =(const KalmanFitting&) = delete;
+    RiemannFitting(const RiemannFitting&) = delete;
+    RiemannFitting& operator =(const RiemannFitting&) = delete;
 
 //................................................................................//
 //Processor
@@ -52,6 +44,8 @@ public:
 
 //................................................................................//
 //Get
+//................................................................................//
+//Inherited
     virtual double GetPx() const override {return px;}
     virtual double GetPy() const override {return py;}
     virtual double GetPz() const override {return pz;}
@@ -62,21 +56,43 @@ public:
     virtual double GetXSigma() const override {return xSigma;}
     virtual double GetYSigma() const override {return ySigma;}
 
-    int GetSign(const TrkHitPVec &track);
+//................................................................................//
+//Method specific
+    double GetTheta(const TrkHitPVec &track);
+
+    TMatrixD GetCartCoo(const TrkHitPVec &track);
+    TMatrixD GetPolarCoo(const TrkHitPVec &track);
+
+    TMatrixD GetVcart0();
+    TMatrixD GetJ1(const TrkHitPVec &track);
+    TMatrixD GetJ2(const TrkHitPVec &track);
+    TMatrixD GetVrad0(const TMatrixD &Vcart0, const TMatrixD &J1, const TMatrixD &J2);
+
+    double GetSigma();
+    double GetVradmsIJ(const TMatrixD &PolarCoo, int i, int j);
+    TMatrixD GetVradms(const TMatrixD &PolarCoo);
+
+    TMatrixD GetG(const TMatrixD &Vrad0, const TMatrixD &Vradms);
+    TMatrixD GetW(const TMatrixD &G);
+
+    TMatrixD GetXc(const TMatrixD &CartCoo, const TMatrixD &W);
+    TMatrixD GetXg(const TMatrixD &CartCoo, const TMatrixD &Xc);
+    TMatrixD GetNVecs(const TMatrixD &G, const TMatrixD &Xg);
 
 private:
 //................................................................................//
 //Method specific
-    genfit::AbsTrackRep *rep = nullptr;
-    //genfit::AbsKalmanFitter *fitter = nullptr;
-    std::unique_ptr<genfit::KalmanFitterRefTrack> fitter = std::make_unique<genfit::KalmanFitterRefTrack>();
-    genfit::Track *fitTrack = nullptr;
+    double preR = RETURN;
+    double preXc = RETURN;
+    double preYc = RETURN;
+    double preTheta = RETURN;
 
-    genfit::PlanarMeasurement *measurement = nullptr;
+    int dim = -1;
 
-    TVector3 pos;
-    TVector3 mom;
-    TMatrixDSym hitCov;
+    double c = RETURN;
+    double n1 = RETURN;
+    double n2 = RETURN;
+    double n3 = RETURN;
 };
 
 #endif

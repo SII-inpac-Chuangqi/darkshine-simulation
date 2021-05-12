@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------------
 # Setup the project
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 project(DSimu)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -62,6 +62,20 @@ if (USE_GENFIT)
 else()
     INCLUDE_DIRECTORIES(Utility/)
 endif ()
+
+# GBL
+FIND_PACKAGE(GBL)
+IF (GBL_FOUND)
+    MESSAGE("-- USING GBL")
+    MESSAGE("-- GBL Include Dir: ${GBL_INCLUDE_DIRS}")
+    MESSAGE("-- GBL Library Dir: ${GBL_LIBRARY_DIRS}")
+    INCLUDE_DIRECTORIES(${GBL_INCLUDE_DIRS})
+    LINK_LIBRARIES(${GBL_LIBRARIES})
+    LINK_DIRECTORIES(${GBL_LIBRARY_DIRS})
+ELSE()
+    MESSAGE("-- GBL NOT FOUND")
+ENDIF ()
+
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
 #
@@ -220,12 +234,10 @@ add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         ${Util_sources} ${Util_headers}
         ${Algo_sources} ${Algo_headers})
 target_link_libraries(DAna DAnaEvent genfit2)
-#target_link_libraries(DAna genfit2)
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers} ${Ana_sources} ${Ana_headers}
                                    ${Util_sources} ${Util_headers} ${Algo_sources} ${Algo_headers})
 target_link_libraries(DDis Display genfit2)
-#target_link_libraries(DDis genfit2)
 
 add_executable(DPlot Tools/DPlot.cpp ${Tools_sources} ${Tools_headers})
 target_link_libraries(DPlot yaml-cpp)

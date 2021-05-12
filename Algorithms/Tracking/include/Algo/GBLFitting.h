@@ -1,5 +1,5 @@
-#ifndef KALMAN_FITTING_H
-#define KALMAN_FITTING_H
+#ifndef GBL_FITTING_H
+#define GBL_FITTING_H
 
 //................................................................................//
 //CPP STL
@@ -16,8 +16,8 @@
 #include "TMatrixDSym.h"
 
 //................................................................................//
-//GenFit
-#include "GenFitInclude.h"
+//General Broken Lines
+#include "GblTrajectory.h"
 
 //................................................................................//
 //Framework
@@ -27,22 +27,19 @@
 #include "Algo/TypeDef.h"
 #include "Algo/TrkHit.h"
 #include "Algo/Fitting.h"
+#include "Algo/GBLUtil.h"
 
-class KalmanFitting : public Fitting
+class GBLFitting : public Fitting
 {
 public:
 //................................................................................//
 //Constructor
-    KalmanFitting() {}
-    KalmanFitting(const TrkHitPVec &track, std::initializer_list<double>);
-    ~KalmanFitting()
-    {
-        delete measurement; measurement = nullptr;
-        //delete fitter; fitter = nullptr;
-    };
+    GBLFitting() {}
+    GBLFitting(const TrkHitPVec &track, std::initializer_list<double>);
+    ~GBLFitting() {};
 
-    KalmanFitting(const KalmanFitting&) = delete;
-    KalmanFitting& operator =(const KalmanFitting&) = delete;
+    GBLFitting(const GBLFitting&) = delete;
+    GBLFitting& operator =(const GBLFitting&) = delete;
 
 //................................................................................//
 //Processor
@@ -62,21 +59,14 @@ public:
     virtual double GetXSigma() const override {return xSigma;}
     virtual double GetYSigma() const override {return ySigma;}
 
-    int GetSign(const TrkHitPVec &track);
-
 private:
 //................................................................................//
 //Method specific
-    genfit::AbsTrackRep *rep = nullptr;
-    //genfit::AbsKalmanFitter *fitter = nullptr;
-    std::unique_ptr<genfit::KalmanFitterRefTrack> fitter = std::make_unique<genfit::KalmanFitterRefTrack>();
-    genfit::Track *fitTrack = nullptr;
+    
 
-    genfit::PlanarMeasurement *measurement = nullptr;
-
-    TVector3 pos;
-    TVector3 mom;
-    TMatrixDSym hitCov;
+    gbl::GblDetectorLayer CreateLayerSit(const std::string aName, unsigned int layer,
+                                         double xPos, double yPos, double zPos, double thickness, double uAngle,
+                                         double uRes, double vAngle, double vRes);
 };
 
 #endif
