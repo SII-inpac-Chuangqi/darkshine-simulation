@@ -42,10 +42,10 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
     RegisterIntParameter   ("clean",    "Clean mode",               &clean,    0);
     RegisterIntParameter   ("Tag_fit_method",
                             "Specify fitting method: 0, no fine fitting; 1, Kalman fitting(memory leak!!!); 2, Riemann fitting; 3, GBL",
-                            &Tag_fit_method, -1);
+                            &Tag_fit_method, 0);
     RegisterIntParameter   ("Rec_fit_method",
                             "Specify fitting method: 0, no fine fitting; 1, Kalman fitting(memory leak!!!); 2, Riemann fitting; 3, GBL",
-                            &Rec_fit_method, -1);
+                            &Rec_fit_method, 0);
     RegisterDoubleParameter("RecTrk_B", "Magnet in recoil tracker", &RecTrk_B, 1.5);
 }
 
