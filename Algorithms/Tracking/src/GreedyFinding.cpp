@@ -1,3 +1,4 @@
+#ifndef _OFF_TRACKING
 //................................................................................//
 //ROOT
 #include <vector>
@@ -197,3 +198,4 @@ void GreedyFinding::MethodKasa(std::vector<double> xVec, std::vector<double> yVe
     }
     goodnessKasa = 1 - sqrt(s/(pointNo*R*R));
 }
+#endif

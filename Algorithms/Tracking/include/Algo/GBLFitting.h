@@ -1,3 +1,4 @@
+#ifndef _OFF_TRACKING
 #ifndef GBL_FITTING_H
 #define GBL_FITTING_H
 
@@ -69,4 +70,5 @@ private:
                                          double uRes, double vAngle, double vRes);
 };
 
+#endif
 #endif

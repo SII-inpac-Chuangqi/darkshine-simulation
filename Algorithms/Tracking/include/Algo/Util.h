@@ -1,3 +1,4 @@
+#ifndef _OFF_TRACKING
 #ifndef SERENA_UTIL_H
 #define SERENA_UTIL_H
 
@@ -87,4 +88,5 @@ double GetMedian(const std::vector<T> &vec)
 }
 
 
+#endif
 #endif

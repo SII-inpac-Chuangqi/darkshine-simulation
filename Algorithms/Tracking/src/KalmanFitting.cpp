@@ -1,3 +1,4 @@
+#ifndef _OFF_TRACKING
 //................................................................................//
 //CPP STL
 #include <iostream>
@@ -192,3 +193,4 @@ int KalmanFitting::GetSign(const TrkHitPVec &track)
     //std::cout << "s: " << s << std::endl;
     return s;
 }
+#endif

@@ -1,3 +1,4 @@
+#ifndef _OFF_TRACKING
 //................................................................................//
 //CPP STL
 #include <iostream>
@@ -130,3 +131,4 @@ gbl::GblDetectorLayer GBLFitting::CreateLayerSit(const std::string aName, unsign
     return gbl::GblDetectorLayer(aName, layer, 2, thickness, aCenter, aResolution,
                                  aPrecision, measTrafo, alignTrafo);
 }
+#endif

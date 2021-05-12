@@ -1,3 +1,4 @@
+#ifndef _OFF_TRACKING
 #ifndef GENFIT_INCLUDE_H
 #define GENFIT_INCLUDE_H
 
@@ -25,4 +26,5 @@
 //Left blanck intentionally
 //................................................................................//
 
+#endif
 #endif

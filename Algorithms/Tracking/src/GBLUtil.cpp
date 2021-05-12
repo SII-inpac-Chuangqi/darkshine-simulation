@@ -1,3 +1,4 @@
+#ifndef _OFF_TRACKING
 /*
  * exampleUtil.cpp
  *
@@ -562,3 +563,4 @@ namespace gbl
 
 }
 
+#endif

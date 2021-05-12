@@ -1,3 +1,4 @@
+#ifndef _OFF_TRACKING
 #ifndef DTRACK_H
 #define DTRACK_H
 
@@ -110,4 +111,5 @@ private:
     TrkHitPVec hits;
 };
 
+#endif
 #endif

@@ -12,7 +12,9 @@
 #include "Algo/MCTruthAnalysis.h"
 #include "Algo/RecECAL.h"
 #include "Algo/Digitizer.h"
-#include "Algo/TrackingProcessor.h"
+#ifndef _OFF_TRACKING
+    #include "Algo/TrackingProcessor.h"
+#endif
 #include "Algo/CutFlowAnalysis.h"
 
 void ControlManager::run() {
@@ -55,7 +57,9 @@ void ControlManager::run() {
     //algo->RegisterAnaProcessor(shared_ptr<Digitizer>(new Digitizer("Digitizer", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)));
+#ifndef _OFF_TRACKING
     algo->RegisterAnaProcessor(shared_ptr<TrackingProcessor>(new TrackingProcessor("Tracking", EvtWrt)));
+#endif
     algo->RegisterAnaProcessor(shared_ptr<CutFlowAnalysis>(new CutFlowAnalysis("CutFlowAnalysis", EvtWrt)));
 
     if (ConfMgr) {

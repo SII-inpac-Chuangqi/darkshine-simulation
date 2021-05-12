@@ -1,3 +1,4 @@
+#ifndef _OFF_TRACKING
 #ifndef FINDING_H
 #define FINDING_H
 
@@ -42,4 +43,5 @@ public:
     virtual std::vector<TrkHitPVec>::iterator Last () = 0;
 };
 
+#endif
 #endif

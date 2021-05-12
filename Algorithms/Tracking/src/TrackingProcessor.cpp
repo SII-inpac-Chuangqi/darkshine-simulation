@@ -1,3 +1,4 @@
+#ifndef _OFF_TRACKING
 //................................................................................//
 //CPP STL
 #include <vector>
@@ -326,3 +327,4 @@ void TrackingProcessor::End()
 }
 
 
+#endif

@@ -47,34 +47,40 @@ if (XercesC_FOUND)
     LINK_LIBRARIES( ${XercesC_LIBRARIES} )
 endif ()
 
-# GenFit2
-option(USE_GENFIT "USE_GENFIT" ON)
-if (USE_GENFIT)
-    MESSAGE("-- USING GenFit2: ${USE_GENFIT}")
-    INCLUDE_DIRECTORIES($ENV{GENFIT_INCLUDE_DIR})
-    LINK_DIRECTORIES($ENV{GENFIT_LIB_DIR})
-    MESSAGE("-- Genfit2 Include Dir: $ENV{GENFIT_INCLUDE_DIR}")
-    MESSAGE("-- Genfit2 Library Dir: $ENV{GENFIT_LIB_DIR}")
+option(DANA_TRACKING "DANA_TRACKING" OFF)
+if(DANA_TRACKING)
 
-    FIND_PACKAGE(Eigen3 REQUIRED)
-    INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
-    MESSAGE("-- Eigen Dir: ${EIGEN3_INCLUDE_DIR}")
+    # GenFit2
+    option(USE_GENFIT "USE_GENFIT" ON)
+    if (USE_GENFIT)
+        MESSAGE("-- USING GenFit2: ${USE_GENFIT}")
+        INCLUDE_DIRECTORIES($ENV{GENFIT_INCLUDE_DIR})
+        LINK_DIRECTORIES($ENV{GENFIT_LIB_DIR})
+        MESSAGE("-- Genfit2 Include Dir: $ENV{GENFIT_INCLUDE_DIR}")
+        MESSAGE("-- Genfit2 Library Dir: $ENV{GENFIT_LIB_DIR}")
+
+        FIND_PACKAGE(Eigen3 REQUIRED)
+        INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
+        MESSAGE("-- Eigen Dir: ${EIGEN3_INCLUDE_DIR}")
+    else()
+        INCLUDE_DIRECTORIES(Utility/)
+    endif ()
+
+    # GBL
+    FIND_PACKAGE(GBL)
+    IF (GBL_FOUND)
+        MESSAGE("-- USING GBL")
+        MESSAGE("-- GBL Include Dir: ${GBL_INCLUDE_DIRS}")
+        MESSAGE("-- GBL Library Dir: ${GBL_LIBRARY_DIRS}")
+        INCLUDE_DIRECTORIES(${GBL_INCLUDE_DIRS})
+        LINK_LIBRARIES(${GBL_LIBRARIES})
+        LINK_DIRECTORIES(${GBL_LIBRARY_DIRS})
+    ELSE()
+        MESSAGE("-- GBL NOT FOUND")
+    ENDIF ()
 else()
-    INCLUDE_DIRECTORIES(Utility/)
-endif ()
-
-# GBL
-FIND_PACKAGE(GBL)
-IF (GBL_FOUND)
-    MESSAGE("-- USING GBL")
-    MESSAGE("-- GBL Include Dir: ${GBL_INCLUDE_DIRS}")
-    MESSAGE("-- GBL Library Dir: ${GBL_LIBRARY_DIRS}")
-    INCLUDE_DIRECTORIES(${GBL_INCLUDE_DIRS})
-    LINK_LIBRARIES(${GBL_LIBRARIES})
-    LINK_DIRECTORIES(${GBL_LIBRARY_DIRS})
-ELSE()
-    MESSAGE("-- GBL NOT FOUND")
-ENDIF ()
+    add_definitions( -D_OFF_TRACKING=\"true\" )
+endif()
 
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
@@ -233,11 +239,20 @@ target_link_libraries(DSimu ${Geant4_LIBRARIES}
 add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         ${Util_sources} ${Util_headers}
         ${Algo_sources} ${Algo_headers})
-target_link_libraries(DAna DAnaEvent genfit2)
+
+if(DANA_TRACKING)
+    target_link_libraries(DAna DAnaEvent genfit2)
+else()
+    target_link_libraries(DAna DAnaEvent)
+endif()
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers} ${Ana_sources} ${Ana_headers}
                                    ${Util_sources} ${Util_headers} ${Algo_sources} ${Algo_headers})
-target_link_libraries(DDis Display genfit2)
+if(DANA_TRACKING)
+    target_link_libraries(DDis Display genfit2)
+else()
+    target_link_libraries(DDis Display)
+endif()
 
 add_executable(DPlot Tools/DPlot.cpp ${Tools_sources} ${Tools_headers})
 target_link_libraries(DPlot yaml-cpp)

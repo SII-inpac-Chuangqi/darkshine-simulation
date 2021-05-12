@@ -1,3 +1,4 @@
+#ifndef _OFF_TRACKING
 //................................................................................//
 //CPP STL
 #include <iostream>
@@ -147,3 +148,4 @@ void DTrack::Evaluate()
             quality = 1.*count.second/hits.size();
     }
 }
+#endif

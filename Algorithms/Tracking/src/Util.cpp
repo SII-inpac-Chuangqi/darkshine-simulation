@@ -1,3 +1,4 @@
+#ifndef _OFF_TRACKING
 //................................................................................//
 //CPP STL
 #include <iostream>
@@ -32,3 +33,4 @@ bool InRecTrack(double x, double y, double z)
 
     return false;
 }
+#endif
