@@ -39,18 +39,42 @@ With everything needed, it's ready to install :v:
 cd darkshine-simulation   # <source-directory>
 mkdir build
 cd build
-cmake -DUSE_GENFIT=ON -DCMAKE_INSTALL_PREFIX=<some-directory> ../
+cmake -DCMAKE_INSTALL_PREFIX=<some-directory> ../
 make -j100  # Just do it!
 make install
 ```
 
 Now in your install directory, everything should be there. Now it's the time to have fun with them. :relaxed:
 
+<details><summary><b>Build Options</b></summary>
+
+These options may be set by passing their name and value to the cmake command via -D flags. For example:
+
+```
+$ cmake -DCMAKE_INSTALL_PREFIX=<some-directory> -DDANA_TRACKING=ON /path/to/source
+```
+
+would configure the build of DSS for installation under <some-directory> and build Tracking Algorithms.
+
+- ```DANA_TRACKING : (DEFAULT : OFF)```  
+  
+   - If set to ON, build Tracking Algorithms.
+    
+    **Requires:**  [GeneralBrokenLines](https://github.com/GeneralBrokenLines/GeneralBrokenLines) and [Developed GenFit for Dark Shine](https://gitlab.com/Biblehome/developed-genfit-for-dark-shine)
+
+
+- ```USE_GENFIT : (DEFAUTL : ON)```
+
+   - Used by Tracking Algorithms only.
+
+</details>
+
 ## Quick guide on DSS
 
 <mark>All the example scripts can be found under the "scripts" folder in their corresponding source directories.<mark>
 
-<details><summary><b>DSimu</b></summary>
+### DSimu
+
 
 Without any arguments, DSimu will run in graphic mode, which is highly not recommended unless it is running on a
 computer with great graphic card.
@@ -62,9 +86,7 @@ computer with great graphic card.
   path.
 - The config file after '-m' is the normal configuration, e.g. particle gun, beam on number.
 
-</details>
-
-<details><summary><b>DAna</b></summary>
+### DAna
 
 There are two commands for **DAna**:
 
@@ -75,9 +97,7 @@ There are two commands for **DAna**:
       default value). One can simply generate an example config file by the bash command
       ```DAna -x > config.txt```
 
-</details>
-
-<details><summary><b>DDis</b></summary>
+### DDis
 
 Event Display is quite straight forward.
 
@@ -89,9 +109,7 @@ Event Display is quite straight forward.
     - the command is not necessary to run the graphic mode. if no specific root file, **DDis**
       will automatically run "dp_out.root".
 
-</details>
-
-<details><summary><b>DPlot</b></summary>
+### DPlot
 
 This is a really naive plotting program for newbies and lazy boys.
 
@@ -100,8 +118,6 @@ This is a really naive plotting program for newbies and lazy boys.
       generate all the plots under
       ```./<name>/```, where ```name``` is the first block in yaml file, which represents the identifier of the whole
       job.
-
-</details>
 
 ## DSS Wiki of yaml config
 
