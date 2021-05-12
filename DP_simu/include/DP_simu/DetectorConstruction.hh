@@ -62,7 +62,7 @@ class G4Material;
 
 class G4UserLimits;
 
-class RootManager;
+// class RootManager;
 
 class DetectorMessenger;
 
@@ -76,7 +76,7 @@ class HCAL_Construct;
 
 class DetectorConstruction : public G4VUserDetectorConstruction {
 public:
-    explicit DetectorConstruction(RootManager *);
+    explicit DetectorConstruction();
 
     ~DetectorConstruction() override;
 
@@ -104,9 +104,6 @@ private:
     void DefineWorld();
 
     void SetBiasLayer();
-
-    // Root Manaer
-    RootManager *fRootMng;
 
     /// Tracker Construction Class
 

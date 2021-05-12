@@ -114,15 +114,15 @@ int main(int argc, char **argv) {
         return -1;
     }
 
+    // Initiate RootManager Class
+    RootManager::CreateInstance();
+
     // Rebuild all dependent variables
     // All the parameters are locked for now
     dControl->RebuildVariables();
 
     // Initialize all the self-defined Singletons
     FilterManager::CreateInstance();
-
-    // Construct the root manager
-    auto *rootMng = new RootManager;
 
     if (!OpticalMacro.empty())   // batch mode
     {
@@ -136,7 +136,7 @@ int main(int argc, char **argv) {
 
     // Set mandatory initialization classes
 
-    runManager->SetUserInitialization(new DetectorConstruction(rootMng));
+    runManager->SetUserInitialization(new DetectorConstruction());
 
     G4VModularPhysicsList *physicsList = new FTFP_BERT;
 
@@ -149,7 +149,7 @@ int main(int argc, char **argv) {
     // Optical Physics
     if (dControl->if_optical) {
         std::cout<<"[Main] ==> Optical Physics Init... "<<std::endl;
-        auto *opticalPhysics = new OpticalPhysics(rootMng,dControl->Optical_PhysicsVerbose);
+        auto *opticalPhysics = new OpticalPhysics(dControl->Optical_PhysicsVerbose);
         physicsList->ReplacePhysics(opticalPhysics);
     }
     physicsList->RegisterPhysics(new G4StepLimiterPhysics());
@@ -167,17 +167,17 @@ int main(int argc, char **argv) {
     runManager->SetUserInitialization(physicsList);
 
     // Set user action classes
-    auto *run_action = new RunAction(rootMng);
+    auto *run_action = new RunAction();
     runManager->SetUserAction(run_action);
 
-    auto *event_action = new EventAction(rootMng);
+    auto *event_action = new EventAction();
     runManager->SetUserAction(event_action);
 
     runManager->SetUserAction(new PrimaryGeneratorAction());
-    runManager->SetUserAction(new TrackingAction(rootMng));
+    runManager->SetUserAction(new TrackingAction());
     if (dControl->if_filter)
         runManager->SetUserAction(new StackingAction);
-    auto *stepping_action = new SteppingAction(rootMng);
+    auto *stepping_action = new SteppingAction();
     runManager->SetUserAction(stepping_action);
 
     // Initialize G4 kernel
@@ -220,7 +220,6 @@ int main(int argc, char **argv) {
 //#ifdef G4VIS_USE
     delete visManager;
 //#endif
-    delete rootMng;
     delete runManager;
 
     return 0;

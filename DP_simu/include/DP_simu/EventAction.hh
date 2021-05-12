@@ -38,13 +38,13 @@
 
 #include <fstream>
 
-class RootManager;
+// class RootManager;
 /// Utility action class
 
 class EventAction : public G4UserEventAction
 {
   public:
-    explicit EventAction(RootManager*);
+    explicit EventAction();
     ~EventAction() override;
 
     void  BeginOfEventAction(const G4Event* ) override;
@@ -58,7 +58,6 @@ class EventAction : public G4UserEventAction
     G4int  fPrintModulo;
     G4int  fStartID;
     G4int  fEvtNb;
-    RootManager* frootMng;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

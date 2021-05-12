@@ -22,9 +22,9 @@ public:
 
     void DefineParameters();
 
-    bool Build(G4LogicalVolume *World_LV, RootManager *fRootMng, bool fCheckOverlaps);
+    bool Build(G4LogicalVolume *World_LV, bool fCheckOverlaps);
 
-    bool BuildSD(RootManager *fRootMng);
+    bool BuildSD();
 
     double eps = dControl->eps;
 private:

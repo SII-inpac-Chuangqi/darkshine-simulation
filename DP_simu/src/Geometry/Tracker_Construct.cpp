@@ -98,7 +98,7 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, G4bool fChe
     return true;
 }
 
-bool Tracker_Construct::BuildSDandField(G4int type, RootManager *fRootMng) {
+bool Tracker_Construct::BuildSDandField(G4int type) {
     //Migrate from: DetectorConstruction::CionstructSDandField
 
     /// Constrtruct Magnetic Field.
@@ -116,7 +116,7 @@ bool Tracker_Construct::BuildSDandField(G4int type, RootManager *fRootMng) {
     auto *TrackerSD1 = new DetectorSD(
             0,
             (type == dTagging ? "TagTrk1" : "RecTrk1"),
-            G4ThreeVector(1, 1, No_Tracker), fRootMng
+            G4ThreeVector(1, 1, No_Tracker)
     );
     G4SDManager::GetSDMpointer()->AddNewDetector(TrackerSD1);
     for (auto LV : Tracker_LV1)
@@ -125,7 +125,7 @@ bool Tracker_Construct::BuildSDandField(G4int type, RootManager *fRootMng) {
     auto *TrackerSD2 = new DetectorSD(
             0,
             (type == dTagging ? "TagTrk2" : "RecTrk2"),
-            G4ThreeVector(1, 1, No_Tracker), fRootMng
+            G4ThreeVector(1, 1, No_Tracker)
     );
     G4SDManager::GetSDMpointer()->AddNewDetector(TrackerSD2);
     for (auto LV : Tracker_LV2)

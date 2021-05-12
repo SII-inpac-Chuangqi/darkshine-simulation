@@ -15,7 +15,7 @@
 
 #include <sstream>
 
-class RootManager;
+// class RootManager;
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -26,13 +26,11 @@ class RootMessenger: public G4UImessenger
 {
   public:
 
-	  RootMessenger(RootManager* rootMng);
+	  RootMessenger();
 	  virtual ~RootMessenger();
 	  virtual void SetNewValue(G4UIcommand*, G4String);
 
   private:
-
-	  RootManager*             froot;
 
       G4UIdirectory*           fEngDirectory;
 

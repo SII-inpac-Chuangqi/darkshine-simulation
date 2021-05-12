@@ -55,9 +55,12 @@ class OpticalDigitizer;
 
 class RootManager {
 public:
-    RootManager();
 
-    ~RootManager();
+    RootManager(const RootManager &) = delete;
+
+    RootManager &operator=(RootManager const &) = delete;
+
+    static RootManager *CreateInstance();
 
     void book();
 
@@ -130,8 +133,12 @@ private:
     // DEvent Collection
     DEvent *Evt;
 
+private:
+    RootManager();
+
 };
 
+extern RootManager *dRootMng;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif

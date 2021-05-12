@@ -41,9 +41,8 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-SteppingAction::SteppingAction(RootManager *rootMng)
+SteppingAction::SteppingAction()
         : G4UserSteppingAction() {
-    froot = rootMng;
     G4cout << "Stepping Initialized!!" << G4endl;
 }
 
@@ -102,14 +101,14 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     // Get Detector Region
     if (post && post->GetPhysicalVolume()) {
         auto Region_name = post->GetPhysicalVolume()->GetName();
-        froot->FillEleak(aStep, Region_name);
+        dRootMng->FillEleak(aStep, Region_name);
     }
     if (!post) return;
     if (dControl->save_initial_particle_step
         && aStep->GetTrack()->GetTrackID() == 1) {
 
         /* Record all steps for certain particle */
-        froot->FillParticleStep(aStep);
+        dRootMng->FillParticleStep(aStep);
     }
 
     if (aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding() == 22) {
@@ -127,7 +126,7 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
             if (post->GetPosition()[2] > 100. * mm)
                 PNEnergyECAL = deltaE;
 
-            froot->FillPNE(PNEnergyTar, PNEnergyECAL);
+            dRootMng->FillPNE(PNEnergyTar, PNEnergyECAL);
         }
     }
 

@@ -20,9 +20,9 @@ public:
 
     void DefineParameters();
 
-    bool Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng, bool fCheckOverlaps);
+    bool Build(int type, G4LogicalVolume *World_LV, bool fCheckOverlaps);
 
-    bool BuildSD(RootManager *fRootMng);
+    bool BuildSD();
 
     bool BuildBias(BOptrMultiParticleChangeCrossSection *bias);
 

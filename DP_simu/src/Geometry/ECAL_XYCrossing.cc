@@ -4,7 +4,7 @@
 
 #include "Geometry/ECAL_XYCrossing.h"
 
-bool ECAL_XYCrossing::Build(int type, G4LogicalVolume *World_LV, RootManager *fRootMng, bool fCheckOverlaps) {
+bool ECAL_XYCrossing::Build(int type, G4LogicalVolume *World_LV, bool fCheckOverlaps) {
     /*
      * Type:
      *    -1: do not build
@@ -129,10 +129,10 @@ void ECAL_XYCrossing::DefineParameters(const G4ThreeVector &Pos_RecRegion, const
 
 }
 
-bool ECAL_XYCrossing::BuildSD(RootManager *fRootMng) {
+bool ECAL_XYCrossing::BuildSD() {
 
     // ECAL Center SD
-    auto *ECalSD = new DetectorSD(1, "ECAL_Center", ECAL_Center_Module_No, fRootMng);
+    auto *ECalSD = new DetectorSD(1, "ECAL_Center", ECAL_Center_Module_No);
     G4SDManager::GetSDMpointer()->AddNewDetector(ECalSD);
     for (auto &itr_LV : ECAL_Center_LV)
         itr_LV->SetSensitiveDetector(ECalSD);
@@ -141,8 +141,7 @@ bool ECAL_XYCrossing::BuildSD(RootManager *fRootMng) {
     const int nECAL_Outer = ECAL_Outer_Module_No.x() * ECAL_Outer_Module_No.y() * ECAL_Outer_Module_No.z();
     DetectorSD *ECalOutSD[4];
     for (int i = 1; i <= nECAL_Outer; i++) {
-        ECalOutSD[i - 1] = new DetectorSD(2, "ECAL_Outer_" + std::to_string(i), ECAL_Outer_Mod_No_Dir,
-                                          fRootMng);
+        ECalOutSD[i - 1] = new DetectorSD(2, "ECAL_Outer_" + std::to_string(i), ECAL_Outer_Mod_No_Dir);
         G4SDManager::GetSDMpointer()->AddNewDetector(ECalOutSD[i - 1]);
         for (auto itr_LV = (ECAL_Outer_LV[i - 1]).begin(); itr_LV != (ECAL_Outer_LV[i - 1]).end(); itr_LV++)
             (*itr_LV)->SetSensitiveDetector(ECalOutSD[i - 1]);

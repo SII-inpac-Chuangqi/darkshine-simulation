@@ -14,10 +14,21 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+// Required by Singleton
+RootManager *dRootMng = nullptr;
+
+// Get Instance Class
+RootManager *RootManager::CreateInstance() {
+    if (dRootMng == nullptr)
+        dRootMng = new RootManager();
+
+    return dRootMng;
+}
+
 RootManager::RootManager()
         : rootFile(nullptr), tr(nullptr), if_clean(false) {
 
-    fMessenger = new RootMessenger(this);
+    fMessenger = new RootMessenger();
     outfile_name = dControl->outfile_Name;
 
     Evt = new DEvent();
@@ -44,10 +55,10 @@ void RootManager::initialize() { //event level init
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-RootManager::~RootManager() {
-    delete fMessenger;
-    delete rootFile;
-}
+// RootManager::~RootManager() {
+//     delete fMessenger;
+//     delete rootFile;
+// }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 /// \brief Create rootFile.

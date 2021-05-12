@@ -72,14 +72,14 @@ class G4OpBoundaryProcess;
 
 class G4OpAbsorption;
 
-class RootManager; //exchange global information
+// class RootManager; //exchange global information
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class OpticalPhysics : public G4VPhysicsConstructor {
 public:
 
-    OpticalPhysics(RootManager *rootMgr = nullptr, G4int verbose = 0, const G4String &name = "Optical");
+    OpticalPhysics(G4int verbose = 0, const G4String &name = "Optical");
 
     virtual ~OpticalPhysics();
 
@@ -98,8 +98,6 @@ private:
     /// Not implemented
     OpticalPhysics &operator=(const OpticalPhysics &right);
 
-    // Load Root mgr for IO
-    RootManager *fRootMgr;
 public:
 
     // configure OpticalPhysics builder

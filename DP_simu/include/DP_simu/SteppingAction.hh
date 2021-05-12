@@ -46,15 +46,13 @@ class G4Step;
 
 class SteppingAction : public G4UserSteppingAction {
 public:
-    explicit SteppingAction(RootManager *);
+    explicit SteppingAction();
 
     ~SteppingAction() override;
 
     void UserSteppingAction(const G4Step *aStep) override;
 
 private:
-
-    RootManager *froot;
 
     G4double PNEnergyTar{0.}; // PN reaction in Target Region
     G4double PNEnergyECAL{0.}; // PN reaction in ECal Region
