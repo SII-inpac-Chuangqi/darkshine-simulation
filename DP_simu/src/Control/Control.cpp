@@ -90,7 +90,7 @@ Control::Control() {
     for (int i = 0; i < 7; i++) {
         tag_Size_Tracker.emplace_back(10 * cm, 20 * cm, 0.1 * mm);
         tag_Pos_Tracker.emplace_back(0 * cm, 0 * cm, (-30. + i * 10.) * cm);
-        tag_Tracker_Angle_Gap.emplace_back(0 * radian, 0.1 * radian, 0 * mm);
+        tag_Tracker_Angle_Gap.emplace_back(0 * radian, 0.1 * radian, 1 * um);
         tag_Tracker_Strip_N.emplace_back(20);
     }
 
@@ -102,7 +102,7 @@ Control::Control() {
     rec_Tracker_MagField = G4ThreeVector(0, -0.5 * tesla, 0);
     for (int i = 0; i < 6; i++) {
         rec_Size_Tracker.emplace_back(10 * cm, 20 * cm, 0.1 * mm);
-        rec_Tracker_Angle_Gap.emplace_back(0 * radian, 0.1 * radian, 0 * mm);
+        rec_Tracker_Angle_Gap.emplace_back(0 * radian, 0.1 * radian, 1 * um);
         rec_Tracker_Strip_N.emplace_back(20);
     }
     rec_Pos_Tracker.emplace_back(0 * cm, 0 * cm, -86.25 * mm);
@@ -299,8 +299,8 @@ void Control::RebuildVariables() {
     tag_Tracker_Strip_Gap_Width.clear();
     tag_Tracker_Strip_Half_Width.clear();
     for (int i = 0 ; i < tag_No_Tracker ; i++) {
-        tag_Tracker_Strip_Gap_Width.emplace_back( tag_Size_Tracker.at(i)[0] / tag_Tracker_Strip_N.at(i) );
-        tag_Tracker_Strip_Half_Width.emplace_back( ( tag_Tracker_Strip_Gap_Width.at(i) - tag_Tracker_Angle_Gap.at(i)[2] ) / 2.0 );
+        tag_Tracker_Strip_Gap_Width.emplace_back( tag_Size_Tracker.at(i).x() / tag_Tracker_Strip_N.at(i) );
+        tag_Tracker_Strip_Half_Width.emplace_back( ( tag_Tracker_Strip_Gap_Width.at(i) - tag_Tracker_Angle_Gap.at(i).z() ) / 2.0 );
     }
 
     //----------------------------------------
@@ -321,8 +321,8 @@ void Control::RebuildVariables() {
     rec_Tracker_Strip_Gap_Width.clear();
     rec_Tracker_Strip_Half_Width.clear();
     for (int i = 0 ; i < rec_No_Tracker ; i++) {
-        rec_Tracker_Strip_Gap_Width.emplace_back( rec_Size_Tracker.at(i)[0] / rec_Tracker_Strip_N.at(i) );
-        rec_Tracker_Strip_Half_Width.emplace_back( ( rec_Tracker_Strip_Gap_Width.at(i) - rec_Tracker_Angle_Gap.at(i)[2] ) / 2.0 );
+        rec_Tracker_Strip_Gap_Width.emplace_back( rec_Size_Tracker.at(i).x() / rec_Tracker_Strip_N.at(i) );
+        rec_Tracker_Strip_Half_Width.emplace_back( ( rec_Tracker_Strip_Gap_Width.at(i) - rec_Tracker_Angle_Gap.at(i).z() ) / 2.0 );
     }
 
     //----------------------------------------
