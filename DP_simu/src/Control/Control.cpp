@@ -95,7 +95,7 @@ Control::Control() {
     }
 
     assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size()); // Sanity Check
-    assert(tag_Tracker_Angle_Gap.size() == tag_Pos_Tracker.size());
+    assert(tag_Tracker_Angle_Gap.size() == tag_Size_Tracker.size());
     assert(tag_Tracker_Strip_N.size() == tag_Tracker_Angle_Gap.size());
 
     // Recoil Tracker
@@ -113,7 +113,7 @@ Control::Control() {
     rec_Pos_Tracker.emplace_back(0 * cm, 0 * cm, 86.25 * mm);
 
     assert(rec_Size_Tracker.size() == rec_Pos_Tracker.size());  // Sanity Check
-    assert(rec_Tracker_Angle_Gap.size() == rec_Pos_Tracker.size());
+    assert(rec_Tracker_Angle_Gap.size() == rec_Size_Tracker.size());
     assert(rec_Tracker_Strip_N.size() == rec_Tracker_Angle_Gap.size());
 
     //----------------------------------------
@@ -573,6 +573,8 @@ bool Control::ReadYAML(const G4String &file_in) {
         for (auto node : Node["Geometry"]["Tracker"]["tag_Tracker_Strip_N"])
             tag_Tracker_Strip_N.emplace_back(node.as<int>());
         assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size()); // Sanity Check
+        assert(tag_Tracker_Angle_Gap.size() == tag_Size_Tracker.size());
+        assert(tag_Tracker_Strip_N.size() == tag_Tracker_Angle_Gap.size());
         // Recoil Tracker
         rec_Tracker_MagField = readV3(Node["Geometry"]["Tracker"]["rec_Tracker_MagField"], true);
         rec_Size_Tracker.clear();
@@ -587,8 +589,9 @@ bool Control::ReadYAML(const G4String &file_in) {
             rec_Tracker_Angle_Gap.emplace_back(readV3(node, true));
         for (auto node : Node["Geometry"]["Tracker"]["rec_Tracker_Strip_N"])
             rec_Tracker_Strip_N.emplace_back(node.as<int>());
-
         assert(rec_Size_Tracker.size() == rec_Pos_Tracker.size()); // Sanity Check
+        assert(rec_Tracker_Angle_Gap.size() == rec_Size_Tracker.size());
+        assert(rec_Tracker_Strip_N.size() == rec_Tracker_Angle_Gap.size());
         //----------------------------------------
         // Electromagnetic Calorimeter
         ECAL_Name = Node["Geometry"]["ECAL"]["ECAL_Name"].as<std::string>();
