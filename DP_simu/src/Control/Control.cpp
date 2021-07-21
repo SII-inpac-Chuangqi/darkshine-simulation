@@ -554,19 +554,31 @@ bool Control::ReadYAML(const G4String &file_in) {
         tag_Tracker_MagField = readV3(Node["Geometry"]["Tracker"]["tag_Tracker_MagField"], true);
         tag_Size_Tracker.clear();
         tag_Pos_Tracker.clear();
+        tag_Tracker_Angle_Gap.clear();
+        tag_Tracker_Strip_N.clear();
         for (auto node : Node["Geometry"]["Tracker"]["tag_Size_Tracker"])
             tag_Size_Tracker.emplace_back(readV3(node, true));
         for (auto node : Node["Geometry"]["Tracker"]["tag_Pos_Tracker"])
             tag_Pos_Tracker.emplace_back(readV3(node, true));
+        for (auto node : Node["Geometry"]["Tracker"]["tag_Tracker_Angle_Gap"])
+            tag_Tracker_Angle_Gap.emplace_back(readV3(node, true));
+        for (auto node : Node["Geometry"]["Tracker"]["tag_Tracker_Strip_N"])
+            tag_Tracker_Strip_N.emplace_back(node.as<int>());
         assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size()); // Sanity Check
         // Recoil Tracker
         rec_Tracker_MagField = readV3(Node["Geometry"]["Tracker"]["rec_Tracker_MagField"], true);
         rec_Size_Tracker.clear();
         rec_Pos_Tracker.clear();
+        rec_Tracker_Angle_Gap.clear();
+        rec_Tracker_Strip_N.clear();
         for (auto node : Node["Geometry"]["Tracker"]["rec_Size_Tracker"])
             rec_Size_Tracker.emplace_back(readV3(node, true));
         for (auto node : Node["Geometry"]["Tracker"]["rec_Pos_Tracker"])
             rec_Pos_Tracker.emplace_back(readV3(node, true));
+        for (auto node : Node["Geometry"]["Tracker"]["rec_Tracker_Angle_Gap"])
+            rec_Tracker_Angle_Gap.emplace_back(readV3(node, true));
+        for (auto node : Node["Geometry"]["Tracker"]["rec_Tracker_Strip_N"])
+            rec_Tracker_Strip_N.emplace_back(node.as<int>());
 
         assert(rec_Size_Tracker.size() == rec_Pos_Tracker.size()); // Sanity Check
         //----------------------------------------
