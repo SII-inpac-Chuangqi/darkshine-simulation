@@ -160,7 +160,7 @@ Geometry:
       - [ 0, "radian" , 0.1 , "radian" , 0 , "mm" ] #Layer 5
       - [ 0, "radian" , 0.1 , "radian" , 0 , "mm" ] #Layer 6
       - [ 0, "radian" , 0.1 , "radian" , 0 , "mm" ] #Layer 7
-    tag_Tracker_Strip_N: [ 40 , 40 , 40 , 40 , 40 , 40 , 40 ]
+    tag_Tracker_Strip_N: [ 20 , 20 , 20 , 20 , 20 , 20 , 20 ]
     # Recoil Tracker
     # Magnetic Field along -y direction
     rec_Tracker_MagField: [ 0, "tesla", -0.5 , "tesla", 0, "tesla" ]
@@ -185,7 +185,7 @@ Geometry:
       - [ 0, "radian" , 0.1 , "radian" , 0 , "mm" ] #Layer 4
       - [ 0, "radian" , 0.1 , "radian" , 0 , "mm" ] #Layer 5
       - [ 0, "radian" , 0.1 , "radian" , 0 , "mm" ] #Layer 6
-    rec_Tracker_Strip_N: [ 40, 40 , 40 , 40 , 40 , 40 ]
+    rec_Tracker_Strip_N: [ 20, 20 , 20 , 20 , 20 , 20 ]
   ECAL:
     ECAL_Name: "ECAL"
 
