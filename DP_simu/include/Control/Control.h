@@ -121,8 +121,6 @@ public:
     int tag_No_Tracker{};  // dependent
     G4ThreeVector tag_Size_TrackerRegion;  // dependent
     G4ThreeVector tag_Pos_TrackerRegion;  // dependent
-    std::vector<G4double> tag_Tracker_Strip_Gap_Width{}; // dependent
-    std::vector<G4double> tag_Tracker_Strip_Half_Width{}; // dpendent
     G4ThreeVector tag_Tracker_MagField;
 
     // Recoil Tracker
@@ -133,8 +131,6 @@ public:
     int rec_No_Tracker{};  // dependent
     G4ThreeVector rec_Size_TrackerRegion;  // dependent
     G4ThreeVector rec_Pos_TrackerRegion;  // dependent
-    std::vector<G4double> rec_Tracker_Strip_Gap_Width{}; // dependent
-    std::vector<G4double> rec_Tracker_Strip_Half_Width{}; // dependent
     G4ThreeVector rec_Tracker_MagField;
 
     //----------------------------------------
