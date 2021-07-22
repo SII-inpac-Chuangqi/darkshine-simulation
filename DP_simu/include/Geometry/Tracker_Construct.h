@@ -55,7 +55,7 @@ private:
     /// Tracker build parameters
     G4ThreeVector Tracker1_Color;
     G4ThreeVector Tracker2_Color;
-    std::vector<G4LogicalVolume *> Tracker_LV;
+    std::vector<G4LogicalVolume *> TrackerStrip_LV;
 
     /// Magnetic Field
     G4bool allLocal = true;

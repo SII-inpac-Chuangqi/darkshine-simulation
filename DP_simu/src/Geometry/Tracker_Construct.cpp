@@ -82,7 +82,7 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, G4bool fChe
     Tracker->SetVis2(new G4VisAttributes(G4Colour(Tracker2_Color[0], Tracker2_Color[1], Tracker2_Color[2])));
     Tracker->TrackerPlacement(No_Tracker, &Size_Tracker[0], &Pos_Tracker[0], StripN_Tracker, &Strip_Angle_Gap_Tracker[0]);
 
-    Tracker_LV = Tracker->GetStripLVVector();
+    TrackerStrip_LV = Tracker->GetStripLVVector();
 
     return true;
 }
@@ -102,14 +102,14 @@ bool Tracker_Construct::BuildSDandField(G4int type) {
 
     /// Construct Sensitive Detector
 
-    auto *TrackerSD = new DetectorSD(
+    auto *SMTrackerSD = new DetectorSD(
             0,
             (type == dTagging ? "TagTrk" : "RecTrk"),
             G4ThreeVector(1, 1, No_Tracker)
     );
-    G4SDManager::GetSDMpointer()->AddNewDetector(TrackerSD);
-    for (auto LV : Tracker_LV)
-        LV->SetSensitiveDetector(TrackerSD);
+    G4SDManager::GetSDMpointer()->AddNewDetector(SMTrackerSD);
+    for (auto LV : TrackerStrip_LV)
+        LV->SetSensitiveDetector(SMTrackerSD);
 
     return true;
 }
