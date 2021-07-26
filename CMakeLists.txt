@@ -47,7 +47,7 @@ if (XercesC_FOUND)
     LINK_LIBRARIES( ${XercesC_LIBRARIES} )
 endif ()
 
-option(DANA_TRACKING "DANA_TRACKING" OFF)
+option(DANA_TRACKING "DANA_TRACKING" ON)
 if(DANA_TRACKING)
 
     # GenFit2
