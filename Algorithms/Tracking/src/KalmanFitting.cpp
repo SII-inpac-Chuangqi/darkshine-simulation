@@ -156,7 +156,7 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
     //std::cout << "position error: " << xSigma << std::endl;
     ySigma = state[4]*10 - (*track.at(0)).GetY();
 
-    delete tp; tp = nullptr;
+    //delete tp; tp = nullptr;
 }
 
 //................................................................................//

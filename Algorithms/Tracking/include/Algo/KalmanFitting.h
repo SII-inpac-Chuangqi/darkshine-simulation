@@ -38,7 +38,8 @@ public:
     KalmanFitting(const TrkHitPVec &track, std::initializer_list<double>);
     ~KalmanFitting()
     {
-        delete measurement; measurement = nullptr;
+        //delete measurement; measurement = nullptr;
+        delete fitTrack; fitTrack = nullptr;
         //delete fitter; fitter = nullptr;
     };
 
