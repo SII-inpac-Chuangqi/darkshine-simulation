@@ -75,8 +75,8 @@ double DMagnet::GetField(double x, double y, double z)
        y < yDivision_.front() || y > yDivision_.back() ||
        z < zDivision_.front() || z > zDivision_.back())
     {
-        std::cout << "WARNING	Position declared crosses the border" << std::endl;
-        return INFINITY;
+        // std::cout << "WARNING	Position declared crosses the border" << std::endl;
+        return 0;
     }
 
     int xid = xDivision_.size()*yDivision_.size()*zDivision_.size();
@@ -102,8 +102,8 @@ double DMagnet::GetField(double x, double y, double z)
     int id = zid*((xDivision_.size() - 1)*(yDivision_.size() - 1)) + yid*(xDivision_.size() - 1) + xid;
     if(id > static_cast<int>(mags_.size()) || id < 0)
     {
-        std::cout << "WARNING	No magnet slice matched" << std::endl;
-        return INFINITY;
+        // std::cout << "WARNING	No magnet slice matched" << std::endl;
+        return 0;
     }
 
     double field = GetFieldValue(x, y, z, mags_.at(id));
