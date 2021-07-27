@@ -69,7 +69,7 @@ void MagneticField::GetFieldValue(const G4double Point[4],
         Bfield[2] = mag_field_vector.z();
     } else {
         for ( int i = 0; i < 3; i++ ) {
-            Bfield[i] = BField.at(i)->GetField(Point[0], Point[1], Point[2]);
+            Bfield[i] = BField.at(i)->GetField(Point[0] / mm, Point[1] / mm, Point[2] / mm) / tesla;
         }
         std::cerr << "Point " << Point[0] << " " << Point[1] << " " << Point[2] << std::endl;
         std::cerr << "Bfield " << Bfield[0] << " " <<  Bfield[1] << " " << Bfield[2] << std::endl;
