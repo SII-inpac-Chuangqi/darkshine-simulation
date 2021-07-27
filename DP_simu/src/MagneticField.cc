@@ -46,6 +46,12 @@ MagneticField::MagneticField()
         BField = std::vector<DMagnet*>({dynamic_cast<DMagnet*>(f->Get("magnet0")),
                                         dynamic_cast<DMagnet*>(f->Get("magnet1")),
                                         dynamic_cast<DMagnet*>(f->Get("magnet2"))});
+
+        dRootMng->getRootFile()->cd();
+        for ( auto b : BField ) {
+            b->Write();
+        }
+
     }
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

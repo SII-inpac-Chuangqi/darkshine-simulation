@@ -34,6 +34,7 @@
 #include "TFile.h"
 
 #include "Control/Control.h"
+#include "RootManager.hh"
 #include "G4MagneticField.hh"
 #include "Object/DMagnet.h"
 #include "G4ThreeVector.hh"
