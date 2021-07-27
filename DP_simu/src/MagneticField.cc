@@ -71,6 +71,8 @@ void MagneticField::GetFieldValue(const G4double Point[4],
         for ( int i = 0; i < 3; i++ ) {
             Bfield[i] = BField.at(i)->GetField(Point[0], Point[1], Point[2]);
         }
+        std::cerr << "Point" << Point[0] << Point[1] << Point[2] << std::endl;
+        std::cerr << "Bfield" << Bfield[0] << Bfield[1] << Bfield[2] << std::endl;
     }
 }
 
