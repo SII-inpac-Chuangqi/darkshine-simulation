@@ -16,7 +16,6 @@
 #include "Algo/DTrack.h"
 #include "Algo/KalmanFitting.h"
 #include "Algo/RiemannFitting.h"
-#include "Algo/GBLFitting.h"
 
 //................................................................................//
 //public:
@@ -91,9 +90,6 @@ void DTrack::Fit(int method)
                         break;
         case dRiemann :
                         fitter = new RiemannFitting(hits, {preR, preXc, preYc, By}); //Fix to 4 ordered parameters!
-                        break;
-        case dGBL     :
-                        fitter = new GBLFitting(hits, {preR, By});                   //Fix to 2 ordered parameters!
                         break;
         case dNone    :
                         std::cout << "No fitting." << std::endl;

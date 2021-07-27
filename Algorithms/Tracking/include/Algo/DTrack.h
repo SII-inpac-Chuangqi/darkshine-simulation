@@ -25,7 +25,7 @@
 //................................................................................//
 //Fitting methods implemented in Dark Shine tracking
 //--dNone: No method specified, return pre-fitting results from track finding
-enum FittingMethods {dNone, dKalman, dRiemann, dGBL};
+enum FittingMethods {dNone, dKalman, dRiemann};
 
 class DTrack
 {
