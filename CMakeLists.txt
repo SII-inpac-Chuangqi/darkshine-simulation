@@ -157,6 +157,7 @@ SET(DEvent_header_shared
         Utility/Object/include/Object/ReconstructedParticle.h
         Utility/Object/include/Object/DigiForm.hh
         Utility/Object/include/Object/DEvent.h
+        Utility/Object/include/Object/DMagnet.h
         )
 SET(AnaEvent_header_shared
         DP_ana/include/Event/AnaEvent.h
@@ -183,6 +184,7 @@ SET(DEvent_source
         Utility/Object/src/ReconstructedParticle.cpp
         Utility/Object/src/DigiForm.cpp
         Utility/Object/src/DEvent.cpp
+        Utility/Object/src/DMagnet.cpp
         )
 SET(AnaEvent_source
         DP_ana/src/AnaEvent.cpp

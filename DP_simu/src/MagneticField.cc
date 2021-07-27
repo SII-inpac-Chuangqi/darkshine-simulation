@@ -36,47 +36,48 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 MagneticField::MagneticField()
-  : G4MagneticField()
-{
-  GetGlobalFieldManager()->SetDetectorField(nullptr);
+        : G4MagneticField() {
+    GetGlobalFieldManager()->SetDetectorField(nullptr);
+    if ( ! dControl->uniform_mag_field ) {
+        f = new TFile(dControl->mag_field_input);
+        if (!f) {
+            std::cerr << "[READFILE ERROR] ==> File: " + dControl->mag_field_input + " does not exist." << std::endl;
+        }
+        BField = std::vector<DMagnet*>({dynamic_cast<DMagnet*>(f->Get("magnet0")),
+                                        dynamic_cast<DMagnet*>(f->Get("magnet1")),
+                                        dynamic_cast<DMagnet*>(f->Get("magnet2"))});
+    }
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-MagneticField::~MagneticField()
-{}
+MagneticField::~MagneticField() {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 
 void MagneticField::GetFieldValue(const G4double Point[4],
-                                  G4double* Bfield)
-{
-    if ( use_uniform_field )
-    {
-        Bfield[0] = uniform_mag_field.x();
-        Bfield[1] = uniform_mag_field.y();
-        Bfield[2] = uniform_mag_field.z();
-    }
-    else
-    {
-        Bfield[0] = BFieldX->GetField(Point[0], Point[1], Point[2]);
-        Bfield[1] = BFieldY->GetField(Point[0], Point[1], Point[2]);
-        Bfield[2] = BFieldZ->GetField(Point[0], Point[1], Point[2]);
+                                  G4double *Bfield) const {
+    if (dControl->uniform_mag_field) {
+        Bfield[0] = mag_field_vector.x();
+        Bfield[1] = mag_field_vector.y();
+        Bfield[2] = mag_field_vector.z();
+    } else {
+        for ( int i = 0; i < 3; i++ ) {
+            Bfield[i] = BField.at(i)->GetField(Point[0], Point[1], Point[2]);
+        }
     }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void MagneticField::SetUniformMagFieldVector(G4ThreeVector filedVector)
-{
-    uniform_mag_field = filedVector;
+void MagneticField::SetUniformMagFieldVector(G4ThreeVector filedVector) {
+    mag_field_vector = filedVector;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4FieldManager*  MagneticField::GetGlobalFieldManager()
-{
-  return G4TransportationManager::GetTransportationManager()->GetFieldManager();
+G4FieldManager *MagneticField::GetGlobalFieldManager() {
+    return G4TransportationManager::GetTransportationManager()->GetFieldManager();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

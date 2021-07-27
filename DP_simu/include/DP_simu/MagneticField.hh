@@ -31,7 +31,9 @@
 #ifndef MagneticField_h
 #define MagneticField_h 1
 
-//#include "G4UniformMagField.hh"
+#include "TFile.h"
+
+#include "Control/Control.h"
 #include "G4MagneticField.hh"
 #include "Object/DMagnet.h"
 #include "G4ThreeVector.hh"
@@ -53,17 +55,16 @@ class MagneticField : public G4MagneticField
     void SetUniformMagFieldVector(G4ThreeVector);
 
     void GetFieldValue( const G4double Point[4],
-                        G4double* Bfield );
+                        G4double* Bfield ) const override;
+
   protected:
     // Find the global Field Manager
     G4FieldManager* GetGlobalFieldManager(); // static
 
   private:
-    DMagnet* BFieldX; // magnet0
-    DMagnet* BFieldY;
-    DMagnet* BFieldZ;
-    bool use_uniform_field;
-    G4ThreeVector uniform_mag_field;
+    TFile* f;
+    std::vector<DMagnet*> BField;
+    G4ThreeVector mag_field_vector;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
