@@ -470,6 +470,13 @@ bool Control::ReadYAML(const G4String &file_in) {
         check_overlaps = Node["check_overlaps"].as<bool>();
         signal_production = Node["signal_production"].as<bool>();
         if (Node["signal_mass"].IsDefined()) signal_mass = readV2(Node["signal_mass"]);
+        //========================================
+        // Magnetic field
+        //----------------------------------------
+        mag_field_input = Node["MagField"]["mag_field_input"].as<std::string>();
+        uniform_mag_field = Node["MagField"]["uniform_mag_field"].as<bool>();
+        tag_Tracker_MagField = readV3(Node["MagField"]["tag_Tracker_MagField"], true);
+        rec_Tracker_MagField = readV3(Node["MagField"]["rec_Tracker_MagField"], true);
         //----------------------------------------
         // Root Manager Options
         outfile_Name = Node["RootManager"]["outfile_Name"].as<std::string>();
@@ -551,7 +558,6 @@ bool Control::ReadYAML(const G4String &file_in) {
         Tracker1_Color = readV3(Node["Geometry"]["Tracker"]["Tracker1_Color"]);
         Tracker2_Color = readV3(Node["Geometry"]["Tracker"]["Tracker2_Color"]);
         // Tagging Tracker
-        tag_Tracker_MagField = readV3(Node["Geometry"]["Tracker"]["tag_Tracker_MagField"], true);
         tag_Size_Tracker.clear();
         tag_Pos_Tracker.clear();
         for (auto node : Node["Geometry"]["Tracker"]["tag_Size_Tracker"])
@@ -560,7 +566,6 @@ bool Control::ReadYAML(const G4String &file_in) {
             tag_Pos_Tracker.emplace_back(readV3(node, true));
         assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size()); // Sanity Check
         // Recoil Tracker
-        rec_Tracker_MagField = readV3(Node["Geometry"]["Tracker"]["rec_Tracker_MagField"], true);
         rec_Size_Tracker.clear();
         rec_Pos_Tracker.clear();
         for (auto node : Node["Geometry"]["Tracker"]["rec_Size_Tracker"])

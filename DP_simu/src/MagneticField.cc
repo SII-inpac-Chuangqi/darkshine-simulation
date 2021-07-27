@@ -36,20 +36,10 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 MagneticField::MagneticField()
-  : G4UniformMagField(G4ThreeVector())
+  : G4MagneticField()
 {
-  GetGlobalFieldManager()->SetDetectorField(NULL);
+  GetGlobalFieldManager()->SetDetectorField(nullptr);
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-MagneticField::MagneticField(G4ThreeVector fieldVector)
-  : G4UniformMagField(fieldVector)
-{
-  GetGlobalFieldManager()->SetDetectorField(this);    
-  GetGlobalFieldManager()->CreateChordFinder(this);
-}
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 MagneticField::~MagneticField()
@@ -57,26 +47,29 @@ MagneticField::~MagneticField()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-// Set the value of the Global Field to fieldValue along X
 
-void MagneticField::SetMagFieldValue(G4double fieldValue)
+void MagneticField::GetFieldValue(const G4double Point[4],
+                                  G4double* Bfield)
 {
-   SetMagFieldValue(G4ThreeVector(fieldValue,0,0));
+    if ( use_uniform_field )
+    {
+        Bfield[0] = uniform_mag_field.x();
+        Bfield[1] = uniform_mag_field.y();
+        Bfield[2] = uniform_mag_field.z();
+    }
+    else
+    {
+        Bfield[0] = BFieldX->GetField(Point[0], Point[1], Point[2]);
+        Bfield[1] = BFieldY->GetField(Point[0], Point[1], Point[2]);
+        Bfield[2] = BFieldZ->GetField(Point[0], Point[1], Point[2]);
+    }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-// Set the value of the Global Field
-
-void MagneticField::SetMagFieldValue(G4ThreeVector fieldVector)
+void MagneticField::SetUniformMagFieldVector(G4ThreeVector filedVector)
 {
-  if( fieldVector != G4ThreeVector(0.,0.,0.) )
-  {
-    SetFieldValue(fieldVector);
-    GetGlobalFieldManager()->SetDetectorField(this);
-    GetGlobalFieldManager()->CreateChordFinder(this);
-  } else
-    GetGlobalFieldManager()->SetDetectorField(NULL);
+    uniform_mag_field = filedVector;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

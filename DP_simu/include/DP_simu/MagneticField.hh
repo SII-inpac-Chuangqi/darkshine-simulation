@@ -31,7 +31,10 @@
 #ifndef MagneticField_h
 #define MagneticField_h 1
 
-#include "G4UniformMagField.hh"
+//#include "G4UniformMagField.hh"
+#include "G4MagneticField.hh"
+#include "Object/DMagnet.h"
+#include "G4ThreeVector.hh"
 
 class G4FieldManager;
 
@@ -40,20 +43,27 @@ class G4FieldManager;
 ///  A class for control of the Magnetic Field of the detector.
 ///  The field is assumed to be uniform.
  
-class MagneticField : public G4UniformMagField
+class MagneticField : public G4MagneticField
 {
   public:
-    MagneticField();              //  A zero field
-    MagneticField(G4ThreeVector); //  The value of the field
-    virtual ~MagneticField();  
+    MagneticField();
+    virtual ~MagneticField();
       
     //Set the field (fieldValue,0,0)
-    void SetMagFieldValue(G4double fieldValue);
-    void SetMagFieldValue(G4ThreeVector fieldVector);
-      
+    void SetUniformMagFieldVector(G4ThreeVector);
+
+    void GetFieldValue( const G4double Point[4],
+                        G4double* Bfield );
   protected:
     // Find the global Field Manager
-    G4FieldManager* GetGlobalFieldManager(); // static 
+    G4FieldManager* GetGlobalFieldManager(); // static
+
+  private:
+    DMagnet* BFieldX; // magnet0
+    DMagnet* BFieldY;
+    DMagnet* BFieldZ;
+    bool use_uniform_field;
+    G4ThreeVector uniform_mag_field;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
