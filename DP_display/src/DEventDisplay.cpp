@@ -47,7 +47,7 @@ void DEventDisplay::Initialize() {
     // Set Camera
     auto *v = gEve->GetDefaultGLViewer();
     v->CurrentCamera().SetExternalCenter(kTRUE);
-    v->SetCurrentCamera(TGLViewer::kCameraOrthoXOZ);
+    v->SetCurrentCamera(TGLViewer::kCameraOrthoZOX);
     v->CurrentCamera().SetCenterVec(0, 0, 30.);
 
     // Set TApplication Termination
