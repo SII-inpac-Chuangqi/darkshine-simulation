@@ -74,6 +74,10 @@ void EventAction::BeginOfEventAction(const G4Event *event) {
     G4RunManager::GetRunManager()->StoreRandomNumberStatusToG4Event(1);
 
     if(dControl->if_filter) dFilterManager->Filter_Event_Initialize();
+
+#ifdef MEMCK
+    if(dControl->Memory_Check) DEvent::PrintObjectStatistics("Begin of event");
+#endif
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -121,4 +125,8 @@ void EventAction::EndOfEventAction(const G4Event *event) {
     if(dControl->if_optical) dRootMng->FinalizeOptical();
 
     dRootMng->FillSim(eventID, rndm); //refresh event level data, so any fill should before this!
+
+#ifdef MEMCK
+    if(dControl->Memory_Check) DEvent::PrintObjectStatistics("End of event");
+#endif
 }

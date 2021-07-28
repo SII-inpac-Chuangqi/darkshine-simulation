@@ -483,6 +483,9 @@ bool Control::ReadYAML(const G4String &file_in) {
         save_initial_particle_step = Node["OutCollection"]["save_initial_particle_step"].as<bool>();
         RawMCCollection_Name = Node["OutCollection"]["RawMCCollection_Name"].as<std::string>();
         InitialParticleStepCollection_Name = Node["OutCollection"]["InitialParticleStepCollection_Name"].as<std::string>();
+        //----------------------------------------
+        // For Memory Leak
+        Memory_Check = Node["memory_check"].IsDefined()? Node["memory_check"].as<bool>(): false;
         //========================================
         /* Biasing */
         //----------------------------------------

@@ -76,8 +76,7 @@ public:
 
     //----------------------------------------
     // For Memory Leak
-    bool Memory_Check = true;
-    std::vector<std::string> Mem_Collections = {"McParticle", "SimulatedHit", "DEvent", "DStep"};
+    bool Memory_Check;
 
     //========================================
     /* Geometry */

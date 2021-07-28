@@ -185,11 +185,11 @@ void RootManager::FillSim(Int_t eventID, const Double_t *Rnd) {
 
     tr->Fill();
 
-    DEvent::PrintObjectStatistics("Waiting for Filling the tree");
+#ifdef MEMCK
+    if(dControl->Memory_Check) DEvent::PrintObjectStatistics("Waiting for Filling the tree");
+#endif
 
     initialize();
-
-    DEvent::PrintObjectStatistics("After initialization");
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
