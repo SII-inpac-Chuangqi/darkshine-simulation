@@ -51,31 +51,31 @@ public:
         return Verbose;
     }
 
-    const double *getRndm() const {
+    [[nodiscard]] const double *getRndm() const {
         return Rndm;
     }
 
-    const DStepMapO &getStepCollection_Old() const {
+    [[nodiscard]] const DStepMap &getStepCollection() const {
         return StepCollection;
     }
 
-    const DigiFormMapO &getOpticalCollection_Old() const {
+    [[nodiscard]] const DigiFormMap &getOpticalCollection() const {
         return OpticalCollection;
     }
 
-    const MCParticleMapO &getMcParticleCollection_Old() const {
+    [[nodiscard]] const MCParticleMap &getMcParticleCollection() const {
         return MCParticleCollection;
     }
 
-    const RecParticleMapO &getRecParticleCollection_Old() const {
+    [[nodiscard]] const RecParticleMap &getRecParticleCollection() const {
         return RecParticleCollection;
     }
 
-    const SimulatedHitMapO &getSimulatedHitCollection_Old() const {
+    [[nodiscard]] const SimulatedHitMap &getSimulatedHitCollection() const {
         return SimulatedHitCollection;
     }
 
-    const CalorimeterHitMapO &getCalorimeterHitCollection_Old() const {
+    [[nodiscard]] const CalorimeterHitMap &getCalorimeterHitCollection() const {
         return CalorimeterHitCollection;
     }
 
@@ -156,6 +156,8 @@ public:
         return nullptr;
     }
 
+    void LinkChildren();
+
 #ifdef MEMCK
     static void PrintObjectStatistics(const TString& str="");
 #endif
@@ -187,16 +189,16 @@ protected:
     int Verbose{0};
 
     // Step Collection
-    DStepMapO StepCollection;
+    DStepMap StepCollection;
 
     // Optical Collection
-    DigiFormMapO OpticalCollection;
+    DigiFormMap OpticalCollection;
 
     // Event Physics Quantities
-    MCParticleMapO MCParticleCollection;
-    RecParticleMapO RecParticleCollection;
-    SimulatedHitMapO SimulatedHitCollection;
-    CalorimeterHitMapO CalorimeterHitCollection;
+    MCParticleMap MCParticleCollection;
+    RecParticleMap RecParticleCollection;
+    SimulatedHitMap SimulatedHitCollection;
+    CalorimeterHitMap CalorimeterHitCollection;
 
 ClassDefOverride(DEvent, 1);
 };

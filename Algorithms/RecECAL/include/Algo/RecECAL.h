@@ -8,10 +8,6 @@
 #include <utility>
 
 #include "Core/AnaProcessor.h"
-//#include "Algo/Trk_LineFit.h"
-//#include "Algo/ECAL_Writer.h"
-//#include "Algo/ECAL_RNN.h"
-#include "Algo/ECAL_Cluster.h"
 #include "Algo/Cluster_Analysis.h"
 
 using namespace std;

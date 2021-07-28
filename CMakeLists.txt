@@ -193,13 +193,13 @@ SET(Display_source
 root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DEventLinkDef.h)
 add_library(DEvent SHARED ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx)
 
-root_generate_dictionary(G__DAnaEvent ${AnaEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DAnaEventLinkDef.h)
-add_library(DAnaEvent SHARED ${AnaEvent_header_shared} ${AnaEvent_source} G__DAnaEvent.cxx)
-target_link_libraries(DAnaEvent PUBLIC DEvent)
+#root_generate_dictionary(G__DAnaEvent ${AnaEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DAnaEventLinkDef.h)
+#add_library(DAnaEvent SHARED ${AnaEvent_header_shared} ${AnaEvent_source} G__DAnaEvent.cxx)
+#target_link_libraries(DAnaEvent PUBLIC DEvent)
 
 root_generate_dictionary(G__Display ${Display_header_shared} LINKDEF Utility/UTIL/include/Utility/DisplayLinkDef.h)
 add_library(Display SHARED ${Display_header_shared} ${Display_source} G__Display.cxx)
-target_link_libraries(Display PUBLIC DEvent DAnaEvent)
+target_link_libraries(Display PUBLIC DEvent)
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
@@ -218,9 +218,9 @@ add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         ${Algo_sources} ${Algo_headers})
 
 if(DANA_TRACKING)
-    target_link_libraries(DAna DAnaEvent genfit2)
+    target_link_libraries(DAna DEvent genfit2)
 else()
-    target_link_libraries(DAna DAnaEvent)
+    target_link_libraries(DAna DEvent)
 endif()
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers} )
@@ -242,12 +242,12 @@ install(TARGETS DAna DESTINATION bin)
 install(TARGETS DDis DESTINATION bin)
 install(TARGETS DPlot DESTINATION bin)
 install(TARGETS DEvent LIBRARY DESTINATION lib )
-install(TARGETS DAnaEvent LIBRARY DESTINATION lib )
+#install(TARGETS DAnaEvent LIBRARY DESTINATION lib )
 install(TARGETS Display LIBRARY DESTINATION lib )
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent_rdict.pcm DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent.rootmap DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent_rdict.pcm DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent.rootmap DESTINATION lib)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent_rdict.pcm DESTINATION lib)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent.rootmap DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDisplay_rdict.pcm DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDisplay.rootmap DESTINATION lib)

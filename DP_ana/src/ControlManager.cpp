@@ -12,14 +12,15 @@
 #include "Algo/MCTruthAnalysis.h"
 #include "Algo/RecECAL.h"
 #include "Algo/Digitizer.h"
+
 #ifndef _OFF_TRACKING
-    #include "Algo/TrackingProcessor.h"
+#include "Algo/TrackingProcessor.h"
 #endif
+
 #include "Algo/CutFlowAnalysis.h"
 
 void ControlManager::run() {
 
-    auto *evt = new AnaEvent();
     /* Read in Basic Configuration */
     /* Read Algorithm Lists */
     if (ConfMgr) {
@@ -43,7 +44,7 @@ void ControlManager::run() {
     if (ConfMgr) {
         EvtReader->setVerbose(ConfMgr->getEventReaderVerbose());
         algo->setVerbose(ConfMgr->getAlgoManagerVerbose());
-        evt->setVerbose(ConfMgr->getDEventVerbose());
+        //evt->setVerbose(ConfMgr->getDEventVerbose());
         EvtWrt->setVerbose(ConfMgr->getEventStoreAndWriterVerbose());
 
         // Register Output Tree
@@ -83,7 +84,6 @@ void ControlManager::run() {
      *  Begin
      */
     EvtReader->ReadFile(FileName);
-    EvtReader->setEvt(evt);
 
     // Read Geometry from ROOT file
     EvtReader->ReadGeometry(ConfMgr->getInputGeofile());
@@ -99,8 +99,6 @@ void ControlManager::run() {
         nentries = (nentries >= EventNumber + SkipNumber) ? EventNumber + SkipNumber : nentries;
     for (int i = 0; i < nentries; ++i) {
         // read the i-th event
-        if (!EvtReader->ReadNextEntry()) break;
-
         // Skip events
         if (i < SkipNumber) continue;
 
@@ -110,8 +108,19 @@ void ControlManager::run() {
             cout << " --------------------------" << endl;
         }
 
+#ifdef MEMCK
+        if (ConfMgr->getMemoryCheckVerbose() > 1)
+            AnaEvent::PrintObjectStatistics(Form("Begin of Event: %d", i));
+#endif
         // convert into DEvent
+        EvtReader->ReadEntry(i);
         EvtReader->Convert();
+
+#ifdef MEMCK
+        if (ConfMgr->getMemoryCheckVerbose() > 2)
+            AnaEvent::PrintObjectStatistics("Read DEvent from ROOT");
+#endif
+        auto evt = EvtReader->getEvt();
 
         // process algorithms
         algo->ProcessEvtAnaProcessors(evt);
@@ -129,6 +138,11 @@ void ControlManager::run() {
             cout << " End of Event:  " << i;
             cout << " --------------------------" << endl;
         }
+
+#ifdef MEMCK
+        if (ConfMgr->getMemoryCheckVerbose() > 0)
+            AnaEvent::PrintObjectStatistics(Form("End of Event: %d", i));
+#endif
     }
 
     /*
@@ -141,8 +155,6 @@ void ControlManager::run() {
     EvtWrt->CloseFile();
 
     std::cout << std::endl << " ==> Done ..." << std::endl;
-
-    delete evt;
 }
 
 void ControlManager::PrintConfig() {
@@ -166,8 +178,8 @@ void ControlManager::PrintConfig() {
     cout << endl << "### Verbosity Settings" << endl << left;
     cout << setw(30) << "AlgoManager.Verbose" << "= 0" << endl;
     cout << setw(30) << "EventReader.Verbose" << "= 0" << endl;
-    cout << setw(30) << "Event.Verbose" << "= 0" << endl;
     cout << setw(30) << "EventStoreAndWriter.Verbose" << "= 0" << endl;
+    cout << setw(30) << "MemoryCheck.Verbose" << "= 0" << endl;
 
     // Print Algorithm List
     cout << endl << "### Algorithm List" << endl << left;

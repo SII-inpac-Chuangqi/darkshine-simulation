@@ -26,6 +26,7 @@ private:
     int AnaProcessor_Verbose{0};
     int DEvent_Verbose{0};
     int EventStoreAndWriter_Verbose{0};
+    int MemoryCheck_Verbose{0};
 
 public:
     ConfigManager() = default;
@@ -133,6 +134,14 @@ public:
 
     void setEventStoreAndWriterVerbose(int eventStoreAndWriterVerbose) {
         EventStoreAndWriter_Verbose = eventStoreAndWriterVerbose;
+    }
+
+    int getMemoryCheckVerbose() const {
+        return MemoryCheck_Verbose;
+    }
+
+    void setMemoryCheckVerbose(int memoryCheckVerbose) {
+        MemoryCheck_Verbose = memoryCheckVerbose;
     }
 
 private:

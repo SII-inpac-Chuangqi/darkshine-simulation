@@ -28,49 +28,22 @@ class DigiForm;
 class AnaProcessor;
 
 typedef std::vector<DStep *> DStepVec;
-typedef std::shared_ptr<DStepVec> DStepVecUniPtr;
-typedef std::vector<DStep *>::iterator DStepVecItr;
-typedef std::map<std::string, DStepVecUniPtr> DStepMap;
-typedef std::map<std::string, DStepVec* > DStepMapO;
-typedef std::shared_ptr<DStepMap> DStepMapUniPtr;
-typedef std::map<std::string, DStepVecUniPtr>::iterator DStepMapItr;
+typedef std::map<std::string, DStepVec* > DStepMap;
 
 typedef std::vector<McParticle *> MCParticleVec;
-typedef std::shared_ptr<MCParticleVec> MCParticleVecUniPtr;
-typedef std::vector<McParticle *>::iterator MCParticleVecItr;
-typedef std::map<std::string, MCParticleVecUniPtr> MCParticleMap;
-typedef std::map<std::string, MCParticleVec* > MCParticleMapO;
-typedef std::shared_ptr<MCParticleMap> MCParticleMapUniPtr;
-typedef std::map<std::string, MCParticleVecUniPtr>::iterator MCParticleMapItr;
+typedef std::map<std::string, MCParticleVec* > MCParticleMap;
 
 typedef std::vector<ReconstructedParticle *> RecParticleVec;
-typedef std::shared_ptr<RecParticleVec> RecParticleVecUniPtr;
-typedef std::vector<ReconstructedParticle *>::iterator RecParticleVecItr;
-typedef std::map<std::string, RecParticleVecUniPtr> RecParticleMap;
-typedef std::map<std::string, RecParticleVec* > RecParticleMapO;
-typedef std::shared_ptr<RecParticleMap> RecParticleMapUniPtr;
-typedef std::map<std::string, RecParticleVecUniPtr>::iterator RecParticleMapItr;
+typedef std::map<std::string, RecParticleVec* > RecParticleMap;
 
 typedef std::vector<SimulatedHit *> SimulatedHitVec;
-typedef std::shared_ptr<SimulatedHitVec> SimulatedHitVecUniPtr;
-typedef std::vector<SimulatedHit *>::iterator SimulatedHitVecItr;
-typedef std::map<std::string, SimulatedHitVecUniPtr> SimulatedHitMap;
-typedef std::map<std::string, SimulatedHitVec* > SimulatedHitMapO;
-typedef std::shared_ptr<SimulatedHitMap> SimulatedHitMapUniPtr;
-typedef std::map<std::string, SimulatedHitVecUniPtr>::iterator SimulatedHitMapItr;
+typedef std::map<std::string, SimulatedHitVec* > SimulatedHitMap;
 
 typedef std::vector<CalorimeterHit *> CalorimeterHitVec;
-typedef std::shared_ptr<CalorimeterHitVec> CalorimeterHitVecUniPtr;
-typedef std::vector<CalorimeterHit *>::iterator CalorimeterHitVecItr;
-typedef std::map<std::string, CalorimeterHitVecUniPtr> CalorimeterHitMap;
-typedef std::map<std::string, CalorimeterHitVec* > CalorimeterHitMapO;
-typedef std::shared_ptr<CalorimeterHitMap> CalorimeterHitMapUniPtr;
-typedef std::map<std::string, CalorimeterHitVecUniPtr>::iterator CalorimeterHitMapItr;
+typedef std::map<std::string, CalorimeterHitVec* > CalorimeterHitMap;
 
 typedef std::vector<DigiForm *> DigiFormVec;
-typedef std::shared_ptr<DigiFormVec> DigiFormVecUniPtr;
-typedef std::map<std::string, DigiFormVecUniPtr> DigiFormVecMap;
-typedef std::map<std::string, DigiFormVec* > DigiFormMapO;
+typedef std::map<std::string, DigiFormVec* > DigiFormMap;
 
 typedef std::shared_ptr<AnaProcessor> AnaProcessorUniPtr;
 typedef std::vector<AnaProcessorUniPtr> AnaProcessorVec;

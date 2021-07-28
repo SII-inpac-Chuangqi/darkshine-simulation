@@ -41,13 +41,7 @@ void EventReader::Convert() {
     /*
      *
      */
-
-    // Initialization
-    evt->Initialization(nALL);
-
-    evt->ConvertTreeValuePtr(EvtPtr);
     evt->LinkChildren();
-
     RunNumber = evt->getRunId();
     EventNumber = evt->getEventId();
     for (int i = 0; i < 4; ++i) Rndm[i] = evt->getRndm()[i];
@@ -76,25 +70,20 @@ void EventReader::Convert() {
 /* From ROOT MakeClass */
 /*                     */
 
-bool EventReader::ReadNextEntry() const {
-// Read contents of entry.
-    if (!treeReader) return false;
-    return treeReader->Next();
-}
-
 bool EventReader::ReadEntry(int i) const {
-    if (!treeReader) return false;
-    if (!treeReader->SetEntry(i)) return false;
-
+    if (!input_tree) return false;
+    Long64_t ientry = input_tree->LoadTree(i);
+    if (ientry < 0) return false;
+    input_tree->GetEntry(i);
     return true;
 }
 
-Int_t EventReader::ReadTree(const string &treename, TFile* tfile) {
+Int_t EventReader::ReadTree(const string &treename, TFile *tfile) {
 
-    treeReader = shared_ptr<TTreeReader>(new TTreeReader(treename.data(),tfile));
-    Entries = treeReader->GetEntries();
+    input_tree = tfile->Get<TTree>(treename.data());
+    Entries = input_tree->GetEntries();
 
-    EvtPtr = shared_ptr<TTreeReaderValue<DEvent> >( new TTreeReaderValue<DEvent>(*treeReader,"DEvent") ) ;
+    input_tree->SetBranchAddress("DEvent", &evt, &b_DEvent);
 
     if (Verbose > -1) {
         cout << "======================================================================" << endl;
@@ -123,7 +112,6 @@ Int_t EventReader::ReadTree(const string &treename, TFile* tfile) {
         std::cout << "==> Process Event(s): " << std::setw(30) << Evt << std::endl;
     }
 
-
     return 0;
 }
 
@@ -134,7 +122,7 @@ void EventReader::ReadGeometry(const std::string &filename) {
         return;
     }
 
-    std::cout << "[ READ Geometry ] ==> reading geometry from file: "<< tfile->GetName() << std::endl;
+    std::cout << "[ READ Geometry ] ==> reading geometry from file: " << tfile->GetName() << std::endl;
     gGeoManager = (TGeoManager *) tfile->Get("DetGeoManager");
     if (!gGeoManager) {
         std::cerr << "[ READ Geometry ] ==> No Geometry in the file..." << std::endl;

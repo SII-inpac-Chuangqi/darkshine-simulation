@@ -28,6 +28,7 @@ void ConfigManager::ReadConst() {
     AnaProcessor_Verbose = config->Read("Processor.Verbose", 0);
     DEvent_Verbose = config->Read("Event.Verbose", 0);
     EventStoreAndWriter_Verbose = config->Read("EventStoreAndWriter.Verbose", 0);
+    MemoryCheck_Verbose = config->Read("MemoryCheck.Verbose", 0);
 }
 
 

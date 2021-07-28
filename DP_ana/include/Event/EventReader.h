@@ -27,11 +27,12 @@ public:
 
     void Convert();
 
-    bool ReadNextEntry() const;
     bool ReadEntry(int i) const;
 
     Int_t ReadFile(const std::string &filename);
-    Int_t ReadTree(const std::string &treename, TFile* tfile);
+
+    Int_t ReadTree(const std::string &treename, TFile *tfile);
+
     void ReadGeometry(const std::string &filename);
 
     AnaEvent *getEvt() const {
@@ -88,6 +89,8 @@ public:
 
 private:
     AnaEvent *evt{nullptr};
+    TBranch *b_DEvent;   //!
+
     Long64_t Entries{0};
     shared_ptr<EventStoreAndWriter> EvtWrt;
 
@@ -104,13 +107,12 @@ private:
     int Verbose{0};
 
     TFile *f{nullptr};
-    shared_ptr<TTreeReader> treeReader;
-    shared_ptr<TTreeReaderValue<DEvent> > EvtPtr;
+    TTree *input_tree{nullptr};
 
     // Declaration of leaf types
     Int_t RunNumber{0};
     Int_t EventNumber{0};
-    Double_t Rndm[4] = {0,0,0,0};
+    Double_t Rndm[4] = {0, 0, 0, 0};
 
 };
 

@@ -35,11 +35,11 @@ class Cluster_Analysis {
 public:
     Cluster_Analysis() = default;
 
-    explicit Cluster_Analysis(SimulatedHitVecUniPtr clusterVec);
+    explicit Cluster_Analysis(SimulatedHitVec* clusterVec);
 
     virtual ~Cluster_Analysis() = default;
 
-    void setClusterVec(const shared_ptr<std::vector<SimulatedHit *>> &clusterVec) {
+    void setClusterVec(SimulatedHitVec* clusterVec) {
         ClusterVec = clusterVec;
         std::sort(ClusterVec->begin(), ClusterVec->end(), sortbyE<SimulatedHit>);
         E_Tot = FindETotal();
@@ -67,7 +67,7 @@ public:
 private:
     // data
     //std::shared_ptr<std::vector<ClusterHit *> > ClusterVec;
-    SimulatedHitVecUniPtr ClusterVec;
+    SimulatedHitVec* ClusterVec;
 
     //-------------------------------------------
 

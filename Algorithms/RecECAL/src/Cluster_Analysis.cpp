@@ -8,7 +8,7 @@
 
 #include "Algo/Cluster_Analysis.h"
 
-Cluster_Analysis::Cluster_Analysis(SimulatedHitVecUniPtr clusterVec) : ClusterVec(std::move(clusterVec)) {
+Cluster_Analysis::Cluster_Analysis(SimulatedHitVec* clusterVec) : ClusterVec(std::move(clusterVec)) {
     std::sort(ClusterVec->begin(), ClusterVec->end(), sortbyE<SimulatedHit>);
     E_Tot = FindETotal();
 }

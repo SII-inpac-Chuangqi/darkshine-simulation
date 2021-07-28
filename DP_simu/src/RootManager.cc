@@ -166,7 +166,7 @@ void RootManager::FillMC(McParticle *fMC, int ParentID) {
 
     auto mc = new McParticle(*fMC);
 
-    auto mcps = Evt->getMcParticleCollection_Old().at(dControl->RawMCCollection_Name);
+    auto mcps = Evt->getMcParticleCollection().at(dControl->RawMCCollection_Name);
     mc->setParents(McParticle::SearchID(mcps, ParentID));
 
     auto tmp1 = G4String(mc->getCreateProcess());
@@ -208,7 +208,7 @@ void RootManager::FillSim(Int_t eventID, const Double_t *Rnd) {
 
 void RootManager::FillSimHit(const G4String &cIn, SimulatedHit *hit) {
 
-    auto SimHits = Evt->getSimulatedHitCollection_Old();
+    auto SimHits = Evt->getSimulatedHitCollection();
     auto Hits = new SimulatedHit(*hit);
 
     SimHits.at(cIn)->emplace_back(Hits);
@@ -223,7 +223,7 @@ void RootManager::FillEleak(const G4Step *in, const G4String &type) {
 //    else if (type.contains("_PVW")) {
 //        auto cin = type.remove(type.index("_PVW"));
 //
-//        auto SimHits = Evt->getSimulatedHitCollection_Old();
+//        auto SimHits = Evt->getSimulatedHitCollection();
 //        auto itr = SimHits.at(cin)->end() - 1;
 //        (*itr)->setELeakWrapper( (*itr)->getELeakWrapper() + deltaE);
 //    }
@@ -242,7 +242,7 @@ bool RootManager::FillOpticalLUTs(std::vector<OpticalHit *> *hits, G4int GenNo, 
                                   int copyNum) //or we can fill as a whole, like a vector, how about memory???
 {
     //check collection
-    auto DiGiMap = Evt->getOpticalCollection_Old();
+    auto DiGiMap = Evt->getOpticalCollection();
     if (DiGiMap.find(cIn) == DiGiMap.end()) {
         G4cerr << "Not found optical collection cIn=" << cIn << G4endl;
         return false;
@@ -271,7 +271,7 @@ bool RootManager::FillOpticalLUTs(std::vector<OpticalHit *> *hits, G4int GenNo, 
 }
 
 bool RootManager::FinalizeOptical() {
-    for (const auto &imap : Evt->getOpticalCollection_Old()) {
+    for (const auto &imap : Evt->getOpticalCollection()) {
         auto DiGis = imap.second; //vec
         auto cIn = imap.first;
         auto digitizer = fDigitizers[cIn];
@@ -296,7 +296,7 @@ void RootManager::FillParticleStep(const G4Step *aStep) {
     G4StepPoint *prev = aStep->GetPreStepPoint();
     G4StepPoint *post = aStep->GetPostStepPoint();
 
-    auto Steps = Evt->getStepCollection_Old().at(dControl->InitialParticleStepCollection_Name);
+    auto Steps = Evt->getStepCollection().at(dControl->InitialParticleStepCollection_Name);
     auto step = new DStep();
     step->setId(static_cast<int>(Steps->size()));
     if (Steps->empty()) {

@@ -230,6 +230,16 @@ void DEvent::DeleteCollection(const std::string &str) {
         std::cerr << "[WARNING] ==> No Key named " + str + "." << std::endl;
 }
 
+void DEvent::LinkChildren() {
+    if (MCParticleCollection.empty()) return;
+    for (const auto &collection : MCParticleCollection) {
+        for (auto itr : *(collection.second)) {
+            // If parent exists
+            if (itr->getParents()) itr->getParents()->addChildren(itr);
+        }
+    }
+}
+
 #ifdef MEMCK
 void DEvent::PrintObjectStatistics(const TString& str) {
 
