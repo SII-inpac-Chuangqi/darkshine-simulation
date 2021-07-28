@@ -98,8 +98,8 @@ void MagneticField::SetUniformMagFieldVector(G4ThreeVector filedVector) {
 
 void MagneticField::SetMagFieldRegion(G4ThreeVector BoxPosition, G4ThreeVector BoxFullLength) {
     for ( int i = 0 ; i < 3 ; i++ ) {
-        mag_field_region_max[i] = (BoxPosition[i] + 0.5 * BoxFullLength[i])*2;
-        mag_field_region_min[i] = (BoxPosition[i] - 0.5 * BoxFullLength[i])*2;
+        mag_field_region_max[i] = BoxPosition[i] + 0.5 * BoxFullLength[i] * 2;
+        mag_field_region_min[i] = BoxPosition[i] - 0.5 * BoxFullLength[i] * 2;
     }
 }
 
