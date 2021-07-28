@@ -230,6 +230,7 @@ void DEvent::DeleteCollection(const std::string &str) {
         std::cerr << "[WARNING] ==> No Key named " + str + "." << std::endl;
 }
 
+#ifdef MEMCK
 void DEvent::PrintObjectStatistics(const TString& str) {
 
     std::vector<std::string> Mem_Collections = {"DEvent", "DStep", "McParticle", "SimulatedHit",
@@ -259,6 +260,7 @@ void DEvent::PrintObjectStatistics(const TString& str) {
     Printf("Total:                   %8d%11d%16d%18.2f%17.2f", ncum, hcum, scum, tcum / 1000., thcum / 1000.);
     Printf("===============================================================================================");
 }
+#endif
 
 
 

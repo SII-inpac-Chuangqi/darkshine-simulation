@@ -88,7 +88,7 @@ ENDIF ()
 option(MEMCK "MEMCK" OFF)
 if(MEMCK OR ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
     MESSAGE("-- Memory Check is ON")
-    add_definitions("-DMEMCK")
+    #add_definitions("-DMEMCK")
 endif()
 
 #----------------------------------------------------------------------------

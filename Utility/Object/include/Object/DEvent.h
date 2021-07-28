@@ -156,7 +156,9 @@ public:
         return nullptr;
     }
 
+#ifdef MEMCK
     static void PrintObjectStatistics(const TString& str="");
+#endif
 
 protected:
     // run number
