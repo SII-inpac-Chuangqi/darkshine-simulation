@@ -49,7 +49,6 @@ endif ()
 
 option(DANA_TRACKING "DANA_TRACKING" ON)
 if(DANA_TRACKING)
-
     # GenFit2
     option(USE_GENFIT "USE_GENFIT" ON)
     if (USE_GENFIT)
@@ -65,7 +64,6 @@ if(DANA_TRACKING)
     else()
         INCLUDE_DIRECTORIES(Utility/)
     endif ()
-
 else()
     add_definitions( -D_OFF_TRACKING=\"true\" )
 endif()
@@ -82,6 +80,16 @@ IF (ROOT_FOUND)
     LINK_LIBRARIES(${ROOT_LIBRARIES})
     LINK_DIRECTORIES(${ROOT_LIBRARY_DIR})
 ENDIF ()
+
+
+#----------------------------------------------------------------------------
+# For Memory Check
+#
+option(MEMCK "MEMCK" OFF)
+if(MEMCK OR ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
+    MESSAGE("-- Memory Check is ON")
+    add_definitions("-DMEMCK")
+endif()
 
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
@@ -208,8 +216,6 @@ add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         Utility/UTIL/include/Utility/Config.h
         Utility/UTIL/src/Config.cpp
         ${Algo_sources} ${Algo_headers})
-
-message("${Util_sources}")
 
 if(DANA_TRACKING)
     target_link_libraries(DAna DAnaEvent genfit2)

@@ -4,6 +4,9 @@
 
 #include "Object/DEvent.h"
 
+#include "TObjectTable.h"
+#include "TROOT.h"
+
 void DEvent::Initialization(CleanType ct) {
     // clean constant variables
     PNEnergy_Target = 0.;
@@ -227,6 +230,35 @@ void DEvent::DeleteCollection(const std::string &str) {
         std::cerr << "[WARNING] ==> No Key named " + str + "." << std::endl;
 }
 
+void DEvent::PrintObjectStatistics(const TString& str) {
+
+    std::vector<std::string> Mem_Collections = {"DEvent", "DStep", "McParticle", "SimulatedHit",
+                                                "ReconstructedParticle", "CalorimeterHit", "DigiForm"};
+
+    gObjectTable->UpdateInstCount();
+
+    unsigned int n, h, si, ncum = 0, hcum = 0, scum = 0, tcum = 0, thcum = 0;
+    Printf("\n[Memory Check] %s", str.Data());
+    Printf("class                       count    on heap     size(bytes)    total size(KB)    heap size(KB)");
+    Printf("===============================================================================================");
+    for (auto cl_name: Mem_Collections) {
+        auto cl = gROOT->GetClass(cl_name.data());
+        n = cl->GetInstanceCount();
+        h = cl->GetHeapInstanceCount();
+        si = cl->Size();
+        if (n > 0) {
+            Printf("%-24s %8d%11d%16d%18.2f%17.2f", cl->GetName(), n, h, si, n * si / 1000., h * si / 1000.);
+            ncum += n;
+            hcum += h;
+            scum += si;
+            tcum += n * si;
+            thcum += h * si;
+        }
+    }
+    Printf("-----------------------------------------------------------------------------------------------");
+    Printf("Total:                   %8d%11d%16d%18.2f%17.2f", ncum, hcum, scum, tcum / 1000., thcum / 1000.);
+    Printf("===============================================================================================");
+}
 
 
 

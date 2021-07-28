@@ -19,6 +19,7 @@
 #include "DStep.h"
 
 #include "TObject.h"
+#include "TString.h"
 
 enum CleanType {
     nALL, nVector
@@ -154,6 +155,8 @@ public:
         }
         return nullptr;
     }
+
+    static void PrintObjectStatistics(const TString& str="");
 
 protected:
     // run number

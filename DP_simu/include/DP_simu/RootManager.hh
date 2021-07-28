@@ -84,13 +84,14 @@ public:
 
     void FillPNE(G4double E1, G4double E2);
 
-    void FillEleak(const G4Step *, const G4String&);
+    void FillEleak(const G4Step *, const G4String &);
 
     // bool FillOptical(const G4Step *, G4String);
-    bool SetOpticalTimeZero(G4double T0, const G4String& cIn);
-    bool FillOpticalLUTs(std::vector<OpticalHit *>* hits,   G4int GenNo, const G4String& cIn, int copyNum);
-    bool FinalizeOptical();
+    bool SetOpticalTimeZero(G4double T0, const G4String &cIn);
 
+    bool FillOpticalLUTs(std::vector<OpticalHit *> *hits, G4int GenNo, const G4String &cIn, int copyNum);
+
+    bool FinalizeOptical();
 
     void FillParticleStep(const G4Step *);
 
@@ -99,7 +100,7 @@ public:
 private:
 
     RootMessenger *fMessenger;
-    std::map<G4String, OpticalDigitizer*> fDigitizers;
+    std::map<G4String, OpticalDigitizer *> fDigitizers;
 
 
     /*              */
@@ -135,7 +136,6 @@ private:
 
 private:
     RootManager();
-
 };
 
 extern RootManager *dRootMng;

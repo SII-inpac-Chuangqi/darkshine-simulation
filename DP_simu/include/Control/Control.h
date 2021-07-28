@@ -74,6 +74,11 @@ public:
     G4String RawMCCollection_Name;
     G4String InitialParticleStepCollection_Name;
 
+    //----------------------------------------
+    // For Memory Leak
+    bool Memory_Check = true;
+    std::vector<std::string> Mem_Collections = {"McParticle", "SimulatedHit", "DEvent", "DStep"};
+
     //========================================
     /* Geometry */
     //----------------------------------------

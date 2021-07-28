@@ -6,6 +6,9 @@
 #include "TString.h"
 #include "TGeoManager.h"
 
+#include "TObjectTable.h"
+#include "TROOT.h"
+
 #include "G4TouchableHistory.hh"
 
 #include <stdexcept>
@@ -112,7 +115,7 @@ void RootManager::bookCollection(const G4String &cIn) {  //run level initilize b
             auto Placeholder = dControl->ECAL_Center_Module_No;
             G4int No = Placeholder.x() * Placeholder.y() * Placeholder.z();
 
-            fDigitizers.insert(std::pair<G4String, OpticalDigitizer*>(cIn, new OpticalDigitizer(cIn, No)));
+            fDigitizers.insert(std::pair<G4String, OpticalDigitizer *>(cIn, new OpticalDigitizer(cIn, No)));
             fDigitizers["ECAL"]->Print();
         } else if (cIn == "HCAL");
 //        Evt->RegisterOpticalCollection(cIn);
@@ -182,7 +185,11 @@ void RootManager::FillSim(Int_t eventID, const Double_t *Rnd) {
 
     tr->Fill();
 
+    DEvent::PrintObjectStatistics("Waiting for Filling the tree");
+
     initialize();
+
+    DEvent::PrintObjectStatistics("After initialization");
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
@@ -252,7 +259,7 @@ bool RootManager::FillOpticalLUTs(std::vector<OpticalHit *> *hits, G4int GenNo, 
 }
 
 bool RootManager::FinalizeOptical() {
-    for (const auto& imap : Evt->getOpticalCollection_Old()) {
+    for (const auto &imap : Evt->getOpticalCollection_Old()) {
         auto DiGis = imap.second; //vec
         auto cIn = imap.first;
         auto digitizer = fDigitizers[cIn];
@@ -328,3 +335,4 @@ void RootManager::FillGeometry(const G4String &filename) {
     std::remove(filename);
 
 }
+
