@@ -41,6 +41,18 @@ RootManager::RootManager()
     fStart = dControl->Run_Number;
     fEvtNb = dControl->Total_Event_Number;
 
+#ifdef MEMCK
+    if (dControl->Memory_Check) {
+        Printf("============================================================");
+        Printf("-- Remeber to include the following strings in ~/.rootrc");
+        Printf("Root.MemStat:            1");
+        Printf("Root.MemStat.size:       1");
+        Printf("Root.MemStat.cnt:        1");
+        Printf("Root.ObjectStat:         1");
+        Printf("============================================================");
+    }
+#endif
+
 }
 
 /// \brief Clean Optical stuff.
@@ -186,7 +198,7 @@ void RootManager::FillSim(Int_t eventID, const Double_t *Rnd) {
     tr->Fill();
 
 #ifdef MEMCK
-    if(dControl->Memory_Check) DEvent::PrintObjectStatistics("Waiting for Filling the tree");
+    if (dControl->Memory_Check) DEvent::PrintObjectStatistics("Waiting for Filling the tree");
 #endif
 
     initialize();
