@@ -45,6 +45,7 @@ public:
     /*  Define all the variables needed  */
     /*************************************/
 
+    G4String DSimu_version = "1.0.0"; // DSimu version
     //========================================
     /* Global Variables */
     //----------------------------------------

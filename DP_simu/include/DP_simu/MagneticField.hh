@@ -58,6 +58,9 @@ class MagneticField : public G4MagneticField
     void GetFieldValue( const G4double Point[4],
                         G4double* Bfield ) const override;
 
+    void SetMagFieldRegion(G4ThreeVector BoxPosition, G4ThreeVector BoxFullLength);
+
+
   protected:
     // Find the global Field Manager
     G4FieldManager* GetGlobalFieldManager(); // static
@@ -66,6 +69,8 @@ class MagneticField : public G4MagneticField
     TFile* f;
     std::vector<DMagnet*> BField;
     G4ThreeVector mag_field_vector;
+    G4ThreeVector mag_field_region_max = {0,0,0};
+    G4ThreeVector mag_field_region_min = {0,0,0};
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

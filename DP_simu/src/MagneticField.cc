@@ -64,9 +64,17 @@ MagneticField::~MagneticField() {}
 void MagneticField::GetFieldValue(const G4double Point[4],
                                   G4double *Bfield) const {
     if (dControl->uniform_mag_field) {
-        Bfield[0] = mag_field_vector.x();
-        Bfield[1] = mag_field_vector.y();
-        Bfield[2] = mag_field_vector.z();
+        if (Point[0] >= mag_field_region_min[0] && Point[1] >= mag_field_region_min[1] && Point[2] >= mag_field_region_min[2] &&
+            Point[0] <= mag_field_region_max[0] && Point[1] <= mag_field_region_max[1] && Point[2] <= mag_field_region_max[2] ) {
+            Bfield[0] = mag_field_vector.x();
+            Bfield[1] = mag_field_vector.y();
+            Bfield[2] = mag_field_vector.z();
+        } else {
+            Bfield[0] = 0;
+            Bfield[1] = 0;
+            Bfield[2] = 0;
+        }
+
     } else {
         for ( int i = 0; i < 3; i++ ) {
             Bfield[i] = BField.at(i)->GetField(Point[0], Point[1], Point[2]) * tesla;
@@ -88,8 +96,19 @@ void MagneticField::SetUniformMagFieldVector(G4ThreeVector filedVector) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+void MagneticField::SetMagFieldRegion(G4ThreeVector BoxPosition, G4ThreeVector BoxFullLength) {
+    for ( int i = 0 ; i < 3 ; i++ ) {
+        mag_field_region_max[i] = BoxPosition[i] + 0.5 * BoxFullLength[i];
+        mag_field_region_min[i] = BoxPosition[i] - 0.5 * BoxFullLength[i];
+    }
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
 G4FieldManager *MagneticField::GetGlobalFieldManager() {
     return G4TransportationManager::GetTransportationManager()->GetFieldManager();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+
