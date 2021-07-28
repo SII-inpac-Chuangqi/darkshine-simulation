@@ -155,7 +155,7 @@ public:
     static void MakeViewerScene(TEveWindowSlot *slot, TEveViewer *&v, TEveScene *&s);
 
     // Ana Processors
-    void RunAnaProcessors();
+    //void RunAnaProcessors();
 
     // Open Application
     void makeGUIRaw(DEventDisplay *fh);

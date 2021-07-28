@@ -5,14 +5,12 @@
 #ifndef DSIMU_CONFIG_H
 #define DSIMU_CONFIG_H
 
-//Config.h
-#pragma once
-
 #include <string>
 #include <map>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <utility>
 
 /*
 * \brief Generic configuration Class
@@ -30,7 +28,7 @@ protected:
     // Methods
 public:
 
-    Config(std::string filename, std::string delimiter = "=", std::string comment = "#");
+    explicit Config(const std::string& filename, std::string delimiter = "=", std::string comment = "#");
 
     Config();
 
@@ -51,7 +49,7 @@ public:
     void ReadFile(std::string filename, std::string delimiter = "=", std::string comment = "#");
 
     // Check whether key exists in configuration
-    bool KeyExists(const std::string &in_key) const;
+    [[maybe_unused]] [[nodiscard]] bool KeyExists(const std::string &in_key) const;
 
     // Modify keys and values
     template<class T>
@@ -60,9 +58,9 @@ public:
     void Remove(const std::string &in_key);
 
     // Check or change configuration syntax
-    std::string GetDelimiter() const { return m_Delimiter; }
+    [[nodiscard]] std::string GetDelimiter() const { return m_Delimiter; }
 
-    std::string GetComment() const { return m_Comment; }
+    [[nodiscard]] std::string GetComment() const { return m_Comment; }
 
     std::string SetDelimiter(const std::string &in_s) {
         std::string old = m_Delimiter;
@@ -96,18 +94,17 @@ public:
     struct File_not_found {
         std::string filename;
 
-        File_not_found(const std::string &filename_ = std::string())
-                : filename(filename_) {}
+        File_not_found(std::string filename_ = std::string())
+                : filename(std::move(filename_)) {}
     };
 
     struct Key_not_found {  // thrown only by T read(key) variant of read()
         std::string key;
 
-        Key_not_found(const std::string &key_ = std::string())
-                : key(key_) {}
+        Key_not_found(std::string key_ = std::string())
+                : key(std::move(key_)) {}
     };
 };
-
 
 /* static */
 template<class T>
@@ -118,7 +115,6 @@ std::string Config::T_as_string(const T &t) {
     ost << t;
     return ost.str();
 }
-
 
 /* static */
 template<class T>
@@ -162,7 +158,7 @@ inline bool Config::string_as_T<bool>(const std::string &s) {
 template<class T>
 T Config::Read(const std::string &key) const {
     // Read the value corresponding to key
-    mapci p = m_Contents.find(key);
+    auto p = m_Contents.find(key);
     if (p == m_Contents.end()) throw Key_not_found(key);
     return string_as_T<T>(p->second);
 }
@@ -172,7 +168,7 @@ template<class T>
 T Config::Read(const std::string &key, const T &value) const {
     // Return the value corresponding to key or given default value
     // if key is not found
-    mapci p = m_Contents.find(key);
+    auto p = m_Contents.find(key);
     if (p == m_Contents.end()) return value;
     return string_as_T<T>(p->second);
 }
@@ -183,7 +179,7 @@ bool Config::ReadInto(T &var, const std::string &key) const {
     // Get the value corresponding to key and store in var
     // Return true if key is found
     // Otherwise leave var untouched
-    mapci p = m_Contents.find(key);
+    auto p = m_Contents.find(key);
     bool found = (p != m_Contents.end());
     if (found) var = string_as_T<T>(p->second);
     return found;
@@ -195,7 +191,7 @@ bool Config::ReadInto(T &var, const std::string &key, const T &value) const {
     // Get the value corresponding to key and store in var
     // Return true if key is found
     // Otherwise set var to given default
-    mapci p = m_Contents.find(key);
+    auto p = m_Contents.find(key);
     bool found = (p != m_Contents.end());
     if (found)
         var = string_as_T<T>(p->second);
@@ -213,7 +209,6 @@ void Config::Add(const std::string &in_key, const T &value) {
     Trim(key);
     Trim(v);
     m_Contents[key] = v;
-    return;
 }
 
 #endif //DSIMU_CONFIG_H

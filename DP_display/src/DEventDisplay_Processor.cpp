@@ -2,14 +2,8 @@
 // Created by Zhang Yulei on 12/22/20.
 //
 
-#include "DEventDisplay.h"
-
-#include "TGLabel.h"
-#include "TEveBrowser.h"
-
 //-----------
 // Processor
-#include "Algo/RecECAL.h"
 
 //void DEventDisplay::RunAnaProcessors() {
 //    auto *AnaList = new TEveElementList("AnaProcessor Lists");

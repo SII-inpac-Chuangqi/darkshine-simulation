@@ -82,16 +82,6 @@ IF (ROOT_FOUND)
     LINK_LIBRARIES(${ROOT_LIBRARIES})
     LINK_DIRECTORIES(${ROOT_LIBRARY_DIR})
 ENDIF ()
-#----------------------------------------------------------------------------
-# Find Pythia6 (optional package)
-#
-find_package(Pythia6 QUIET)
-if (PYTHIA6_FOUND)
-    message(STATUS "G4 Examples: Pythia6 found. --> DP_simu example with Pythia6 enabled.")
-    add_definitions(-DG4LIB_USE_PYTHIA)
-else ()
-    set(PYTHIA6_LIBRARIES "")
-endif ()
 
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
@@ -162,11 +152,6 @@ SET(AnaEvent_header_shared
         DP_ana/include/Event/AnaEvent.h
         DP_ana/include/Event/EventStoreAndWriter.h
         DP_ana/include/Core/AnaProcessor.h
-
-        # include All Running Ana Processors
-        Algorithms/RecECAL/include/Algo/ECAL_Cluster.h
-        Algorithms/RecECAL/include/Algo/Cluster_Analysis.h
-        Algorithms/RecECAL/include/Algo/RecECAL.h
         )
 SET(Display_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DEventDisplay.h
@@ -188,11 +173,6 @@ SET(AnaEvent_source
         DP_ana/src/AnaEvent.cpp
         DP_ana/src/EventStoreAndWriter.cpp
         DP_ana/src/AnaProcessor.cpp
-
-        # include All Running Ana Processors
-        Algorithms/RecECAL/src/ECAL_Cluster.cpp
-        Algorithms/RecECAL/src/Cluster_Analysis.cpp
-        Algorithms/RecECAL/src/RecECAL.cpp
         )
 SET(Display_source
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay.cpp
@@ -217,16 +197,19 @@ target_link_libraries(Display PUBLIC DEvent DAnaEvent)
 # Add the executable, and link it to the Geant4 libraries
 #
 link_libraries(DEvent)
-add_executable(DSimu DP_simu.cc ${Simu_sources} ${Simu_headers}
-        ${Util_sources} ${Util_headers})
+add_executable(DSimu DP_simu.cc ${Simu_sources} ${Simu_headers} )
+       # ${Util_sources} ${Util_headers})
 
 target_link_libraries(DSimu ${Geant4_LIBRARIES}
         ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES}
         ${PYTHIA6_LIBRARIES})
 
 add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
-        ${Util_sources} ${Util_headers}
+        Utility/UTIL/include/Utility/Config.h
+        Utility/UTIL/src/Config.cpp
         ${Algo_sources} ${Algo_headers})
+
+message("${Util_sources}")
 
 if(DANA_TRACKING)
     target_link_libraries(DAna DAnaEvent genfit2)
@@ -234,8 +217,8 @@ else()
     target_link_libraries(DAna DAnaEvent)
 endif()
 
-add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers} ${Ana_sources} ${Ana_headers}
-                                   ${Util_sources} ${Util_headers} ${Algo_sources} ${Algo_headers})
+add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers} )
+                                  # ${Util_sources} ${Util_headers} {Algo_sources} ${Algo_headers} ${Ana_sources} ${Ana_headers}
 if(DANA_TRACKING)
     target_link_libraries(DDis Display genfit2)
 else()

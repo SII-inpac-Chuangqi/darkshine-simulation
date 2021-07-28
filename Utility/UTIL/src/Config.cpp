@@ -2,13 +2,17 @@
 // Created by Zhang Yulei on 9/19/20.
 //
 
+#include <utility>
+
+#include <utility>
+
 #include "Utility/Config.h"
 
 using namespace std;
 
-Config::Config(string filename, string delimiter,
+Config::Config(const string& filename, string delimiter,
                string comment)
-        : m_Delimiter(delimiter), m_Comment(comment) {
+        : m_Delimiter(std::move(std::move(delimiter))), m_Comment(std::move(comment)) {
     // Construct a Config, getting keys and values from given file
 
     std::ifstream in(filename.c_str());
@@ -25,9 +29,9 @@ Config::Config()
 }
 
 
-bool Config::KeyExists(const string &key) const {
+[[maybe_unused]] bool Config::KeyExists(const string &key) const {
     // Indicate whether key is found
-    mapci p = m_Contents.find(key);
+    auto p = m_Contents.find(key);
     return (p != m_Contents.end());
 }
 
