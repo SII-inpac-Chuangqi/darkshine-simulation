@@ -62,6 +62,7 @@ public:
     G4bool uniform_mag_field;
     G4ThreeVector tag_Tracker_MagField;
     G4ThreeVector rec_Tracker_MagField;
+    G4int mag_verbose;
 
 
     //----------------------------------------

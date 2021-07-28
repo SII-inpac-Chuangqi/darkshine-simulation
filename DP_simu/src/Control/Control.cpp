@@ -477,6 +477,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         uniform_mag_field = Node["MagField"]["uniform_mag_field"].as<bool>();
         tag_Tracker_MagField = readV3(Node["MagField"]["tag_Tracker_MagField"], true);
         rec_Tracker_MagField = readV3(Node["MagField"]["rec_Tracker_MagField"], true);
+        mag_verbose = Node["MagField"]["mag_verbose"].as<int>();
         //----------------------------------------
         // Root Manager Options
         outfile_Name = Node["RootManager"]["outfile_Name"].as<std::string>();

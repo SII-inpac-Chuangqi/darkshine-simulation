@@ -72,8 +72,12 @@ void MagneticField::GetFieldValue(const G4double Point[4],
             Bfield[i] = BField.at(i)->GetField(Point[0], Point[1], Point[2]) * tesla;
         }
     }
-    std::cout << "Point = " << Point[0] << ", " << Point[1] << ", " << Point[2] << std::endl;
-    std::cout << "Bfiled = "<< Bfield[0] << ", " << Bfield[1] << ", " << Bfield[2] << std::endl;
+    if ( dControl->mag_verbose == 1 )
+    {
+        std::cout << "Point = " << Point[0] << ", " << Point[1] << ", " << Point[2] << std::endl;
+        std::cout << "Bfiled = "<< Bfield[0] << ", " << Bfield[1] << ", " << Bfield[2] << std::endl;
+    }
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
