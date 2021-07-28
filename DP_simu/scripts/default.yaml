@@ -28,6 +28,7 @@ MagField:
   uniform_mag_field: false # if uniform_mag_field = true, use the following setup
   tag_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
   rec_Tracker_MagField: [ 0, "tesla", -0.5 , "tesla", 0, "tesla" ]
+  mag_verbose: 1
 
 ###########################################
 # Root Manager Settings
