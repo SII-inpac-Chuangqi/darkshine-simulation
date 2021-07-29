@@ -36,54 +36,80 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 MagneticField::MagneticField()
-  : G4UniformMagField(G4ThreeVector())
-{
-  GetGlobalFieldManager()->SetDetectorField(NULL);
+        : G4MagneticField() {
+    GetGlobalFieldManager()->SetDetectorField(nullptr);
+    if ( ! dControl->uniform_mag_field ) {
+        f = new TFile(dControl->mag_field_input);
+        if (!f) {
+            std::cerr << "[READFILE ERROR] ==> File: " + dControl->mag_field_input + " does not exist." << std::endl;
+        }
+        BField = std::vector<DMagnet*>({dynamic_cast<DMagnet*>(f->Get("magnet0")),
+                                        dynamic_cast<DMagnet*>(f->Get("magnet1")),
+                                        dynamic_cast<DMagnet*>(f->Get("magnet2"))});
+
+        dRootMng->getRootFile()->cd();
+        for ( auto b : BField ) {
+            b->Write();
+        }
+
+    }
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+MagneticField::~MagneticField() {}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+
+void MagneticField::GetFieldValue(const G4double Point[4],
+                                  G4double *Bfield) const {
+    if (dControl->uniform_mag_field) {
+        Bfield[0] = mag_field_vector.x();
+        Bfield[1] = mag_field_vector.y();
+        Bfield[2] = mag_field_vector.z();
+    } else {
+        for ( int i = 0; i < 3; i++ ) {
+            Bfield[i] = BField.at(i)->GetField(Point[0], Point[1], Point[2]) * tesla;
+        }
+    }
+
+    if (Point[0] < mag_field_region_min[0] || Point[1] < mag_field_region_min[1] || Point[2] < mag_field_region_min[2] ||
+        Point[0] > mag_field_region_max[0] || Point[1] > mag_field_region_max[1] || Point[2] > mag_field_region_max[2] ) {
+
+        Bfield[0] = 0;
+        Bfield[1] = 0;
+        Bfield[2] = 0;
+    }
+
+    if ( dControl->mag_verbose == 1 )
+    {
+        std::cout << std::setw(10) << "Point = " << Point[0] << ", " << Point[1] << ", " << Point[2] << std::endl;
+        std::cout << std::setw(10) << "Bfiled = "<< Bfield[0] << ", " << Bfield[1] << ", " << Bfield[2] << std::endl;
+    }
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-MagneticField::MagneticField(G4ThreeVector fieldVector)
-  : G4UniformMagField(fieldVector)
-{
-  GetGlobalFieldManager()->SetDetectorField(this);    
-  GetGlobalFieldManager()->CreateChordFinder(this);
+void MagneticField::SetUniformMagFieldVector(G4ThreeVector filedVector) {
+    mag_field_vector = filedVector;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-MagneticField::~MagneticField()
-{}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-// Set the value of the Global Field to fieldValue along X
-
-void MagneticField::SetMagFieldValue(G4double fieldValue)
-{
-   SetMagFieldValue(G4ThreeVector(fieldValue,0,0));
+void MagneticField::SetMagFieldRegion(G4ThreeVector BoxPosition, G4ThreeVector BoxFullLength) {
+    for ( int i = 0 ; i < 3 ; i++ ) {
+        mag_field_region_max[i] = BoxPosition[i] + 0.5 * BoxFullLength[i];
+        mag_field_region_min[i] = BoxPosition[i] - 0.5 * BoxFullLength[i];
+    }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-// Set the value of the Global Field
-
-void MagneticField::SetMagFieldValue(G4ThreeVector fieldVector)
-{
-  if( fieldVector != G4ThreeVector(0.,0.,0.) )
-  {
-    SetFieldValue(fieldVector);
-    GetGlobalFieldManager()->SetDetectorField(this);
-    GetGlobalFieldManager()->CreateChordFinder(this);
-  } else
-    GetGlobalFieldManager()->SetDetectorField(NULL);
+G4FieldManager *MagneticField::GetGlobalFieldManager() {
+    return G4TransportationManager::GetTransportationManager()->GetFieldManager();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4FieldManager*  MagneticField::GetGlobalFieldManager()
-{
-  return G4TransportationManager::GetTransportationManager()->GetFieldManager();
-}
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

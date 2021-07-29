@@ -45,6 +45,7 @@ public:
     /*  Define all the variables needed  */
     /*************************************/
 
+    G4String DSimu_version = "1.0.0"; // DSimu version
     //========================================
     /* Global Variables */
     //----------------------------------------
@@ -55,6 +56,15 @@ public:
     //----------------------------------------
     // Signal Option
     double signal_mass;
+
+    //----------------------------------------
+    // Magnetic field
+    G4String mag_field_input; // file name of magnetic field
+    G4bool uniform_mag_field;
+    G4ThreeVector tag_Tracker_MagField;
+    G4ThreeVector rec_Tracker_MagField;
+    G4int mag_verbose;
+
 
     //----------------------------------------
     // Root Manager Options
@@ -123,7 +133,6 @@ public:
     int tag_No_Tracker{};  // dependent
     G4ThreeVector tag_Size_TrackerRegion;  // dependent
     G4ThreeVector tag_Pos_TrackerRegion;  // dependent
-    G4ThreeVector tag_Tracker_MagField;
 
     // Recoil Tracker
     std::vector<G4ThreeVector> rec_Size_Tracker{};
@@ -131,7 +140,6 @@ public:
     int rec_No_Tracker{};  // dependent
     G4ThreeVector rec_Size_TrackerRegion;  // dependent
     G4ThreeVector rec_Pos_TrackerRegion;  // dependent
-    G4ThreeVector rec_Tracker_MagField;
 
     //----------------------------------------
     // Electromagnetic Calorimeter

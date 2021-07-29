@@ -103,8 +103,11 @@ bool Tracker_Construct::BuildSDandField(G4int type) {
 
     /// Constrtruct Magnetic Field.
 
-    G4MagneticField *TrackerMagField;
-    TrackerMagField = new G4UniformMagField(G4ThreeVector(Tracker_MagField));
+    //G4MagneticField *TrackerMagField;
+    MagneticField* TrackerMagField = new MagneticField();
+    TrackerMagField->SetUniformMagFieldVector(Tracker_MagField); // only used for uniform field
+    TrackerMagField->SetMagFieldRegion(Pos_TrackerRegion, Size_TrackerRegion); // only used for uniform field
+
     auto *TrackerFieldMng = new G4FieldManager();
     TrackerFieldMng->SetDetectorField(TrackerMagField);
     TrackerFieldMng->CreateChordFinder(TrackerMagField);

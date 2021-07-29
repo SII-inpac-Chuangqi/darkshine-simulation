@@ -69,9 +69,22 @@ namespace {
         G4cerr << "   note: yaml file is necessary." << G4endl;
         G4cerr << G4endl;
     }
+
+    void PrintVersion() {
+        G4cerr << "DSimu " << dControl->DSimu_version << G4endl; // date: 2021-07-28
+    }
 }
 
 int main(int argc, char **argv) {
+
+    // Get the pointer to the User Interface manager
+    G4UImanager *UImanager = G4UImanager::GetUIpointer();
+
+    // Choose the Random engine
+    CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine);
+
+    // Initiate Control Class
+    Control::CreateInstance();
 
 //-------------------------------------------------------------------------------
 // Evaluate Arguments
@@ -89,6 +102,13 @@ int main(int argc, char **argv) {
         if (G4String(argv[i]) == "-m") macro = argv[i + 1];
         else if (G4String(argv[i]) == "-o") OpticalMacro = argv[i + 1];
         else if (G4String(argv[i]) == "-y") yamlFileName = argv[i + 1];
+        else if (G4String(argv[i]) == "-h") {
+            PrintUsage();
+            return 1;
+        }
+        else if (G4String(argv[i]) == "-v") {
+            PrintVersion();
+        }
         else {
             PrintUsage();
             //return 1;
@@ -97,15 +117,6 @@ int main(int argc, char **argv) {
 
 //-------------------------------------------------------------------------
     G4cout << macro << ", " << OpticalMacro << G4endl;
-
-    // Get the pointer to the User Interface manager
-    G4UImanager *UImanager = G4UImanager::GetUIpointer();
-
-    // Choose the Random engine
-    CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine);
-
-    // Initiate Control Class
-    Control::CreateInstance();
 
     // Read Configuration from YAML
     auto yaml_valid = dControl->ReadYAML(yamlFileName);

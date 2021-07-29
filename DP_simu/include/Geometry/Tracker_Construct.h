@@ -7,6 +7,7 @@
 
 #include "DP_simu/TrkConstruct.hh"
 #include "DP_simu/DetectorConstruction.hh"
+#include "DP_simu/MagneticField.hh"
 #include "Control/Control.h"
 
 #include "G4FieldManager.hh"

@@ -45,6 +45,8 @@
 
 #pragma link C++ class DEvent+;
 
+#pragma link C++ class DMagnet+;
+
 #endif
 
 #endif //DSIMU_DEVENTLINKDEF_H

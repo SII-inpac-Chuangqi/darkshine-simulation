@@ -97,6 +97,10 @@ public:
 
     void FillGeometry(const G4String &filename);
 
+    TFile *getRootFile() const {
+        return rootFile;
+    }
+
 private:
 
     RootMessenger *fMessenger;

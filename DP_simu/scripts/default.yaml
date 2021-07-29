@@ -21,6 +21,16 @@ signal_production: false
 signal_mass: [ 1.0, "GeV" ]
 
 ###########################################
+# Magnetic field
+###########################################
+MagField:
+  mag_field_input: "mag_default.root"
+  uniform_mag_field: false # if uniform_mag_field = true, use the following setup
+  tag_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
+  rec_Tracker_MagField: [ 0, "tesla", -0.5 , "tesla", 0, "tesla" ]
+  mag_verbose: 1
+
+###########################################
 # Root Manager Settings
 ###########################################
 RootManager:
@@ -133,8 +143,6 @@ Geometry:
     Tracker1_Color: [ 0.5, 0.5, 0. ] # RGB
     Tracker2_Color: [ 0.5, 0.5, 0. ] # RGB
     # Tagging Tracker
-    # Magnetic Field along -y direction
-    tag_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
     tag_Size_Tracker:
       - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 1
       - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 2
@@ -152,8 +160,6 @@ Geometry:
       - [ 0 , "cm", 0 , "cm",  20 , "cm" ] # Layer 6
       - [ 0 , "cm", 0 , "cm",  30 , "cm" ] # Layer 7
     # Recoil Tracker
-    # Magnetic Field along -y direction
-    rec_Tracker_MagField: [ 0, "tesla", -0.5 , "tesla", 0, "tesla" ]
     rec_Size_Tracker:
       - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 1
       - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 2
