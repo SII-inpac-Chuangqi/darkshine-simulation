@@ -89,7 +89,13 @@ public:
         EvtWrt = evtWrt;
     }
 
+    TFile *getDataFile() const {
+        return data_file;
+    }
+
 private:
+    TFile* data_file;
+
     AnaEvent *evt{nullptr};
     TBranch *b_DEvent;   //!
 

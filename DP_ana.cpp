@@ -31,6 +31,8 @@ int main(int argc, char **argv) {
         PrintUsage = true;
     } else return -1;
 
+    AnaData::CreateInstance();
+
     auto control = new ControlManager();
     control->setOnlyPrintUsage(PrintUsage);
 

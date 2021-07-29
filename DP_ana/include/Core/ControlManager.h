@@ -5,6 +5,7 @@
 #ifndef DSIMU_CONTROLMANAGER_H
 #define DSIMU_CONTROLMANAGER_H
 
+#include "Core/AnaData.h"
 #include "Core/AlgoManager.h"
 #include "Event/EventReader.h"
 #include "Core/ConfigManager.h"
@@ -26,6 +27,8 @@ public:
     void run();
 
     void PrintConfig();
+
+
 
     //
 

@@ -87,6 +87,7 @@ void ControlManager::run() {
 
     // Read Geometry from ROOT file
     EvtReader->ReadGeometry(ConfMgr->getInputGeofile());
+    dAnaData->setRootFile(EvtReader->getDataFile());
 
     /*
      *  Processing

@@ -49,8 +49,10 @@ MagneticField::MagneticField()
                                         dynamic_cast<DMagnet*>(f->Get("magnet2"))});
 
         dRootMng->getRootFile()->cd();
+
         for ( auto b : BField ) {
-            b->Write();
+            if(! f->GetListOfKeys()->Contains(b->GetName()))
+                b->Write();
         }
 
     }

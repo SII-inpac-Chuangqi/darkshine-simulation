@@ -27,7 +27,7 @@ signal_mass: [ 1.0, "GeV" ]
 ###########################################
 MagField:
   mag_field_input: "mag_default.root"
-  uniform_mag_field: true # if uniform_mag_field = true, use the following setup
+  uniform_mag_field: false # if uniform_mag_field = true, use the following setup
   tag_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
   rec_Tracker_MagField: [ 0, "tesla", -0.5 , "tesla", 0, "tesla" ]
   mag_verbose: 0
