@@ -158,9 +158,9 @@ SET(DEvent_header_shared
         Utility/Object/include/Object/DMagnet.h
         )
 SET(AnaEvent_header_shared
-        DP_ana/include/Event/AnaEvent.h
+        #DP_ana/include/Event/AnaEvent.h
+        DP_ana/include/Event/EventReader.h
         DP_ana/include/Event/EventStoreAndWriter.h
-        DP_ana/include/Core/AnaProcessor.h
         )
 SET(Display_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DEventDisplay.h
@@ -180,9 +180,9 @@ SET(DEvent_source
         Utility/Object/src/DMagnet.cpp
         )
 SET(AnaEvent_source
-        DP_ana/src/AnaEvent.cpp
+        #DP_ana/src/AnaEvent.cpp
+        DP_ana/src/EventReader.cpp
         DP_ana/src/EventStoreAndWriter.cpp
-        DP_ana/src/AnaProcessor.cpp
         )
 SET(Display_source
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay.cpp
@@ -193,26 +193,30 @@ SET(Display_source
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/CaloHitsDisplay.cpp
         )
 root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DEventLinkDef.h)
-add_library(DEvent SHARED ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx)
+#add_library(DEvent SHARED ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx)
 
-#root_generate_dictionary(G__DAnaEvent ${AnaEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DAnaEventLinkDef.h)
+# root_generate_dictionary(G__DAnaEvent ${AnaEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DAnaEventLinkDef.h)
 #add_library(DAnaEvent SHARED ${AnaEvent_header_shared} ${AnaEvent_source} G__DAnaEvent.cxx)
 #target_link_libraries(DAnaEvent PUBLIC DEvent)
 
 root_generate_dictionary(G__Display ${Display_header_shared} LINKDEF Utility/UTIL/include/Utility/DisplayLinkDef.h)
-add_library(Display SHARED ${Display_header_shared} ${Display_source} G__Display.cxx)
-target_link_libraries(Display PUBLIC DEvent)
+#add_library(Display SHARED ${Display_header_shared} ${Display_source} G__Display.cxx)
+#target_link_libraries(Display PUBLIC DAnaEvent)
+
+add_library(DarkShine SHARED
+        ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx
+        ${AnaEvent_header_shared} ${AnaEvent_source} # G__DAnaEvent.cxx
+        ${Display_header_shared} ${Display_source} G__Display.cxx)
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-link_libraries(DEvent)
+link_libraries(DarkShine)
 add_executable(DSimu DP_simu.cc ${Simu_sources} ${Simu_headers} )
        # ${Util_sources} ${Util_headers})
 
-target_link_libraries(DSimu ${Geant4_LIBRARIES}
-        ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES}
-        ${PYTHIA6_LIBRARIES})
+target_link_libraries(DSimu
+        ${Geant4_LIBRARIES} ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES} ${PYTHIA6_LIBRARIES})
 
 add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         Utility/UTIL/include/Utility/Config.h
@@ -220,18 +224,16 @@ add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         ${Algo_sources} ${Algo_headers})
 
 if(DANA_TRACKING)
-    target_link_libraries(DAna DEvent genfit2)
-else()
-    target_link_libraries(DAna DEvent)
+    target_link_libraries(DAna genfit2)
 endif()
 
-add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers} )
+add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
                                   # ${Util_sources} ${Util_headers} {Algo_sources} ${Algo_headers} ${Ana_sources} ${Ana_headers}
-if(DANA_TRACKING)
-    target_link_libraries(DDis Display genfit2)
-else()
-    target_link_libraries(DDis Display)
-endif()
+#if(DANA_TRACKING)
+#    target_link_libraries(DDis Display genfit2)
+#else()
+#    target_link_libraries(DDis Display )
+#endif()
 
 add_executable(DPlot Tools/DPlot.cpp ${Tools_sources} ${Tools_headers})
 target_link_libraries(DPlot yaml-cpp)
@@ -243,9 +245,10 @@ install(TARGETS DSimu DESTINATION bin)
 install(TARGETS DAna DESTINATION bin)
 install(TARGETS DDis DESTINATION bin)
 install(TARGETS DPlot DESTINATION bin)
-install(TARGETS DEvent LIBRARY DESTINATION lib )
+#install(TARGETS DEvent LIBRARY DESTINATION lib )
 #install(TARGETS DAnaEvent LIBRARY DESTINATION lib )
-install(TARGETS Display LIBRARY DESTINATION lib )
+#install(TARGETS Display LIBRARY DESTINATION lib )
+install(TARGETS DarkShine LIBRARY DESTINATION lib )
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent_rdict.pcm DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent.rootmap DESTINATION lib)

@@ -35,7 +35,8 @@
 
 #include "Object/DEvent.h"
 #include "Event/AnaEvent.h"
-#include "DEventReader_dis.h"
+#include "Event/EventReader.h"
+//#include "DEventReader_dis.h"
 #include "DSMagneticField.h"
 #include "CaloHitsDisplay.h"
 
@@ -214,11 +215,11 @@ private:
 
     shared_ptr<TGeoNode> world_node;
 
-    shared_ptr<EventReader_D> EvtReader;
+    shared_ptr<EventReader> EvtReader;
 
     int _eventID{0};
 
-    std::shared_ptr<AnaEvent> evt;
+    AnaEvent* evt;
 
     // Detector Geometry Info
     // size is half, length = 2*size [cm]

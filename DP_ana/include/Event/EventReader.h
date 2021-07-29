@@ -29,6 +29,8 @@ public:
 
     bool ReadEntry(int i) const;
 
+    Long64_t GetEntries() const;
+
     Int_t ReadFile(const std::string &filename);
 
     Int_t ReadTree(const std::string &treename, TFile *tfile);

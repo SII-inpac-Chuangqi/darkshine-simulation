@@ -16,7 +16,6 @@
 #pragma link off all functions;
 #pragma link C++ nestedclasses;
 
-#pragma link C++ class EventReader_D+;
 #pragma link C++ class DSMagneticField+;
 #pragma link C++ class CaloHitsDisplay+;
 #pragma link C++ class DEventDisplay+;

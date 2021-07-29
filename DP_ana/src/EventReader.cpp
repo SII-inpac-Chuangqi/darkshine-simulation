@@ -130,6 +130,15 @@ void EventReader::ReadGeometry(const std::string &filename) {
     }
 }
 
+Long64_t EventReader::GetEntries() const {
+    if (input_tree)
+        return input_tree->GetEntries();
+    else {
+        cerr<<"==> Error when reading input tree..."<<endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
 
 
 

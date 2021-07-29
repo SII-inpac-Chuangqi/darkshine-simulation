@@ -32,8 +32,7 @@ bool DEventDisplay::drawEvent(int id, bool resCam) {
     if (!gGeoManager) return false;
 
     // read event
-    evt = shared_ptr<AnaEvent>(new AnaEvent());
-    EvtReader->setEvt(evt);
+    evt = EvtReader->getEvt();
 
     if ( !EvtReader->ReadEntry(id) ) {
         std::cerr<<"[Read Event] ==> No event in current file ..."<<std::endl;
