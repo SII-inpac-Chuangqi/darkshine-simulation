@@ -562,6 +562,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         Target_Pos = readV3(Node["Geometry"]["Target"]["Target_Pos"], true);
         //----------------------------------------
         // Tracker
+        build_silicon_micro_strip = Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].as<bool>();
         Trk_Tar_Dis = readV2(Node["Geometry"]["Tracker"]["Trk_Tar_Dis"]);
         Tracker_Mat = G4Material::GetMaterial(Node["Geometry"]["Tracker"]["Tracker_Mat"].as<std::string>());
         TrackerRegion_Mat = G4Material::GetMaterial(Node["Geometry"]["Tracker"]["TrackerRegion_Mat"].as<std::string>());

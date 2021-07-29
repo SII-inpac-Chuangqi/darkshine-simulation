@@ -119,6 +119,7 @@ public:
 
     //----------------------------------------
     // Tracker
+    bool build_silicon_micro_strip;
     double Trk_Tar_Dis;
     G4Material *Tracker_Mat;
     G4Material *TrackerRegion_Mat;

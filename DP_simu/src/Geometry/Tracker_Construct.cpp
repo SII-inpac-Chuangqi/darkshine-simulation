@@ -80,8 +80,10 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, G4bool fChe
     Tracker->SetTrkMaterial(Tracker_Mat);
     Tracker->SetVis1(new G4VisAttributes(G4Colour(Tracker1_Color[0], Tracker1_Color[1], Tracker1_Color[2])));
     Tracker->SetVis2(new G4VisAttributes(G4Colour(Tracker2_Color[0], Tracker2_Color[1], Tracker2_Color[2])));
-    Tracker->TrackerPlacement(No_Tracker, &Size_Tracker[0], &Pos_Tracker[0], StripN_Tracker, &Strip_Angle_Gap_Tracker[0]);
+    Tracker->LinearPlacement(No_Tracker, &Size_Tracker[0], &Pos_Tracker[0], StripN_Tracker,
+                            &Strip_Angle_Gap_Tracker[0]);
 
+    Tracker_LV = Tracker->GetTrkLVVector();
     TrackerStrip_LV = Tracker->GetStripLVVector();
 
     return true;
@@ -105,14 +107,30 @@ bool Tracker_Construct::BuildSDandField(G4int type) {
 
     /// Construct Sensitive Detector
 
-    auto *SMTrackerSD = new DetectorSD(
+    auto *Tracker1SD = new DetectorSD(
             0,
-            (type == dTagging ? "TagTrk" : "RecTrk"),
-            G4ThreeVector(1, 1, No_Tracker)
-    );
-    G4SDManager::GetSDMpointer()->AddNewDetector(SMTrackerSD);
-    for (auto LV : TrackerStrip_LV)
-        LV->SetSensitiveDetector(SMTrackerSD);
+            (type == dTagging ? "TagTrk1" : "RecTrk1"),
+            G4ThreeVector(1, 1, No_Tracker) );
+    auto *Tracker2SD = new DetectorSD(
+            0,
+            (type == dTagging ? "TagTrk2" : "RecTrk2"),
+            G4ThreeVector(1, 1, No_Tracker) );
+
+    G4SDManager::GetSDMpointer()->AddNewDetector(Tracker1SD);
+    G4SDManager::GetSDMpointer()->AddNewDetector(Tracker2SD);
+
+    if (dControl->build_silicon_micro_strip) {
+        for ( int i = 0; i < 2 * No_Tracker; i+=2) {
+            TrackerStrip_LV.at(i)->SetSensitiveDetector(Tracker1SD);
+            TrackerStrip_LV.at(i + 1)->SetSensitiveDetector(Tracker2SD);
+        }
+    } else {
+        for ( int i = 0; i < 2 * No_Tracker; i+=2) {
+            Tracker_LV.at(i)->SetSensitiveDetector(Tracker1SD);
+            Tracker_LV.at(i + 1)->SetSensitiveDetector(Tracker2SD);
+        }
+    }
+
 
     return true;
 }

@@ -180,7 +180,7 @@ void DetectorConstruction::DefineTarget() {
     Target->SetPosXYZ(Target_Pos);
     Target->SetTrkMaterial(Target_Mat);
     Target->SetVis(new G4VisAttributes(G4Colour(0, 1.0, 0)));
-    Target->Construct();
+    Target->BoxPlacement();
 
     Target_LV = Target->GetTrkLVVector();
 

@@ -22,10 +22,10 @@ class TrkConstruct
     TrkConstruct(const TrkConstruct&);
     virtual ~TrkConstruct();
 
-    G4ThreeVector Construct();
+    G4ThreeVector BoxConstruct();
+    G4ThreeVector BoxPlacement();
     G4ThreeVector SMTConstruct();
-    G4ThreeVector TrackerPlacement(G4int, G4ThreeVector*, G4ThreeVector*, std::vector<G4int>, G4ThreeVector*);
-    G4ThreeVector LinearPlacement(G4int, G4ThreeVector*, G4ThreeVector*); // old
+    G4ThreeVector LinearPlacement(G4int zNo, G4ThreeVector *SizeVec, G4ThreeVector *PosVec, std::vector<G4int> StripNVec, G4ThreeVector *AngleGapVec);
 
     // initializing the output LV
     void CleanLV() { fTrkLVVector.clear(); };
