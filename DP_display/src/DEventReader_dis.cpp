@@ -27,7 +27,6 @@ void EventReader_D::Convert() {
     // Initialization
     evt->Initialization(nALL);
 
-    evt->ConvertTreeValuePtr(EvtPtr);
     evt->LinkChildren();
 
     RunNumber = evt->getRunId();
