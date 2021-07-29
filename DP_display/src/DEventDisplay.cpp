@@ -60,6 +60,7 @@ void DEventDisplay::Initialize() {
 bool DEventDisplay::drawDetector() {
     if (!gGeoManager) {
         std::cerr << "[Draw Detector] ==> No available geometry ..." << std::endl;
+        exit(EXIT_FAILURE);
         return false;
     }
 
