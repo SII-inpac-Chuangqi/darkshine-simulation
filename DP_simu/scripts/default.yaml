@@ -205,9 +205,9 @@ Geometry:
 
     ECAL_Center_Wrap_Size: [ 0.3 , "mm", 0.3 , "mm", 0.3 , "mm" ]
     # ECAL Scintillator cell size
-    ECAL_Center_Size: [ 2.5 , "cm", 2.5 , "cm", 2.0 , "cm" ]
+    ECAL_Center_Size: [ 2.5 , "cm", 2.5 , "cm", 4.0 , "cm" ]
     # ECAL Scintillator cell placement (x,y,z)
-    ECAL_Center_Module_No: [ 20, 20, 18 ]
+    ECAL_Center_Module_No: [ 20, 20, 11 ]
   HCAL:
     HCAL_Name: "HCAL"
 
@@ -225,9 +225,9 @@ Geometry:
     HCAL_Size_Dir: [ 1, "cm", 5 , "cm", 100.57 , "cm"] # z = HCAL_Mod_No_Dir.x() * (HCAL_Size_Dir.y() + HCAL_Wrap_Size.y())
                                                        #     -HCAL_Wrap_Size.y()
     # HCAL Scintillator cell placement (x,y,z)
-    HCAL_Mod_No_Dir: [20, 20, 120]
+    HCAL_Mod_No_Dir: [20, 20, 160]
     # HCAL Module Number placement (x,y,z)
-    HCAL_Module_No: [3, 3, 1]
+    HCAL_Module_No: [4, 4, 1]
     HCAL_Module_Gap: [0.5 , "mm"]
     # HCAL Absorber Thickness
     HCAL_Absorber_Thickness: [3 , "cm"]

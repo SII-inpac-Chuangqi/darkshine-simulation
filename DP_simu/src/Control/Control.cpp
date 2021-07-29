@@ -30,7 +30,17 @@ Control::Control() {
     //----------------------------------------
     save_geometry = false;
     check_overlaps = false;
+    Memory_Check = true;
     signal_production = false;
+
+    //========================================
+    // Magnetic field
+    //----------------------------------------
+    mag_field_input ="mag_default.root";
+    uniform_mag_field = true;
+    tag_Tracker_MagField = G4ThreeVector(0, -1.5 * tesla, 0);
+    rec_Tracker_MagField = G4ThreeVector(0, -1.5 * tesla, 0);
+    mag_verbose = 0;
 
     //----------------------------------------
     // Signal Option
@@ -77,6 +87,7 @@ Control::Control() {
 
     //----------------------------------------
     // Tracker
+    build_silicon_micro_strip = true;
     Trk_Tar_Dis = 7.5 * mm;
     Tracker_Mat = G4Material::GetMaterial("G4_Si");
     TrackerRegion_Mat = G4Material::GetMaterial("vacuum");
