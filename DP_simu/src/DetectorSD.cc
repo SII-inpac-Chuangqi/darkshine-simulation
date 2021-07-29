@@ -88,29 +88,35 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     auto *touchable = (G4TouchableHistory *) (step->GetPreStepPoint()->GetTouchable());
 
     // Get calorimeter cell id
-    reNumber = touchable->GetReplicaNumber( fType > 0 ? 1 : 0); // for Tracker, depth=0; for calo, depth=1
+    reNumber1 = touchable->GetReplicaNumber(1); // for calo, depth=1
+
 
     auto xID = (int) fCellID.x();
     auto yID = (int) fCellID.y();
     //G4int zID = (int)fCellID.z();
     G4ThreeVector CellID(0, 0, 0);
-    CellID.setZ((int) (reNumber / (xID * yID)) + 1);
-    CellID.setX((reNumber % (xID * yID)) % xID + 1);
-    CellID.setY((int) ((reNumber % (xID * yID)) / yID) + 1);
+    CellID.setZ((int) (reNumber1 / (xID * yID)) + 1);
+    CellID.setX((reNumber1 % (xID * yID)) % xID + 1);
+    CellID.setY((int) ((reNumber1 % (xID * yID)) / yID) + 1);
+    if (fType == 0) {
+        CellID.setX( touchable->GetReplicaNumber(0) + 1 );
+        CellID.setY(1);
+        CellID.setZ(reNumber1 + 1);
+    }
     if (fType == 2) {
         if ((int) CellID.z() % 2 == 0) {
             CellID.setX(1);
-            CellID.setY(((reNumber % (xID * yID)) % yID) + 1);
+            CellID.setY(((reNumber1 % (xID * yID)) % yID) + 1);
         } else {
             CellID.setY(1);
-            CellID.setX(((reNumber % (xID * yID)) % yID) + 1);
+            CellID.setX(((reNumber1 % (xID * yID)) % yID) + 1);
         }
     }
 
     // Get hit accounting data for this cell
     SimulatedHit *hit;
     if (!fType) hit = new SimulatedHit();
-    else hit = fSimHitVec[reNumber];
+    else hit = fSimHitVec[reNumber1];
 
     // Calculate the center position of this cell
     G4ThreeVector origin(0., 0., 0.);
@@ -146,14 +152,23 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     hit->addParticleContribution(*fMC, edep, !fType);
     delete fMC;
 
-    hit->setCellId(reNumber + 1); // replica start from 0 in DetectorConstruction
+    hit->setCellId(reNumber1 + 1); // replica start from 0 in DetectorConstruction
     if (!fType) {
-        hit->setX(HitPoint.x());
-        hit->setY(HitPoint.y());
-        hit->setZ(CellPosition.z());
-        dRootMng->FillSimHit(fname, hit);
+        if (dControl->build_silicon_micro_strip) {
+            hit->setX(CellPosition.x());
+            hit->setY(CellPosition.y());
+            hit->setZ(CellPosition.z());
+            dRootMng->FillSimHit(fname, hit);
 
-        delete hit;
+            delete hit;
+        } else {
+            hit->setX(HitPoint.x());
+            hit->setY(HitPoint.y());
+            hit->setZ(CellPosition.z());
+            dRootMng->FillSimHit(fname, hit);
+
+            delete hit;
+        }
     } else {
         hit->setX(CellPosition.x());
         hit->setY(CellPosition.y());

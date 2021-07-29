@@ -72,7 +72,7 @@ private:
     G4ThreeVector fCellID;
     G4int fType; // 0: Tracker 1: ECAL_Center 2: ECAL_Outer
     G4String fname;
-    G4int reNumber; // replical number of PV
+    G4int reNumber1; // replical number of PV
 
     std::vector<SimulatedHit *> fSimHitVec;
 
