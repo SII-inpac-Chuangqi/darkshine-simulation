@@ -46,18 +46,17 @@ private:
     G4Material *TrackerRegion_Mat = nullptr; 
     std::vector<G4ThreeVector> Size_Tracker{};
     std::vector<G4ThreeVector> Pos_Tracker{};
+    std::vector<G4int> StripN_Tracker{};
+    std::vector<G4ThreeVector> Strip_Angle_Gap_Tracker{};
     G4int No_Tracker{};
     G4ThreeVector Size_TrackerRegion;
     G4ThreeVector Pos_TrackerRegion;
     G4LogicalVolume *TrackerRegion_LV{};
 
     /// Tracker build parameters
-    G4double Tracker1_Rotation{};
-    G4double Tracker2_Rotation{};
     G4ThreeVector Tracker1_Color;
     G4ThreeVector Tracker2_Color;
-    std::vector<G4LogicalVolume *> Tracker_LV1;
-    std::vector<G4LogicalVolume *> Tracker_LV2;
+    std::vector<G4LogicalVolume *> TrackerStrip_LV;
 
     /// Magnetic Field
     G4bool allLocal = true;

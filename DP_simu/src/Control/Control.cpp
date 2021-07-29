@@ -90,14 +90,20 @@ Control::Control() {
     for (int i = 0; i < 7; i++) {
         tag_Size_Tracker.emplace_back(10 * cm, 20 * cm, 0.1 * mm);
         tag_Pos_Tracker.emplace_back(0 * cm, 0 * cm, (-30. + i * 10.) * cm);
+        tag_Tracker_Angle_Gap.emplace_back(0 * radian, 0.1 * radian, 1 * um);
+        tag_Tracker_Strip_N.emplace_back(20);
     }
 
     assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size()); // Sanity Check
+    assert(tag_Tracker_Angle_Gap.size() == tag_Size_Tracker.size());
+    assert(tag_Tracker_Strip_N.size() == tag_Tracker_Angle_Gap.size());
 
     // Recoil Tracker
     rec_Tracker_MagField = G4ThreeVector(0, -0.5 * tesla, 0);
     for (int i = 0; i < 6; i++) {
         rec_Size_Tracker.emplace_back(10 * cm, 20 * cm, 0.1 * mm);
+        rec_Tracker_Angle_Gap.emplace_back(0 * radian, 0.1 * radian, 1 * um);
+        rec_Tracker_Strip_N.emplace_back(20);
     }
     rec_Pos_Tracker.emplace_back(0 * cm, 0 * cm, -86.25 * mm);
     rec_Pos_Tracker.emplace_back(0 * cm, 0 * cm, -71.25 * mm);
@@ -107,6 +113,8 @@ Control::Control() {
     rec_Pos_Tracker.emplace_back(0 * cm, 0 * cm, 86.25 * mm);
 
     assert(rec_Size_Tracker.size() == rec_Pos_Tracker.size());  // Sanity Check
+    assert(rec_Tracker_Angle_Gap.size() == rec_Size_Tracker.size());
+    assert(rec_Tracker_Strip_N.size() == rec_Tracker_Angle_Gap.size());
 
     //----------------------------------------
     // Electromagnetic Calorimeter
@@ -564,20 +572,35 @@ bool Control::ReadYAML(const G4String &file_in) {
         // Tagging Tracker
         tag_Size_Tracker.clear();
         tag_Pos_Tracker.clear();
+        tag_Tracker_Angle_Gap.clear();
+        tag_Tracker_Strip_N.clear();
         for (auto node : Node["Geometry"]["Tracker"]["tag_Size_Tracker"])
             tag_Size_Tracker.emplace_back(readV3(node, true));
         for (auto node : Node["Geometry"]["Tracker"]["tag_Pos_Tracker"])
             tag_Pos_Tracker.emplace_back(readV3(node, true));
+        for (auto node : Node["Geometry"]["Tracker"]["tag_Tracker_Angle_Gap"])
+            tag_Tracker_Angle_Gap.emplace_back(readV3(node, true));
+        for (auto node : Node["Geometry"]["Tracker"]["tag_Tracker_Strip_N"])
+            tag_Tracker_Strip_N.emplace_back(node.as<int>());
         assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size()); // Sanity Check
+        assert(tag_Tracker_Angle_Gap.size() == tag_Size_Tracker.size());
+        assert(tag_Tracker_Strip_N.size() == tag_Tracker_Angle_Gap.size());
         // Recoil Tracker
         rec_Size_Tracker.clear();
         rec_Pos_Tracker.clear();
+        rec_Tracker_Angle_Gap.clear();
+        rec_Tracker_Strip_N.clear();
         for (auto node : Node["Geometry"]["Tracker"]["rec_Size_Tracker"])
             rec_Size_Tracker.emplace_back(readV3(node, true));
         for (auto node : Node["Geometry"]["Tracker"]["rec_Pos_Tracker"])
             rec_Pos_Tracker.emplace_back(readV3(node, true));
-
+        for (auto node : Node["Geometry"]["Tracker"]["rec_Tracker_Angle_Gap"])
+            rec_Tracker_Angle_Gap.emplace_back(readV3(node, true));
+        for (auto node : Node["Geometry"]["Tracker"]["rec_Tracker_Strip_N"])
+            rec_Tracker_Strip_N.emplace_back(node.as<int>());
         assert(rec_Size_Tracker.size() == rec_Pos_Tracker.size()); // Sanity Check
+        assert(rec_Tracker_Angle_Gap.size() == rec_Size_Tracker.size());
+        assert(rec_Tracker_Strip_N.size() == rec_Tracker_Angle_Gap.size());
         //----------------------------------------
         // Electromagnetic Calorimeter
         ECAL_Name = Node["Geometry"]["ECAL"]["ECAL_Name"].as<std::string>();
