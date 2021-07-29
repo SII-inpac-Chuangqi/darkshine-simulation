@@ -51,7 +51,7 @@ MagneticField::MagneticField()
         dRootMng->getRootFile()->cd();
 
         for ( auto b : BField ) {
-            if(! f->GetListOfKeys()->Contains(b->GetName()))
+            if(! dRootMng->getRootFile()->GetListOfKeys()->Contains(b->GetName()))
                 b->Write();
         }
 
