@@ -1,28 +1,30 @@
 #include "DP_simu/TrkConstruct.hh"
 #include "G4Box.hh"
-#include "G4PVPlacement.hh"
 
 #include <iterator>
 #include <utility>
 
+// TODO: clean PV, HepRot pointers
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-TrkConstruct::TrkConstruct(G4String TrkName, 
-                           G4LogicalVolume* MotherVolume, 
-                           G4int CopyNo, 
-                           G4bool CheckOverlap)
-{
+TrkConstruct::TrkConstruct(G4String TrkName,
+                           G4LogicalVolume *MotherVolume,
+                           G4int CopyNo,
+                           G4bool CheckOverlap) {
     fTrkName = std::move(TrkName);
     fMotherVolume = MotherVolume;
     fCopyNo = CopyNo;
     fCheckOverlap = CheckOverlap;
 
-    fSizeX = 0.; 
-    fSizeY = 0.; 
-    fSizeZ = 0.; 
-    fPosX = 0.; 
-    fPosY = 0.; 
-    fPosZ = 0.; 
+    fSizeX = 0.;
+    fSizeY = 0.;
+    fSizeZ = 0.;
+    fPosX = 0.;
+    fPosY = 0.;
+    fPosZ = 0.;
+    fAngle1 = 0.;
+    fAngle2 = 0.;
 
     fAngle = 0.;
     fZMove = 0.;
@@ -33,91 +35,225 @@ TrkConstruct::TrkConstruct(G4String TrkName,
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-TrkConstruct::TrkConstruct(const TrkConstruct& in)
-{
-    fTrkName        = in.fTrkName        ;
-    fMotherVolume   = in.fMotherVolume   ;
-    fCopyNo         = in.fCopyNo         ;
-    fType           = in.fType           ;
-    fCheckOverlap   = in.fCheckOverlap   ;
-    fSizeX          = in.fSizeX          ;
-    fSizeY          = in.fSizeY          ;
-    fSizeZ          = in.fSizeZ          ;
-    fPosX           = in.fPosX           ;
-    fPosY           = in.fPosY           ;
-    fPosZ           = in.fPosZ           ;
-    fTrkMaterial    = in.fTrkMaterial    ;
-    fVis            = in.fVis            ;
-    fTrkLVVector    = in.fTrkLVVector    ;
-    fAngle          = in.fAngle          ;
-    fZMove          = in.fZMove          ;
+TrkConstruct::TrkConstruct(const TrkConstruct &in) {
+    fTrkName = in.fTrkName;
+    fMotherVolume = in.fMotherVolume;
+    fCopyNo = in.fCopyNo;
+    fType = in.fType;
+    fCheckOverlap = in.fCheckOverlap;
+    fSizeX = in.fSizeX;
+    fSizeY = in.fSizeY;
+    fSizeZ = in.fSizeZ;
+    fPosX = in.fPosX;
+    fPosY = in.fPosY;
+    fPosZ = in.fPosZ;
+    fTrkMaterial = in.fTrkMaterial;
+    fVis = in.fVis;
+    fTrkLVVector = in.fTrkLVVector;
+    fAngle = in.fAngle;
+    fZMove = in.fZMove;
+    fPos1 = in.fPos1;
+    fPos2 = in.fPos2;
+    fTrkLV = in.fTrkLV;
+    fAngle1 = in.fAngle1;
+    fAngle2 = in.fAngle2;
+    fStripNum = in.fStripNum;
+    fStripSizeX = in.fStripSizeX;
+    fStripSizeY = in.fStripSizeY;
+    fStripSizeZ = in.fStripSizeZ;
+    fStripPosX = in.fStripPosX;
+    fStripPosY = in.fStripPosY;
+    fStripPosZ = in.fStripPosZ;
+    fStripGapX = in.fStripGapX;
+    fStripVis = in.fStripVis;
+    fStripLV = in.fStripLV;
+    fStripLVVector = in.fStripLVVector;
+    PVVector = in.PVVector;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-TrkConstruct::~TrkConstruct()
-= default;
+TrkConstruct::~TrkConstruct() {
+    delete fVis;
+    delete fStripVis;
+    delete fStripLV;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4ThreeVector TrkConstruct::Construct()
-{
-    auto TotalSize = G4ThreeVector(0,0,0);
-    // check consistency
-    if ( !fSizeX || !fSizeY || !fSizeZ ) 
-    {
-        G4cout<<fTrkName<<" Construction Error: at least size of one dimension is zero."<<G4endl; 
-        return TotalSize;
+G4ThreeVector TrkConstruct::BoxConstruct() {
+    auto TotalHalfSize = G4ThreeVector(0, 0, 0);
+
+    if (!fSizeX || !fSizeY || !fSizeZ) {
+        G4cout << fTrkName << " Construction Error: at least size of one dimension is zero." << G4endl;
+        return TotalHalfSize;
     }
+    // box LV
+    auto box = new G4Box(fTrkName + "_Box", fSizeX / 2., fSizeY / 2., fSizeZ / 2.);
+    auto boxLV = new G4LogicalVolume(box, fTrkMaterial, fTrkName + "_LV", nullptr, nullptr, nullptr);
 
-    // Calculate Rotation Matrix
-    auto HepRot = new G4RotationMatrix();
-    //HepRot->set( CLHEP::Hep3Vector ( 1., 0., 1.), fAngle );
-    HepRot->rotateZ( fAngle );
+    fTrkLV = boxLV;
+    fTrkLVVector.emplace_back(boxLV);
 
-    //G4cout<<"Angle: "<<fAngle<<", "<<   HepRot->thetaZ () <<G4endl;
+    if (fVis) {
+        fVis->SetVisibility(true);
+        boxLV->SetVisAttributes(fVis);
+    } else boxLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    return TotalHalfSize;
+}
+
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4ThreeVector TrkConstruct::BoxPlacement() {
+    auto TotalSize = G4ThreeVector(0, 0, 0);
 
     // Placement of Tracker
     auto pos = G4ThreeVector(fPosX, fPosY, fPosZ + fZMove);
-
-    auto box = new G4Box(fTrkName+"_Box" , fSizeX/2., fSizeY/2., fSizeZ/2. );
-    auto boxLV = new G4LogicalVolume(box, fTrkMaterial, fTrkName+"_LV", nullptr,nullptr,nullptr);
-    new G4PVPlacement( HepRot, pos, boxLV, fTrkName+"_PV", fMotherVolume, false, fCopyNo, fCheckOverlap);
-
-    fTrkLVVector.push_back(boxLV);
-
-    if ( fVis ) 
-    {
-        fVis->SetVisibility(true); 
-        boxLV->SetVisAttributes(fVis);
-    }
-    else boxLV->SetVisAttributes(G4VisAttributes::GetInvisible());
-
     TotalSize = G4ThreeVector(fSizeX, fSizeY, fSizeZ);
+    BoxConstruct();
+    new G4PVPlacement(nullptr, pos, fTrkLV, fTrkName + "_PV", fMotherVolume, false, fCopyNo, fCheckOverlap);
 
     return TotalSize;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo, G4ThreeVector* SizeVec, G4ThreeVector* PosVec)
-{
-    auto TotalSize = G4ThreeVector(0,0,0);
-
-    for (int k = 0; k < zNo; k++) 
-    {
-        auto CurSizeVec = *(SizeVec+k);
-        auto CurPosVec  = *(PosVec+k);
-
-        SetSizeXYZ(CurSizeVec); 
-        SetPosXYZ(CurPosVec); 
-
-        Construct();  
-        
-        fCopyNo++;
+// Volume relationship:
+// 0 Outline (Trk)
+// └-1 Silicon micro-strip (Strip)
+G4ThreeVector TrkConstruct::SMTConstruct() {
+    auto TotalHalfSize = G4ThreeVector(0, 0, 0);
+    // check consistency
+    if (!fSizeX || !fSizeY || !fSizeZ) {
+        G4cout << fTrkName << " Construction Error: at least size of one dimension is zero." << G4endl;
+        return TotalHalfSize;
     }
+    // outline
+    auto TrkBox = new G4Box(fTrkName + "_Box", fSizeX / 2., fSizeY / 2., fSizeZ / 2.);
+    auto TrkLV = new G4LogicalVolume(TrkBox,
+                                     G4Material::GetMaterial("vacuum"),
+                                     fTrkName + "_LV",
+                                     nullptr, nullptr, nullptr);
 
-    return TotalSize;
+    fTrkLV = TrkLV;
+    fTrkLVVector.emplace_back(TrkLV);
+    if (fVis) {
+        fVis->SetVisibility(true);
+        TrkLV->SetVisAttributes(fVis);
+    } else TrkLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    // Silicon micro-strip
+    auto StripBox = new G4Box(fTrkName + "_Strip_Box", fStripSizeX / 2., fStripSizeY / 2., fStripSizeZ / 2.);
+    auto StripLV = new G4LogicalVolume(StripBox, fTrkMaterial, fTrkName + "_Strip_LV",
+                                       nullptr, nullptr, nullptr);
+    fStripLV = StripLV;
+    fStripLVVector.emplace_back(StripLV);
+    if (fStripVis)
+    {
+        fStripVis->SetVisibility(true);
+        StripLV->SetVisAttributes(fStripVis);
+    } else StripLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    /// construct nphysical volume
+    // place strip
+    TotalHalfSize = G4ThreeVector(0.5 * fSizeX,
+                                  0.5 * fSizeY,
+                                  0.5 * fSizeZ);
+    fStripPosY = 0;
+    fStripPosZ = 0;
+    // G4PVPlacement* StripPV = nullptr;
+    G4int fStripCopyNo = 0;
+    for (int i = 0; i < fStripNum; i++) {
+        fStripPosX = -1 * TotalHalfSize.x() + (i + 0.5) * fStripGapX;
+        auto StripPV = new G4PVPlacement(nullptr,
+                                         G4ThreeVector(fStripPosX, fStripPosY, fStripPosZ),
+                                         fStripLV,
+                                         fTrkName + "_Strip_PV",
+                                         fTrkLV,
+                                         false,
+                                         fStripCopyNo,
+                                         fCheckOverlap);
+        PVVector.emplace_back(StripPV);
+        fStripCopyNo++;
+    }
+    return TotalHalfSize;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
+                                            G4ThreeVector *SizeVec,
+                                            G4ThreeVector *PosVec,
+                                            std::vector<G4int> StripNVec,
+                                            G4ThreeVector *AngleGapVec) {
+    auto TotalHalfSize = G4ThreeVector(0, 0, 0);
+
+    G4PVPlacement *UnitPV = nullptr;
+    // construct Tracker1s
+    for (int k = 0; k < zNo; k++) {
+        auto CurSizeVec = *(SizeVec + k);
+        auto CurPosVec = *(PosVec + k);
+        auto CurStripN = StripNVec.at(k);
+        auto CurAngleGapVec = *(AngleGapVec + k);
+
+        SetSizeXYZ(CurSizeVec);
+        SetPosXYZ(CurPosVec);
+        SetStrip_Angle_Gap(CurStripN, CurAngleGapVec);
+
+        auto HepRot1 = new G4RotationMatrix();
+        HepRot1->rotateZ(fAngle1);
+        auto HepRot2 = new G4RotationMatrix();
+        HepRot2->rotateZ(fAngle2);
+
+        fZMove = 0.5 * fSizeZ + dControl->eps;
+        fPos1 = G4ThreeVector(fPosX, fPosY, fPosZ - fZMove);
+        fPos2 = G4ThreeVector(fPosX, fPosY, fPosZ + fZMove);
+
+
+        G4ThreeVector CurColor = dControl->Tracker1_Color;
+        fVis = fVis1;
+        fStripVis = fVis1;
+        if (dControl->build_silicon_micro_strip) SMTConstruct();
+        else BoxConstruct();
+        UnitPV = new G4PVPlacement(HepRot1,
+                                   fPos1,
+                                   fTrkLV,
+                                   fTrkName + "1_PV",
+                                   fMotherVolume,
+                                   false,
+                                   fCopyNo,
+                                   fCheckOverlap);
+        PVVector.emplace_back(UnitPV);
+
+        fVis = fVis2;
+        fStripVis = fVis2;
+        if (dControl->build_silicon_micro_strip) SMTConstruct();
+        else BoxConstruct();
+        UnitPV = new G4PVPlacement(HepRot2,
+                                   fPos2,
+                                   fTrkLV,
+                                   fTrkName + "2_PV",
+                                   fMotherVolume,
+                                   false,
+                                   fCopyNo,
+                                   fCheckOverlap);
+        PVVector.emplace_back(UnitPV);
+        fCopyNo++;
+
+    }
+    return TotalHalfSize;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void TrkConstruct::SetStrip_Angle_Gap(const G4int &stripN, const G4ThreeVector &angleGap) {
+    fStripNum = stripN;
+    fStripGapX = fSizeX / stripN;
+    fStripSizeX = fStripGapX - angleGap.z();
+    fStripSizeY = fSizeY;
+    fStripSizeZ = fSizeZ;
+
+    fAngle1 = angleGap.x();
+    fAngle2 = angleGap.y();
+}

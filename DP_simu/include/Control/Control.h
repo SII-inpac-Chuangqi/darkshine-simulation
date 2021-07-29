@@ -119,6 +119,7 @@ public:
 
     //----------------------------------------
     // Tracker
+    bool build_silicon_micro_strip;
     double Trk_Tar_Dis;
     G4Material *Tracker_Mat;
     G4Material *TrackerRegion_Mat;
@@ -130,6 +131,8 @@ public:
     // Tagging Tracker
     std::vector<G4ThreeVector> tag_Size_Tracker{};
     std::vector<G4ThreeVector> tag_Pos_Tracker{};
+    std::vector<G4ThreeVector> tag_Tracker_Angle_Gap{};
+    std::vector<G4int> tag_Tracker_Strip_N{};
     int tag_No_Tracker{};  // dependent
     G4ThreeVector tag_Size_TrackerRegion;  // dependent
     G4ThreeVector tag_Pos_TrackerRegion;  // dependent
@@ -137,6 +140,8 @@ public:
     // Recoil Tracker
     std::vector<G4ThreeVector> rec_Size_Tracker{};
     std::vector<G4ThreeVector> rec_Pos_Tracker{};
+    std::vector<G4ThreeVector> rec_Tracker_Angle_Gap{};
+    std::vector<G4int> rec_Tracker_Strip_N{};
     int rec_No_Tracker{};  // dependent
     G4ThreeVector rec_Size_TrackerRegion;  // dependent
     G4ThreeVector rec_Pos_TrackerRegion;  // dependent

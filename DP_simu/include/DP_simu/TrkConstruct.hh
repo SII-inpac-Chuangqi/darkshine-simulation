@@ -10,6 +10,8 @@
 #include "G4Colour.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
+#include "G4PVPlacement.hh"
+#include "Control/Control.h"
 
 #include <vector>
 
@@ -20,8 +22,10 @@ class TrkConstruct
     TrkConstruct(const TrkConstruct&);
     virtual ~TrkConstruct();
 
-    G4ThreeVector Construct();
-    G4ThreeVector LinearPlacement(G4int, G4ThreeVector*, G4ThreeVector*);
+    G4ThreeVector BoxConstruct();
+    G4ThreeVector BoxPlacement();
+    G4ThreeVector SMTConstruct();
+    G4ThreeVector LinearPlacement(G4int zNo, G4ThreeVector *SizeVec, G4ThreeVector *PosVec, std::vector<G4int> StripNVec, G4ThreeVector *AngleGapVec);
 
     // initializing the output LV
     void CleanLV() { fTrkLVVector.clear(); };
@@ -37,6 +41,8 @@ class TrkConstruct
     void SetCopyNo(G4int in)            { fCopyNo = in; };
     void SetTrkName(const G4String &in)        { fTrkName = in; };
     void SetVis(G4VisAttributes* in)    { fVis = in; };
+    void SetVis1(G4VisAttributes* in) { fVis1 = in; };
+    void SetVis2(G4VisAttributes* in) { fVis2 = in; };
     void SetMotherVolume(G4LogicalVolume* in)   { fMotherVolume = in; };
     void SetTrkMaterial(G4Material* in)         { fTrkMaterial = in; };
 
@@ -44,8 +50,10 @@ class TrkConstruct
     void SetZMove(double in)            { fZMove = in; };
     void SetSizeXYZ(const G4ThreeVector &in)   { fSizeX = in.x(); fSizeY = in.y(); fSizeZ = in.z(); };
     void SetPosXYZ(const G4ThreeVector &in)    { fPosX = in.x();  fPosY = in.y();  fPosZ = in.z();  };
+    void SetStrip_Angle_Gap(const G4int &stripN, const G4ThreeVector &angleGap);
 
     std::vector<G4LogicalVolume*> GetTrkLVVector() { return fTrkLVVector; };
+    std::vector<G4LogicalVolume*> GetStripLVVector() { return fStripLVVector; };
 
   private:
     G4bool fType; //
@@ -57,6 +65,8 @@ class TrkConstruct
     G4double fPosX;
     G4double fPosY;
     G4double fPosZ;
+    G4ThreeVector fPos1; // position of front Tracker, with ZMove
+    G4ThreeVector fPos2; // position of back Tracker, with ZMove
 
     G4double fAngle;
     G4double fZMove;
@@ -66,10 +76,31 @@ class TrkConstruct
 
     G4LogicalVolume* fMotherVolume;
     G4VisAttributes* fVis;
+    G4VisAttributes* fVis1;
+    G4VisAttributes* fVis2;
 
     G4Material* fTrkMaterial;
 
+    G4LogicalVolume* fTrkLV;
+    G4double fAngle1;
+    G4double fAngle2;
     std::vector<G4LogicalVolume*> fTrkLVVector;
+
+    // Silicon Micro-Strip
+    G4int fStripNum;
+    G4double fStripSizeX;
+    G4double fStripSizeY;
+    G4double fStripSizeZ;
+    G4double fStripPosX;
+    G4double fStripPosY;
+    G4double fStripPosZ;
+    G4double fStripGapX;
+    G4VisAttributes* fStripVis;
+    G4LogicalVolume* fStripLV;
+    std::vector<G4LogicalVolume*> fStripLVVector;
+
+
+    std::vector<G4PVPlacement*> PVVector;
 };
 
 #endif
