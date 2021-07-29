@@ -104,7 +104,7 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
             }
         }
         // ECAL
-        if (dt == DECAL && !cur_Name.Contains("LVW")) {
+        if (dt == DECAL && cur_Name.Contains("LVW")) {
             auto daughter_pos = cur_node->GetMatrix()->GetTranslation();
             mat_cal = TString(cur_node->GetVolume()->GetMaterial()->GetName());
             // count Z layer
@@ -133,7 +133,7 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
 
         }
         // HCAL
-        if (dt == DHCAL && !cur_Name.Contains("LVW") && cur_Name.Contains("_0")) {
+        if (dt == DHCAL && cur_Name.Contains("_0")) {
             auto daughter_pos = cur_node->GetMatrix()->GetTranslation();
             // Concerning Cell First
             if (!cur_Name.Contains("Abs")) {
