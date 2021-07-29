@@ -223,11 +223,9 @@ add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         Utility/UTIL/src/Config.cpp
         ${Algo_sources} ${Algo_headers})
 
-#if(DANA_TRACKING)
-#    target_link_libraries(DAna DEvent genfit2)
-#else()
-#    target_link_libraries(DAna DEvent)
-#endif()
+if(DANA_TRACKING)
+    target_link_libraries(DAna genfit2)
+endif()
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
                                   # ${Util_sources} ${Util_headers} {Algo_sources} ${Algo_headers} ${Ana_sources} ${Ana_headers}
