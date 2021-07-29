@@ -197,15 +197,15 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         auto CurStripN = StripNVec.at(k);
         auto CurAngleGapVec = *(AngleGapVec + k);
 
+        SetSizeXYZ(CurSizeVec);
+        SetPosXYZ(CurPosVec);
+        SetStrip_Angle_Gap(CurStripN, CurAngleGapVec);
+
         if (! dControl->build_silicon_micro_strip ) {
             fStripNum = 1;
             fStripGapX = fSizeX;
             fStripSizeX = fSizeX;
         }
-
-        SetSizeXYZ(CurSizeVec);
-        SetPosXYZ(CurPosVec);
-        SetStrip_Angle_Gap(CurStripN, CurAngleGapVec);
 
         auto HepRot1 = new G4RotationMatrix();
         HepRot1->rotateZ(fAngle1);
