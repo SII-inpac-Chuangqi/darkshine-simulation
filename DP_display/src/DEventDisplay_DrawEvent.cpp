@@ -97,8 +97,8 @@ void DEventDisplay::drawInitialParticleStep() {
             auto step = Steps->at(i);
             auto next_step = Steps->at(i + 1);
 
-            TVector3 start(step->getX() / 10, step->getY() / 10, step->getZ() / 10);
-            TVector3 end(next_step->getX() / 10, next_step->getY() / 10, next_step->getZ() / 10);
+            TVector3 start(step->getX() / CUNIT, step->getY() / CUNIT, step->getZ() / CUNIT);
+            TVector3 end(next_step->getX() / CUNIT, next_step->getY() / CUNIT, next_step->getZ() / CUNIT);
 
             makeLines(lineSet, start, end, kRed, 1, false, 3, 0);
         }
@@ -216,8 +216,8 @@ TEveTrack *DEventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned id,
     rt.SetPdgCode(mc->getPdg());
     rt.SetUniqueID(mc->getId());
     rt.SetMomentum(mc->getPx() * 1e-3, mc->getPy() * 1e-3, mc->getPz() * 1e-3, mc->getEnergy() * 1e-3);
-    rt.SetProductionVertex(mc->getVertexX() / 10, mc->getVertexY() / 10, mc->getVertexZ() / 10, 0.);
-    TVector3 endpoint(mc->getEndPointX() / 10, mc->getEndPointY() / 10, mc->getEndPointZ() / 10);
+    rt.SetProductionVertex(mc->getVertexX() / CUNIT, mc->getVertexY() / CUNIT, mc->getVertexZ() / CUNIT, 0.);
+    TVector3 endpoint(mc->getEndPointX() / CUNIT, mc->getEndPointY() / CUNIT, mc->getEndPointZ() / CUNIT);
 
     auto EndPoint = new TEvePathMark(TEvePathMark::kDecay);
     EndPoint->fV.Set(endpoint);
@@ -310,7 +310,7 @@ TEveBox *DEventDisplay::makeBox(const double *abs_pos, const double *half_size) 
 }
 
 TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) const {
-    auto cur_node = gGeoManager->FindNode(hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10);
+    auto cur_node = gGeoManager->FindNode(hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT);
     auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
 
     auto *mother_node = gGeoManager->GetMother();
@@ -320,7 +320,7 @@ TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) const {
     double hy = fabs(cur_shape->GetDX() * RotationMatrix[3] + cur_shape->GetDY() * RotationMatrix[4] + cur_shape->GetDZ() * RotationMatrix[5]);
     double hz = fabs(cur_shape->GetDX() * RotationMatrix[6] + cur_shape->GetDY() * RotationMatrix[7] + cur_shape->GetDZ() * RotationMatrix[8]);
 
-    double abs_pos[3] = {hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10};
+    double abs_pos[3] = {hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT};
     double half_size[3] = {hx, hy, hz};
 
     if (_drawScaleSimuCaloBox) {
@@ -353,9 +353,9 @@ TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) const {
 }
 
 TEveBox *DEventDisplay::makeRecCaloBox(CalorimeterHit *hit, double EMax) {
-    auto cur_node = gGeoManager->FindNode(hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10);
+    auto cur_node = gGeoManager->FindNode(hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT);
     auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
-    double abs_pos[3] = {hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10};
+    double abs_pos[3] = {hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT};
     double half_size[3] = {cur_shape->GetDX(), cur_shape->GetDY(), cur_shape->GetDZ()};
 
     auto *box = makeBox(abs_pos, half_size);
@@ -379,9 +379,9 @@ TEveBox *DEventDisplay::makeRecCaloBox(CalorimeterHit *hit, double EMax) {
 
 template<class Hit>
 TEveBox *DEventDisplay::makeTrackerBox(Hit *hit, double scale) {
-    auto cur_node = gGeoManager->FindNode(hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10 + 1e-6);
+    auto cur_node = gGeoManager->FindNode(hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT + 1e-6);
     auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
-    double abs_pos[3] = {hit->getX() / 10, hit->getY() / 10, hit->getZ() / 10};
+    double abs_pos[3] = {hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT};
     double half_size[3] = {cur_shape->GetDX() * scale, cur_shape->GetDY() * scale, cur_shape->GetDZ() * 0.1};
 
     auto *box = makeBox(abs_pos, half_size);
@@ -428,9 +428,9 @@ void DEventDisplay::makeCaloLego(CaloCol col, CaloHitsDisplay *calo_dis, bool if
             for (auto hits : *CALs) {
                 int i = ECALslice_calo ? hits->getCellIdZ() - 1 : 0;
                 CaloHit tmp;
-                tmp.X = hits->getX() / 10; // cm
-                tmp.Y = hits->getY() / 10; // cm
-                tmp.Z = hits->getZ() / 10; // cm
+                tmp.X = hits->getX() / CUNIT; // cm
+                tmp.Y = hits->getY() / CUNIT; // cm
+                tmp.Z = hits->getZ() / CUNIT; // cm
                 tmp.E = hits->getE();    // MeV
                 tmp.Color = kGreen + i;
                 tmp.id = hits->getCellId();

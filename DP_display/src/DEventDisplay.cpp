@@ -47,7 +47,7 @@ void DEventDisplay::Initialize() {
     // Set Camera
     auto *v = gEve->GetDefaultGLViewer();
     v->CurrentCamera().SetExternalCenter(kTRUE);
-    v->SetCurrentCamera(TGLViewer::kCameraOrthoZOX);
+    //v->SetCurrentCamera(TGLViewer::kCameraOrthoZOX);
     v->CurrentCamera().SetCenterVec(0, 0, 30.);
 
     // Set TApplication Termination
@@ -357,7 +357,7 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
         hf = new TGHorizontalFrame(frmMain1);
         {
             guiScaleSimuCaloBox = new TGCheckButton(hf, "Scale Simulated CaloHits Box by Energy");
-            //if (guiScaleSimuCaloBox) guiScaleSimuCaloBox->Toggle();
+            if (_drawScaleSimuCaloBox) guiScaleSimuCaloBox->Toggle();
             hf->AddFrame(guiScaleSimuCaloBox);
             guiScaleSimuCaloBox->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptions()");
         }
@@ -478,11 +478,6 @@ void DEventDisplay::gotoEvent(unsigned int id) {
     // CaloHits Lego Options
     _drawLogSacle = guiLogCaloHitsLego->IsOn();
     _scale_factor_Lego = guiScaleFactorLego->GetNumberEntry()->GetNumber();
-
-    // Ana Processors
-    RecECAL_ = guiRecECAL->IsOn();
-    RecECAL_W0 = guiRecECAL_W0->GetNumberEntry()->GetNumber();
-    RecECAL_r_cut = guiRecECAL_r_cut->GetNumberEntry()->GetNumber();
 
     gotoEvent(_eventID);
 }

@@ -5,6 +5,12 @@
 #ifndef DSIMU_DEVENTDISPLAY_H
 #define DSIMU_DEVENTDISPLAY_H
 
+#ifdef RM_UNIT
+#define CUNIT 1
+#else
+#define CUNIT 10
+#endif
+
 #include "TEveManager.h"
 #include "TGeoManager.h"
 #include "TApplication.h"
@@ -267,15 +273,6 @@ private:
     // Format:
     //   ProcessorName_Variable
 
-    // Part One: Variables
-    bool RecECAL_ = false;
-    double RecECAL_W0 = 3.2;
-    double RecECAL_r_cut = 0.01;
-
-    // Part Two: Gui Commands
-    TGCheckButton *guiRecECAL{nullptr};
-    TGNumberEntry *guiRecECAL_W0{nullptr};
-    TGNumberEntry *guiRecECAL_r_cut{nullptr};
 
 
 ClassDefOverride(DEventDisplay, 0);
