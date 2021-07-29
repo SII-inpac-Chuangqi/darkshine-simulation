@@ -119,18 +119,10 @@ bool Tracker_Construct::BuildSDandField(G4int type) {
     G4SDManager::GetSDMpointer()->AddNewDetector(Tracker1SD);
     G4SDManager::GetSDMpointer()->AddNewDetector(Tracker2SD);
 
-    if (dControl->build_silicon_micro_strip) {
-        for ( int i = 0; i < 2 * No_Tracker; i+=2) {
-            TrackerStrip_LV.at(i)->SetSensitiveDetector(Tracker1SD);
-            TrackerStrip_LV.at(i + 1)->SetSensitiveDetector(Tracker2SD);
-        }
-    } else {
-        for ( int i = 0; i < 2 * No_Tracker; i+=2) {
-            Tracker_LV.at(i)->SetSensitiveDetector(Tracker1SD);
-            Tracker_LV.at(i + 1)->SetSensitiveDetector(Tracker2SD);
-        }
+    for ( int i = 0; i < 2 * No_Tracker; i+=2) {
+        TrackerStrip_LV.at(i)->SetSensitiveDetector(Tracker1SD);
+        TrackerStrip_LV.at(i + 1)->SetSensitiveDetector(Tracker2SD);
     }
-
 
     return true;
 }

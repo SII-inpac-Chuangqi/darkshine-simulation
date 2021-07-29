@@ -197,6 +197,12 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         auto CurStripN = StripNVec.at(k);
         auto CurAngleGapVec = *(AngleGapVec + k);
 
+        if (! dControl->build_silicon_micro_strip ) {
+            fStripNum = 1;
+            fStripGapX = fSizeX;
+            fStripSizeX = fSizeX;
+        }
+
         SetSizeXYZ(CurSizeVec);
         SetPosXYZ(CurPosVec);
         SetStrip_Angle_Gap(CurStripN, CurAngleGapVec);
@@ -214,8 +220,7 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         G4ThreeVector CurColor = dControl->Tracker1_Color;
         fVis = fVis1;
         fStripVis = fVis1;
-        if (dControl->build_silicon_micro_strip) SMTConstruct();
-        else BoxConstruct();
+        SMTConstruct();
         UnitPV = new G4PVPlacement(HepRot1,
                                    fPos1,
                                    fTrkLV,
@@ -228,8 +233,7 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
 
         fVis = fVis2;
         fStripVis = fVis2;
-        if (dControl->build_silicon_micro_strip) SMTConstruct();
-        else BoxConstruct();
+        SMTConstruct();
         UnitPV = new G4PVPlacement(HepRot2,
                                    fPos2,
                                    fTrkLV,
