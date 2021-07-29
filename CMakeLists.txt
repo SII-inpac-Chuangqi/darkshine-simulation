@@ -11,7 +11,7 @@ set(CMAKE_PLATFORM_INDEPENDENT_CODE ON)
 set(OpenGL_GL_PREFERENCE GLVND)
 
 # define path to macros and settings
-LIST( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
+LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
@@ -39,16 +39,16 @@ LINK_LIBRARIES(${GSL_LIBRARIES})
 
 # yaml-cpp
 find_package(yaml-cpp REQUIRED)
-LINK_LIBRARIES( yaml-cpp )
+LINK_LIBRARIES(yaml-cpp)
 
 find_package(XercesC REQUIRED)
 if (XercesC_FOUND)
-    INCLUDE_DIRECTORIES( ${XercesC_INCLUDE_DIRS} )
-    LINK_LIBRARIES( ${XercesC_LIBRARIES} )
+    INCLUDE_DIRECTORIES(${XercesC_INCLUDE_DIRS})
+    LINK_LIBRARIES(${XercesC_LIBRARIES})
 endif ()
 
 option(DANA_TRACKING "DANA_TRACKING" ON)
-if(DANA_TRACKING)
+if (DANA_TRACKING)
     # GenFit2
     option(USE_GENFIT "USE_GENFIT" ON)
     if (USE_GENFIT)
@@ -61,12 +61,12 @@ if(DANA_TRACKING)
         FIND_PACKAGE(Eigen3 REQUIRED)
         INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
         MESSAGE("-- Eigen Dir: ${EIGEN3_INCLUDE_DIR}")
-    else()
+    else ()
         INCLUDE_DIRECTORIES(Utility/)
     endif ()
-else()
-    add_definitions( -D_OFF_TRACKING=\"true\" )
-endif()
+else ()
+    add_definitions(-D_OFF_TRACKING=\"true\")
+endif ()
 
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
@@ -79,6 +79,10 @@ IF (ROOT_FOUND)
     INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
     LINK_LIBRARIES(${ROOT_LIBRARIES})
     LINK_DIRECTORIES(${ROOT_LIBRARY_DIR})
+
+    if (${ROOT_VERSION} VERSION_GREATER_EQUAL "6.24.0")
+        ADD_DEFINITIONS("-DRM_UNIT")
+    endif ()
 ENDIF ()
 
 
@@ -86,10 +90,10 @@ ENDIF ()
 # For Memory Check
 #
 option(MEMCK "MEMCK" OFF)
-if(MEMCK OR ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
+if (MEMCK OR ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
     MESSAGE("-- Memory Check is ON")
     add_definitions("-DMEMCK")
-endif()
+endif ()
 
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
@@ -136,11 +140,11 @@ file(GLOB_RECURSE Util_headers Utility/*/include/*)
 FILE(GLOB_RECURSE Algo_sources Algorithms/*/src/*.cpp)
 FILE(GLOB_RECURSE Algo_headers Algorithms/*/include/*)
 
-file(GLOB Display_sources DP_display/src/* )
-file(GLOB Display_headers DP_display/include/* )
+file(GLOB Display_sources DP_display/src/*)
+file(GLOB Display_headers DP_display/include/*)
 
-file(GLOB Tools_sources Tools/src/* )
-file(GLOB Tools_headers Tools/include/* )
+file(GLOB Tools_sources Tools/src/*)
+file(GLOB Tools_headers Tools/include/*)
 #----------------------------------------------------------------------------
 # Generate ROOT library for DEvent
 #
@@ -212,8 +216,8 @@ add_library(DarkShine SHARED
 # Add the executable, and link it to the Geant4 libraries
 #
 link_libraries(DarkShine)
-add_executable(DSimu DP_simu.cc ${Simu_sources} ${Simu_headers} )
-       # ${Util_sources} ${Util_headers})
+add_executable(DSimu DP_simu.cc ${Simu_sources} ${Simu_headers})
+# ${Util_sources} ${Util_headers})
 
 target_link_libraries(DSimu
         ${Geant4_LIBRARIES} ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES} ${PYTHIA6_LIBRARIES})
@@ -223,12 +227,12 @@ add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         Utility/UTIL/src/Config.cpp
         ${Algo_sources} ${Algo_headers})
 
-if(DANA_TRACKING)
+if (DANA_TRACKING)
     target_link_libraries(DAna genfit2)
-endif()
+endif ()
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
-                                  # ${Util_sources} ${Util_headers} {Algo_sources} ${Algo_headers} ${Ana_sources} ${Ana_headers}
+# ${Util_sources} ${Util_headers} {Algo_sources} ${Algo_headers} ${Ana_sources} ${Ana_headers}
 #if(DANA_TRACKING)
 #    target_link_libraries(DDis Display genfit2)
 #else()
@@ -248,7 +252,7 @@ install(TARGETS DPlot DESTINATION bin)
 #install(TARGETS DEvent LIBRARY DESTINATION lib )
 #install(TARGETS DAnaEvent LIBRARY DESTINATION lib )
 #install(TARGETS Display LIBRARY DESTINATION lib )
-install(TARGETS DarkShine LIBRARY DESTINATION lib )
+install(TARGETS DarkShine LIBRARY DESTINATION lib)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent_rdict.pcm DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent.rootmap DESTINATION lib)

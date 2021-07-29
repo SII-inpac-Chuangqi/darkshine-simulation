@@ -34,11 +34,11 @@ void DEventDisplay::inspectMainRegion() {
         std::cout << "=============================================================================" <<std::endl;
         std::cout << std::left;
         std::cout << "Node " << i << ") " << std::setw(10) << cur_Name << ": ";
-        std::cout << "center z = " << std::setw(10) << 10 * current_node->GetMatrix()->GetTranslation()[2] << " [mm], ";
+        std::cout << "center z = " << std::setw(10) << CUNIT * current_node->GetMatrix()->GetTranslation()[2] << " [mm], ";
         std::cout << std::right;
-        std::cout << "size = (" << std::setw(8) << 2 * cur_shape->GetDX() << ","
-                  << std::setw(8) << 2 * cur_shape->GetDY() << ","
-                  << std::setw(8) << 2 * cur_shape->GetDZ() << ") [cm]";
+        std::cout << "size = (" << std::setw(8) << CUNIT * 2 * cur_shape->GetDX() << ","
+                  << std::setw(8) << CUNIT * 2 * cur_shape->GetDY() << ","
+                  << std::setw(8) << CUNIT * 2 * cur_shape->GetDZ() << ") [mm]";
         std::cout << std::endl;
         std::cout << "-----------------------------------------------------------------------------" <<std::endl;
 
@@ -81,7 +81,7 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
         // Tracker
         if (dt == DTracker) {
             auto mother_z = current_node->GetMatrix()->GetTranslation()[2];
-            auto daughter_z = 10 * (mother_z + cur_node->GetMatrix()->GetTranslation()[2]); // mm
+            auto daughter_z = CUNIT * (mother_z + cur_node->GetMatrix()->GetTranslation()[2]); // mm
             if (cur_Name.Contains("1")) {
                 std::cout << std::right;
                 std::cout << "    ==> " << std::setw(3) << i << ") ";
@@ -89,9 +89,9 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
                 std::cout << std::setw(10) << cur_Name << ": ";
                 std::cout << "center z = " << std::setw(8) << daughter_z << " [mm], ";
                 std::cout << std::right;
-                std::cout << "size = (" << std::setw(6) << 2 * cur_shape->GetDX() << ","
-                          << std::setw(6) << 2 * cur_shape->GetDY() << ","
-                          << std::setw(6) << 2 * cur_shape->GetDZ() << ") [cm]";
+                std::cout << "size = (" << std::setw(6) << CUNIT * 2 * cur_shape->GetDX() << ","
+                          << std::setw(6) << CUNIT * 2 * cur_shape->GetDY() << ","
+                          << std::setw(6) << CUNIT * 2 * cur_shape->GetDZ() << ") [mm]";
                 std::cout << std::endl;
             } else {
                 auto rot_mat = cur_node->GetMatrix()->GetRotationMatrix();
@@ -121,9 +121,9 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
             }
 
             // record ecal cell size
-            size_cal[0] = 2 * cur_shape->GetDX();
-            size_cal[1] = 2 * cur_shape->GetDY();
-            size_cal[2] = 2 * cur_shape->GetDZ();
+            size_cal[0] = CUNIT * 2 * cur_shape->GetDX();
+            size_cal[1] = CUNIT * 2 * cur_shape->GetDY();
+            size_cal[2] = CUNIT * 2 * cur_shape->GetDZ();
 
             ECAL_Cell_Arr = TVector3(n_cell[0],n_cell[1],n_cell[2]);
             ECAL_Cell_Size = TVector3(size_cal[0],size_cal[1],size_cal[2]);
@@ -150,9 +150,9 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
                         if (daughter_pos[0] != last_pos[0]) n_cell[0]++;
                     }
                     // record first layer cell size
-                    size_cal[0] = 2 * cur_shape->GetDX();
-                    size_cal[1] = 2 * cur_shape->GetDY();
-                    size_cal[2] = 2 * cur_shape->GetDZ();
+                    size_cal[0] = CUNIT * 2 * cur_shape->GetDX();
+                    size_cal[1] = CUNIT * 2 * cur_shape->GetDY();
+                    size_cal[2] = CUNIT * 2 * cur_shape->GetDZ();
                 }
                 // Only count the second layer
                 if (n_cell[2] == 2) {
@@ -164,18 +164,18 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
                         if (daughter_pos[0] != last_pos[0]) n_cell2[0]++;
                     }
                     // record second layer cell size
-                    size_cal2[0] = 2 * cur_shape->GetDX();
-                    size_cal2[1] = 2 * cur_shape->GetDY();
-                    size_cal2[2] = 2 * cur_shape->GetDZ();
+                    size_cal2[0] = CUNIT * 2 * cur_shape->GetDX();
+                    size_cal2[1] = CUNIT * 2 * cur_shape->GetDY();
+                    size_cal2[2] = CUNIT * 2 * cur_shape->GetDZ();
                 }
             }
             // Concerning Absorber
             else {
                 mat_abs = TString(cur_node->GetVolume()->GetMaterial()->GetName());
                 // record absorber size
-                size_abs[0] = 2 * cur_shape->GetDX();
-                size_abs[1] = 2 * cur_shape->GetDY();
-                size_abs[2] = 2 * cur_shape->GetDZ();
+                size_abs[0] = CUNIT * 2 * cur_shape->GetDX();
+                size_abs[1] = CUNIT * 2 * cur_shape->GetDY();
+                size_abs[2] = CUNIT * 2 * cur_shape->GetDZ();
             }
 
             for (int j = 0; j < 3; ++j)
@@ -195,7 +195,7 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
         std::cout << "    ==> Cell Size: ";
         std::cout << size_cal[0] << ", "
                   << size_cal[1] << ", "
-                  << size_cal[2] << " [cm]";
+                  << size_cal[2] << " [mm]";
         std::cout << std::endl;
 
         std::cout << "    ==> Cell Material: " << mat_cal << std::endl;
@@ -213,7 +213,7 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
         std::cout << "        -- Cell Size: ";
         std::cout << size_cal[0] << ", "
                   << size_cal[1] << ", "
-                  << size_cal[2] << " [cm]";
+                  << size_cal[2] << " [mm]";
         std::cout << std::endl;
 
         std::cout << "    ==> Layer Type 2: " <<std::endl;
@@ -226,7 +226,7 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
         std::cout << "        -- Cell Size: ";
         std::cout << size_cal2[0] << ", "
                   << size_cal2[1] << ", "
-                  << size_cal2[2] << " [cm]";
+                  << size_cal2[2] << " [mm]";
         std::cout << std::endl;
 
         std::cout << "    ==> Cell Material: " << mat_cal << std::endl;
@@ -234,7 +234,7 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
         std::cout << "    ==> Absorber Size: ";
         std::cout << size_abs[0] << ", "
                   << size_abs[1] << ", "
-                  << size_abs[2] << " [cm]";
+                  << size_abs[2] << " [mm]";
         std::cout << std::endl;
         std::cout << "    ==> Absorber Material: " << mat_abs << std::endl;
 
