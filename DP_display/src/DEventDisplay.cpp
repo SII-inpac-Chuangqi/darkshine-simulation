@@ -131,14 +131,16 @@ bool DEventDisplay::readGeo(const TString &file_in) {
 //        std::cerr << "[Display] ==> file: " << file_in << " not existed or broken..." << std::endl;
 //        return false;
 //    }
-    auto file = f;
-    if (file_in != "") file = new TFile(file_in);
-    std::cout << "[Read Geometry] ==> Geometry from file: " << file_in << std::endl;
-    gGeoManager = (TGeoManager *) file->Get("DetGeoManager");
-    if (!gGeoManager) {
-        std::cerr << "[Display] ==> No Geometry in the file..." << std::endl;
-        return false;
-    }
+//    auto file = f;
+//    if (file_in != "") file = new TFile(file_in);
+//    std::cout << "[Read Geometry] ==> Geometry from file: " << file_in << std::endl;
+//    gGeoManager = (TGeoManager *) file->Get("DetGeoManager");
+//    if (!gGeoManager) {
+//        std::cerr << "[Display] ==> No Geometry in the file..." << std::endl;
+//        return false;
+//    }
+
+    EvtReader->ReadGeometry(file_in.Data());
 
     world_node = shared_ptr<TGeoNode>(dynamic_cast<TGeoNode *>(gGeoManager->GetListOfNodes()->At(0)));
 
