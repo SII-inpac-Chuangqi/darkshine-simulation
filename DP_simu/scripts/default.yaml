@@ -12,6 +12,8 @@
 save_geometry: false
 # check geometry overlap, maybe very slow
 check_overlaps: false
+# memory check
+memory_check: true
 
 # if signal production is activated, program will automatically
 # bias for DMProcessDMBrem and record all the MC particles
@@ -25,10 +27,10 @@ signal_mass: [ 1.0, "GeV" ]
 ###########################################
 MagField:
   mag_field_input: "mag_default.root"
-  uniform_mag_field: false # if uniform_mag_field = true, use the following setup
+  uniform_mag_field: true # if uniform_mag_field = true, use the following setup
   tag_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
   rec_Tracker_MagField: [ 0, "tesla", -0.5 , "tesla", 0, "tesla" ]
-  mag_verbose: 1
+  mag_verbose: 0
 
 ###########################################
 # Root Manager Settings

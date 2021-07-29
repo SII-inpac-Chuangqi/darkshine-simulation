@@ -40,8 +40,9 @@ MagneticField::MagneticField()
     GetGlobalFieldManager()->SetDetectorField(nullptr);
     if ( ! dControl->uniform_mag_field ) {
         f = new TFile(dControl->mag_field_input);
-        if (!f) {
+        if (! f->IsOpen()) {
             std::cerr << "[READFILE ERROR] ==> File: " + dControl->mag_field_input + " does not exist." << std::endl;
+            exit(1);
         }
         BField = std::vector<DMagnet*>({dynamic_cast<DMagnet*>(f->Get("magnet0")),
                                         dynamic_cast<DMagnet*>(f->Get("magnet1")),
