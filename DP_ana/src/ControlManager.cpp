@@ -140,6 +140,8 @@ void ControlManager::run() {
             cout << " --------------------------" << endl;
         }
 
+        evt->Initialization(nALL);
+
 #ifdef MEMCK
         if (ConfMgr->getMemoryCheckVerbose() > 0)
             AnaEvent::PrintObjectStatistics(Form("End of Event: %d", i));
