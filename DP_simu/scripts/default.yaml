@@ -137,7 +137,7 @@ Geometry:
     Target_Size: [ 10 , "cm", 20 , "cm", 350 , "um" ]
     Target_Pos: [ 0 , "cm", 0 , "cm", 0 , "cm" ]
   Tracker:
-    build_silicon_micro_strip: true # fasle - only build one silicon micro strip in one tracker volume
+    build_silicon_micro_strip: false # fasle - only build one silicon micro strip in one tracker volume
     Trk_Tar_Dis: [ 7.5, "mm" ]
     Tracker_Mat: "G4_Si"
     TrackerRegion_Mat: "vacuum"
