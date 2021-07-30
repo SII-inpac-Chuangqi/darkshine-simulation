@@ -1,0 +1,52 @@
+############################
+###
+### Example Config File
+###
+############################
+
+### Basic Settings
+InputFile      = /lustre/collider/hepmc/DarkSHINE_Production/Baseline_1/noOptical/inclusive/Inclusive_noOptical_Jun02_out_1.root
+InputGeoFile   = geometry.root
+OutputFile     = memory_test.root
+#OutputFile     = /lustre/collider/zhuyifan/DarkShine/AnaInc/20210602_inc_20210707.root
+RunNumber      = 0
+EventNumber    = -1
+SkipNumber     = 0
+
+### Verbosity Settings
+AlgoManager.Verbose           = 0
+EventReader.Verbose           = 2
+Event.Verbose                 = 0
+EventStoreAndWriter.Verbose   = 0
+
+### Algorithm List
+###
+# MCTruthAnalysis: MC Truth Analysis
+# RecECAL: ECAL Reconstruction Processor
+# Tracking: None
+# CutFlowAnalysis: Automatically Generate Cut Flow.
+###
+Algorithm.List = MCTruthAnalysis #RecECAL Tracking CutFlowAnalysis 
+
+### Algorithm Configuration
+
+CutFlowAnalysis.SaveToNewRoot = 0  # Save Result to a new File
+CutFlowAnalysis.ECAL_E_Min = 4000  # Min. ECAL Energy
+CutFlowAnalysis.HCAL_E_Cell_Max = 1  # Max. HCAL Energy per Cell
+CutFlowAnalysis.HCAL_E_Max = 10  # Max. HCAL Energy
+CutFlowAnalysis.momentum_diff = 4000  # Pi - Pf
+CutFlowAnalysis.weight = 1  # event weight
+
+MCTruthAnalysis.Sec_PDG = 0  # PDG of secondary
+MCTruthAnalysis.Verbose = 0  # Verbosity
+
+RecECAL.E_n_fraction = 20  # the n-th large E fraction
+RecECAL.Verbose = 0  # Verbosity Variable
+RecECAL.W0 = 0  # W0
+RecECAL.d_cut = 0.2  # Cluster: d_cut
+RecECAL.r_cut = 0.5  # Cluster: r_cut
+
+Tracking.Rec_fit_method = 1  # Specify fitting method: 0, no fine fitting; 1, Kalman fitting(memory leak!!!); 2, Riemann fitting; 3, GBL
+Tracking.Tag_fit_method = 1  # Specify fitting method: 0, no fine fitting; 1, Kalman fitting(memory leak!!!); 2, Riemann fitting; 3, GBL
+Tracking.clean = 1  # Clean mode
+Tracking.RecTrk_B = 1.5  # Magnet in recoil tracker

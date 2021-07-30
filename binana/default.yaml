@@ -1,0 +1,238 @@
+---
+# Begin of File
+# For Dark SHINE Software
+# Default Configuration by Yulei Zhang
+
+# IMPORTANT: For yaml, indentation matters!
+
+###########################################
+# Global Variables
+###########################################
+# save geometry in the output root file
+save_geometry: false
+# check geometry overlap, maybe very slow
+check_overlaps: false
+# memory check
+memory_check: true
+
+# if signal production is activated, program will automatically
+# bias for DMProcessDMBrem and record all the MC particles
+# A process filter on target region will be applied
+signal_production: false
+# Dark Photon Mass
+signal_mass: [ 1.0, "GeV" ]
+
+###########################################
+# Magnetic field
+###########################################
+MagField:
+  mag_field_input: "mag_default.root"
+  uniform_mag_field: true # false - use mag_field_input; true - use the following setup
+  tag_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
+  rec_Tracker_MagField: [ 0, "tesla", -0.5 , "tesla", 0, "tesla" ]
+  mag_verbose: 0
+
+###########################################
+# Root Manager Settings
+###########################################
+RootManager:
+  outfile_Name: "dp_out.root"
+  tree_Name: "Dark_Photon"
+
+  # job run number
+  Run_Number: 0
+  # how many events in this run
+  Total_Event_Number: 10000
+
+###########################################
+# DEvent Collection
+###########################################
+OutCollection:
+  # save all kinds of mc particles
+  save_all_mcp: false
+  # save MC particles
+  save_MC: true
+  # save the initial particle step
+  save_initial_particle_step: true
+
+  RawMCCollection_Name: "RawMCParticle"
+  InitialParticleStepCollection_Name: "Initial_Particle_Step"
+
+###########################################
+# Event Biasing
+###########################################
+Biasing:
+  if_bias: false
+  if_bias_target: false
+  if_bias_ECAL: false
+
+  BiasProcess: "GammaToMuPair"
+  # BiasProcess: "DMProcessDMBrem"
+  BiasFactor: 1e20
+  BiasEmin: [ 4.0, "GeV" ]
+
+###########################################
+# Event Filters
+###########################################
+Filters:
+  # if to apply filters
+  if_filter: false
+  # if to apply filter on hard-brem event
+  if_HardBrem: false
+  # Parameters description:
+  # max Energy -  set to a minus value = Infinity
+  # fInclude - true: including filter, only save event when particle/process is in the filter; false: excluding filter, abort particle/process in the filter
+  # fStage0 - true: apply filter on primary track; false: not apply on primary track
+  # fStage1 - true: apply filter on secondaries track; false: not apply on secondary track
+  # PDG, min Energy [Unit], max Energy [Unit] , min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
+  particle_filters_parameters:
+    # - [ 22, 6, "GeV", 8, "GeV", -1, "m", 0.2, "m", true, true, true ]
+    # - [ 11, 2, "GeV", 3, "GeV", -1, "m", 0.2, "m", false, true, true ]
+  # Process Name, min Energy [Unit], max Energy [Unit], min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
+  process_filters_parameters:
+    # - [ "GammaToMuPair", 2, "GeV", 4, "GeV", -10, "cm", 2, "cm", false, true, true]
+
+###########################################
+# Optical Options
+###########################################
+Optical:
+  # if to start optical simualtion
+  if_optical: false
+  # Global Optical Yield Factor: photon yields = material photon yields * Optical_YieldFactor
+  Optical_YieldFactor: 0.01
+
+  SiPM:
+    Optical_pulseFilePath: "SiPM_g2_pulse.root"
+    # On cluster bl-0.inpac.sjtu.edu.cn
+    # Optical_pulseFilePath: "/lustre/collider/zhangyulei/dark_photon/Simulation/DP/SiPM_g2_pulse.root"
+    Optical_pulseScaleFactor: 0.001
+
+  LUT:
+    LUT_FilePath: "ECAL_LUT.dat"
+    # On cluster bl-0.inpac.sjtu.edu.cn
+    # LUT_FilePath: "/lustre/collider/zhangyulei/dark_photon/Simulation/DP/ECAL_LUT.dat"
+    LUT_Name: "ECAL_cube_2.5_2.5_2_v1"
+
+###########################################
+# Detector Geometry
+###########################################
+Geometry:
+  # Build options
+  build_target: true
+  build_tag_tracker: true
+  build_rec_tracker: true
+  build_ECAL: true
+  build_HCAL: true
+
+  # Build only
+  build_only_target: false
+  build_only_tag_tracker: false
+  build_only_rec_tracker: false
+  build_only_ECAL: false
+  build_only_HCAL: false
+
+  # Size is the total length, not the half
+  Target:
+    Target_Mat: "G4_W"
+    Target_Size: [ 10 , "cm", 20 , "cm", 350 , "um" ]
+    Target_Pos: [ 0 , "cm", 0 , "cm", 0 , "cm" ]
+  Tracker:
+    build_silicon_micro_strip: false # fasle - only build one silicon micro strip in one tracker volume
+    Trk_Tar_Dis: [ 7.5, "mm" ]
+    Tracker_Mat: "G4_Si"
+    TrackerRegion_Mat: "vacuum"
+    Tracker1_Color: [ 0.5, 0.5, 0. ] # RGB
+    Tracker2_Color: [ 0. , 0.5, 0.5 ] # RGB
+    # Tagging Tracker
+    tag_Size_Tracker:
+      - [ 5 , "cm", 10 , "cm", 0.1 , "mm" ] # Layer 1
+      - [ 5 , "cm", 10 , "cm", 0.1 , "mm" ] # Layer 2
+      - [ 5 , "cm", 10 , "cm", 0.1 , "mm" ] # Layer 3
+      - [ 5 , "cm", 10 , "cm", 0.1 , "mm" ] # Layer 4
+      - [ 5 , "cm", 10 , "cm", 0.1 , "mm" ] # Layer 5
+      - [ 5 , "cm", 10 , "cm", 0.1 , "mm" ] # Layer 6
+      - [ 5 , "cm", 10 , "cm", 0.1 , "mm" ] # Layer 7
+    tag_Pos_Tracker:
+      - [ 0 , "cm", 0 , "cm", -30 , "cm" ] # Layer 1
+      - [ 0 , "cm", 0 , "cm", -20 , "cm" ] # Layer 2
+      - [ 0 , "cm", 0 , "cm", -10 , "cm" ] # Layer 3
+      - [ 0 , "cm", 0 , "cm",   0 , "cm" ] # Layer 4
+      - [ 0 , "cm", 0 , "cm",  10 , "cm" ] # Layer 5
+      - [ 0 , "cm", 0 , "cm",  20 , "cm" ] # Layer 6
+      - [ 0 , "cm", 0 , "cm",  30 , "cm" ] # Layer 7
+    tag_Tracker_Angle_Gap: # angle of trackers , and gap between each strips
+      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 1
+      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 2
+      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 3
+      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 4
+      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 5
+      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 6
+      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 7
+    tag_Tracker_Strip_N: [ 20 , 20 , 20 , 20 , 20 , 20 , 20 ]
+    # Recoil Tracker
+    rec_Size_Tracker:
+      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 1
+      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 2
+      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 3
+      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 4
+      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 5
+      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 6
+    rec_Pos_Tracker:
+      - [ 0 , "cm", 0 , "cm", -86.25 , "mm" ] # Layer 1
+      - [ 0 , "cm", 0 , "cm", -71.25 , "mm" ] # Layer 2
+      - [ 0 , "cm", 0 , "cm", -55.25 , "mm" ] # Layer 3
+      - [ 0 , "cm", 0 , "cm", -40.25 , "mm" ] # Layer 4
+      - [ 0 , "cm", 0 , "cm", -4.25  , "mm" ] # Layer 5
+      - [ 0 , "cm", 0 , "cm", 86.25  , "mm" ] # Layer 6
+    rec_Tracker_Angle_Gap:
+      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 1
+      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 2
+      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 3
+      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 4
+      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 5
+      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 6
+    rec_Tracker_Strip_N: [ 40, 40 , 40 , 40 , 40 , 40 ]
+  ECAL:
+    ECAL_Name: "ECAL"
+
+    # ECAL Main Region Material
+    ECALRegion_Mat: "CarbonFiber"
+    # ECAL Scintillator Material
+    # ECAL_Center_Mat: "PWO4" # X0 = 0.92 cm
+    ECAL_Center_Mat: "LYSO" # Opitcal Module only supports LYSO
+    # Wrapper Material
+    ECAL_Wrap_Mat: "G4_Al"
+
+    ECAL_Center_Wrap_Size: [ 0.3 , "mm", 0.3 , "mm", 0.3 , "mm" ]
+    # ECAL Scintillator cell size
+    ECAL_Center_Size: [ 2.5 , "cm", 2.5 , "cm", 4.0 , "cm" ]
+    # ECAL Scintillator cell placement (x,y,z)
+    ECAL_Center_Module_No: [ 20, 20, 11 ]
+  HCAL:
+    HCAL_Name: "HCAL"
+
+    # HCAL Absorber Material
+    HCAL_Absorber_Mat: "G4_Fe"
+    # HCAL Main Region Material
+    HCALRegion_Mat: "CarbonFiber"
+    # HCAL Scintillator Material
+    HCAL_Mat: "Polystyrene"
+    # Wrapper Material
+    HCAL_Wrap_Mat: "G4_Al"
+
+    HCAL_Wrap_Size: [0.3 , "mm", 0.3 , "mm", 0.3 , "mm"]
+    # HCAL Scintillator cell size along x, the odd layer place along x, even along y
+    HCAL_Size_Dir: [ 1, "cm", 5 , "cm", 100.57 , "cm"] # z = HCAL_Mod_No_Dir.x() * (HCAL_Size_Dir.y() + HCAL_Wrap_Size.y())
+                                                       #     -HCAL_Wrap_Size.y()
+    # HCAL Scintillator cell placement (x,y,z)
+    HCAL_Mod_No_Dir: [20, 20, 160]
+    # HCAL Module Number placement (x,y,z)
+    HCAL_Module_No: [4, 4, 1]
+    HCAL_Module_Gap: [0.5 , "mm"]
+    # HCAL Absorber Thickness
+    HCAL_Absorber_Thickness: [3 , "cm"]
+
+
+# End of File
+---
+

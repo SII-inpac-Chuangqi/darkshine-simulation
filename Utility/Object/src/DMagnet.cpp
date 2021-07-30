@@ -1,4 +1,5 @@
 #include <iostream>
+#include <malloc.h>
 
 #include "TVectorD.h"
 
@@ -6,6 +7,32 @@
 
 //................................................................................//
 //public:
+//................................................................................//
+//Constructor & destructor
+//................................................................................//
+//Copy constructor
+DMagnet::DMagnet(const DMagnet &old) : TNamed(old),
+                                       mags_(old.mags_),
+                                       xDivision_(old.xDivision_),
+                                       yDivision_(old.yDivision_),
+                                       zDivision_(old.zDivision_)
+{}
+
+//................................................................................//
+//Operator =
+DMagnet& DMagnet::operator =(const DMagnet &rhs)
+{
+    if(this == &rhs) return *this;
+
+    TNamed::operator = (rhs);
+    this->mags_.assign(rhs.mags_.begin(), rhs.mags_.end());
+    this->xDivision_.assign(rhs.xDivision_.begin(), rhs.xDivision_.end());
+    this->yDivision_.assign(rhs.yDivision_.begin(), rhs.yDivision_.end());
+    this->zDivision_.assign(rhs.zDivision_.begin(), rhs.zDivision_.end());
+
+    return *this;
+}
+
 //................................................................................//
 //Set
 //................................................................................//
@@ -39,14 +66,18 @@ void DMagnet::AddMagnet(const TMultiDimFit *fitter)
 
     mag.gNVariables = fitter->GetNVariables();
     mag.gNCoefficients = fitter->GetNCoefficients();
+    mag.gChi2 = fitter->GetChi2()/(fitter->GetSampleSize() - fitter->GetNCoefficients());
+
     mag.gDMean = fitter->GetMeanQuantity();
+    mag.gDMin = fitter->GetMeanQuantity() + fitter->GetMinQuantity();
+    mag.gDMax = fitter->GetMeanQuantity() + fitter->GetMaxQuantity();
 
     auto gXMin = fitter->GetMinVariables();
     auto gXMax = fitter->GetMaxVariables();
     for(int i = 0; i < 3; i++)
     {
-        mag.gXMin.push_back((*gXMin)[i]);
-        mag.gXMax.push_back((*gXMax)[i]);
+        mag.gXMin.at(i) = (*gXMin)[i];
+        mag.gXMax.at(i) = (*gXMax)[i];
     }
 
     auto gCoefficients = fitter->GetCoefficients();
@@ -73,10 +104,7 @@ double DMagnet::GetField(double x, double y, double z)
     if(x < xDivision_.front() || x > xDivision_.back() ||
        y < yDivision_.front() || y > yDivision_.back() ||
        z < zDivision_.front() || z > zDivision_.back())
-    {
-        // std::cout << "WARNING	Position declared crosses the border" << std::endl;
-        return 0;
-    }
+        return 0.;
 
     int xid = xDivision_.size()*yDivision_.size()*zDivision_.size();
     int yid = yDivision_.size()*xDivision_.size();
@@ -98,22 +126,45 @@ double DMagnet::GetField(double x, double y, double z)
             zid = k;
     }
 
-    int id = zid*((xDivision_.size() - 1)*(yDivision_.size() - 1)) + yid*(xDivision_.size() - 1) + xid;
+    int id = zid*(xDivision_.size() - 1)*(yDivision_.size() - 1) + yid*(xDivision_.size() - 1) + xid;
     if(id > static_cast<int>(mags_.size()) || id < 0)
-    {
-        // std::cout << "WARNING	No magnet slice matched" << std::endl;
-        return 0;
-    }
+        return 0.;
 
-    double field = GetFieldValue(x, y, z, mags_.at(id));
+    double field = GetSliceField(x, y, z, mags_.at(id));
     return field;
+}
+
+//................................................................................//
+//Print
+void DMagnet::Print(Option_t *option) const
+{
+    std::cout << "******************************************************************************" << std::endl
+              << "*" << " DMagnet:" << "	name: " << this->GetName() << "	title: " << this->GetTitle() << std::endl
+              << "******************************************************************************" << std::endl;
+    for(int i = 0; i < static_cast<int>(mags_.size()); i++)
+    {
+        int zid = i/((xDivision_.size() - 1)*(yDivision_.size() - 1));
+        int yid = (i - zid*(xDivision_.size() - 1)*(yDivision_.size() - 1))/(xDivision_.size() - 1);
+        int xid = i - zid*(xDivision_.size() - 1)*(yDivision_.size() - 1) - yid*(xDivision_.size() - 1);
+
+        if(i) std::cout << std::endl;
+
+        std::cout << "* magnet " << i << ":" << std::endl
+                  << "* x range/mm:   " << xDivision_.at(xid) << " " << xDivision_.at(xid + 1) << std::endl
+                  << "* y range/mm:   " << yDivision_.at(yid) << " " << yDivision_.at(yid + 1) << std::endl
+                  << "* z range/mm:   " << zDivision_.at(zid) << " " << zDivision_.at(zid + 1) << std::endl
+                  << "* min field/T:  " << mags_.at(i).gDMin << std::endl
+                  << "* max field/T:  " << mags_.at(i).gDMax << std::endl
+                  << "* reduced chi2: " << mags_.at(i).gChi2 << std::endl;
+    }
+    std::cout << "******************************************************************************" << std::endl;
 }
 
 //................................................................................//
 //private:
 //................................................................................//
 //Get field value in chosen MagSlice
-double DMagnet::GetFieldValue(double x, double y, double z, const MagSlice &mag)
+double DMagnet::GetSliceField(double x, double y, double z, const MagSlice &mag)
 {
     std::vector<double> coor = {x, y, z};
 
@@ -148,3 +199,4 @@ double DMagnet::GetFieldValue(double x, double y, double z, const MagSlice &mag)
 
     return returnValue;
 }
+
