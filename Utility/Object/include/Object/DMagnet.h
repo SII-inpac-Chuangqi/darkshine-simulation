@@ -15,16 +15,20 @@ class DMagnet : public TNamed
 //Struct to store parameterization from TMultiDimFit
     struct MagSlice
     {
-        int id;
+        int id; //ID of slice
 
-        int gNVariables;
-        int gNCoefficients;
-        double gDMean;
+        int gNVariables;    //Dimension of coordination
+        int gNCoefficients; //No. of parameterization coefficients
+        double gChi2;       //Chi2 of parameteriztion
 
-        std::vector<double> gXMin;
-        std::vector<double> gXMax;
-        std::vector<double> gCoefficients;
-        std::vector<int> gPowers;
+        double gDMean;      //Mean value of magnet
+        double gDMin;       //Min value of magnet
+        double gDMax;       //Max calue of magnet
+
+        std::vector<double> gXMin = std::vector<double>(3); //Min value of coordination
+        std::vector<double> gXMax = std::vector<double>(3); //Max value of coordination
+        std::vector<double> gCoefficients;                  //Coefficients of parameterization functions
+        std::vector<int> gPowers;                           //Powers of parameterization
     };
 
 public:
@@ -33,18 +37,28 @@ public:
 //................................................................................//
 //Empty constructor, do not use
     DMagnet() {}
+
 //................................................................................//
 //Constructor with name & title needed
     DMagnet(const TString &name, const TString &title) {this->SetNameTitle(name, title);}
+
+//................................................................................//
+//Copy constructor
+    DMagnet(const DMagnet &old);
+
+//................................................................................//
+//Operator =
+    DMagnet& operator =(const DMagnet &rhs);
+
 //................................................................................//
 //Destructor
     ~DMagnet() {}
 
 //................................................................................//
-//No copy/move constructor & =
-    DMagnet(const DMagnet &magnet) = delete;
+
+//................................................................................//
+//No move constructor
     DMagnet(DMagnet &&magnet) = delete;
-    DMagnet& operator =(const DMagnet &magnet) = delete;
 
 //................................................................................//
 //Set
@@ -53,6 +67,7 @@ public:
     void SetXDivision(const std::vector<double> &division);
     void SetYDivision(const std::vector<double> &division);
     void SetZDivision(const std::vector<double> &division);
+
 //................................................................................//
 //Add parameterized magnet from TMultiDimFit
     void AddMagnet(const TMultiDimFit *fitter);
@@ -64,6 +79,7 @@ public:
     std::vector<double> GetXDivision() const {return xDivision_;}
     std::vector<double> GetYDivision() const {return yDivision_;}
     std::vector<double> GetZDivision() const {return zDivision_;}
+
 //................................................................................//
 //Get MagSlice
     std::vector<MagSlice> GetMagnets() const {return mags_;}
@@ -71,6 +87,10 @@ public:
 //................................................................................//
 //Get field value at position (x, y, z) in mm
     double GetField(double x, double y, double z);
+
+//................................................................................//
+//Print
+    virtual void Print(Option_t *option = "") const;
 
 private:
 
@@ -81,7 +101,7 @@ private:
 
 //................................................................................//
 //Get field value in chosen MagSlice
-    double GetFieldValue(double x, double y, double z, const MagSlice &mag);
+    double GetSliceField(double x, double y, double z, const MagSlice &mag);
 };
 
 #endif
