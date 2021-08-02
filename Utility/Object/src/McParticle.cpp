@@ -15,7 +15,7 @@ McParticle::McParticle(const McParticle &rhs) : DParticle(rhs) {
 }
 
 McParticle::~McParticle() {
-    if (!Children->empty()) {
+    if (Children && !Children->empty()) {
         Children->clear();
         Children->shrink_to_fit();
     }
