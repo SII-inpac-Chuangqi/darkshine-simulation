@@ -309,6 +309,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
 //Memory management
         //vector<TrkHit>().swap(rawTagTrkHits);
         //vector<TrkHit>().swap(rawRecTrkHits);
+        std::cout<<"Error here"<<std::endl;
         malloc_trim(0);
     }
 }
