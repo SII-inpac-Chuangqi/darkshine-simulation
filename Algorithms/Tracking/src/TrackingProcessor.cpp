@@ -143,6 +143,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
         //const auto &mc = MCCollection.at("RawMCParticle");
         const auto &stepIni = stepCollection.at("Initial_Particle_Step");
 
+                std::cout<<"0"<<std::endl;
+
         vector<TrkHit> rawTagTrkHits;
         auto tag2Hits = simuHitCollection.at("TagTrk2");
         for(auto hit : *tag2Hits) rawTagTrkHits.emplace_back(*hit);
