@@ -72,11 +72,6 @@ void EventReader::Convert() {
 
 bool EventReader::ReadEntry(int i) {
     if (!input_tree) return false;
-
-    input_tree->ResetBranchAddresses();
-
-    input_tree->SetBranchAddress("DEvent", &evt, &b_DEvent);
-
     Long64_t ientry = input_tree->LoadTree(i);
     if (ientry < 0) return false;
     input_tree->GetEntry(i);
@@ -89,6 +84,7 @@ Int_t EventReader::ReadTree(const string &treename, TFile *tfile) {
     Entries = input_tree->GetEntries();
     input_tree->SetMakeClass(1);
 
+    input_tree->SetBranchAddress("DEvent", &evt, &b_DEvent);
 
     if (Verbose > -1) {
         cout << "======================================================================" << endl;
