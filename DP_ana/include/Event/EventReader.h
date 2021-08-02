@@ -27,7 +27,7 @@ public:
 
     void Convert();
 
-    bool ReadEntry(int i) const;
+    bool ReadEntry(int i);
 
     Long64_t GetEntries() const;
 

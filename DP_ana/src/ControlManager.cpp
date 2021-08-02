@@ -92,7 +92,6 @@ void ControlManager::run() {
     /*
      *  Processing
      */
-    AnaEvent* evt;
     Long64_t nentries = EvtReader->getEntries();
     Long64_t processed_evt = 0;
     if (EventNumber == -1)
@@ -110,12 +109,16 @@ void ControlManager::run() {
             cout << " --------------------------" << endl;
         }
 
-        evt->Initialization(nALL);
+        //evt->Initialization(nALL);
 
 #ifdef MEMCK
         if (ConfMgr->getMemoryCheckVerbose() > 1)
             AnaEvent::PrintObjectStatistics(Form("Begin of Event: %d", i));
 #endif
+
+        auto* evt = new AnaEvent();
+        EvtReader->setEvt(evt);
+
         // convert into DEvent
         EvtReader->ReadEntry(i);
         EvtReader->Convert();
@@ -143,7 +146,9 @@ void ControlManager::run() {
             cout << " --------------------------" << endl;
         }
 
-        //evt->Initialization(nALL);
+        evt->Initialization(nALL);
+
+        delete evt;
 
 #ifdef MEMCK
         if (ConfMgr->getMemoryCheckVerbose() > 0)
