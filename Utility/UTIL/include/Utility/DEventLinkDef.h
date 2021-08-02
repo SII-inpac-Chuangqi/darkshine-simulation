@@ -18,6 +18,7 @@
 
 #pragma link C++ class DStep+;
 #pragma link C++ class std::vector<DStep*>;
+#pragma link C++ class std::map<std::string, std::vector<DStep*>* >;
 
 #pragma link C++ class DHit+;
 #pragma link C++ class std::vector<DHit*>+;
@@ -30,9 +31,11 @@
 
 #pragma link C++ class McParticle-;
 #pragma link C++ class std::vector<McParticle*>;
+#pragma link C++ class std::map<std::string, std::vector<McParticle*>* >;
 
 #pragma link C++ class SimulatedHit+;
 #pragma link C++ class std::vector<SimulatedHit*>;
+#pragma link C++ class std::map<std::string, std::vector<SimulatedHit*>* >;
 
 #pragma link C++ class ReconstructedParticle+;
 #pragma link C++ class std::vector<ReconstructedParticle*>+;
@@ -42,6 +45,7 @@
 
 #pragma link C++ class DigiForm+;
 #pragma link C++ class std::vector<DigiForm*>+;
+#pragma link C++ class std::map<std::string, std::vector<DigiForm*>* >;
 
 #pragma link C++ class DEvent-;
 

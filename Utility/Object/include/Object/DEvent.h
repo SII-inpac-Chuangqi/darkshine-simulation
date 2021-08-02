@@ -39,7 +39,7 @@ public:
 
     ~DEvent() override {
         //std::cout<<"Devent Destructor"<<std::endl;
-        //Initialization(nALL);
+        Initialization(nALL);
     }
 
     // Operators
