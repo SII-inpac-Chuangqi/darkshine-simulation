@@ -21,6 +21,8 @@ McParticle::~McParticle() {
 
         delete Children;
     }
+
+    delete Children;
 }
 
 McParticle &McParticle::operator=(const McParticle &rhs) {
