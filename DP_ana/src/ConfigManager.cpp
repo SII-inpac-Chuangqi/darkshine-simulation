@@ -85,3 +85,7 @@ void ConfigManager::ReadAnaParameters() {
     }
 }
 
+ConfigManager::~ConfigManager() {
+    delete config;
+}
+

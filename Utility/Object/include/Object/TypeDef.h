@@ -5,6 +5,9 @@
 #ifndef DSIMU_TYPEDEF_H
 #define DSIMU_TYPEDEF_H
 
+#include "TBuffer.h"
+#include <iostream>
+
 #include <vector>
 #include <map>
 #include <unordered_map>

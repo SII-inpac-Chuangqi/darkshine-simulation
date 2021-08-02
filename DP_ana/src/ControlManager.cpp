@@ -92,6 +92,7 @@ void ControlManager::run() {
     /*
      *  Processing
      */
+    AnaEvent* evt;
     Long64_t nentries = EvtReader->getEntries();
     Long64_t processed_evt = 0;
     if (EventNumber == -1)
@@ -121,7 +122,7 @@ void ControlManager::run() {
         if (ConfMgr->getMemoryCheckVerbose() > 2)
             AnaEvent::PrintObjectStatistics("Read DEvent from ROOT");
 #endif
-        auto evt = EvtReader->getEvt();
+        evt = EvtReader->getEvt();
 
         // process algorithms
         algo->ProcessEvtAnaProcessors(evt);
@@ -140,7 +141,7 @@ void ControlManager::run() {
             cout << " --------------------------" << endl;
         }
 
-        evt->Initialization(nALL);
+        //evt->Initialization(nALL);
 
 #ifdef MEMCK
         if (ConfMgr->getMemoryCheckVerbose() > 0)

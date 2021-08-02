@@ -33,7 +33,7 @@ public:
 
     ConfigManager(string configfile, AlgoManager *algomgr);
 
-    ~ConfigManager() = default;
+    ~ConfigManager();
 
     // Read
     void ReadConst();

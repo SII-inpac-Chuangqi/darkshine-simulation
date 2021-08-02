@@ -21,7 +21,7 @@ class EventReader {
 public:
     EventReader() : evt(nullptr) {};
 
-    ~EventReader() = default;
+    ~EventReader();
 
     void RegisterOutput();
 

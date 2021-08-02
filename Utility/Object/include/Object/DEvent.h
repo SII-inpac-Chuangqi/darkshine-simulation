@@ -20,6 +20,7 @@
 
 #include "TObject.h"
 #include "TString.h"
+#include "TBuffer.h"
 
 enum CleanType {
     nALL, nVector
@@ -29,11 +30,16 @@ enum CleanType {
 /// \brief Contains all the necessary information for analysis.
 class DEvent : public TObject {
 public:
+
     // Constructor
-    DEvent() { Initialization(nALL); };
+    DEvent() {
+        //std::cout<<"Devent Constructor"<<std::endl;
+        //Initialization(nALL);
+    };
 
     ~DEvent() override {
-        Initialization(nALL);
+        //std::cout<<"Devent Destructor"<<std::endl;
+        //Initialization(nALL);
     }
 
     // Operators
@@ -201,6 +207,7 @@ protected:
     CalorimeterHitMap CalorimeterHitCollection;
 
 ClassDefOverride(DEvent, 1);
+
 };
 
 // Some inline

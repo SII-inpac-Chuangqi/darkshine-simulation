@@ -9,7 +9,7 @@
 
 Int_t EventReader::ReadFile(const std::string &filename) {
     f = new TFile(TString(filename));
-    if (!f) {
+    if (!f->IsOpen()) {
         std::cerr << "[READFILE ERROR] ==> File: " + filename + " does not exist." << std::endl;
         return -1;
     }
@@ -82,6 +82,7 @@ Int_t EventReader::ReadTree(const string &treename, TFile *tfile) {
 
     input_tree = tfile->Get<TTree>(treename.data());
     Entries = input_tree->GetEntries();
+    input_tree->SetMakeClass(1);
 
     input_tree->SetBranchAddress("DEvent", &evt, &b_DEvent);
 
@@ -117,7 +118,7 @@ Int_t EventReader::ReadTree(const string &treename, TFile *tfile) {
 
 void EventReader::ReadGeometry(const std::string &filename) {
     data_file = new TFile(TString(filename));
-    if (!data_file) {
+    if (!data_file->IsOpen()) {
         std::cerr << "[READFILE ERROR] ==> File: " + filename + " does not exist." << std::endl;
         return;
     }
@@ -137,6 +138,10 @@ Long64_t EventReader::GetEntries() const {
         cerr<<"==> Error when reading input tree..."<<endl;
         exit(EXIT_FAILURE);
     }
+}
+
+EventReader::~EventReader() {
+    delete f;
 }
 
 
