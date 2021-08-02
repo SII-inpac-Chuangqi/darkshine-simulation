@@ -147,9 +147,13 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
         auto tag2Hits = simuHitCollection.at("TagTrk2");
         for(auto hit : *tag2Hits) rawTagTrkHits.emplace_back(*hit);
 
+        std::cout<<"1"<<std::endl;
+
         vector<TrkHit> rawRecTrkHits;
         auto rec2Hits = simuHitCollection.at("RecTrk2");
         for(auto hit : *rec2Hits) rawRecTrkHits.emplace_back(*hit);
+
+                std::cout<<"2"<<std::endl;
 
         if(rawTagTrkHits.size() < 20 && rawTagTrkHits.size() > 2 &&
            rawRecTrkHits.size() < 20 && rawRecTrkHits.size() > 2)
@@ -165,6 +169,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
             Cluster(rawTagTrkHits, clusTagTrkHitMap);
             TrkHitPVecMap clusRecTrkHitMap;
             Cluster(rawRecTrkHits, clusRecTrkHitMap);
+
+                    std::cout<<"3"<<std::endl;
 
 //................................................................................//
 //Finding, by pre-fitting
