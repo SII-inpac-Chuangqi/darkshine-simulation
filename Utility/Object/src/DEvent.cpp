@@ -24,6 +24,7 @@ void DEvent::Initialization(CleanType ct) {
         }
         (itr.second)->clear();
         (itr.second)->shrink_to_fit();
+        if (ct == nALL) delete itr.second;
     }
     if (ct == nALL) MCParticleCollection.clear();
     for (auto itr : RecParticleCollection) {
@@ -32,6 +33,7 @@ void DEvent::Initialization(CleanType ct) {
         }
         (itr.second)->clear();
         (itr.second)->shrink_to_fit();
+        if (ct == nALL) delete itr.second;
     }
     if (ct == nALL) RecParticleCollection.clear();
 
@@ -41,6 +43,7 @@ void DEvent::Initialization(CleanType ct) {
         }
         (itr.second)->clear();
         (itr.second)->shrink_to_fit();
+        if (ct == nALL) delete itr.second;
     }
     if (ct == nALL) SimulatedHitCollection.clear();
 
@@ -50,6 +53,7 @@ void DEvent::Initialization(CleanType ct) {
         }
         (itr.second)->clear();
         (itr.second)->shrink_to_fit();
+        if (ct == nALL) delete itr.second;
     }
     if (ct == nALL) CalorimeterHitCollection.clear();
 
@@ -59,6 +63,7 @@ void DEvent::Initialization(CleanType ct) {
         }
         (itr.second)->clear();
         (itr.second)->shrink_to_fit();
+        if (ct == nALL) delete itr.second;
     }
     if (ct == nALL) StepCollection.clear();
 
@@ -68,6 +73,7 @@ void DEvent::Initialization(CleanType ct) {
         }
         (itr.second)->clear();
         (itr.second)->shrink_to_fit();
+        if (ct == nALL) delete itr.second;
     }
     if (ct == nALL) OpticalCollection.clear();
 
