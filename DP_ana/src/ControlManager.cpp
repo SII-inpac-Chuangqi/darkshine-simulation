@@ -52,6 +52,12 @@ void ControlManager::run() {
         EvtReader->RegisterOutput();
     }
 
+    EvtReader->ReadFile(FileName);
+
+    // Read Geometry from ROOT file
+    EvtReader->ReadGeometry(ConfMgr->getInputGeofile());
+    dAnaData->setRootFile(EvtReader->getDataFile());
+
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
     /* DEFINE ALGO PROCESSOR HERE */
@@ -70,6 +76,10 @@ void ControlManager::run() {
         */
         ConfMgr->ReadAnaParameters();
     }
+
+    /*
+     *  Begin
+     */
     algo->BeginAnaProcessors();
 
     if (Only_PrintUsage) {
@@ -79,15 +89,6 @@ void ControlManager::run() {
 
     // Print Output Tree
     EvtWrt->PrintTree();
-
-    /*
-     *  Begin
-     */
-    EvtReader->ReadFile(FileName);
-
-    // Read Geometry from ROOT file
-    EvtReader->ReadGeometry(ConfMgr->getInputGeofile());
-    dAnaData->setRootFile(EvtReader->getDataFile());
 
     /*
      *  Processing
