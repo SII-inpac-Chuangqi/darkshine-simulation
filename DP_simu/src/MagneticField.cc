@@ -47,7 +47,6 @@ MagneticField::MagneticField()
         BField = std::vector<DMagnet*>({dynamic_cast<DMagnet*>(f->Get("magnet0")),
                                         dynamic_cast<DMagnet*>(f->Get("magnet1")),
                                         dynamic_cast<DMagnet*>(f->Get("magnet2"))});
-
         if (dControl->save_geometry) {
             dRootMng->getRootFile()->cd();
             for ( auto b : BField ) {

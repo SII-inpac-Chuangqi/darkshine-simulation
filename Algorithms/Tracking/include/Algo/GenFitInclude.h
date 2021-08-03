@@ -22,6 +22,7 @@
 #include <HelixTrackModel.h>
 #include <MeasurementCreator.h>
 
+#include <MapField.h>
 //................................................................................//
 //Left blanck intentionally
 //................................................................................//

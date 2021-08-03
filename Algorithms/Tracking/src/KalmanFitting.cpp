@@ -79,8 +79,8 @@ void KalmanFitting::Init(const TrkHitPVec &track, std::initializer_list<double> 
     hitCov(0, 0) = 0.0006*0.0006;              //resolution, cm --x 6µm
     hitCov(1, 1) = 0.006*0.006;                //               --y 60µm
 
-    genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
-    genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., B*10., 0.)); //Magnet, T->kGs
+    //genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
+    //genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., B*10., 0.)); //Magnet, T->kGs
 
     rep = new genfit::RKTrackRep(pdg);
     //fitter = new genfit::KalmanFitterRefTrack();
