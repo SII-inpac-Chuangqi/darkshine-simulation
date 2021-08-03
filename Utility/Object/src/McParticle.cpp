@@ -29,10 +29,10 @@ McParticle &McParticle::operator=(const McParticle &rhs) {
     RecParticles = rhs.RecParticles;
     //SimHits = rhs.SimHits;
     Parents = rhs.Parents;
-    if (Children) Children = rhs.Children;
+    if (rhs.Children) Children = rhs.Children;
     return *this;
 }
-
+Œ
 double McParticle::getERemain() const {
     return ERemain;
 }
