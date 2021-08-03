@@ -57,15 +57,13 @@ void TrackingProcessor::Begin() {
 
     genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
     std::vector<DMagnet *> magnets = dAnaData->getMagFieldVec();
-    cout<<magnets.size()<<endl;
-    if (!magnets.empty()) {
+    if (magnets.size() == 3 && magnets.at(0) && magnets.at(1) && magnets.at(2)) {
         genfit::FieldManager::getInstance()->init(new genfit::MapField(*(magnets.at(0)),
                                                                        *(magnets.at(1)),
                                                                        *(magnets.at(2)),
                                                                        genfit::Tesla)); //T->kGs
-    }
-    else
-        genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., RecTrk_B*10., 0.));
+    } else
+        genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., RecTrk_B * 10., 0.));
 
     // Register dp_ana.root
 //................................................................................//
