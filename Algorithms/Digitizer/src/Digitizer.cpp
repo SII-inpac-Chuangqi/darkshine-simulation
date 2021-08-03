@@ -11,6 +11,14 @@ Digitizer::Digitizer(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaP
     // Add description for this AnaProcessor
     Description = "Digitizer for Calorimeter(ECAL) with optical process";
 
+    // Register Fast Smearing
+    fs = shared_ptr<FastSmear>(new FastSmear(evtwrt));
+    // Register Parameters for FastSmear
+    RegisterIntParameter("RandomSeed", "Random seed for smearing", &fs_rnd_seed, 0);
+    RegisterIntParameter("ApplytoECAL", "Smearing on ECAL", &fs_apply_to_ecal, true);
+    RegisterIntParameter("ApplytoHCAL", "Smearing on HCAL", &fs_apply_to_hcal, true);
+    RegisterStringParameter("CalibrationFile", "YAML file for reference", &fs_config_file, "");
+
     // Register Double parameter
     RegisterDoubleParameter("Calibration_Factor", "Calibration Factor", &scale_factor,
                             1.); //this is for post-calibration
@@ -41,9 +49,7 @@ void Digitizer::Begin() {
      *
      */
 
-
-
-
+    fs->RegisterParameters(fs_config_file, fs_apply_to_ecal, fs_apply_to_hcal, fs_rnd_seed);
 }
 
 void Digitizer::ProcessEvt(AnaEvent *evt) {
@@ -97,6 +103,14 @@ void Digitizer::ProcessEvt(AnaEvent *evt) {
     } else {
         // if not exists, print out error
         //cerr << "OpticalCollection not found" << endl;
+    }
+
+    // For FastSmear
+    if (fs_apply_to_ecal) fs->Process(evt, "ECAL", "ECAL");
+    if (fs_apply_to_hcal) {
+        for (int i = 1; i <= 16; ++i) {
+            fs->Process(evt, "HCAL_" + to_string(i), "HCAL");
+        }
     }
 }
 

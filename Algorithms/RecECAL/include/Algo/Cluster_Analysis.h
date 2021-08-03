@@ -35,18 +35,18 @@ class Cluster_Analysis {
 public:
     Cluster_Analysis() = default;
 
-    explicit Cluster_Analysis(SimulatedHitVec* clusterVec);
+    explicit Cluster_Analysis(CalorimeterHitVec* clusterVec);
 
     virtual ~Cluster_Analysis() = default;
 
-    void setClusterVec(SimulatedHitVec* clusterVec) {
+    void setClusterVec(CalorimeterHitVec* clusterVec) {
         ClusterVec = clusterVec;
-        std::sort(ClusterVec->begin(), ClusterVec->end(), sortbyE<SimulatedHit>);
+        std::sort(ClusterVec->begin(), ClusterVec->end(), sortbyE<CalorimeterHit>);
         E_Tot = FindETotal();
     }
 
     /// \brief Find the hit with maximumal energy
-    SimulatedHit *FindMaxEHit();
+    CalorimeterHit *FindMaxEHit();
 
     /// \brief Find the total deposited energy
     double FindETotal();
@@ -67,7 +67,7 @@ public:
 private:
     // data
     //std::shared_ptr<std::vector<ClusterHit *> > ClusterVec;
-    SimulatedHitVec* ClusterVec;
+    CalorimeterHitVec* ClusterVec;
 
     //-------------------------------------------
 
@@ -75,7 +75,7 @@ private:
     double E_Tot{0};
 
     // Maximum Energy Hit
-    SimulatedHit *MaxHit{nullptr};
+    CalorimeterHit *MaxHit{nullptr};
 
     // Cluster Energy Fraction ( to the n-th highest energy )
     double E_frac{0.};

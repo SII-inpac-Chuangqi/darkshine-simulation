@@ -8,12 +8,12 @@
 
 #include "Algo/Cluster_Analysis.h"
 
-Cluster_Analysis::Cluster_Analysis(SimulatedHitVec* clusterVec) : ClusterVec(std::move(clusterVec)) {
-    std::sort(ClusterVec->begin(), ClusterVec->end(), sortbyE<SimulatedHit>);
+Cluster_Analysis::Cluster_Analysis(CalorimeterHitVec* clusterVec) : ClusterVec(clusterVec) {
+    std::sort(ClusterVec->begin(), ClusterVec->end(), sortbyE<CalorimeterHit>);
     E_Tot = FindETotal();
 }
 
-SimulatedHit *Cluster_Analysis::FindMaxEHit() {
+CalorimeterHit *Cluster_Analysis::FindMaxEHit() {
     // return the hit with the maximal energy
     return ClusterVec->at(0);
 }
@@ -23,7 +23,7 @@ double Cluster_Analysis::FindETotal() {
     double E = 0.;
 
     // Lambda Expression
-    //for_each(ClusterVec->begin(), ClusterVec->end(), [&E] (SimulatedHit* h) {E += h->getE();} );
+    //for_each(ClusterVec->begin(), ClusterVec->end(), [&E] (CalorimeterHit* h) {E += h->getE();} );
 
     for (auto hit : *ClusterVec) E += hit->getE();
 

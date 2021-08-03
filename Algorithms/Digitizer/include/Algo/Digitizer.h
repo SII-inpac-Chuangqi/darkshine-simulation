@@ -8,6 +8,7 @@
 #include <utility>
 
 #include "Core/AnaProcessor.h"
+#include "Algo/FastSmear.h"
 
 using namespace std;
 
@@ -45,6 +46,14 @@ private:
     double digitized_total_energy_digitized{0.};
     int digitized_total_No{0};
     int digitized_total_NoGen{0};
+
+    shared_ptr<FastSmear> fs;
+    // Variables for FastSmear
+    string fs_config_file;
+    int fs_apply_to_ecal{};
+    int fs_apply_to_hcal{};
+    int fs_rnd_seed{};
+
 };
 
 
