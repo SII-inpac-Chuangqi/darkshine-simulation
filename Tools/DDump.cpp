@@ -9,15 +9,22 @@
 
 int main(int argc, char **argv)
 {
+    if((TString)argv[1] == (TString)"-h")
+    {
+        EventDump dump;
+        return -1;
+    }
+
+    if((argc < 3 && argc > 0) || argc > 5)
+    {
+        std::cout << "Error Wrong arguments, try DDump -h" << std::endl;
+        return -1;
+    }
+
     std::string file_name = "dp_out.root";
     std::string tree_name = "Dark_Photon";
     long long skip_number = -1;
     long long event_number = -1;
-
-    if((argc < 3 && argc > 0) || argc > 5)
-    {
-        return 0;
-    }
 
     if(argc >= 3)
     {

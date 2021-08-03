@@ -55,7 +55,7 @@ public:
 //        else if(Detector == nECAL)    detector = "ECal";
 //        else if(Detector == nHCAL)    detector = "HCal";
 
-        TString str(Form("| %-5d | %8.3f, %8.3f, %8.3f, %8.3f, %8.3f | %-5d  |",
+        TString str(Form("| %-5d | %8.3f, %8.3f, %8.3f, %8.3f, %8.3f | %-5d   |",
                           hit.id,
                           hit.X, hit.Y, hit.Z, hit.T, hit.E,
                           hit.CellID));

@@ -67,12 +67,12 @@ void EventDump::ListRecursiveTree(TDirectoryFile *file, unsigned int nindent)
 void EventDump::Dump(long long skip_number, long long event_number)
 {
     long long start = 0;
-    long long  end = tree_->GetEntries();
+    long long end = tree_->GetEntries();
 
     if(skip_number >= 0)
     {
         start = skip_number;
-        if(event_number > 0)
+        if(event_number >= 0)
             end = skip_number + event_number;
     }
     if(end > tree_->GetEntries())
@@ -85,22 +85,33 @@ void EventDump::Dump(long long skip_number, long long event_number)
     tree_->SetBranchAddress("DEvent", &event);
     TBranch *branch = tree_->GetBranch("DEvent");
 
-    std::cout << "**************************************************************************************************************************" << std::endl
+    std::cout << "***********************************************************************************************************************" << std::endl
               << "* File: " << file_name_ << std::endl
               << "* Tree: " << tree_name_ << std::endl
-              << "**************************************************************************************************************************" << std::endl
+              << "***********************************************************************************************************************" << std::endl
               << "* Dump from event " << start << " to " << end - 1 << std::endl
-              << "**************************************************************************************************************************" << std::endl;
+              << "***********************************************************************************************************************" << std::endl;
 
     for(long long i = start; i < end; i++)
     {
         branch->GetEntry(i);
 
-        std::cout << "**************************************************************************************************************************"
+        std::cout << "***********************************************************************************************************************"
                   << std::endl
                   << "* Event " << i << ": " << std::endl;
 
         event->PrintDetails();
     }
 
+}
+
+void EventDump::Help()
+{
+    std::cout << "Dark Shine event dump:" << std::endl
+              << "DDump -h: help" << std::endl
+              << "DDump [file name] [tree name] [skip number(optional)] [event number(optional)]" << std::endl
+              << "    file name: file to dump" << std::endl
+              << "    tree name: tree in file which contains a branch of DEvent" << std::endl
+              << "    skip number(optional): not set or < 0, dump all events; >= 0, skip events from 0 to skip number" << std::endl
+              << "    event number(optional): when skip number >= 0, not set or < 0, dump all events unskipped; >= 0, dump events from skip number to skip number + event number" << std::endl;
 }
