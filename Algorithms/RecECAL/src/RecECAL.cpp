@@ -28,6 +28,7 @@ void RecECAL::Begin() {
 
     ReadCollections();
     ecal_col_size = static_cast<int>(ecal_cols.size());
+    hcal_col_size = static_cast<int>(hcal_cols.size());
 
     // Register Output Variable
     if (EvtWrt) {

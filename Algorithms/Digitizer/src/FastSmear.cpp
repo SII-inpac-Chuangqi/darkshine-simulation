@@ -33,13 +33,17 @@ double FastSmear::MidPoint(double x1, double x2, double y1, double y2, double x)
 }
 
 double FastSmear::CalculateSigma(double E, const Calibration_Table &ct) {
-    // sig/E = A/sqrt(E) + B/E + C
+    // (sig/E)^2 = (A/sqrt(E))^2 + B^2 + (C/E)^2
+
+    auto sigma = [](double a, double b, double c, double e) {
+        return sqrt(pow(a, 2) * e + pow(b * e, 2) + pow(c, 2));
+    };
 
     if (E <= ct.E.front())
-        return (ct.A.front() * sqrt(E) + ct.B.front() + ct.C.front() * E);
+        return sigma(ct.A.front(), ct.B.front(), ct.C.front(), E);
 
     if (E >= ct.E.back())
-        return (ct.A.back() * sqrt(E) + ct.B.back() + ct.C.back() * E);
+        return sigma(ct.A.back(), ct.B.back(), ct.C.back(), E);
 
     for (unsigned i = 1; i < ct.E.size(); ++i) {
         if (E <= ct.E.at(i)) {
@@ -47,7 +51,7 @@ double FastSmear::CalculateSigma(double E, const Calibration_Table &ct) {
             double B = MidPoint(ct.E.at(i - 1), ct.E.at(i), ct.B.at(i - 1), ct.B.at(i), E);
             double C = MidPoint(ct.E.at(i - 1), ct.E.at(i), ct.C.at(i - 1), ct.C.at(i), E);
 
-            return (A * sqrt(E) + B + C * E);
+            return sigma(A, B, C, E);
         }
     }
 
@@ -60,7 +64,7 @@ void FastSmear::Process(AnaEvent *evt, const string &det_name, const string &cal
         // Read in collection
         auto hit_col = col.at(det_name);
 
-        for (unsigned i = 0; i <cal_info.at(cal_name).size(); i++) {
+        for (unsigned i = 0; i < cal_info.at(cal_name).size(); i++) {
             // Register output collection
             auto out_col = evt->RegisterCalorimeterHitCollection(det_name + "_FS" + std::to_string(i));
 
