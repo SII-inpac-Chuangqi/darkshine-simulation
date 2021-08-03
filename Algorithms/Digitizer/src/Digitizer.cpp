@@ -6,7 +6,6 @@
 
 #include <utility>
 
-
 Digitizer::Digitizer(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name),
                                                                                          std::move(evtwrt)) {
     // Add description for this AnaProcessor
@@ -16,7 +15,7 @@ Digitizer::Digitizer(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaP
     RegisterDoubleParameter("Calibration_Factor", "Calibration Factor", &scale_factor,
                             1.); //this is for post-calibration
     RegisterDoubleParameter("Nominal_Yield", "Nominal Yield of material, like 20000/MeV for LYSO", &nominal_yield,
-                            20000.); 
+                            20000.);
     RegisterDoubleParameter("voltageToADC", "voltageToADC: fullRangeMV/ADCbits", &voltageToADC,
                             5000. / 4096); //this is for digitization study
     RegisterIntParameter("rangeMin", "rangeMin", &rangeMin, -2047);
@@ -43,12 +42,16 @@ void Digitizer::Begin() {
      */
 
 
+
+
 }
 
 void Digitizer::ProcessEvt(AnaEvent *evt) {
 
     // Get MCCollections for the current event
-    const auto &OpticalCollection = evt->getOpticalCollection();
+    DigiFormMap OpticalCollection;
+    if (!evt->getOpticalCollection().empty())
+        OpticalCollection = evt->getOpticalCollection();
 
     std::string CollectionName = "ECAL";
 
@@ -93,7 +96,7 @@ void Digitizer::ProcessEvt(AnaEvent *evt) {
         }
     } else {
         // if not exists, print out error
-        cerr << "OpticalCollection not found" << endl;
+        //cerr << "OpticalCollection not found" << endl;
     }
 }
 

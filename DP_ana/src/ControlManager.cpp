@@ -65,7 +65,7 @@ void ControlManager::run() {
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
     /* DEFINE ALGO PROCESSOR HERE */
-    //algo->RegisterAnaProcessor(shared_ptr<Digitizer>(new Digitizer("Digitizer", EvtWrt)));
+    algo->RegisterAnaProcessor(shared_ptr<Digitizer>(new Digitizer("Digitizer", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)));
 #ifndef _OFF_TRACKING
