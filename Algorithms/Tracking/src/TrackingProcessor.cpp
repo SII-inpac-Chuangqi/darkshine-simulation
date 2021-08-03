@@ -19,6 +19,7 @@
 //................................................................................//
 //FRAMEWORK
 #include "Algo/TrackingProcessor.h"
+#include "Core/AnaData.h"
 
 //................................................................................//
 //TRACKING
@@ -27,7 +28,6 @@
 #include "Algo/TrkHit.h"
 #include "Algo/Digitization.h"
 #include "Algo/GreedyFinding.h"
-#include "Algo/KalmanFitting.h"
 #include "Algo/DTrack.h"
 
 TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name), std::move(evtwrt))
@@ -48,6 +48,15 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
                             "Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting",
                             &Rec_fit_method, 0);
     RegisterDoubleParameter("RecTrk_B", "Magnet in recoil tracker", &RecTrk_B, 1.5);
+
+    std::cout << "reading magnet ..." << std::endl;
+    std::vector<DMagnet*> magnets = dAnaData->getMagFieldVec();
+    genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
+    genfit::FieldManager::getInstance()->init(new genfit::MapField(*(magnets.at(0)),
+                                                                   *(magnets.at(1)),
+                                                                   *(magnets.at(2)),
+                                                                    genfit::Tesla)); //T->kGs
+    std::cout << "end reading magnet ..." << std::endl;
 }
 
 void TrackingProcessor::Begin()
