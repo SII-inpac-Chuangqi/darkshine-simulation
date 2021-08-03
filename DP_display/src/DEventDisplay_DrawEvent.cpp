@@ -32,12 +32,12 @@ bool DEventDisplay::drawEvent(int id, bool resCam) {
     if (!gGeoManager) return false;
 
     // read event
-    evt = EvtReader->getEvt();
 
     if ( !EvtReader->ReadEntry(id) ) {
         std::cerr<<"[Read Event] ==> No event in current file ..."<<std::endl;
         return false;
     }
+    evt = EvtReader->getEvt();
 
     EvtReader->Convert();
     //evtHistory.emplace_back(evt);
