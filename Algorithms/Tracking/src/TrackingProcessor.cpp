@@ -49,14 +49,12 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
                             &Rec_fit_method, 0);
     RegisterDoubleParameter("RecTrk_B", "Magnet in recoil tracker", &RecTrk_B, 1.5);
 
-    std::cout << "reading magnet ..." << std::endl;
     std::vector<DMagnet*> magnets = dAnaData->getMagFieldVec();
     genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
     genfit::FieldManager::getInstance()->init(new genfit::MapField(*(magnets.at(0)),
                                                                    *(magnets.at(1)),
                                                                    *(magnets.at(2)),
                                                                     genfit::Tesla)); //T->kGs
-    std::cout << "end reading magnet ..." << std::endl;
 }
 
 void TrackingProcessor::Begin()
@@ -64,6 +62,8 @@ void TrackingProcessor::Begin()
    
     // Add description for this AnaProcessor
     Description = "Tracking.";
+
+    //genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., RecTrk_B*10., 0.));
 
     // Register dp_ana.root
 //................................................................................//

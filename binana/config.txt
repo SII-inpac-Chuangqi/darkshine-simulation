@@ -8,10 +8,11 @@
 #InputFile      = /lustre/collider/hepmc/DarkSHINE_Production/Baseline_1/noOptical/inclusive/Inclusive_noOptical_Jun02_out_1.root
 InputFile      = /lustre/collider/zhuyifan/DarkShine/Data/20210730_magnet_new.root
 InputGeoFile   = geometry.root
-OutputFile     = /lustre/collider/zhuyifan/DarkShine/Inhomo/20210802_magnet_new_genfit_new_ana.root
+OutputFile     = dp_ana.root
+#OutputFile     = /lustre/collider/zhuyifan/DarkShine/Inhomo/20210802_magnet_new_genfit_new_ana.root
 #OutputFile     = /lustre/collider/zhuyifan/DarkShine/AnaInc/20210602_inc_20210707.root
 RunNumber      = 0
-EventNumber    = -1
+EventNumber    = 10
 SkipNumber     = 0
 
 ### Verbosity Settings
