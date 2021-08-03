@@ -211,15 +211,6 @@ int main(int argc, char **argv) {
     G4VisManager *visManager = new G4VisExecutive;
     visManager->Initialize();
 
-    if (gui_mode) {
-        auto *ui = new G4UIExecutive(argc, argv);
-        UImanager->ApplyCommand("/control/execute init_vis.mac");
-        if (ui->IsGUI())
-            UImanager->ApplyCommand("/control/execute gui.mac");
-        ui->SessionStart();
-        delete ui;
-    }
-
     if (!macro.empty())   // batch mode
     {
         G4String command = "/control/execute ";
@@ -228,7 +219,17 @@ int main(int argc, char **argv) {
         std::cout << macro.size() << ", " << OpticalMacro.size() << std::endl;
     }
 
-    runManager->BeamOn(dControl->BeamOnNumber);
+    if (gui_mode) {
+        auto *ui = new G4UIExecutive(argc, argv);
+        UImanager->ApplyCommand("/control/execute init_vis.mac");
+        if (ui->IsGUI())
+            UImanager->ApplyCommand("/control/execute gui.mac");
+        ui->SessionStart();
+        delete ui;
+    } else {
+        runManager->BeamOn(dControl->BeamOnNumber);
+    }
+
 
 
     // Job termination
