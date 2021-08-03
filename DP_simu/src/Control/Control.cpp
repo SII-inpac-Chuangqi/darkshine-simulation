@@ -479,7 +479,7 @@ bool Control::ReadYAML(const G4String &file_in) {
     G4String infile;
     if (file_in.empty()) infile = "default.yaml";
     else infile = file_in;
-    auto Node = YAML::LoadFile(infile);
+    Node = YAML::LoadFile(infile);
 
     try {
         //========================================
@@ -714,4 +714,11 @@ DigiScheme Control::Optical_GetDigiScheme(const G4String &cIn) {
         // return SIPM_g2_v1_20210124;
     else
         return UnknownDigi;
+}
+
+void Control::ReadAndSetRandomSeed() {
+    random_seed = Node["random_seed"]["seed"].IsDefined() ? Node["random_seed"]["seed"].as<long int>() : 0;
+    random_restore_file = Node["random_seed"]["restore_file"].IsDefined()
+                          ? Node["random_seed"]["restore_file"].as<std::string>()
+                          : "";
 }

@@ -40,12 +40,17 @@ public:
     // Read data from yaml
     bool ReadYAML(const G4String& file_in);
 
+    void ReadAndSetRandomSeed();
+
 public:
     /*************************************/
     /*  Define all the variables needed  */
     /*************************************/
 
     G4String DSimu_version = "1.0.0"; // DSimu version
+
+    long random_seed = 0;
+    G4String random_restore_file = "non";
     //========================================
     /* Global Variables */
     //----------------------------------------
@@ -256,6 +261,7 @@ public:
 
 private:
     Control();
+    YAML::Node Node;
 
     static G4ThreeVector readV3(const YAML::Node &n, bool unit=false);
     static double readV2(const YAML::Node &n);

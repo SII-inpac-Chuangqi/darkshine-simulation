@@ -26,11 +26,6 @@
 /gps/direction                      0. 0. 1.
 /gps/position                       0. 0.01 -610. mm
 
-########## Random Engine Setting ############
-
-/DP/Engine/randomSeed               1051
-#/random/resetEngineFrom            currentEvent.rndm
-
 #####################################
 ########## RUN !!!!!!!!!!############
 #####################################
