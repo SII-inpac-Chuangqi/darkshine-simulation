@@ -32,7 +32,7 @@ McParticle &McParticle::operator=(const McParticle &rhs) {
     if (rhs.Children) Children = rhs.Children;
     return *this;
 }
-Œ
+
 double McParticle::getERemain() const {
     return ERemain;
 }
