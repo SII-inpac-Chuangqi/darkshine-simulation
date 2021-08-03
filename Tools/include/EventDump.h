@@ -16,14 +16,13 @@ public:
 
     EventDump() = delete;
 
+    void Dump(long long skip_number = -1, long long event_number = -1);
+
 private:
 
     void CheckFile();
     void ListRecursive();
     void ListRecursiveTree(TDirectoryFile *file, unsigned int nindent = 0);
-
-    void Dump();
-    void DumpEvent();
 
     TFile *file_;
     TTree *tree_;

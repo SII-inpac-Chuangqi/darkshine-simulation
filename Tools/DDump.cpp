@@ -14,7 +14,7 @@ int main(int argc, char **argv)
     long long skip_number = -1;
     long long event_number = -1;
 
-    if((argc < 3 && argc > 0) || argc > 4)
+    if((argc < 3 && argc > 0) || argc > 5)
     {
         return 0;
     }
@@ -24,12 +24,13 @@ int main(int argc, char **argv)
         file_name = argv[1];
         tree_name = argv[2];
     }
-    if(argc == 4)
+    if(argc > 3)
         skip_number = std::stoll(argv[3]);
-    if(argc == 5)
+    if(argc > 4)
         event_number = std::stoll(argv[4]);
 
-    EventDump(file_name, tree_name);
+    EventDump dump(file_name, tree_name);
+    dump.Dump(skip_number, event_number);
 
     return 0;
 }

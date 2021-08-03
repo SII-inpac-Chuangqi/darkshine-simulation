@@ -98,7 +98,7 @@ public:
 
     // Dump
     friend std::ostream &operator<<(std::ostream &os, const DStep &step) {
-        TString str(Form("| %-5d | % 8.3f, % 8.3f, % 8.3f | % 8.3f, % 8.3f, % 8.3f, % 8.3f | %-21s  %-15s |",
+        TString str(Form("| %-5d | %8.3f, %8.3f, %8.3f | %8.3f, %8.3f, %8.3f, %8.3f | %-21s  %-15s |",
                           step.id,
                           step.X, step.Y, step.Z,
                           step.Px, step.Py, step.Pz, step.E,
