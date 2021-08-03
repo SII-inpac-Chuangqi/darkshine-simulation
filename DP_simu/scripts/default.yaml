@@ -16,7 +16,7 @@ random_seed:
 # Global Variables
 ###########################################
 # save geometry in the output root file
-save_geometry: true
+save_geometry: false
 # check geometry overlap, maybe very slow
 check_overlaps: false
 # memory check

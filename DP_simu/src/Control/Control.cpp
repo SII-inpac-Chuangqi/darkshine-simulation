@@ -485,18 +485,18 @@ bool Control::ReadYAML(const G4String &file_in) {
         //========================================
         /* Global Variables */
         //----------------------------------------
-        save_geometry = Node["save_geometry"].as<bool>();
-        check_overlaps = Node["check_overlaps"].as<bool>();
-        signal_production = Node["signal_production"].as<bool>();
+        save_geometry = Node["save_geometry"].IsDefined() ? Node["save_geometry"].as<bool>() : false;
+        check_overlaps = Node["check_overlaps"].IsDefined() ? Node["check_overlaps"].as<bool>() : false;
+        signal_production = Node["signal_production"].IsDefined() ? Node["signal_production"].as<bool>() : false;
         if (Node["signal_mass"].IsDefined()) signal_mass = readV2(Node["signal_mass"]);
         //========================================
         // Magnetic field
         //----------------------------------------
-        mag_field_input = Node["MagField"]["mag_field_input"].as<std::string>();
-        uniform_mag_field = Node["MagField"]["uniform_mag_field"].as<bool>();
-        tag_Tracker_MagField = readV3(Node["MagField"]["tag_Tracker_MagField"], true);
-        rec_Tracker_MagField = readV3(Node["MagField"]["rec_Tracker_MagField"], true);
-        mag_verbose = Node["MagField"]["mag_verbose"].as<int>();
+        mag_field_input = Node["MagField"]["mag_field_input"].IsDefined() ? Node["MagField"]["mag_field_input"].as<std::string>() : "mag_default.root";
+        uniform_mag_field = Node["MagField"]["uniform_mag_field"].IsDefined() ? Node["MagField"]["uniform_mag_field"].as<bool>() : true;
+        tag_Tracker_MagField =  Node["MagField"]["tag_Tracker_MagField"].IsDefined() ? readV3(Node["MagField"]["tag_Tracker_MagField"], true) : G4ThreeVector(0, -1.5 * tesla, 0);
+        rec_Tracker_MagField = Node["MagField"]["rec_Tracker_MagField"].IsDefined() ? readV3(Node["MagField"]["rec_Tracker_MagField"], true) : G4ThreeVector(0, -1.5 * tesla, 0);
+        mag_verbose = Node["MagField"]["mag_verbose"].IsDefined() ? Node["MagField"]["mag_verbose"].as<int>() : 0;
         //----------------------------------------
         // Root Manager Options
         outfile_Name = Node["RootManager"]["outfile_Name"].as<std::string>();
@@ -573,7 +573,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         Target_Pos = readV3(Node["Geometry"]["Target"]["Target_Pos"], true);
         //----------------------------------------
         // Tracker
-        build_silicon_micro_strip = Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].as<bool>();
+        build_silicon_micro_strip = Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].IsDefined() ? Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].as<bool>() : false;
         Trk_Tar_Dis = readV2(Node["Geometry"]["Tracker"]["Trk_Tar_Dis"]);
         Tracker_Mat = G4Material::GetMaterial(Node["Geometry"]["Tracker"]["Tracker_Mat"].as<std::string>());
         TrackerRegion_Mat = G4Material::GetMaterial(Node["Geometry"]["Tracker"]["TrackerRegion_Mat"].as<std::string>());
