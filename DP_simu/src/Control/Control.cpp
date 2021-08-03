@@ -23,6 +23,7 @@ Control::Control() {
     // Construct Material Table First
     ConstructG4MaterialTable();
 
+    UIManager = G4UImanager::GetUIpointer();
     /* Build All independent Variables */
 
     //========================================
@@ -714,6 +715,26 @@ DigiScheme Control::Optical_GetDigiScheme(const G4String &cIn) {
         // return SIPM_g2_v1_20210124;
     else
         return UnknownDigi;
+}
+
+void Control::ReadAndSetVerbosity() {
+    auto node = Node["verbosity"];
+
+    for (auto subnode : node) {
+        UIManager->ApplyCommand("/" + subnode.first.as<std::string>() + "/verbose " +
+        subnode.second.as<std::string>());
+    }
+}
+
+void Control::ReadAndSetGPS() {
+    auto node = Node["general_particle_source"]["settings"];
+    UIManager = G4UImanager::GetUIpointer();
+    for (auto subnode : node) {
+        printf("GPS settings: /gps/%s %s \n", subnode.first.as<std::string>().data(), subnode.second.as<std::string>().data());
+        UIManager->ApplyCommand("/gps/" + subnode.first.as<std::string>() + " " +
+        subnode.second.as<std::string>());
+    }
+    BeamOnNumber = Node["general_particle_source"]["beam_on"].as<int>();
 }
 
 void Control::ReadAndSetRandomSeed() {

@@ -12,6 +12,7 @@
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4OpticalSurface.hh"
+#include "G4UImanager.hh"
 
 // yaml-cpp
 #include "yaml-cpp/yaml.h"
@@ -40,6 +41,10 @@ public:
     // Read data from yaml
     bool ReadYAML(const G4String& file_in);
 
+    void ReadAndSetVerbosity();
+
+    void ReadAndSetGPS();
+
     void ReadAndSetRandomSeed();
 
 public:
@@ -49,6 +54,10 @@ public:
 
     G4String DSimu_version = "1.0.0"; // DSimu version
 
+    //========================================
+    /* Geant4 settings */
+    //----------------------------------------
+    int BeamOnNumber = 0;
     long random_seed = 0;
     G4String random_restore_file = "non";
     //========================================
@@ -262,6 +271,9 @@ public:
 private:
     Control();
     YAML::Node Node;
+
+    // for geant4 internal settings
+    G4UImanager* UIManager;
 
     static G4ThreeVector readV3(const YAML::Node &n, bool unit=false);
     static double readV2(const YAML::Node &n);
