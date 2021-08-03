@@ -147,6 +147,9 @@ void RecECAL::ReadCollections() {
         while(s_stream.good()) {
             string substr;
             getline(s_stream, substr, ','); //get first string delimited by comma
+
+
+            substr.erase(remove(substr.begin(), substr.end(), ' '), substr.end());
             cols.push_back(substr);
         }
     };

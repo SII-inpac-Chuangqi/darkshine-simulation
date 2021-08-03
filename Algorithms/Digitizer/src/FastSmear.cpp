@@ -22,8 +22,38 @@ void FastSmear::ReadConfigFile() {
         ct.A = vector<double>({0});
         ct.B = vector<double>({0});
         ct.C = vector<double>({0});
+        
+        Calibration_Table ct1;
+        ct1.E = vector<double>({8000});
+        ct1.A = vector<double>({1.75074e-01});
+        ct1.B = vector<double>({1.62906e-02});
+        ct1.C = vector<double>({5.80854e-05});
+    
+        Calibration_Table ct2;
+        ct2.E = vector<double>({8000});
+        ct2.A = vector<double>({8.41628e-01});
+        ct2.B = vector<double>({1.33504e-01});
+        ct2.C = vector<double>({1.14263e-05});
+    
+        Calibration_Table ct3;
+        ct3.E = vector<double>({8000});
+        ct3.A = vector<double>({1.33274e+00});
+        ct3.B = vector<double>({1.49126e-02});
+        ct3.C = vector<double>({1.28824e+00});
+    
+        Calibration_Table ct4;
+        ct4.E = vector<double>({8000});
+        ct4.A = vector<double>({7.18887e-01});
+        ct4.B = vector<double>({9.63437e-03});
+        ct4.C = vector<double>({7.90937e-01});
 
+        
         cal_info.at(ECAL_Name).push_back(ct);
+        cal_info.at(ECAL_Name).push_back(ct1);
+        cal_info.at(ECAL_Name).push_back(ct2);
+        cal_info.at(ECAL_Name).push_back(ct3);
+        cal_info.at(ECAL_Name).push_back(ct4);
+
         cal_info.at(HCAL_Name).push_back(ct);
     }
 }
