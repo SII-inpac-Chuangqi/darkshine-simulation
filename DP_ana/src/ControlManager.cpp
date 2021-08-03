@@ -14,7 +14,9 @@
 #include "Algo/Digitizer.h"
 
 #ifndef _OFF_TRACKING
+
 #include "Algo/TrackingProcessor.h"
+
 #endif
 
 #include "Algo/CutFlowAnalysis.h"
@@ -52,11 +54,13 @@ void ControlManager::run() {
         EvtReader->RegisterOutput();
     }
 
-    EvtReader->ReadFile(FileName);
-
     // Read Geometry from ROOT file
-    EvtReader->ReadGeometry(ConfMgr->getInputGeofile());
-    dAnaData->setRootFile(EvtReader->getDataFile());
+    if (!Only_PrintUsage) {
+        EvtReader->ReadFile(FileName);
+
+        EvtReader->ReadGeometry(ConfMgr->getInputGeofile());
+        dAnaData->setRootFile(EvtReader->getDataFile());
+    }
 
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
@@ -93,7 +97,7 @@ void ControlManager::run() {
     /*
      *  Processing
      */
-    AnaEvent* evt;
+    AnaEvent *evt;
     Long64_t nentries = EvtReader->getEntries();
     Long64_t processed_evt = 0;
     if (EventNumber == -1)

@@ -54,7 +54,6 @@ void DEventDisplay::Initialize() {
     gEve->GetBrowser()->Connect("CloseWindow()", "TApplication", gApplication, "Terminate()");
 
     _eventID = 0;
-    EvtReader = shared_ptr<EventReader>(new EventReader());
 }
 
 bool DEventDisplay::drawDetector() {

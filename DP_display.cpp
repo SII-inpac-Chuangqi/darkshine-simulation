@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
 
     else{
         EvtDisplay->Initialize();
-        EvtDisplay->bookSlot();
+        //EvtDisplay->bookSlot();
         EvtDisplay->readEvt();
 
         // default Draw 0-th event

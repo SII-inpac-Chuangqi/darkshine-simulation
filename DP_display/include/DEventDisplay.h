@@ -107,7 +107,7 @@ public:
         return kRed + 2;
     }
 
-    DEventDisplay() = default;
+    DEventDisplay() {  EvtReader = shared_ptr<EventReader>(new EventReader()); };
 
     ~DEventDisplay() override = default;
 
@@ -225,7 +225,7 @@ private:
 
     int _eventID{0};
 
-    AnaEvent* evt;
+    AnaEvent* evt{};
 
     // Detector Geometry Info
     // size is half, length = 2*size [cm]

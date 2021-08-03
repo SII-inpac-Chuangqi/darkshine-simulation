@@ -64,9 +64,9 @@ bool DEventDisplay::drawEvent(int id, bool resCam) {
     }
 
     // Display Simulated Calorimeter Hits LEGO
-    CaloDisplay = new CaloHitsDisplay();
-    auto CALCols = evt->getSimulatedHitCollection();
-    makeCaloLego(CALCols, CaloDisplay, _drawSimuCaloLego);
+//    CaloDisplay = new CaloHitsDisplay();
+//    auto CALCols = evt->getSimulatedHitCollection();
+//    makeCaloLego(CALCols, CaloDisplay, _drawSimuCaloLego);
 
     /************************************/
     /*   Reconstruction Visualization   */

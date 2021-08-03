@@ -29,8 +29,8 @@
 #include "Algo/GreedyFinding.h"
 #include "Algo/DTrack.h"
 
-TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name), std::move(evtwrt))
-{
+TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(
+        std::move(name), std::move(evtwrt)) {
     /*
      *
      *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
@@ -39,28 +39,30 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
      *
      */
 
-    RegisterIntParameter   ("clean",    "Clean mode",               &clean,    1);
-    RegisterIntParameter   ("Tag_fit_method",
-                            "Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting",
-                            &Tag_fit_method, 0);
-    RegisterIntParameter   ("Rec_fit_method",
-                            "Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting",
-                            &Rec_fit_method, 0);
+    // Add description for this AnaProcessor
+    Description = "Tracking by Yi-Fan Zhu (Genius in SJTU)";
+
+    RegisterIntParameter("clean", "Clean mode", &clean, 1);
+    RegisterIntParameter("Tag_fit_method",
+                         "Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting",
+                         &Tag_fit_method, 0);
+    RegisterIntParameter("Rec_fit_method",
+                         "Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting",
+                         &Rec_fit_method, 0);
     RegisterDoubleParameter("RecTrk_B", "Magnet in recoil tracker", &RecTrk_B, 1.5);
 
-    std::vector<DMagnet*> magnets = dAnaData->getMagFieldVec();
-    genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
-    genfit::FieldManager::getInstance()->init(new genfit::MapField(*(magnets.at(0)),
-                                                                   *(magnets.at(1)),
-                                                                   *(magnets.at(2)),
-                                                                    genfit::Tesla)); //T->kGs
 }
 
-void TrackingProcessor::Begin()
-{
-   
-    // Add description for this AnaProcessor
-    Description = "Tracking.";
+void TrackingProcessor::Begin() {
+
+    std::vector<DMagnet *> magnets = dAnaData->getMagFieldVec();
+    if (!magnets.empty()) {
+        genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
+        genfit::FieldManager::getInstance()->init(new genfit::MapField(*(magnets.at(0)),
+                                                                       *(magnets.at(1)),
+                                                                       *(magnets.at(2)),
+                                                                       genfit::Tesla)); //T->kGs
+    }
 
     //genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., RecTrk_B*10., 0.));
 
@@ -68,8 +70,7 @@ void TrackingProcessor::Begin()
 //................................................................................//
 //Truth
 //................................................................................//
-    if(!clean)
-    {
+    if (!clean) {
         EvtWrt->RegisterIntVariable("TagTrk2_No", &TagTrk2_No, "TagTrk2_No/I");
         EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_ini", &TagTrk2_pp_truth_ini, "TagTrk2_pp_truth_ini/D");
         EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_fin", &TagTrk2_pp_truth_fin, "TagTrk2_pp_truth_fin/D");
@@ -90,10 +91,9 @@ void TrackingProcessor::Begin()
 //Reconstructed
 //................................................................................//
     EvtWrt->RegisterIntVariable("TagTrk2_track_No", &TagTrk2_track_No, "TagTrk2_track_No/I");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_pp",    TagTrk2_pp,        "TagTrk2_pp[TagTrk2_track_No]/D");
+    EvtWrt->RegisterDoubleVariable("TagTrk2_pp", TagTrk2_pp, "TagTrk2_pp[TagTrk2_track_No]/D");
 
-    if(!clean)
-    {
+    if (!clean) {
 /*
         EvtWrt->RegisterIntVariable("TagTrk2_rechit_No", &TagTrk2_rechit_No,   "TagTrk2_rechit_No/I");
         EvtWrt->RegisterIntVariable("TagTrk2_rectrk_hit_No", TagTrk2_rectrk_hit_No, "TagTrk2_rectrk_hit_No[TagTrk2_track_No]/I");
@@ -102,18 +102,21 @@ void TrackingProcessor::Begin()
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_z", TagTrk2_track_z,  "TagTrk2_track_z[TagTrk2_rechit_No]/D");
 */
 
-        EvtWrt->RegisterDoubleVariable("TagTrk2_track_quality", TagTrk2_track_quality, "TagTrk2_track_quality[TagTrk2_track_No]/D");
-        EvtWrt->RegisterDoubleVariable("TagTrk2_track_chi2",    TagTrk2_track_chi2,    "TagTrk2_track_chi2[TagTrk2_track_No]/D");
-        EvtWrt->RegisterDoubleVariable("TagTrk2_track_x_sigma", TagTrk2_track_x_sigma, "TagTrk2_track_x_sigma[TagTrk2_track_No]/D");
-        EvtWrt->RegisterDoubleVariable("TagTrk2_track_y_sigma", TagTrk2_track_y_sigma, "TagTrk2_track_y_sigma[TagTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_track_quality", TagTrk2_track_quality,
+                                       "TagTrk2_track_quality[TagTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_track_chi2", TagTrk2_track_chi2,
+                                       "TagTrk2_track_chi2[TagTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_track_x_sigma", TagTrk2_track_x_sigma,
+                                       "TagTrk2_track_x_sigma[TagTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_track_y_sigma", TagTrk2_track_y_sigma,
+                                       "TagTrk2_track_y_sigma[TagTrk2_track_No]/D");
     }
 
 //................................................................................//
     EvtWrt->RegisterIntVariable("RecTrk2_track_No", &RecTrk2_track_No, "RecTrk2_track_No/I");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_pp",    RecTrk2_pp,        "RecTrk2_pp[RecTrk2_track_No]/D");
+    EvtWrt->RegisterDoubleVariable("RecTrk2_pp", RecTrk2_pp, "RecTrk2_pp[RecTrk2_track_No]/D");
 
-    if(!clean)
-    {
+    if (!clean) {
 /*
         EvtWrt->RegisterIntVariable("RecTrk2_rechit_No", &RecTrk2_rechit_No,   "RecTrk2_rechit_No/I");
         EvtWrt->RegisterIntVariable("RecTrk2_rectrk_hit_No", RecTrk2_rectrk_hit_No, "RecTrk2_rectrk_hit_No[RecTrk2_track_No]/I");
@@ -122,18 +125,21 @@ void TrackingProcessor::Begin()
         EvtWrt->RegisterDoubleVariable("RecTrk2_track_z", RecTrk2_track_z,  "RecTrk2_track_z[RecTrk2_rechit_No]/D");
 */
 
-        EvtWrt->RegisterDoubleVariable("RecTrk2_track_quality", RecTrk2_track_quality, "RecTrk2_track_quality[RecTrk2_track_No]/D");
-        EvtWrt->RegisterDoubleVariable("RecTrk2_track_chi2",    RecTrk2_track_chi2,    "RecTrk2_track_chi2[RecTrk2_track_No]/D");
-        EvtWrt->RegisterDoubleVariable("RecTrk2_track_x_sigma", RecTrk2_track_x_sigma, "RecTrk2_track_x_sigma[RecTrk2_track_No]/D");
-        EvtWrt->RegisterDoubleVariable("RecTrk2_track_y_sigma", RecTrk2_track_y_sigma, "RecTrk2_track_y_sigma[RecTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_track_quality", RecTrk2_track_quality,
+                                       "RecTrk2_track_quality[RecTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_track_chi2", RecTrk2_track_chi2,
+                                       "RecTrk2_track_chi2[RecTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_track_x_sigma", RecTrk2_track_x_sigma,
+                                       "RecTrk2_track_x_sigma[RecTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_track_y_sigma", RecTrk2_track_y_sigma,
+                                       "RecTrk2_track_y_sigma[RecTrk2_track_No]/D");
     }
 
     //if(Tag_fit_method == 1 || Rec_fit_method == 1)
 }
 
-void TrackingProcessor::ProcessEvt(AnaEvent* evt)
-{
-    
+void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
+
     const auto &stepCollection = evt->getStepCollection();
     //const auto &MCCollection = evt->getMcParticleCollection();
     const auto &simuHitCollection = evt->getSimulatedHitCollection();
@@ -141,10 +147,9 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
     auto itFindStep = stepCollection.find("Initial_Particle_Step");
     auto itFindRec1 = simuHitCollection.find("RecTrk1");
     auto itFindRec2 = simuHitCollection.find("RecTrk2");
-    if(itFindStep != stepCollection.end() &&
-       itFindRec1 != simuHitCollection.end() &&
-       itFindRec2 != simuHitCollection.end())
-    {
+    if (itFindStep != stepCollection.end() &&
+        itFindRec1 != simuHitCollection.end() &&
+        itFindRec2 != simuHitCollection.end()) {
 //................................................................................//
 //Read
 
@@ -153,21 +158,21 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
 
         vector<TrkHit> rawTagTrkHits;
         auto tag2Hits = simuHitCollection.at("TagTrk2");
-        for(auto hit : *tag2Hits) rawTagTrkHits.emplace_back(*hit);
+        for (auto hit : *tag2Hits) rawTagTrkHits.emplace_back(*hit);
 
         vector<TrkHit> rawRecTrkHits;
         auto rec2Hits = simuHitCollection.at("RecTrk2");
-        for(auto hit : *rec2Hits) rawRecTrkHits.emplace_back(*hit);
+        for (auto hit : *rec2Hits) rawRecTrkHits.emplace_back(*hit);
 
-        if(rawTagTrkHits.size() < 20 && rawTagTrkHits.size() > 2 &&
-           rawRecTrkHits.size() < 20 && rawRecTrkHits.size() > 2)
-        //if(rawRecTrkHits.size() < 25 && rawRecTrkHits.size() > 2)
+        if (rawTagTrkHits.size() < 20 && rawTagTrkHits.size() > 2 &&
+            rawRecTrkHits.size() < 20 && rawRecTrkHits.size() > 2)
+            //if(rawRecTrkHits.size() < 25 && rawRecTrkHits.size() > 2)
         {
 
 //................................................................................//
 //Digitization, depends on further hardware setting
             Digitization(rawTagTrkHits);
-            Digitization(rawRecTrkHits); 
+            Digitization(rawRecTrkHits);
 
             TrkHitPVecMap clusTagTrkHitMap;
             Cluster(rawTagTrkHits, clusTagTrkHitMap);
@@ -192,8 +197,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
             TagTrk2_rechit_No = 0;
             RecTrk2_rechit_No = 0;
 
-            for (int i = 0; i < findTag.GetTrackNo(); i++)
-            {
+            for (int i = 0; i < findTag.GetTrackNo(); i++) {
                 TrkHitPVec tagTrack((*(VecTagTrack.begin() + i)).begin(), (*(VecTagTrack.begin() + i)).end());
                 DTrack track(tagTrack,
                              findTag.GetR(i),       //used in Kalman filter
@@ -209,8 +213,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
                 TagTrk2_track_x_sigma[i] = track.GetXSigma();
                 TagTrk2_track_y_sigma[i] = track.GetYSigma();
 
-                for(int hitno = 0; hitno < track.GetSize(); hitno++)
-                {
+                for (int hitno = 0; hitno < track.GetSize(); hitno++) {
                     TagTrk2_track_x[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetX();
                     TagTrk2_track_y[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetY();
                     TagTrk2_track_z[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetZ();
@@ -219,8 +222,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
                 TagTrk2_rectrk_hit_No[i] = track.GetSize();
             }
 
-            for(int i = 0; i < findRec.GetTrackNo(); i++)
-            {
+            for (int i = 0; i < findRec.GetTrackNo(); i++) {
                 TrkHitPVec recTrack((*(VecRecTrack.begin() + i)).begin(), (*(VecRecTrack.begin() + i)).end());
                 DTrack track(recTrack,
                              findRec.GetR(i),       //used in Kalman filter
@@ -229,15 +231,14 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
                              RecTrk_B);             //magnetic in the volume where track lies
                 track.Fit(Rec_fit_method);          //choose fitting method: Kalman filter
                 track.Evaluate();
-               
+
                 RecTrk2_pp[i] = track.GetPp();
                 RecTrk2_track_quality[i] = track.GetQuality();
                 RecTrk2_track_chi2[i] = track.GetChi2();
                 RecTrk2_track_x_sigma[i] = track.GetXSigma();
                 RecTrk2_track_y_sigma[i] = track.GetYSigma();
 
-                for(int hitno = 0; hitno < track.GetSize(); hitno++)
-                {
+                for (int hitno = 0; hitno < track.GetSize(); hitno++) {
                     RecTrk2_track_x[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetX();
                     RecTrk2_track_y[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetY();
                     RecTrk2_track_z[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetZ();
@@ -250,9 +251,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
 //Write root
 //................................................................................//
 //Truth
-        }
-        else
-        {
+        } else {
             TagTrk2_track_No = 0;
             RecTrk2_track_No = 0;
 
@@ -263,24 +262,19 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
         TagTrk2_No = rawTagTrkHits.size();
 
         bool trackerFlag = false;
-        for(auto step : *stepIni)
-        {
-            if(InTagTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag)
-            {
-                TagTrk2_pp_truth_ini = sqrt(step->getPx()*step->getPx() +
-                                            step->getPz()*step->getPz()  );
+        for (auto step : *stepIni) {
+            if (InTagTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
+                TagTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
+                                            step->getPz() * step->getPz());
                 trackerFlag = true;
-            }
-            else if(!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag)
-            {
-                TagTrk2_pp_truth_fin = sqrt(step->getPx()*step->getPx() +
-                                            step->getPz()*step->getPz()  );
+            } else if (!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
+                TagTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
+                                            step->getPz() * step->getPz());
                 break;
             }
         }
-        
-        for(int i = 0; i < TagTrk2_No; ++i)
-        {
+
+        for (int i = 0; i < TagTrk2_No; ++i) {
             TagTrk2_x[i] = rawTagTrkHits.at(i).GetX();
             TagTrk2_y[i] = rawTagTrkHits.at(i).GetY();
             TagTrk2_z[i] = rawTagTrkHits.at(i).GetZ();
@@ -290,24 +284,19 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
         RecTrk2_No = rawRecTrkHits.size();
 
         trackerFlag = false;
-        for(auto step : *stepIni)
-        {
-            if(InRecTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag)
-            {
-                RecTrk2_pp_truth_ini = sqrt(step->getPx()*step->getPx() +
-                                            step->getPz()*step->getPz()  );
+        for (auto step : *stepIni) {
+            if (InRecTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
+                RecTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
+                                            step->getPz() * step->getPz());
                 trackerFlag = true;
-            }
-            else if(!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag)
-            {
-                RecTrk2_pp_truth_fin = sqrt(step->getPx()*step->getPx() +
-                                            step->getPz()*step->getPz()  );
+            } else if (!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
+                RecTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
+                                            step->getPz() * step->getPz());
                 break;
             }
         }
-        
-        for(int i = 0; i < RecTrk2_No; ++i)
-        {
+
+        for (int i = 0; i < RecTrk2_No; ++i) {
             RecTrk2_x[i] = rawRecTrkHits.at(i).GetX();
             RecTrk2_y[i] = rawRecTrkHits.at(i).GetY();
             RecTrk2_z[i] = rawRecTrkHits.at(i).GetZ();
@@ -320,14 +309,12 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
     }
 }
 
-void TrackingProcessor::CheckEvt(AnaEvent* evt)
-{
+void TrackingProcessor::CheckEvt(AnaEvent *evt) {
     //cout<<"Check!"<<endl;
-    if(!evt) cerr << "null event" << endl;
+    if (!evt) cerr << "null event" << endl;
 }
 
-void TrackingProcessor::End()
-{
+void TrackingProcessor::End() {
     //for(auto it : ProSum) cout << it << endl;
 
     //cout<<"End!"<<endl;
