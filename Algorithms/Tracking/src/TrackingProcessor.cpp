@@ -3,7 +3,6 @@
 //CPP STL
 #include <vector>
 #include <map>
-#include <malloc.h>
 #include <memory>
 #include <string>
 
@@ -318,7 +317,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent* evt)
 //Memory management
         //vector<TrkHit>().swap(rawTagTrkHits);
         //vector<TrkHit>().swap(rawRecTrkHits);
-        malloc_trim(0);
     }
 }
 
