@@ -65,7 +65,7 @@
 namespace {
     void PrintUsage() {
         G4cerr << " Usage: " << G4endl;
-        G4cerr << " factory [-m macro ] [-o OpticalMacro] [-y yaml.file]" << G4endl;
+        G4cerr << " factory [-y yaml.file] [-m macro ] [-o OpticalMacro]" << G4endl;
         G4cerr << "   note: yaml file is necessary." << G4endl;
         G4cerr << G4endl;
     }
@@ -98,8 +98,10 @@ int main(int argc, char **argv) {
     G4String OpticalMacro;
     G4String yamlFileName;
 
+    bool gui_mode = false;
     for (G4int i = 1; i < argc; i = i + 2) {
-        if (G4String(argv[i]) == "-m") macro = argv[i + 1];
+        if (G4String(argv[i]) == "-g") gui_mode = true;
+        else if (G4String(argv[i]) == "-m") macro = argv[i + 1];
         else if (G4String(argv[i]) == "-o") OpticalMacro = argv[i + 1];
         else if (G4String(argv[i]) == "-y") yamlFileName = argv[i + 1];
         else if (G4String(argv[i]) == "-h") {
@@ -199,16 +201,15 @@ int main(int argc, char **argv) {
     auto *stepping_action = new SteppingAction();
     runManager->SetUserAction(stepping_action);
 
+    dControl->ReadAndSetVerbosity();
+    dControl->ReadAndSetGPS();
+
     // Initialize G4 kernel
     runManager->Initialize();
 
-//#ifdef G4VIS_USE
     // Initialize visualization
     G4VisManager *visManager = new G4VisExecutive;
-    // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
-    // G4VisManager* visManager = new G4VisExecutive("Quiet");
     visManager->Initialize();
-//#endif
 
     if (!macro.empty())   // batch mode
     {
@@ -216,19 +217,19 @@ int main(int argc, char **argv) {
         UImanager->ApplyCommand(command + macro);
     } else if (OpticalMacro.empty()) {  // interactive mode : define UI session
         std::cout << macro.size() << ", " << OpticalMacro.size() << std::endl;
-//#ifdef G4UI_USE
+    }
+
+    if (gui_mode) {
         auto *ui = new G4UIExecutive(argc, argv);
-//#ifdef G4VIS_USE
         UImanager->ApplyCommand("/control/execute init_vis.mac");
-//#else
-        UImanager->ApplyCommand("/control/execute init.mac");
-//#endif
         if (ui->IsGUI())
             UImanager->ApplyCommand("/control/execute gui.mac");
         ui->SessionStart();
         delete ui;
-//#endif
+    } else {
+        runManager->BeamOn(dControl->BeamOnNumber);
     }
+
 
 
     // Job termination

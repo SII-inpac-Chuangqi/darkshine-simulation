@@ -8,15 +8,30 @@
 ###########################################
 # Geant4 General Settings
 ###########################################
+verbosity:
+  run:      2
+  event:    0
+  tracking: 0
+
 random_seed:
   seed: 10
   restore_file: non
+
+general_particle_source:
+  settings:
+    source/multiplevertex: true
+    source/intensity: 5
+    particle: "proton"
+    ene/mono: "250 MeV"
+    direction: "0 0 1"
+    position: "0 0 -50 cm"
+  beam_on: 5
 
 ###########################################
 # Global Variables
 ###########################################
 # save geometry in the output root file
-save_geometry: true
+save_geometry: false
 # check geometry overlap, maybe very slow
 check_overlaps: false
 # memory check
