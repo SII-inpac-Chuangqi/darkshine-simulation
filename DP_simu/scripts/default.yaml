@@ -6,6 +6,13 @@
 # IMPORTANT: For yaml, indentation matters!
 
 ###########################################
+# Geant4 General Settings
+###########################################
+random_seed:
+  seed: 10
+  restore_file: non
+
+###########################################
 # Global Variables
 ###########################################
 # save geometry in the output root file

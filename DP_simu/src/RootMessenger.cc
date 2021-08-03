@@ -19,10 +19,10 @@ RootMessenger::RootMessenger()
     fEngDirectory = new G4UIdirectory("/DP/Engine/");
     fEngDirectory->SetGuidance("Simulation Engine control");
     
-    fSetRndEngCmd = new G4UIcmdWithAnInteger("/DP/Engine/randomSeed",this);
-    fSetRndEngCmd->SetGuidance("Set the random seed for Rnd Engine.");
-    fSetRndEngCmd->SetParameterName("rndseed",false);
-    fSetRndEngCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+//    fSetRndEngCmd = new G4UIcmdWithAnInteger("/DP/Engine/randomSeed",this);
+//    fSetRndEngCmd->SetGuidance("Set the random seed for Rnd Engine.");
+//    fSetRndEngCmd->SetParameterName("rndseed",false);
+//    fSetRndEngCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     
 }
 
@@ -33,9 +33,8 @@ RootMessenger::~RootMessenger()
 
 }
 
-void RootMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{
-    if( command == fSetRndEngCmd )
-        CLHEP::HepRandom::getTheEngine()->setSeed(G4UIcmdWithAnInteger::GetNewIntValue(newValue),0);
-}
-
+//void RootMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
+//{
+//    if( command == fSetRndEngCmd )
+//        CLHEP::HepRandom::getTheEngine()->setSeed(G4UIcmdWithAnInteger::GetNewIntValue(newValue),0);
+//}

@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
     G4UImanager *UImanager = G4UImanager::GetUIpointer();
 
     // Choose the Random engine
-    CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine);
+    // CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine);
 
     // Initiate Control Class
     Control::CreateInstance();
@@ -131,6 +131,14 @@ int main(int argc, char **argv) {
     // Rebuild all dependent variables
     // All the parameters are locked for now
     dControl->RebuildVariables();
+    dControl->ReadAndSetRandomSeed();
+
+    G4Random::setTheEngine(new CLHEP::RanecuEngine());
+    if ( ! dControl->random_restore_file.contains(".rndm")) {
+        G4Random::setTheSeed(dControl->random_seed);
+    } else {
+        G4Random::restoreEngineStatus(dControl->random_restore_file.c_str());
+    }
 
     // Initialize all the self-defined Singletons
     FilterManager::CreateInstance();
