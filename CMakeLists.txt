@@ -242,6 +242,8 @@ add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
 add_executable(DPlot Tools/DPlot.cpp ${Tools_sources} ${Tools_headers})
 target_link_libraries(DPlot yaml-cpp)
 
+add_executable(DDump Tools/DDump.cpp ${Tools_sources} ${Tools_headers})
+
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
@@ -249,6 +251,7 @@ install(TARGETS DSimu DESTINATION bin)
 install(TARGETS DAna DESTINATION bin)
 install(TARGETS DDis DESTINATION bin)
 install(TARGETS DPlot DESTINATION bin)
+install(TARGETS DDump DESTINATION bin)
 install(TARGETS DEvent LIBRARY DESTINATION lib )
 #install(TARGETS DAnaEvent LIBRARY DESTINATION lib )
 #install(TARGETS Display LIBRARY DESTINATION lib )
