@@ -47,7 +47,7 @@
 #pragma link C++ class std::vector<DigiForm*>+;
 //#pragma link C++ class std::map<std::string, std::vector<DigiForm*>* >;
 
-#pragma link C++ class DEvent-;
+#pragma link C++ class DEvent+;
 
 #pragma link C++ class DMagnet+;
 
