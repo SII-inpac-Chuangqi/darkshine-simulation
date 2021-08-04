@@ -29,7 +29,7 @@
 #pragma link C++ class CalorimeterHit+;
 #pragma link C++ class std::vector<CalorimeterHit*>+;
 
-#pragma link C++ class McParticle-;
+#pragma link C++ class McParticle+;
 #pragma link C++ class std::vector<McParticle*>;
 //#pragma link C++ class std::map<std::string, std::vector<McParticle*>* >;
 
