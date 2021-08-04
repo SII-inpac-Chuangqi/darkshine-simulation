@@ -132,7 +132,7 @@ void ControlManager::run() {
         evt = EvtReader->getEvt();
 
         // process algorithms
-        algo->ProcessEvtAnaProcessors(evt);
+        algo->ProcessEvtAnaProcessors(evt, processed_evt);
 
         // check algorithms
         algo->CheckEvtAnaProcessors(evt);

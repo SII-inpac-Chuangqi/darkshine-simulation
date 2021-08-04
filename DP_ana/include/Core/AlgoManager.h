@@ -67,7 +67,7 @@ public:
     // Run AnaProcessor
     void BeginAnaProcessors();
 
-    void ProcessEvtAnaProcessors(AnaEvent *);
+    void ProcessEvtAnaProcessors(AnaEvent *, int cur_evt_num = 0);
 
     void CheckEvtAnaProcessors(AnaEvent *);
 

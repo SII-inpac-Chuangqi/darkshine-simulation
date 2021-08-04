@@ -35,7 +35,6 @@ void AlgoManager::BeginAnaProcessors() {
         if (AnaProcessors.count(*itr) == 0) {
             itr = AnaProcessorList.erase(itr);
         }
-
         // Initialize Processor
         AnaProcessors.at(*itr)->Begin();
 
@@ -51,7 +50,7 @@ void AlgoManager::BeginAnaProcessors() {
 
 }
 
-void AlgoManager::ProcessEvtAnaProcessors(AnaEvent *evt) {
+void AlgoManager::ProcessEvtAnaProcessors(AnaEvent *evt, int cur_evt_num) {
     for (const auto &itr : AnaProcessorList) {
 
         // record start time for each processor
@@ -60,8 +59,18 @@ void AlgoManager::ProcessEvtAnaProcessors(AnaEvent *evt) {
         if (Verbose > 2) {
             cout << "[ PROCESSOR ] (Verbosity 3) : " << itr << endl;
         }
-        // process evt
-        AnaProcessors.at(itr)->ProcessEvt(evt);
+
+
+        try {
+            // process evt
+            AnaProcessors.at(itr)->ProcessEvt(evt);
+        } catch (const std::out_of_range &oor) {
+            std::cerr << "[ERROR] Evt: " << cur_evt_num << " -- Out of Range error: " << oor.what() << " in Algo"
+                      << itr << endl;
+        } catch (...) {
+            std::cerr << "[ERROR] Evt: " << cur_evt_num << " --  Some unknown errors appear. Please check: "
+                      << itr << endl;
+        }
 
         // record end time for each processor
         end_processing = clock();
