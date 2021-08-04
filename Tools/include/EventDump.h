@@ -7,13 +7,14 @@
 
 #include "Object/DEvent.h"
 
-class EventDump
-{
+class EventDump {
 public:
 
-    EventDump() : file_(nullptr), tree_(nullptr) {this->Help();}
+    EventDump() : file_(nullptr), tree_(nullptr) { this->Help(); }
+
     EventDump(TString file_name, TString tree_name);
-    ~EventDump() {}
+
+    ~EventDump() = default;
 
     void Dump(long long skip_number = -1, long long event_number = -1);
 
@@ -22,7 +23,9 @@ public:
 private:
 
     void CheckFile();
+
     void ListRecursive();
+
     void ListRecursiveTree(TDirectoryFile *file, unsigned int nindent = 0);
 
     TFile *file_;
@@ -30,7 +33,7 @@ private:
 
     TString file_name_;
     TString tree_name_;
-    int verbose_;
+    int verbose_{};
 };
 
 #endif
