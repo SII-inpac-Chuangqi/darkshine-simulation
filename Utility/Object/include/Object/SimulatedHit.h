@@ -11,6 +11,7 @@
 #include "DHit.h"
 
 #include <vector>
+#include "TString.h"
 
 class McParticle;
 
@@ -44,6 +45,23 @@ public:
 
     const CalorimeterHitVec &getCaloHits() const {
         return CaloHits;
+    }
+
+    //Dump
+    friend std::ostream &operator<<(std::ostream &os, const SimulatedHit &hit) {
+//        TString detector;
+//        if     (Detector == nNone)    detector = "None";
+//        else if(Detector == nTracker) detector = "Tracker";
+//        else if(Detector == nECAL)    detector = "ECal";
+//        else if(Detector == nHCAL)    detector = "HCal";
+
+        TString str(Form("| %-5d | %8.3f, %8.3f, %8.3f, %8.3f, %8.3f | %-5d   |",
+                          hit.id,
+                          hit.X, hit.Y, hit.Z, hit.T, hit.E,
+                          hit.CellID));
+        os << str;
+
+        return os;
     }
 
     // Set Methods

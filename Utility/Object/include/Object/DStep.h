@@ -6,8 +6,10 @@
 #define DSIMU_DSTEP_H
 
 #include <string>
+#include <ostream>
 
 #include "TObject.h"
+#include "TString.h"
 
 class DStep : public TObject {
 public:
@@ -92,6 +94,18 @@ public:
 
     const std::string &getProcessName() const {
         return ProcessName;
+    }
+
+    // Dump
+    friend std::ostream &operator<<(std::ostream &os, const DStep &step) {
+        TString str(Form("| %-5d | %8.3f, %8.3f, %8.3f | %8.3f, %8.3f, %8.3f, %8.3f | %-18s  %-15s |",
+                          step.id,
+                          step.X, step.Y, step.Z,
+                          step.Px, step.Py, step.Pz, step.E,
+                          step.PVName.data(), step.ProcessName.data()));
+        os << str;
+
+        return os;
     }
 
     // Set Methods

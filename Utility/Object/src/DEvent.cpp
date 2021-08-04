@@ -79,6 +79,51 @@ void DEvent::Initialization(CleanType ct) {
 
 }
 
+void DEvent::PrintDetails()
+{
+    for(auto steps : StepCollection)
+    {
+        std::cout << "***********************************************************************************************************************"
+                  << std::endl
+                  << "* Step Collection: " << steps.first << std::endl
+                  << "***********************************************************************************************************************"
+                  << std::endl
+                  << "| ID    |    x[mm]     y[mm]    z[mm]  |  Px[MeV]   Py[MeV]   Pz[MeV]    E[MeV] | PVName              Process Name    |"
+                  << std::endl
+                  << "***********************************************************************************************************************"
+                  << std::endl;
+        for(auto step : *(steps.second))
+            std::cout << *step << std::endl;
+    }
+
+    for(auto particles : MCParticleCollection)
+    {
+        std::cout << "****************************************************************************************************************************************************************************"
+                  << std::endl
+                  << "* MC Particle Collection: " << particles.first << std::endl
+                  << "****************************************************************************************************************************************************************************"
+                  << std::endl
+                  << "| ID    | PDG   |  Px[MeV]   Py[MeV]   Pz[MeV] |   E[MeV]  Mass[MeV]  ER[MeV] |Vertex x[mm]     y[mm]     z[mm] |End x[mm]     y[mm]     z[mm] | Process          Parent   |"
+                  << std::endl
+                  << "****************************************************************************************************************************************************************************"
+                  << std::endl;
+         for(auto particle : *(particles.second))
+             std::cout << *particle << std::endl;
+    }
+
+    for(auto simus : SimulatedHitCollection)
+    {
+        std::cout << "**********************************************************************" << std::endl
+                  << "* Simulated Hit Collection: " << simus.first << std::endl
+                  << "**********************************************************************" << std::endl
+                  << "| ID    |    x[mm]     y[mm]     z[mm]  time[ns]    E[GeV] | Cell ID |" << std::endl
+                  << "**********************************************************************" << std::endl;
+        for(auto simu : *(simus.second))
+             std::cout << *simu << std::endl;
+    }
+    std::cout << "**********************************************************************" << std::endl;
+}
+
 DStepVec *DEvent::RegisterStepCollection(const std::string &str) {
     if (StepCollection.count(str) != 0) {
         std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;

@@ -85,6 +85,8 @@ public:
         return CalorimeterHitCollection;
     }
 
+    void PrintDetails();
+
     // Set Methods
     void setRunId(int runId) {
         RunID = runId;

@@ -49,6 +49,23 @@ public:
         return SimHits;
     }
 
+    // Dump
+    friend std::ostream &operator<<(std::ostream &os, const McParticle &particle) {
+        TString str(Form("| %-5d | %-5d | %8.3f, %8.3f, %8.3f | %8.3f, %8.3f, %8.3f |    %8.3f, %8.3f, %8.3f | %8.3f, %8.3f, %8.3f | %-16s %-8d |",
+                    particle.id,
+                    particle.PDG,
+                    particle.Px, particle.Py, particle.Pz,
+                    particle.Energy, particle.Mass, particle.ERemain,
+                    particle.VertexX, particle.VertexY, particle.VertexZ,
+                    particle.EndPointX, particle.EndPointY, particle.EndPointZ,
+                    particle.CreateProcess.data(), (particle.getParents()) ? particle.getParents()->getId() : 0));
+
+        os << str;
+
+        return os;
+    }
+
+
     // Set Methods
     void setERemain(double eRemain);
 
