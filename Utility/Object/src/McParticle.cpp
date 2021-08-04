@@ -54,16 +54,4 @@ bool McParticle::operator!=(const McParticle &rhs) const {
     return !(rhs == *this);
 }
 
-//void McParticle::Streamer(TBuffer &R__b)
-//{
-//    // Stream an object of class DEvent.
-//
-//    if (R__b.IsReading()) {
-//        //std::cout<<"reading mcp: "<< R__b.BufferSize() <<std::endl;
-//        R__b.ReadClassBuffer(McParticle::Class(),this);
-//    } else {
-//        //std::cout<<"writing mpc"<<std::endl;
-//        R__b.WriteClassBuffer(McParticle::Class(),this);
-//    }
-//}
 

@@ -325,21 +325,6 @@ void DEvent::PrintObjectStatistics(const TString& str) {
 }
 #endif
 
-//void DEvent::Streamer(TBuffer &R__b)
-//{
-//    // Stream an object of class DEvent.
-//
-//    if (R__b.IsReading()) {
-//        //std::cout<<"reading event: "<<std::endl;
-//        //this->Initialization(nALL);
-//
-//        //DEvent::Class()->
-//        R__b.ReadClassBuffer(DEvent::Class(),this);
-//    } else {
-//        //std::cout<<"writing!!"<<std::endl;
-//        R__b.WriteClassBuffer(DEvent::Class(),this);
-//    }
-//}
 
 
 
