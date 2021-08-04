@@ -144,7 +144,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     const auto &simuHitCollection = evt->getSimulatedHitCollection();
 
     auto itFindStep = stepCollection.find("Initial_Particle_Step");
-    auto itFindRec1 = simuHitCollection.find("RecTrk1");
+    auto itFindRec1 = simuHitCollection.find("TagTrk2");
     auto itFindRec2 = simuHitCollection.find("RecTrk2");
     if (itFindStep != stepCollection.end() &&
         itFindRec1 != simuHitCollection.end() &&
