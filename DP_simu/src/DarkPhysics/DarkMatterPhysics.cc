@@ -54,7 +54,7 @@ void DarkMatterPhysics::ConstructParticle() {
 }
 
 void DarkMatterPhysics::ConstructProcess() {
-    //here to define which process should be add to the physicslist
+    //here to define which process should be added to the physics list
     G4ParticleDefinition *theDMParticlePtr = nullptr;
     G4ProcessManager *pmanager = nullptr;
 

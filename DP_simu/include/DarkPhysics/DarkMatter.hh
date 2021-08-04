@@ -23,6 +23,12 @@ struct ParamsForMuonTotCS {
     double EE0;
 };
 
+struct DM_Mom {
+    double E = 0.;
+    double rec_phi = 0.;
+    double rec_theta = 0.;
+};
+
 double chi(double t, void *pp);
 
 double parinv(double x, double a[], double f[], int n);
@@ -97,7 +103,8 @@ public:
 
     double SimulateEmission(double E0, double *angles);
 
-    double SimulateEmissionWithAngle(double E0, double *angles);
+    //double SimulateEmissionWithAngle(double E0, double *angles);
+    double SimulateEmissionWithAngle(double E0, DM_Mom& angles);
 
     double GetAccumulatedProbability() const { return AccumulatedProbability; }
 

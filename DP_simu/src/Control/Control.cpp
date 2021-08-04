@@ -37,7 +37,7 @@ Control::Control() {
     //========================================
     // Magnetic field
     //----------------------------------------
-    mag_field_input ="mag_default.root";
+    mag_field_input = "mag_default.root";
     uniform_mag_field = true;
     tag_Tracker_MagField = G4ThreeVector(0, -1.5 * tesla, 0);
     rec_Tracker_MagField = G4ThreeVector(0, -1.5 * tesla, 0);
@@ -46,6 +46,7 @@ Control::Control() {
     //----------------------------------------
     // Signal Option
     signal_mass = 17 * MeV;
+    signal_lookup_table = "";
 
     //----------------------------------------
     // Root Manager Options
@@ -92,8 +93,6 @@ Control::Control() {
     Trk_Tar_Dis = 7.5 * mm;
     Tracker_Mat = G4Material::GetMaterial("G4_Si");
     TrackerRegion_Mat = G4Material::GetMaterial("vacuum");
-    Tracker1_Rotation = 0. * radian;
-    Tracker2_Rotation = 0.1 * radian;
     Tracker1_Color = G4ThreeVector(0.5, 0.5, 0.);
     Tracker2_Color = G4ThreeVector(0.5, 0.5, 0.);
 
@@ -217,7 +216,8 @@ Control::Control() {
     Optical_apertureJitterSigma = 0.0001; // [ns]
     // scaling factor to allow for two overlapped 3.1 GeV positrons to be in ADC's
     // range,need calibration
-    Optical_pulseScaleFactor = 1./1000; //dummy, can be setted later in DEvent or here. This is for pre-calibration for pulshShape file. output unit is mV
+    Optical_pulseScaleFactor = 1. /
+                               1000; //dummy, can be setted later in DEvent or here. This is for pre-calibration for pulshShape file. output unit is mV
 
     //----------------------------------------
     // LUT
@@ -490,13 +490,22 @@ bool Control::ReadYAML(const G4String &file_in) {
         check_overlaps = Node["check_overlaps"].IsDefined() ? Node["check_overlaps"].as<bool>() : false;
         signal_production = Node["signal_production"].IsDefined() ? Node["signal_production"].as<bool>() : false;
         if (Node["signal_mass"].IsDefined()) signal_mass = readV2(Node["signal_mass"]);
+        signal_lookup_table = (Node["signal_lookup_table"].IsDefined() ? Node["signal_lookup_table"].as<std::string>()
+                                                                       : "");
+
+        std::cout<<Node["signal_use_LUT"].IsDefined()<<" "<<Node["signal_use_LUT"].as<bool>()<<std::endl;
+        signal_use_LUT = Node["signal_use_LUT"].IsDefined() && Node["signal_use_LUT"].as<bool>();
         //========================================
         // Magnetic field
         //----------------------------------------
-        mag_field_input = Node["MagField"]["mag_field_input"].IsDefined() ? Node["MagField"]["mag_field_input"].as<std::string>() : "mag_default.root";
-        uniform_mag_field = Node["MagField"]["uniform_mag_field"].IsDefined() ? Node["MagField"]["uniform_mag_field"].as<bool>() : true;
-        tag_Tracker_MagField =  Node["MagField"]["tag_Tracker_MagField"].IsDefined() ? readV3(Node["MagField"]["tag_Tracker_MagField"], true) : G4ThreeVector(0, -1.5 * tesla, 0);
-        rec_Tracker_MagField = Node["MagField"]["rec_Tracker_MagField"].IsDefined() ? readV3(Node["MagField"]["rec_Tracker_MagField"], true) : G4ThreeVector(0, -1.5 * tesla, 0);
+        mag_field_input = Node["MagField"]["mag_field_input"].IsDefined()
+                          ? Node["MagField"]["mag_field_input"].as<std::string>() : "mag_default.root";
+        uniform_mag_field = Node["MagField"]["uniform_mag_field"].IsDefined()
+                            ? Node["MagField"]["uniform_mag_field"].as<bool>() : true;
+        tag_Tracker_MagField = Node["MagField"]["tag_Tracker_MagField"].IsDefined() ? readV3(
+                Node["MagField"]["tag_Tracker_MagField"], true) : G4ThreeVector(0, -1.5 * tesla, 0);
+        rec_Tracker_MagField = Node["MagField"]["rec_Tracker_MagField"].IsDefined() ? readV3(
+                Node["MagField"]["rec_Tracker_MagField"], true) : G4ThreeVector(0, -1.5 * tesla, 0);
         mag_verbose = Node["MagField"]["mag_verbose"].IsDefined() ? Node["MagField"]["mag_verbose"].as<int>() : 0;
         //----------------------------------------
         // Root Manager Options
@@ -513,7 +522,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         InitialParticleStepCollection_Name = Node["OutCollection"]["InitialParticleStepCollection_Name"].as<std::string>();
         //----------------------------------------
         // For Memory Leak
-        Memory_Check = Node["memory_check"].IsDefined()? Node["memory_check"].as<bool>(): false;
+        Memory_Check = Node["memory_check"].IsDefined() ? Node["memory_check"].as<bool>() : false;
         //========================================
         /* Biasing */
         //----------------------------------------
@@ -574,12 +583,11 @@ bool Control::ReadYAML(const G4String &file_in) {
         Target_Pos = readV3(Node["Geometry"]["Target"]["Target_Pos"], true);
         //----------------------------------------
         // Tracker
-        build_silicon_micro_strip = Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].IsDefined() ? Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].as<bool>() : false;
+        build_silicon_micro_strip = Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].IsDefined()
+                                    ? Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].as<bool>() : false;
         Trk_Tar_Dis = readV2(Node["Geometry"]["Tracker"]["Trk_Tar_Dis"]);
         Tracker_Mat = G4Material::GetMaterial(Node["Geometry"]["Tracker"]["Tracker_Mat"].as<std::string>());
         TrackerRegion_Mat = G4Material::GetMaterial(Node["Geometry"]["Tracker"]["TrackerRegion_Mat"].as<std::string>());
-        Tracker1_Rotation = readV2(Node["Geometry"]["Tracker"]["Tracker1_Rotation"]);
-        Tracker2_Rotation = readV2(Node["Geometry"]["Tracker"]["Tracker2_Rotation"]);
         Tracker1_Color = readV3(Node["Geometry"]["Tracker"]["Tracker1_Color"]);
         Tracker2_Color = readV3(Node["Geometry"]["Tracker"]["Tracker2_Color"]);
         // Tagging Tracker
@@ -722,7 +730,7 @@ void Control::ReadAndSetVerbosity() {
 
     for (auto subnode : node) {
         UIManager->ApplyCommand("/" + subnode.first.as<std::string>() + "/verbose " +
-        subnode.second.as<std::string>());
+                                subnode.second.as<std::string>());
     }
 }
 
@@ -730,9 +738,10 @@ void Control::ReadAndSetGPS() {
     auto node = Node["general_particle_source"]["settings"];
     UIManager = G4UImanager::GetUIpointer();
     for (auto subnode : node) {
-        printf("GPS settings: /gps/%s %s \n", subnode.first.as<std::string>().data(), subnode.second.as<std::string>().data());
+        printf("GPS settings: /gps/%s %s \n", subnode.first.as<std::string>().data(),
+               subnode.second.as<std::string>().data());
         UIManager->ApplyCommand("/gps/" + subnode.first.as<std::string>() + " " +
-        subnode.second.as<std::string>());
+                                subnode.second.as<std::string>());
     }
     BeamOnNumber = Node["general_particle_source"]["beam_on"].as<int>();
 }

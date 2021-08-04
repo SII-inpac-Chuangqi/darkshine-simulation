@@ -294,7 +294,7 @@ double DarkMatter::SimulateEmission(double E0, double *angles) {
 }
 
 
-double DarkMatter::SimulateEmissionWithAngle(double E0, double *angles) {
+double DarkMatter::SimulateEmissionWithAngle(double E0, DM_Mom& angles) {
 
     //std::cout<<"E0: "<<E0<<", MA: "<<MA<<std::endl;
 
@@ -356,8 +356,8 @@ double DarkMatter::SimulateEmissionWithAngle(double E0, double *angles) {
 //            printf("Accepted at iteration %d\n", iii);
 //            printf("EParent = %e XAcc = %e ThetaAcc = %e\n ", E0, XAcc, ThetaAcc);
 
-            angles[0] = ThetaAcc;
-            angles[1] = PhiAcc;
+            angles.rec_theta = ThetaAcc;
+            angles.rec_phi = PhiAcc;
             return XAcc;
         }
     }

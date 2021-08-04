@@ -445,9 +445,9 @@ void DEventDisplay::gotoEvent(unsigned int id) {
         gEve->GetCurrentEvent()->DestroyElements();
     }
     // Clear List Tree
-    if (CaloDisplay->getLegoListTree())
-        gEve->RemoveFromListTree(CaloDisplay->getCaloHitsDisplayList(), gEve->GetListTree(),
-                                 CaloDisplay->getLegoListTree());
+//    if (CaloDisplay->getLegoListTree())
+//        gEve->RemoveFromListTree(CaloDisplay->getCaloHitsDisplayList(), gEve->GetListTree(),
+//                                 CaloDisplay->getLegoListTree());
 
     // Redraw Event
     drawEvent(_eventID);

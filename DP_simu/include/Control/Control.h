@@ -70,6 +70,8 @@ public:
     //----------------------------------------
     // Signal Option
     double signal_mass;
+    G4String signal_lookup_table;
+    bool signal_use_LUT{};
 
     //----------------------------------------
     // Magnetic field
@@ -137,8 +139,6 @@ public:
     double Trk_Tar_Dis;
     G4Material *Tracker_Mat;
     G4Material *TrackerRegion_Mat;
-    double Tracker1_Rotation;
-    double Tracker2_Rotation;
     G4ThreeVector Tracker1_Color;
     G4ThreeVector Tracker2_Color;
 

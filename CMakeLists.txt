@@ -245,6 +245,26 @@ target_link_libraries(DPlot yaml-cpp)
 add_executable(DDump Tools/DDump.cpp ${Tools_sources} ${Tools_headers})
 
 #----------------------------------------------------------------------------
+# Copy all scripts to the build directory
+#
+set(RUN_SCRIPTS
+        DP_simu/scripts/default.yaml
+        DP_simu/scripts/init_vis.mac
+        DP_simu/scripts/vis.mac
+        DP_simu/scripts/gui.mac
+        )
+
+foreach (_script ${RUN_SCRIPTS})
+    configure_file(
+            ${PROJECT_SOURCE_DIR}/${_script}
+            ${PROJECT_BINARY_DIR}/
+            COPYONLY
+    )
+endforeach ()
+
+
+
+#----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
 install(TARGETS DSimu DESTINATION bin)

@@ -114,23 +114,23 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
         // Search for truth Pi && Pf for initial electron
         Pi = -999.;
         Pf = -999.;
-        TLorentzVector electron;
+        DStep *prev_s = nullptr;
+        TLorentzVector electron_prev, electron_post;
         for (auto s: *steps) {
-            electron.SetPxPyPzE(s->getPx(), s->getPy(), s->getPz(), s->getE());
-            if ( s->getZ() < -7.5 ) {
-                Pi = electron.P();
-            } else if ( s->getZ() < 180.0 ) {
-                Pf = electron.P();
+            if (s->getProcessName() == "DMProcessDMBrem" && prev_s != nullptr) {
+                electron_prev.SetPxPyPzE(prev_s->getPx(), prev_s->getPy(), prev_s->getPz(), prev_s->getE());
+                electron_post.SetPxPyPzE(s->getPx(), s->getPy(), s->getPz(), s->getE());
+                Pi = electron_prev.P();
+                Pf = electron_post.P();
             }
+            prev_s = s;
         }
-
     } else {
         // if not exists, print out error
         if (verbose > 0)
             cerr << "MCCollection not found" << endl;
 
     }
-
 }
 
 void MCTruthAnalysis::CheckEvt(AnaEvent *evt) {

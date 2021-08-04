@@ -14,18 +14,18 @@ verbosity:
   tracking: 0
 
 random_seed:
-  seed: 10
+  seed: 500
   restore_file: non
 
 general_particle_source:
   settings:
     source/multiplevertex: true
     source/intensity: 5
-    particle: "proton"
-    ene/mono: "250 MeV"
+    particle: "e-"
+    ene/mono: "8 GeV"
     direction: "0 0 1"
-    position: "0 0 -50 cm"
-  beam_on: 5
+    position: "0 0 -61 cm"
+  beam_on: 1
 
 ###########################################
 # Global Variables
@@ -35,14 +35,18 @@ save_geometry: false
 # check geometry overlap, maybe very slow
 check_overlaps: false
 # memory check
-memory_check: true
+memory_check: false
 
 # if signal production is activated, program will automatically
 # bias for DMProcessDMBrem and record all the MC particles
 # A process filter on target region will be applied
-signal_production: false
+signal_production: true
 # Dark Photon Mass
-signal_mass: [ 1.0, "GeV" ]
+signal_mass: [ 500, "MeV" ]
+# If to use signal LUT
+signal_use_LUT: false
+# signal LUT place
+signal_lookup_table: "signal.root"
 
 ###########################################
 # Magnetic field
