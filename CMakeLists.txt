@@ -149,6 +149,7 @@ SET(DEvent_header_shared
         Utility/Object/include/Object/ReconstructedParticle.h
         Utility/Object/include/Object/DigiForm.hh
         Utility/Object/include/Object/DEvent.h
+        GenFit2/fields/include/DMagnet.h
         #Utility/Object/include/Object/DMagnet.h
         )
 SET(AnaEvent_header_shared
@@ -171,6 +172,7 @@ SET(DEvent_source
         Utility/Object/src/ReconstructedParticle.cpp
         Utility/Object/src/DigiForm.cpp
         Utility/Object/src/DEvent.cpp
+        GenFit2/fields/src/DMagnet.cc
         # Utility/Object/src/DMagnet.cpp
         )
 SET(AnaEvent_source
