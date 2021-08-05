@@ -8,4 +8,4 @@
 #pragma link C++ namespace genfit;
 
 // These need no special treatment.
-#pragma link C++ class genfit::EventDisplay+;
+//#pragma link C++ class genfit::EventDisplay+;

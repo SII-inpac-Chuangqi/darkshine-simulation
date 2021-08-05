@@ -12,7 +12,6 @@ INCLUDE(genfit)
 # Set GENFIT include directories
 SET(GF_INC_DIRS
 		./core/include/
-		./eventDisplay/include/
 		./fields/include/
 		./finitePlanes/include/
 		./fitters/include/
@@ -31,7 +30,6 @@ INCLUDE_DIRECTORIES(
 
 # add the list of source code files -- careful, when a new file is added!
 AUX_SOURCE_DIRECTORY( ./core/src          library_sources )
-AUX_SOURCE_DIRECTORY( ./eventDisplay/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./fields/src        library_sources )
 AUX_SOURCE_DIRECTORY( ./finitePlanes/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./fitters/src       library_sources )
