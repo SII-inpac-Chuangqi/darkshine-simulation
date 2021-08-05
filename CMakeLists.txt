@@ -95,10 +95,7 @@ endif ()
 #---------------------------------------------------------------------------
 # GenFit2
 #
-option(BUILD_GENFIT2 "BUILD_GENFIT2" ON)
-if (BUILD_GENFIT2)
-    add_subdirectory(GenFit2)
-endif()
+add_subdirectory(GenFit2)
 
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
