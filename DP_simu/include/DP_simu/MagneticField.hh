@@ -36,7 +36,7 @@
 #include "Control/Control.h"
 #include "RootManager.hh"
 #include "G4MagneticField.hh"
-#include "Object/DMagnet.h"
+#include "DMagnet.h"
 #include "G4ThreeVector.hh"
 
 class G4FieldManager;

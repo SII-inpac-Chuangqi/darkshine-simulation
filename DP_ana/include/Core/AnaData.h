@@ -9,7 +9,7 @@
 
 #include "TFile.h"
 
-#include "Object/DMagnet.h"
+#include "DMagnet.h"
 
 #include <vector>
 #include <tuple>

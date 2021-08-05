@@ -2,7 +2,7 @@
 
 #include "TVectorD.h"
 
-#include "Object/DMagnet.h"
+#include "DMagnet.h"
 
 //................................................................................//
 //public:

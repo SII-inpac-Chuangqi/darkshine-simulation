@@ -95,6 +95,14 @@ if (MEMCK OR ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
     add_definitions("-DMEMCK")
 endif ()
 
+#---------------------------------------------------------------------------
+# GenFit2
+#
+option(BUILD_GENFIT2 "BUILD_GENFIT2" ON)
+if (BUILD_GENFIT2)
+    add_subdirectory(GenFit2)
+endif()
+
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 #
@@ -159,7 +167,7 @@ SET(DEvent_header_shared
         Utility/Object/include/Object/ReconstructedParticle.h
         Utility/Object/include/Object/DigiForm.hh
         Utility/Object/include/Object/DEvent.h
-        Utility/Object/include/Object/DMagnet.h
+        #Utility/Object/include/Object/DMagnet.h
         )
 SET(AnaEvent_header_shared
         #DP_ana/include/Event/AnaEvent.h
