@@ -52,11 +52,6 @@ if (DANA_TRACKING)
     # GenFit2
     option(USE_GENFIT "USE_GENFIT" ON)
     if (USE_GENFIT)
-        MESSAGE("-- USING GenFit2: ${USE_GENFIT}")
-        INCLUDE_DIRECTORIES($ENV{GENFIT_INCLUDE_DIR})
-        LINK_DIRECTORIES($ENV{GENFIT_LIB_DIR})
-        MESSAGE("-- Genfit2 Include Dir: $ENV{GENFIT_INCLUDE_DIR}")
-        MESSAGE("-- Genfit2 Library Dir: $ENV{GENFIT_LIB_DIR}")
 
         FIND_PACKAGE(Eigen3 REQUIRED)
         INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
@@ -189,7 +184,7 @@ SET(DEvent_source
         Utility/Object/src/ReconstructedParticle.cpp
         Utility/Object/src/DigiForm.cpp
         Utility/Object/src/DEvent.cpp
-        Utility/Object/src/DMagnet.cpp
+        # Utility/Object/src/DMagnet.cpp
         )
 SET(AnaEvent_source
         #DP_ana/src/AnaEvent.cpp
@@ -206,6 +201,7 @@ SET(Display_source
         )
 root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DEventLinkDef.h)
 add_library(DEvent SHARED ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx)
+target_link_libraries(DEvent PUBLIC genfit2)
 
 # root_generate_dictionary(G__DAnaEvent ${AnaEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DAnaEventLinkDef.h)
 #add_library(DAnaEvent SHARED ${AnaEvent_header_shared} ${AnaEvent_source} G__DAnaEvent.cxx)
