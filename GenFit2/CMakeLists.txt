@@ -62,14 +62,15 @@ SET(CORE_DICTIONARY_SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/fields/include/DMagnet.h
 )
 
-ROOT_GENERATE_DICTIONARY_genfit(
-		"${CMAKE_SHARED_LIBRARY_PREFIX}genfit2"
-		"${CORE_DICTIONARY_SOURCES}"
-		"${CMAKE_CURRENT_SOURCE_DIR}/core/include"
-		"${CMAKE_CURRENT_SOURCE_DIR}/core/src/coreLinkDef.h"
-		"${CMAKE_CURRENT_BINARY_DIR}/coreRootDict.cc"
-)
-SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/coreRootDict.cc" "${library_sources}")
+ROOT_GENERATE_DICTIONARY(coreRootDict ${CORE_DICTIONARY_SOURCES} LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/core/src/coreLinkDef.h)
+#ROOT_GENERATE_DICTIONARY_genfit(
+#		"${CMAKE_SHARED_LIBRARY_PREFIX}genfit2"
+#		"${CORE_DICTIONARY_SOURCES}"
+#		"${CMAKE_CURRENT_SOURCE_DIR}/core/include"
+#		"${CMAKE_CURRENT_SOURCE_DIR}/core/src/coreLinkDef.h"
+#		"${CMAKE_CURRENT_BINARY_DIR}/coreRootDict.cc"
+#)
+SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/coreRootDict.cxx" "${library_sources}")
 
 
 SET(FITTERS_DICTIONARY_SOURCES
@@ -82,14 +83,15 @@ SET(FITTERS_DICTIONARY_SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/fitters/include/KalmanFitterInfo.h
 		${CMAKE_CURRENT_SOURCE_DIR}/fitters/include/DAF.h
 )
-ROOT_GENERATE_DICTIONARY_genfit(
-		"${CMAKE_SHARED_LIBRARY_PREFIX}genfit2"
-		"${FITTERS_DICTIONARY_SOURCES}"
-		"${CMAKE_CURRENT_SOURCE_DIR}/core/include;${CMAKE_CURRENT_SOURCE_DIR}/fitters/include"
-		"${CMAKE_CURRENT_SOURCE_DIR}/fitters/src/fittersLinkDef.h"
-		"${CMAKE_CURRENT_BINARY_DIR}/fittersRootDict.cc"
-)
-SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/fittersRootDict.cc" "${library_sources}")
+ROOT_GENERATE_DICTIONARY(fittersRootDict ${FITTERS_DICTIONARY_SOURCES} LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/fitters/src/fittersLinkDef.h)
+#ROOT_GENERATE_DICTIONARY_genfit(
+#		"${CMAKE_SHARED_LIBRARY_PREFIX}genfit2"
+#		"${FITTERS_DICTIONARY_SOURCES}"
+#		"${CMAKE_CURRENT_SOURCE_DIR}/core/include;${CMAKE_CURRENT_SOURCE_DIR}/fitters/include"
+#		"${CMAKE_CURRENT_SOURCE_DIR}/fitters/src/fittersLinkDef.h"
+#		"${CMAKE_CURRENT_BINARY_DIR}/fittersRootDict.cc"
+#)
+SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/fittersRootDict.cxx" "${library_sources}")
 
 SET(MEASUREMENTS_DICTIONARY_SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/measurements/include/HMatrixPhi.h
@@ -106,27 +108,29 @@ SET(MEASUREMENTS_DICTIONARY_SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/measurements/include/WirePointMeasurement.h
 		${CMAKE_CURRENT_SOURCE_DIR}/measurements/include/WireTrackCandHit.h
 )
-ROOT_GENERATE_DICTIONARY_genfit(
-		"${CMAKE_SHARED_LIBRARY_PREFIX}genfit2"
-		"${MEASUREMENTS_DICTIONARY_SOURCES}"
-        "${CMAKE_CURRENT_SOURCE_DIR}/core/include;${CMAKE_CURRENT_SOURCE_DIR}/measurements/include"
-		"${CMAKE_CURRENT_SOURCE_DIR}/measurements/src/measurementsLinkDef.h"
-		"${CMAKE_CURRENT_BINARY_DIR}/measurementsRootDict.cc"
-)
-SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/measurementsRootDict.cc" "${library_sources}")
+ROOT_GENERATE_DICTIONARY(measurementsRootDict ${MEASUREMENTS_DICTIONARY_SOURCES} LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/measurements/src/measurementsLinkDef.h)
+#ROOT_GENERATE_DICTIONARY_genfit(
+#		"${CMAKE_SHARED_LIBRARY_PREFIX}genfit2"
+#		"${MEASUREMENTS_DICTIONARY_SOURCES}"
+#        "${CMAKE_CURRENT_SOURCE_DIR}/core/include;${CMAKE_CURRENT_SOURCE_DIR}/measurements/include"
+#		"${CMAKE_CURRENT_SOURCE_DIR}/measurements/src/measurementsLinkDef.h"
+#		"${CMAKE_CURRENT_BINARY_DIR}/measurementsRootDict.cc"
+#)
+SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/measurementsRootDict.cxx" "${library_sources}")
 
 SET(TRACKREPS_DICTIONARY_SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/trackReps/include/RKTrackRep.h
 		${CMAKE_CURRENT_SOURCE_DIR}/trackReps/include/MplTrackRep.h
 )
-ROOT_GENERATE_DICTIONARY_genfit(
-		"${CMAKE_SHARED_LIBRARY_PREFIX}genfit2"
-		"${TRACKREPS_DICTIONARY_SOURCES}"
-		"${CMAKE_CURRENT_SOURCE_DIR}/core/include;${CMAKE_CURRENT_SOURCE_DIR}/trackReps/include"
-		"${CMAKE_CURRENT_SOURCE_DIR}/trackReps/src/trackRepsLinkDef.h"
-		"${CMAKE_CURRENT_BINARY_DIR}/trackRepsRootDict.cc"
-)
-SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/trackRepsRootDict.cc" "${library_sources}")
+ROOT_GENERATE_DICTIONARY(trackRepsRootDict ${TRACKREPS_DICTIONARY_SOURCES} LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/trackReps/src/trackRepsLinkDef.h)
+#ROOT_GENERATE_DICTIONARY_genfit(
+#		"${CMAKE_SHARED_LIBRARY_PREFIX}genfit2"
+#		"${TRACKREPS_DICTIONARY_SOURCES}"
+#		"${CMAKE_CURRENT_SOURCE_DIR}/core/include;${CMAKE_CURRENT_SOURCE_DIR}/trackReps/include"
+#		"${CMAKE_CURRENT_SOURCE_DIR}/trackReps/src/trackRepsLinkDef.h"
+#		"${CMAKE_CURRENT_BINARY_DIR}/trackRepsRootDict.cc"
+#)
+SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/trackRepsRootDict.cxx" "${library_sources}")
 
 SET(UTILITIES_DICTIONARY_SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/utilities/include/HelixTrackModel.h
@@ -134,17 +138,19 @@ SET(UTILITIES_DICTIONARY_SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/utilities/include/mySpacepointDetectorHit.h
 		${CMAKE_CURRENT_SOURCE_DIR}/utilities/include/mySpacepointMeasurement.h
 )
-ROOT_GENERATE_DICTIONARY_genfit(
-		"${CMAKE_SHARED_LIBRARY_PREFIX}genfit2"
-		"${UTILITIES_DICTIONARY_SOURCES}"
-		"${CMAKE_CURRENT_SOURCE_DIR}/core/include;${CMAKE_CURRENT_SOURCE_DIR}/utilities/include;${CMAKE_CURRENT_SOURCE_DIR}/measurements/include"
-		"${CMAKE_CURRENT_SOURCE_DIR}/utilities/src/utilitiesLinkDef.h"
-		"${CMAKE_CURRENT_BINARY_DIR}/utilitiesRootDict.cc"
-)
-SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/utilitiesRootDict.cc" "${library_sources}")
+ROOT_GENERATE_DICTIONARY(utilitiesRootDict ${UTILITIES_DICTIONARY_SOURCES} LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/utilities/src/utilitiesLinkDef.h)
+#ROOT_GENERATE_DICTIONARY_genfit(
+#		"${CMAKE_SHARED_LIBRARY_PREFIX}genfit2"
+#		"${UTILITIES_DICTIONARY_SOURCES}"
+#		"${CMAKE_CURRENT_SOURCE_DIR}/core/include;${CMAKE_CURRENT_SOURCE_DIR}/utilities/include;${CMAKE_CURRENT_SOURCE_DIR}/measurements/include"
+#		"${CMAKE_CURRENT_SOURCE_DIR}/utilities/src/utilitiesLinkDef.h"
+#		"${CMAKE_CURRENT_BINARY_DIR}/utilitiesRootDict.cc"
+#)
+SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/utilitiesRootDict.cxx" "${library_sources}")
 
 # install
-ADD_SHARED_LIBRARY( genfit2 ${library_sources})
+ADD_LIBRARY(genfit2 SHARED ${library_sources})
+# ADD_SHARED_LIBRARY( genfit2 ${library_sources})
 INSTALL(TARGETS genfit2 LIBRARY DESTINATION lib)
 
 

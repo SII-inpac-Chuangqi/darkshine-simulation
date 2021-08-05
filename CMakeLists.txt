@@ -12,6 +12,8 @@ set(OpenGL_GL_PREFERENCE GLVND)
 
 # define path to macros and settings
 LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+INCLUDE(macros)
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
@@ -102,29 +104,17 @@ endif()
 # Locate sources and headers for this project
 #
 
-# Recursively Find Algorithm headers
-MACRO(HEADER_DIRECTORIES return_list return_file search_directory)
-    FILE(GLOB_RECURSE new_list ${search_directory}/*/include/*.h)
-    SET(dir_list "")
-    SET(file_list "")
-    FOREACH (file_path ${new_list})
-        GET_FILENAME_COMPONENT(file_dir ${file_path} PATH)
-        get_filename_component(dir_path ${file_dir} DIRECTORY)
-        SET(dir_list ${dir_list} ${dir_path})
-    ENDFOREACH ()
-    LIST(REMOVE_DUPLICATES dir_list)
-    LIST(REMOVE_DUPLICATES new_list)
-    SET(${return_list} ${dir_list})
-    SET(${return_file} ${new_list})
-ENDMACRO()
 HEADER_DIRECTORIES(Algo_List Algo_File "Algorithms")
 HEADER_DIRECTORIES(Util_List Util_File "Utility")
+HEADER_DIRECTORIES_GENFIT2(GenFit2_List GenFit2_File "GenFit2")
+MESSAGE(${GenFit2_List})
 
 include_directories(DP_simu/include
         DP_ana/include
         DP_display/include
         Tools/include
         ./
+        ${GenFit2_List}
         ${Util_List}
         ${Algo_List}
         ${Geant4_INCLUDE_DIR}
