@@ -201,7 +201,6 @@ SET(Display_source
         )
 root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DEventLinkDef.h)
 add_library(DEvent SHARED ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx)
-target_link_libraries(DEvent PUBLIC genfit2)
 
 # root_generate_dictionary(G__DAnaEvent ${AnaEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DAnaEventLinkDef.h)
 #add_library(DAnaEvent SHARED ${AnaEvent_header_shared} ${AnaEvent_source} G__DAnaEvent.cxx)
@@ -215,6 +214,7 @@ add_library(DarkShine SHARED
         ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx
         ${AnaEvent_header_shared} ${AnaEvent_source} # G__DAnaEvent.cxx
         ${Display_header_shared} ${Display_source} G__Display.cxx)
+target_link_libraries(DarkShine PUBLIC genfit2)
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
@@ -231,9 +231,6 @@ add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         Utility/UTIL/src/Config.cpp
         ${Algo_sources} ${Algo_headers})
 
-if (DANA_TRACKING)
-    target_link_libraries(DAna genfit2)
-endif ()
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
 # ${Util_sources} ${Util_headers} {Algo_sources} ${Algo_headers} ${Ana_sources} ${Ana_headers}

@@ -5,9 +5,9 @@
 # define path to macros and settings
 LIST( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 # include the macros and settings
-INCLUDE(settings)
-INCLUDE(macros)
-INCLUDE(genfit)
+#INCLUDE(settings)
+#INCLUDE(macros)
+#INCLUDE(genfit)
 
 # Set GENFIT include directories
 SET(GF_INC_DIRS
