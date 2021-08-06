@@ -1,0 +1,33 @@
+INCLUDE_DIRECTORIES(
+        include
+)
+
+SET(DEvent_header_shared
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DHit.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DParticle.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DStep.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/SimulatedHit.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/CalorimeterHit.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/McParticle.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/ReconstructedParticle.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DigiForm.hh
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DEvent.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DMagnet.h
+        )
+SET(DEvent_source
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/SimulatedHit.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/CalorimeterHit.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/McParticle.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ReconstructedParticle.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/DigiForm.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/DEvent.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/DMagnet.cpp
+        )
+
+root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF include/Object/DEventLinkDef.h)
+add_library(DEvent SHARED ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx)
+
+install(TARGETS DEvent LIBRARY DESTINATION lib )
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent_rdict.pcm DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent.rootmap DESTINATION lib)

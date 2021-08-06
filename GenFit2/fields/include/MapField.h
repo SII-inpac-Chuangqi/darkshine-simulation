@@ -30,7 +30,7 @@
 
 #include "AbsBField.h"
 
-#include "DMagnet.h"
+#include "Object/DMagnet.h"
 
 namespace genfit
 {

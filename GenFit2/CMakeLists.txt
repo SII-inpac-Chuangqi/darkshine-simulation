@@ -26,6 +26,7 @@ INCLUDE_DIRECTORIES(
 		${ROOT_INCLUDE_DIRS}
 		SYSTEM ${EIGEN3_INCLUDE_DIR}
 		${GF_INC_DIRS}
+		${PROJECT_SOURCE_DIR}/Utility/Object/include
 )
 
 # add the list of source code files -- careful, when a new file is added!
@@ -59,7 +60,6 @@ SET(CORE_DICTIONARY_SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/core/include/TrackCandHit.h
 		${CMAKE_CURRENT_SOURCE_DIR}/core/include/TrackPoint.h
 		${CMAKE_CURRENT_SOURCE_DIR}/finitePlanes/include/RectangularFinitePlane.h
-		${CMAKE_CURRENT_SOURCE_DIR}/fields/include/DMagnet.h
 )
 
 ROOT_GENERATE_DICTIONARY(coreRootDict ${CORE_DICTIONARY_SOURCES} LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/core/src/coreLinkDef.h)

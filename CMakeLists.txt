@@ -92,6 +92,11 @@ if (MEMCK OR ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
     add_definitions("-DMEMCK")
 endif ()
 
+#----------------------------------------------------------------------------
+# DEvent
+#
+add_subdirectory(Utility/Object)
+
 #---------------------------------------------------------------------------
 # GenFit2
 #
@@ -138,18 +143,7 @@ file(GLOB Tools_headers Tools/include/*)
 # Generate ROOT library for DEvent
 #
 # Header
-SET(DEvent_header_shared
-        Utility/Object/include/Object/DHit.h
-        Utility/Object/include/Object/DParticle.h
-        Utility/Object/include/Object/DStep.h
-        Utility/Object/include/Object/SimulatedHit.h
-        Utility/Object/include/Object/CalorimeterHit.h
-        Utility/Object/include/Object/McParticle.h
-        Utility/Object/include/Object/ReconstructedParticle.h
-        Utility/Object/include/Object/DigiForm.hh
-        Utility/Object/include/Object/DEvent.h
-        #GenFit2/fields/include/DMagnet.h
-        )
+
 SET(AnaEvent_header_shared
         #DP_ana/include/Event/AnaEvent.h
         DP_ana/include/Event/EventReader.h
@@ -163,15 +157,6 @@ SET(Display_header_shared
         )
 
 # Source
-SET(DEvent_source
-        Utility/Object/src/SimulatedHit.cpp
-        Utility/Object/src/CalorimeterHit.cpp
-        Utility/Object/src/McParticle.cpp
-        Utility/Object/src/ReconstructedParticle.cpp
-        Utility/Object/src/DigiForm.cpp
-        Utility/Object/src/DEvent.cpp
-        #GenFit2/fields/src/DMagnet.cc
-        )
 SET(AnaEvent_source
         #DP_ana/src/AnaEvent.cpp
         DP_ana/src/EventReader.cpp
@@ -185,22 +170,20 @@ SET(Display_source
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventReader_dis.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/CaloHitsDisplay.cpp
         )
-root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DEventLinkDef.h)
-#add_library(DEvent SHARED ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx)
 
 # root_generate_dictionary(G__DAnaEvent ${AnaEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DAnaEventLinkDef.h)
 #add_library(DAnaEvent SHARED ${AnaEvent_header_shared} ${AnaEvent_source} G__DAnaEvent.cxx)
-#target_link_libraries(DAnaEvent PUBLIC DEvent)
 
 root_generate_dictionary(G__Display ${Display_header_shared} LINKDEF Utility/UTIL/include/Utility/DisplayLinkDef.h)
 #add_library(Display SHARED ${Display_header_shared} ${Display_source} G__Display.cxx)
 #target_link_libraries(Display PUBLIC DAnaEvent)
 
 add_library(DarkShine SHARED
-        ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx
+        #${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx
         ${AnaEvent_header_shared} ${AnaEvent_source} # G__DAnaEvent.cxx
         ${Display_header_shared} ${Display_source} G__Display.cxx)
 target_link_libraries(DarkShine PUBLIC genfit2)
+target_link_libraries(DarkShine PUBLIC DEvent)
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
@@ -259,13 +242,11 @@ install(TARGETS DAna DESTINATION bin)
 install(TARGETS DDis DESTINATION bin)
 install(TARGETS DPlot DESTINATION bin)
 install(TARGETS DDump DESTINATION bin)
-#install(TARGETS DEvent LIBRARY DESTINATION lib )
+
 #install(TARGETS DAnaEvent LIBRARY DESTINATION lib )
 #install(TARGETS Display LIBRARY DESTINATION lib )
 install(TARGETS DarkShine LIBRARY DESTINATION lib)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent_rdict.pcm DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDEvent.rootmap DESTINATION lib)
 #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent_rdict.pcm DESTINATION lib)
 #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent.rootmap DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDisplay_rdict.pcm DESTINATION lib)
