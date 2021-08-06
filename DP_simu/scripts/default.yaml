@@ -25,7 +25,7 @@ general_particle_source:
     ene/mono: "8 GeV"
     direction: "0 0 1"
     position: "0 0 -61 cm"
-  beam_on: 1
+  beam_on: 10
 
 ###########################################
 # Global Variables

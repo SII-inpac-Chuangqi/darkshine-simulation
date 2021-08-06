@@ -186,7 +186,7 @@ SET(Display_source
         ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/CaloHitsDisplay.cpp
         )
 root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DEventLinkDef.h)
-add_library(DEvent SHARED ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx)
+#add_library(DEvent SHARED ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx)
 
 # root_generate_dictionary(G__DAnaEvent ${AnaEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DAnaEventLinkDef.h)
 #add_library(DAnaEvent SHARED ${AnaEvent_header_shared} ${AnaEvent_source} G__DAnaEvent.cxx)
@@ -259,7 +259,7 @@ install(TARGETS DAna DESTINATION bin)
 install(TARGETS DDis DESTINATION bin)
 install(TARGETS DPlot DESTINATION bin)
 install(TARGETS DDump DESTINATION bin)
-install(TARGETS DEvent LIBRARY DESTINATION lib )
+#install(TARGETS DEvent LIBRARY DESTINATION lib )
 #install(TARGETS DAnaEvent LIBRARY DESTINATION lib )
 #install(TARGETS Display LIBRARY DESTINATION lib )
 install(TARGETS DarkShine LIBRARY DESTINATION lib)
