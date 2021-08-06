@@ -8,7 +8,7 @@
 #pragma link C++ namespace genfit;
 
 // These need no special treatment.
-#pragma link C++ class DMagnet+;
+//#pragma link C++ class DMagnet+;
 #pragma link C++ class genfit::AbsFinitePlane+;
 #pragma link C++ class genfit::AbsHMatrix+;
 #pragma link C++ class genfit::RectangularFinitePlane+;
