@@ -104,7 +104,6 @@ add_subdirectory(GenFit2)
 HEADER_DIRECTORIES(Algo_List Algo_File "Algorithms")
 HEADER_DIRECTORIES(Util_List Util_File "Utility")
 HEADER_DIRECTORIES_GENFIT2(GenFit2_List GenFit2_File "GenFit2")
-MESSAGE(${GenFit2_List})
 
 include_directories(DP_simu/include
         DP_ana/include
@@ -149,8 +148,7 @@ SET(DEvent_header_shared
         Utility/Object/include/Object/ReconstructedParticle.h
         Utility/Object/include/Object/DigiForm.hh
         Utility/Object/include/Object/DEvent.h
-        GenFit2/fields/include/DMagnet.h
-        #Utility/Object/include/Object/DMagnet.h
+        #GenFit2/fields/include/DMagnet.h
         )
 SET(AnaEvent_header_shared
         #DP_ana/include/Event/AnaEvent.h
@@ -172,8 +170,7 @@ SET(DEvent_source
         Utility/Object/src/ReconstructedParticle.cpp
         Utility/Object/src/DigiForm.cpp
         Utility/Object/src/DEvent.cpp
-        GenFit2/fields/src/DMagnet.cc
-        # Utility/Object/src/DMagnet.cpp
+        #GenFit2/fields/src/DMagnet.cc
         )
 SET(AnaEvent_source
         #DP_ana/src/AnaEvent.cpp
