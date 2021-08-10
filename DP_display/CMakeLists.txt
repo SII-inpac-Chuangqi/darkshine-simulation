@@ -14,6 +14,9 @@ SET(Display_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/include/DEventReader_dis.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/DSMagneticField.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/CaloHitsDisplay.h
+
+        ${PROJECT_SOURCE_DIR}/DP_ana/include/Event/EventReader.h
+        ${PROJECT_SOURCE_DIR}/DP_ana/include/Event/EventStoreAndWriter.h
         )
 
 # Source
@@ -24,14 +27,17 @@ SET(Display_source
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DEventDisplay_DrawEvent.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DEventReader_dis.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/CaloHitsDisplay.cpp
+
+        ${PROJECT_SOURCE_DIR}/DP_ana/src/EventReader.cpp
+        ${PROJECT_SOURCE_DIR}/DP_ana/src/EventStoreAndWriter.cpp
         )
 root_generate_dictionary(G__Display ${Display_header_shared} LINKDEF ${PROJECT_SOURCE_DIR}/Utility/UTIL/include/Utility/DisplayLinkDef.h)
 
 add_library(DDisplay SHARED ${Display_header_shared} ${Display_source} G__Display.cxx)
 
-add_executable(DDis ${PROJECT_SOURCE_DIR}/DP_display.cpp ${Display_sources} ${Display_headers})
+add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
 
-target_link_libraries(DDis DAnaEvent)
+target_link_libraries(DDis PUBLIC DDisplay)
 
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX

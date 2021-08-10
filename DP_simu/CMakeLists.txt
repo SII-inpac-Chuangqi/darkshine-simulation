@@ -12,7 +12,7 @@ file(GLOB_RECURSE Simu_headers include/*)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(DSimu ${PROJECT_SOURCE_DIR}/DP_simu.cc ${Simu_sources} ${Simu_headers})
+add_executable(DSimu DP_simu.cc ${Simu_sources} ${Simu_headers})
 
 target_link_libraries(DSimu
         ${Geant4_LIBRARIES} ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES} ${PYTHIA6_LIBRARIES})
