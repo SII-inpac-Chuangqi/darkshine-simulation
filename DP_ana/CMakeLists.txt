@@ -32,7 +32,7 @@ SET(AnaEvent_source
         ${CMAKE_CURRENT_SOURCE_DIR}/src/EventStoreAndWriter.cpp
         )
 
-add_library(DAnaEvent ${AnaEvent_header_shared} ${AnaEvent_source})
+add_library(DAnaEvent SHARED ${AnaEvent_header_shared} ${AnaEvent_source})
 
 #----------------------------------------------------------------------------
 # Add the executable
