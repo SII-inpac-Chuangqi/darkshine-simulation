@@ -19,7 +19,7 @@ RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProce
     // Register parameters
     RegisterIntParameter("Verbose", "Verbosity Variable", &verbose, 0);
     RegisterStringParameter("ECollectionToUse", "Calorimeter (ECAL) Collection to Use", &ecal_col_use, "ECAL_FS0");
-    RegisterStringParameter("HCollectionToUse", "Calorimeter (HCAL) Collection to Use", &hcal_col_use, "HCAL_0_FS0");
+    RegisterStringParameter("HCollectionToUse", "Calorimeter (HCAL) Collection to Use", &hcal_col_use, "FS0");
     RegisterIntParameter("E_n_fraction", "the n-th large E fraction", &n_fraction, 20);
 
 }
@@ -70,7 +70,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
     //const auto &HitCollection = evt->getSimulatedHitCollection();
     const auto &HitCollection = evt->getCalorimeterHitCollection();
 
-    for (const auto& HitCollectionName: ecal_cols) {
+    for (const auto &HitCollectionName: ecal_cols) {
         // define the collection name (RawMCParticle) to find.
         // IMPORTANT: check if the collection exists
         if (HitCollection.count(HitCollectionName) != 0) {
@@ -112,14 +112,14 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
         }
     }
 
-    for (const auto& HCAL_Collection_Name: hcal_cols) {
+    for (const auto &HCAL_Collection_Name: hcal_cols) {
         // temporary HCAL Analyzer
         double HCAL_E = 0;
         double HCAL_E_Max_cell = 0;
         for (int i = 0; i < 16; i++) {
-
-            if (HitCollection.count(HCAL_Collection_Name) != 0) {
-                const auto &hits = HitCollection.at(HCAL_Collection_Name);
+            auto Collection_String = Form("HCAL_%d_%s", i, HCAL_Collection_Name.c_str());
+            if (HitCollection.count(Collection_String) != 0) {
+                const auto &hits = HitCollection.at(Collection_String);
 
                 for (auto hit : *hits) {
                     HCAL_E += hit->getE();
@@ -142,9 +142,9 @@ void RecECAL::End() {
 
 void RecECAL::ReadCollections() {
 
-    auto format_str = [] (const string& str, vector<string>& cols) {
+    auto format_str = [](const string &str, vector<string> &cols) {
         stringstream s_stream(str); //create string stream from the string
-        while(s_stream.good()) {
+        while (s_stream.good()) {
             string substr;
             getline(s_stream, substr, ','); //get first string delimited by comma
 
