@@ -27,7 +27,7 @@ SET(Display_source
         )
 root_generate_dictionary(G__Display ${Display_header_shared} LINKDEF ${PROJECT_SOURCE_DIR}/Utility/UTIL/include/Utility/DisplayLinkDef.h)
 
-add_library(DDisplay SHARED ${Display_header_shared} ${Display_source} G__Display.cxx)
+add_library(DDisplay ${Display_header_shared} ${Display_source} G__Display.cxx)
 
 add_executable(DDis ${PROJECT_SOURCE_DIR}/DP_display.cpp ${Display_sources} ${Display_headers})
 
