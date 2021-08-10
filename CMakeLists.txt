@@ -54,7 +54,6 @@ if (DANA_TRACKING)
     # GenFit2
     option(USE_GENFIT "USE_GENFIT" ON)
     if (USE_GENFIT)
-
         FIND_PACKAGE(Eigen3 REQUIRED)
         INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
         MESSAGE("-- Eigen Dir: ${EIGEN3_INCLUDE_DIR}")
@@ -93,27 +92,13 @@ if (MEMCK OR ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
 endif ()
 
 #----------------------------------------------------------------------------
-# DEvent
-#
-add_subdirectory(Utility/Object)
-
-#---------------------------------------------------------------------------
-# GenFit2
-#
-add_subdirectory(GenFit2)
-
-#----------------------------------------------------------------------------
 # Locate sources and headers for this project
 #
-
 HEADER_DIRECTORIES(Algo_List Algo_File "Algorithms")
 HEADER_DIRECTORIES(Util_List Util_File "Utility")
 HEADER_DIRECTORIES_GENFIT2(GenFit2_List GenFit2_File "GenFit2")
 
-include_directories(DP_simu/include
-        DP_ana/include
-        DP_display/include
-        Tools/include
+include_directories(
         ./
         ${GenFit2_List}
         ${Util_List}
@@ -121,98 +106,38 @@ include_directories(DP_simu/include
         ${Geant4_INCLUDE_DIR}
         ${HEPMC_INCLUDE_DIR})
 
-file(GLOB_RECURSE Simu_sources DP_simu/src/*)
-
-file(GLOB_RECURSE Simu_headers DP_simu/include/*)
-
-file(GLOB Ana_sources DP_ana/src/*.cpp)
-file(GLOB Ana_headers DP_ana/include/*)
-
-file(GLOB_RECURSE Util_sources Utility/*/src/*.cpp)
-file(GLOB_RECURSE Util_headers Utility/*/include/*)
-
-FILE(GLOB_RECURSE Algo_sources Algorithms/*/src/*.cpp)
-FILE(GLOB_RECURSE Algo_headers Algorithms/*/include/*)
-
-file(GLOB Display_sources DP_display/src/*)
-file(GLOB Display_headers DP_display/include/*)
-
-file(GLOB Tools_sources Tools/src/*)
-file(GLOB Tools_headers Tools/include/*)
 #----------------------------------------------------------------------------
-# Generate ROOT library for DEvent
+# DEvent
 #
-# Header
+add_subdirectory(Utility/Object)
+link_libraries(DEvent)
 
-SET(AnaEvent_header_shared
-        #DP_ana/include/Event/AnaEvent.h
-        DP_ana/include/Event/EventReader.h
-        DP_ana/include/Event/EventStoreAndWriter.h
-        )
-SET(Display_header_shared
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DEventDisplay.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DEventReader_dis.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/DSMagneticField.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/include/CaloHitsDisplay.h
-        )
-
-# Source
-SET(AnaEvent_source
-        #DP_ana/src/AnaEvent.cpp
-        DP_ana/src/EventReader.cpp
-        DP_ana/src/EventStoreAndWriter.cpp
-        )
-SET(Display_source
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_Processor.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_DetInfo.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventDisplay_DrawEvent.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/DEventReader_dis.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/DP_display/src/CaloHitsDisplay.cpp
-        )
-
-# root_generate_dictionary(G__DAnaEvent ${AnaEvent_header_shared} LINKDEF Utility/UTIL/include/Utility/DAnaEventLinkDef.h)
-#add_library(DAnaEvent SHARED ${AnaEvent_header_shared} ${AnaEvent_source} G__DAnaEvent.cxx)
-
-root_generate_dictionary(G__Display ${Display_header_shared} LINKDEF Utility/UTIL/include/Utility/DisplayLinkDef.h)
-#add_library(Display SHARED ${Display_header_shared} ${Display_source} G__Display.cxx)
-#target_link_libraries(Display PUBLIC DAnaEvent)
-
-add_library(DarkShine SHARED
-        #${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx
-        ${AnaEvent_header_shared} ${AnaEvent_source} # G__DAnaEvent.cxx
-        ${Display_header_shared} ${Display_source} G__Display.cxx)
-target_link_libraries(DarkShine PUBLIC genfit2)
-target_link_libraries(DarkShine PUBLIC DEvent)
+# DSimu
+option(BUILD_DSIMU "BUILD_DSIMU" ON)
+if (BUILD_DSIMU)
+    add_subdirectory(DP_simu)
+endif ()
 
 #----------------------------------------------------------------------------
-# Add the executable, and link it to the Geant4 libraries
+# DAna
 #
-link_libraries(DarkShine)
-add_executable(DSimu DP_simu.cc ${Simu_sources} ${Simu_headers})
-# ${Util_sources} ${Util_headers})
+option(BUILD_DANA "BUILD_DANA" ON)
+option(BUILD_DDIS "BUILD_DDIS" ON)
+if (BUILD_DANA)
+    add_subdirectory(GenFit2)
+    add_subdirectory(DP_ana)
+    if (BUILD_DDIS)
+        add_subdirectory(DP_display)
+    endif ()
+endif ()
 
-target_link_libraries(DSimu
-        ${Geant4_LIBRARIES} ${HEPMC_LIBRARIES} ${HEPMC_FIO_LIBRARIES} ${PYTHIA6_LIBRARIES})
-
-add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
-        Utility/UTIL/include/Utility/Config.h
-        Utility/UTIL/src/Config.cpp
-        ${Algo_sources} ${Algo_headers})
-
-
-add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
-# ${Util_sources} ${Util_headers} {Algo_sources} ${Algo_headers} ${Ana_sources} ${Ana_headers}
-#if(DANA_TRACKING)
-#    target_link_libraries(DDis Display genfit2)
-#else()
-#    target_link_libraries(DDis Display )
-#endif()
-
-add_executable(DPlot Tools/DPlot.cpp ${Tools_sources} ${Tools_headers})
-target_link_libraries(DPlot yaml-cpp)
-
-add_executable(DDump Tools/DDump.cpp ${Tools_sources} ${Tools_headers})
+#---------------------------------------------------------------------------
+# Tools
+#
+option(BUILD_TOOLS "BUILD_TOOLS" ON)
+if (BUILD_TOOLS)
+    add_subdirectory(Tools)
+endif()
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory
@@ -231,23 +156,3 @@ foreach (_script ${RUN_SCRIPTS})
             COPYONLY
     )
 endforeach ()
-
-
-
-#----------------------------------------------------------------------------
-# Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
-#
-install(TARGETS DSimu DESTINATION bin)
-install(TARGETS DAna DESTINATION bin)
-install(TARGETS DDis DESTINATION bin)
-install(TARGETS DPlot DESTINATION bin)
-install(TARGETS DDump DESTINATION bin)
-
-#install(TARGETS DAnaEvent LIBRARY DESTINATION lib )
-#install(TARGETS Display LIBRARY DESTINATION lib )
-install(TARGETS DarkShine LIBRARY DESTINATION lib)
-
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent_rdict.pcm DESTINATION lib)
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDAnaEvent.rootmap DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDisplay_rdict.pcm DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libDisplay.rootmap DESTINATION lib)
