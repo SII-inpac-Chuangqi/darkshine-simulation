@@ -13,11 +13,9 @@ LIST( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 SET(GF_INC_DIRS
 		./core/include/
 		./fields/include/
-		#./finitePlanes/include/
 		./fitters/include/
 		./measurements/include/
 		./trackReps/include/
-		./utilities/include/
 		${GF_INC_DIRS}
 )
 #
@@ -32,11 +30,9 @@ INCLUDE_DIRECTORIES(
 # add the list of source code files -- careful, when a new file is added!
 AUX_SOURCE_DIRECTORY( ./core/src          library_sources )
 AUX_SOURCE_DIRECTORY( ./fields/src        library_sources )
-#AUX_SOURCE_DIRECTORY( ./finitePlanes/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./fitters/src       library_sources )
 AUX_SOURCE_DIRECTORY( ./measurements/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./trackReps/src     library_sources )
-AUX_SOURCE_DIRECTORY( ./utilities/src     library_sources )
 
 # Dictionary generation.  For the time being, we list classes one-by-one.
 SET(CORE_DICTIONARY_SOURCES
@@ -104,15 +100,6 @@ SET(TRACKREPS_DICTIONARY_SOURCES
 ROOT_GENERATE_DICTIONARY(trackRepsRootDict ${TRACKREPS_DICTIONARY_SOURCES} LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/trackReps/src/trackRepsLinkDef.h)
 SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/trackRepsRootDict.cxx" "${library_sources}")
 
-SET(UTILITIES_DICTIONARY_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/utilities/include/HelixTrackModel.h
-		${CMAKE_CURRENT_SOURCE_DIR}/utilities/include/MeasurementCreator.h
-		${CMAKE_CURRENT_SOURCE_DIR}/utilities/include/mySpacepointDetectorHit.h
-		${CMAKE_CURRENT_SOURCE_DIR}/utilities/include/mySpacepointMeasurement.h
-)
-ROOT_GENERATE_DICTIONARY(utilitiesRootDict ${UTILITIES_DICTIONARY_SOURCES} LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/utilities/src/utilitiesLinkDef.h)
-SET(library_sources "${CMAKE_CURRENT_BINARY_DIR}/utilitiesRootDict.cxx" "${library_sources}")
-
 # install
 ADD_LIBRARY(genfit2 SHARED ${library_sources})
 # ADD_SHARED_LIBRARY( genfit2 ${library_sources})
@@ -125,8 +112,6 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libmeasurementsRootDict_rdict.pcm DEST
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libmeasurementsRootDict.rootmap DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libtrackRepsRootDict_rdict.pcm DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libtrackRepsRootDict.rootmap DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libutilitiesRootDict_rdict.pcm DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libutilitiesRootDict.rootmap DESTINATION lib)
 
 # TARGET_LINK_LIBRARIES(genfit2 ${ROOT_LIBS})
 
