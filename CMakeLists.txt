@@ -14,6 +14,13 @@ set(OpenGL_GL_PREFERENCE GLVND)
 LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 INCLUDE(macros)
+
+OPTION(ENABLE_GCOV "Enable gcov (debug, Linux builds only)" OFF)
+IF (ENABLE_GCOV AND NOT WIN32 AND NOT APPLE)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
+ENDIF()
+
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
