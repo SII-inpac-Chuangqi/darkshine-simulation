@@ -45,31 +45,6 @@ make install
 
 Now in your install directory, everything should be there. Now it's the time to have fun with them. :relaxed:
 
-<details><summary><b>Build Options</b></summary>
-
-These options may be set by passing their name and value to the cmake command via -D flags. For example:
-
-```
-$ cmake -DCMAKE_INSTALL_PREFIX=<some-directory> -DDANA_TRACKING=ON /path/to/source
-```
-
-would configure the build of DSS for installation under <some-directory> and build Tracking Algorithms.
-
-- ```DANA_TRACKING : (DEFAULT : OFF)```  
-  
-   - If set to ON, build Tracking Algorithms.
-    
-  **Requires:**  [GeneralBrokenLines](https://github.com/GeneralBrokenLines/GeneralBrokenLines) 
-
-
-- ```USE_GENFIT : (DEFAUTL : ON)```
-
-   - Used by Tracking Algorithms only.
-    
-  **Requires:** [Developed GenFit for Dark Shine](https://gitlab.com/Biblehome/developed-genfit-for-dark-shine)
-
-</details>
-
 ## Quick guide on DSS
 
 <mark>All the example scripts can be found under the "scripts" folder in their corresponding source directories.<mark>
