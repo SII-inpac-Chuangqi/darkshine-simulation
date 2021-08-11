@@ -249,4 +249,15 @@ For detector ID, DetectorID and (DetectorID_x, DetectorID_y, DetectorID_z) are t
 DetectorID or (DetectorID_x, DetectorID_y, DetectorID_z). The later one is calculated by splitting the former one
 according to corresponding cell number along x, y and z. 
 
+# Change Log
+## Unreleased
 
+### Added:
+
+### Fixed:
+
+## 2021-8-11
+
+### Added:
+
+- Integrated GenFit2 Library.
