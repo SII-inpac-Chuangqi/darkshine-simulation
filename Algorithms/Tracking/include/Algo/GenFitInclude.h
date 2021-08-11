@@ -17,7 +17,7 @@
 #include <RKTrackRep.h>
 #include <TGeoMaterialInterface.h>
 #include "PlanarMeasurement.h"
-#include <EventDisplay.h>
+//#include <EventDisplay.h>
 
 #include <HelixTrackModel.h>
 #include <MeasurementCreator.h>

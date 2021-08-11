@@ -13,7 +13,7 @@ LIST( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 SET(GF_INC_DIRS
 		./core/include/
 		./fields/include/
-		./finitePlanes/include/
+		#./finitePlanes/include/
 		./fitters/include/
 		./measurements/include/
 		./trackReps/include/
@@ -32,7 +32,7 @@ INCLUDE_DIRECTORIES(
 # add the list of source code files -- careful, when a new file is added!
 AUX_SOURCE_DIRECTORY( ./core/src          library_sources )
 AUX_SOURCE_DIRECTORY( ./fields/src        library_sources )
-AUX_SOURCE_DIRECTORY( ./finitePlanes/src  library_sources )
+#AUX_SOURCE_DIRECTORY( ./finitePlanes/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./fitters/src       library_sources )
 AUX_SOURCE_DIRECTORY( ./measurements/src  library_sources )
 AUX_SOURCE_DIRECTORY( ./trackReps/src     library_sources )
@@ -59,7 +59,7 @@ SET(CORE_DICTIONARY_SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/core/include/TrackCand.h
 		${CMAKE_CURRENT_SOURCE_DIR}/core/include/TrackCandHit.h
 		${CMAKE_CURRENT_SOURCE_DIR}/core/include/TrackPoint.h
-		${CMAKE_CURRENT_SOURCE_DIR}/finitePlanes/include/RectangularFinitePlane.h
+		#${CMAKE_CURRENT_SOURCE_DIR}/finitePlanes/include/RectangularFinitePlane.h
 )
 
 ROOT_GENERATE_DICTIONARY(coreRootDict ${CORE_DICTIONARY_SOURCES} LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/core/src/coreLinkDef.h)
