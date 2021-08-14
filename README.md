@@ -20,7 +20,7 @@ They could be executed separately, with totally different configuration file for
 Dark SHINE Software can be easily downloaded through GitLab.
 
 ```c++
-    git clone git@gitlab.com:yulei_zhang/darkshine-simulation.git
+    git clone git@gitlab.com:dark_shine/darkshine-simulation.git
 ```
 
 Before installing, several dependencies need to be checked.
