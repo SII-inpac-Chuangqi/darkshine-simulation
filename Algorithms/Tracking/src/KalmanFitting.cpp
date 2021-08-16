@@ -45,7 +45,7 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<doub
         auto it = list.begin();
         double preR = *it; it++;
         double B = *it;
-        pp = 0.3*B*preR;
+        pp = 0.3*std::abs(B)*preR;
     }
     catch(genfit::Exception& e)
     {
@@ -55,7 +55,7 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<doub
         auto it = list.begin();
         double preR = *it; it++;
         double B = *it;
-        pp = 0.3*B*preR;
+        pp = 0.3*std::abs(B)*preR;
     }
 }
 
@@ -129,11 +129,11 @@ void KalmanFitting::Fit(const TrkHitPVec &track, std::initializer_list<double>)
 void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
 {
     fitTrack->getFittedState().getPosMomCov(pos, mom, hitCov);
-    px = mom.Px()*1000;                                     //GeV->MeV
-    py = mom.Py()*1000;                                     //
-    pz = mom.Pz()*1000;                                     //
+    px = std::abs(mom.Px())*1000;                           //GeV->MeV
+    py = std::abs(mom.Py())*1000;                           //
+    pz = std::abs(mom.Pz())*1000;                           //
     pp = sqrt(mom.Pz()*mom.Pz() + mom.Px()*mom.Px())*1000.; //
-    pl = mom.Py()*1000;                                     //
+    pl = std::abs(mom.Py())*1000;                           //
 
     double bChi2;
     double bNdf;

@@ -40,32 +40,35 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
      */
 
     // Add description for this AnaProcessor
-    Description = "Tracking by Yi-Fan Zhu (Genius in SJTU)";
+    Description = "Tracking by Yi-Fan Zhu";
 
     RegisterIntParameter("clean", "Clean mode", &clean, 1);
     RegisterIntParameter("Tag_fit_method",
-                         "Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting",
+                         "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
                          &Tag_fit_method, 0);
     RegisterIntParameter("Rec_fit_method",
-                         "Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting",
+                         "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
                          &Rec_fit_method, 0);
-    RegisterDoubleParameter("RecTrk_B", "Magnet in recoil tracker", &RecTrk_B, 1.5);
-
 }
 
 void TrackingProcessor::Begin() {
-
-    genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
-    std::vector<DMagnet *> magnets = dAnaData->getMagFieldVec();
-    if (magnets.size() == 3 && magnets.at(0) && magnets.at(1) && magnets.at(2)) {
-        genfit::FieldManager::getInstance()->init(new genfit::MapField(*(magnets.at(0)),
-                                                                       *(magnets.at(1)),
-                                                                       *(magnets.at(2)),
-                                                                       genfit::Tesla)); //T->kGs
-    } else
-        genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., RecTrk_B * 10., 0.));
-
-    // Register dp_ana.root
+//................................................................................//
+//Load magnet
+//................................................................................//
+    if(Tag_fit_method == dKalman || Rec_fit_method == dKalman)
+    {
+        genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
+        magnets = dAnaData->getMagFieldVec();
+        if (magnets.size() == 3 && magnets.at(0) && magnets.at(1) && magnets.at(2)) {
+            genfit::FieldManager::getInstance()->init(new genfit::MapField(*(magnets.at(0)),
+                                                                           *(magnets.at(1)),
+                                                                           *(magnets.at(2)),
+                                                                           genfit::Tesla)); //T->kGs
+        } else
+            genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., -1.5*10., 0.));
+    }
+//................................................................................//
+//Register dp_ana.root
 //................................................................................//
 //Truth
 //................................................................................//
@@ -93,13 +96,13 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterDoubleVariable("TagTrk2_pp", TagTrk2_pp, "TagTrk2_pp[TagTrk2_track_No]/D");
 
     if (!clean) {
-/*
+
         EvtWrt->RegisterIntVariable("TagTrk2_rechit_No", &TagTrk2_rechit_No,   "TagTrk2_rechit_No/I");
         EvtWrt->RegisterIntVariable("TagTrk2_rectrk_hit_No", TagTrk2_rectrk_hit_No, "TagTrk2_rectrk_hit_No[TagTrk2_track_No]/I");
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_x", TagTrk2_track_x,  "TagTrk2_track_x[TagTrk2_rechit_No]/D");
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_y", TagTrk2_track_y,  "TagTrk2_track_y[TagTrk2_rechit_No]/D");
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_z", TagTrk2_track_z,  "TagTrk2_track_z[TagTrk2_rechit_No]/D");
-*/
+
 
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_quality", TagTrk2_track_quality,
                                        "TagTrk2_track_quality[TagTrk2_track_No]/D");
@@ -165,7 +168,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
         if (rawTagTrkHits.size() < 20 && rawTagTrkHits.size() > 2 &&
             rawRecTrkHits.size() < 20 && rawRecTrkHits.size() > 2)
-            //if(rawRecTrkHits.size() < 25 && rawRecTrkHits.size() > 2)
         {
 
 //................................................................................//
@@ -202,7 +204,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                              findTag.GetR(i),       //used in Kalman filter
                              findTag.GetCenterX(i), //not used in Kalman filter, reserved for future
                              findTag.GetCenterY(i), //not used in Kalman filter, reserved for future
-                             1.5);                  //magnetic in the volume where track lies
+                             magnets);              //magnetic in the volume where track lies
                 track.Fit(Tag_fit_method);          //choose fitting method: Kalman filter
                 track.Evaluate();
 
@@ -227,7 +229,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                              findRec.GetR(i),       //used in Kalman filter
                              findRec.GetCenterX(i), //not used in Kalman filter, reserved for future
                              findRec.GetCenterY(i), //not used in Kalman filter, reserved for future
-                             RecTrk_B);             //magnetic in the volume where track lies
+                             magnets);              //magnetic in the volume where track lies
                 track.Fit(Rec_fit_method);          //choose fitting method: Kalman filter
                 track.Evaluate();
 
