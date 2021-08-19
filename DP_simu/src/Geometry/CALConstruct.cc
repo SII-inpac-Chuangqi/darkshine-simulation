@@ -456,7 +456,7 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
         // place absorber
         if (k % 2 == 1) {
             UnitPosX = CentrePos.x();
-            UnitPosY = CentrePos.z();
+            UnitPosY = CentrePos.y();
             UnitPosZ = -1. * TotalHalfSize.z() + ((k / 2) + 1) * (4 * UnitXHalfLength + AbsThickness)
                        - 0.5 * AbsThickness + CentrePos.z();
 
