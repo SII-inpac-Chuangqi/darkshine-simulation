@@ -40,7 +40,7 @@ memory_check: false
 # if signal production is activated, program will automatically
 # bias for DMProcessDMBrem and record all the MC particles
 # A process filter on target region will be applied
-signal_production: true
+signal_production: false
 # Dark Photon Mass
 signal_mass: [ 500, "MeV" ]
 # If to use signal LUT
