@@ -147,9 +147,13 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     const auto &simuHitCollection = evt->getSimulatedHitCollection();
 
     auto itFindStep = stepCollection.find("Initial_Particle_Step");
-    auto itFindRec1 = simuHitCollection.find("TagTrk2");
+    auto itFindTag1 = simuHitCollection.find("TagTrk1");
+    auto itFindTag2 = simuHitCollection.find("TagTrk2");
+    auto itFindRec1 = simuHitCollection.find("RecTrk1");
     auto itFindRec2 = simuHitCollection.find("RecTrk2");
     if (itFindStep != stepCollection.end() &&
+        itFindTag1 != simuHitCollection.end() &&
+        itFindTag2 != simuHitCollection.end() &&
         itFindRec1 != simuHitCollection.end() &&
         itFindRec2 != simuHitCollection.end()) {
 //................................................................................//
@@ -158,27 +162,29 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         //const auto &mc = MCCollection.at("RawMCParticle");
         const auto &stepIni = stepCollection.at("Initial_Particle_Step");
 
-        vector<TrkHit> rawTagTrkHits;
-        auto tag2Hits = simuHitCollection.at("TagTrk2");
-        for (auto hit : *tag2Hits) rawTagTrkHits.emplace_back(*hit);
+        vector<TrkHit> rawTagTrk1Hits;
+        vector<TrkHit> rawTagTrk2Hits;
+        for (auto hit : *simuHitCollection.at("TagTrk1")) rawTagTrk1Hits.emplace_back(*hit);
+        for (auto hit : *simuHitCollection.at("TagTrk2")) rawTagTrk2Hits.emplace_back(*hit);
 
-        vector<TrkHit> rawRecTrkHits;
-        auto rec2Hits = simuHitCollection.at("RecTrk2");
-        for (auto hit : *rec2Hits) rawRecTrkHits.emplace_back(*hit);
+        vector<TrkHit> rawRecTrk1Hits;
+        vector<TrkHit> rawRecTrk2Hits;
+        for (auto hit : *simuHitCollection.at("RecTrk1")) rawRecTrk1Hits.emplace_back(*hit);
+        for (auto hit : *simuHitCollection.at("RecTrk2")) rawRecTrk2Hits.emplace_back(*hit);
 
-        if (rawTagTrkHits.size() < 20 && rawTagTrkHits.size() > 2 &&
-            rawRecTrkHits.size() < 20 && rawRecTrkHits.size() > 2)
+        if (rawTagTrk2Hits.size() < 20 && rawTagTrk2Hits.size() > 2 &&
+            rawRecTrk2Hits.size() < 20 && rawRecTrk2Hits.size() > 2)
         {
 
 //................................................................................//
 //Digitization, depends on further hardware setting
-            Digitization(rawTagTrkHits);
-            Digitization(rawRecTrkHits);
+            Digitization(rawTagTrk2Hits);
+            Digitization(rawRecTrk2Hits);
 
             TrkHitPVecMap clusTagTrkHitMap;
-            Cluster(rawTagTrkHits, clusTagTrkHitMap);
+            Cluster(rawTagTrk2Hits, clusTagTrkHitMap);
             TrkHitPVecMap clusRecTrkHitMap;
-            Cluster(rawRecTrkHits, clusRecTrkHitMap);
+            Cluster(rawRecTrk2Hits, clusRecTrkHitMap);
 
 //................................................................................//
 //Finding, by pre-fitting
@@ -260,7 +266,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             RecTrk2_rechit_No = 0;
         }
 
-        TagTrk2_No = rawTagTrkHits.size();
+        TagTrk2_No = rawTagTrk2Hits.size();
 
         bool trackerFlag = false;
         for (auto step : *stepIni) {
@@ -276,13 +282,13 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         }
 
         for (int i = 0; i < TagTrk2_No; ++i) {
-            TagTrk2_x[i] = rawTagTrkHits.at(i).GetX();
-            TagTrk2_y[i] = rawTagTrkHits.at(i).GetY();
-            TagTrk2_z[i] = rawTagTrkHits.at(i).GetZ();
-            TagTrk2_e[i] = rawTagTrkHits.at(i).GetE();
+            TagTrk2_x[i] = rawTagTrk2Hits.at(i).GetX();
+            TagTrk2_y[i] = rawTagTrk2Hits.at(i).GetY();
+            TagTrk2_z[i] = rawTagTrk2Hits.at(i).GetZ();
+            TagTrk2_e[i] = rawTagTrk2Hits.at(i).GetE();
         }
 
-        RecTrk2_No = rawRecTrkHits.size();
+        RecTrk2_No = rawRecTrk2Hits.size();
 
         trackerFlag = false;
         for (auto step : *stepIni) {
@@ -298,10 +304,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         }
 
         for (int i = 0; i < RecTrk2_No; ++i) {
-            RecTrk2_x[i] = rawRecTrkHits.at(i).GetX();
-            RecTrk2_y[i] = rawRecTrkHits.at(i).GetY();
-            RecTrk2_z[i] = rawRecTrkHits.at(i).GetZ();
-            RecTrk2_e[i] = rawRecTrkHits.at(i).GetE();
+            RecTrk2_x[i] = rawRecTrk2Hits.at(i).GetX();
+            RecTrk2_y[i] = rawRecTrk2Hits.at(i).GetY();
+            RecTrk2_z[i] = rawRecTrk2Hits.at(i).GetZ();
+            RecTrk2_e[i] = rawRecTrk2Hits.at(i).GetE();
         }
 //................................................................................//
 //Memory management
