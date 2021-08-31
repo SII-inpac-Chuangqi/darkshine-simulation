@@ -158,7 +158,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         itFindRec2 != simuHitCollection.end()) {
 //................................................................................//
 //Read
-
         //const auto &mc = MCCollection.at("RawMCParticle");
         const auto &stepIni = stepCollection.at("Initial_Particle_Step");
 
@@ -178,13 +177,22 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Digitization, depends on further hardware setting
-            Digitization(rawTagTrk2Hits);
-            Digitization(rawRecTrk2Hits);
-
             TrkHitPVecMap clusTagTrkHitMap;
-            Cluster(rawTagTrk2Hits, clusTagTrkHitMap);
+            Digitization(rawTagTrk1Hits, rawTagTrk2Hits, clusTagTrkHitMap);
             TrkHitPVecMap clusRecTrkHitMap;
-            Cluster(rawRecTrk2Hits, clusRecTrkHitMap);
+            Digitization(rawRecTrk1Hits, rawRecTrk2Hits, clusRecTrkHitMap);
+
+            for(auto layer : clusTagTrkHitMap)
+            {
+                for(auto hit : layer.second)
+                {
+                    std::cout << hit->GetX() << "	"
+                              << hit->GetY() << "	"
+                              << hit->GetZ() << "	"
+                              << hit->GetU() << "	"
+                              << hit->GetV() << std::endl;
+                }
+            }
 
 //................................................................................//
 //Finding, by pre-fitting

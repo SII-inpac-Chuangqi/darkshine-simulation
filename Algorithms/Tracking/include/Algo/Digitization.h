@@ -23,9 +23,7 @@
 //Realization
 //................................................................................//
 //Separate tracker hits into vectors by layers
-void Cluster(const std::vector<TrkHit> &trkHits, TrkHitPVecMap &clusTrkHitMap);
-
-void Digitization(std::vector<TrkHit> &rawHits);
+void Digitization(const std::vector<TrkHit> &trk1Hits, const std::vector<TrkHit> &trk2Hits, TrkHitPVecMap &clusTrkHitMap);
 
 #endif
 #endif
