@@ -28,7 +28,7 @@ public:
     ~Digitization() = default;
 
 //Get world node from TGeoManager
-    void GetWorldNode(std::shared_ptr<TGeoNode> world_node);
+    void GetWorldNode(TGeoNode* worldNode);
 //Separate tracker hits into vectors by layers
     void Layering(const std::vector<TrkHit> &trk1Hits, const std::vector<TrkHit> &trk2Hits, TrkHitPVecMap &clusTrkHitMap);
 

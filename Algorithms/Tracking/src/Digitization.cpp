@@ -19,9 +19,9 @@
 #include "Algo/Digitization.h"
 
 //Get world node from TGeoManager
-void Digitization::GetWorldNode(std::shared_ptr<TGeoNode> world_node)
+void Digitization::GetWorldNode(TGeoNode* worldNode)
 {
-    std::cout << world_node << std::endl;
+    std::cout << "world node: " << worldNode << std::endl;
 }
 
 //Separate tracker hits into vectors by layers

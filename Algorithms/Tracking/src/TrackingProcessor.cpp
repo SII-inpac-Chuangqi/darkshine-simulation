@@ -54,7 +54,7 @@ void TrackingProcessor::Begin() {
 //................................................................................//
 //Load Geometry
 //................................................................................//
-    digitizer.GetWorldNode(std::shared_ptr<TGeoNode>(dynamic_cast<TGeoNode *>(gGeoManager->GetListOfNodes()->At(0))));
+    digitizer.GetWorldNode(dynamic_cast<TGeoNode*>(gGeoManager->GetListOfNodes()->At(0)));
 
 //................................................................................//
 //Load magnet
