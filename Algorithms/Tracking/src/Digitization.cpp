@@ -2,6 +2,7 @@
 //................................................................................//
 //CPP STL
 #include <iostream>
+#include <iomanip>
 #include <map>
 #include <vector>
 #include <cmath>
@@ -9,6 +10,7 @@
 //................................................................................//
 //ROOT
 #include "TMath.h"
+#include "TGeoBBox.h"
 
 //................................................................................//
 //Framework
@@ -21,7 +23,22 @@
 //Get world node from TGeoManager
 void Digitization::GetWorldNode(TGeoNode* worldNode)
 {
-    std::cout << "world node: " << worldNode << std::endl;
+    world = worldNode;
+}
+
+void Digitization::GetTrackerInfo()
+{
+    for(int i = 0; i < world->GetNdaughters(); i++)
+    {
+        auto *detector = dynamic_cast<TGeoNode*>(world->GetDaughter(i));
+        auto detectorName = TString(detector->GetVolume()->GetName());
+        if(detectorName.Contains("Trk"))
+        {
+            for(int i = 0; i < current_node->GetNdaughters(); i++)
+            {
+            }
+        }
+    }
 }
 
 //Separate tracker hits into vectors by layers
