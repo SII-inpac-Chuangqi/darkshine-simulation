@@ -9,6 +9,8 @@
 
 //................................................................................//
 //ROOT
+#include "TGeoManager.h"
+#include "TGeoNode.h"
 
 //................................................................................//
 //Framework
@@ -19,11 +21,20 @@
 #include "Algo/TypeDef.h"
 #include "Algo/TrkHit.h"
 
-//................................................................................//
-//Realization
-//................................................................................//
+class Digitization
+{
+public:
+    Digitization() = default;
+    ~Digitization() = default;
+
+//Get world node from TGeoManager
+    void GetWorldNode(std::shared_ptr<TGeoNode> world_node);
 //Separate tracker hits into vectors by layers
-void Digitization(const std::vector<TrkHit> &trk1Hits, const std::vector<TrkHit> &trk2Hits, TrkHitPVecMap &clusTrkHitMap);
+    void Layering(const std::vector<TrkHit> &trk1Hits, const std::vector<TrkHit> &trk2Hits, TrkHitPVecMap &clusTrkHitMap);
+
+private:
+};
+
 
 #endif
 #endif

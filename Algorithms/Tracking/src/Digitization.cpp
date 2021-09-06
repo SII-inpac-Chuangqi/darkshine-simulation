@@ -18,15 +18,14 @@
 #include "Algo/TrkHit.h"
 #include "Algo/Digitization.h"
 
-//................................................................................//
-//Control
-//................................................................................//
+//Get world node from TGeoManager
+void Digitization::GetWorldNode(std::shared_ptr<TGeoNode> world_node)
+{
+    std::cout << world_node << std::endl;
+}
 
-//................................................................................//
-//Realization
-//................................................................................//
-//Separate trk1Hits into vectors by layers
-void Digitization(const std::vector<TrkHit> &trk1Hits, const std::vector<TrkHit> &trk2Hits, TrkHitPVecMap &clusTrkHitMap)
+//Separate tracker hits into vectors by layers
+void Digitization::Layering(const std::vector<TrkHit> &trk1Hits, const std::vector<TrkHit> &trk2Hits, TrkHitPVecMap &clusTrkHitMap)
 {
 //No clustering
     for(auto itTrkHit : trk2Hits)

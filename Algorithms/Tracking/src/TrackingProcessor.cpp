@@ -25,7 +25,6 @@
 #include "Algo/TypeDef.h"
 #include "Algo/Util.h"
 #include "Algo/TrkHit.h"
-#include "Algo/Digitization.h"
 #include "Algo/GreedyFinding.h"
 #include "Algo/DTrack.h"
 
@@ -52,6 +51,11 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
 }
 
 void TrackingProcessor::Begin() {
+//................................................................................//
+//Load Geometry
+//................................................................................//
+    digitizer.GetWorldNode(std::shared_ptr<TGeoNode>(dynamic_cast<TGeoNode *>(gGeoManager->GetListOfNodes()->At(0))));
+
 //................................................................................//
 //Load magnet
 //................................................................................//
@@ -96,13 +100,13 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterDoubleVariable("TagTrk2_pp", TagTrk2_pp, "TagTrk2_pp[TagTrk2_track_No]/D");
 
     if (!clean) {
-
+/*
         EvtWrt->RegisterIntVariable("TagTrk2_rechit_No", &TagTrk2_rechit_No,   "TagTrk2_rechit_No/I");
         EvtWrt->RegisterIntVariable("TagTrk2_rectrk_hit_No", TagTrk2_rectrk_hit_No, "TagTrk2_rectrk_hit_No[TagTrk2_track_No]/I");
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_x", TagTrk2_track_x,  "TagTrk2_track_x[TagTrk2_rechit_No]/D");
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_y", TagTrk2_track_y,  "TagTrk2_track_y[TagTrk2_rechit_No]/D");
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_z", TagTrk2_track_z,  "TagTrk2_track_z[TagTrk2_rechit_No]/D");
-
+*/
 
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_quality", TagTrk2_track_quality,
                                        "TagTrk2_track_quality[TagTrk2_track_No]/D");
@@ -178,9 +182,9 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Digitization, depends on further hardware setting
             TrkHitPVecMap clusTagTrkHitMap;
-            Digitization(rawTagTrk1Hits, rawTagTrk2Hits, clusTagTrkHitMap);
+            digitizer.Layering(rawTagTrk1Hits, rawTagTrk2Hits, clusTagTrkHitMap);
             TrkHitPVecMap clusRecTrkHitMap;
-            Digitization(rawRecTrk1Hits, rawRecTrk2Hits, clusRecTrkHitMap);
+            digitizer.Layering(rawRecTrk1Hits, rawRecTrk2Hits, clusRecTrkHitMap);
 
             for(auto layer : clusTagTrkHitMap)
             {
