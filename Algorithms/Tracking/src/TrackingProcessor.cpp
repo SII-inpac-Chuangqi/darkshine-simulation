@@ -187,18 +187,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             TrkHitPVecMap clusRecTrkHitMap;
             digitizer.Layering(rawRecTrk1Hits, rawRecTrk2Hits, clusRecTrkHitMap);
 
-            for(auto layer : clusTagTrkHitMap)
-            {
-                for(auto hit : layer.second)
-                {
-                    std::cout << hit->GetX() << "	"
-                              << hit->GetY() << "	"
-                              << hit->GetZ() << "	"
-                              << hit->GetU() << "	"
-                              << hit->GetV() << std::endl;
-                }
-            }
-
 //................................................................................//
 //Finding, by pre-fitting
             vector<TrkHitPVec> VecTagTrack;

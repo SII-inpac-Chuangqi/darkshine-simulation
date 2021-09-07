@@ -30,6 +30,7 @@
 class Digitization
 {
 public:
+
     Digitization() = default;
     ~Digitization() = default;
 
@@ -42,7 +43,12 @@ public:
 
 private:
 
-    TGeoNode* world;
+    TGeoNode* world_;
+
+    double layerWidth_ = 100.;
+    double layerLength_ = 200.;
+    int stripNo_ = 100;
+    std::vector<double> angle_ = {.05, -.05, .05, -.05, .05, -.05, .05};
 };
 
 
