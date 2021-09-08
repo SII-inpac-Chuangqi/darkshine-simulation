@@ -85,6 +85,8 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
             auto temp_v = vector<double>();
             int j = 0;
             for (auto i : {5, 10, 20, 50, 100, 125, 150, 200}) {
+                if(HitCollectionName == "ECAL_FS3" && j == 7)
+                    double a = 0;
                 temp_v.push_back(cluster_ana->FindEFraction(i));
                 j++;
             }

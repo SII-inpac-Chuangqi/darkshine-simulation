@@ -70,8 +70,6 @@ public:
 private:
     G4ParticleGun *fParticleGun;
     G4VPrimaryGenerator *fGPS;
-    G4VPrimaryGenerator *fHepmcAscii;
-    G4VPrimaryGenerator *fPythiaGen;
 
     G4VPrimaryGenerator *fCurrentGenerator;
     G4String fCurrentGeneratorName;

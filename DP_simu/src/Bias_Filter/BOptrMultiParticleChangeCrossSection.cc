@@ -38,88 +38,86 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 BOptrMultiParticleChangeCrossSection::BOptrMultiParticleChangeCrossSection(G4String BP)
-  : G4VBiasingOperator(BP)
-{}
+        : G4VBiasingOperator(BP) {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void BOptrMultiParticleChangeCrossSection::AddParticle(G4String particleName, G4double BF, G4double Em, G4String BP)
-{
-  const G4ParticleDefinition* particle =
-    G4ParticleTable::GetParticleTable()->FindParticle( particleName );
-  
-  if ( particle == 0 )
-    {
-      G4ExceptionDescription ed;
-      ed << "Particle `" << particleName << "' not found !" << G4endl;
-      G4Exception("BOptrMultiParticleChangeCrossSection::AddParticle(...)",
-                  "ex.02",
-                  JustWarning,
-                  ed);
-      return;
+void BOptrMultiParticleChangeCrossSection::AddParticle(G4String particleName, G4double BF, G4double Em, G4String BP) {
+    const G4ParticleDefinition *particle =
+            G4ParticleTable::GetParticleTable()->FindParticle(particleName);
+
+    if (particle == 0) {
+        G4ExceptionDescription ed;
+        ed << "Particle `" << particleName << "' not found !" << G4endl;
+        G4Exception("BOptrMultiParticleChangeCrossSection::AddParticle(...)",
+                    "ex.02",
+                    JustWarning,
+                    ed);
+        return;
     }
-  
-  BOptrChangeCrossSection* optr = new BOptrChangeCrossSection(particleName,BF,Em,BP);
-  fParticlesToBias.push_back( particle );
-  fBOptrForParticle[ particle ] = optr;
+
+    BOptrChangeCrossSection *optr = new BOptrChangeCrossSection(particleName, BF, Em, BP);
+    fParticlesToBias.push_back(particle);
+    fBOptrForParticle[particle] = optr;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4VBiasingOperation*
+G4VBiasingOperation *
 BOptrMultiParticleChangeCrossSection::
-ProposeOccurenceBiasingOperation(const G4Track* track,
-                                 const G4BiasingProcessInterface* callingProcess)
-{
-  // -- examples of limitations imposed to apply the biasing:
-  // -- limit application of biasing to primary particles only:
-  //if ( track->GetParentID() != 0 ) return 0;
-  // -- limit to at most 5 biased interactions:
-  if ( fnInteractions > 4 )        return 0;
-  // -- and limit to a weight of at least 0.05:
-  if ( track->GetWeight() < 0.05 ) return 0;
-  
-  if ( fCurrentOperator ) return fCurrentOperator->
-                            GetProposedOccurenceBiasingOperation(track, callingProcess);
-  else                    return 0;
+ProposeOccurenceBiasingOperation(const G4Track *track,
+                                 const G4BiasingProcessInterface *callingProcess) {
+    // -- examples of limitations imposed to apply the biasing:
+    // -- limit application of biasing to primary particles only:
+    //if ( track->GetParentID() != 0 ) return 0;
+    // -- limit to at most 5 biased interactions:
+    if (fnInteractions > 4) return 0;
+    // -- and limit to a weight of at least 0.05:
+    if (track->GetWeight() < 0.05) return 0;
+
+    if (fCurrentOperator)
+        return fCurrentOperator->
+                GetProposedOccurenceBiasingOperation(track, callingProcess);
+    else return 0;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void BOptrMultiParticleChangeCrossSection::StartTracking( const G4Track* track )
-{
-  // -- fetch the underneath biasing operator, if any, for the current particle type:
-  const G4ParticleDefinition* definition = track->GetParticleDefinition();
-  std::map < const G4ParticleDefinition*, BOptrChangeCrossSection* > :: iterator
-    it = fBOptrForParticle.find( definition );
-  fCurrentOperator = 0;
-  if ( it != fBOptrForParticle.end() ) fCurrentOperator = (*it).second;
+void BOptrMultiParticleChangeCrossSection::StartTracking(const G4Track *track) {
+    // -- fetch the underneath biasing operator, if any, for the current particle type:
+    const G4ParticleDefinition *definition = track->GetParticleDefinition();
+    auto it = fBOptrForParticle.find(definition);
+    fCurrentOperator = 0;
+    if (it != fBOptrForParticle.end()) fCurrentOperator = (*it).second;
 
-  // -- reset count for number of biased interactions:
-  fnInteractions = 0;
+    // -- reset count for number of biased interactions:
+    fnInteractions = 0;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void 
+void
 BOptrMultiParticleChangeCrossSection::
-OperationApplied( const G4BiasingProcessInterface*               callingProcess, 
-                  G4BiasingAppliedCase                              biasingCase,
-                  G4VBiasingOperation*                occurenceOperationApplied, 
-                  G4double                        weightForOccurenceInteraction,
-                  G4VBiasingOperation*               finalStateOperationApplied, 
-                  const G4VParticleChange*               particleChangeProduced )
-{
-  // -- count number of biased interactions:
-  fnInteractions++;
+OperationApplied(const G4BiasingProcessInterface *callingProcess,
+                 G4BiasingAppliedCase biasingCase,
+                 G4VBiasingOperation *occurenceOperationApplied,
+                 G4double weightForOccurenceInteraction,
+                 G4VBiasingOperation *finalStateOperationApplied,
+                 const G4VParticleChange *particleChangeProduced) {
+    // -- count number of biased interactions:
+    fnInteractions++;
 
-  // -- inform the underneath biasing operator that a biased interaction occured:
-  if ( fCurrentOperator ) fCurrentOperator->ReportOperationApplied( callingProcess,
-                                                                    biasingCase,
-                                                                    occurenceOperationApplied,
-                                                                    weightForOccurenceInteraction,
-                                                                    finalStateOperationApplied,
-                                                                    particleChangeProduced );
+    // -- inform the underneath biasing operator that a biased interaction occured:
+    if (fCurrentOperator) {
+        fCurrentOperator->ReportOperationApplied(callingProcess,
+                                                 biasingCase,
+                                                 occurenceOperationApplied,
+                                                 weightForOccurenceInteraction,
+                                                 finalStateOperationApplied,
+                                                 particleChangeProduced);
+
+
+    }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
