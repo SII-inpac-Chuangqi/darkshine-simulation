@@ -27,6 +27,8 @@
 #include "Algo/TypeDef.h"
 #include "Algo/TrkHit.h"
 
+enum {tag = 1, rec = 2};
+
 class Digitization
 {
 public:
@@ -39,16 +41,23 @@ public:
 //Get tracker information
     void GetTrackerInfo();
 //Separate tracker hits into vectors by layers
-    void Layering(const std::vector<TrkHit> &trk1Hits, const std::vector<TrkHit> &trk2Hits, TrkHitPVecMap &clusTrkHitMap);
+    void Layering(const std::vector<TrkHit> &trk1Hits, const std::vector<TrkHit> &trk2Hits, TrkHitPVecMap &clusTrkHitMap,
+                  int detector);
 
 private:
 
     TGeoNode* world_;
 
-    double layerWidth_ = 100.;
-    double layerLength_ = 200.;
-    int stripNo_ = 100;
-    std::vector<double> angle_ = {.05, -.05, .05, -.05, .05, -.05, .05};
+    double layerWidthTag_ = 50.;
+    double layerLengthTag_ = 100.;
+    int stripNoTag_ = 500;
+    std::vector<double> anglesTag_ = {.05, -.05, .05, -.05, .05, -.05, .05};
+
+
+    double layerWidthRec_ = 100.;
+    double layerLengthRec_ = 200.;
+    int stripNoRec_ = 1000;
+    std::vector<double> anglesRec_ = {-.05, .05, -.05, .05, -.05, .05};
 };
 
 

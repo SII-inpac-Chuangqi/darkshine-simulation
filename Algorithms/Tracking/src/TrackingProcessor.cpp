@@ -183,9 +183,9 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Digitization, depends on further hardware setting
             TrkHitPVecMap clusTagTrkHitMap;
-            digitizer.Layering(rawTagTrk1Hits, rawTagTrk2Hits, clusTagTrkHitMap);
+            digitizer.Layering(rawTagTrk1Hits, rawTagTrk2Hits, clusTagTrkHitMap, tag);
             TrkHitPVecMap clusRecTrkHitMap;
-            digitizer.Layering(rawRecTrk1Hits, rawRecTrk2Hits, clusRecTrkHitMap);
+            digitizer.Layering(rawRecTrk1Hits, rawRecTrk2Hits, clusRecTrkHitMap, rec);
 
 //................................................................................//
 //Finding, by pre-fitting

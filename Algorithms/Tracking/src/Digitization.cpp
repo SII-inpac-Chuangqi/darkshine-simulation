@@ -1,4 +1,9 @@
 #ifndef _OFF_TRACKING
+
+#ifndef RETURN
+#define RETURN -INFINITY
+#endif
+
 //................................................................................//
 //CPP STL
 #include <iostream>
@@ -38,14 +43,14 @@ void Digitization::GetTrackerInfo()
             {
                 auto *layer = dynamic_cast<TGeoNode*>(detector->GetDaughter(i));
                 auto rotation = layer->GetMatrix()->GetRotationMatrix();
-                std::cout << layer->GetVolume()->GetName() << ": " << TMath::ATan2(rotation[1], rotation[0]) << std::endl;
             }
         }
     }
 }
 
 //Separate tracker hits into vectors by layers
-void Digitization::Layering(const std::vector<TrkHit> &trk1Hits, const std::vector<TrkHit> &trk2Hits, TrkHitPVecMap &clusTrkHitMap)
+void Digitization::Layering(const std::vector<TrkHit> &trk1Hits, const std::vector<TrkHit> &trk2Hits, TrkHitPVecMap &clusTrkHitMap,
+                            int detector)
 {
     TrkHitPVecMap map1;
     TrkHitPVecMap map2;
@@ -84,30 +89,47 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1Hits, const std::vect
         }
     }
 
+    double layerWidth = RETURN;
+    double layerLength = RETURN;
+    int stripNo = -1;
+    std::vector<double> *angles = nullptr;
+    if(detector == tag)
+    {
+        layerWidth = layerWidthTag_;
+        layerLength = layerLengthTag_;
+        stripNo = stripNoTag_;
+        angles = &anglesTag_;
+    }
+    else if(detector == rec)
+    {
+        layerWidth = layerWidthRec_;
+        layerLength = layerLengthRec_;
+        stripNo = stripNoRec_;
+        angles = &anglesRec_;
+    }
+
     for(auto layer1 : map1)
     {
         auto itFindLayer2 = map2.find(layer1.first);
         if(itFindLayer2 != map2.end())
         {
-            int range = std::abs(angle_.at(layer1.first - 1))*layerLength_/(layerWidth_/stripNo_);
-            std::cout << layer1.first << "	" << range << std::endl;
+            double angle = angles->at(layer1.first - 1);
+            //std::cout << layer1.first << "	" << range << std::endl;
 
             auto layer2 = map2.at(layer1.first);
             for(auto hit1 : layer1.second)
             {
                 for(auto hit2 : layer2)
                 {
-                    if(abs(hit2->GetCellIdX() - hit1->GetCellIdX()) < range)
+                    double x1 = hit1->GetX();
+                    double y1 = -x1/tan(angle) + (hit2->GetCellIdX() - (stripNo + 1)/2)/sin(angle)*layerWidth/stripNo;
+
+                    if(abs(y1) < 0.5*layerLength)
                     {
                         TrkHit constructedHit;
                         constructedHit.SetU(hit1->GetX());
                         constructedHit.SetZ(hit1->GetZ());
-
-                        double angle = angle_.at(layer1.first - 1);
-                        double x1 = hit1->GetX();
-                        double x2 = (hit2->GetCellIdX() - 0.5)*layerWidth_/stripNo_;
-                        constructedHit.SetV(-x1/tan(angle) + x2/sin(angle));
-                        constructedHit.SetV(0.);
+                        constructedHit.SetV(y1);
 
                         auto itSearchMap = clusTrkHitMap.find(hit1->GetCellIdZ());
                         if(itSearchMap != clusTrkHitMap.end())
@@ -121,18 +143,6 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1Hits, const std::vect
                     }
                 }
             }
-        }
-    }
-
-    for(auto layer : clusTrkHitMap)
-    {
-        for(auto hit : layer.second)
-        {
-            std::cout << hit->GetX() << "       "
-                      << hit->GetY() << "       "
-                      << hit->GetZ() << "       "
-                      << hit->GetU() << "       "
-                      << hit->GetV() << std::endl;
         }
     }
 
