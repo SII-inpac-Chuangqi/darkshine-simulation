@@ -67,7 +67,7 @@ void EventDump::Dump(long long skip_number, long long event_number) {
             end = skip_number + event_number;
     }
     if (end > tree_->GetEntries()) {
-        std::cout << "Warning Request more than exceeds the total number of entries" << std::endl;
+        std::cout << "Warning Request events exceed the total number of entries" << std::endl;
         end = tree_->GetEntries();
     }
 

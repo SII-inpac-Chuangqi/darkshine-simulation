@@ -103,7 +103,7 @@ void DEvent::PrintDetails()
                   << "* MC Particle Collection: " << particles.first << std::endl
                   << "****************************************************************************************************************************************************************************"
                   << std::endl
-                  << "| ID    | PDG   |  Px[MeV]   Py[MeV]   Pz[MeV] |   E[MeV]  Mass[MeV]  ER[MeV] |Vertex x[mm]     y[mm]     z[mm] |End x[mm]     y[mm]     z[mm] | Process          Parent   |"
+                  << "| ID    | PDG    |  Px[MeV]   Py[MeV]   Pz[MeV] |   E[MeV]  Mass[MeV]  ER[MeV] |Vertex x[mm]     y[mm]     z[mm] |End x[mm]     y[mm]     z[mm] | Process          Parent   |"
                   << std::endl
                   << "****************************************************************************************************************************************************************************"
                   << std::endl;

@@ -105,6 +105,7 @@ void FastSmear::Process(AnaEvent *evt, const string &det_name, const string &cal
                 double oE = hit->getE();
 
                 double new_E = rnd.Gaus(oE, CalculateSigma(oE, cal_info.at(cal_name).at(i)));
+                new_E=std::max(0.,new_E);
 
                 new_hit->setE(new_E);
                 new_hit->setId(hit->getId());
