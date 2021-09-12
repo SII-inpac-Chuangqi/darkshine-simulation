@@ -127,14 +127,14 @@ BOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track *track,
         G4cout<<"--"<<G4endl;
     };
 
-    if(track->GetParticleDefinition()->GetPDGEncoding() == 22) {
-        G4cout << "ID: " << track->GetTrackID() << ", GlobalTime: " << track->GetGlobalTime() << ", E: "
-               << track->GetTotalEnergy() << ", ";
-        G4cout << "Biasing Process: " << callingProcess->GetWrappedProcess()->GetProcessName() << ", Emin: " << Emin
-               << G4endl;
-
-//        print_process();
-    }
+//    if(track->GetParticleDefinition()->GetPDGEncoding() == 22) {
+//        G4cout << "ID: " << track->GetTrackID() << ", GlobalTime: " << track->GetGlobalTime() << ", E: "
+//               << track->GetTotalEnergy() << ", ";
+//        G4cout << "Biasing Process: " << callingProcess->GetWrappedProcess()->GetProcessName() << ", Emin: " << Emin
+//               << G4endl;
+//
+////        print_process();
+//    }
     // -----------------------------------------------------
     // -- Check if current particle type is the one to bias:
     // -----------------------------------------------------
