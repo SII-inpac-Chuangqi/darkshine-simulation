@@ -39,10 +39,14 @@ void Digitization::GetTrackerInfo()
         auto detectorName = TString(detector->GetVolume()->GetName());
         if(detectorName.Contains("Trk"))
         {
+            std::cout << detectorName << std::endl;
+
             for(int j = 0; j < detector->GetNdaughters(); j++)
             {
-                auto *layer = dynamic_cast<TGeoNode*>(detector->GetDaughter(i));
-                auto rotation = layer->GetMatrix()->GetRotationMatrix();
+                auto *layer = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
+                std::cout << layer->GetVolume()->GetName() << std::endl;
+                //auto rotation = layer->GetMatrix()->GetRotationMatrix();
+                layer->GetMatrix()->Print();
             }
         }
     }
