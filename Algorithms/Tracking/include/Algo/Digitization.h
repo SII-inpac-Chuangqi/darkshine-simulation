@@ -51,13 +51,13 @@ private:
     double layerWidthTag_ = 50.;
     double layerLengthTag_ = 100.;
     int stripNoTag_ = 500;
-    std::vector<double> anglesTag_ = {.05, -.05, .05, -.05, .05, -.05, .05};
+    std::vector<double> anglesTag_ = {};
 
 
     double layerWidthRec_ = 100.;
     double layerLengthRec_ = 200.;
     int stripNoRec_ = 1000;
-    std::vector<double> anglesRec_ = {-.05, .05, -.05, .05, -.05, .05};
+    std::vector<double> anglesRec_ = {};
 };
 
 
