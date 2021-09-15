@@ -91,6 +91,7 @@ void TrackingProcessor::Begin() {
 //................................................................................//
     EvtWrt->RegisterIntVariable("TagTrk2_track_No", &TagTrk2_track_No, "TagTrk2_track_No/I");
     EvtWrt->RegisterDoubleVariable("TagTrk2_pp", TagTrk2_pp, "TagTrk2_pp[TagTrk2_track_No]/D");
+    EvtWrt->RegisterDoubleVariable("TagTrk2_track_chi2", TagTrk2_track_chi2, "TagTrk2_track_chi2[TagTrk2_track_No]/D");
 
     if (!clean) {
 /*
@@ -103,8 +104,6 @@ void TrackingProcessor::Begin() {
 
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_quality", TagTrk2_track_quality,
                                        "TagTrk2_track_quality[TagTrk2_track_No]/D");
-        EvtWrt->RegisterDoubleVariable("TagTrk2_track_chi2", TagTrk2_track_chi2,
-                                       "TagTrk2_track_chi2[TagTrk2_track_No]/D");
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_x_sigma", TagTrk2_track_x_sigma,
                                        "TagTrk2_track_x_sigma[TagTrk2_track_No]/D");
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_y_sigma", TagTrk2_track_y_sigma,
@@ -114,6 +113,7 @@ void TrackingProcessor::Begin() {
 //................................................................................//
     EvtWrt->RegisterIntVariable("RecTrk2_track_No", &RecTrk2_track_No, "RecTrk2_track_No/I");
     EvtWrt->RegisterDoubleVariable("RecTrk2_pp", RecTrk2_pp, "RecTrk2_pp[RecTrk2_track_No]/D");
+    EvtWrt->RegisterDoubleVariable("RecTrk2_track_chi2", RecTrk2_track_chi2, "RecTrk2_track_chi2[RecTrk2_track_No]/D");
 
     if (!clean) {
 /*
@@ -126,8 +126,6 @@ void TrackingProcessor::Begin() {
 
         EvtWrt->RegisterDoubleVariable("RecTrk2_track_quality", RecTrk2_track_quality,
                                        "RecTrk2_track_quality[RecTrk2_track_No]/D");
-        EvtWrt->RegisterDoubleVariable("RecTrk2_track_chi2", RecTrk2_track_chi2,
-                                       "RecTrk2_track_chi2[RecTrk2_track_No]/D");
         EvtWrt->RegisterDoubleVariable("RecTrk2_track_x_sigma", RecTrk2_track_x_sigma,
                                        "RecTrk2_track_x_sigma[RecTrk2_track_No]/D");
         EvtWrt->RegisterDoubleVariable("RecTrk2_track_y_sigma", RecTrk2_track_y_sigma,
