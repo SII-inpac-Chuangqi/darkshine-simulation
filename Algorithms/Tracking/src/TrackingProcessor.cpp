@@ -54,7 +54,6 @@ void TrackingProcessor::Begin() {
 //................................................................................//
 //Load Geometry
 //................................................................................//
-    digitizer.GetWorldNode(dynamic_cast<TGeoNode*>(gGeoManager->GetListOfNodes()->At(0)));
     digitizer.GetTrackerInfo();
 
 //................................................................................//

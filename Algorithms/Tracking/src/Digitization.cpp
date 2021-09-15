@@ -23,13 +23,10 @@
 #include "Algo/Digitization.h"
 
 //Get world node from TGeoManager
-void Digitization::GetWorldNode(TGeoNode* worldNode)
-{
-    world_ = worldNode;
-}
-
 void Digitization::GetTrackerInfo()
 {
+    world_ = dynamic_cast<TGeoNode*>(gGeoManager->GetListOfNodes()->At(0));
+
     anglesTag_.clear();
     anglesRec_.clear();
 
