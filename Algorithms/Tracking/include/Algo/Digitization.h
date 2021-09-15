@@ -3,9 +3,13 @@
 #define DIGITIZATION_H
 
 #ifdef RM_UNIT
-    #define CUNIT 1
+#define CUNIT 1
 #else
-    #define CUNIT 10
+#define CUNIT 10
+#endif
+
+#ifndef RETURN
+#define RETURN -INFINITY
 #endif
 
 //................................................................................//
@@ -17,6 +21,7 @@
 //ROOT
 #include "TGeoManager.h"
 #include "TGeoNode.h"
+#include "TRandom.h"
 
 //................................................................................//
 //Framework
@@ -48,16 +53,17 @@ private:
 
     TGeoNode* world_;
 
-    double layerWidthTag_ = 50.;
-    double layerLengthTag_ = 100.;
-    int stripNoTag_ = 500;
+    double layerWidthTag_ = RETURN;
+    double layerLengthTag_ = RETURN;
+    int stripNoTag_ = -1;
     std::vector<double> anglesTag_ = {};
 
-
-    double layerWidthRec_ = 100.;
-    double layerLengthRec_ = 200.;
-    int stripNoRec_ = 1000;
+    double layerWidthRec_ = RETURN;
+    double layerLengthRec_ = RETURN;
+    int stripNoRec_ = -1;
     std::vector<double> anglesRec_ = {};
+
+    TRandom rnd_;
 };
 
 

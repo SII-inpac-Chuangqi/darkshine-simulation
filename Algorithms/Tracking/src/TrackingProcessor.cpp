@@ -99,6 +99,7 @@ void TrackingProcessor::Begin() {
 //................................................................................//
     EvtWrt->RegisterIntVariable("TagTrk2_track_No", &TagTrk2_track_No, "TagTrk2_track_No/I");
     EvtWrt->RegisterDoubleVariable("TagTrk2_pp", TagTrk2_pp, "TagTrk2_pp[TagTrk2_track_No]/D");
+    EvtWrt->RegisterDoubleVariable("TagTrk2_track_chi2", TagTrk2_track_chi2, "TagTrk2_track_chi2[TagTrk2_track_No]/D");
 
     if (!clean) {
 /*
@@ -111,8 +112,6 @@ void TrackingProcessor::Begin() {
 
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_quality", TagTrk2_track_quality,
                                        "TagTrk2_track_quality[TagTrk2_track_No]/D");
-        EvtWrt->RegisterDoubleVariable("TagTrk2_track_chi2", TagTrk2_track_chi2,
-                                       "TagTrk2_track_chi2[TagTrk2_track_No]/D");
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_x_sigma", TagTrk2_track_x_sigma,
                                        "TagTrk2_track_x_sigma[TagTrk2_track_No]/D");
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_y_sigma", TagTrk2_track_y_sigma,
@@ -122,6 +121,7 @@ void TrackingProcessor::Begin() {
 //................................................................................//
     EvtWrt->RegisterIntVariable("RecTrk2_track_No", &RecTrk2_track_No, "RecTrk2_track_No/I");
     EvtWrt->RegisterDoubleVariable("RecTrk2_pp", RecTrk2_pp, "RecTrk2_pp[RecTrk2_track_No]/D");
+    EvtWrt->RegisterDoubleVariable("RecTrk2_track_chi2", RecTrk2_track_chi2, "RecTrk2_track_chi2[RecTrk2_track_No]/D");
 
     if (!clean) {
 /*
@@ -134,8 +134,6 @@ void TrackingProcessor::Begin() {
 
         EvtWrt->RegisterDoubleVariable("RecTrk2_track_quality", RecTrk2_track_quality,
                                        "RecTrk2_track_quality[RecTrk2_track_No]/D");
-        EvtWrt->RegisterDoubleVariable("RecTrk2_track_chi2", RecTrk2_track_chi2,
-                                       "RecTrk2_track_chi2[RecTrk2_track_No]/D");
         EvtWrt->RegisterDoubleVariable("RecTrk2_track_x_sigma", RecTrk2_track_x_sigma,
                                        "RecTrk2_track_x_sigma[RecTrk2_track_No]/D");
         EvtWrt->RegisterDoubleVariable("RecTrk2_track_y_sigma", RecTrk2_track_y_sigma,
@@ -187,79 +185,93 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             TrkHitPVecMap clusRecTrkHitMap;
             digitizer.Layering(rawRecTrk1Hits, rawRecTrk2Hits, clusRecTrkHitMap, rec);
 
+            if(clusTagTrkHitMap.size() && clusRecTrkHitMap.size())
+            {
+
 //................................................................................//
 //Finding, by pre-fitting
-            vector<TrkHitPVec> VecTagTrack;
-            GreedyFinding findTag(clusTagTrkHitMap);
-            VecTagTrack.assign(findTag.First(), findTag.Last());
-
-            vector<TrkHitPVec> VecRecTrack;
-            GreedyFinding findRec(clusRecTrkHitMap);
-            VecRecTrack.assign(findRec.First(), findRec.Last());
+                vector<TrkHitPVec> VecTagTrack;
+                GreedyFinding findTag(clusTagTrkHitMap);
+                VecTagTrack.assign(findTag.First(), findTag.Last());
+    
+                vector<TrkHitPVec> VecRecTrack;
+                GreedyFinding findRec(clusRecTrkHitMap);
+                VecRecTrack.assign(findRec.First(), findRec.Last());
 
 //................................................................................//
 //Fitting, by Genfit, Kalman filter/by Riemann fitting
-            TagTrk2_track_No = findTag.GetTrackNo();
-            RecTrk2_track_No = findRec.GetTrackNo();
-
-            TagTrk2_rechit_No = 0;
-            RecTrk2_rechit_No = 0;
-
-            for (int i = 0; i < findTag.GetTrackNo(); i++) {
-                TrkHitPVec tagTrack((*(VecTagTrack.begin() + i)).begin(), (*(VecTagTrack.begin() + i)).end());
-                DTrack track(tagTrack,
-                             findTag.GetR(i),       //used in Kalman filter
-                             findTag.GetCenterX(i), //not used in Kalman filter, reserved for future
-                             findTag.GetCenterY(i), //not used in Kalman filter, reserved for future
-                             magnets);              //magnetic in the volume where track lies
-                track.Fit(Tag_fit_method);          //choose fitting method: Kalman filter
-                track.Evaluate();
-
-                TagTrk2_pp[i] = track.GetPp();
-                TagTrk2_track_quality[i] = track.GetQuality();
-                TagTrk2_track_chi2[i] = track.GetChi2();
-                TagTrk2_track_x_sigma[i] = track.GetXSigma();
-                TagTrk2_track_y_sigma[i] = track.GetYSigma();
-
-                for (int hitno = 0; hitno < track.GetSize(); hitno++) {
-                    TagTrk2_track_x[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetX();
-                    TagTrk2_track_y[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetY();
-                    TagTrk2_track_z[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetZ();
+                TagTrk2_track_No = findTag.GetTrackNo();
+                RecTrk2_track_No = findRec.GetTrackNo();
+    
+                TagTrk2_rechit_No = 0;
+                RecTrk2_rechit_No = 0;
+    
+                for (int i = 0; i < findTag.GetTrackNo(); i++) {
+                    TrkHitPVec tagTrack((*(VecTagTrack.begin() + i)).begin(), (*(VecTagTrack.begin() + i)).end());
+                    DTrack track(tagTrack,
+                                 findTag.GetR(i),       //used in Kalman filter
+                                 findTag.GetCenterX(i), //not used in Kalman filter, reserved for future
+                                 findTag.GetCenterY(i), //not used in Kalman filter, reserved for future
+                                 magnets);              //magnetic in the volume where track lies
+                    track.Fit(Tag_fit_method);          //choose fitting method: Kalman filter
+                    track.Evaluate();
+    
+                    TagTrk2_pp[i] = track.GetPp();
+                    TagTrk2_track_quality[i] = track.GetQuality();
+                    TagTrk2_track_chi2[i] = track.GetChi2();
+                    TagTrk2_track_x_sigma[i] = track.GetXSigma();
+                    TagTrk2_track_y_sigma[i] = track.GetYSigma();
+    
+                    for (int hitno = 0; hitno < track.GetSize(); hitno++) {
+                        TagTrk2_track_x[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetX();
+                        TagTrk2_track_y[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetY();
+                        TagTrk2_track_z[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetZ();
+                    }
+                    TagTrk2_rechit_No += track.GetSize();
+                    TagTrk2_rectrk_hit_No[i] = track.GetSize();
                 }
-                TagTrk2_rechit_No += track.GetSize();
-                TagTrk2_rectrk_hit_No[i] = track.GetSize();
+    
+                for (int i = 0; i < findRec.GetTrackNo(); i++) {
+                    TrkHitPVec recTrack((*(VecRecTrack.begin() + i)).begin(), (*(VecRecTrack.begin() + i)).end());
+                    DTrack track(recTrack,
+                                 findRec.GetR(i),       //used in Kalman filter
+                                 findRec.GetCenterX(i), //not used in Kalman filter, reserved for future
+                                 findRec.GetCenterY(i), //not used in Kalman filter, reserved for future
+                                 magnets);              //magnetic in the volume where track lies
+                    track.Fit(Rec_fit_method);          //choose fitting method: Kalman filter
+                    track.Evaluate();
+    
+                    RecTrk2_pp[i] = track.GetPp();
+                    RecTrk2_track_quality[i] = track.GetQuality();
+                    RecTrk2_track_chi2[i] = track.GetChi2();
+                    RecTrk2_track_x_sigma[i] = track.GetXSigma();
+                    RecTrk2_track_y_sigma[i] = track.GetYSigma();
+    
+                    for (int hitno = 0; hitno < track.GetSize(); hitno++) {
+                        RecTrk2_track_x[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetX();
+                        RecTrk2_track_y[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetY();
+                        RecTrk2_track_z[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetZ();
+                    }
+                    RecTrk2_rechit_No += track.GetSize();
+                    RecTrk2_rectrk_hit_No[i] = track.GetSize();
+                }
             }
-
-            for (int i = 0; i < findRec.GetTrackNo(); i++) {
-                TrkHitPVec recTrack((*(VecRecTrack.begin() + i)).begin(), (*(VecRecTrack.begin() + i)).end());
-                DTrack track(recTrack,
-                             findRec.GetR(i),       //used in Kalman filter
-                             findRec.GetCenterX(i), //not used in Kalman filter, reserved for future
-                             findRec.GetCenterY(i), //not used in Kalman filter, reserved for future
-                             magnets);              //magnetic in the volume where track lies
-                track.Fit(Rec_fit_method);          //choose fitting method: Kalman filter
-                track.Evaluate();
-
-                RecTrk2_pp[i] = track.GetPp();
-                RecTrk2_track_quality[i] = track.GetQuality();
-                RecTrk2_track_chi2[i] = track.GetChi2();
-                RecTrk2_track_x_sigma[i] = track.GetXSigma();
-                RecTrk2_track_y_sigma[i] = track.GetYSigma();
-
-                for (int hitno = 0; hitno < track.GetSize(); hitno++) {
-                    RecTrk2_track_x[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetX();
-                    RecTrk2_track_y[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetY();
-                    RecTrk2_track_z[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetZ();
-                }
-                RecTrk2_rechit_No += track.GetSize();
-                RecTrk2_rectrk_hit_No[i] = track.GetSize();
+            else
+            {
+                TagTrk2_track_No = 0;
+                RecTrk2_track_No = 0;
+    
+                TagTrk2_rechit_No = 0;
+                RecTrk2_rechit_No = 0;
             }
 
 //................................................................................//
 //Write root
 //................................................................................//
 //Truth
-        } else {
+        }
+        else
+        {
             TagTrk2_track_No = 0;
             RecTrk2_track_No = 0;
 
