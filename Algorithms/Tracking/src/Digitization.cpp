@@ -63,6 +63,8 @@ void Digitization::GetTrackerInfo()
             }
         }
     }
+
+    std::cout << stripNoTag_ << std::endl;
 }
 
 //Separate tracker hits into vectors by layers

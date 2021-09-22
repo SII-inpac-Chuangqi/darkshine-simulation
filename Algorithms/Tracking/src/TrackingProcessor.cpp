@@ -80,25 +80,25 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterIntVariable("TagTrk2_No", &TagTrk2_No, "TagTrk2_No/I");
         EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_ini", &TagTrk2_pp_truth_ini, "TagTrk2_pp_truth_ini/D");
         EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_fin", &TagTrk2_pp_truth_fin, "TagTrk2_pp_truth_fin/D");
-        EvtWrt->RegisterDoubleVariable("TagTrk2_x", TagTrk2_x, "TagTrk2_x[TagTrk2_No]/D");
-        EvtWrt->RegisterDoubleVariable("TagTrk2_y", TagTrk2_y, "TagTrk2_y[TagTrk2_No]/D");
-        EvtWrt->RegisterDoubleVariable("TagTrk2_z", TagTrk2_z, "TagTrk2_z[TagTrk2_No]/D");
-        EvtWrt->RegisterDoubleVariable("TagTrk2_e", TagTrk2_e, "TagTrk2_e[TagTrk2_No]/D");
+        EvtWrt->RegisterOutVariable("TagTrk2_x", &TagTrk2_x);
+        EvtWrt->RegisterOutVariable("TagTrk2_y", &TagTrk2_y);
+        EvtWrt->RegisterOutVariable("TagTrk2_z", &TagTrk2_z);
+        EvtWrt->RegisterOutVariable("TagTrk2_e", &TagTrk2_e);
 
         EvtWrt->RegisterIntVariable("RecTrk2_No", &RecTrk2_No, "RecTrk2_No/I");
         EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_ini", &RecTrk2_pp_truth_ini, "RecTrk2_pp_truth_ini/D");
         EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_fin", &RecTrk2_pp_truth_fin, "RecTrk2_pp_truth_fin/D");
-        EvtWrt->RegisterDoubleVariable("RecTrk2_x", RecTrk2_x, "RecTrk2_x[RecTrk2_No]/D");
-        EvtWrt->RegisterDoubleVariable("RecTrk2_y", RecTrk2_y, "RecTrk2_y[RecTrk2_No]/D");
-        EvtWrt->RegisterDoubleVariable("RecTrk2_z", RecTrk2_z, "RecTrk2_z[RecTrk2_No]/D");
-        EvtWrt->RegisterDoubleVariable("RecTrk2_e", RecTrk2_e, "RecTrk2_e[RecTrk2_No]/D");
+        EvtWrt->RegisterOutVariable("RecTrk2_x", &RecTrk2_x);
+        EvtWrt->RegisterOutVariable("RecTrk2_y", &RecTrk2_y);
+        EvtWrt->RegisterOutVariable("RecTrk2_z", &RecTrk2_z);
+        EvtWrt->RegisterOutVariable("RecTrk2_e", &RecTrk2_e);
     }
 //................................................................................//
 //Reconstructed
 //................................................................................//
     EvtWrt->RegisterIntVariable("TagTrk2_track_No", &TagTrk2_track_No, "TagTrk2_track_No/I");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_pp", TagTrk2_pp, "TagTrk2_pp[TagTrk2_track_No]/D");
-    EvtWrt->RegisterDoubleVariable("TagTrk2_track_chi2", TagTrk2_track_chi2, "TagTrk2_track_chi2[TagTrk2_track_No]/D");
+    EvtWrt->RegisterOutVariable("TagTrk2_pp", &TagTrk2_pp);
+    EvtWrt->RegisterOutVariable("TagTrk2_track_chi2", &TagTrk2_track_chi2);
 
     if (!clean) {
 /*
@@ -109,18 +109,15 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_z", TagTrk2_track_z,  "TagTrk2_track_z[TagTrk2_rechit_No]/D");
 */
 
-        EvtWrt->RegisterDoubleVariable("TagTrk2_track_quality", TagTrk2_track_quality,
-                                       "TagTrk2_track_quality[TagTrk2_track_No]/D");
-        EvtWrt->RegisterDoubleVariable("TagTrk2_track_x_sigma", TagTrk2_track_x_sigma,
-                                       "TagTrk2_track_x_sigma[TagTrk2_track_No]/D");
-        EvtWrt->RegisterDoubleVariable("TagTrk2_track_y_sigma", TagTrk2_track_y_sigma,
-                                       "TagTrk2_track_y_sigma[TagTrk2_track_No]/D");
+        EvtWrt->RegisterOutVariable("TagTrk2_track_quality", &TagTrk2_track_quality);
+        EvtWrt->RegisterOutVariable("TagTrk2_track_x_sigma", &TagTrk2_track_x_sigma);
+        EvtWrt->RegisterOutVariable("TagTrk2_track_y_sigma", &TagTrk2_track_y_sigma);
     }
 
 //................................................................................//
     EvtWrt->RegisterIntVariable("RecTrk2_track_No", &RecTrk2_track_No, "RecTrk2_track_No/I");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_pp", RecTrk2_pp, "RecTrk2_pp[RecTrk2_track_No]/D");
-    EvtWrt->RegisterDoubleVariable("RecTrk2_track_chi2", RecTrk2_track_chi2, "RecTrk2_track_chi2[RecTrk2_track_No]/D");
+    EvtWrt->RegisterOutVariable("RecTrk2_pp", &RecTrk2_pp);
+    EvtWrt->RegisterOutVariable("RecTrk2_track_chi2", &RecTrk2_track_chi2);
 
     if (!clean) {
 /*
@@ -131,18 +128,35 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterDoubleVariable("RecTrk2_track_z", RecTrk2_track_z,  "RecTrk2_track_z[RecTrk2_rechit_No]/D");
 */
 
-        EvtWrt->RegisterDoubleVariable("RecTrk2_track_quality", RecTrk2_track_quality,
-                                       "RecTrk2_track_quality[RecTrk2_track_No]/D");
-        EvtWrt->RegisterDoubleVariable("RecTrk2_track_x_sigma", RecTrk2_track_x_sigma,
-                                       "RecTrk2_track_x_sigma[RecTrk2_track_No]/D");
-        EvtWrt->RegisterDoubleVariable("RecTrk2_track_y_sigma", RecTrk2_track_y_sigma,
-                                       "RecTrk2_track_y_sigma[RecTrk2_track_No]/D");
+        EvtWrt->RegisterOutVariable("RecTrk2_track_quality", &RecTrk2_track_quality);
+        EvtWrt->RegisterOutVariable("RecTrk2_track_x_sigma", &RecTrk2_track_x_sigma);
+        EvtWrt->RegisterOutVariable("RecTrk2_track_y_sigma", &RecTrk2_track_y_sigma);
     }
 
     //if(Tag_fit_method == 1 || Rec_fit_method == 1)
 }
 
 void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
+    std::vector<double>().swap(TagTrk2_x);
+    std::vector<double>().swap(TagTrk2_y);
+    std::vector<double>().swap(TagTrk2_z);
+    std::vector<double>().swap(TagTrk2_e);
+    std::vector<double>().swap(RecTrk2_x);
+    std::vector<double>().swap(RecTrk2_y);
+    std::vector<double>().swap(RecTrk2_z);
+    std::vector<double>().swap(RecTrk2_e);
+
+    std::vector<double>().swap(TagTrk2_pp);
+    std::vector<double>().swap(TagTrk2_track_chi2);
+    std::vector<double>().swap(TagTrk2_track_quality);
+    std::vector<double>().swap(TagTrk2_track_x_sigma);
+    std::vector<double>().swap(TagTrk2_track_y_sigma);
+
+    std::vector<double>().swap(RecTrk2_pp);
+    std::vector<double>().swap(RecTrk2_track_chi2);
+    std::vector<double>().swap(RecTrk2_track_quality);
+    std::vector<double>().swap(RecTrk2_track_x_sigma);
+    std::vector<double>().swap(RecTrk2_track_y_sigma);
 
     const auto &stepCollection = evt->getStepCollection();
     //const auto &MCCollection = evt->getMcParticleCollection();
@@ -176,7 +190,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         if (rawTagTrk2Hits.size() < 20 && rawTagTrk2Hits.size() > 2 &&
             rawRecTrk2Hits.size() < 20 && rawRecTrk2Hits.size() > 2)
         {
-
 //................................................................................//
 //Digitization, depends on further hardware setting
             TrkHitPVecMap clusTagTrkHitMap;
@@ -186,7 +199,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
             if(clusTagTrkHitMap.size() && clusRecTrkHitMap.size())
             {
-
 //................................................................................//
 //Finding, by pre-fitting
                 vector<TrkHitPVec> VecTagTrack;
@@ -204,7 +216,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     
                 TagTrk2_rechit_No = 0;
                 RecTrk2_rechit_No = 0;
-    
+
                 for (int i = 0; i < findTag.GetTrackNo(); i++) {
                     TrkHitPVec tagTrack((*(VecTagTrack.begin() + i)).begin(), (*(VecTagTrack.begin() + i)).end());
                     DTrack track(tagTrack,
@@ -215,19 +227,23 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     track.Fit(Tag_fit_method);          //choose fitting method: Kalman filter
                     track.Evaluate();
     
-                    TagTrk2_pp[i] = track.GetPp();
-                    TagTrk2_track_quality[i] = track.GetQuality();
-                    TagTrk2_track_chi2[i] = track.GetChi2();
-                    TagTrk2_track_x_sigma[i] = track.GetXSigma();
-                    TagTrk2_track_y_sigma[i] = track.GetYSigma();
-    
-                    for (int hitno = 0; hitno < track.GetSize(); hitno++) {
-                        TagTrk2_track_x[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetX();
-                        TagTrk2_track_y[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetY();
-                        TagTrk2_track_z[hitno + TagTrk2_rechit_No] = track.At(hitno)->GetZ();
+                    TagTrk2_pp.push_back(track.GetPp());
+                    TagTrk2_track_chi2.push_back(track.GetChi2());
+
+                    if (!clean) {
+                        TagTrk2_track_quality.push_back(track.GetQuality());
+                        TagTrk2_track_x_sigma.push_back(track.GetXSigma());
+                        TagTrk2_track_y_sigma.push_back(track.GetYSigma());
+/*    
+                        for (int hitno = 0; hitno < track.GetSize(); hitno++) {
+                            TagTrk2_track_x.push_back(track.At(hitno)->GetX());
+                            TagTrk2_track_y.push_back(track.At(hitno)->GetY());
+                            TagTrk2_track_z.push_back(track.At(hitno)->GetZ());
+                        }
+                        TagTrk2_rechit_No += track.GetSize();
+                        TagTrk2_rectrk_hit_No.push_back(track.GetSize());
+*/
                     }
-                    TagTrk2_rechit_No += track.GetSize();
-                    TagTrk2_rectrk_hit_No[i] = track.GetSize();
                 }
     
                 for (int i = 0; i < findRec.GetTrackNo(); i++) {
@@ -240,28 +256,34 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     track.Fit(Rec_fit_method);          //choose fitting method: Kalman filter
                     track.Evaluate();
     
-                    RecTrk2_pp[i] = track.GetPp();
-                    RecTrk2_track_quality[i] = track.GetQuality();
-                    RecTrk2_track_chi2[i] = track.GetChi2();
-                    RecTrk2_track_x_sigma[i] = track.GetXSigma();
-                    RecTrk2_track_y_sigma[i] = track.GetYSigma();
-    
-                    for (int hitno = 0; hitno < track.GetSize(); hitno++) {
-                        RecTrk2_track_x[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetX();
-                        RecTrk2_track_y[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetY();
-                        RecTrk2_track_z[hitno + RecTrk2_rechit_No] = track.At(hitno)->GetZ();
+                    RecTrk2_pp.push_back(track.GetPp());
+                    RecTrk2_track_chi2.push_back(track.GetChi2());
+
+                    if (!clean) {
+                        RecTrk2_track_quality.push_back(track.GetQuality());
+                        RecTrk2_track_x_sigma.push_back(track.GetXSigma());
+                        RecTrk2_track_y_sigma.push_back(track.GetYSigma());
+/*    
+                        for (int hitno = 0; hitno < track.GetSize(); hitno++) {
+                            RecTrk2_track_x.push_back(track.At(hitno)->GetX());
+                            RecTrk2_track_y.push_back(track.At(hitno)->GetY());
+                            RecTrk2_track_z.push_back(track.At(hitno)->GetZ());
+                        }
+                        RecTrk2_rechit_No += track.GetSize();
+                        RecTrk2_rectrk_hit_No.push_back(track.GetSize());
+*/
                     }
-                    RecTrk2_rechit_No += track.GetSize();
-                    RecTrk2_rectrk_hit_No[i] = track.GetSize();
                 }
             }
             else
             {
                 TagTrk2_track_No = 0;
                 RecTrk2_track_No = 0;
-    
-                TagTrk2_rechit_No = 0;
-                RecTrk2_rechit_No = 0;
+
+                if (!clean) {
+                    TagTrk2_rechit_No = 0;
+                    RecTrk2_rechit_No = 0;
+                }
             }
 
 //................................................................................//
@@ -274,68 +296,67 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             TagTrk2_track_No = 0;
             RecTrk2_track_No = 0;
 
-            TagTrk2_rechit_No = 0;
-            RecTrk2_rechit_No = 0;
-        }
-
-        TagTrk2_No = rawTagTrk2Hits.size();
-
-        bool trackerFlag = false;
-        for (auto step : *stepIni) {
-            if (InTagTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
-                TagTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
-                                            step->getPz() * step->getPz());
-                trackerFlag = true;
-            } else if (!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
-                TagTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
-                                            step->getPz() * step->getPz());
-                break;
+            if (!clean) {
+                TagTrk2_rechit_No = 0;
+                RecTrk2_rechit_No = 0;
             }
         }
 
-        for (int i = 0; i < TagTrk2_No; ++i) {
-            TagTrk2_x[i] = rawTagTrk2Hits.at(i).GetX();
-            TagTrk2_y[i] = rawTagTrk2Hits.at(i).GetY();
-            TagTrk2_z[i] = rawTagTrk2Hits.at(i).GetZ();
-            TagTrk2_e[i] = rawTagTrk2Hits.at(i).GetE();
-        }
+        if (!clean) {
 
-        RecTrk2_No = rawRecTrk2Hits.size();
-
-        trackerFlag = false;
-        for (auto step : *stepIni) {
-            if (InRecTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
-                RecTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
-                                            step->getPz() * step->getPz());
-                trackerFlag = true;
-            } else if (!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
-                RecTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
-                                            step->getPz() * step->getPz());
-                break;
+            TagTrk2_No = rawTagTrk2Hits.size();
+    
+            bool trackerFlag = false;
+            for (auto step : *stepIni) {
+                if (InTagTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
+                    TagTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
+                                                step->getPz() * step->getPz());
+                    trackerFlag = true;
+                } else if (!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
+                    TagTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
+                                                step->getPz() * step->getPz());
+                    break;
+                }
+            }
+    
+            for (int i = 0; i < TagTrk2_No; ++i) {
+                TagTrk2_x.push_back(rawTagTrk2Hits.at(i).GetX());
+                TagTrk2_y.push_back(rawTagTrk2Hits.at(i).GetY());
+                TagTrk2_z.push_back(rawTagTrk2Hits.at(i).GetZ());
+                TagTrk2_e.push_back(rawTagTrk2Hits.at(i).GetE());
+            }
+    
+            RecTrk2_No = rawRecTrk2Hits.size();
+    
+            trackerFlag = false;
+            for (auto step : *stepIni) {
+                if (InRecTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
+                    RecTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
+                                                step->getPz() * step->getPz());
+                    trackerFlag = true;
+                } else if (!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
+                    RecTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
+                                                step->getPz() * step->getPz());
+                    break;
+                }
+            }
+    
+            for (int i = 0; i < RecTrk2_No; ++i) {
+                RecTrk2_x.push_back(rawRecTrk2Hits.at(i).GetX());
+                RecTrk2_y.push_back(rawRecTrk2Hits.at(i).GetY());
+                RecTrk2_z.push_back(rawRecTrk2Hits.at(i).GetZ());
+                RecTrk2_e.push_back(rawRecTrk2Hits.at(i).GetE());
             }
         }
-
-        for (int i = 0; i < RecTrk2_No; ++i) {
-            RecTrk2_x[i] = rawRecTrk2Hits.at(i).GetX();
-            RecTrk2_y[i] = rawRecTrk2Hits.at(i).GetY();
-            RecTrk2_z[i] = rawRecTrk2Hits.at(i).GetZ();
-            RecTrk2_e[i] = rawRecTrk2Hits.at(i).GetE();
-        }
-//................................................................................//
-//Memory management
-        //vector<TrkHit>().swap(rawTagTrkHits);
-        //vector<TrkHit>().swap(rawRecTrkHits);
     }
 }
 
 void TrackingProcessor::CheckEvt(AnaEvent *evt) {
-    //cout<<"Check!"<<endl;
+   //cout << "check" << endl;
     if (!evt) cerr << "null event" << endl;
 }
 
 void TrackingProcessor::End() {
-    //for(auto it : ProSum) cout << it << endl;
-
     //cout<<"End!"<<endl;
 }
 

@@ -41,8 +41,6 @@ public:
     Digitization() = default;
     ~Digitization() = default;
 
-//Get world node from TGeoManager
-    void GetWorldNode(TGeoNode* worldNode);
 //Get tracker information
     void GetTrackerInfo();
 //Separate tracker hits into vectors by layers
