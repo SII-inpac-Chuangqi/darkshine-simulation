@@ -136,7 +136,7 @@ void TrackingProcessor::Begin() {
     //if(Tag_fit_method == 1 || Rec_fit_method == 1)
 }
 
-void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
+void TrackingProcessor::CleanEvt() {
     std::vector<double>().swap(TagTrk2_x);
     std::vector<double>().swap(TagTrk2_y);
     std::vector<double>().swap(TagTrk2_z);
@@ -157,6 +157,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     std::vector<double>().swap(RecTrk2_track_quality);
     std::vector<double>().swap(RecTrk2_track_x_sigma);
     std::vector<double>().swap(RecTrk2_track_y_sigma);
+}
+
+void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
+    this->CleanEvt();
 
     const auto &stepCollection = evt->getStepCollection();
     //const auto &MCCollection = evt->getMcParticleCollection();

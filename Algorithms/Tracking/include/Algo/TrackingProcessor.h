@@ -30,6 +30,8 @@ public:
 
     void Begin() override;
 
+    void CleanEvt();
+
     void ProcessEvt(AnaEvent* evt) override;
 
     void CheckEvt(AnaEvent* evt) override;
