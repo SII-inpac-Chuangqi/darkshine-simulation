@@ -149,6 +149,38 @@ public:
         PNEnergy_ECAL = pnEnergyEcal;
     }
 
+    void setPnZTarget(double pnzTarget) {
+        PNZ_Target = pnzTarget;
+    }
+
+    void setPnZEcal(double pnzEcal) {
+        PNZ_ECAL = pnzEcal;
+    }
+
+    double getEnEnergyTarget() const {
+        return ENEnergy_Target;
+    }
+
+    void setEnEnergyTarget(double enEnergyTarget) {
+        ENEnergy_Target = enEnergyTarget;
+    }
+
+    double getEnEnergyEcal() const {
+        return ENEnergy_ECAL;
+    }
+
+    void setEnEnergyEcal(double enEnergyEcal) {
+        ENEnergy_ECAL = enEnergyEcal;
+    }
+
+    void setEnZTarget(double enzTarget) {
+        ENZ_Target = enzTarget;
+    }
+
+    void setEnZEcal(double enzEcal) {
+        ENZ_ECAL = enzEcal;
+    }
+
     double getEleakEcal() const {
         return Eleak_ECAL;
     }
@@ -184,7 +216,13 @@ protected:
     double Rndm[4]{}; // Random Number Seeds
     double PNEnergy_Target{0.}; // Photon-Nuclear reaction Energy in Target region
     double PNEnergy_ECAL{0.}; // Photon-Nuclear reaction Energy in ECAL region
+    double PNZ_Target{0.};
+    double PNZ_ECAL{0.};
     double Eleak_ECAL{0.}; // Energy leakage in ECAL holder
+    double ENEnergy_Target{0.};
+    double ENEnergy_ECAL{0.};
+    double ENZ_Target{0.};
+    double ENZ_ECAL{0.};
 
     /*
      * Miscellaneous (Reconstructed)

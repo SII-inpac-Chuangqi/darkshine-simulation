@@ -98,7 +98,10 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void TrackingAction::PostUserTrackingAction(const G4Track *aTrack) {
-
+    // save weight
+    if (aTrack->GetWeight() != 1) {
+        dRootMng->FillWeight( aTrack->GetWeight() );
+    }
     // Find MC in collection
     auto MCCols = dRootMng->GetEvt()->getMcParticleCollection().at(dControl->RawMCCollection_Name);
     auto p = McParticle::SearchID(MCCols, aTrack->GetTrackID());

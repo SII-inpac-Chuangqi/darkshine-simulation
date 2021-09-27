@@ -179,8 +179,11 @@ int main(int argc, char **argv) {
     // Biasing
     if (dControl->if_bias) {
         auto *biasingPhysics = new G4GenericBiasingPhysics();
-        biasingPhysics->Bias("e-");
-        biasingPhysics->Bias("gamma");
+        if ( dControl->BiasProcess.contains("electron") )
+            biasingPhysics->Bias("e-", {dControl->BiasProcess} );
+        if ( dControl->BiasProcess.contains("Gamma")
+          || dControl->BiasProcess.contains("photo"))
+            biasingPhysics->Bias("gamma", {dControl->BiasProcess} );
         physicsList->RegisterPhysics(biasingPhysics);
     }
     //physicsList->RegisterPhysics( new OpticalPhysics( rootMng ) );

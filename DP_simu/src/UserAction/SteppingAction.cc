@@ -110,23 +110,35 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
         /* Record all steps for certain particle */
         dRootMng->FillParticleStep(aStep);
     }
+    if (aStep->GetTrack()->GetTrackID() == 1) {
+        if (post->GetProcessDefinedStep()->GetProcessName().contains("electronNuclear") ) {
+//            || post->GetProcessDefinedStep()->GetProcessName() == "biasWrapper(electronNuclear)" ) {
+            G4double deltaE = fabs(prev->GetKineticEnergy() - post->GetKineticEnergy());
+            if (post->GetPosition()[2] <= 100. * mm) {
+                // Target
+                ENEnergyTar = deltaE;
+            } else {
+                // ECal
+                ENEnergyECAL = deltaE;
+            }
+            dRootMng->FillENE(ENEnergyTar, ENEnergyECAL, post->GetPosition()[2]);
+        }
+    } else {
+        if (aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding() == 22) {
+            // Photo-Nuclear Reaction
+            if (post->GetProcessDefinedStep()->GetProcessType() == 4 // 4=Nulear
+                && post->GetProcessDefinedStep()->GetProcessSubType() == 121) { // 121=HadInElastic
+                G4double deltaE = fabs(prev->GetKineticEnergy() - post->GetKineticEnergy());
+                if (post->GetPosition()[2] <= 100. * mm) {
+                    // Target
+                    PNEnergyTar = deltaE;
+                } else {
+                    // ECal
+                    PNEnergyECAL = deltaE;
+                }
 
-    if (aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding() == 22) {
-
-        G4double deltaE = fabs(prev->GetKineticEnergy() - post->GetKineticEnergy());
-
-        // Photo-Nuclear Reaction
-        if (post->GetProcessDefinedStep()->GetProcessType() == 4
-            && post->GetProcessDefinedStep()->GetProcessSubType() == 121) {
-
-            // Target
-            if (post->GetPosition()[2] <= 100. * mm)
-                PNEnergyTar = deltaE;
-            // ECal
-            if (post->GetPosition()[2] > 100. * mm)
-                PNEnergyECAL = deltaE;
-
-            dRootMng->FillPNE(PNEnergyTar, PNEnergyECAL);
+                dRootMng->FillPNE(PNEnergyTar, PNEnergyECAL, post->GetPosition()[2]);
+            }
         }
     }
 
