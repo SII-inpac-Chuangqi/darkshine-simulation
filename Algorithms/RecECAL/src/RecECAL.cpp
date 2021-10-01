@@ -75,6 +75,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
         // IMPORTANT: check if the collection exists
         if (HitCollection.count(HitCollectionName) != 0) {
             const auto &hits = HitCollection.at(HitCollectionName);
+            if (hits->empty()) continue;
             // Calculate some cluster parameters ( moments...)
             auto cluster_ana = std::shared_ptr<Cluster_Analysis>(new Cluster_Analysis(hits));
             E_total.push_back(cluster_ana->FindETotal());
