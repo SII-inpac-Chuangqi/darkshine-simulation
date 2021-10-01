@@ -1,0 +1,92 @@
+//
+// Created by Zhang Yulei on 9/10/21
+//
+
+#include "Algo/ProcessClassifier.h"
+
+using namespace std;
+
+bool ProcessClassifier::FoundInitial(AnaEvent *Evt) {
+    auto mcps = Evt->getMcParticleCollection().at("RawMCParticle");
+    int Initial_ID = (*mcps->begin())->getId();
+    int Initial_PDG = (*mcps->begin())->getPdg();
+    if (Initial_ID == 1 && Initial_PDG == 11) {
+        isFoundInit = true;
+    }
+
+    return isFoundInit;
+}
+
+yulei ProcessClassifier::defineProcessName(bool isFound, AnaEvent *Evt, McParticle *mcp) {
+    auto mcps = Evt->getMcParticleCollection().at("RawMCParticle");
+    auto itrp = (mcp == nullptr) ? mcps->at(0) : mcp;
+    ProcessName = "inclusive";
+    if (isFound){    // Found Initial Electron Particle
+        for (auto p: *(itrp->getChildren())) {
+            Children_PDG = p->getPdg();
+            Children_ID = p->getId();
+            Children_E = p->getEnergy();
+            Children_pointZ = p->getEndPointZ();
+
+            if (Children_E > 4000. && Children_PDG == 22) {
+                ProcessName = "hardbrem";
+
+                ProcessEnergy = Children_E;
+                EndPointZ = Children_pointZ;
+
+                n_mu = 0;
+                double Max_pnE = 0;
+                for (auto pc: *(p->getChildren())) {
+                    Children_PDG = pc->getPdg();
+                    Children_ID = pc->getId();
+
+                    //=======GammaToMuPair=========
+                    if (std::abs(Children_PDG) == 13) {
+                        n_mu += 1;
+                    }
+
+                    //======== photonNuclear ========
+                    const string &Name = pc->getCreateProcess();
+                    if (Name == "photonNuclear") {
+                        double energy = pc->getEnergy();
+                        if (energy > Max_pnE) {
+                            Max_pnE = energy;
+                            ProcessName = "photonNuclear";
+                        }
+                    }
+                }
+                if (n_mu == 2) {
+                    ProcessName = "GammaToMuPair";
+                }
+            }
+        }
+    }
+
+    //======== electronNuclear =======
+    auto stepCollection = Evt->getStepCollection();
+    auto stepIni = stepCollection.at("Initial_Particle_Step");
+    DStep *prev_s = nullptr;
+    double Max_sE = 0;
+
+    for (auto step: *stepIni) {
+        if (step->getProcessName() == "electronNuclear") {
+            double StepE = step->getE();
+            if (StepE > Max_sE && prev_s != nullptr) {
+                Max_sE = StepE;
+                ProcessName = "electronNuclear";
+                PVName = step->getPVName();
+                ProcessEnergy = prev_s->getE() - step->getE();
+            }
+        }
+        prev_s = step;
+    }
+
+    return std::make_tuple(ProcessName, PVName, EndPointZ, ProcessEnergy);
+}
+
+void ProcessClassifier::initialization() {
+    ProcessName = "inclusive";
+    PVName = "";
+    ProcessEnergy = 0.;
+    EndPointZ = -999.;
+}

@@ -232,6 +232,7 @@ void RootManager::FillSim(Int_t eventID, const Double_t *Rnd) {
 
     Evt->setEventId(EventID);
     Evt->setRndm(Rnd);
+    Evt->setWeight(weight);
 
     tr->Fill();
 

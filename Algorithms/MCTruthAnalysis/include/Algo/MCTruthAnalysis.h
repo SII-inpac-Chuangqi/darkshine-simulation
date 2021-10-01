@@ -9,6 +9,7 @@
 
 #include "Core/AnaProcessor.h"
 #include "Algo/SecondaryMaxEFinder.h"
+#include "Algo/ProcessClassifier.h"
 
 using namespace std;
 
@@ -35,6 +36,7 @@ private:
     int Sec_PDG{0};
 
     std::shared_ptr<SecondaryMaxEFinder> SecFinder;
+    ProcessClassifier PCFinder;
 
     int Initial_PDG{};
     double Initial_Px{};
@@ -59,6 +61,12 @@ private:
     double Pi{0.};
     double Pf{0.};
 
+    // For Process Classifier
+    std::tuple<TString, TString, double, double> process;
+    TString ProcessName{};
+    TString PVName{};
+    double EndPoint_Z{};
+    double Process_E{};
 };
 
 

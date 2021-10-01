@@ -189,6 +189,30 @@ public:
         Eleak_ECAL = eleakEcal;
     }
 
+    double getPnzTarget() const {
+        return PNZ_Target;
+    }
+
+    double getPnzEcal() const {
+        return PNZ_ECAL;
+    }
+
+    double getEnzTarget() const {
+        return ENZ_Target;
+    }
+
+    double getEnzEcal() const {
+        return ENZ_ECAL;
+    }
+
+    double getWeight() const {
+        return weight;
+    }
+
+    void setWeight(double weight) {
+        DEvent::weight = weight;
+    }
+
     McParticle *SearchID(MCParticleVec *mv, int ID) {
         for (auto itr : *mv) {
             if (itr->getId() == ID) return itr;
@@ -212,7 +236,7 @@ protected:
     /*
      * Miscellaneous (truth)
      */
-
+    double weight{1.};
     double Rndm[4]{}; // Random Number Seeds
     double PNEnergy_Target{0.}; // Photon-Nuclear reaction Energy in Target region
     double PNEnergy_ECAL{0.}; // Photon-Nuclear reaction Energy in ECAL region
