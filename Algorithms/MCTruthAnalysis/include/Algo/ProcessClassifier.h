@@ -39,7 +39,7 @@ private:
 
     TString ProcessName;
     TString PVName;
-    double EndPointZ;
+    double Process_Vertex_Z;
     double ProcessEnergy;
 
 };

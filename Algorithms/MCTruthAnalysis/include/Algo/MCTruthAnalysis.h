@@ -65,7 +65,7 @@ private:
     std::tuple<TString, TString, double, double> process;
     TString ProcessName{};
     TString PVName{};
-    double EndPoint_Z{};
+    double ProcessVertexZ{};
     double Process_E{};
 };
 

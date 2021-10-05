@@ -26,13 +26,12 @@ yulei ProcessClassifier::defineProcessName(bool isFound, AnaEvent *Evt, McPartic
             Children_PDG = p->getPdg();
             Children_ID = p->getId();
             Children_E = p->getEnergy();
-            Children_pointZ = p->getEndPointZ();
 
             if (Children_E > 4000. && Children_PDG == 22) {
                 ProcessName = "hardbrem";
 
                 ProcessEnergy = Children_E;
-                EndPointZ = Children_pointZ;
+                Process_Vertex_Z = p->getVertexZ();
 
                 n_mu = 0;
                 double Max_pnE = 0;
@@ -52,11 +51,13 @@ yulei ProcessClassifier::defineProcessName(bool isFound, AnaEvent *Evt, McPartic
                         if (energy > Max_pnE) {
                             Max_pnE = energy;
                             ProcessName = "photonNuclear";
+                            Process_Vertex_Z = p->getEndPointZ();
                         }
                     }
                 }
                 if (n_mu == 2) {
                     ProcessName = "GammaToMuPair";
+                    Process_Vertex_Z = p->getEndPointZ();
                 }
             }
         }
@@ -76,17 +77,18 @@ yulei ProcessClassifier::defineProcessName(bool isFound, AnaEvent *Evt, McPartic
                 ProcessName = "electronNuclear";
                 PVName = step->getPVName();
                 ProcessEnergy = prev_s->getE() - step->getE();
+                Process_Vertex_Z = prev_s->getZ();
             }
         }
         prev_s = step;
     }
 
-    return std::make_tuple(ProcessName, PVName, EndPointZ, ProcessEnergy);
+    return std::make_tuple(ProcessName, PVName, Process_Vertex_Z, ProcessEnergy);
 }
 
 void ProcessClassifier::initialization() {
     ProcessName = "inclusive";
     PVName = "";
     ProcessEnergy = 0.;
-    EndPointZ = -999.;
+    Process_Vertex_Z = -611.;
 }

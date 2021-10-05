@@ -48,7 +48,7 @@ void MCTruthAnalysis::Begin() {
 
         EvtWrt->RegisterStrVariable("Process_Type", &ProcessName);
         EvtWrt->RegisterStrVariable("Process_PVName", &PVName);
-        EvtWrt->RegisterDoubleVariable("Process_EndPoint_Z", &EndPoint_Z, "Process_EndPoint_Z/D");
+        EvtWrt->RegisterDoubleVariable("Process_Vertex_Z", &ProcessVertexZ, "Process_Vertex_Z/D");
         EvtWrt->RegisterDoubleVariable("Process_E", &Process_E, "Process_E/D");
     }
 
@@ -82,7 +82,7 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
         process  = PCFinder.defineProcessName(isFound, evt);
         ProcessName = std::get<0>(process);
         PVName      = std::get<1>(process);
-        EndPoint_Z  = std::get<2>(process);
+        ProcessVertexZ  = std::get<2>(process);
         Process_E   = std::get<3>(process);
 
         // Record Initial Particle Status
