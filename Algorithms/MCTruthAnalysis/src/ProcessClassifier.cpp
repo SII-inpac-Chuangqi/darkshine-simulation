@@ -21,10 +21,9 @@ yulei ProcessClassifier::defineProcessName(bool isFound, AnaEvent *Evt, McPartic
     auto mcps = Evt->getMcParticleCollection().at("RawMCParticle");
     auto itrp = (mcp == nullptr) ? mcps->at(0) : mcp;
     ProcessName = "inclusive";
-    if (isFound){    // Found Initial Electron Particle
+    if (isFound) {    // Found Initial Electron Particle
         for (auto p: *(itrp->getChildren())) {
             Children_PDG = p->getPdg();
-            Children_ID = p->getId();
             Children_E = p->getEnergy();
 
             if (Children_E > 4000. && Children_PDG == 22) {
@@ -51,7 +50,10 @@ yulei ProcessClassifier::defineProcessName(bool isFound, AnaEvent *Evt, McPartic
                         if (energy > Max_pnE) {
                             Max_pnE = energy;
                             ProcessName = "photonNuclear";
-                            Process_Vertex_Z = p->getEndPointZ();
+                            Process_Vertex_Z = pc->getVertexZ();
+
+                            if (pc->getVertexZ() != p->getVertexZ())
+                                cerr << "Error: " << pc->getVertexZ() << ", " << p->getVertexZ() << endl;
                         }
                     }
                 }
@@ -63,24 +65,26 @@ yulei ProcessClassifier::defineProcessName(bool isFound, AnaEvent *Evt, McPartic
         }
     }
 
-    //======== electronNuclear =======
-    auto stepCollection = Evt->getStepCollection();
-    auto stepIni = stepCollection.at("Initial_Particle_Step");
-    DStep *prev_s = nullptr;
-    double Max_sE = 0;
+    if (ProcessName == "inclusive") {
+        //======== electronNuclear =======
+        auto stepCollection = Evt->getStepCollection();
+        auto stepIni = stepCollection.at("Initial_Particle_Step");
+        DStep *prev_s = nullptr;
+        double Max_sE = 0;
 
-    for (auto step: *stepIni) {
-        if (step->getProcessName() == "electronNuclear") {
-            double StepE = step->getE();
-            if (StepE > Max_sE && prev_s != nullptr) {
-                Max_sE = StepE;
-                ProcessName = "electronNuclear";
-                PVName = step->getPVName();
-                ProcessEnergy = prev_s->getE() - step->getE();
-                Process_Vertex_Z = prev_s->getZ();
+        for (auto step: *stepIni) {
+            if (step->getProcessName() == "electronNuclear") {
+                double StepE = step->getE();
+                if (StepE > Max_sE && prev_s != nullptr) {
+                    Max_sE = StepE;
+                    ProcessName = "electronNuclear";
+                    PVName = step->getPVName();
+                    ProcessEnergy = prev_s->getE() - step->getE();
+                    Process_Vertex_Z = prev_s->getZ();
+                }
             }
+            prev_s = step;
         }
-        prev_s = step;
     }
 
     return std::make_tuple(ProcessName, PVName, Process_Vertex_Z, ProcessEnergy);
