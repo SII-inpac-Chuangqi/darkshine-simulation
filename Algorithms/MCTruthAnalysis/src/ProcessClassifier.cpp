@@ -18,7 +18,7 @@ void ProcessClassifier::RegisterParameters() {
     EvtWrt->RegisterIntVariable("Process_EN_Pre_ECAL", &Process_EN_Pre_ECAL, "Process_EN_Pre_ECAL/I");
 }
 
-yulei ProcessClassifier::defineProcessName(AnaEvent *Evt, McParticle *mcp) {
+void ProcessClassifier::defineProcessName(AnaEvent *Evt, McParticle *mcp) {
     auto mcps = Evt->getMcParticleCollection().at("RawMCParticle");
     auto itrp = (mcp == nullptr) ? mcps->at(0) : mcp;
     ProcessName = "inclusive";
@@ -96,8 +96,6 @@ yulei ProcessClassifier::defineProcessName(AnaEvent *Evt, McParticle *mcp) {
             prev_s = step;
         }
     }
-
-    return std::make_tuple(ProcessName, PVName, Process_Vertex_Z, ProcessEnergy);
 }
 
 void ProcessClassifier::initialization() {
