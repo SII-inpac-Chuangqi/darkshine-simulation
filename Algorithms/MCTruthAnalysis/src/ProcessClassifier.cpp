@@ -30,7 +30,7 @@ yulei ProcessClassifier::defineProcessName(bool isFound, AnaEvent *Evt, McPartic
                 ProcessName = "hardbrem";
 
                 ProcessEnergy = Children_E;
-                Process_Vertex_Z = p->getVertexZ();
+                Process_Vertex_Z = p->getEndPointZ();
 
                 n_mu = 0;
                 double Max_pnE = 0;
@@ -52,8 +52,8 @@ yulei ProcessClassifier::defineProcessName(bool isFound, AnaEvent *Evt, McPartic
                             ProcessName = "photonNuclear";
                             Process_Vertex_Z = pc->getVertexZ();
 
-                            if (pc->getVertexZ() != p->getVertexZ())
-                                cerr << "Error: " << pc->getVertexZ() << ", " << p->getVertexZ() << endl;
+                            if (pc->getVertexZ() != p->getEndPointZ())
+                                cerr << "Error: " << pc->getVertexZ() << ", " << p->getEndPointZ() << endl;
                         }
                     }
                 }
