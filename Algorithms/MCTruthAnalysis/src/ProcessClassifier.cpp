@@ -71,16 +71,17 @@ yulei ProcessClassifier::defineProcessName(bool isFound, AnaEvent *Evt, McPartic
         auto stepIni = stepCollection.at("Initial_Particle_Step");
         DStep *prev_s = nullptr;
 
+        double maxE = 0.;
         for (auto step: *stepIni) {
             if (step->getProcessName() == "electronNuclear") {
                 if (prev_s != nullptr) {
-                    if (auto deltaE = prev_s->getE() - step->getE(); deltaE > 4000.) {
+                    if (auto deltaE = prev_s->getE() - step->getE(); deltaE >= maxE) {
                         ProcessEnergy = deltaE;
                         ProcessName = "electronNuclear";
                         PVName = step->getPVName();
                         Process_Vertex_Z = step->getZ();
 
-                        break;
+                        maxE = deltaE;
                     }
                 }
             }
