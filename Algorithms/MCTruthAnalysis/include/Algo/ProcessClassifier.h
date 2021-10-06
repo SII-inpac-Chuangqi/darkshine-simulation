@@ -34,6 +34,13 @@ private:
     double ProcessEnergy;
 
     const shared_ptr<EventStoreAndWriter> &EvtWrt;
+
+    int Process_HardBrem_Target;
+    int Process_HardBrem_ECAL;
+
+    int Process_EN_Pre_Target;
+    int Process_EN_Pre_ECAL;
+
 };
 
 #endif //DSIMU_PROCESSCLASSIFIER_H
