@@ -34,8 +34,9 @@ void ProcessClassifier::defineProcessName(AnaEvent *Evt, McParticle *mcp) {
                 ProcessEnergy = Children_E;
                 Process_Vertex_Z = p->getEndPointZ();
 
-                if (p->getVertexZ() <= 7.5 && p->getVertexZ() >= -7.5) Process_HardBrem_Target = 1;
-                if (p->getVertexZ() <= 636.5 && p->getVertexZ() >= 181.3) Process_HardBrem_ECAL = 1;
+                // at least should across target/ecal region
+                if (p->getEndPointZ() >= -7.5) Process_HardBrem_Target = 1;
+                if (p->getEndPointZ() >= 181.3) Process_HardBrem_ECAL = 1;
 
                 int n_mu = 0;
                 double mu_Z = -611.;
