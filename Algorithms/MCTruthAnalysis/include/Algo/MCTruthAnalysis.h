@@ -36,7 +36,7 @@ private:
     int Sec_PDG{0};
 
     std::shared_ptr<SecondaryMaxEFinder> SecFinder;
-    ProcessClassifier PCFinder;
+    std::shared_ptr<ProcessClassifier> PCFinder;
 
     int Initial_PDG{};
     double Initial_Px{};
@@ -61,12 +61,6 @@ private:
     double Pi{0.};
     double Pf{0.};
 
-    // For Process Classifier
-    std::tuple<TString, TString, double, double> process;
-    TString ProcessName{};
-    TString PVName{};
-    double ProcessVertexZ{};
-    double Process_E{};
 };
 
 

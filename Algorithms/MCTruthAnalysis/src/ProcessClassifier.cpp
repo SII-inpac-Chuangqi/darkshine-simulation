@@ -6,25 +6,22 @@
 
 using namespace std;
 
-bool ProcessClassifier::FoundInitial(AnaEvent *Evt) {
-    auto mcps = Evt->getMcParticleCollection().at("RawMCParticle");
-    int Initial_ID = (*mcps->begin())->getId();
-    int Initial_PDG = (*mcps->begin())->getPdg();
-    if (Initial_ID == 1 && Initial_PDG == 11) {
-        isFoundInit = true;
-    }
-
-    return isFoundInit;
+void ProcessClassifier::RegisterParameters() {
+    EvtWrt->RegisterStrVariable("Process_Type", &ProcessName);
+    EvtWrt->RegisterStrVariable("Process_PVName", &PVName);
+    EvtWrt->RegisterDoubleVariable("Process_Vertex_Z", &Process_Vertex_Z, "Process_Vertex_Z/D");
+    EvtWrt->RegisterDoubleVariable("Process_E", &ProcessEnergy, "Process_E/D");
 }
 
-yulei ProcessClassifier::defineProcessName(bool isFound, AnaEvent *Evt, McParticle *mcp) {
+yulei ProcessClassifier::defineProcessName(AnaEvent *Evt, McParticle *mcp) {
     auto mcps = Evt->getMcParticleCollection().at("RawMCParticle");
     auto itrp = (mcp == nullptr) ? mcps->at(0) : mcp;
     ProcessName = "inclusive";
-    if (isFound) {    // Found Initial Electron Particle
+
+    { // For gamma process
         for (auto p: *(itrp->getChildren())) {
-            Children_PDG = p->getPdg();
-            Children_E = p->getEnergy();
+            auto Children_PDG = p->getPdg();
+            auto Children_E = p->getEnergy();
 
             if (Children_E > 4000. && Children_PDG == 22) {
                 ProcessName = "hardbrem";
@@ -32,28 +29,25 @@ yulei ProcessClassifier::defineProcessName(bool isFound, AnaEvent *Evt, McPartic
                 ProcessEnergy = Children_E;
                 Process_Vertex_Z = p->getEndPointZ();
 
-                n_mu = 0;
+                int n_mu = 0;
                 double Max_pnE = 0;
                 for (auto pc: *(p->getChildren())) {
-                    Children_PDG = pc->getPdg();
-                    Children_ID = pc->getId();
 
                     //=======GammaToMuPair=========
-                    if (std::abs(Children_PDG) == 13) {
+                    if (std::abs(pc->getPdg()) == 13) {
                         n_mu += 1;
                     }
 
                     //======== photonNuclear ========
                     const string &Name = pc->getCreateProcess();
                     if (Name == "photonNuclear") {
-                        double energy = pc->getEnergy();
-                        if (energy > Max_pnE) {
+                        if (auto energy = pc->getEnergy(); energy > Max_pnE) {
                             Max_pnE = energy;
                             ProcessName = "photonNuclear";
                             Process_Vertex_Z = pc->getVertexZ();
 
                             if (pc->getVertexZ() != p->getEndPointZ())
-                                cerr << "Error: " << pc->getVertexZ() << ", " << p->getEndPointZ() << endl;
+                                cerr << "Error -- " << Evt->getEventId()<<": " << pc->getVertexZ() << ", " << p->getEndPointZ() << endl;
                         }
                     }
                 }
