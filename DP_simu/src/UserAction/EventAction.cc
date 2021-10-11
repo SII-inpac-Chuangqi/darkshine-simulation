@@ -62,7 +62,6 @@ EventAction::~EventAction()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::BeginOfEventAction(const G4Event *event) {
-    dRootMng->FillWeight(1);
     dFilterManager->SetifCheckIncludeResult(true);
     fPrintModulo = dRootMng->GetNbEvent() / 100;
 
