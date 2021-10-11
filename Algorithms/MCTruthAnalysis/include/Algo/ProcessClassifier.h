@@ -12,35 +12,32 @@
 #include "Object/DStep.h"
 #include "Core/AnaProcessor.h"
 
-typedef std::tuple<TString, TString, double, double> yulei;
-
 class ProcessClassifier {
 
 public:
 
+    explicit ProcessClassifier(const shared_ptr<EventStoreAndWriter> &evtWrt) : EvtWrt(evtWrt) {}
+
     void initialization();
 
-    bool FoundInitial(AnaEvent* evt);
+    void RegisterParameters();
     
-    yulei defineProcessName(bool isFound, AnaEvent* evt, McParticle* mcp = nullptr);
+    void defineProcessName(AnaEvent* evt, McParticle* mcp = nullptr);
 
 private:
 
-//    AnaEvent* Evt{};
-
-    bool isFoundInit;
-
-    double Children_E;
-    double Children_pointZ;
-    int    Children_ID;
-    int    Children_PDG;
-
-    int n_mu;
-
     TString ProcessName;
     TString PVName;
-    double EndPointZ;
-    double ProcessEnergy;
+    double Process_Vertex_Z{};
+    double ProcessEnergy{};
+
+    const shared_ptr<EventStoreAndWriter> &EvtWrt;
+
+    int Process_HardBrem_Target{};
+    int Process_HardBrem_ECAL{};
+
+    int Process_EN_Pre_Target{};
+    int Process_EN_Pre_ECAL{};
 
 };
 

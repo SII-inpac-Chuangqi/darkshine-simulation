@@ -108,9 +108,9 @@ void TrackingAction::PostUserTrackingAction(const G4Track *aTrack) {
     if (p) {
         //p->setERemain(aTrack->GetKineticEnergy());
         p->setERemain(aTrack->GetTotalEnergy());
-        p->setEndPointX(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[0]);
-        p->setEndPointY(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[1]);
-        p->setEndPointZ(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[2]);
+        p->setEndPointX(aTrack->GetStep()->GetPostStepPoint()->GetPosition()[0]);
+        p->setEndPointY(aTrack->GetStep()->GetPostStepPoint()->GetPosition()[1]);
+        p->setEndPointZ(aTrack->GetStep()->GetPostStepPoint()->GetPosition()[2]);
     }
 
     delete fMC;
