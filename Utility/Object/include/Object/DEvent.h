@@ -209,8 +209,8 @@ public:
         return weight;
     }
 
-    void setWeight(double weight) {
-        DEvent::weight = weight;
+    void setWeight(double w) {
+        weight = w;
     }
 
     McParticle *SearchID(MCParticleVec *mv, int ID) {
