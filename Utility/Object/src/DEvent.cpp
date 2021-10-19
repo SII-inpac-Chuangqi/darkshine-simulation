@@ -121,7 +121,7 @@ void DEvent::PrintDetails() {
         std::cout << "**********************************************************************" << std::endl
                   << "* Simulated Hit Collection: " << simus.first << std::endl
                   << "**********************************************************************" << std::endl
-                  << "| ID    |    x[mm]     y[mm]     z[mm]  time[ns]    E[GeV] | Cell ID |" << std::endl
+                  << "| ID    |    x[mm]     y[mm]     z[mm]  time[ns]    E[MeV] | Cell ID |" << std::endl
                   << "**********************************************************************" << std::endl;
         for (auto simu: *(simus.second))
             std::cout << *simu << std::endl;
