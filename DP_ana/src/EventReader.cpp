@@ -27,10 +27,16 @@ void EventReader::RegisterOutput() {
     EvtWrt->RegisterIntVariable("RunNumber", &RunNumber, "RunNumber/I");
     EvtWrt->RegisterIntVariable("EventNumber", &eventProcessedNumber, "EventNumber/I");
     EvtWrt->RegisterDoubleVariable("Rndm", Rndm, "Rndm[4]/D");
+    EvtWrt->RegisterDoubleVariable("weight", &weight, "weight/D");
+    EvtWrt->RegisterDoubleVariable("ECAL_Leak", &ECAL_Leak, "ECAL_Leak/D");
     EvtWrt->RegisterDoubleVariable("PNEnergy_Target", &PNEnergy_Target, "PNEnergy_Target/D");
     EvtWrt->RegisterDoubleVariable("PNEnergy_ECAL", &PNEnergy_ECAL, "PNEnergy_ECAL/D");
-    EvtWrt->RegisterDoubleVariable("ECAL_Leak", &ECAL_Leak, "ECAL_Leak/D");
-
+    EvtWrt->RegisterDoubleVariable("ENEnergy_Target", &ENEnergy_Target, "ENEnergy_Target/D");
+    EvtWrt->RegisterDoubleVariable("ENEnergy_ECAL", &ENEnergy_ECAL, "ENEnergy_ECAL/D");
+    EvtWrt->RegisterDoubleVariable("PNZ_Target", &PNZ_Target, "PNZ_Target/D");
+    EvtWrt->RegisterDoubleVariable("PNZ_ECAL", &PNZ_ECAL, "PNZ_ECAL/D");
+    EvtWrt->RegisterDoubleVariable("ENZ_Target", &ENZ_Target, "ENZ_Target/D");
+    EvtWrt->RegisterDoubleVariable("ENZ_ECAL", &ENZ_ECAL, "ENZ_ECAL/D");
 
     // Initialized Processed Number
     eventProcessedNumber = 0;
@@ -46,9 +52,18 @@ void EventReader::Convert() {
     EventNumber = evt->getEventId();
     for (int i = 0; i < 4; ++i) Rndm[i] = evt->getRndm()[i];
 
+    weight = evt->getWeight();
+    ECAL_Leak = evt->getEleakEcal();
     PNEnergy_Target = evt->getPnEnergyTarget();
     PNEnergy_ECAL = evt->getPnEnergyEcal();
-    ECAL_Leak = evt->getEleakEcal();
+    ENEnergy_Target = evt->getEnEnergyTarget();
+    ENEnergy_ECAL = evt->getEnEnergyEcal();
+
+    PNZ_Target = evt->getPnzTarget();
+    PNZ_ECAL = evt->getPnzEcal();
+    ENZ_Target = evt->getEnzTarget();
+    ENZ_ECAL = evt->getEnzEcal();
+
 
     eventProcessedNumber++;
     if (Verbose > 1) {

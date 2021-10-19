@@ -11,15 +11,22 @@
 
 void DEvent::Initialization(CleanType ct) {
     // clean constant variables
+    weight = 1.;
     PNEnergy_Target = 0.;
     PNEnergy_ECAL = 0.;
+    ENEnergy_Target = 0.;
+    ENEnergy_ECAL = 0.;
+    PNZ_Target = -999.;
+    PNZ_ECAL = -999.;
+    ENZ_Target = -999.;
+    ENZ_ECAL = -999.;
     Eleak_ECAL = 0.;
     TotalRecEnergy = 0.;
     ECALRecEnergy = 0.;
     HCALRecEnergy = 0.;
 
-    for (auto itr : MCParticleCollection) {
-        for (auto itr2 : *itr.second) {
+    for (auto itr: MCParticleCollection) {
+        for (auto itr2: *itr.second) {
             delete itr2;
         }
         (itr.second)->clear();
@@ -27,8 +34,8 @@ void DEvent::Initialization(CleanType ct) {
         if (ct == nALL) delete itr.second;
     }
     if (ct == nALL) MCParticleCollection.clear();
-    for (auto itr : RecParticleCollection) {
-        for (auto itr2 : *itr.second) {
+    for (auto itr: RecParticleCollection) {
+        for (auto itr2: *itr.second) {
             delete itr2;
         }
         (itr.second)->clear();
@@ -37,8 +44,8 @@ void DEvent::Initialization(CleanType ct) {
     }
     if (ct == nALL) RecParticleCollection.clear();
 
-    for (auto itr : SimulatedHitCollection) {
-        for (auto itr2 : *itr.second) {
+    for (auto itr: SimulatedHitCollection) {
+        for (auto itr2: *itr.second) {
             delete itr2;
         }
         (itr.second)->clear();
@@ -47,8 +54,8 @@ void DEvent::Initialization(CleanType ct) {
     }
     if (ct == nALL) SimulatedHitCollection.clear();
 
-    for (auto itr : CalorimeterHitCollection) {
-        for (auto itr2 : *itr.second) {
+    for (auto itr: CalorimeterHitCollection) {
+        for (auto itr2: *itr.second) {
             delete itr2;
         }
         (itr.second)->clear();
@@ -57,8 +64,8 @@ void DEvent::Initialization(CleanType ct) {
     }
     if (ct == nALL) CalorimeterHitCollection.clear();
 
-    for (auto itr : StepCollection) {
-        for (auto itr2 : *itr.second) {
+    for (auto itr: StepCollection) {
+        for (auto itr2: *itr.second) {
             delete itr2;
         }
         (itr.second)->clear();
@@ -67,8 +74,8 @@ void DEvent::Initialization(CleanType ct) {
     }
     if (ct == nALL) StepCollection.clear();
 
-    for (auto itr : OpticalCollection) {
-        for (auto itr2 : *itr.second) {
+    for (auto itr: OpticalCollection) {
+        for (auto itr2: *itr.second) {
             delete itr2;
         }
         (itr.second)->clear();
@@ -79,47 +86,45 @@ void DEvent::Initialization(CleanType ct) {
 
 }
 
-void DEvent::PrintDetails()
-{
-    for(auto steps : StepCollection)
-    {
-        std::cout << "***********************************************************************************************************************"
-                  << std::endl
-                  << "* Step Collection: " << steps.first << std::endl
-                  << "***********************************************************************************************************************"
-                  << std::endl
-                  << "| ID    |    x[mm]     y[mm]    z[mm]  |  Px[MeV]   Py[MeV]   Pz[MeV]    E[MeV] | PVName              Process Name    |"
-                  << std::endl
-                  << "***********************************************************************************************************************"
-                  << std::endl;
-        for(auto step : *(steps.second))
+void DEvent::PrintDetails() {
+    for (const auto& steps: StepCollection) {
+        std::cout
+                << "***********************************************************************************************************************"
+                << std::endl
+                << "* Step Collection: " << steps.first << std::endl
+                << "***********************************************************************************************************************"
+                << std::endl
+                << "| ID    |    x[mm]     y[mm]    z[mm]  |  Px[MeV]   Py[MeV]   Pz[MeV]    E[MeV] | PVName              Process Name    |"
+                << std::endl
+                << "***********************************************************************************************************************"
+                << std::endl;
+        for (auto step: *(steps.second))
             std::cout << *step << std::endl;
     }
 
-    for(auto particles : MCParticleCollection)
-    {
-        std::cout << "****************************************************************************************************************************************************************************"
-                  << std::endl
-                  << "* MC Particle Collection: " << particles.first << std::endl
-                  << "****************************************************************************************************************************************************************************"
-                  << std::endl
-                  << "| ID    | PDG    |  Px[MeV]   Py[MeV]   Pz[MeV] |   E[MeV]  Mass[MeV]  ER[MeV] |Vertex x[mm]     y[mm]     z[mm] |End x[mm]     y[mm]     z[mm] | Process          Parent   |"
-                  << std::endl
-                  << "****************************************************************************************************************************************************************************"
-                  << std::endl;
-         for(auto particle : *(particles.second))
-             std::cout << *particle << std::endl;
+    for (const auto& particles: MCParticleCollection) {
+        std::cout
+                << "****************************************************************************************************************************************************************************"
+                << std::endl
+                << "* MC Particle Collection: " << particles.first << std::endl
+                << "****************************************************************************************************************************************************************************"
+                << std::endl
+                << "| ID    | PDG    |  Px[MeV]   Py[MeV]   Pz[MeV] |   E[MeV]  Mass[MeV]  ER[MeV] |Vertex x[mm]     y[mm]     z[mm] |End x[mm]     y[mm]     z[mm] | Process          Parent   |"
+                << std::endl
+                << "****************************************************************************************************************************************************************************"
+                << std::endl;
+        for (auto particle: *(particles.second))
+            std::cout << *particle << std::endl;
     }
 
-    for(auto simus : SimulatedHitCollection)
-    {
+    for (const auto& simus: SimulatedHitCollection) {
         std::cout << "**********************************************************************" << std::endl
                   << "* Simulated Hit Collection: " << simus.first << std::endl
                   << "**********************************************************************" << std::endl
                   << "| ID    |    x[mm]     y[mm]     z[mm]  time[ns]    E[GeV] | Cell ID |" << std::endl
                   << "**********************************************************************" << std::endl;
-        for(auto simu : *(simus.second))
-             std::cout << *simu << std::endl;
+        for (auto simu: *(simus.second))
+            std::cout << *simu << std::endl;
     }
     std::cout << "**********************************************************************" << std::endl;
 }
@@ -285,8 +290,8 @@ void DEvent::DeleteCollection(const std::string &str) {
 
 void DEvent::LinkChildren() {
     if (MCParticleCollection.empty()) return;
-    for (const auto &collection : MCParticleCollection) {
-        for (auto itr : *(collection.second)) {
+    for (const auto &collection: MCParticleCollection) {
+        for (auto itr: *(collection.second)) {
             // If parent exists
             if (itr->getParents()) itr->getParents()->addChildren(itr);
         }
@@ -294,7 +299,8 @@ void DEvent::LinkChildren() {
 }
 
 #ifdef MEMCK
-void DEvent::PrintObjectStatistics(const TString& str) {
+
+void DEvent::PrintObjectStatistics(const TString &str) {
 
     std::vector<std::string> Mem_Collections = {"DEvent", "DStep", "McParticle", "SimulatedHit",
                                                 "ReconstructedParticle", "CalorimeterHit", "DigiForm"};
@@ -323,6 +329,7 @@ void DEvent::PrintObjectStatistics(const TString& str) {
     Printf("Total:                   %8d%11d%16d%18.2f%17.2f", ncum, hcum, scum, tcum / 1000., thcum / 1000.);
     Printf("===============================================================================================");
 }
+
 #endif
 
 

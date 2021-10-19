@@ -98,16 +98,19 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void TrackingAction::PostUserTrackingAction(const G4Track *aTrack) {
-
+    // save weight
+    if (aTrack->GetWeight() != 1) {
+        dRootMng->FillWeight( aTrack->GetWeight() );
+    }
     // Find MC in collection
     auto MCCols = dRootMng->GetEvt()->getMcParticleCollection().at(dControl->RawMCCollection_Name);
     auto p = McParticle::SearchID(MCCols, aTrack->GetTrackID());
     if (p) {
         //p->setERemain(aTrack->GetKineticEnergy());
         p->setERemain(aTrack->GetTotalEnergy());
-        p->setEndPointX(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[0]);
-        p->setEndPointY(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[1]);
-        p->setEndPointZ(aTrack->GetStep()->GetPreStepPoint()->GetPosition()[2]);
+        p->setEndPointX(aTrack->GetStep()->GetPostStepPoint()->GetPosition()[0]);
+        p->setEndPointY(aTrack->GetStep()->GetPostStepPoint()->GetPosition()[1]);
+        p->setEndPointZ(aTrack->GetStep()->GetPostStepPoint()->GetPosition()[2]);
     }
 
     delete fMC;
