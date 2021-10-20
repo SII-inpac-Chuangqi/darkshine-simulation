@@ -32,6 +32,9 @@ public:
 
     void CleanEvt();
 
+    void FillTruth(std::vector<DStep*> *stepIni,
+                   std::vector<TrkHit> rawTagTrk2Hits, std::vector<TrkHit> rawRecTrk2Hits);
+
     void ProcessEvt(AnaEvent* evt) override;
 
     void CheckEvt(AnaEvent* evt) override;

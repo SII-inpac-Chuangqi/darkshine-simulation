@@ -159,6 +159,56 @@ void TrackingProcessor::CleanEvt() {
     std::vector<double>().swap(RecTrk2_track_y_sigma);
 }
 
+void TrackingProcessor::FillTruth(std::vector<DStep*> *stepIni,
+                                  std::vector<TrkHit> rawTagTrk2Hits,
+                                  std::vector<TrkHit> rawRecTrk2Hits) {
+    if (!clean) {
+        TagTrk2_No = rawTagTrk2Hits.size();
+ 
+        bool trackerFlag = false;
+        for (auto step : *stepIni) {
+            if (InTagTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
+                TagTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
+                                            step->getPz() * step->getPz());
+                trackerFlag = true;
+            } else if (!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
+                TagTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
+                                            step->getPz() * step->getPz());
+                break;
+            }
+        }
+ 
+        for (int i = 0; i < TagTrk2_No; ++i) {
+            TagTrk2_x.push_back(rawTagTrk2Hits.at(i).GetX());
+            TagTrk2_y.push_back(rawTagTrk2Hits.at(i).GetY());
+            TagTrk2_z.push_back(rawTagTrk2Hits.at(i).GetZ());
+            TagTrk2_e.push_back(rawTagTrk2Hits.at(i).GetE());
+        }
+ 
+        RecTrk2_No = rawRecTrk2Hits.size();
+ 
+        trackerFlag = false;
+        for (auto step : *stepIni) {
+            if (InRecTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
+                RecTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
+                                            step->getPz() * step->getPz());
+                trackerFlag = true;
+            } else if (!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
+                RecTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
+                                            step->getPz() * step->getPz());
+                break;
+            }
+        }
+ 
+        for (int i = 0; i < RecTrk2_No; ++i) {
+            RecTrk2_x.push_back(rawRecTrk2Hits.at(i).GetX());
+            RecTrk2_y.push_back(rawRecTrk2Hits.at(i).GetY());
+            RecTrk2_z.push_back(rawRecTrk2Hits.at(i).GetZ());
+            RecTrk2_e.push_back(rawRecTrk2Hits.at(i).GetE());
+        }
+    }
+}
+
 void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     this->CleanEvt();
 
@@ -181,13 +231,13 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         //const auto &mc = MCCollection.at("RawMCParticle");
         const auto &stepIni = stepCollection.at("Initial_Particle_Step");
 
-        vector<TrkHit> rawTagTrk1Hits;
-        vector<TrkHit> rawTagTrk2Hits;
+        std::vector<TrkHit> rawTagTrk1Hits;
+        std::vector<TrkHit> rawTagTrk2Hits;
         for (auto hit : *simuHitCollection.at("TagTrk1")) rawTagTrk1Hits.emplace_back(*hit);
         for (auto hit : *simuHitCollection.at("TagTrk2")) rawTagTrk2Hits.emplace_back(*hit);
 
-        vector<TrkHit> rawRecTrk1Hits;
-        vector<TrkHit> rawRecTrk2Hits;
+        std::vector<TrkHit> rawRecTrk1Hits;
+        std::vector<TrkHit> rawRecTrk2Hits;
         for (auto hit : *simuHitCollection.at("RecTrk1")) rawRecTrk1Hits.emplace_back(*hit);
         for (auto hit : *simuHitCollection.at("RecTrk2")) rawRecTrk2Hits.emplace_back(*hit);
 
@@ -205,11 +255,11 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             {
 //................................................................................//
 //Finding, by pre-fitting
-                vector<TrkHitPVec> VecTagTrack;
+                std::vector<TrkHitPVec> VecTagTrack;
                 GreedyFinding findTag(clusTagTrkHitMap);
                 VecTagTrack.assign(findTag.First(), findTag.Last());
     
-                vector<TrkHitPVec> VecRecTrack;
+                std::vector<TrkHitPVec> VecRecTrack;
                 GreedyFinding findRec(clusRecTrkHitMap);
                 VecRecTrack.assign(findRec.First(), findRec.Last());
 
@@ -306,52 +356,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             }
         }
 
-        if (!clean) {
-
-            TagTrk2_No = rawTagTrk2Hits.size();
-    
-            bool trackerFlag = false;
-            for (auto step : *stepIni) {
-                if (InTagTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
-                    TagTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
-                                                step->getPz() * step->getPz());
-                    trackerFlag = true;
-                } else if (!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
-                    TagTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
-                                                step->getPz() * step->getPz());
-                    break;
-                }
-            }
-    
-            for (int i = 0; i < TagTrk2_No; ++i) {
-                TagTrk2_x.push_back(rawTagTrk2Hits.at(i).GetX());
-                TagTrk2_y.push_back(rawTagTrk2Hits.at(i).GetY());
-                TagTrk2_z.push_back(rawTagTrk2Hits.at(i).GetZ());
-                TagTrk2_e.push_back(rawTagTrk2Hits.at(i).GetE());
-            }
-    
-            RecTrk2_No = rawRecTrk2Hits.size();
-    
-            trackerFlag = false;
-            for (auto step : *stepIni) {
-                if (InRecTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
-                    RecTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
-                                                step->getPz() * step->getPz());
-                    trackerFlag = true;
-                } else if (!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
-                    RecTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
-                                                step->getPz() * step->getPz());
-                    break;
-                }
-            }
-    
-            for (int i = 0; i < RecTrk2_No; ++i) {
-                RecTrk2_x.push_back(rawRecTrk2Hits.at(i).GetX());
-                RecTrk2_y.push_back(rawRecTrk2Hits.at(i).GetY());
-                RecTrk2_z.push_back(rawRecTrk2Hits.at(i).GetZ());
-                RecTrk2_e.push_back(rawRecTrk2Hits.at(i).GetE());
-            }
-        }
+        this->FillTruth(stepIni, rawTagTrk2Hits, rawRecTrk2Hits);
     }
 }
 
