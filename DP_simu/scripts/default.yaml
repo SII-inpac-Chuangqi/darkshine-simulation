@@ -265,7 +265,7 @@ Geometry:
     HCAL_Module_No: [4, 4, 1]
     HCAL_Module_Gap: [0.5 , "mm"]
     # HCAL Absorber Thickness
-    HCAL_Absorber_Thickness: [3 , "cm"]
+    HCAL_Absorber_Thickness: [3 , "cm"] # Set this value to zero will not build Absorber.
 
 
 # End of File
