@@ -124,6 +124,8 @@ int main(int argc, char **argv) {
         std::cerr << "[Read YAML] ==> Reading Error from YAML file: " << std::endl;
         return -1;
     }
+    dControl->ConstructG4MaterialTable();
+    dControl->AssignG4Material();
 
     // Initiate RootManager Class
     RootManager::CreateInstance();
