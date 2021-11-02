@@ -134,9 +134,9 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1Hits, const std::vect
                     double smear1 = rnd_.Uniform(layerWidth/stripNo) - 0.5*layerWidth/stripNo;
                     double smear2 = rnd_.Uniform(layerWidth/stripNo) - 0.5*layerWidth/stripNo;
                     double x1 = hit1->GetX() + smear1;
-                    double y = -x1/tan(angle) + ((hit2->GetCellIdX() - (stripNo + 1)/2)*layerWidth/stripNo + smear2)/sin(angle);
+                    double y = -x1/tan(angle) + ((hit2->GetCellIdX() - 0.5*(stripNo + 1))*layerWidth/stripNo + smear2)/sin(angle);
 
-                    if(abs(y) < 0.5*layerLength)
+                    if(std::abs(y) < 0.5*layerLength)
                     {
                         TrkHit constructedHit;
                         constructedHit.SetU(x1);
@@ -157,5 +157,29 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1Hits, const std::vect
             }
         }
     }
+
+/*
+    for(auto itTrkHit : trk1Hits)
+    {
+        auto itSearchMap = clusTrkHitMap.find(itTrkHit.GetCellIdZ());
+        if(itSearchMap != clusTrkHitMap.end())
+            itSearchMap->second.emplace_back(std::make_shared<TrkHit>(itTrkHit));
+        else
+        {
+            TrkHitPVec tempNewLayer;
+            tempNewLayer.emplace_back(std::make_shared<TrkHit>(itTrkHit));
+            clusTrkHitMap.insert(std::pair(itTrkHit.GetCellIdZ(), tempNewLayer));
+        }
+    }
+
+    for(auto layer : clusTrkHitMap)
+    {
+        for(auto hit : layer.second)
+        {
+            hit->SetU(hit->GetX());
+            hit->SetV(hit->GetY());
+        }
+    }
+*/
 }
 #endif
