@@ -41,7 +41,6 @@ include(${Geant4_USE_FILE})
 #----------------------------------------------------------------------------
 # Find required packages)
 #
-find_package(HepMC REQUIRED)
 
 find_package(GSL REQUIRED)
 LINK_LIBRARIES(${GSL_LIBRARIES})

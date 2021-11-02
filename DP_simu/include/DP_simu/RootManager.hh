@@ -82,7 +82,9 @@ public:
 
     void FillMC(McParticle *, int);
 
-    void FillPNE(G4double E1, G4double E2);
+    void FillPNE(G4double E1, G4double E2, G4double Z);
+
+    void FillENE(G4double E1, G4double E2, G4double Z);
 
     void FillEleak(const G4Step *, const G4String &);
 
@@ -99,6 +101,10 @@ public:
 
     TFile *getRootFile() const {
         return rootFile;
+    }
+
+    void FillWeight(double w) {
+        weight = w;
     }
 
 private:
@@ -118,6 +124,7 @@ private:
     Int_t fStart; // Run Number, Initialized to 0. Set method: RootManager::SetStartID(int id)
     Int_t fEvtNb; // Event Number, Initialized to 100000. Set method: RootManager::SetNbEvent(int id)
     Int_t fEvtN{};
+    Double_t weight{0.};
 
     Int_t EventID{};
     Double_t Rndm[4]{}; //Random double array, size=4

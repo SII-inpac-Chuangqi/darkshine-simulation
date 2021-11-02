@@ -1,6 +1,8 @@
 v2.3.0
 DSimu:
     1. Add Signal (Dark Photon) Mass in yaml file
+    2. Add PNZ, ENZ (Z Position), ENEnergy in DEvent
+    3. Add Branch: Weight
 
 
 v2.2.0

@@ -50,69 +50,76 @@
 #include "BiasingMessenger.hh"
 
 class G4BOptnChangeCrossSection;
+
 class G4ParticleDefinition;
+
 class BiasingMessenger;
+
 #include <map>
 
 class BOptrChangeCrossSection : public G4VBiasingOperator {
 public:
-  // ------------------------------------------------------------
-  // -- Constructor: takes the name of the particle type to bias:
-  // ------------------------------------------------------------
-  BOptrChangeCrossSection(const G4String& particleToBias, G4double BF, G4double Em, G4String BP, G4String name = "ChangeXS");
-  virtual ~BOptrChangeCrossSection();
-  
-  // -- method called at beginning of run:
-  virtual void StartRun();
+    // ------------------------------------------------------------
+    // -- Constructor: takes the name of the particle type to bias:
+    // ------------------------------------------------------------
+    BOptrChangeCrossSection(const G4String &particleToBias, G4double BF, G4double Em, G4String BP,
+                            G4String name = "ChangeXS");
 
-  // For messenger
-  void SetBiasFactor(G4double a)    { BiasFactor = a; };
-  void SetEmin(G4double a)          { Emin = a; };
-  void SetBiasProcess(G4String a)   { BiasProcess = a; };
-  
-private:
-  // -----------------------------
-  // -- Mandatory from base class:
-  // -----------------------------
-  // -- This method returns the biasing operation that will bias the physics process occurence.
-  virtual G4VBiasingOperation*
-  ProposeOccurenceBiasingOperation(const G4Track*                            track,
-                                   const G4BiasingProcessInterface* callingProcess);
-  // -- Methods not used:
-  virtual G4VBiasingOperation*
-  ProposeFinalStateBiasingOperation(const G4Track*, const G4BiasingProcessInterface*)
-  {return 0;}
-  virtual G4VBiasingOperation*
-  ProposeNonPhysicsBiasingOperation(const G4Track*, const G4BiasingProcessInterface*)
-  {return 0;}
+    virtual ~BOptrChangeCrossSection();
+
+    // -- method called at beginning of run:
+    virtual void StartRun();
+
+    // For messenger
+    void SetBiasFactor(G4double a) { BiasFactor = a; };
+
+    void SetEmin(G4double a) { Emin = a; };
+
+    void SetBiasProcess(G4String a) { BiasProcess = a; };
 
 private:
-  // -- ("using" is avoid compiler complaining against (false) method shadowing.)
-  using G4VBiasingOperator::OperationApplied;
+    // -----------------------------
+    // -- Mandatory from base class:
+    // -----------------------------
+    // -- This method returns the biasing operation that will bias the physics process occurence.
+    virtual G4VBiasingOperation *
+    ProposeOccurenceBiasingOperation(const G4Track *track,
+                                     const G4BiasingProcessInterface *callingProcess);
 
-  // -- Optionnal base class method implementation.
-  // -- This method is called to inform the operator that a proposed operation has been applied.
-  // -- In the present case, it means that a physical interaction occured (interaction at
-  // -- PostStepDoIt level):
-  virtual void OperationApplied( const G4BiasingProcessInterface*                callingProcess,
-                                 G4BiasingAppliedCase                               biasingCase,
-                                 G4VBiasingOperation*                 occurenceOperationApplied,
-                                 G4double                         weightForOccurenceInteraction,
-                                 G4VBiasingOperation*                finalStateOperationApplied, 
-                                 const G4VParticleChange*                particleChangeProduced );
-  
+    // -- Methods not used:
+    virtual G4VBiasingOperation *
+    ProposeFinalStateBiasingOperation(const G4Track *, const G4BiasingProcessInterface *) { return 0; }
+
+    virtual G4VBiasingOperation *
+    ProposeNonPhysicsBiasingOperation(const G4Track *, const G4BiasingProcessInterface *) { return 0; }
+
 private:
-  // -- List of associations between processes and biasing operations:
-  std::map< const G4BiasingProcessInterface*, 
-            G4BOptnChangeCrossSection*       > fChangeCrossSectionOperations;
-  G4bool                                  fSetup;
-  const G4ParticleDefinition*    fParticleToBias;
-  
-  BiasingMessenger* fMessenger;
-  G4int nBias{};
-  G4double BiasFactor;
-  G4double Emin;
-  G4String BiasProcess;
+    // -- ("using" is avoid compiler complaining against (false) method shadowing.)
+    using G4VBiasingOperator::OperationApplied;
+
+    // -- Optionnal base class method implementation.
+    // -- This method is called to inform the operator that a proposed operation has been applied.
+    // -- In the present case, it means that a physical interaction occured (interaction at
+    // -- PostStepDoIt level):
+    virtual void OperationApplied(const G4BiasingProcessInterface *callingProcess,
+                                  G4BiasingAppliedCase biasingCase,
+                                  G4VBiasingOperation *occurenceOperationApplied,
+                                  G4double weightForOccurenceInteraction,
+                                  G4VBiasingOperation *finalStateOperationApplied,
+                                  const G4VParticleChange *particleChangeProduced);
+
+private:
+    // -- List of associations between processes and biasing operations:
+    std::map<const G4BiasingProcessInterface *,
+            G4BOptnChangeCrossSection *> fChangeCrossSectionOperations;
+    G4bool fSetup;
+    const G4ParticleDefinition *fParticleToBias;
+
+    BiasingMessenger *fMessenger;
+    G4int nBias{};
+    G4double BiasFactor;
+    G4double Emin;
+    G4String BiasProcess;
 
 };
 

@@ -108,8 +108,15 @@ private:
     int eventProcessedNumber{0};
 
     double ECAL_Leak{0.};
-    double PNEnergy_Target{0.};
-    double PNEnergy_ECAL{0.};
+    double weight{1.};
+    double PNEnergy_Target{0.}; // Photon-Nuclear reaction Energy in Target region
+    double PNEnergy_ECAL{0.}; // Photon-Nuclear reaction Energy in ECAL region
+    double PNZ_Target{0.};
+    double PNZ_ECAL{0.};
+    double ENEnergy_Target{0.};
+    double ENEnergy_ECAL{0.};
+    double ENZ_Target{0.};
+    double ENZ_ECAL{0.};
 
     // Verbosity
     int Verbose{0};

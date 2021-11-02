@@ -34,8 +34,6 @@
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
 #include "G4GeneralParticleSource.hh"
-#include "DP_simu/HepMCG4AsciiReader.hh"
-#include "DP_simu/HepMCG4PythiaInterface.hh"
 #include "TRandom.h"
 #include "TRandom3.h"
 
@@ -47,16 +45,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     fCurrentGeneratorName = "fParticleGun";
 
     fParticleGun = new G4ParticleGun();
-    fHepmcAscii = new HepMCG4AsciiReader();
-#ifdef G4LIB_USE_PYTHIA
-    fPythiaGen = new HepMCG4PythiaInterface();
-#else
-    fPythiaGen = nullptr;
-#endif
+
     fGentypeMap["particleGun"] = fParticleGun;
     fGentypeMap["GPS"] = fGPS;
-    fGentypeMap["hepmcAscii"] = fHepmcAscii;
-    fGentypeMap["pythia"] = fPythiaGen;
 
     fMessenger = new PrimaryGeneratorMessenger(this);
 }
@@ -65,8 +56,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 PrimaryGeneratorAction::~PrimaryGeneratorAction() {
     delete fMessenger;
     delete fCurrentGenerator;
-    delete fPythiaGen;
-    delete fHepmcAscii;
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

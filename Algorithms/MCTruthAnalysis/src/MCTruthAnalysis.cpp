@@ -14,6 +14,7 @@ MCTruthAnalysis::MCTruthAnalysis(string name, shared_ptr<EventStoreAndWriter> ev
                                                                                                      std::move(
                                                                                                              evtwrt)) {
     SecFinder = std::shared_ptr<SecondaryMaxEFinder>(new SecondaryMaxEFinder(EvtWrt));
+    PCFinder = std::shared_ptr<ProcessClassifier>(new ProcessClassifier(EvtWrt));
 
     // Add description for this AnaProcessor
     Description = "MC Truth Analysis";
@@ -45,9 +46,11 @@ void MCTruthAnalysis::Begin() {
 
         EvtWrt->RegisterDoubleVariable("Truth_Pi", &Pi, "Truth_Pi/D");
         EvtWrt->RegisterDoubleVariable("Truth_Pf", &Pf, "Truth_Pf/D");
+
     }
 
     SecFinder->RegisterParameters();
+    PCFinder->RegisterParameters();
 }
 
 void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
@@ -70,6 +73,10 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
 
         const auto &mc = MCCollection.at(CollectionName);
         const auto &steps = StepCollection.at(StepCollectionName);
+
+        // Process MCTruthEvent -- ProcessClassifier
+        PCFinder->initialization();
+        PCFinder->defineProcessName(evt);
 
         // Record Initial Particle Status
         auto step = steps->begin();
