@@ -55,7 +55,7 @@ Now in your install directory, everything should be there. Now it's the time to 
 Without any arguments, DSimu will run in graphic mode, which is highly not recommended unless it is running on a
 computer with great graphic card.
 
-**Batch Mode**: ```DSimu [ -y file.yaml] [ -m config.file ]```
+**Batch Mode**: ```DSimu [ -y default.yaml]```
 
 - (**IMPORTANT**)The config file after '-y' is the yaml file, which will control the whole configuration of the program.
   The default yaml file is in ```DP_simu/scripts/```, or it will also be installed to the ```CMAKE_ISNTALL_PREFIX```

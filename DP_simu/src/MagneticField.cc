@@ -74,7 +74,7 @@ void MagneticField::GetFieldValue(const G4double Point[4],
             Bfield[i] = BField.at(i)->GetField(Point[0], Point[1], Point[2]) * tesla;
         }
     }
-
+/*
     if (Point[0] < mag_field_region_min[0] || Point[1] < mag_field_region_min[1] || Point[2] < mag_field_region_min[2] ||
         Point[0] > mag_field_region_max[0] || Point[1] > mag_field_region_max[1] || Point[2] > mag_field_region_max[2] ) {
 
@@ -82,7 +82,7 @@ void MagneticField::GetFieldValue(const G4double Point[4],
         Bfield[1] = 0;
         Bfield[2] = 0;
     }
-
+*/
     if ( dControl->mag_verbose == 1 )
     {
         std::cout << std::setw(10) << "Point = " << Point[0] << ", " << Point[1] << ", " << Point[2] << std::endl;

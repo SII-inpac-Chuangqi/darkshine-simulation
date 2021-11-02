@@ -97,6 +97,7 @@ void RootManager::book() { //run level init for all
         tr->Branch("RunNumber", &fStart, "RunNumber/I");
         tr->Branch("EventNumber", &fEvtN, "EventNumber/I");
         tr->Branch("Rndm", &Rndm, "Rndm[4]/D");
+        tr->Branch("Weight", &weight, "Weight/D");
 
         // truth
         if (dControl->save_MC)
@@ -150,12 +151,49 @@ void RootManager::save() {
 /// \brief Fill Photon-Nuclear reaction Energy.
 /// \param[in] E1 if E1 > PNEnergy_Target, replace it by E1
 /// \param[in] E1 if E2 > PNEnergy_Ecal, replace it by E2
-void RootManager::FillPNE(G4double E1, G4double E2) {
+/// \param[in] Z - z position
+void RootManager::FillPNE(G4double E1, G4double E2, G4double Z) {
     auto EnergyTarget = Evt->getPnEnergyTarget();
-    Evt->setPnEnergyTarget(E1 > EnergyTarget ? E1 : EnergyTarget);
     auto EnergyECAL = Evt->getPnEnergyEcal();
-    Evt->setPnEnergyEcal(E2 > EnergyECAL ? E2 : EnergyECAL);
+    if (E1 > EnergyTarget) {
+        Evt->setPnEnergyTarget(E1);
+        Evt->setPnZTarget(Z);
+    } else {
+
+    }
+    if (E2 > EnergyECAL) {
+        Evt->setPnEnergyEcal(E2);
+        Evt->setPnZEcal(Z);
+    } else {
+
+    }
+//    Evt->setPnEnergyTarget(E1 > EnergyTarget ? E1 : EnergyTarget);
+//    Evt->setPnEnergyEcal(E2 > EnergyECAL ? E2 : EnergyECAL);
 }
+
+/// \brief Fill Electron-Nuclear reaction Energy.
+/// \param[in] E1
+/// \param[in] E2
+/// \param[in] Z
+void RootManager::FillENE(G4double E1, G4double E2, G4double Z) {
+    auto EnergyTarget = Evt->getEnEnergyTarget();
+    auto EnergyECAL = Evt->getEnEnergyEcal();
+    if (E1 > EnergyTarget) {
+        Evt->setEnEnergyTarget(E1);
+        Evt->setEnZTarget(Z);
+    } else {
+
+    }
+    if (E2 > EnergyECAL) {
+        Evt->setEnEnergyEcal(E2);
+        Evt->setEnZEcal(Z);
+    } else {
+
+    }
+    //    Evt->setPnEnergyTarget(E1 > EnergyTarget ? E1 : EnergyTarget);
+    //    Evt->setPnEnergyEcal(E2 > EnergyECAL ? E2 : EnergyECAL);
+}
+
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 /// \brief
@@ -194,6 +232,7 @@ void RootManager::FillSim(Int_t eventID, const Double_t *Rnd) {
 
     Evt->setEventId(EventID);
     Evt->setRndm(Rnd);
+    Evt->setWeight(weight);
 
     tr->Fill();
 

@@ -22,9 +22,18 @@ general_particle_source:
     source/multiplevertex: true
     source/intensity: 5
     particle: "e-"
+    pos/type: "Beam"
+    pos/shape: "Circle"
+    pos/centre: "0 0 -61 cm"
+    pos/radius: "3 cm"
+    pos/sigma_r: "0.05 cm"
+    ang/type: "beam1d"
+    ang/rot1: "0 1 0"
+    ang/rot2: "1 0 0"
+    ene/type: "Gauss"
     ene/mono: "8 GeV"
-    direction: "0 0 1"
-    position: "0 0 -61 cm"
+    #direction: "0 0 1"
+    #position: "0 0 -61 cm"
   beam_on: 10
 
 ###########################################
@@ -40,7 +49,7 @@ memory_check: false
 # if signal production is activated, program will automatically
 # bias for DMProcessDMBrem and record all the MC particles
 # A process filter on target region will be applied
-signal_production: true
+signal_production: false
 # Dark Photon Mass
 signal_mass: [ 500, "MeV" ]
 # If to use signal LUT
@@ -55,7 +64,7 @@ MagField:
   mag_field_input: "mag_default.root"
   uniform_mag_field: true # false - use mag_field_input; true - use the following setup
   tag_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
-  rec_Tracker_MagField: [ 0, "tesla", -0.5 , "tesla", 0, "tesla" ]
+  rec_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
   mag_verbose: 0
 
 ###########################################
@@ -163,7 +172,7 @@ Geometry:
     Target_Size: [ 10 , "cm", 20 , "cm", 350 , "um" ]
     Target_Pos: [ 0 , "cm", 0 , "cm", 0 , "cm" ]
   Tracker:
-    build_silicon_micro_strip: false # fasle - only build one silicon micro strip in one tracker volume
+    build_silicon_micro_strip: false # false - only build one silicon micro strip in one tracker volume
     Trk_Tar_Dis: [ 7.5, "mm" ]
     Tracker_Mat: "G4_Si"
     TrackerRegion_Mat: "vacuum"
@@ -171,13 +180,13 @@ Geometry:
     Tracker2_Color: [ 0. , 0.5, 0.5 ] # RGB
     # Tagging Tracker
     tag_Size_Tracker:
-      - [ 5 , "cm", 10 , "cm", 0.1 , "mm" ] # Layer 1
-      - [ 5 , "cm", 10 , "cm", 0.1 , "mm" ] # Layer 2
-      - [ 5 , "cm", 10 , "cm", 0.1 , "mm" ] # Layer 3
-      - [ 5 , "cm", 10 , "cm", 0.1 , "mm" ] # Layer 4
-      - [ 5 , "cm", 10 , "cm", 0.1 , "mm" ] # Layer 5
-      - [ 5 , "cm", 10 , "cm", 0.1 , "mm" ] # Layer 6
-      - [ 5 , "cm", 10 , "cm", 0.1 , "mm" ] # Layer 7
+      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 1
+      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 2
+      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 3
+      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 4
+      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 5
+      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 6
+      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 7
     tag_Pos_Tracker:
       - [ 0 , "cm", 0 , "cm", -30 , "cm" ] # Layer 1
       - [ 0 , "cm", 0 , "cm", -20 , "cm" ] # Layer 2
@@ -187,22 +196,22 @@ Geometry:
       - [ 0 , "cm", 0 , "cm",  20 , "cm" ] # Layer 6
       - [ 0 , "cm", 0 , "cm",  30 , "cm" ] # Layer 7
     tag_Tracker_Angle_Gap: # angle of trackers , and gap between each strips
-      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 1
-      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 2
-      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 3
-      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 4
-      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 5
-      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 6
-      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 7
+      - [ 0, "radian" ,  0.1 , "radian" , 1 , "um" ] #Layer 1
+      - [ 0, "radian" ,  0.1 , "radian" , 1 , "um" ] #Layer 2
+      - [ 0, "radian" ,  0.1 , "radian" , 1 , "um" ] #Layer 3
+      - [ 0, "radian" ,  0.1 , "radian" , 1 , "um" ] #Layer 4
+      - [ 0, "radian" ,  0.1 , "radian" , 1 , "um" ] #Layer 5
+      - [ 0, "radian" ,  0.1 , "radian" , 1 , "um" ] #Layer 6
+      - [ 0, "radian" ,  0.1 , "radian" , 1 , "um" ] #Layer 7
     tag_Tracker_Strip_N: [ 20 , 20 , 20 , 20 , 20 , 20 , 20 ]
     # Recoil Tracker
     rec_Size_Tracker:
       - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 1
       - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 2
       - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 3
-      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 4
-      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 5
-      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 6
+      - [ 12 , "cm", 23 , "cm", 0.1 , "mm" ] # Layer 4
+      - [ 18 , "cm", 28 , "cm", 0.1 , "mm" ] # Layer 5
+      - [ 25 , "cm", 40 , "cm", 0.1 , "mm" ] # Layer 6
     rec_Pos_Tracker:
       - [ 0 , "cm", 0 , "cm", -86.25 , "mm" ] # Layer 1
       - [ 0 , "cm", 0 , "cm", -71.25 , "mm" ] # Layer 2
@@ -211,12 +220,12 @@ Geometry:
       - [ 0 , "cm", 0 , "cm", -4.25  , "mm" ] # Layer 5
       - [ 0 , "cm", 0 , "cm", 86.25  , "mm" ] # Layer 6
     rec_Tracker_Angle_Gap:
-      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 1
-      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 2
-      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 3
-      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 4
-      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 5
-      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 6
+      - [ 0, "radian" , 0.1 , "radian" , 1 , "um" ] #Layer 1
+      - [ 0, "radian" , 0.1 , "radian" , 1 , "um" ] #Layer 2
+      - [ 0, "radian" , 0.1 , "radian" , 1 , "um" ] #Layer 3
+      - [ 0, "radian" , 0.1 , "radian" , 1 , "um" ] #Layer 4
+      - [ 0, "radian" , 0.1 , "radian" , 1 , "um" ] #Layer 5
+      - [ 0, "radian" , 0.1 , "radian" , 1 , "um" ] #Layer 6
     rec_Tracker_Strip_N: [ 40, 40 , 40 , 40 , 40 , 40 ]
   ECAL:
     ECAL_Name: "ECAL"
@@ -256,7 +265,7 @@ Geometry:
     HCAL_Module_No: [4, 4, 1]
     HCAL_Module_Gap: [0.5 , "mm"]
     # HCAL Absorber Thickness
-    HCAL_Absorber_Thickness: [3 , "cm"]
+    HCAL_Absorber_Thickness: [3 , "cm"] # Set this value to zero will not build Absorber.
 
 
 # End of File

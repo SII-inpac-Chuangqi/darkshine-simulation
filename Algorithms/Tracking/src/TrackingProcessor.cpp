@@ -97,8 +97,8 @@ void TrackingProcessor::Begin() {
 //Reconstructed
 //................................................................................//
     EvtWrt->RegisterIntVariable("TagTrk2_track_No", &TagTrk2_track_No, "TagTrk2_track_No/I");
-    EvtWrt->RegisterOutVariable("TagTrk2_pp", &TagTrk2_pp);
-    EvtWrt->RegisterOutVariable("TagTrk2_track_chi2", &TagTrk2_track_chi2);
+    EvtWrt->RegisterDoubleVariable("TagTrk2_pp", TagTrk2_pp, "TagTrk2_pp[TagTrk2_track_No]/D");
+    EvtWrt->RegisterDoubleVariable("TagTrk2_track_chi2", TagTrk2_track_chi2, "TagTrk2_track_chi2[TagTrk2_track_No]/D");
 
     if (!clean) {
 /*
@@ -109,15 +109,18 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterDoubleVariable("TagTrk2_track_z", TagTrk2_track_z,  "TagTrk2_track_z[TagTrk2_rechit_No]/D");
 */
 
-        EvtWrt->RegisterOutVariable("TagTrk2_track_quality", &TagTrk2_track_quality);
-        EvtWrt->RegisterOutVariable("TagTrk2_track_x_sigma", &TagTrk2_track_x_sigma);
-        EvtWrt->RegisterOutVariable("TagTrk2_track_y_sigma", &TagTrk2_track_y_sigma);
+        EvtWrt->RegisterDoubleVariable("TagTrk2_track_quality", TagTrk2_track_quality,
+                                       "TagTrk2_track_quality[TagTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_track_x_sigma", TagTrk2_track_x_sigma,
+                                       "TagTrk2_track_x_sigma[TagTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("TagTrk2_track_y_sigma", TagTrk2_track_y_sigma,
+                                       "TagTrk2_track_y_sigma[TagTrk2_track_No]/D");
     }
 
 //................................................................................//
     EvtWrt->RegisterIntVariable("RecTrk2_track_No", &RecTrk2_track_No, "RecTrk2_track_No/I");
-    EvtWrt->RegisterOutVariable("RecTrk2_pp", &RecTrk2_pp);
-    EvtWrt->RegisterOutVariable("RecTrk2_track_chi2", &RecTrk2_track_chi2);
+    EvtWrt->RegisterDoubleVariable("RecTrk2_pp", RecTrk2_pp, "RecTrk2_pp[RecTrk2_track_No]/D");
+    EvtWrt->RegisterDoubleVariable("RecTrk2_track_chi2", RecTrk2_track_chi2, "RecTrk2_track_chi2[RecTrk2_track_No]/D");
 
     if (!clean) {
 /*
@@ -128,9 +131,12 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterDoubleVariable("RecTrk2_track_z", RecTrk2_track_z,  "RecTrk2_track_z[RecTrk2_rechit_No]/D");
 */
 
-        EvtWrt->RegisterOutVariable("RecTrk2_track_quality", &RecTrk2_track_quality);
-        EvtWrt->RegisterOutVariable("RecTrk2_track_x_sigma", &RecTrk2_track_x_sigma);
-        EvtWrt->RegisterOutVariable("RecTrk2_track_y_sigma", &RecTrk2_track_y_sigma);
+        EvtWrt->RegisterDoubleVariable("RecTrk2_track_quality", RecTrk2_track_quality,
+                                       "RecTrk2_track_quality[RecTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_track_x_sigma", RecTrk2_track_x_sigma,
+                                       "RecTrk2_track_x_sigma[RecTrk2_track_No]/D");
+        EvtWrt->RegisterDoubleVariable("RecTrk2_track_y_sigma", RecTrk2_track_y_sigma,
+                                       "RecTrk2_track_y_sigma[RecTrk2_track_No]/D");
     }
 
     //if(Tag_fit_method == 1 || Rec_fit_method == 1)

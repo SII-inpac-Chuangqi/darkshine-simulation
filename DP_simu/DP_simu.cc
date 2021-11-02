@@ -107,11 +107,9 @@ int main(int argc, char **argv) {
         else if (G4String(argv[i]) == "-h") {
             PrintUsage();
             return 1;
-        }
-        else if (G4String(argv[i]) == "-v") {
+        } else if (G4String(argv[i]) == "-v") {
             PrintVersion();
-        }
-        else {
+        } else {
             PrintUsage();
             //return 1;
         }
@@ -123,9 +121,11 @@ int main(int argc, char **argv) {
     // Read Configuration from YAML
     auto yaml_valid = dControl->ReadYAML(yamlFileName);
     if (!yaml_valid) {
-        std::cerr<<"[Read YAML] ==> Reading Error from YAML file: "<<std::endl;
+        std::cerr << "[Read YAML] ==> Reading Error from YAML file: " << std::endl;
         return -1;
     }
+    dControl->ConstructG4MaterialTable();
+    dControl->AssignG4Material();
 
     // Initiate RootManager Class
     RootManager::CreateInstance();
@@ -136,7 +136,7 @@ int main(int argc, char **argv) {
     dControl->ReadAndSetRandomSeed();
 
     G4Random::setTheEngine(new CLHEP::RanecuEngine());
-    if ( ! dControl->random_restore_file.contains(".rndm")) {
+    if (!dControl->random_restore_file.contains(".rndm")) {
         G4Random::setTheSeed(dControl->random_seed);
     } else {
         G4Random::restoreEngineStatus(dControl->random_restore_file.c_str());
@@ -169,7 +169,7 @@ int main(int argc, char **argv) {
 
     // Optical Physics
     if (dControl->if_optical) {
-        std::cout<<"[Main] ==> Optical Physics Init... "<<std::endl;
+        std::cout << "[Main] ==> Optical Physics Init... " << std::endl;
         auto *opticalPhysics = new OpticalPhysics(dControl->Optical_PhysicsVerbose);
         physicsList->ReplacePhysics(opticalPhysics);
     }
@@ -179,8 +179,11 @@ int main(int argc, char **argv) {
     // Biasing
     if (dControl->if_bias) {
         auto *biasingPhysics = new G4GenericBiasingPhysics();
-        biasingPhysics->Bias("e-");
-        biasingPhysics->Bias("gamma");
+        if (dControl->BiasProcess.contains("electron"))
+            biasingPhysics->Bias("e-", {dControl->BiasProcess});
+        if (dControl->BiasProcess.contains("Gamma")
+            || dControl->BiasProcess.contains("photo"))
+            biasingPhysics->Bias("gamma", {dControl->BiasProcess});
         physicsList->RegisterPhysics(biasingPhysics);
     }
     //physicsList->RegisterPhysics( new OpticalPhysics( rootMng ) );

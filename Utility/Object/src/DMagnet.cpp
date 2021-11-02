@@ -137,6 +137,9 @@ double DMagnet::GetField(double x, double y, double z)
 //Print
 void DMagnet::Print(Option_t *option) const
 {
+    if(option)
+        std::cout << "[Warning] No option available" << std::endl;
+
     std::cout << "******************************************************************************" << std::endl
               << "*" << " DMagnet:" << "	name: " << this->GetName() << "	title: " << this->GetTitle() << std::endl
               << "******************************************************************************" << std::endl;
