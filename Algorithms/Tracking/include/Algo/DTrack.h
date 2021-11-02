@@ -16,7 +16,6 @@
 
 //................................................................................//
 //Framework
-#include "Object/DMagnet.h"
 #include "Object/ReconstructedParticle.h"
 
 //................................................................................//
@@ -26,8 +25,7 @@
 //................................................................................//
 //Fitting methods implemented in Dark Shine tracking
 //--dNone: No method specified, return pre-fitting results from track finding
-//--dKalman: Kalman fitter from GenFit
-enum FittingMethods {dNone, dKalman};
+enum FittingMethods {dNone, dKalman, dRiemann};
 
 class DTrack
 {
@@ -35,10 +33,8 @@ public:
 
     DTrack() = default;
     DTrack(const TrkHitPVec &newHits,
-           double newPreR, 
-           double newPreXc,
-           double newPreYc,
-           std::vector<DMagnet*> magnets);
+           double newPreR, double newPreXc, double newPreYc,
+           double By);
     DTrack(const DTrack &oldTrack);
     DTrack(DTrack &&oldTrack);
 
