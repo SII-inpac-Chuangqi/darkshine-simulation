@@ -54,6 +54,8 @@ public:
 //Get
 //................................................................................//
     int GetId() const {return getId();}
+    int GetCellIdX() const {return getCellIdX();}
+    int GetCellIdY() const {return getCellIdY();}
     int GetCellIdZ() const {return getCellIdZ();}
 
     double GetX() const {return getX();}
