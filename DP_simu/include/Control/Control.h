@@ -19,6 +19,7 @@
 
 #include <vector>
 #include <tuple>
+#include <map>
 
 #include "Object/DigiForm.hh"
 
@@ -34,6 +35,9 @@ public:
 
     // build geant4 material table
     void ConstructG4MaterialTable() const;
+
+    // Assign Materials
+    void AssignG4Material();
 
     // Rebuild all dependent variables
     void RebuildVariables();
@@ -122,6 +126,12 @@ public:
     bool build_only_rec_tracker;
     bool build_only_ECAL;
     bool build_only_HCAL;
+
+
+    //----------------------------------------
+    // Material Stirng
+    std::map<G4String, G4String> MaterialStr{};
+
     //----------------------------------------
     // World
     G4Material *World_Mat{};

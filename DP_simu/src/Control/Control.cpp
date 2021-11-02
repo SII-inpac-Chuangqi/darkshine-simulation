@@ -21,7 +21,7 @@ Control *Control::CreateInstance() {
 Control::Control() {
 
     // Construct Material Table First
-    ConstructG4MaterialTable();
+    //ConstructG4MaterialTable();
 
     UIManager = G4UImanager::GetUIpointer();
     /* Build All independent Variables */
@@ -83,7 +83,7 @@ Control::Control() {
 
     //----------------------------------------
     // Target
-    Target_Mat = G4Material::GetMaterial("G4_W");
+    MaterialStr["Target_Mat"] = "G4_W";
     Target_Size = G4ThreeVector(10 * cm, 20 * cm, 350 * um);
     Target_Pos = G4ThreeVector(0 * cm, 0 * cm, 0 * cm);
 
@@ -91,8 +91,8 @@ Control::Control() {
     // Tracker
     build_silicon_micro_strip = true;
     Trk_Tar_Dis = 7.5 * mm;
-    Tracker_Mat = G4Material::GetMaterial("G4_Si");
-    TrackerRegion_Mat = G4Material::GetMaterial("vacuum");
+    MaterialStr["Tracker_Mat"] = "G4_Si";
+    MaterialStr["TrackerRegion_Mat"] = "vacuum";
     Tracker1_Color = G4ThreeVector(0.5, 0.5, 0.);
     Tracker2_Color = G4ThreeVector(0.5, 0.5, 0.);
 
@@ -131,10 +131,10 @@ Control::Control() {
     // Electromagnetic Calorimeter
     ECAL_Name = "ECAL";
 
-    ECALRegion_Mat = G4Material::GetMaterial("CarbonFiber");
-    ECAL_Center_Mat = G4Material::GetMaterial("LYSO");
-    // ECAL_Center_Mat = G4Material::GetMaterial("PWO4"); // X0 = 0.92 cm
-    ECAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
+    MaterialStr["ECALRegion_Mat"] = "CarbonFiber";
+    MaterialStr["ECAL_Center_Mat"] = "LYSO";
+    MaterialStr["ECAL_Center_Mat"] = "PWO4"; // X0 = 0.92 cm
+    MaterialStr["ECAL_Wrap_Mat"] = "G4_Al";
 
     ECAL_Center_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
     ECAL_Center_Size = G4ThreeVector(2.5 * cm, 2.5 * cm, 2.0 * cm);
@@ -144,10 +144,10 @@ Control::Control() {
     // Hadronic Calorimeter
     HCAL_Name = "HCAL";
 
-    HCAL_Absorber_Mat = G4Material::GetMaterial("G4_Fe");
-    HCALRegion_Mat = G4Material::GetMaterial("CarbonFiber");
-    HCAL_Mat = G4Material::GetMaterial("Polystyrene");
-    HCAL_Wrap_Mat = G4Material::GetMaterial("G4_Al");
+    MaterialStr["HCAL_Absorber_Mat"] = "G4_Fe";
+    MaterialStr["HCALRegion_Mat"] = "CarbonFiber";
+    MaterialStr["HCAL_Mat"] = "Polystyrene";
+    MaterialStr["HCAL_Wrap_Mat"] = "G4_Al";
 
     HCAL_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
     //HCAL_Size_Dir = G4ThreeVector(100 * cm + 19 * HCAL_Wrap_Size.x(), 5 * cm, 1 * cm);
@@ -224,46 +224,8 @@ Control::Control() {
     LUT_FilePath = "ECAL_LUT.dat";
     LUT_Name = "ECAL_cube_2.5_2.5_2_v1";
 
-    //----------------------------------------
-    // Wrap related
-    const G4int cNum = 2;
-    G4double ephoton[cNum] = {1 * eV, 7 * eV};//overflow and underflow will take first/last bin
-    G4double reflectivity[cNum] = {1.0, 1.0};
-    G4double efficiency[cNum] = {0.0, 0.0};
-    G4double transmittance[cNum] = {0.0, 0.0};
-    Wrap_Surface_Mat = new G4MaterialPropertiesTable();
-    Wrap_Surface_Mat->AddProperty("REFLECTIVITY", ephoton, reflectivity, cNum); //reflect fraction, default=1
-    Wrap_Surface_Mat->AddProperty("EFFICIENCY", ephoton, efficiency,
-                                  cNum); //detection  fraction (abs=1-reflet-trans, then at efficiency, detectition(invoke post-step SD)),default=0
-    Wrap_Surface_Mat->AddProperty("TRANSMITTANCE", ephoton, transmittance, cNum); //transmission fraction, default=0
-
-    Wrap_Surface = new G4OpticalSurface("WrapSurfaceOptical");
-    Wrap_Surface->SetType(dielectric_LUT);
-    Wrap_Surface->SetModel(LUT);
-    Wrap_Surface->SetFinish(polishedtyvekair);
-    Wrap_Surface->SetMaterialPropertiesTable(Wrap_Surface_Mat);
-    //----------------------------------------
-    // APD related
-    APD_Mat = G4Material::GetMaterial("G4_Si");
     APD_Size = G4ThreeVector(1 * cm, 1 * cm, 1 * mm);
-
-    Glue_Mat = G4Material::GetMaterial("G4_W");
     Glue_Size = G4ThreeVector(1 * cm, 1 * cm, 0.1 * mm);
-
-    G4double reflectivityAPD[cNum] = {0.0, 0.0};
-    G4double efficiencyAPD[cNum] = {1.0, 1.0};
-    G4double transmittanceAPD[cNum] = {0.0, 0.0};
-    APD_Surface_Mat = new G4MaterialPropertiesTable();
-    APD_Surface_Mat->AddProperty("REFLECTIVITY", ephoton, reflectivityAPD, cNum); //reflect fraction, default=1
-    APD_Surface_Mat->AddProperty("EFFICIENCY", ephoton, efficiencyAPD,
-                                 cNum); //detection  fraction (abs=1-reflet-trans, then at efficiency, detectition(invoke post-step SD)),default=0
-    APD_Surface_Mat->AddProperty("TRANSMITTANCE", ephoton, transmittanceAPD, cNum); //transmission fraction, default=0
-
-    APD_Surface = new G4OpticalSurface("APDSurfaceOptical");
-    APD_Surface->SetType(dielectric_LUT);
-    APD_Surface->SetModel(LUT);
-    APD_Surface->SetFinish(polishedvm2000glue);
-    APD_Surface->SetMaterialPropertiesTable(APD_Surface_Mat);
 
 }
 
@@ -476,6 +438,59 @@ void Control::ConstructG4MaterialTable() const {
     //G4cout << *(G4Material::GetMaterialTable()) < < G4endl;
 }
 
+void Control::AssignG4Material() {
+    Target_Mat = G4Material::GetMaterial(MaterialStr.at("Target_Mat"));
+    Tracker_Mat = G4Material::GetMaterial(MaterialStr.at("Tracker_Mat"));
+    TrackerRegion_Mat = G4Material::GetMaterial(MaterialStr.at("TrackerRegion_Mat"));
+    ECALRegion_Mat = G4Material::GetMaterial(MaterialStr.at("ECALRegion_Mat"));
+    ECAL_Center_Mat = G4Material::GetMaterial(MaterialStr.at("ECAL_Center_Mat"));
+    ECAL_Wrap_Mat = G4Material::GetMaterial(MaterialStr.at("ECAL_Wrap_Mat"));
+    HCAL_Absorber_Mat = G4Material::GetMaterial(MaterialStr.at("HCAL_Absorber_Mat"));
+    HCALRegion_Mat = G4Material::GetMaterial(MaterialStr.at("HCALRegion_Mat"));
+    HCAL_Mat = G4Material::GetMaterial(MaterialStr.at("HCAL_Mat"));
+    HCAL_Wrap_Mat = G4Material::GetMaterial(MaterialStr.at("HCAL_Wrap_Mat"));
+
+    APD_Mat = G4Material::GetMaterial("G4_Si");
+    Glue_Mat = G4Material::GetMaterial("G4_W");
+    if (if_optical) {
+        //----------------------------------------
+        // Wrap related
+        const G4int cNum = 2;
+        G4double ephoton[cNum] = {1 * eV, 7 * eV};//overflow and underflow will take first/last bin
+        G4double reflectivity[cNum] = {1.0, 1.0};
+        G4double efficiency[cNum] = {0.0, 0.0};
+        G4double transmittance[cNum] = {0.0, 0.0};
+        Wrap_Surface_Mat = new G4MaterialPropertiesTable();
+        Wrap_Surface_Mat->AddProperty("REFLECTIVITY", ephoton, reflectivity, cNum); //reflect fraction, default=1
+        Wrap_Surface_Mat->AddProperty("EFFICIENCY", ephoton, efficiency,
+                                      cNum); //detection  fraction (abs=1-reflet-trans, then at efficiency, detectition(invoke post-step SD)),default=0
+        Wrap_Surface_Mat->AddProperty("TRANSMITTANCE", ephoton, transmittance, cNum); //transmission fraction, default=0
+
+        Wrap_Surface = new G4OpticalSurface("WrapSurfaceOptical");
+        Wrap_Surface->SetType(dielectric_LUT);
+        Wrap_Surface->SetModel(LUT);
+        Wrap_Surface->SetFinish(polishedtyvekair);
+        Wrap_Surface->SetMaterialPropertiesTable(Wrap_Surface_Mat);
+        //----------------------------------------
+        // APD related
+
+        G4double reflectivityAPD[cNum] = {0.0, 0.0};
+        G4double efficiencyAPD[cNum] = {1.0, 1.0};
+        G4double transmittanceAPD[cNum] = {0.0, 0.0};
+        APD_Surface_Mat = new G4MaterialPropertiesTable();
+        APD_Surface_Mat->AddProperty("REFLECTIVITY", ephoton, reflectivityAPD, cNum); //reflect fraction, default=1
+        APD_Surface_Mat->AddProperty("EFFICIENCY", ephoton, efficiencyAPD,
+                                     cNum); //detection  fraction (abs=1-reflet-trans, then at efficiency, detectition(invoke post-step SD)),default=0
+        APD_Surface_Mat->AddProperty("TRANSMITTANCE", ephoton, transmittanceAPD, cNum); //transmission fraction, default=0
+
+        APD_Surface = new G4OpticalSurface("APDSurfaceOptical");
+        APD_Surface->SetType(dielectric_LUT);
+        APD_Surface->SetModel(LUT);
+        APD_Surface->SetFinish(polishedvm2000glue);
+        APD_Surface->SetMaterialPropertiesTable(APD_Surface_Mat);
+    }
+}
+
 bool Control::ReadYAML(const G4String &file_in) {
     G4String infile;
     if (file_in.empty()) infile = "default.yaml";
@@ -578,7 +593,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         build_only_HCAL = Node["Geometry"]["build_only_HCAL"].as<bool>();
         //----------------------------------------
         // Target
-        Target_Mat = G4Material::GetMaterial(Node["Geometry"]["Target"]["Target_Mat"].as<std::string>());
+        MaterialStr["Target_Mat"] = Node["Geometry"]["Target"]["Target_Mat"].as<std::string>();
         Target_Size = readV3(Node["Geometry"]["Target"]["Target_Size"], true);
         Target_Pos = readV3(Node["Geometry"]["Target"]["Target_Pos"], true);
         //----------------------------------------
@@ -586,8 +601,8 @@ bool Control::ReadYAML(const G4String &file_in) {
         build_silicon_micro_strip = Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].IsDefined()
                                     ? Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].as<bool>() : false;
         Trk_Tar_Dis = readV2(Node["Geometry"]["Tracker"]["Trk_Tar_Dis"]);
-        Tracker_Mat = G4Material::GetMaterial(Node["Geometry"]["Tracker"]["Tracker_Mat"].as<std::string>());
-        TrackerRegion_Mat = G4Material::GetMaterial(Node["Geometry"]["Tracker"]["TrackerRegion_Mat"].as<std::string>());
+        MaterialStr["Tracker_Mat"] = Node["Geometry"]["Tracker"]["Tracker_Mat"].as<std::string>();
+        MaterialStr["TrackerRegion_Mat"] = Node["Geometry"]["Tracker"]["TrackerRegion_Mat"].as<std::string>();
         Tracker1_Color = readV3(Node["Geometry"]["Tracker"]["Tracker1_Color"]);
         Tracker2_Color = readV3(Node["Geometry"]["Tracker"]["Tracker2_Color"]);
         // Tagging Tracker
@@ -625,19 +640,19 @@ bool Control::ReadYAML(const G4String &file_in) {
         //----------------------------------------
         // Electromagnetic Calorimeter
         ECAL_Name = Node["Geometry"]["ECAL"]["ECAL_Name"].as<std::string>();
-        ECALRegion_Mat = G4Material::GetMaterial(Node["Geometry"]["ECAL"]["ECALRegion_Mat"].as<std::string>());
-        ECAL_Center_Mat = G4Material::GetMaterial(Node["Geometry"]["ECAL"]["ECAL_Center_Mat"].as<std::string>());
-        ECAL_Wrap_Mat = G4Material::GetMaterial(Node["Geometry"]["ECAL"]["ECAL_Wrap_Mat"].as<std::string>());
+        MaterialStr["ECALRegion_Mat"] = Node["Geometry"]["ECAL"]["ECALRegion_Mat"].as<std::string>();
+        MaterialStr["ECAL_Center_Mat"] = Node["Geometry"]["ECAL"]["ECAL_Center_Mat"].as<std::string>();
+        MaterialStr["ECAL_Wrap_Mat"] = Node["Geometry"]["ECAL"]["ECAL_Wrap_Mat"].as<std::string>();
         ECAL_Center_Wrap_Size = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Wrap_Size"], true);
         ECAL_Center_Size = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Size"], true);
         ECAL_Center_Module_No = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Module_No"]);
         //----------------------------------------
         // Hadronic Calorimeter
         HCAL_Name = Node["Geometry"]["HCAL"]["HCAL_Name"].as<std::string>();
-        HCAL_Absorber_Mat = G4Material::GetMaterial(Node["Geometry"]["HCAL"]["HCAL_Absorber_Mat"].as<std::string>());
-        HCALRegion_Mat = G4Material::GetMaterial(Node["Geometry"]["HCAL"]["HCALRegion_Mat"].as<std::string>());
-        HCAL_Mat = G4Material::GetMaterial(Node["Geometry"]["HCAL"]["HCAL_Mat"].as<std::string>());
-        HCAL_Wrap_Mat = G4Material::GetMaterial(Node["Geometry"]["HCAL"]["HCAL_Wrap_Mat"].as<std::string>());
+        MaterialStr["HCAL_Absorber_Mat"] = Node["Geometry"]["HCAL"]["HCAL_Absorber_Mat"].as<std::string>();
+        MaterialStr["HCALRegion_Mat"] = Node["Geometry"]["HCAL"]["HCALRegion_Mat"].as<std::string>();
+        MaterialStr["HCAL_Mat"] = Node["Geometry"]["HCAL"]["HCAL_Mat"].as<std::string>();
+        MaterialStr["HCAL_Wrap_Mat"] = Node["Geometry"]["HCAL"]["HCAL_Wrap_Mat"].as<std::string>();
         HCAL_Wrap_Size = readV3(Node["Geometry"]["HCAL"]["HCAL_Wrap_Size"], true);
         HCAL_Size_Dir = readV3(Node["Geometry"]["HCAL"]["HCAL_Size_Dir"], true);
         HCAL_Mod_No_Dir = readV3(Node["Geometry"]["HCAL"]["HCAL_Mod_No_Dir"]);

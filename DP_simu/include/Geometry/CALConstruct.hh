@@ -135,7 +135,7 @@ private:
     G4bool fOptical{false}; // 0: No optical photon, fast; 1: Full simulation with optical photon
     G4bool fCheckOverlap{false};
     G4bool fRecordLV{false};
-    G4bool ifAbsorber{false};
+    G4bool ifAbsorber{true};
 
     // For Inner part
     G4double CaloXHalfLength{0};

@@ -44,7 +44,7 @@ CALConstruct::CALConstruct(const G4String &CALName,
     fCALMaterial = nullptr;
     fWrapMaterial = nullptr;
 
-    ifAbsorber = false;
+    ifAbsorber = true;
     fRecordLV = true;
 }
 
@@ -405,10 +405,11 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
     AbsZHalfLength = 0.5 * AbsThickness;
     fAbsMaterial = AbsMat;
     fVis = new G4VisAttributes(G4Colour(0.5, 0.23, 0.89));
-    AbsorberUnitConstruct();
 
+    if ( AbsThickness <= 0) ifAbsorber = false;
+
+    if ( ifAbsorber ) AbsorberUnitConstruct();
     // Initialize
-    ifAbsorber = false;
     G4int Abs_No = 0;
     G4PVPlacement* CaloUnitPV = nullptr;
     G4PVPlacement* AbsPV = nullptr;
@@ -460,16 +461,18 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
             UnitPosZ = -1. * TotalHalfSize.z() + ((k / 2) + 1) * (4 * UnitXHalfLength + AbsThickness)
                        - 0.5 * AbsThickness + CentrePos.z();
 
-            AbsPV = new G4PVPlacement(nullptr,
-                                      G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
-                                      fAbsLV,
-                                      fCALName + "_AbsPV",
-                                      fMotherVolume,
-                                      false,
-                                      Abs_No,
-                                      fCheckOverlap);
-            PVVector.push_back(AbsPV);
-            Abs_No++;
+            if ( ifAbsorber ) {
+                AbsPV = new G4PVPlacement(nullptr,
+                                          G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                          fAbsLV,
+                                          fCALName + "_AbsPV",
+                                          fMotherVolume,
+                                          false,
+                                          Abs_No,
+                                          fCheckOverlap);
+                PVVector.push_back(AbsPV);
+                Abs_No++;
+            }
         }
     }
 
