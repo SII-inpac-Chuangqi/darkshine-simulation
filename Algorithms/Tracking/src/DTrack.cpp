@@ -15,7 +15,6 @@
 //Tracking
 #include "Algo/DTrack.h"
 #include "Algo/KalmanFitting.h"
-#include "Algo/RiemannFitting.h"
 
 //................................................................................//
 //public:
@@ -23,13 +22,16 @@
 //Constructor
 //
 DTrack::DTrack(const TrkHitPVec &newHits,
-               double newPreR, double newPreXc, double newPreYc, 
-               double RecTrk_B)                                  : By(RecTrk_B),
-                                                                   preR(newPreR),
-                                                                   preXc(newPreXc),
-                                                                   preYc(newPreYc),
-                                                                   hits(newHits)
-{}
+               double newPreR,
+               double newPreXc,
+               double newPreYc, 
+               std::vector<DMagnet*> magnets) : preR(newPreR),
+                                                preXc(newPreXc),
+                                                preYc(newPreYc),
+                                                hits(newHits)
+{
+    By = magnets.size() ? magnets.at(1)->GetField(0., 0., 0.) : -1.5;
+}
 
 DTrack::DTrack(const DTrack &oldTrack) : pdg(oldTrack.pdg),         //physical properties
                                          sign(oldTrack.sign),
@@ -86,10 +88,10 @@ void DTrack::Fit(int method)
     switch(method)
     {
         case dKalman  :
-                        fitter = new KalmanFitting(hits, {preR, By});                //Fix to 2 ordered parameters!
-                        break;
-        case dRiemann :
-                        fitter = new RiemannFitting(hits, {preR, preXc, preYc, By}); //Fix to 4 ordered parameters!
+                        fitter = new KalmanFitting(hits,
+                                                   {preR, //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                    By}   //                             --magnet value to manage exception condition
+                                                  );
                         break;
         case dNone    :
                         std::cout << "No fitting." << std::endl;
@@ -110,7 +112,7 @@ void DTrack::Fit(int method)
         ySigma = fitter->GetYSigma();
     }
     else
-        pp = 0.3*preR*By;
+        pp = 0.3*preR*std::abs(By);
 
     delete fitter;
     fitter = nullptr;
