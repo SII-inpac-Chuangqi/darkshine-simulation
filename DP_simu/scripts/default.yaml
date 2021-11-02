@@ -163,7 +163,7 @@ Geometry:
     Target_Size: [ 10 , "cm", 20 , "cm", 350 , "um" ]
     Target_Pos: [ 0 , "cm", 0 , "cm", 0 , "cm" ]
   Tracker:
-    build_silicon_micro_strip: false # fasle - only build one silicon micro strip in one tracker volume
+    build_silicon_micro_strip: true # false - only build one silicon micro strip in one tracker volume
     Trk_Tar_Dis: [ 7.5, "mm" ]
     Tracker_Mat: "G4_Si"
     TrackerRegion_Mat: "vacuum"
@@ -187,14 +187,14 @@ Geometry:
       - [ 0 , "cm", 0 , "cm",  20 , "cm" ] # Layer 6
       - [ 0 , "cm", 0 , "cm",  30 , "cm" ] # Layer 7
     tag_Tracker_Angle_Gap: # angle of trackers , and gap between each strips
-      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 1
-      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 2
-      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 3
-      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 4
-      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 5
-      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 6
-      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 7
-    tag_Tracker_Strip_N: [ 20 , 20 , 20 , 20 , 20 , 20 , 20 ]
+      - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 1
+      - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 2
+      - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 3
+      - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 4
+      - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 5
+      - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 6
+      - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 7
+    tag_Tracker_Strip_N: [ 1000 , 1000 , 1000 , 1000 , 1000 , 1000 , 1000 ]
     # Recoil Tracker
     rec_Size_Tracker:
       - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 1
@@ -211,13 +211,13 @@ Geometry:
       - [ 0 , "cm", 0 , "cm", -4.25  , "mm" ] # Layer 5
       - [ 0 , "cm", 0 , "cm", 86.25  , "mm" ] # Layer 6
     rec_Tracker_Angle_Gap:
-      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 1
-      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 2
-      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 3
-      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 4
-      - [ 0, "radian" , -0.05 , "radian" , 1 , "um" ] #Layer 5
-      - [ 0, "radian" ,  0.05 , "radian" , 1 , "um" ] #Layer 6
-    rec_Tracker_Strip_N: [ 40, 40 , 40 , 40 , 40 , 40 ]
+      - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 1
+      - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 2
+      - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 3
+      - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 4
+      - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 5
+      - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 6
+    rec_Tracker_Strip_N: [ 2000, 2000 , 2000 , 2000 , 2000 , 2000 ]
   ECAL:
     ECAL_Name: "ECAL"
 
