@@ -124,7 +124,7 @@ void RootManager::bookCollection(const G4String &cIn) {  //run level initilize b
         //nullptr trick
         //init ar first event, then not clear the nullptr.
         if (cIn == "ECAL") {
-            auto v = Evt->RegisterOpticalCollection(cIn);
+            [[maybe_unused]] auto v = Evt->RegisterOpticalCollection(cIn);
             auto Placeholder = dControl->ECAL_Center_Module_No;
             G4int No = Placeholder.x() * Placeholder.y() * Placeholder.z();
 
@@ -271,7 +271,7 @@ void RootManager::FillEleak(const G4Step *in, const G4String &type) {
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 // Optical Part Start ///////////////////////////////////////////////////////////
 
-bool RootManager::SetOpticalTimeZero(G4double T0, const G4String &cIn) { //global T0 for on unit across many particles
+bool RootManager::SetOpticalTimeZero(G4double /*T0*/, const G4String& /*cIn*/) { //global T0 for on unit across many particles
     //dummy, not used here. 
     //Time zero is used for pileup simulation
     return true;

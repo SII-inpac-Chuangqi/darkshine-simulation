@@ -31,7 +31,7 @@ double Cluster_Analysis::FindETotal() {
 }
 
 double Cluster_Analysis::FindEFraction(unsigned n) {
-    if (n < 0) return -1;
+    if (static_cast<int>(n) < 0) return -1;
     if (n >= ClusterVec->size()) n = ClusterVec->size();
     double E = 0.;
 
@@ -95,7 +95,7 @@ double Cluster_Analysis::FindMoment(unsigned n, int type, bool center) {
     // convert from mm to cm
     //for (auto &i : pos_vec) i /= 10.;
 
-    double sum_layer = std::accumulate(pos_vec.begin(), pos_vec.end(), 0.);
+    [[maybe_unused]] double sum_layer = std::accumulate(pos_vec.begin(), pos_vec.end(), 0.);
     double out_moment = 0.;
     if (!center || n == 1) {
         // Calculate the n-th power sum, weighted by energy

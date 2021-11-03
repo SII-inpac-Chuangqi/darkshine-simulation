@@ -71,7 +71,7 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
     if (MCCollection.count(CollectionName) != 0
         && StepCollection.count(StepCollectionName) != 0) {
 
-        const auto &mc = MCCollection.at(CollectionName);
+        [[maybe_unused]] const auto &mc = MCCollection.at(CollectionName);
         const auto &steps = StepCollection.at(StepCollectionName);
 
         // Process MCTruthEvent -- ProcessClassifier
@@ -140,7 +140,7 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
     }
 }
 
-void MCTruthAnalysis::CheckEvt(AnaEvent *evt) {
+void MCTruthAnalysis::CheckEvt(AnaEvent* /*evt*/) {
     //cout<<"Check!"<<endl;
 
 }

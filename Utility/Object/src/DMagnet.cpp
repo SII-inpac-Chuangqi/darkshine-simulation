@@ -178,7 +178,8 @@ double DMagnet::GetSliceField(double x, double y, double z, const MagSlice &mag)
         for (j = 0; j < mag.gNVariables; j++)
         {
             int power = mag.gPowers.at(i*mag.gNVariables + j);
-            double p1 = 1, p2 = 0, p3 = 0, r = 0;
+            [[maybe_unused]] double p1 = 1;
+            double p2 = 0, p3 = 0, r = 0;
             double v =  1 + 2. / (mag.gXMax.at(j) - mag.gXMin.at(j))*(coor.at(j) - mag.gXMax.at(j));
 
             switch(power)

@@ -62,9 +62,9 @@ ScintillationLUT::ScintillationLUT(const G4String &processName,
           fScintillationTrackInfo(false),
           fStackingFlag(true),
           fNumPhotons(0),
-          fEmSaturation(nullptr),
           fUseLUT(true),
-          lookupTable(nullptr)
+          lookupTable(nullptr),
+          fEmSaturation(nullptr)
 //now we will not create real photons anymore in the DSimu
 //since impossible to simu this in the full detector
 //instead, we use standalone FW to study and make LUT for only one unit
@@ -348,7 +348,7 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
         G4double ScintillationTime = 0. * ns;
         G4double ScintillationRiseTime = 0. * ns;
         G4PhysicsOrderedFreeVector *ScintillationIntegral = nullptr;
-        G4ScintillationType ScintillationType = Slow;
+        [[maybe_unused]] G4ScintillationType ScintillationType = Slow;
 
         if (scnt == 1) { //
             if (nscnt == 1) { // only faat or slow component of sci. light

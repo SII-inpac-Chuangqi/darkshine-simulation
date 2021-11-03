@@ -55,7 +55,7 @@ void CutFlowAnalysis::Begin() {
 //    HCAL_E_Max_Cell = EvtWrt->FindDoubleVar("HCAL_E_Max_Cell");
 }
 
-void CutFlowAnalysis::ProcessEvt(AnaEvent *evt) {
+void CutFlowAnalysis::ProcessEvt(AnaEvent* /*evt*/) {
     // Raw Events
 //    h_cut->Fill(cut_chain.at(0).data(), 1.);
 //
@@ -82,7 +82,7 @@ void CutFlowAnalysis::ProcessEvt(AnaEvent *evt) {
 //        h_tmp->Fill(*ECAL_E_total);
 }
 
-void CutFlowAnalysis::CheckEvt(AnaEvent *evt) {
+void CutFlowAnalysis::CheckEvt(AnaEvent* /*evt*/) {
     //cout<<"Check!"<<endl;
 
 }

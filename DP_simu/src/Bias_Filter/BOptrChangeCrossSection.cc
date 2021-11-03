@@ -111,7 +111,7 @@ BOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track *track,
                                                           const G4BiasingProcessInterface *
                                                           callingProcess) {
 
-    auto print_process = [callingProcess]() {
+    [[maybe_unused]] auto print_process = [callingProcess]() {
         auto process_mgr = callingProcess->GetWrappedProcess()->GetProcessManager();
         G4cout<<"=="<<G4endl;
         for (unsigned i = 2; i < process_mgr->GetProcessList()[0].size()-1; ++i) {

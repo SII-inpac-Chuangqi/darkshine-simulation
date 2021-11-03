@@ -105,7 +105,7 @@ void EventStoreAndWriter::PrintTree() {
     }
 }
 
-void EventStoreAndWriter::FillTree(AnaEvent *Evt) {
+void EventStoreAndWriter::FillTree(AnaEvent* /*Evt*/) {
 
     tout->Fill();
     Initialization();

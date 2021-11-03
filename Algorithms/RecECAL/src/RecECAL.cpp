@@ -87,7 +87,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
             int j = 0;
             for (auto i : {5, 10, 20, 50, 100, 125, 150, 200}) {
                 if(HitCollectionName == "ECAL_FS3" && j == 7)
-                    double a = 0;
+                    [[maybe_unused]] double a = 0;
                 temp_v.push_back(cluster_ana->FindEFraction(i));
                 j++;
             }
@@ -135,7 +135,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
     }
 }
 
-void RecECAL::CheckEvt(AnaEvent *evt) {
+void RecECAL::CheckEvt(AnaEvent* /*evt*/) {
     //cout<<"Check!"<<endl;
 }
 

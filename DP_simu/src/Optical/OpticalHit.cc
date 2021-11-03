@@ -80,7 +80,7 @@ G4bool OpticalHit::operator==(const OpticalHit &right) const {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 bool OpticalHit::BuildLUTHit(OpticalLUT &LUT, G4double depth, G4double cosTheta, G4double creationT, G4double creationE,
-                             const G4ThreeVector &creationP, G4double rand1, G4double rand2, G4EmProcessSubType Type) {
+                             const G4ThreeVector& /*creationP*/, G4double rand1, G4double rand2, G4EmProcessSubType Type) {
     if (!LUT.isReady()) {
         G4cerr << "Error: Not valid LUT, should not happen." << G4endl;
         return false;

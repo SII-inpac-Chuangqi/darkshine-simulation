@@ -206,7 +206,7 @@ void DEventDisplay::makeLines(TEveStraightLineSet *lineSet, const TVector3 &star
     }
 }
 
-TEveTrack *DEventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned id, McParticle *mc) {
+TEveTrack *DEventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned /*id*/, McParticle *mc) {
     // get mother id
     int m_id = -999;
     auto p = mc->getParents();
@@ -352,7 +352,7 @@ TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) const {
     return box;
 }
 
-TEveBox *DEventDisplay::makeRecCaloBox(CalorimeterHit *hit, double EMax) {
+TEveBox *DEventDisplay::makeRecCaloBox(CalorimeterHit *hit, double /*EMax*/) {
     auto cur_node = gGeoManager->FindNode(hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT);
     auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
     double abs_pos[3] = {hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT};

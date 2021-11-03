@@ -928,7 +928,7 @@ KalmanFitterRefTrack::processTrackPoint(KalmanFitterInfo* fi, const KalmanFitter
     debugOut << " KalmanFitterRefTrack::processTrackPoint " << fi->getTrackPoint() << "\n";
   }
 
-  unsigned int dim = fi->getRep()->getDim();
+  [[maybe_unused]] unsigned int dim = fi->getRep()->getDim();
 
   p_.Zero(); // p_{k|k-1}
   C_.Zero(); // C_{k|k-1}

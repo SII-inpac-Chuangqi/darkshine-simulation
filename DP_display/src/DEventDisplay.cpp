@@ -147,7 +147,7 @@ bool DEventDisplay::readGeo(const TString &file_in) {
 }
 
 
-bool DEventDisplay::readEvt(const TString &file_in) {
+bool DEventDisplay::readEvt(const TString& /*file_in*/) {
     // load Event from ROOT file
 //    auto file = std::shared_ptr<TFile>(new TFile(file_in));
 //    if (!file) {
@@ -427,12 +427,12 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
 
 void DEventDisplay::gotoEvent(unsigned int id) {
 
-    if (EvtReader->GetEntries() == 0 || id < 0)
+    if (EvtReader->GetEntries() == 0 || static_cast<int>(id) < 0)
         return;
     else if (id >= EvtReader->GetEntries())
         id = EvtReader->GetEntries() - 1;
 
-    bool resetCam = true;
+    [[maybe_unused]] bool resetCam = true;
 
     if (id == (unsigned int) _eventID)
         resetCam = false;

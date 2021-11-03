@@ -90,7 +90,7 @@ void ExampleProcessor::ProcessEvt(AnaEvent *evt) {
     }
 }
 
-void ExampleProcessor::CheckEvt(AnaEvent *evt) {
+void ExampleProcessor::CheckEvt(AnaEvent* /*evt*/) {
     //cout<<"Check!"<<endl;
 
 }

@@ -22,7 +22,7 @@ FilterManager::FilterManager() {
     G4double minDist;
     G4double maxDist;
     G4bool fInclude;
-    G4bool fStage0;
+    [[maybe_unused]] G4bool fStage0;
     G4bool fStage1;
     /// \brief Setup a new particle filter.
     /// \param pdg  PDG ID of secondary particle.

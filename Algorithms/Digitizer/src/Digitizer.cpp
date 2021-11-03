@@ -114,7 +114,7 @@ void Digitizer::ProcessEvt(AnaEvent *evt) {
     }
 }
 
-void Digitizer::CheckEvt(AnaEvent *evt) {
+void Digitizer::CheckEvt(AnaEvent* /*evt*/) {
     //cout<<"Check!"<<endl;
 
 }

@@ -70,7 +70,7 @@ void DarkMatterPhysics::ConstructProcess() {
     myDarkMatter->SetMA(theDMParticlePtr->GetPDGMass() / GeV);
     myDarkMatter->PrepareTable();
 
-    G4PhysicsListHelper *phLHelper = G4PhysicsListHelper::GetPhysicsListHelper();
+    [[maybe_unused]] G4PhysicsListHelper *phLHelper = G4PhysicsListHelper::GetPhysicsListHelper();
 
     std::cout << pmanager->AddDiscreteProcess(new DMBremProcess(myDarkMatter, theDMParticlePtr, BiasSigmaFactor),
                                               G4ProcessVectorDoItIndex::idxPostStep) << std::endl;

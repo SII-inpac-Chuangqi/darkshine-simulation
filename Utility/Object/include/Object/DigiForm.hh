@@ -42,6 +42,7 @@ class DigiForm : public TObject {
 
 public:
     DigiForm() = default;
+    DigiForm(const DigiForm&) = default;
 
     ~DigiForm() override;
 

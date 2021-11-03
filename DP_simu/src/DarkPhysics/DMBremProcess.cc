@@ -12,8 +12,8 @@
 DMBremProcess::DMBremProcess(DarkPhotons *DarkMatterPointerIn, G4ParticleDefinition *theDMParticlePtrIn,
                              G4double BiasSigmaFactorIn)
         : G4VDiscreteProcess("DMProcessDMBrem", fElectromagnetic),  // fElectromagnetic
-          myDarkMatter(DarkMatterPointerIn),
           theDMParticlePtr(theDMParticlePtrIn),
+          myDarkMatter(DarkMatterPointerIn),
           BiasSigmaFactor(BiasSigmaFactorIn) {
 //here I don't think what to define
     SetProcessSubType(500);
@@ -73,8 +73,8 @@ G4VParticleChange *DMBremProcess::PostStepDoIt(const G4Track &aTrack, const G4St
     const G4double DMMass = theDMParticlePtr->GetPDGMass();
     const G4ThreeVector &incidentDir = aTrack.GetMomentumDirection();
 
-    G4double XAcc, angles[2];
-    G4double e_rec_angles[2];
+    G4double XAcc;
+    //G4double angles[2], e_rec_angles[2];
 
     DM_Mom dark_photon;
     DM_Mom electron;
