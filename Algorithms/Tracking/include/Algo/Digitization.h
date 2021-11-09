@@ -42,7 +42,7 @@ public:
     ~Digitization() = default;
 
 //Get tracker information
-    void GetTrackerInfo();
+    void GetTrackerInfo(bool if_strip);
 //Separate tracker hits into vectors by layers
     void Layering(const std::vector<TrkHit> &trk1Hits, const std::vector<TrkHit> &trk2Hits, TrkHitPVecMap &clusTrkHitMap,
                   int detector);
@@ -51,14 +51,16 @@ private:
 
     TGeoNode* world_;
 
-    double layerWidthTag_ = RETURN;
-    double layerLengthTag_ = RETURN;
-    int stripNoTag_ = -1;
+    bool if_strip_{true};
+
+    double layerWidthTag_{RETURN};
+    double layerLengthTag_{RETURN};
+    int stripNoTag_{-1};
     std::vector<double> anglesTag_ = {};
 
-    double layerWidthRec_ = RETURN;
-    double layerLengthRec_ = RETURN;
-    int stripNoRec_ = -1;
+    double layerWidthRec_{RETURN};
+    double layerLengthRec_{RETURN};
+    int stripNoRec_{-1};
     std::vector<double> anglesRec_ = {};
 
     TRandom rnd_;

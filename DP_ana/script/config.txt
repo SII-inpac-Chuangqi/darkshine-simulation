@@ -23,7 +23,7 @@ MemoryCheck.Verbose           = 0
 # Digitizer: Digitizer for Calorimeter(ECAL) with optical process
 # MCTruthAnalysis: MC Truth Analysis
 # RecECAL: ECAL Reconstruction Processor
-# Tracking: Tracking by Yi-Fan Zhu (Genius in SJTU)
+# Tracking: Tracking by Yi-Fan Zhu
 # CutFlowAnalysis: None
 ###
 Algorithm.List = Digitizer MCTruthAnalysis RecECAL Tracking CutFlowAnalysis 
@@ -50,7 +50,7 @@ RecECAL.Verbose = 0  # Verbosity Variable
 RecECAL.ECollectionToUse = ECAL_FS0  # Calorimeter (ECAL) Collection to Use
 RecECAL.HCollectionToUse = FS0  # Calorimeter (HCAL) Collection to Use
 
-Tracking.Rec_fit_method = 0  # Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting
-Tracking.Tag_fit_method = 0  # Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting
-Tracking.clean = 1  # Clean mode
-Tracking.RecTrk_B = 1.5  # Magnet in recoil tracker
+Tracking.Rec_fit_method = 0  # Specify fitting method: 0, no fine fitting; 1, Kalman fitting
+Tracking.Tag_fit_method = 0  # Specify fitting method: 0, no fine fitting; 1, Kalman fitting
+Tracking.clean_mode = 1  # Clean mode: no truth information
+Tracking.if_strip = 1  # If strip structures in trackers
