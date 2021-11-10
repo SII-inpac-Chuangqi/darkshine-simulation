@@ -54,7 +54,7 @@ Control::Control() {
     tree_Name = "Dark_Photon";
 
     Run_Number = 0;
-    //Total_Event_Number = 10000;
+    Total_Event_Number = 10000;
 
     //----------------------------------------
     // Out Collection Options
@@ -527,7 +527,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         outfile_Name = Node["RootManager"]["outfile_Name"].as<std::string>();
         tree_Name = Node["RootManager"]["tree_Name"].as<std::string>();
         Run_Number = Node["RootManager"]["Run_Number"].as<int>();
-        //Total_Event_Number = Node["RootManager"]["Total_Event_Number"].as<int>();
+        Total_Event_Number = Node["general_particle_source"]["beam_on"].as<int>();
         //----------------------------------------
         // Out Collection Options
         save_all_mcp = Node["OutCollection"]["save_all_mcp"].as<bool>();
