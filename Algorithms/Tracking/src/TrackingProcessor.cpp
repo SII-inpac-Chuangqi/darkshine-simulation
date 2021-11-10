@@ -240,7 +240,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         it_find_tag1 != simuhit_collection.end() &&
         it_find_tag2 != simuhit_collection.end() &&
         it_find_rec1 != simuhit_collection.end() &&
-        it_find_rec2 != simuhit_collection.end()) {
+        it_find_rec2 != simuhit_collection.end())
+    {
 //................................................................................//
 //Read
         //const auto &mc = MCCollection.at("RawMCParticle");
@@ -256,37 +257,31 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         for (auto hit : *simuhit_collection.at("RecTrk1")) raw_rectrk1_hits.emplace_back(*hit);
         for (auto hit : *simuhit_collection.at("RecTrk2")) raw_rectrk2_hits.emplace_back(*hit);
 
-        if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2 &&
-            raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
+        if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
         {
 //................................................................................//
-//Digitization, depends on further hardware setting
+//Tag tracker
+//................................................................................//
+//Digitization
             TrkHitPVecMap clus_tag_trkhit_map;
             digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, clus_tag_trkhit_map, tag);
-            TrkHitPVecMap clus_rec_trkhit_map;
-            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, clus_rec_trkhit_map, rec);
 
-            if(clus_tag_trkhit_map.size() && clus_rec_trkhit_map.size())
+            if(clus_tag_trkhit_map.size())
             {
 //................................................................................//
 //Finding, by pre-fitting
                 std::vector<TrkHitPVec> vec_tag_track;
                 GreedyFinding find_tag(clus_tag_trkhit_map);
                 vec_tag_track.assign(find_tag.First(), find_tag.Last());
-    
-                std::vector<TrkHitPVec> vec_rec_track;
-                GreedyFinding find_rec(clus_rec_trkhit_map);
-                vec_rec_track.assign(find_rec.First(), find_rec.Last());
 
 //................................................................................//
 //Fitting, by Genfit, Kalman filter/by Riemann fitting
                 TagTrk2_track_No = find_tag.GetTrackNo();
-                RecTrk2_track_No = find_rec.GetTrackNo();
     
                 TagTrk2_rechit_No = 0;
-                RecTrk2_rechit_No = 0;
 
-                for (int i = 0; i < find_tag.GetTrackNo(); i++) {
+                for (int i = 0; i < find_tag.GetTrackNo(); i++)
+                {
                     TrkHitPVec tag_track((*(vec_tag_track.begin() + i)).begin(), (*(vec_tag_track.begin() + i)).end());
                     DTrack track(tag_track,
                                  find_tag.GetR(i),       //used in Kalman filter
@@ -299,7 +294,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     TagTrk2_pp.push_back(track.GetPp());
                     TagTrk2_track_chi2.push_back(track.GetChi2());
 
-                    if (!clean) {
+                    if (!clean)
+                    {
                         TagTrk2_track_quality.push_back(track.GetQuality());
                         TagTrk2_track_x_sigma.push_back(track.GetXSigma());
                         TagTrk2_track_y_sigma.push_back(track.GetYSigma());
@@ -314,7 +310,40 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 */
                     }
                 }
-    
+            }
+            else
+            {
+                TagTrk2_track_No = 0;
+
+                if (!clean) {
+                    TagTrk2_rechit_No = 0;
+                }
+            }
+        }
+
+        if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
+        {
+//................................................................................//
+//Recoil tracker
+//................................................................................//
+//Digitization
+            TrkHitPVecMap clus_rec_trkhit_map;
+            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, clus_rec_trkhit_map, rec);
+
+            if(clus_rec_trkhit_map.size())
+            {
+//................................................................................//
+//Finding, by pre-fitting
+                std::vector<TrkHitPVec> vec_rec_track;
+                GreedyFinding find_rec(clus_rec_trkhit_map);
+                vec_rec_track.assign(find_rec.First(), find_rec.Last());
+
+//................................................................................//
+//Fitting, by Genfit, Kalman filter/by Riemann fitting
+                RecTrk2_track_No = find_rec.GetTrackNo();
+      
+                RecTrk2_rechit_No = 0;
+
                 for (int i = 0; i < find_rec.GetTrackNo(); i++) {
                     TrkHitPVec rec_track((*(vec_rec_track.begin() + i)).begin(), (*(vec_rec_track.begin() + i)).end());
                     DTrack track(rec_track,
@@ -324,7 +353,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                  magnets);               //magnets
                     track.Fit(Rec_fit_method);           //choose fitting method: Kalman filter
                     track.Evaluate();
-    
+      
                     RecTrk2_pp.push_back(track.GetPp());
                     RecTrk2_track_chi2.push_back(track.GetChi2());
 
@@ -340,39 +369,25 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                         }
                         RecTrk2_rechit_No += track.GetSize();
                         RecTrk2_rectrk_hit_No.push_back(track.GetSize());
-*/
+*/    
                     }
                 }
             }
             else
             {
-                TagTrk2_track_No = 0;
                 RecTrk2_track_No = 0;
 
                 if (!clean) {
-                    TagTrk2_rechit_No = 0;
                     RecTrk2_rechit_No = 0;
                 }
             }
-
-//................................................................................//
-//Write root
-//................................................................................//
-//Truth
         }
-        else
-        {
-            TagTrk2_track_No = 0;
-            RecTrk2_track_No = 0;
-
-            if (!clean) {
-                TagTrk2_rechit_No = 0;
-                RecTrk2_rechit_No = 0;
-            }
-        }
-
+        
+//................................................................................//
+//Write truth
         this->FillTruth(initial_steps, raw_tagtrk2_hits, raw_rectrk2_hits);
     }
+
 }
 
 void TrackingProcessor::CheckEvt(AnaEvent *evt) {
