@@ -44,7 +44,7 @@ public:
 //Get tracker information
     void GetTrackerInfo(bool if_strip);
 //Separate tracker hits into vectors by layers
-    void Layering(const std::vector<TrkHit> &trk1Hits, const std::vector<TrkHit> &trk2Hits, TrkHitPVecMap &clusTrkHitMap,
+    void Layering(const std::vector<TrkHit> &trk1_hits, const std::vector<TrkHit> &trk2_hits, TrkHitPVecMap &clusTrkHitMap,
                   int detector);
 
 private:
@@ -53,15 +53,15 @@ private:
 
     bool if_strip_{true};
 
-    double layerWidthTag_{RETURN};
-    double layerLengthTag_{RETURN};
-    int stripNoTag_{-1};
-    std::vector<double> anglesTag_ = {};
+    double layer_width_tag_{RETURN};
+    double layer_length_tag_{RETURN};
+    int strip_no_tag_{-1};
+    std::vector<double> angles_tag_ = {};
 
-    double layerWidthRec_{RETURN};
-    double layerLengthRec_{RETURN};
-    int stripNoRec_{-1};
-    std::vector<double> anglesRec_ = {};
+    double layer_width_rec_{RETURN};
+    double layer_length_rec_{RETURN};
+    int strip_no_rec_{-1};
+    std::vector<double> angles_rec_ = {};
 
     TRandom rnd_;
 };

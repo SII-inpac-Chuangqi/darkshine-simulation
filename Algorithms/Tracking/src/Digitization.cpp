@@ -27,50 +27,56 @@ void Digitization::GetTrackerInfo(bool if_strip)
 {
     if_strip_ = if_strip;
 
-    world_ = dynamic_cast<TGeoNode*>(gGeoManager->GetListOfNodes()->At(0));
-
-    anglesTag_.clear();
-    anglesRec_.clear();
-
-    for(int i = 0; i < world_->GetNdaughters(); i++)
+    if(if_strip_)
     {
-        auto *detector = dynamic_cast<TGeoNode*>(world_->GetDaughter(i));
-        auto detectorName = TString(detector->GetVolume()->GetName());
-        if(detectorName.Contains("Trk"))
+        world_ = dynamic_cast<TGeoNode*>(gGeoManager->GetListOfNodes()->At(0));
+    
+        angles_tag_.clear();
+        angles_rec_.clear();
+    
+        for(int i = 0; i < world_->GetNdaughters(); i++)
         {
-            auto *detectorShape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
-
-            if(detectorName.Contains("TAG"))
+            auto *detector = dynamic_cast<TGeoNode*>(world_->GetDaughter(i));
+            auto detector_name = TString(detector->GetVolume()->GetName());
+            if(detector_name.Contains("Trk"))
             {
-                stripNoTag_ = detector->GetDaughter(0)->GetNdaughters();
-                layerWidthTag_ = CUNIT*detectorShape->GetDX();
-                layerLengthTag_ = CUNIT*detectorShape->GetDY();
-            }
-            else if(detectorName.Contains("REC"))
-            {
-                stripNoRec_ = detector->GetDaughter(0)->GetNdaughters();
-                layerWidthRec_ = CUNIT*detectorShape->GetDX();
-                layerLengthRec_ = CUNIT*detectorShape->GetDY();
-            }
-
-            for(int j = 0; j < detector->GetNdaughters(); j++)
-            {
-                auto *layer = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
-                auto layerName = TString(layer->GetVolume()->GetName());
-                auto rotation = layer->GetMatrix()->GetRotationMatrix();
-                if(layerName.Contains("Tag"))
-                    anglesTag_.push_back(std::asin(rotation[1]));
-                else if(layerName.Contains("Rec"))
-                    anglesRec_.push_back(std::asin(rotation[1]));
+                auto *detectorShape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
+    
+                if(detector_name.Contains("TAG"))
+                {
+                    strip_no_tag_ = detector->GetDaughter(0)->GetNdaughters();
+                    layer_width_tag_ = CUNIT*detectorShape->GetDX();
+                    layer_length_tag_ = CUNIT*detectorShape->GetDY();
+                }
+                else if(detector_name.Contains("REC"))
+                {
+                    strip_no_rec_ = detector->GetDaughter(0)->GetNdaughters();
+                    layer_width_rec_ = CUNIT*detectorShape->GetDX();
+                    layer_length_rec_ = CUNIT*detectorShape->GetDY();
+                }
+    
+                for(int j = 0; j < detector->GetNdaughters(); j++)
+                {
+                    auto *layer = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
+                    auto layer_name = TString(layer->GetVolume()->GetName());
+                    auto rotation = layer->GetMatrix()->GetRotationMatrix();
+                    if(layer_name.Contains("Tag"))
+                        angles_tag_.push_back(std::asin(rotation[1]));
+                    else if(layer_name.Contains("Rec"))
+                        angles_rec_.push_back(std::asin(rotation[1]));
+                }
             }
         }
+    
+        std::cout << "[INFO] ==> Tag tracker strip no: " << strip_no_tag_ << std::endl;
+        std::cout << "[INFO] ==> Recoil tracker strip no: " << strip_no_rec_ << std::endl;
     }
-
-    std::cout << stripNoTag_ << std::endl;
+    else
+        std::cout << "[WARNING] ==> No strips in trackers" << std::endl;
 }
 
 //Separate tracker hits into vectors by layers
-void Digitization::Layering(const std::vector<TrkHit> &trk1Hits, const std::vector<TrkHit> &trk2Hits, TrkHitPVecMap &clusTrkHitMap,
+void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vector<TrkHit> &trk2_hits, TrkHitPVecMap &clus_trkhit_map,
                             int detector)
 {
     if(if_strip_)
@@ -78,41 +84,41 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1Hits, const std::vect
         TrkHitPVecMap map1;
         TrkHitPVecMap map2;
     
-        for(auto itTrkHit : trk1Hits)
+        for(auto it_trkhit : trk1_hits)
         {
-            auto itSearchMap = map1.find(itTrkHit.GetCellIdZ());
-            if(itSearchMap != map1.end())
-                itSearchMap->second.emplace_back(std::make_shared<TrkHit>(itTrkHit));
+            auto it_search_map = map1.find(it_trkhit.GetCellIdZ());
+            if(it_search_map != map1.end())
+                it_search_map->second.emplace_back(std::make_shared<TrkHit>(it_trkhit));
             else
             {
-                TrkHitPVec tempNewLayer;
-                tempNewLayer.emplace_back(std::make_shared<TrkHit>(itTrkHit));
-                map1.insert(std::pair(itTrkHit.GetCellIdZ(), tempNewLayer));
+                TrkHitPVec temp_new_layer;
+                temp_new_layer.emplace_back(std::make_shared<TrkHit>(it_trkhit));
+                map1.insert(std::pair(it_trkhit.GetCellIdZ(), temp_new_layer));
             }
         }
     
-        for(auto itTrkHit : trk2Hits)
+        for(auto it_trkhit : trk2_hits)
         {
-            auto itSearchMap = map2.find(itTrkHit.GetCellIdZ());
-            if(itSearchMap != map2.end())
-                itSearchMap->second.emplace_back(std::make_shared<TrkHit>(itTrkHit));
+            auto it_search_map = map2.find(it_trkhit.GetCellIdZ());
+            if(it_search_map != map2.end())
+                it_search_map->second.emplace_back(std::make_shared<TrkHit>(it_trkhit));
             else
             {
-                TrkHitPVec tempNewLayer;
-                tempNewLayer.emplace_back(std::make_shared<TrkHit>(itTrkHit));
-                map2.insert(std::pair(itTrkHit.GetCellIdZ(), tempNewLayer));
+                TrkHitPVec temp_new_layer;
+                temp_new_layer.emplace_back(std::make_shared<TrkHit>(it_trkhit));
+                map2.insert(std::pair(it_trkhit.GetCellIdZ(), temp_new_layer));
             }
         }
     
-        double layerWidth = (detector == tag) ? layerWidthTag_ : layerWidthRec_;
-        double layerLength = (detector == tag) ? layerLengthTag_ : layerLengthRec_;
-        int stripNo = (detector == tag) ? stripNoTag_ : stripNoRec_;
-        std::vector<double> *angles = (detector == tag) ? &anglesTag_ : &anglesRec_;
+        double layer_width = (detector == tag) ? layer_width_tag_ : layer_width_rec_;
+        double layer_length = (detector == tag) ? layer_length_tag_ : layer_length_rec_;
+        int strip_no = (detector == tag) ? strip_no_tag_ : strip_no_rec_;
+        std::vector<double> *angles = (detector == tag) ? &angles_tag_ : &angles_rec_;
     
         for(auto layer1 : map1)
         {
-            auto itFindLayer2 = map2.find(layer1.first);
-            if(itFindLayer2 != map2.end())
+            auto it_find_layer2 = map2.find(layer1.first);
+            if(it_find_layer2 != map2.end())
             {
                 double angle = angles->at((layer1.first - 1)*2 + 1);
     
@@ -121,26 +127,26 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1Hits, const std::vect
                 {
                     for(auto hit2 : layer2)
                     {
-                        double smear1 = rnd_.Uniform(layerWidth/stripNo) - 0.5*layerWidth/stripNo;
-                        double smear2 = rnd_.Uniform(layerWidth/stripNo) - 0.5*layerWidth/stripNo;
+                        double smear1 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
+                        double smear2 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
                         double x1 = hit1->GetX() + smear1;
-                        double y = -x1/tan(angle) + ((hit2->GetCellIdX() - 0.5*(stripNo + 1))*layerWidth/stripNo + smear2)/sin(angle);
+                        double y = -x1/tan(angle) + ((hit2->GetCellIdX() - 0.5*(strip_no + 1))*layer_width/strip_no + smear2)/sin(angle);
     
-                        if(std::abs(y) < 0.5*layerLength)
+                        if(std::abs(y) < 0.5*layer_length)
                         {
-                            TrkHit constructedHit;
-                            constructedHit.SetU(x1);
-                            constructedHit.SetZ(hit1->GetZ());
-                            constructedHit.SetV(y);
+                            TrkHit constructed_hit;
+                            constructed_hit.SetU(x1);
+                            constructed_hit.SetZ(hit1->GetZ());
+                            constructed_hit.SetV(y);
     
-                            auto itSearchMap = clusTrkHitMap.find(hit1->GetCellIdZ());
-                            if(itSearchMap != clusTrkHitMap.end())
-                                itSearchMap->second.emplace_back(std::make_shared<TrkHit>(constructedHit));
+                            auto it_search_map = clus_trkhit_map.find(hit1->GetCellIdZ());
+                            if(it_search_map != clus_trkhit_map.end())
+                                it_search_map->second.emplace_back(std::make_shared<TrkHit>(constructed_hit));
                             else
                             {
-                                TrkHitPVec tempNewLayer;
-                                tempNewLayer.emplace_back(std::make_shared<TrkHit>(constructedHit));
-                                clusTrkHitMap.insert(std::pair(hit1->GetCellIdZ(), tempNewLayer));
+                                TrkHitPVec temp_new_layer;
+                                temp_new_layer.emplace_back(std::make_shared<TrkHit>(constructed_hit));
+                                clus_trkhit_map.insert(std::pair(hit1->GetCellIdZ(), temp_new_layer));
                             }
                         }
                     }
@@ -150,23 +156,21 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1Hits, const std::vect
     }
     else
     {
-        for(auto itTrkHit : trk1Hits)
+        for(auto it_trkhit : trk2_hits)
         {
-            auto itSearchMap = clusTrkHitMap.find(itTrkHit.GetCellIdZ());
-            if(itSearchMap != clusTrkHitMap.end())
-                itSearchMap->second.emplace_back(std::make_shared<TrkHit>(itTrkHit));
+            auto it_search_map = clus_trkhit_map.find(it_trkhit.GetCellIdZ());
+            if(it_search_map != clus_trkhit_map.end())
+                it_search_map->second.emplace_back(std::make_shared<TrkHit>(it_trkhit));
             else
             {
-                TrkHitPVec tempNewLayer;
-                tempNewLayer.emplace_back(std::make_shared<TrkHit>(itTrkHit));
-                clusTrkHitMap.insert(std::pair(itTrkHit.GetCellIdZ(), tempNewLayer));
+                TrkHitPVec temp_new_layer;
+                temp_new_layer.emplace_back(std::make_shared<TrkHit>(it_trkhit));
+                clus_trkhit_map.insert(std::pair(it_trkhit.GetCellIdZ(), temp_new_layer));
             }
         }
     }
 
-/*
-
-    for(auto layer : clusTrkHitMap)
+    for(auto layer : clus_trkhit_map)
     {
         for(auto hit : layer.second)
         {
@@ -174,6 +178,5 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1Hits, const std::vect
             hit->SetV(hit->GetY());
         }
     }
-*/
 }
 #endif
