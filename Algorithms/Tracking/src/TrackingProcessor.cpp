@@ -290,10 +290,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     TrkHitPVec tag_track((*(vec_tag_track.begin() + i)).begin(), (*(vec_tag_track.begin() + i)).end());
                     DTrack track(tag_track,
                                  find_tag.GetR(i),       //used in Kalman filter
-                                 find_tag.GetCenterX(i), //not used in Kalman filter, reserved for future
-                                 find_tag.GetCenterY(i), //not used in Kalman filter, reserved for future
-                                 magnets);              //magnetic in the volume where track lies
-                    track.Fit(Tag_fit_method);          //choose fitting method: Kalman filter
+                                 find_tag.GetCenterX(i), //not used in Kalman filter, reserved
+                                 find_tag.GetCenterY(i), //not used in Kalman filter, reserved
+                                 magnets);               //magnets
+                    track.Fit(Tag_fit_method);           //choose fitting method: Kalman filter
                     track.Evaluate();
     
                     TagTrk2_pp.push_back(track.GetPp());
@@ -319,10 +319,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     TrkHitPVec rec_track((*(vec_rec_track.begin() + i)).begin(), (*(vec_rec_track.begin() + i)).end());
                     DTrack track(rec_track,
                                  find_rec.GetR(i),       //used in Kalman filter
-                                 find_rec.GetCenterX(i), //not used in Kalman filter, reserved for future
-                                 find_rec.GetCenterY(i), //not used in Kalman filter, reserved for future
-                                 magnets);              //magnetic in the volume where track lies
-                    track.Fit(Rec_fit_method);          //choose fitting method: Kalman filter
+                                 find_rec.GetCenterX(i), //not used in Kalman filter, reserved
+                                 find_rec.GetCenterY(i), //not used in Kalman filter, reserved
+                                 magnets);               //magnets
+                    track.Fit(Rec_fit_method);           //choose fitting method: Kalman filter
                     track.Evaluate();
     
                     RecTrk2_pp.push_back(track.GetPp());

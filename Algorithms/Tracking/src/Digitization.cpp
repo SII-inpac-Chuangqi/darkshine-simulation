@@ -68,8 +68,8 @@ void Digitization::GetTrackerInfo(bool if_strip)
             }
         }
     
-        std::cout << "[INFO] ==> Tag tracker strip no: " << strip_no_tag_ << std::endl;
-        std::cout << "[INFO] ==> Recoil tracker strip no: " << strip_no_rec_ << std::endl;
+        std::cout << "[INFO] ==> Tag tracker strip number: " << strip_no_tag_ << std::endl;
+        std::cout << "[INFO] ==> Recoil tracker strip number: " << strip_no_rec_ << std::endl;
     }
     else
         std::cout << "[WARNING] ==> No strips in trackers" << std::endl;
@@ -130,14 +130,14 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
                         double smear1 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
                         double smear2 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
                         double x1 = hit1->GetX() + smear1;
-                        double y = -x1/tan(angle) + ((hit2->GetCellIdX() - 0.5*(strip_no + 1))*layer_width/strip_no + smear2)/sin(angle);
+                        double y1 = -x1/tan(angle) + ((hit2->GetCellIdX() - 0.5*(strip_no + 1))*layer_width/strip_no + smear2)/sin(angle);
     
-                        if(std::abs(y) < 0.5*layer_length)
+                        if(std::abs(y1) < 0.5*layer_length)
                         {
                             TrkHit constructed_hit;
-                            constructed_hit.SetU(x1);
+                            constructed_hit.SetX(x1);
                             constructed_hit.SetZ(hit1->GetZ());
-                            constructed_hit.SetV(y);
+                            constructed_hit.SetY(y1);
     
                             auto it_search_map = clus_trkhit_map.find(hit1->GetCellIdZ());
                             if(it_search_map != clus_trkhit_map.end())
@@ -170,13 +170,21 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
         }
     }
 
-    for(auto layer : clus_trkhit_map)
+    for(auto &layer : clus_trkhit_map)
     {
-        for(auto hit : layer.second)
+        for(auto &hit : layer.second)
         {
             hit->SetU(hit->GetX());
             hit->SetV(hit->GetY());
         }
     }
+/*
+    for(auto layer : clus_trkhit_map)
+    {
+        for(auto hit : layer.second)
+            std::cout << hit->GetX() << "	";
+        std::cout << std::endl;
+    }
+*/
 }
 #endif
