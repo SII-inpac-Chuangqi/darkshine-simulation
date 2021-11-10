@@ -76,8 +76,6 @@ RootManager:
 
   # job run number
   Run_Number: 0
-  # how many events in this run
-  Total_Event_Number: 10000
 
 ###########################################
 # DEvent Collection

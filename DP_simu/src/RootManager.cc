@@ -39,7 +39,7 @@ RootManager::RootManager()
     initialize();
 
     fStart = dControl->Run_Number;
-    fEvtNb = dControl->Total_Event_Number;
+    fEvtNb = dControl->BeamOnNumber;
 
 #ifdef MEMCK
     if (dControl->Memory_Check) {

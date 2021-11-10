@@ -93,7 +93,7 @@ public:
 
     /* event_id = id + Run_Number * Total_Event_Number */
     int Run_Number; // run number
-    int Total_Event_Number; // event number
+    //int Total_Event_Number; // event number
 
     //----------------------------------------
     // Out Collection Options
