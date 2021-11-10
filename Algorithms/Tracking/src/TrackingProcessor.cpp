@@ -41,7 +41,7 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
     // Add description for this AnaProcessor
     Description = "Tracking by Yi-Fan Zhu";
 
-    RegisterIntParameter("clean_mode", "Clean mode: no truth information", &clean, 1);
+    RegisterIntParameter("clean", "Clean mode: no truth information", &clean, 1);
     RegisterIntParameter("if_strip", "If strip structures in trackers", &if_strip, 1);
     RegisterIntParameter("Tag_fit_method",
                          "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
@@ -177,6 +177,7 @@ void TrackingProcessor::CleanEvt() {
 void TrackingProcessor::FillTruth(std::vector<DStep*> *initial_steps,
                                   std::vector<TrkHit> raw_tagtrk2_hits,
                                   std::vector<TrkHit> raw_rectrk2_hits) {
+
     if (!clean) {
         TagTrk2_No = raw_tagtrk2_hits.size();
  
