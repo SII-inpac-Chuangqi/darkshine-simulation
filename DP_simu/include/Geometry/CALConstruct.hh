@@ -18,6 +18,7 @@
 #include <vector>
 
 /// Class decription:
+/// Logical volume configuration information
 class CALConstruct {
 public:
     CALConstruct(const G4String&, G4LogicalVolume *, G4int, G4bool, G4bool, G4bool, G4bool);
