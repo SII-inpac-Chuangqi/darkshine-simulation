@@ -410,6 +410,8 @@ void Control::ConstructG4MaterialTable() const {
         // ------------ Generate & Add Material Properties Table ------------
         //
         std::cout << "[Control] ==> optical enabled. " << std::endl;
+        // ESR surface
+
         double photonEnergy[] = {0.1 * eV, 2.21 * eV, 2.58 * eV, 2.82 * eV, 2.95 * eV, 3.10 * eV, 4.00 * eV};
 
         const int nEntries = sizeof(photonEnergy) / sizeof(G4double);

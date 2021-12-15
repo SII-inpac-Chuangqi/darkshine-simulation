@@ -13,6 +13,9 @@
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4PVPlacement.hh"
+#include "G4LogicalSurface.hh"
+#include "G4LogicalBorderSurface.hh"
+#include "G4LogicalSkinSurface.hh"
 
 #include <utility>
 #include <vector>
@@ -179,6 +182,9 @@ private:
     G4Material *APD_Material{nullptr};
     G4Material *Glue_Material{nullptr};
     G4VisAttributes *fAPDVis{nullptr};
+
+    // Optical surface
+    G4LogicalSkinSurface* ESR_LSkinSurface{nullptr};
 
     // Absorber
     G4double AbsXHalfLength{0.};

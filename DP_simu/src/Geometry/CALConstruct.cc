@@ -291,17 +291,20 @@ void CALConstruct::CalUnit2Construct() {
 //   └-1 Calo
 //     ├-2 WLS fiber
 //     └-3 SiPM
-//                   ->|               |<- CaloZHalfLength + WrapZHalfLength
-// ->| |<-             |           ->| |<- WrapZHalfLength
-//   ┌---------------------------------┐
-//   |0┌-----------------------------┐ |
-//   | | 1                           | |
-//   | |========2===================3╡ |
-//   | |                           ->║<- APDZHalfLength
-//   | └-----------------------------┘ |
-//   └-------------------------------|-┘
+//                   ->|                   |<- CaloZHalfLength + WrapZHalfLength
+// ->| |<-             |               ->| |<- WrapZHalfLength
+//   ┌-------------------------------------┐
+//   |0┌-----------------------------┐     |
+//   | | 1                           | ┌ ┐ |
+//   | ╞========2====================╪=╡ │ |
+//   | |                           ->  └ ┘ |<- APDZHalfLength
+//   | └-----------------------------┘     |
+//   └-------------------------------|-----┘
 //                   ->|             |<- CaloZHalfLength
 void CALConstruct::CalWLSUnitConstruct() {
+    // Optical surface
+    ESR_LSkinSurface = new G4LogicalSkinSurface( "ESR_surface", fOutlineLV, dControl->Wrap_Surface); //here just use the inner skin surface, which is just between ESR and the scintallator
+
 
 }
 
