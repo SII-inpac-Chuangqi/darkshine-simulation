@@ -131,6 +131,7 @@ Filters:
 Optical:
   # if to start optical simualtion
   if_optical: false
+  if_UseLUT: false # true - use look up table. false - full simulation
   # Global Optical Yield Factor: photon yields = material photon yields * Optical_YieldFactor
   Optical_YieldFactor: 0.01
 
@@ -234,7 +235,7 @@ Geometry:
     # ECAL_Center_Mat: "PWO4" # X0 = 0.92 cm
     ECAL_Center_Mat: "LYSO" # Opitcal Module only supports LYSO
     # Wrapper Material
-    ECAL_Wrap_Mat: "G4_Al"
+    ECAL_Wrap_Mat: "G4_C"
 
     ECAL_Center_Wrap_Size: [ 0.3 , "mm", 0.3 , "mm", 0.3 , "mm" ]
     # ECAL Scintillator cell size
@@ -247,13 +248,13 @@ Geometry:
     # HCAL Absorber Material
     HCAL_Absorber_Mat: "G4_Fe"
     # HCAL Main Region Material
-    HCALRegion_Mat: "CarbonFiber"
+    HCALRegion_Mat: "vacuum"
     # HCAL Scintillator Material
-    HCAL_Mat: "Polystyrene"
+    HCAL_Mat: "G4_POLYSTYRENE"
     # Wrapper Material
-    HCAL_Wrap_Mat: "G4_Al"
+    HCAL_Wrap_Mat: "G4_C"
 
-    HCAL_Wrap_Size: [0.3 , "mm", 0.3 , "mm", 0.3 , "mm"]
+    HCAL_Wrap_Size: [0.1 , "mm", 0.1 , "mm", 0.1 , "mm"]
     # HCAL Scintillator cell size along x, the odd layer place along x, even along y
     HCAL_Size_Dir: [ 1, "cm", 5 , "cm", 100.57 , "cm"] # z = HCAL_Mod_No_Dir.x() * (HCAL_Size_Dir.y() + HCAL_Wrap_Size.y())
                                                        #     -HCAL_Wrap_Size.y()

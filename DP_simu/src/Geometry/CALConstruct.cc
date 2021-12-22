@@ -1,5 +1,6 @@
 #include "Geometry/CALConstruct.hh"
 #include "G4Box.hh"
+#include "G4Tubs.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4LogicalSkinSurface.hh"
@@ -75,6 +76,16 @@ CALConstruct::CALConstruct(const CALConstruct &in) {
     fWrapVis = in.fWrapVis;
     fCaloLVVector = in.fCaloLVVector;
     fWrapLVVector = in.fWrapLVVector;
+    fFiberCladVis = in.fFiberCladVis;
+    fFiberVis = in.fFiberVis;
+    fFiberCladMaterial = in.fFiberCladMaterial;
+    fFiberMaterial = in.fFiberMaterial;
+    fFiberCladLV = in.fFiberCladLV;
+    fFiberLV = in.fFiberLV;
+    fAPDSD = in.fAPDSD;
+    fFiberCladSD = in.fFiberCladSD;
+    fFiberSD = in.fFiberSD;
+    fAPDMaterial = in.fAPDMaterial;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -113,7 +124,7 @@ CALConstruct::~CALConstruct() {
 //   |0┌---------------|-------------┐   |
 //   | | 1             |             |   |
 //   | |               |             ├-┐ |
-//   | |              ┌╋             |2| |
+//   | |              ┌╋             |2| | -------------> Z Axis
 //   | |            ->||<- APDZHalf  ├┬┘ |
 //   | |              |    Length    ||  |
 //   | └--------------|--------------┘|  |
@@ -158,7 +169,7 @@ void CALConstruct::CalUnit1Construct() {
 
     // APD
     auto APDBox = new G4Box(fCALName + "_APDWorld_Box", APDXHalfLength, APDYHalfLength, APDZHalfLength);
-    auto APDLV = new G4LogicalVolume(APDBox, G4Material::GetMaterial("vacuum"), fCALName,
+    auto APDLV = new G4LogicalVolume(APDBox, G4Material::GetMaterial("vacuum"), fCALName + "_APDWorld_LV",
                                      nullptr, nullptr, nullptr);
     fAPDWLV = APDLV;
 
@@ -196,7 +207,7 @@ void CALConstruct::CalUnit1Construct() {
 //   |1┌---------------|-------------┬-┐ |
 //   | |               |             |0| |
 //   | | 2             |             ├-┤ |
-//   | |              ┌╋             |3| |
+//   | |              ┌╋             |3| | --------> Z Axis
 //   | |            ->||<- APDZHalf  ├-┤ |
 //   | |              |    Length    | | |
 //   | └--------------|--------------┴┬┘ |
@@ -288,24 +299,157 @@ void CALConstruct::CalUnit2Construct() {
 
 // Volume relationship:
 //   0 Wrap
-//   └-1 Calo
-//     ├-2 WLS fiber
-//     └-3 SiPM
-//                   ->|                   |<- CaloZHalfLength + WrapZHalfLength
-// ->| |<-             |               ->| |<- WrapZHalfLength
-//   ┌-------------------------------------┐
-//   |0┌-----------------------------┐     |
-//   | | 1                           | ┌ ┐ |
-//   | ╞========2====================╪=╡ │ |
-//   | |                           ->  └ ┘ |<- APDZHalfLength
-//   | └-----------------------------┘     |
-//   └-------------------------------|-----┘
-//                   ->|             |<- CaloZHalfLength
+//   ├-1 Calo
+//   ├-2 Fiber Clad
+//   ├-3 Fiber
+//   └-4 SiPM
+//                    ->|                  |<- CaloZHalfLength + APDZHalfLength + APDCaloHalfGap + WrapZHalfLength
+// ->| |<-              |              ->| |<- WrapZHalfLength
+//                      |             ->||<- APDZHalfLength
+//   ┌------------------|---------------||-┐
+//   |0┌----------------|------------┐  || |
+//   | | 1           ->||<-          | ┌┴┤ |
+//   | ╞========2=====╤╧╋============╪╤╡ │ | -------------> Z Axis
+//   | |            ->| |<-          ||└ ┘ |<- APDZHalfLength
+//   | └--------------|--------------┘|    |
+//   └----------------|--------------||----┘
+//                    |            ->||<- APDCaloHalfGap
+//                  ->|              |<- CaloZHalfLength
 void CALConstruct::CalWLSUnitConstruct() {
-    // Optical surface
-    ESR_LSkinSurface = new G4LogicalSkinSurface( "ESR_surface", fOutlineLV, dControl->Wrap_Surface); //here just use the inner skin surface, which is just between ESR and the scintallator
+    // sanity check
+    if (!CaloXHalfLength || !CaloYHalfLength || !CaloZHalfLength) {
+        G4cout << fCALName << " Construction Error: at least size of one dimension is zero." << G4endl;
+        return;
+    }
+    // -----------------------------------------
+    // construct logical volume
+    //
 
+    // Wrap
 
+    auto WrapBox = new G4Box(fCALName + "_WrapBox",
+                             CaloXHalfLength + WrapXHalfLength,
+                             CaloYHalfLength + WrapYHalfLength,
+                             CaloZHalfLength + APDZHalfLength + APDCaloHalfGap + WrapZHalfLength);
+    auto WrapLV = new G4LogicalVolume(WrapBox, fWrapMaterial, fCALName + "_LVW",
+                                      nullptr, nullptr, nullptr);
+    fWrapLV = WrapLV;
+    fOutlineLV = WrapLV;
+    if(fWrapVis) {
+        fWrapVis->SetVisibility(true);
+        WrapLV->SetVisAttributes(fWrapVis);
+    } else WrapLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    if (fCALWrapSD) WrapLV->SetSensitiveDetector(fCALWrapSD);
+
+    // Crystal
+
+    auto CaloBox = new G4Box(fCALName + "_Box", CaloXHalfLength, CaloYHalfLength, CaloZHalfLength);
+
+    auto CaloHoleTubs = new G4Tubs(fCALName + "_Tubs", 0, CaloHoleRadius,
+                                   (CaloZHalfLength + eps) * 2,
+                                   0*deg, 360*deg );
+    auto CaloWithHole = new G4SubtractionSolid(fCALName + "_Box_1",
+                                                CaloBox,
+                                                CaloHoleTubs,
+                                                nullptr,
+                                                G4ThreeVector(0,0,0));
+    auto CaloLV = new G4LogicalVolume(CaloWithHole,
+                                      fCALMaterial,
+                                      fCALName + "_LV",
+                                      nullptr, nullptr, nullptr);
+
+    fCaloLV = CaloLV;
+    fCaloLVVector.push_back(CaloLV);
+    if (fVis) {
+        fVis->SetVisibility(true);
+        CaloLV->SetVisAttributes(fVis);
+    } else CaloLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    if (fCALSD) CaloLV->SetSensitiveDetector(fCALSD);
+
+    // Fiber Clad
+
+    auto FiberCladTubs = new G4Tubs(fCALName + "_FiberClad_Tubs", FiberRadius, CaloHoleRadius,
+                                    (CaloZHalfLength + APDCaloHalfGap),
+                                    0*deg, 360*deg);
+
+    auto FiberCladLV = new G4LogicalVolume(FiberCladTubs, fFiberCladMaterial, fCALName + "_FiberClad_LV",
+                                           nullptr,nullptr,nullptr);
+    fFiberCladLV = FiberCladLV;
+
+    if (fFiberCladVis) {
+        fFiberCladVis->SetVisibility(true);
+        FiberCladLV->SetVisAttributes(fFiberCladVis);
+    } else FiberCladLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    if (fFiberCladSD) FiberCladLV->SetSensitiveDetector(fFiberCladSD);
+
+    // Optical Fiber
+    auto FiberTubs = new G4Tubs(fCALName + "_Fiber_Tubs", 0, FiberRadius,
+                                (CaloZHalfLength + APDCaloHalfGap),
+                                0*deg, 360*deg);
+    auto FiberLV = new G4LogicalVolume(FiberTubs, fFiberMaterial, fCALName + "_Fiber_LV",
+                                       nullptr,nullptr,nullptr);
+    fFiberLV = FiberLV;
+
+    if (fFiberVis) {
+        fFiberVis->SetVisibility(fFiberVis);
+        FiberLV->SetVisAttributes(fFiberVis);
+    } else FiberLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    if(fFiberSD) FiberLV->SetSensitiveDetector(fFiberSD);
+
+    // APD
+    auto APDBox = new G4Box(fCALName + "_APDWorld_Box", APDXHalfLength, APDYHalfLength, APDZHalfLength);
+
+    auto APDLV = new G4LogicalVolume(APDBox, fAPDMaterial, fCALName + "_APDWorld_LV");
+    fAPDWLV = APDLV;
+    if (fAPDVis) {
+        fAPDVis->SetVisibility(fAPDVis);
+        APDLV->SetVisAttributes(fAPDVis);
+    } else APDLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    if(fAPDSD) APDLV->SetSensitiveDetector(fAPDSD);
+
+    // -----------------------------------------------
+    // Placement
+    //
+
+    // Place Crystal
+    auto CaloPV = new G4PVPlacement(nullptr,
+                                    G4ThreeVector(0, 0, - APDZHalfLength - APDCaloHalfGap),
+                                    fCaloLV, fCALName + "_PV",
+                                    fWrapLV, false, fCopyNo, fCheckOverlap);
+    PVVector.emplace_back(CaloPV);
+
+    // Place Fiber Clad
+    auto FiberCladPV = new G4PVPlacement(nullptr,
+                                         G4ThreeVector(0, 0, -APDZHalfLength),
+                                         fFiberCladLV, fCALName + "_FiberClad_PV",
+                                         fWrapLV, false, fCopyNo, fCheckOverlap);
+    PVVector.emplace_back(FiberCladPV);
+    // Place Fiber
+    auto FiberPV = new G4PVPlacement(nullptr,
+                                     G4ThreeVector(0,0, - APDZHalfLength),
+                                     fFiberLV, fCALName + "_Fiber_PV",
+                                     fWrapLV, false, fCopyNo, fCheckOverlap);
+    PVVector.emplace_back(FiberPV);
+
+    // Place APD
+    auto APDPV = new G4PVPlacement(nullptr,
+                                   G4ThreeVector(0,0, CaloZHalfLength + ( 2 * APDCaloHalfGap ) + APDZHalfLength),
+                                   APDLV, fCALName + "_APDWorld_PV",
+                                   fWrapLV, false, fCopyNo, fCheckOverlap);
+    PVVector.emplace_back(APDPV);
+
+    // -----------------------------------------------
+    // SkinSurface and BorderSurface
+    //
+    if (dControl->if_optical && ! dControl->Optical_UseLUT) {
+        Wrap_LSkinSurface = new G4LogicalSkinSurface( "ESR_surface", fOutlineLV, dControl->Wrap_Surface); //here just use the inner skin surface, which is just between ESR and the scintallator
+        APD_LBorderSurface = new G4LogicalBorderSurface('SIPM_surface', FiberPV, APDPV, dControl->APD_Surface);
+    }
 }
 
 //   0 Absorber
@@ -389,7 +533,9 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
 
     // Construct Detector LV
     fAPDVis = new G4VisAttributes(G4Colour(0.5, 0.5, .0));
-    CalUnit1Construct();
+    //fFiberCladVis = new G4VisAttributes(G4Colour(0.6,0.7,0.8));
+    //fFiberVis = new G4VisAttributes(G4Colour(0.4,0.3,0.2));
+    CalWLSUnitConstruct();
 
     // Calculate total size
     auto UnitBox = dynamic_cast<G4Box*>(fOutlineLV->GetSolid());

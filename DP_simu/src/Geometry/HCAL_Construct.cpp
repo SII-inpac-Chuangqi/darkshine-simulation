@@ -22,16 +22,22 @@ void HCAL_Construct::DefineParameters() {
     Size_HCALRegion = dControl->Size_HCALRegion;
     Pos_HCALRegion = dControl->Pos_HCALRegion;
 
+
+
     G4cout << " ==> HCAL starts from " << Pos_HCALRegion.z() - Size_HCALRegion.z() / 2 << G4endl;
 
     /////////////////////////
     //  APD
     /////////////////////////
     APD_Mat = dControl->APD_Mat;
-    APD_Size = dControl->APD_Size;
+    APD_Size = dControl->HCAL_APD_Size;
 
     Glue_Mat = dControl->Glue_Mat;
     Glue_Size = dControl->Glue_Size;
+
+    ////////////////////////
+    // Optical
+    ////////////////////////
 }
 
 bool HCAL_Construct::Build(G4LogicalVolume *World_LV, bool fCheckOverlaps) {
@@ -56,7 +62,11 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, bool fCheckOverlaps) {
 
             HCAL->SetSizeXYZ(HCAL_Size_Dir.x() / 2., HCAL_Size_Dir.y() / 2., HCAL_Size_Dir.z() / 2.);
             HCAL->SetWrapSizeXYZ(HCAL_Wrap_Size.x() / 2., HCAL_Wrap_Size.y() / 2., HCAL_Wrap_Size.z() / 2.);
+            HCAL->SetCaloHoleRadius(dControl->HCAL_CaloHoleRadius);
+            HCAL->SetFiberRadius(dControl->HCAL_FiberRadius);
             HCAL->SetCALMaterial(HCAL_Mat);
+            HCAL->SetFiberCladMaterial(dControl->HCAL_FiberClad_Mat);
+            HCAL->SetFiberMaterial(dControl->HCAL_Fiber_Mat);
             HCAL->SetWrapMaterial(HCAL_Wrap_Mat);
             HCAL->SetVis(new G4VisAttributes(G4Colour(0.2, 0.37, 0.8)));
             HCAL->SetAPDSize(APD_Size, Glue_Size);

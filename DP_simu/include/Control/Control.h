@@ -36,7 +36,7 @@ public:
     // build geant4 material table
     void ConstructG4MaterialTable() const;
 
-    // Assign Materials
+    // Assign Materials using GetMaterial, and define OpticalSurface
     void AssignG4Material();
 
     // Rebuild all dependent variables
@@ -191,6 +191,8 @@ public:
     G4Material *HCAL_Mat{};
     G4Material *HCAL_Wrap_Mat{};
     G4Material *HCAL_Absorber_Mat{};
+    G4Material *HCAL_FiberClad_Mat{};
+    G4Material *HCAL_Fiber_Mat{};
     G4ThreeVector Size_HCALRegion;  // dependent
     G4ThreeVector Pos_HCALRegion;  // dependent
     G4ThreeVector HCAL_Wrap_Size;
@@ -261,6 +263,8 @@ public:
     double Optical_clockJitterSigma;
     double Optical_apertureJitterSigma;
     double Optical_pulseScaleFactor;
+    double HCAL_CaloHoleRadius;
+    double HCAL_FiberRadius;
 
     //----------------------------------------
     // Wrap related
@@ -270,12 +274,17 @@ public:
     // APD related
     G4Material *APD_Mat;
     G4ThreeVector APD_Size;
+    G4ThreeVector ECAL_APD_Size;
+    G4ThreeVector HCAL_APD_Size;
 
     G4Material *Glue_Mat;
     G4ThreeVector Glue_Size;
     G4MaterialPropertiesTable *APD_Surface_Mat;
     G4OpticalSurface *APD_Surface;
     //----------------------------------------
+    // Optical Fiber related
+    int Optical_polyPMMA = 1;
+
 
 
 private:

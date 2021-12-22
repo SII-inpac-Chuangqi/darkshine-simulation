@@ -134,7 +134,7 @@ Control::Control() {
     MaterialStr["ECALRegion_Mat"] = "CarbonFiber";
     MaterialStr["ECAL_Center_Mat"] = "LYSO";
     MaterialStr["ECAL_Center_Mat"] = "PWO4"; // X0 = 0.92 cm
-    MaterialStr["ECAL_Wrap_Mat"] = "G4_Al";
+    MaterialStr["ECAL_Wrap_Mat"] = "G4_C";
 
     ECAL_Center_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
     ECAL_Center_Size = G4ThreeVector(2.5 * cm, 2.5 * cm, 2.0 * cm);
@@ -146,8 +146,8 @@ Control::Control() {
 
     MaterialStr["HCAL_Absorber_Mat"] = "G4_Fe";
     MaterialStr["HCALRegion_Mat"] = "CarbonFiber";
-    MaterialStr["HCAL_Mat"] = "Polystyrene";
-    MaterialStr["HCAL_Wrap_Mat"] = "G4_Al";
+    MaterialStr["HCAL_Mat"] = "G4_POLYSTYRENE";
+    MaterialStr["HCAL_Wrap_Mat"] = "G4_C";
 
     HCAL_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
     //HCAL_Size_Dir = G4ThreeVector(100 * cm + 19 * HCAL_Wrap_Size.x(), 5 * cm, 1 * cm);
@@ -186,7 +186,7 @@ Control::Control() {
     /* Optical */
     //----------------------------------------
     if_optical = true;
-    Optical_UseLUT = true; //if disabled, nothing will happen in the optical!
+    Optical_UseLUT = false; //if disabled, use full optical simulation.
     Optical_YieldFactor = 1e-3; //used to
     Optical_PhysicsVerbose = 0;
     //digitizer
@@ -219,12 +219,15 @@ Control::Control() {
     Optical_pulseScaleFactor = 1. /
                                1000; //dummy, can be setted later in DEvent or here. This is for pre-calibration for pulshShape file. output unit is mV
 
+    HCAL_CaloHoleRadius = 1.2 * mm;
+    HCAL_FiberRadius = 0.98 * 1.2 * mm;
     //----------------------------------------
     // LUT
     LUT_FilePath = "ECAL_LUT.dat";
     LUT_Name = "ECAL_cube_2.5_2.5_2_v1";
 
-    APD_Size = G4ThreeVector(1 * cm, 1 * cm, 1 * mm);
+    APD_Size = G4ThreeVector(1 * cm, 1 * cm, 1 * mm); // Will deprecated, change to ECAL_APD_Size
+    HCAL_APD_Size = G4ThreeVector(3 * mm, 3 * mm, 1 * mm);
     Glue_Size = G4ThreeVector(1 * cm, 1 * cm, 0.1 * mm);
 
 }
@@ -304,7 +307,7 @@ void Control::RebuildVariables() {
     //----------------------------------------
     // Hadronic Calorimeter
     Size_HCALRegion.setX(
-            HCAL_Module_No.x() * (HCAL_Size_Dir.z() + HCAL_Wrap_Size.z() + APD_Size.z())
+            HCAL_Module_No.x() * (HCAL_Size_Dir.z() + HCAL_Wrap_Size.z() + HCAL_APD_Size.z())
             + HCAL_Module_Gap * (HCAL_Module_No.x() - 1)
             + HCAL_Module_No.x() * 2 * eps);
     Size_HCALRegion.setY(Size_HCALRegion.x());
@@ -344,7 +347,6 @@ void Control::RebuildVariables() {
 
     //----------------------------------------
     // Optical
-    Optical_UseLUT = if_optical;
 }
 
 
@@ -403,38 +405,103 @@ void Control::ConstructG4MaterialTable() const {
     nistManager->FindOrBuildMaterial("G4_Si");
     nistManager->FindOrBuildMaterial("G4_Al");
     nistManager->FindOrBuildMaterial("G4_Fe");
+    nistManager->FindOrBuildMaterial("G4_C");
 
     /* Define Optical Properties */
-    if (if_optical) {
-        //
-        // ------------ Generate & Add Material Properties Table ------------
-        //
-        std::cout << "[Control] ==> optical enabled. " << std::endl;
-        // ESR surface
+    //
+    // ------------ Generate & Add Material Properties Table ------------
+    //
+    std::cout << "[Control] ==> optical enabled. " << std::endl;
 
-        double photonEnergy[] = {0.1 * eV, 2.21 * eV, 2.58 * eV, 2.82 * eV, 2.95 * eV, 3.10 * eV, 4.00 * eV};
+    double photonEnergy[] = {0.1 * eV, 2.21 * eV, 2.58 * eV, 2.82 * eV, 2.95 * eV, 3.10 * eV, 4.00 * eV};
 
-        const int nEntries = sizeof(photonEnergy) / sizeof(G4double);
+    const int nEntries = sizeof(photonEnergy) / sizeof(G4double);
 
-        double RefractionIdx[nEntries] = {1.85, 1.833, 1.821, 1.813, 1.809, 1.804, 1.79};
-        double AbsorptionLength[nEntries] = {40. * cm, 40. * cm, 40. * cm, 40. * cm, 40. * cm, 40. * cm, 40. * cm};
+    double RefractionIdx[nEntries] = {1.85, 1.833, 1.821, 1.813, 1.809, 1.804, 1.79};
+    double AbsorptionLength[nEntries] = {40. * cm, 40. * cm, 40. * cm, 40. * cm, 40. * cm, 40. * cm, 40. * cm};
 
-        auto *MPT = new G4MaterialPropertiesTable();
-        MPT->AddProperty("RINDEX", photonEnergy, RefractionIdx, nEntries);
-        MPT->AddProperty("ABSLENGTH", photonEnergy, AbsorptionLength, nEntries);
+    auto *MPT = new G4MaterialPropertiesTable();
+    MPT->AddProperty("RINDEX", photonEnergy, RefractionIdx, nEntries);
+    MPT->AddProperty("ABSLENGTH", photonEnergy, AbsorptionLength, nEntries);
 
-        double ScintEnergy[nEntries] = {0.1 * eV, 2.21 * eV, 2.58 * eV, 2.82 * eV, 2.95 * eV, 3.10 * eV, 4.00 * eV};
-        double ScintFast[nEntries] = {0.0, 0.23, 0.85, 1.93, 2.15, 1.08, 0.0};
+    double ScintEnergy[nEntries] = {0.1 * eV, 2.21 * eV, 2.58 * eV, 2.82 * eV, 2.95 * eV, 3.10 * eV, 4.00 * eV};
+    double ScintFast[nEntries] = {0.0, 0.23, 0.85, 1.93, 2.15, 1.08, 0.0};
 
-        MPT->AddProperty("FASTCOMPONENT", ScintEnergy, ScintFast, nEntries);
+    MPT->AddProperty("FASTCOMPONENT", ScintEnergy, ScintFast, nEntries);
 
-        MPT->AddConstProperty("SCINTILLATIONYIELD", 20000. / MeV);
-        MPT->AddConstProperty("RESOLUTIONSCALE", 1.0);
-        MPT->AddConstProperty("FASTTIMECONSTANT", 40. * ns);
-        MPT->AddConstProperty("YIELDRATIO", 1.);
+    MPT->AddConstProperty("SCINTILLATIONYIELD", 20000. / MeV);
+    MPT->AddConstProperty("RESOLUTIONSCALE", 1.0);
+    MPT->AddConstProperty("FASTTIMECONSTANT", 40. * ns);
+    MPT->AddConstProperty("YIELDRATIO", 1.);
 
-        LYSO->SetMaterialPropertiesTable(MPT);
-    }
+    LYSO->SetMaterialPropertiesTable(MPT);
+
+
+    // ---------------------------------------------------
+    // Add Material and PropertiesTable
+
+    // Calo
+    G4double wls_Energy[] = {2.00*eV,2.87*eV,2.90*eV,3.47*eV};
+    const G4int wlsnum = sizeof(wls_Energy)/sizeof(G4double);
+    G4double rIndexPstyrene[]={ 1.5, 1.5, 1.5, 1.5};
+    G4double absorption1[]={2.*cm, 2.*cm, 2.*cm, 2.*cm};
+    G4double scintilFast[]={0.00, 0.00, 1.00, 1.00};
+
+    assert(sizeof(rIndexPstyrene) == sizeof(wls_Energy));
+    assert(sizeof(absorption1) == sizeof(wls_Energy));
+    assert(sizeof(scintilFast) == sizeof(wls_Energy));
+
+    auto *MPTPStyrene = new G4MaterialPropertiesTable();
+    MPTPStyrene->AddProperty("RINDEX",wls_Energy,rIndexPstyrene,wlsnum);
+    MPTPStyrene->AddProperty("ABSLENGTH",wls_Energy,absorption1,wlsnum);
+    MPTPStyrene->AddProperty("FASTCOMPONENT",wls_Energy, scintilFast,wlsnum);
+    MPTPStyrene->AddConstProperty("SCINTILLATIONYIELD",10./keV); //VIP
+    MPTPStyrene->AddConstProperty("RESOLUTIONSCALE",1.0);
+    MPTPStyrene->AddConstProperty("FASTTIMECONSTANT", 10.*ns);
+
+    // Fiber Clad
+    G4double RefractiveIndexClad1[]={ 1.49, 1.49, 1.49, 1.49};
+    G4double AbsFiber[]={9.00*m,9.00*m,0.1*mm,0.1*mm};
+
+    assert(sizeof(RefractiveIndexClad1) == sizeof(wls_Energy));
+    assert(sizeof(AbsFiber) == sizeof(wls_Energy));
+
+    auto *clad1Property = new G4MaterialPropertiesTable();
+    clad1Property->AddProperty("RINDEX",wls_Energy,RefractiveIndexClad1,wlsnum);
+    clad1Property->AddProperty("ABSLENGTH",wls_Energy,AbsFiber,wlsnum);
+
+    // Fiber
+    G4double RefractiveIndexFiber[]={ 1.60, 1.60, 1.60, 1.60};
+    G4double EmissionFib[]={1.0, 1.0, 0.0, 0.0};
+
+    assert(sizeof(RefractiveIndexFiber) == sizeof(wls_Energy));
+    assert(sizeof(EmissionFib) == sizeof(wls_Energy));
+
+    auto *fiberProperty = new G4MaterialPropertiesTable();
+    fiberProperty->AddProperty("RINDEX",wls_Energy,RefractiveIndexFiber,wlsnum);
+    fiberProperty->AddProperty("WLSABSLENGTH",wls_Energy,AbsFiber,wlsnum);
+    fiberProperty->AddProperty("WLSCOMPONENT",wls_Energy,EmissionFib,wlsnum);
+    fiberProperty->AddConstProperty("WLSTIMECONSTANT", 0.5*ns);
+
+    // -----------------------------------------------------
+    // Add Material
+    //
+
+    // Calo
+    auto *G4_PS = nistManager->FindOrBuildMaterial("G4_POLYSTYRENE");
+    G4_PS->SetMaterialPropertiesTable(MPTPStyrene);
+    G4_PS->GetIonisation()->SetBirksConstant(0.126*mm/MeV);
+
+    // Fiber clad
+    auto *G4_PE = nistManager->FindOrBuildMaterial("G4_POLYETHYLENE");
+    G4_PE->SetMaterialPropertiesTable(clad1Property);
+
+    // Fiber
+    auto *PMMA = new G4Material("PMMA",1190*kg/m3,3);
+    PMMA->AddElement(elH, 6 + 2 * Optical_polyPMMA);
+    PMMA->AddElement(elC,3 + 2 * Optical_polyPMMA);
+    PMMA->AddElement(elO, 2);
+    PMMA->SetMaterialPropertiesTable(fiberProperty);
 
     // Print materials
     //G4cout << *(G4Material::GetMaterialTable()) < < G4endl;
@@ -451,6 +518,8 @@ void Control::AssignG4Material() {
     HCALRegion_Mat = G4Material::GetMaterial(MaterialStr.at("HCALRegion_Mat"));
     HCAL_Mat = G4Material::GetMaterial(MaterialStr.at("HCAL_Mat"));
     HCAL_Wrap_Mat = G4Material::GetMaterial(MaterialStr.at("HCAL_Wrap_Mat"));
+    HCAL_FiberClad_Mat = G4Material::GetMaterial(MaterialStr.at("HCAL_FiberClad_Mat"));
+    HCAL_Fiber_Mat = G4Material::GetMaterial(MaterialStr.at("HCAL_Fiber_Mat"));
 
     APD_Mat = G4Material::GetMaterial("G4_Si");
     Glue_Mat = G4Material::GetMaterial("G4_W");
@@ -477,7 +546,7 @@ void Control::AssignG4Material() {
         // APD related
 
         G4double reflectivityAPD[cNum] = {0.0, 0.0};
-        G4double efficiencyAPD[cNum] = {1.0, 1.0};
+        G4double efficiencyAPD[cNum] = {0.2, 0.2};
         G4double transmittanceAPD[cNum] = {0.0, 0.0};
         APD_Surface_Mat = new G4MaterialPropertiesTable();
         APD_Surface_Mat->AddProperty("REFLECTIVITY", ephoton, reflectivityAPD, cNum); //reflect fraction, default=1
@@ -655,12 +724,20 @@ bool Control::ReadYAML(const G4String &file_in) {
         MaterialStr["HCALRegion_Mat"] = Node["Geometry"]["HCAL"]["HCALRegion_Mat"].as<std::string>();
         MaterialStr["HCAL_Mat"] = Node["Geometry"]["HCAL"]["HCAL_Mat"].as<std::string>();
         MaterialStr["HCAL_Wrap_Mat"] = Node["Geometry"]["HCAL"]["HCAL_Wrap_Mat"].as<std::string>();
+        MaterialStr["HCAL_FiberClad_Mat"] = Node["Geometry"]["HCAL"]["HCAL_FiberClad_Mat"].IsDefined() ?
+                                            Node["Geometry"]["HCAL"]["HCAL_FiberClad_Mat"].as<std::string>() : "G4_POLYSTYRENE";
+        MaterialStr["HCAL_Fiber_Mat"] = Node["Geometry"]["HCAL"]["HCAL_Fiber_Mat"].IsDefined() ?
+                                        Node["Geometry"]["HCAL"]["HCAL_Fiber_Mat"].as<std::string>() : "PMMA";
         HCAL_Wrap_Size = readV3(Node["Geometry"]["HCAL"]["HCAL_Wrap_Size"], true);
         HCAL_Size_Dir = readV3(Node["Geometry"]["HCAL"]["HCAL_Size_Dir"], true);
         HCAL_Mod_No_Dir = readV3(Node["Geometry"]["HCAL"]["HCAL_Mod_No_Dir"]);
         HCAL_Module_No = readV3(Node["Geometry"]["HCAL"]["HCAL_Module_No"]);
         HCAL_Module_Gap = readV2(Node["Geometry"]["HCAL"]["HCAL_Module_Gap"]);
         HCAL_Absorber_Thickness = readV2(Node["Geometry"]["HCAL"]["HCAL_Absorber_Thickness"]);
+        HCAL_CaloHoleRadius = Node["Geometry"]["HCAL"]["HCAL_CaloHoleRadius"].IsDefined() ?
+                              Node["Geometry"]["HCAL"]["HCAL_CaloHoleRadius"].as<double>() : 1.2 * mm;
+        HCAL_FiberRadius = Node["Geometry"]["HCAL"]["HCAL_FiberRadius"].IsDefined() ?
+                           Node["Geometry"]["HCAL"]["HCAL_FiberRadius"].as<double>() : 0.98 * 1.2 * mm;
 
         //========================================
         /* Optical */
