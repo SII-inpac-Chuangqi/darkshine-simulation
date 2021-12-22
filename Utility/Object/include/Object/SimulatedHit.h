@@ -39,6 +39,10 @@ public:
 
     double getELeakWrapper() const;
 
+    int getPhotonNumber() const {
+        return PhotonNumber;
+    }
+
     const std::vector<McParticle > &getPContribution() const {
         return MCPContribution;
     }
@@ -87,12 +91,15 @@ public:
         E += (EEm + EHad);
     };
 
+    void addPhoton(int num = 1) { PhotonNumber += num; };
+
     void addParticleContribution(const McParticle& mcp, double Edep, bool record_all = false);
 
 private:
     double ELeak_Wrapper{0.};
     double EdepEm{0.};
     double EdepHad{0.};
+    int PhotonNumber{0};
 
     // the corresponding MC particle contributing to this hit
     std::vector<McParticle > MCPContribution;

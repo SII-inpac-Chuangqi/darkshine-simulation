@@ -125,6 +125,7 @@ private:
     Int_t fEvtNb; // Event Number, Initialized to 100000. Set method: RootManager::SetNbEvent(int id)
     Int_t fEvtN{};
     Double_t weight{0.};
+    Double_t OpticalHCALYield{0.};
 
     Int_t EventID{};
     Double_t Rndm[4]{}; //Random double array, size=4

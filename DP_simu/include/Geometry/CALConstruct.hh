@@ -50,6 +50,7 @@ public:
     void CleanLV() {
         fCaloLVVector.clear();
         fWrapLVVector.clear();
+        fAPDLVVector.clear();
     };
 
     // Set Methods
@@ -149,6 +150,8 @@ public:
 
     std::vector<G4LogicalVolume *> GetWrapLVVector() { return fWrapLVVector; };
 
+    std::vector<G4LogicalVolume *> GetAPDLVVector() { return fAPDLVVector; };
+
     double eps = 1 * um;
 
 private:
@@ -238,6 +241,7 @@ private:
     // For Matrix Placement Output
     std::vector<G4LogicalVolume *> fCaloLVVector{};
     std::vector<G4LogicalVolume *> fWrapLVVector{};
+    std::vector<G4LogicalVolume *> fAPDLVVector{};
 
     // For Memory Clean
     std::vector<G4PVPlacement*> PVVector;

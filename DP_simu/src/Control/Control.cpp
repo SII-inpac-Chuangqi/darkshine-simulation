@@ -455,7 +455,7 @@ void Control::ConstructG4MaterialTable() const {
     MPTPStyrene->AddProperty("RINDEX",wls_Energy,rIndexPstyrene,wlsnum);
     MPTPStyrene->AddProperty("ABSLENGTH",wls_Energy,absorption1,wlsnum);
     MPTPStyrene->AddProperty("FASTCOMPONENT",wls_Energy, scintilFast,wlsnum);
-    MPTPStyrene->AddConstProperty("SCINTILLATIONYIELD",10./keV); //VIP
+    MPTPStyrene->AddConstProperty("SCINTILLATIONYIELD",Optical_HCAL_Yield); //VIP
     MPTPStyrene->AddConstProperty("RESOLUTIONSCALE",1.0);
     MPTPStyrene->AddConstProperty("FASTTIMECONSTANT", 10.*ns);
 
@@ -744,6 +744,11 @@ bool Control::ReadYAML(const G4String &file_in) {
         //----------------------------------------
         if_optical = Node["Optical"]["if_optical"].as<bool>();
         Optical_YieldFactor = Node["Optical"]["Optical_YieldFactor"].as<double>();
+        //----------------------------------------
+        // HCAL
+        //
+        Optical_HCAL_Yield = Node["Optical"]["HCAL"]["Yield"].IsDefined() ?
+                             Node["Optical"]["HCAL"]["Yield"].as<double>() / keV : 10 / keV;
         //----------------------------------------
         // SiPM
         Optical_pulseFilePath = Node["Optical"]["SiPM"]["Optical_pulseFilePath"].as<std::string>();

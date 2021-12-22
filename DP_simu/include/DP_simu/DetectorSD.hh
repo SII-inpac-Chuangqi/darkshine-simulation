@@ -73,6 +73,7 @@ private:
     G4int fType; // 0: Tracker 1: ECAL_Center 2: ECAL_Outer
     G4String fname;
     G4int reNumber1; // replical number of PV
+    G4String particleName;
 
     std::vector<SimulatedHit *> fSimHitVec;
 

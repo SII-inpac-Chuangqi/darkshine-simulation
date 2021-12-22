@@ -76,6 +76,7 @@ CALConstruct::CALConstruct(const CALConstruct &in) {
     fWrapVis = in.fWrapVis;
     fCaloLVVector = in.fCaloLVVector;
     fWrapLVVector = in.fWrapLVVector;
+    fAPDLVVector = in.fAPDLVVector;
     fFiberCladVis = in.fFiberCladVis;
     fFiberVis = in.fFiberVis;
     fFiberCladMaterial = in.fFiberCladMaterial;
@@ -106,6 +107,9 @@ CALConstruct::~CALConstruct() {
 
     fWrapLVVector.clear();
     fWrapLVVector.shrink_to_fit();
+
+    fAPDLVVector.clear();
+    fAPDLVVector.shrink_to_fit();
 
     PVVector.clear();
     PVVector.shrink_to_fit();
@@ -405,6 +409,7 @@ void CALConstruct::CalWLSUnitConstruct() {
 
     auto APDLV = new G4LogicalVolume(APDBox, fAPDMaterial, fCALName + "_APDWorld_LV");
     fAPDWLV = APDLV;
+    fAPDLVVector.emplace_back(APDLV);
     if (fAPDVis) {
         fAPDVis->SetVisibility(fAPDVis);
         APDLV->SetVisAttributes(fAPDVis);
@@ -438,15 +443,18 @@ void CALConstruct::CalWLSUnitConstruct() {
 
     // Place APD
     auto APDPV = new G4PVPlacement(nullptr,
-                                   G4ThreeVector(0,0, CaloZHalfLength + ( 2 * APDCaloHalfGap ) + APDZHalfLength),
+                                   G4ThreeVector(0,0, CaloZHalfLength + APDCaloHalfGap ),
                                    APDLV, fCALName + "_APDWorld_PV",
                                    fWrapLV, false, fCopyNo, fCheckOverlap);
+    G4cerr << "[DEBUG] APD left" <<  CaloZHalfLength + APDCaloHalfGap - APDZHalfLength<< G4endl;
+    G4cerr << "[DEBUG] Fiber right" << -APDZHalfLength + (CaloZHalfLength + APDCaloHalfGap)<< G4endl;
     PVVector.emplace_back(APDPV);
 
     // -----------------------------------------------
     // SkinSurface and BorderSurface
     //
-    if (dControl->if_optical && ! dControl->Optical_UseLUT) {
+    //if (dControl->if_optical) {
+    if (true) {
         Wrap_LSkinSurface = new G4LogicalSkinSurface( "ESR_surface", fOutlineLV, dControl->Wrap_Surface); //here just use the inner skin surface, which is just between ESR and the scintallator
         APD_LBorderSurface = new G4LogicalBorderSurface('SIPM_surface', FiberPV, APDPV, dControl->APD_Surface);
     }
@@ -533,8 +541,8 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
 
     // Construct Detector LV
     fAPDVis = new G4VisAttributes(G4Colour(0.5, 0.5, .0));
-    //fFiberCladVis = new G4VisAttributes(G4Colour(0.6,0.7,0.8));
-    //fFiberVis = new G4VisAttributes(G4Colour(0.4,0.3,0.2));
+    fFiberCladVis = new G4VisAttributes(G4Colour(0.6,0.7,0.8));
+    fFiberVis = new G4VisAttributes(G4Colour(0.4,0.3,0.2));
     CalWLSUnitConstruct();
 
     // Calculate total size

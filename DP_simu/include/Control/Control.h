@@ -23,6 +23,8 @@
 
 #include "Object/DigiForm.hh"
 
+enum detector_type {Tracker, ECAL, HCAL, HCAL_APD};
+
 /// \brief The central control class which should store all the data
 
 class Control {
@@ -232,6 +234,7 @@ public:
     bool if_optical=true;
     bool Optical_UseLUT;
     double Optical_YieldFactor;
+    double Optical_HCAL_Yield;
     int Optical_PhysicsVerbose = 0;
     //LUT loader
     G4String LUT_FilePath;

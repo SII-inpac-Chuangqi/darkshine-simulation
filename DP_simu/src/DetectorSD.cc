@@ -63,7 +63,7 @@ DetectorSD::~DetectorSD() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void DetectorSD::Initialize(G4HCofThisEvent *) {
-    if (fType != 0) {
+    if (fType != Tracker) {
         for (int i = 0; i < fCellID.x() * fCellID.y() * fCellID.z(); i++)
             fSimHitVec.push_back(new SimulatedHit());
 
@@ -91,19 +91,25 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     reNumber1 = touchable->GetReplicaNumber(1); // for calo, depth=1
 
 
+    // Get hit accounting data for this cell
+    SimulatedHit *hit;
+    if (fType == Tracker) hit = new SimulatedHit();
+
+    else hit = fSimHitVec[reNumber1];
     auto xID = (int) fCellID.x();
     auto yID = (int) fCellID.y();
     //G4int zID = (int)fCellID.z();
     G4ThreeVector CellID(0, 0, 0);
-    CellID.setZ((int) (reNumber1 / (xID * yID)) + 1);
-    CellID.setX((reNumber1 % (xID * yID)) % xID + 1);
-    CellID.setY((int) ((reNumber1 % (xID * yID)) / yID) + 1);
-    if (fType == 0) {
-        CellID.setX( touchable->GetReplicaNumber(0) + 1 );
+
+    if (fType == Tracker) {
+        CellID.setX(touchable->GetReplicaNumber(0) + 1);
         CellID.setY(1);
         CellID.setZ(reNumber1 + 1);
-    }
-    if (fType == 2) {
+    } else if (fType == ECAL) {
+        CellID.setZ((int) (reNumber1 / (xID * yID)) + 1);
+        CellID.setX((reNumber1 % (xID * yID)) % xID + 1);
+        CellID.setY((int) ((reNumber1 % (xID * yID)) / yID) + 1);
+    } else if (fType == HCAL) {
         if ((int) CellID.z() % 2 == 0) {
             CellID.setX(1);
             CellID.setY(((reNumber1 % (xID * yID)) % yID) + 1);
@@ -111,12 +117,27 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
             CellID.setY(1);
             CellID.setX(((reNumber1 % (xID * yID)) % yID) + 1);
         }
+    } else if (fType == HCAL_APD) {
+        // Save CellID
+        if ((int) CellID.z() % 2 == 0) {
+            CellID.setX(1);
+            CellID.setY(((reNumber1 % (xID * yID)) % yID) + 1);
+        } else {
+            CellID.setY(1);
+            CellID.setX(((reNumber1 % (xID * yID)) % yID) + 1);
+        }
+        // Save Photon
+        particleName = step->GetTrack()->GetDefinition()->GetParticleName();
+        if (particleName == "opticalphoton") {
+            hit->addPhoton();
+        }
+    } else {
+        CellID.setZ((int) (reNumber1 / (xID * yID)) + 1);
+        CellID.setX((reNumber1 % (xID * yID)) % xID + 1);
+        CellID.setY((int) ((reNumber1 % (xID * yID)) / yID) + 1);
     }
 
-    // Get hit accounting data for this cell
-    SimulatedHit *hit;
-    if (!fType) hit = new SimulatedHit();
-    else hit = fSimHitVec[reNumber1];
+
 
     // Calculate the center position of this cell
     G4ThreeVector origin(0., 0., 0.);

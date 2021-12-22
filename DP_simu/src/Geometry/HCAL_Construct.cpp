@@ -75,7 +75,8 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, bool fCheckOverlaps) {
                                                 G4ThreeVector(wx, wy, 0), HCAL_Absorber_Thickness, HCAL_Absorber_Mat);
 
             //HCAL_SD_LV[(int) (ix + iy * HCAL_Module_No.x())] = HCAL->GetCaloLVVector();
-            HCAL_SD_LV.push_back(HCAL->GetCaloLVVector());
+            HCAL_SD_LV.emplace_back(HCAL->GetCaloLVVector());
+            HCAL_APD_SD_LV.emplace_back(HCAL->GetAPDLVVector());
         }
     }
 
@@ -84,13 +85,18 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, bool fCheckOverlaps) {
 
 bool HCAL_Construct::BuildSD() {
     std::vector<DetectorSD *> HCalSD;
+    std::vector<DetectorSD *> HCalAPDSD;
     for (int iy = 0; iy < HCAL_Module_No.y(); iy++) {
         for (int ix = 0; ix < HCAL_Module_No.x(); ix++) {
             int index = (int) (ix + iy * HCAL_Module_No.x());
-            HCalSD.push_back(new DetectorSD(2, Name + "_" + std::to_string(index), HCAL_Mod_No_Dir));
+            HCalSD.push_back(new DetectorSD(HCAL, Name + "_" + std::to_string(index), HCAL_Mod_No_Dir));
+            HCalAPDSD.emplace_back(new DetectorSD(HCAL_APD, Name + "_APD_" + std::to_string(index), HCAL_Mod_No_Dir));
             G4SDManager::GetSDMpointer()->AddNewDetector(HCalSD[index]);
+            G4SDManager::GetSDMpointer()->AddNewDetector(HCalAPDSD[index]);
             for (auto LV : HCAL_SD_LV[index])
                 LV->SetSensitiveDetector(HCalSD[index]);
+            for (auto LV : HCAL_APD_SD_LV[index])
+                LV->SetSensitiveDetector(HCalAPDSD[index]);
         }
     }
     return false;
@@ -109,5 +115,8 @@ HCAL_Construct::~HCAL_Construct() {
     }
     HCAL_SD_LV.clear();
     HCAL_SD_LV.shrink_to_fit();
+
+    HCAL_APD_SD_LV.clear();
+    HCAL_APD_SD_LV.shrink_to_fit();
 
 }
