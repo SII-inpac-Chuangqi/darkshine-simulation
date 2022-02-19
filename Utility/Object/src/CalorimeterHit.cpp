@@ -4,15 +4,15 @@
 
 #include "Object/CalorimeterHit.h"
 
-CalorimeterHit::CalorimeterHit() {
+CalorimeterHit::CalorimeterHit_b1() {
 
 }
 
-CalorimeterHit::~CalorimeterHit() {
+CalorimeterHit::~CalorimeterHit_b1() {
 
 }
 
-CalorimeterHit::CalorimeterHit(const CalorimeterHit &rhs) : DHit(rhs) {
+CalorimeterHit::CalorimeterHit_b1(const CalorimeterHit &rhs) : DHit(rhs) {
     *this = rhs;
 }
 

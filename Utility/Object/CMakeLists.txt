@@ -35,14 +35,6 @@ SET(DEvent_source
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DigiForm.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DEvent.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DMagnet.cpp
-        // baseline1 version
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/versions/SimulatedHit_b1.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/versions/CalorimeterHit_b1.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/versions/McParticle_b1.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/versions/ReconstructedParticle_b1.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/versions/DigiForm_b1.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/versions/DEvent_b1.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/versions/DMagnet_b1.cpp
         )
 
 root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF include/Object/DEventLinkDef.h)

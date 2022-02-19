@@ -15,21 +15,21 @@
 /// next step is to change the optical signal to CalorimeterHit,
 /// which is calld digitization. CalorimeterHit collection is used in
 /// real analysis instead of SimulatedHit.
-class CalorimeterHit : public DHit {
+class CalorimeterHit_b1 : public DHit {
 public:
     // Constructor and Destructor
-    CalorimeterHit();
+    CalorimeterHit_b1();
 
-    CalorimeterHit(const CalorimeterHit &);
+    CalorimeterHit_b1(const CalorimeterHit_b1 &);
 
-    ~CalorimeterHit() override;
+    ~CalorimeterHit_b1() override;
 
     // Operators
-    bool operator==(const CalorimeterHit &rhs) const;
+    bool operator==(const CalorimeterHit_b1 &rhs) const;
 
-    bool operator!=(const CalorimeterHit &rhs) const;
+    bool operator!=(const CalorimeterHit_b1 &rhs) const;
 
-    CalorimeterHit &operator=(const CalorimeterHit &rhs);
+    CalorimeterHit_b1 &operator=(const CalorimeterHit_b1 &rhs);
 
     // Get Methods
     const RecParticleVec &getPContribution() const;
