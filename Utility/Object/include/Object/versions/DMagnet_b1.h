@@ -7,9 +7,9 @@
 #include "TNamed.h"
 #include "TMultiDimFit.h"
 
-class DMagnet : public TNamed
+class DMagnet_b1 : public TNamed
 {
-    ClassDef(DMagnet, 1);
+    ClassDef(DMagnet_b1, 1);
 
 //................................................................................//
 //Struct to store parameterization from TMultiDimFit
@@ -36,29 +36,29 @@ public:
 //Constructor & destructor
 //................................................................................//
 //Empty constructor, do not use
-    DMagnet() {}
+    DMagnet_b1() {}
 
 //................................................................................//
 //Constructor with name & title needed
-    DMagnet(const TString &name, const TString &title) {this->SetNameTitle(name, title);}
+    DMagnet_b1(const TString &name, const TString &title) {this->SetNameTitle(name, title);}
 
 //................................................................................//
 //Copy constructor
-    DMagnet(const DMagnet &old);
+    DMagnet_b1(const DMagnet_b1 &old);
 
 //................................................................................//
 //Operator =
-    DMagnet& operator =(const DMagnet &rhs);
+    DMagnet_b1& operator =(const DMagnet_b1 &rhs);
 
 //................................................................................//
 //Destructor
-    ~DMagnet() {}
+    ~DMagnet_b1() {}
 
 //................................................................................//
 
 //................................................................................//
 //No move constructor
-    DMagnet(DMagnet &&magnet) = delete;
+    DMagnet_b1(DMagnet_b1 &&magnet) = delete;
 
 //................................................................................//
 //Set

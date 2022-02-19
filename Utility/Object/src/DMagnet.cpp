@@ -10,11 +10,11 @@
 //Constructor & destructor
 //................................................................................//
 //Copy constructor
-DMagnet::DMagnet(const DMagnet &old) : TNamed(old),
-                                       mags_(old.mags_),
-                                       xDivision_(old.xDivision_),
-                                       yDivision_(old.yDivision_),
-                                       zDivision_(old.zDivision_)
+DMagnet::DMagnet_b1(const DMagnet &old) : TNamed(old),
+                                          mags_(old.mags_),
+                                          xDivision_(old.xDivision_),
+                                          yDivision_(old.yDivision_),
+                                          zDivision_(old.zDivision_)
 {}
 
 //................................................................................//

@@ -45,7 +45,7 @@ typedef std::map<std::string, SimulatedHitVec* > SimulatedHitMap;
 typedef std::vector<CalorimeterHit_b1 *> CalorimeterHitVec;
 typedef std::map<std::string, CalorimeterHitVec* > CalorimeterHitMap;
 
-typedef std::vector<DigiForm *> DigiFormVec;
+typedef std::vector<DigiForm_b1 *> DigiFormVec;
 typedef std::map<std::string, DigiFormVec* > DigiFormMap;
 
 typedef std::shared_ptr<AnaProcessor> AnaProcessorUniPtr;
