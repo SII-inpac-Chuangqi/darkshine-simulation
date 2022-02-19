@@ -20,7 +20,7 @@ class McParticle_b1;
 
 class ReconstructedParticle_b1;
 
-class SimulatedHit_b1;
+class SimulatedHit_b1_5;
 
 class CalorimeterHit_b1;
 
@@ -39,7 +39,7 @@ typedef std::map<std::string, MCParticleVec* > MCParticleMap;
 typedef std::vector<ReconstructedParticle_b1 *> RecParticleVec;
 typedef std::map<std::string, RecParticleVec* > RecParticleMap;
 
-typedef std::vector<SimulatedHit_b1 *> SimulatedHitVec;
+typedef std::vector<SimulatedHit_b1_5 *> SimulatedHitVec;
 typedef std::map<std::string, SimulatedHitVec* > SimulatedHitMap;
 
 typedef std::vector<CalorimeterHit_b1 *> CalorimeterHitVec;

@@ -15,20 +15,20 @@
 
 /// class description:
 /// \brief Deposit energy. TRUTH information which is known only in simulation.
-class SimulatedHit_b1 : public DHit {
+class SimulatedHit_b1_5 : public DHit {
 public:
     // Constructor and Destructor
-    SimulatedHit_b1();
+    SimulatedHit_b1_5();
 
-    SimulatedHit_b1(const SimulatedHit_b1 &);
+    SimulatedHit_b1_5(const SimulatedHit_b1_5 &);
 
-    ~SimulatedHit_b1() override;
+    ~SimulatedHit_b1_5() override;
 
-    bool operator==(const SimulatedHit_b1 &rhs) const;
+    bool operator==(const SimulatedHit_b1_5 &rhs) const;
 
-    bool operator!=(const SimulatedHit_b1 &rhs) const;
+    bool operator!=(const SimulatedHit_b1_5 &rhs) const;
 
-    SimulatedHit_b1 &operator=(const SimulatedHit_b1 &rhs);
+    SimulatedHit_b1_5 &operator=(const SimulatedHit_b1_5 &rhs);
 
     // Get Methods
     double getEdepEm() const;
@@ -46,7 +46,7 @@ public:
     }
 
     //Dump
-    friend std::ostream &operator<<(std::ostream &os, const SimulatedHit_b1 &hit) {
+    friend std::ostream &operator<<(std::ostream &os, const SimulatedHit_b1_5 &hit) {
 //        TString detector;
 //        if     (Detector == nNone)    detector = "None";
 //        else if(Detector == nTracker) detector = "Tracker";
@@ -99,7 +99,7 @@ private:
 
     CalorimeterHitVec CaloHits;
 
-ClassDefOverride(SimulatedHit_b1, 11)
+ClassDefOverride(SimulatedHit_b1_5, 11)
 
 };
 
