@@ -10,7 +10,7 @@
 #include "Object/SimulatedHit.h"
 #include "Object/DParticle.h"
 
-class SimulatedHit;
+class SimulatedHit_b1;
 
 /// class description:
 /// \brief Secondary particles. TRUTH information which is known only in simulation.

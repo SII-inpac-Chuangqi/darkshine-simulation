@@ -7,9 +7,9 @@
 
 #include <cassert>
 
-SimulatedHit::SimulatedHit() = default;
+SimulatedHit::SimulatedHit_b1() = default;
 
-SimulatedHit::SimulatedHit(const SimulatedHit &rhs) : DHit(rhs) {
+SimulatedHit::SimulatedHit_b1(const SimulatedHit &rhs) : DHit(rhs) {
     *this = rhs;
 }
 
@@ -26,7 +26,7 @@ SimulatedHit &SimulatedHit::operator=(const SimulatedHit &rhs) {
 }
 
 
-SimulatedHit::~SimulatedHit() {
+SimulatedHit::~SimulatedHit_b1() {
     SimHits_Edep.clear();
     SimHits_Edep.shrink_to_fit();
 
