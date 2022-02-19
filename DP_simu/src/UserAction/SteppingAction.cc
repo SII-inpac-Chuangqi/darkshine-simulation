@@ -43,6 +43,7 @@
 
 SteppingAction::SteppingAction()
         : G4UserSteppingAction() {
+    record_step_z = dControl->rec_Pos_TrackerRegion.z() + 0.5 * dControl->rec_Size_TrackerRegion.z();
     G4cout << "Stepping Initialized!!" << G4endl;
 }
 
@@ -105,8 +106,8 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     }
     if (!post) return;
     if (dControl->save_initial_particle_step
-        && aStep->GetTrack()->GetTrackID() == 1) {
-
+        && aStep->GetTrack()->GetTrackID() == 1
+        && aStep->GetPostStepPoint()->GetPosition().z() <= record_step_z ) {
         /* Record all steps for certain particle */
         dRootMng->FillParticleStep(aStep);
     }
