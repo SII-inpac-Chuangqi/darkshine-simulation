@@ -14,7 +14,7 @@
 #include <iterator>
 #include <memory>
 
-class DStep;
+class DStep_b1;
 
 class McParticle;
 
@@ -30,7 +30,7 @@ class DigiForm_b1;
 
 class AnaProcessor;
 
-typedef std::vector<DStep *> DStepVec;
+typedef std::vector<DStep_b1 *> DStepVec;
 typedef std::map<std::string, DStepVec* > DStepMap;
 
 typedef std::vector<McParticle *> MCParticleVec;

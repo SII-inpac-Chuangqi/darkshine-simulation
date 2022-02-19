@@ -11,18 +11,18 @@
 #include "TObject.h"
 #include "TString.h"
 
-class DStep : public TObject {
+class DStep_b1 : public TObject {
 public:
-    DStep() = default;
+    DStep_b1() = default;
 
-    DStep(const DStep &rhs)  : TObject(rhs) {
+    DStep_b1(const DStep_b1 &rhs)  : TObject(rhs) {
         *this = rhs;
     }
 
-    ~DStep() override = default;
+    ~DStep_b1() override = default;
 
     // Operators
-    bool operator==(const DStep &rhs) const {
+    bool operator==(const DStep_b1 &rhs) const {
         return id == rhs.id &&
                X == rhs.X &&
                Y == rhs.Y &&
@@ -35,11 +35,11 @@ public:
                ProcessName == rhs.ProcessName;
     }
 
-    bool operator!=(const DStep &rhs) const {
+    bool operator!=(const DStep_b1 &rhs) const {
         return !(rhs == *this);
     }
 
-    DStep &operator=(const DStep &rhs) {
+    DStep_b1 &operator=(const DStep_b1 &rhs) {
         if (&rhs == this) { return *this; }
         id = rhs.id;
         X = rhs.X;
@@ -97,7 +97,7 @@ public:
     }
 
     // Dump
-    friend std::ostream &operator<<(std::ostream &os, const DStep &step) {
+    friend std::ostream &operator<<(std::ostream &os, const DStep_b1 &step) {
         TString str(Form("| %-5d | %8.3f, %8.3f, %8.3f | %8.3f, %8.3f, %8.3f, %8.3f | %-18s  %-15s |",
                           step.id,
                           step.X, step.Y, step.Z,
@@ -161,7 +161,7 @@ private:
     std::string PVName;
     std::string ProcessName;
 
-ClassDefOverride(DStep,7);
+ClassDefOverride(DStep_b1, 7);
 };
 
 #endif //DSIMU_DSTEP_H
