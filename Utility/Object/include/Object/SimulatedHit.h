@@ -5,5 +5,8 @@
 #ifndef DSIMU_SIMULATEDHIT_H
 #define DSIMU_SIMULATEDHIT_H
 
+#include "Object/versions/SimulatedHit_b1.h"
+
+using SimulatedHit = SimulatedHit_b1;
 
 #endif //DSIMU_SIMULATEDHIT_H

@@ -6,5 +6,8 @@
 #ifndef DigiForm_h
 #define DigiForm_h 1
 
+#include "Object/versions/DigiForm_b1.hh"
+
+using DigiForm = DigiForm_b1;
 
 #endif
