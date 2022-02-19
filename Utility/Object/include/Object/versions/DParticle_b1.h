@@ -10,18 +10,18 @@
 
 #include "TObject.h"
 
-class DParticle : public TObject {
+class DParticle_b1 : public TObject {
 public:
     // Constructor and Destructor
-    DParticle() = default;
+    DParticle_b1() = default;
 
-    DParticle(const DParticle &rhs) : TObject(rhs) {
+    DParticle_b1(const DParticle_b1 &rhs) : TObject(rhs) {
         *this = rhs;
     }
 
-    ~DParticle() override = default;
+    ~DParticle_b1() override = default;
 
-    bool operator==(const DParticle &rhs) const {
+    bool operator==(const DParticle_b1 &rhs) const {
         return id == rhs.id &&
                Name == rhs.Name &&
                CreateProcess == rhs.CreateProcess &&
@@ -40,11 +40,11 @@ public:
                EndPointZ == rhs.EndPointZ;
     }
 
-    bool operator!=(const DParticle &rhs) const {
+    bool operator!=(const DParticle_b1 &rhs) const {
         return !(rhs == *this);
     }
 
-    DParticle &operator=(const DParticle &rhs) {
+    DParticle_b1 &operator=(const DParticle_b1 &rhs) {
         if (&rhs == this) { return *this; }
         id = rhs.id;
         Name = rhs.Name;
@@ -133,7 +133,7 @@ public:
 
     // Set Methods
     void setId(int ID) {
-        DParticle::id = ID;
+        DParticle_b1::id = ID;
     }
 
     void setPdg(int pdg) {
@@ -218,7 +218,7 @@ protected:
     double EndPointY{0.};
     double EndPointZ{0.};
 
-ClassDefOverride(DParticle, 3);
+ClassDefOverride(DParticle_b1, 3);
 };
 
 #endif //DSIMU_DPARTICLE_H
