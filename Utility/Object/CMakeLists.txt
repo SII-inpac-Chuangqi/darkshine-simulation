@@ -3,6 +3,7 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(DEvent_header_shared
+        // Reference the current persistent version:
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DHit.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DParticle.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DStep.h
@@ -13,8 +14,20 @@ SET(DEvent_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DigiForm.hh
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DEvent.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DMagnet.h
+        // baseline1 version
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DHit_b1.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DParticle_b1.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DStep_b1.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/SimulatedHit_b1.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/CalorimeterHit_b1.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/McParticle_b1.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/ReconstructedParticle_b1.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DigiForm_b1.hh
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DEvent_b1.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DMagnet_b1.h
         )
 SET(DEvent_source
+        /// Reference the current persistent version:
         ${CMAKE_CURRENT_SOURCE_DIR}/src/SimulatedHit.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/CalorimeterHit.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/McParticle.cpp
@@ -22,6 +35,14 @@ SET(DEvent_source
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DigiForm.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DEvent.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DMagnet.cpp
+        // baseline1 version
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/versions/SimulatedHit_b1.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/versions/CalorimeterHit_b1.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/versions/McParticle_b1.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/versions/ReconstructedParticle_b1.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/versions/DigiForm_b1.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/versions/DEvent_b1.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/versions/DMagnet_b1.cpp
         )
 
 root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF include/Object/DEventLinkDef.h)
