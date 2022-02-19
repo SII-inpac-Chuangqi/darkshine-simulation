@@ -13,7 +13,7 @@
 #include <vector>
 #include "TString.h"
 
-class McParticle;
+class McParticle_b1;
 
 /// class description:
 /// \brief Deposit energy. TRUTH information which is known only in simulation.

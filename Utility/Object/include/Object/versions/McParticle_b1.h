@@ -14,26 +14,26 @@ class SimulatedHit;
 
 /// class description:
 /// \brief Secondary particles. TRUTH information which is known only in simulation.
-class McParticle : public DParticle {
+class McParticle_b1 : public DParticle {
 public:
     // Constructor and Destructor
-    McParticle();
+    McParticle_b1();
 
-    McParticle(const McParticle &);
+    McParticle_b1(const McParticle_b1 &);
 
-    ~McParticle() override;
+    ~McParticle_b1() override;
 
     // Operators
-    bool operator==(const McParticle &rhs) const;
+    bool operator==(const McParticle_b1 &rhs) const;
 
-    bool operator!=(const McParticle &rhs) const;
+    bool operator!=(const McParticle_b1 &rhs) const;
 
-    McParticle &operator=(const McParticle &rhs);
+    McParticle_b1 &operator=(const McParticle_b1 &rhs);
 
     // Get Methods
     double getERemain() const;
 
-    McParticle *getParents() const {
+    McParticle_b1 *getParents() const {
         return Parents;
     }
 
@@ -50,7 +50,7 @@ public:
     }
 
     // Dump
-    friend std::ostream &operator<<(std::ostream &os, const McParticle &particle) {
+    friend std::ostream &operator<<(std::ostream &os, const McParticle_b1 &particle) {
         TString str(Form("| %-5d | %-6d | %8.3f, %8.3f, %8.3f | %8.3f, %8.3f, %8.3f |    %8.3f, %8.3f, %8.3f | %8.3f, %8.3f, %8.3f | %-16s %-8d |",
                     particle.id,
                     particle.PDG,
@@ -69,7 +69,7 @@ public:
     // Set Methods
     void setERemain(double eRemain);
 
-    void setParents(McParticle *parents) {
+    void setParents(McParticle_b1 *parents) {
         Parents = parents;
     }
 
@@ -86,7 +86,7 @@ public:
     }
 
     // Search Methods
-    static McParticle* SearchID(MCParticleVec* mv, int ID) {
+    static McParticle_b1* SearchID(MCParticleVec* mv, int ID) {
         for (auto itr : *mv) {
             if (itr->getId() == ID) return itr;
         }
@@ -94,7 +94,7 @@ public:
     }
 
     // Add Methods
-    void addChildren(McParticle* mcp) {
+    void addChildren(McParticle_b1* mcp) {
         Children->emplace_back(mcp);
     }
 
@@ -103,13 +103,13 @@ private:
     // the remaining energy while leaving the world
     double ERemain{0.};
 
-    McParticle* Parents{};
+    McParticle_b1* Parents{};
     MCParticleVec* Children{};
 
     ReconstructedParticle* RecParticles{};
     SimulatedHitVec SimHits;
 
-ClassDefOverride(McParticle,10)
+ClassDefOverride(McParticle_b1, 10)
 
 };
 

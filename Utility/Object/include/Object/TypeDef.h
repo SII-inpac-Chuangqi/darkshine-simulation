@@ -16,7 +16,7 @@
 
 class DStep_b1;
 
-class McParticle;
+class McParticle_b1;
 
 class ReconstructedParticle;
 
@@ -33,7 +33,7 @@ class AnaProcessor;
 typedef std::vector<DStep_b1 *> DStepVec;
 typedef std::map<std::string, DStepVec* > DStepMap;
 
-typedef std::vector<McParticle *> MCParticleVec;
+typedef std::vector<McParticle_b1 *> MCParticleVec;
 typedef std::map<std::string, MCParticleVec* > MCParticleMap;
 
 typedef std::vector<ReconstructedParticle *> RecParticleVec;
