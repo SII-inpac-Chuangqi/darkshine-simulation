@@ -21,7 +21,7 @@
 #include "Control/Control.h"
 
 
-
+class OpticalDigitizer {
 public:
     explicit OpticalDigitizer(std::string cIn = "", int DiGi_No = 0);
 
