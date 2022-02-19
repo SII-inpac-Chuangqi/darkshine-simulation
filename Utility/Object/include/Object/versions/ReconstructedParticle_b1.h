@@ -2,13 +2,13 @@
 // Created by Zhang Yulei on 9/18/20.
 //
 
-#ifndef DSIMU_RECONSTRUCTEDPARTICLE_H
-#define DSIMU_RECONSTRUCTEDPARTICLE_H
+#ifndef DSIMU_RECONSTRUCTEDPARTICLE_B1_H
+#define DSIMU_RECONSTRUCTEDPARTICLE_B1_H
 
 #include "Object/TypeDef.h"
 #include "Object/CalorimeterHit.h"
 #include "Object/McParticle.h"
-#include "DParticle.h"
+#include "Object/DParticle.h"
 
 class ReconstructedParticle : public DParticle {
 public:

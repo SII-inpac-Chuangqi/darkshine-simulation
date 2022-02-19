@@ -2,8 +2,8 @@
 // Created by Zhang Yulei on 9/18/20.
 //
 
-#ifndef DSIMU_DPARTICLE_H
-#define DSIMU_DPARTICLE_H
+#ifndef DSIMU_DPARTICLE_B1_H
+#define DSIMU_DPARTICLE_B1_H
 
 #include <string>
 #include <cmath>

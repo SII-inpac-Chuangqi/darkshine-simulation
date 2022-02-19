@@ -2,13 +2,13 @@
 // Created by Zhang Yulei on 9/18/20.
 //
 
-#ifndef DSIMU_SIMULATEDHIT_H
-#define DSIMU_SIMULATEDHIT_H
+#ifndef DSIMU_SIMULATEDHIT_B1_H
+#define DSIMU_SIMULATEDHIT_B1_H
 
 #include "Object/TypeDef.h"
 #include "Object/McParticle.h"
 #include "Object/CalorimeterHit.h"
-#include "DHit.h"
+#include "Object/DHit.h"
 
 #include <vector>
 #include "TString.h"

@@ -2,8 +2,8 @@
 // Created by Zhang Yulei on 9/20/20.
 //
 
-#ifndef DSIMU_DSTEP_H
-#define DSIMU_DSTEP_H
+#ifndef DSIMU_DSTEP_B1_H
+#define DSIMU_DSTEP_B1_H
 
 #include <string>
 #include <ostream>

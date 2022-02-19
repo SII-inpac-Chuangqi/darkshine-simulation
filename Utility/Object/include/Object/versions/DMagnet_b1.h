@@ -1,5 +1,5 @@
-#ifndef D_MAGNET_H
-#define D_MAGNET_H
+#ifndef D_MAGNET_B1_H
+#define D_MAGNET_B1_H
 
 #include <math.h>
 #include <vector>

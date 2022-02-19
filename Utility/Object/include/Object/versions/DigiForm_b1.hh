@@ -3,8 +3,8 @@
 /// \brief Definition of the DigiForm class, after waveform digilization, 
 /// \brief all hits in one cell be formed to a fixed length waveform(fixed-legth vector). Per events
 
-#ifndef DigiForm_h
-#define DigiForm_h 1
+#ifndef DigiForm_b1_h
+#define DigiForm_b1_h 1
 
 #include "TObject.h"
 #include <math.h>

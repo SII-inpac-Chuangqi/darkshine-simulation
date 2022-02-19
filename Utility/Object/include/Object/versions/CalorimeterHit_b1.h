@@ -2,13 +2,13 @@
 // Created by Zhang Yulei on 9/18/20.
 //
 
-#ifndef DSIMU_CALORIMETERHIT_H
-#define DSIMU_CALORIMETERHIT_H
+#ifndef DSIMU_CALORIMETERHIT_B1_H
+#define DSIMU_CALORIMETERHIT_B1_H
 
 #include "Object/TypeDef.h"
 #include "Object/SimulatedHit.h"
 #include "Object/ReconstructedParticle.h"
-#include "DHit.h"
+#include "Object/DHit.h"
 
 /// class descriptoin:
 /// \brief With optical photon detected, the
@@ -50,4 +50,4 @@ ClassDefOverride(CalorimeterHit,12);
 };
 
 
-#endif //DSIMU_CALORIMETERHIT_H
+#endif //DSIMU_CALORIMETERHIT_B1_H

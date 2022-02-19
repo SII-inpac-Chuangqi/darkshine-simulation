@@ -2,13 +2,13 @@
 // Created by Zhang Yulei on 9/18/20.
 //
 
-#ifndef DSIMU_MCPARTICLE_H
-#define DSIMU_MCPARTICLE_H
+#ifndef DSIMU_MCPARTICLE_B1_H
+#define DSIMU_MCPARTICLE_B1_H
 
 #include "Object/TypeDef.h"
 #include "Object/ReconstructedParticle.h"
 #include "Object/SimulatedHit.h"
-#include "DParticle.h"
+#include "Object/DParticle.h"
 
 class SimulatedHit;
 

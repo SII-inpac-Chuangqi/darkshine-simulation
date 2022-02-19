@@ -2,8 +2,8 @@
 // Created by Zhang Yulei on 9/18/20.
 //
 
-#ifndef DSIMU_DEVENT_H
-#define DSIMU_DEVENT_H
+#ifndef DSIMU_DEVENT_B1_H
+#define DSIMU_DEVENT_B1_H
 
 #include <cstddef>
 #include <cstdlib>
@@ -16,7 +16,7 @@
 #include "Object/ReconstructedParticle.h"
 #include "Object/SimulatedHit.h"
 #include "Object/DigiForm.hh"
-#include "DStep.h"
+#include "Object/DStep.h"
 
 #include "TObject.h"
 #include "TString.h"
