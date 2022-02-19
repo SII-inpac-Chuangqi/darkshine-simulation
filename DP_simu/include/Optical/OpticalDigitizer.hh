@@ -17,11 +17,11 @@
 
 #include "OpticalHit.hh"
 #include "Object/DEvent.h"
+#include "Object/DigiForm.hh"
 #include "Control/Control.h"
 
-class DigiForm_b1;
 
-class OpticalDigitizer {
+
 public:
     explicit OpticalDigitizer(std::string cIn = "", int DiGi_No = 0);
 
