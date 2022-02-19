@@ -11,18 +11,18 @@ enum DetectorType {
     nNone, nTracker, nECAL, nHCAL
 };
 
-class DHit : public TObject {
+class DHit_b1 : public TObject {
 public:
     // Constructor and Destructor
-    DHit() = default;
+    DHit_b1() = default;
 
-    DHit(const DHit &rhs)  : TObject(rhs) {
+    DHit_b1(const DHit_b1 &rhs)  : TObject(rhs) {
         *this = rhs;
     }
 
-    ~DHit() override = default;
+    ~DHit_b1() override = default;
 
-    bool operator==(const DHit &rhs) const {
+    bool operator==(const DHit_b1 &rhs) const {
         return id == rhs.id &&
                CellID == rhs.CellID &&
                CellID_X == rhs.CellID_X &&
@@ -36,11 +36,11 @@ public:
                E == rhs.E;
     }
 
-    bool operator!=(const DHit &rhs) const {
+    bool operator!=(const DHit_b1 &rhs) const {
         return !(rhs == *this);
     }
 
-    DHit &operator=(const DHit &rhs) {
+    DHit_b1 &operator=(const DHit_b1 &rhs) {
         if (&rhs == this) { return *this; }
         id = rhs.id;
         CellID = rhs.CellID;
@@ -104,7 +104,7 @@ public:
 
     // Set Methods
     void setId(int ID) {
-        DHit::id = ID;
+        DHit_b1::id = ID;
     }
 
     void setCellId(int cellId) {
@@ -164,7 +164,7 @@ protected:
     double T{0.};
     double E{0.};
 
-ClassDefOverride(DHit,5);
+ClassDefOverride(DHit_b1, 5);
 };
 
 #endif //DSIMU_DHIT_B1_H
