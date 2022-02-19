@@ -55,7 +55,7 @@ public:
 
         TString str(Form("| %-5d | %8.3f, %8.3f, %8.3f, %8.3f, %8.3f | %-5d   |",
                           hit.id,
-                          hit.X, hit.Y, hit.Z, hit.T, hit.E,
+                          hit.getX(), hit.getY(), hit.getZ(), hit.T, hit.E,
                           hit.CellID));
         os << str;
 

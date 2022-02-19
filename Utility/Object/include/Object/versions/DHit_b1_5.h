@@ -24,16 +24,17 @@ public:
 
     bool operator==(const DHit_b1_5 &rhs) const {
         return id == rhs.id &&
-               CellID == rhs.CellID &&
-               CellID_X == rhs.CellID_X &&
-               CellID_Y == rhs.CellID_Y &&
-               CellID_Z == rhs.CellID_Z &&
-               Detector == rhs.Detector &&
-               X == rhs.X &&
-               Y == rhs.Y &&
-               Z == rhs.Z &&
-               T == rhs.T &&
-               E == rhs.E;
+        CellID == rhs.CellID &&
+        CellType == rhs.CellType &&
+//        CellID_X == rhs.CellID_X &&
+//        CellID_Y == rhs.CellID_Y &&
+//        CellID_Z == rhs.CellID_Z &&
+        Detector == rhs.Detector &&
+//        X == rhs.X &&
+//        Y == rhs.Y &&
+//        Z == rhs.Z &&
+        T == rhs.T &&
+        E == rhs.E;
     }
 
     bool operator!=(const DHit_b1_5 &rhs) const {
@@ -44,13 +45,14 @@ public:
         if (&rhs == this) { return *this; }
         id = rhs.id;
         CellID = rhs.CellID;
-        CellID_X = rhs.CellID_X;
-        CellID_Y = rhs.CellID_Y;
-        CellID_Z = rhs.CellID_Z;
+        CellType = rhs.CellType;
+//        CellID_X = rhs.CellID_X;
+//        CellID_Y = rhs.CellID_Y;
+//        CellID_Z = rhs.CellID_Z;
         Detector = rhs.Detector;
-        X = rhs.X;
-        Y = rhs.Y;
-        Z = rhs.Z;
+//        X = rhs.X;
+//        Y = rhs.Y;
+//        Z = rhs.Z;
         T = rhs.T;
         E = rhs.E;
 
@@ -66,16 +68,16 @@ public:
         return CellID;
     }
 
-    double getX() const {
-        return X;
+    virtual double getX() const {
+        return 0; // TODO: read from map
     }
 
-    double getY() const {
-        return Y;
+    virtual double getY() const {
+        return 0;
     }
 
-    double getZ() const {
-        return Z;
+    virtual double getZ() const {
+        return 0;
     }
 
     double getT() const {
@@ -90,16 +92,20 @@ public:
         return Detector;
     }
 
-    int getCellIdX() const {
-        return CellID_X;
+    int getCellType() const {
+        return CellType;
     }
 
-    int getCellIdY() const {
-        return CellID_Y;
+    virtual int getCellIdX() const {
+        return 0;
     }
 
-    int getCellIdZ() const {
-        return CellID_Z;
+    virtual int getCellIdY() const{
+        return 0;
+    }
+
+    virtual int getCellIdZ() const{
+        return 0;
     }
 
     // Set Methods
@@ -133,6 +139,10 @@ public:
 
     void setDetector(DetectorType detector) {
         Detector = detector;
+    }
+
+    void setCellType(int cellType) {
+        CellType = cellType;
     }
 
 //    void setCellIdX(int cellIdX) {
