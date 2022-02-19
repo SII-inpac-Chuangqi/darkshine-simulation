@@ -91,27 +91,27 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     reNumber1 = touchable->GetReplicaNumber(1); // for calo, depth=1
 
 
-    auto xID = (int) fCellID.x();
-    auto yID = (int) fCellID.y();
+//    auto xID = (int) fCellID.x();
+//    auto yID = (int) fCellID.y();
     //G4int zID = (int)fCellID.z();
-    G4ThreeVector CellID(0, 0, 0);
-    CellID.setZ((int) (reNumber1 / (xID * yID)) + 1);
-    CellID.setX((reNumber1 % (xID * yID)) % xID + 1);
-    CellID.setY((int) ((reNumber1 % (xID * yID)) / yID) + 1);
-    if (fType == 0) {
-        CellID.setX( touchable->GetReplicaNumber(0) + 1 );
-        CellID.setY(1);
-        CellID.setZ(reNumber1 + 1);
-    }
-    if (fType == 2) {
-        if ((int) CellID.z() % 2 == 0) {
-            CellID.setX(1);
-            CellID.setY(((reNumber1 % (xID * yID)) % yID) + 1);
-        } else {
-            CellID.setY(1);
-            CellID.setX(((reNumber1 % (xID * yID)) % yID) + 1);
-        }
-    }
+//    G4ThreeVector CellID(0, 0, 0);
+//    CellID.setZ((int) (reNumber1 / (xID * yID)) + 1);
+//    CellID.setX((reNumber1 % (xID * yID)) % xID + 1);
+//    CellID.setY((int) ((reNumber1 % (xID * yID)) / yID) + 1);
+//    if (fType == 0) {
+//        CellID.setX( touchable->GetReplicaNumber(0) + 1 );
+//        CellID.setY(1);
+//        CellID.setZ(reNumber1 + 1);
+//    }
+//    if (fType == 2) {
+//        if ((int) CellID.z() % 2 == 0) {
+//            CellID.setX(1);
+//            CellID.setY(((reNumber1 % (xID * yID)) % yID) + 1);
+//        } else {
+//            CellID.setY(1);
+//            CellID.setX(((reNumber1 % (xID * yID)) % yID) + 1);
+//        }
+//    }
 
     // Get hit accounting data for this cell
     SimulatedHit *hit;
@@ -135,9 +135,9 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     // Add values
     hit->addEdep(E_EM, E_Had);
     hit->setT(step->GetPostStepPoint()->GetGlobalTime());
-    hit->setCellIdX(static_cast<int>(CellID.x()));
-    hit->setCellIdY(static_cast<int>(CellID.y()));
-    hit->setCellIdZ(static_cast<int>(CellID.z()));
+//    hit->setCellIdX(static_cast<int>(CellID.x()));
+//    hit->setCellIdY(static_cast<int>(CellID.y()));
+//    hit->setCellIdZ(static_cast<int>(CellID.z()));
 
     // Add MC particle contribution
     auto fMC = new McParticle();
@@ -154,25 +154,26 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
 
     hit->setCellId(reNumber1 + 1); // replica start from 0 in DetectorConstruction
     if (!fType) {
-        if (dControl->build_silicon_micro_strip) {
-            hit->setX(CellPosition.x());
-            hit->setY(CellPosition.y());
-            hit->setZ(CellPosition.z());
-            dRootMng->FillSimHit(fname, hit);
-
-            delete hit;
-        } else {
-            hit->setX(HitPoint.x());
-            hit->setY(HitPoint.y());
-            hit->setZ(CellPosition.z());
-            dRootMng->FillSimHit(fname, hit);
-
-            delete hit;
-        }
+        dRootMng->FillSimHit(fname, hit);
+//        if (dControl->build_silicon_micro_strip) {
+//            hit->setX(CellPosition.x());
+//            hit->setY(CellPosition.y());
+//            hit->setZ(CellPosition.z());
+//            dRootMng->FillSimHit(fname, hit);
+//
+//            delete hit;
+//        } else {
+//            hit->setX(HitPoint.x());
+//            hit->setY(HitPoint.y());
+//            hit->setZ(CellPosition.z());
+//            dRootMng->FillSimHit(fname, hit);
+//
+//            delete hit;
+//        }
     } else {
-        hit->setX(CellPosition.x());
-        hit->setY(CellPosition.y());
-        hit->setZ(CellPosition.z());
+//        hit->setX(CellPosition.x());
+//        hit->setY(CellPosition.y());
+//        hit->setZ(CellPosition.z());
     }
 
     //G4cout<<fname<<", "<<reNumber<<", "<<hit->GetEdep()<<", Edep "<<edep<<G4endl;
