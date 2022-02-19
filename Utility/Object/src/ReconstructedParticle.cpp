@@ -4,15 +4,15 @@
 
 #include "Object/ReconstructedParticle.h"
 
-ReconstructedParticle::ReconstructedParticle() {
+ReconstructedParticle::ReconstructedParticle_b1() {
 
 }
 
-ReconstructedParticle::ReconstructedParticle(const ReconstructedParticle &rhs) : DParticle(rhs) {
+ReconstructedParticle::ReconstructedParticle_b1(const ReconstructedParticle &rhs) : DParticle(rhs) {
     *this = rhs;
 }
 
-ReconstructedParticle::~ReconstructedParticle() {
+ReconstructedParticle::~ReconstructedParticle_b1() {
 
 }
 

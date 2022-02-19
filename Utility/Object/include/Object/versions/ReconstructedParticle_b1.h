@@ -10,20 +10,20 @@
 #include "Object/McParticle.h"
 #include "Object/DParticle.h"
 
-class ReconstructedParticle : public DParticle {
+class ReconstructedParticle_b1 : public DParticle {
 public:
     // Constructor and Destructor
-    ReconstructedParticle();
+    ReconstructedParticle_b1();
 
-    ReconstructedParticle(const ReconstructedParticle &);
+    ReconstructedParticle_b1(const ReconstructedParticle_b1 &);
 
-    virtual ~ReconstructedParticle();
+    virtual ~ReconstructedParticle_b1();
 
-    bool operator==(const ReconstructedParticle &rhs) const;
+    bool operator==(const ReconstructedParticle_b1 &rhs) const;
 
-    bool operator!=(const ReconstructedParticle &rhs) const;
+    bool operator!=(const ReconstructedParticle_b1 &rhs) const;
 
-    ReconstructedParticle &operator=(const ReconstructedParticle &rhs);
+    ReconstructedParticle_b1 &operator=(const ReconstructedParticle_b1 &rhs);
 
     // Get Methods
     const MCParticleVec &getMcParticles() const;
@@ -50,7 +50,7 @@ private:
     MCParticleVec MCParticles;
     CalorimeterHitVec CaloHits;
 
-ClassDefOverride(ReconstructedParticle,13);
+ClassDefOverride(ReconstructedParticle_b1, 13);
 
 };
 
