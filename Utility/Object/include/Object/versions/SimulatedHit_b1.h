@@ -39,7 +39,7 @@ public:
 
     double getELeakWrapper() const;
 
-    const std::vector<McParticle > &getPContribution() const {
+    const std::vector<McParticle_b1 > &getPContribution() const {
         return MCPContribution;
     }
 
@@ -71,7 +71,7 @@ public:
 
     void setELeakWrapper(double eLeakWrapper);
 
-    void setPContribution(const std::vector<McParticle> &pContribution) {
+    void setPContribution(const std::vector<McParticle_b1> &pContribution) {
         MCPContribution = pContribution;
     }
 
@@ -87,7 +87,7 @@ public:
         E += (EEm + EHad);
     };
 
-    void addParticleContribution(const McParticle& mcp, double Edep, bool record_all = false);
+    void addParticleContribution(const McParticle_b1& mcp, double Edep, bool record_all = false);
 
 private:
     double ELeak_Wrapper{0.};
@@ -95,7 +95,7 @@ private:
     double EdepHad{0.};
 
     // the corresponding MC particle contributing to this hit
-    std::vector<McParticle > MCPContribution;
+    std::vector<McParticle_b1 > MCPContribution;
     // the corresponding Edep for this MC particle in this hit
     std::vector<double> SimHits_Edep;
 
