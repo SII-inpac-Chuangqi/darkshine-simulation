@@ -28,16 +28,16 @@ enum CleanType {
 
 /// class description:
 /// \brief Contains all the necessary information for analysis.
-class DEvent : public TObject {
+class DEvent_b1 : public TObject {
 public:
 
     // Constructor
-    DEvent() {
+    DEvent_b1() {
         //std::cout<<"Devent Constructor"<<std::endl;
         //Initialization(nALL);
     };
 
-    ~DEvent() override {
+    ~DEvent_b1() override {
         //std::cout<<"Devent Destructor"<<std::endl;
         Initialization(nALL);
     }
@@ -270,13 +270,13 @@ protected:
     SimulatedHitMap SimulatedHitCollection;
     CalorimeterHitMap CalorimeterHitCollection;
 
-ClassDefOverride(DEvent, 1);
+ClassDefOverride(DEvent_b1, 1);
 
 };
 
 // Some inline
 template<class T>
-std::vector<std::string> *DEvent::ListCollections(const T &in) {
+std::vector<std::string> *DEvent_b1::ListCollections(const T &in) {
     auto tmp = new std::vector<std::string>;
     for (auto itr : in) tmp->emplace_back(itr.first);
 
