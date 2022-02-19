@@ -19,7 +19,7 @@
 #include "Object/DEvent.h"
 #include "Control/Control.h"
 
-class DigiForm;
+class DigiForm_b1;
 
 class OpticalDigitizer {
 public:

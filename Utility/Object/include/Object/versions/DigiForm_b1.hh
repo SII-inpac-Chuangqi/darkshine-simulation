@@ -38,15 +38,15 @@ enum DigiScheme{
 /// It defines the DigiForm, 
 /// Which save the waveform after digitization, and the information extracted. (Along with digitization parameter)
 
-class DigiForm : public TObject {
+class DigiForm_b1 : public TObject {
 
 public:
-    DigiForm() = default;
-    DigiForm(const DigiForm&) = default;
+    DigiForm_b1() = default;
+    DigiForm_b1(const DigiForm_b1&) = default;
 
-    ~DigiForm() override;
+    ~DigiForm_b1() override;
 
-    bool operator==(const DigiForm &rhs) const {
+    bool operator==(const DigiForm_b1 &rhs) const {
         return fDigiScheme == rhs.fDigiScheme &&
                fNsPerTick == rhs.fNsPerTick &&
                fVoltageToADC == rhs.fVoltageToADC &&
@@ -64,7 +64,7 @@ public:
                fYieldFactor == rhs.fYieldFactor;
     }
 
-    DigiForm &operator=(const DigiForm &rhs) {
+    DigiForm_b1 &operator=(const DigiForm_b1 &rhs) {
         if (&rhs == this) { return *this; }
         TObject::operator=(rhs);
         fDigiScheme = rhs.fDigiScheme;
@@ -190,6 +190,6 @@ private:
     // bool fIsUnderflow{}; // underflow some bin <1ADC
     // bool fIsOutOfTime{}; //Out of time window 
 
-ClassDefOverride(DigiForm,1);
+ClassDefOverride(DigiForm_b1, 1);
 };
 #endif

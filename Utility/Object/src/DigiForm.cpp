@@ -5,7 +5,7 @@
 #include "Object/DigiForm.hh"
 
 
-DigiForm::~DigiForm() {
+DigiForm::~DigiForm_b1() {
     fWaveform.clear();
     fTimeSeq.clear();
 

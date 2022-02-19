@@ -26,7 +26,7 @@ class CalorimeterHit_b1;
 
 //class OpticalHit;
 
-class DigiForm;
+class DigiForm_b1;
 
 class AnaProcessor;
 
