@@ -45,7 +45,7 @@ private:
     RecParticleVec PContribution;
     SimulatedHitVec SimHits;
 
-ClassDefOverride(CalorimeterHit,12);
+ClassDefOverride(CalorimeterHit_b1,12);
 
 };
 

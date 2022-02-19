@@ -3,7 +3,7 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(DEvent_header_shared
-        // Reference the current persistent version:
+        # Reference the current persistent version:
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DHit.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DParticle.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DStep.h
@@ -14,7 +14,7 @@ SET(DEvent_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DigiForm.hh
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DEvent.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DMagnet.h
-        // baseline1 version
+        # baseline1 version
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DHit_b1.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DParticle_b1.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DStep_b1.h
@@ -27,7 +27,7 @@ SET(DEvent_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DMagnet_b1.h
         )
 SET(DEvent_source
-        /// Reference the current persistent version:
+        # Reference the current persistent version:
         ${CMAKE_CURRENT_SOURCE_DIR}/src/SimulatedHit.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/CalorimeterHit.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/McParticle.cpp

@@ -22,7 +22,7 @@ class ReconstructedParticle;
 
 class SimulatedHit;
 
-class CalorimeterHit;
+class CalorimeterHit_b1;
 
 //class OpticalHit;
 
@@ -42,7 +42,7 @@ typedef std::map<std::string, RecParticleVec* > RecParticleMap;
 typedef std::vector<SimulatedHit *> SimulatedHitVec;
 typedef std::map<std::string, SimulatedHitVec* > SimulatedHitMap;
 
-typedef std::vector<CalorimeterHit *> CalorimeterHitVec;
+typedef std::vector<CalorimeterHit_b1 *> CalorimeterHitVec;
 typedef std::map<std::string, CalorimeterHitVec* > CalorimeterHitMap;
 
 typedef std::vector<DigiForm *> DigiFormVec;
