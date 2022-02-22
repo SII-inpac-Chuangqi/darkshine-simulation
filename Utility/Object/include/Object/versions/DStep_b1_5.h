@@ -2,8 +2,8 @@
 // Created by Zhang Yulei on 9/20/20.
 //
 
-#ifndef DSIMU_DSTEP_B1_H
-#define DSIMU_DSTEP_B1_H
+#ifndef DSIMU_DSTEP_B1_5_H
+#define DSIMU_DSTEP_B1_5_H
 
 #include <string>
 #include <ostream>
@@ -164,4 +164,4 @@ private:
 ClassDefOverride(DStep_b1_5, 7);
 };
 
-#endif //DSIMU_DSTEP_H
+#endif //DSIMU_DSTEP_B1_5_H

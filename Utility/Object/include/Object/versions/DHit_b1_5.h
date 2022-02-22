@@ -2,8 +2,8 @@
 // Created by Zhang Yulei on 9/18/20.
 //
 
-#ifndef DSIMU_DHIT_B1_H
-#define DSIMU_DHIT_B1_H
+#ifndef DSIMU_DHIT_B1_5_H
+#define DSIMU_DHIT_B1_5_H
 
 #include "TObject.h"
 
@@ -178,4 +178,4 @@ protected:
 ClassDefOverride(DHit_b1_5, 5);
 };
 
-#endif //DSIMU_DHIT_B1_H
+#endif //DSIMU_DHIT_B1_5_H

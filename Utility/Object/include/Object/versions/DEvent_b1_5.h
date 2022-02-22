@@ -2,8 +2,8 @@
 // Created by Zhang Yulei on 9/18/20.
 //
 
-#ifndef DSIMU_DEVENT_B1_H
-#define DSIMU_DEVENT_B1_H
+#ifndef DSIMU_DEVENT_B1_5_H
+#define DSIMU_DEVENT_B1_5_H
 
 #include <cstddef>
 #include <cstdlib>
@@ -283,5 +283,5 @@ std::vector<std::string> *DEvent_b1_5::ListCollections(const T &in) {
     return tmp;
 }
 
-#endif //DSIMU_DEVENT_H
+#endif //DSIMU_DEVENT_B1_5_H
 

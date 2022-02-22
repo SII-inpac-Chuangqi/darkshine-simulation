@@ -4,17 +4,17 @@
 
 #include "Object/McParticle.h"
 
-McParticle::McParticle_b1() {
+McParticle::McParticle_b1_5() {
     Parents = nullptr;
     Children = nullptr;
     RecParticles = nullptr;
 }
 
-McParticle::McParticle_b1(const McParticle &rhs) : DParticle(rhs) {
+McParticle::McParticle_b1_5(const McParticle &rhs) : DParticle(rhs) {
     *this = rhs;
 }
 
-McParticle::~McParticle_b1() {
+McParticle::~McParticle_b1_5() {
     if (Children && !Children->empty()) {
         Children->clear();
         Children->shrink_to_fit();

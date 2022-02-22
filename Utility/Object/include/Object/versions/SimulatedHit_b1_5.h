@@ -2,8 +2,8 @@
 // Created by Zhang Yulei on 9/18/20.
 //
 
-#ifndef DSIMU_SIMULATEDHIT_B1_H
-#define DSIMU_SIMULATEDHIT_B1_H
+#ifndef DSIMU_SIMULATEDHIT_B1_5_H
+#define DSIMU_SIMULATEDHIT_B1_5_H
 
 #include "Object/TypeDef.h"
 #include "Object/McParticle.h"
@@ -37,7 +37,7 @@ public:
 
     double getELeakWrapper() const;
 
-    const std::vector<McParticle_b1 > &getPContribution() const {
+    const std::vector<McParticle_b1_5 > &getPContribution() const {
         return MCPContribution;
     }
 
@@ -69,7 +69,7 @@ public:
 
     void setELeakWrapper(double eLeakWrapper);
 
-    void setPContribution(const std::vector<McParticle_b1> &pContribution) {
+    void setPContribution(const std::vector<McParticle_b1_5> &pContribution) {
         MCPContribution = pContribution;
     }
 
@@ -85,7 +85,7 @@ public:
         E += (EEm + EHad);
     };
 
-    void addParticleContribution(const McParticle_b1& mcp, double Edep, bool record_all = false);
+    void addParticleContribution(const McParticle_b1_5& mcp, double Edep, bool record_all = false);
 
 private:
     double ELeak_Wrapper{0.};
@@ -93,7 +93,7 @@ private:
     double EdepHad{0.};
 
     // the corresponding MC particle contributing to this hit
-    std::vector<McParticle_b1 > MCPContribution;
+    std::vector<McParticle_b1_5 > MCPContribution;
     // the corresponding Edep for this MC particle in this hit
     std::vector<double> SimHits_Edep;
 
@@ -103,4 +103,4 @@ ClassDefOverride(SimulatedHit_b1_5, 11)
 
 };
 
-#endif //DSIMU_SIMULATEDHIT_H
+#endif //DSIMU_SIMULATEDHIT_B1_5_H
