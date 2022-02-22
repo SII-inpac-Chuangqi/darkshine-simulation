@@ -39,7 +39,7 @@ public:
         return Children;
     }
 
-    ReconstructedParticle_b1 *getRecParticles() const {
+    ReconstructedParticle_b1_5 *getRecParticles() const {
         return RecParticles;
     }
 
@@ -75,7 +75,7 @@ public:
         Children = children;
     }
 
-    void setRecParticles(ReconstructedParticle_b1 *recParticles) {
+    void setRecParticles(ReconstructedParticle_b1_5 *recParticles) {
         RecParticles = recParticles;
     }
 
@@ -104,7 +104,7 @@ private:
     McParticle_b1_5* Parents{};
     MCParticleVec* Children{};
 
-    ReconstructedParticle_b1* RecParticles{};
+    ReconstructedParticle_b1_5* RecParticles{};
     SimulatedHitVec SimHits;
 
 ClassDefOverride(McParticle_b1_5, 10)

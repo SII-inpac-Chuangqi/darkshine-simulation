@@ -9,8 +9,8 @@ b1_4 : baseline1.5
 
 
 PS: steps to create new version:
-    1. edit CMakeLists.txt, refresh cache
-    2. create Objetc/versions/*_b*.h
-    3. check #ifndef
-    4. check Object/*.h ( commit at here to backup )
+    1. create Objetc/versions/*_b*.h
+    2. check #ifndef
+    3. check Object/*.h ( commit at here to backup )
+    4. edit CMakeLists.txt, refresh cache
     5. refactor
