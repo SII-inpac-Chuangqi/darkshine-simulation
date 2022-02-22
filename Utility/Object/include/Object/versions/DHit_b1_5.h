@@ -68,23 +68,23 @@ public:
         return CellID;
     }
 
-    virtual double getX() const {
+    virtual float getX() const {
         return 0; // TODO: read from map
     }
 
-    virtual double getY() const {
+    virtual float getY() const {
         return 0;
     }
 
-    virtual double getZ() const {
+    virtual float getZ() const {
         return 0;
     }
 
-    double getT() const {
+    float getT() const {
         return T;
     }
 
-    double getE() const {
+    float getE() const {
         return E;
     }
 
@@ -117,23 +117,23 @@ public:
         CellID = cellId;
     }
 
-//    void setX(double x) {
+//    void setX(float x) {
 //        X = x;
 //    }
 //
-//    void setY(double y) {
+//    void setY(float y) {
 //        Y = y;
 //    }
 //
-//    void setZ(double z) {
+//    void setZ(float z) {
 //        Z = z;
 //    }
 
-    void setT(double t) {
+    void setT(float t) {
         T = t;
     }
 
-    void setE(double e) {
+    void setE(float e) {
         E = e;
     }
 
@@ -169,11 +169,11 @@ protected:
 
     DetectorType Detector{nNone};
 
-//    double X{0.};
-//    double Y{0.};
-//    double Z{0.};
-    double T{0.};
-    double E{0.};
+//    float X{0.};
+//    float Y{0.};
+//    float Z{0.};
+    float T{0.};
+    float E{0.};
 
 ClassDefOverride(DHit_b1_5, 5);
 };
