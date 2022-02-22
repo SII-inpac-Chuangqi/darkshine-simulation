@@ -14,7 +14,7 @@
 #include <iterator>
 #include <memory>
 
-class DStep_b1;
+class DStep_b1_5;
 
 class McParticle_b1;
 
