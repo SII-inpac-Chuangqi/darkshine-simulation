@@ -60,31 +60,31 @@ public:
         return id;
     }
 
-    double getX() const {
+    float getX() const {
         return X;
     }
 
-    double getY() const {
+    float getY() const {
         return Y;
     }
 
-    double getZ() const {
+    float getZ() const {
         return Z;
     }
 
-    double getPx() const {
+    float getPx() const {
         return Px;
     }
 
-    double getPy() const {
+    float getPy() const {
         return Py;
     }
 
-    double getPz() const {
+    float getPz() const {
         return Pz;
     }
 
-    double getE() const {
+    float getE() const {
         return E;
     }
 
@@ -113,31 +113,31 @@ public:
         id = ID;
     }
 
-    void setX(double x) {
+    void setX(float x) {
         X = x;
     }
 
-    void setY(double y) {
+    void setY(float y) {
         Y = y;
     }
 
-    void setZ(double z) {
+    void setZ(float z) {
         Z = z;
     }
 
-    void setPx(double px) {
+    void setPx(float px) {
         Px = px;
     }
 
-    void setPy(double py) {
+    void setPy(float py) {
         Py = py;
     }
 
-    void setPz(double pz) {
+    void setPz(float pz) {
         Pz = pz;
     }
 
-    void setE(double e) {
+    void setE(float e) {
         E = e;
     }
 
@@ -151,13 +151,13 @@ public:
 
 private:
     int id{0};
-    double X{0.};
-    double Y{0.};
-    double Z{0.};
-    double Px{0.};
-    double Py{0.};
-    double Pz{0.};
-    double E{0.};
+    float X{0.};
+    float Y{0.};
+    float Z{0.};
+    float Px{0.};
+    float Py{0.};
+    float Pz{0.};
+    float E{0.};
     std::string PVName;
     std::string ProcessName;
 
