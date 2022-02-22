@@ -16,7 +16,7 @@ SET(DEvent_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DMagnet.h
         # baseline1 version
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DHit_b1_5.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DParticle_b1.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DParticle_b1_5.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DStep_b1_5.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/SimulatedHit_b1_5.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/CalorimeterHit_b1.h

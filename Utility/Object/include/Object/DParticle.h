@@ -5,8 +5,8 @@
 #ifndef DSIMU_DPARTICLE_H
 #define DSIMU_DPARTICLE_H
 
-#include "Object/versions/DParticle_b1.h"
+#include "Object/versions/DParticle_b1_5.h"
 
-using DParticle = DParticle_b1;
+using DParticle = DParticle_b1_5;
 
 #endif //DSIMU_DPARTICLE_H
