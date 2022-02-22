@@ -31,11 +31,11 @@ public:
     SimulatedHit_b1_5 &operator=(const SimulatedHit_b1_5 &rhs);
 
     // Get Methods
-    double getEdepEm() const;
+    float getEdepEm() const;
 
-    double getEdepHad() const;
+    float getEdepHad() const;
 
-    double getELeakWrapper() const;
+    float getELeakWrapper() const;
 
     const std::vector<McParticle_b1_5 > &getPContribution() const {
         return MCPContribution;
@@ -63,11 +63,11 @@ public:
     }
 
     // Set Methods
-    void setEdepEm(double edepEm);
+    void setEdepEm(float edepEm);
 
-    void setEdepHad(double edepHad);
+    void setEdepHad(float edepHad);
 
-    void setELeakWrapper(double eLeakWrapper);
+    void setELeakWrapper(float eLeakWrapper);
 
     void setPContribution(const std::vector<McParticle_b1_5> &pContribution) {
         MCPContribution = pContribution;
@@ -78,24 +78,24 @@ public:
     }
 
     // Add Methods
-    void addEdep(double EEm, double EHad) {
+    void addEdep(float EEm, float EHad) {
         EdepEm += EEm;
         EdepHad += EHad;
 
         E += (EEm + EHad);
     };
 
-    void addParticleContribution(const McParticle_b1_5& mcp, double Edep, bool record_all = false);
+    void addParticleContribution(const McParticle_b1_5& mcp, float Edep, bool record_all = false);
 
 private:
-    double ELeak_Wrapper{0.};
-    double EdepEm{0.};
-    double EdepHad{0.};
+    float ELeak_Wrapper{0.};
+    float EdepEm{0.};
+    float EdepHad{0.};
 
     // the corresponding MC particle contributing to this hit
     std::vector<McParticle_b1_5 > MCPContribution;
     // the corresponding Edep for this MC particle in this hit
-    std::vector<double> SimHits_Edep;
+    std::vector<float> SimHits_Edep;
 
     CalorimeterHitVec CaloHits;
 
