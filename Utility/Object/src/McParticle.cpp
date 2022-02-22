@@ -33,11 +33,11 @@ McParticle &McParticle::operator=(const McParticle &rhs) {
     return *this;
 }
 
-double McParticle::getERemain() const {
+float McParticle::getERemain() const {
     return ERemain;
 }
 
-void McParticle::setERemain(double eRemain) {
+void McParticle::setERemain(float eRemain) {
     ERemain = eRemain;
 }
 

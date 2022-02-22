@@ -29,7 +29,7 @@ public:
     McParticle_b1_5 &operator=(const McParticle_b1_5 &rhs);
 
     // Get Methods
-    double getERemain() const;
+    float getERemain() const;
 
     McParticle_b1_5 *getParents() const {
         return Parents;
@@ -65,7 +65,7 @@ public:
 
 
     // Set Methods
-    void setERemain(double eRemain);
+    void setERemain(float eRemain);
 
     void setParents(McParticle_b1_5 *parents) {
         Parents = parents;
@@ -99,7 +99,7 @@ public:
 private:
 
     // the remaining energy while leaving the world
-    double ERemain{0.};
+    float ERemain{0.};
 
     McParticle_b1_5* Parents{};
     MCParticleVec* Children{};
