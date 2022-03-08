@@ -43,6 +43,7 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
 
     RegisterIntParameter("clean", "Clean mode: no truth information", &clean, 1);
     RegisterIntParameter("if_strip", "If strip structures in trackers", &if_strip, 1);
+    RegisterDoubleParameter("con_field", "Const magnet field", &con_field, -1.5);
     RegisterIntParameter("Tag_fit_method",
                          "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
                          &Tag_fit_method, 0);
@@ -69,8 +70,9 @@ void TrackingProcessor::Begin() {
                                                                            *(magnets.at(1)),
                                                                            *(magnets.at(2)),
                                                                            genfit::Tesla)); //T->kGs
-        } else
-            genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., -1.5*10., 0.));
+        } else {
+            genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., con_field*10., 0.));
+        }
     }
 //................................................................................//
 //Register dp_ana.root
