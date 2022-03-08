@@ -66,6 +66,7 @@ void TrackingProcessor::Begin() {
         genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
         magnets = dAnaData->getMagFieldVec();
         if (magnets.size() == 3 && magnets.at(0) && magnets.at(1) && magnets.at(2)) {
+            std::cout << magnets.size() << std::endl;
             genfit::FieldManager::getInstance()->init(new genfit::MapField(*(magnets.at(0)),
                                                                            *(magnets.at(1)),
                                                                            *(magnets.at(2)),

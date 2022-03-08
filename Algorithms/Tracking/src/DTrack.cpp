@@ -30,7 +30,7 @@ DTrack::DTrack(const TrkHitPVec &newHits,
                                                 preYc(newPreYc),
                                                 hits(newHits)
 {
-    By = magnets.size() ? magnets.at(1)->GetField(0., 0., 0.) : -1.5;
+    By = magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.) : -1.5;
 }
 
 DTrack::DTrack(const DTrack &oldTrack) : pdg(oldTrack.pdg),         //physical properties
