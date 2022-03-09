@@ -1,4 +1,3 @@
-#ifndef _OFF_TRACKING
 #ifndef KALMAN_FITTING_H
 #define KALMAN_FITTING_H
 
@@ -81,5 +80,4 @@ private:
     TMatrixDSym hitCov;
 };
 
-#endif
 #endif

@@ -1,4 +1,3 @@
-#ifndef _OFF_TRACKING
 #ifndef FITTING_H
 #define FITTING_H
 
@@ -69,5 +68,4 @@ protected:
     double ySigma = RETURN;
 };
 
-#endif
 #endif

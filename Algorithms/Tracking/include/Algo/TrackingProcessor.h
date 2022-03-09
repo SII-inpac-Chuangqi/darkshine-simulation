@@ -1,4 +1,3 @@
-#ifndef _OFF_TRACKING
 #ifndef TRACKINGPROCESSOR_H
 #define TRACKINGPROCESSOR_H
 
@@ -123,5 +122,4 @@ private:
 };
 
 
-#endif
 #endif

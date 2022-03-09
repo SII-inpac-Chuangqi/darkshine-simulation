@@ -1,4 +1,3 @@
-#ifndef _OFF_TRACKING
 #ifndef TRKHIT_H
 #define TRKHIT_H
 
@@ -74,5 +73,4 @@ protected:
 private:
 };
 
-#endif
 #endif

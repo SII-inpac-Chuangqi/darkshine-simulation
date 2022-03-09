@@ -1,4 +1,3 @@
-#ifndef _OFF_TRACKING
 //................................................................................//
 //CPP STL
 #include <vector>
@@ -407,6 +406,3 @@ void TrackingProcessor::CheckEvt(AnaEvent *evt) {
 void TrackingProcessor::End() {
     //cout<<"End!"<<endl;
 }
-
-
-#endif

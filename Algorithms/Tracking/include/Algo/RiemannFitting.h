@@ -1,4 +1,3 @@
-#ifndef _OFF_TRACKING
 #ifndef RIEMANN_FITTING_H
 #define RIEMANN_FITTING_H
 
@@ -96,5 +95,4 @@ private:
     double n3 = RETURN;
 };
 
-#endif
 #endif

@@ -1,5 +1,3 @@
-#ifndef _OFF_TRACKING
-
 //................................................................................//
 //CPP STL
 #include <iostream>
@@ -187,4 +185,3 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
     }
 */
 }
-#endif

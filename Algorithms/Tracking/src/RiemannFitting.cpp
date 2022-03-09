@@ -1,4 +1,3 @@
-#ifndef _OFF_TRACKING
 //................................................................................//
 //CPP STL
 #include <iostream>
@@ -418,4 +417,3 @@ TMatrixD RiemannFitting::GetNVecs(const TMatrixD &G, const TMatrixD &Xg)
 
     return EigenVec;
 }
-#endif

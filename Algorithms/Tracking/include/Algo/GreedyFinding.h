@@ -1,4 +1,3 @@
-#ifndef _OFF_TRACKING
 #ifndef GREEDY_FINDING_H
 #define GREEDY_FINDING_H
 
@@ -89,5 +88,4 @@ private:
     std::vector<int> hitNoStore;
 };
 
-#endif
 #endif

@@ -1,4 +1,3 @@
-#ifndef _OFF_TRACKING
 #ifndef DIGITIZATION_H
 #define DIGITIZATION_H
 
@@ -66,6 +65,4 @@ private:
     TRandom rnd_;
 };
 
-
-#endif
 #endif

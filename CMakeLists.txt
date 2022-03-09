@@ -55,20 +55,13 @@ if (XercesC_FOUND)
     LINK_LIBRARIES(${XercesC_LIBRARIES})
 endif ()
 
-option(DANA_TRACKING "DANA_TRACKING" ON)
-if (DANA_TRACKING)
-    # GenFit2
-    option(USE_GENFIT "USE_GENFIT" ON)
-    if (USE_GENFIT)
-        FIND_PACKAGE(Eigen3 REQUIRED)
-        INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
-        MESSAGE("-- Eigen Dir: ${EIGEN3_INCLUDE_DIR}")
-    else ()
-        INCLUDE_DIRECTORIES(Utility/)
-    endif ()
-else ()
-    add_definitions(-D_OFF_TRACKING=\"true\")
-endif ()
+# GenFit2
+option(BUILD_DANA "BUILD_DANA" ON)
+IF (BUILD_DANA)
+    FIND_PACKAGE(Eigen3 REQUIRED)
+    INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
+    MESSAGE("-- Eigen Dir: ${EIGEN3_INCLUDE_DIR}")
+ENDIF ()
 
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
@@ -127,7 +120,6 @@ endif ()
 #----------------------------------------------------------------------------
 # DAna
 #
-option(BUILD_DANA "BUILD_DANA" ON)
 option(BUILD_DDIS "BUILD_DDIS" ON)
 if (BUILD_DANA)
     add_subdirectory(GenFit2)
