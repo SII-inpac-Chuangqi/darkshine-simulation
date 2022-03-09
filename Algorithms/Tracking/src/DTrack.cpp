@@ -25,12 +25,12 @@ DTrack::DTrack(const TrkHitPVec &newHits,
                double newPreR,
                double newPreXc,
                double newPreYc, 
-               std::vector<DMagnet*> magnets) : preR(newPreR),
-                                                preXc(newPreXc),
-                                                preYc(newPreYc),
-                                                hits(newHits)
+               std::vector<double> magnets) : By(magnets.at(1)),
+                                              preR(newPreR),
+                                              preXc(newPreXc),
+                                              preYc(newPreYc),
+                                              hits(newHits)
 {
-    By = magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.) : -1.5;
 }
 
 DTrack::DTrack(const DTrack &oldTrack) : pdg(oldTrack.pdg),         //physical properties

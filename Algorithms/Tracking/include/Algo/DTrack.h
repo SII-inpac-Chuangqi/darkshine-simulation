@@ -38,7 +38,7 @@ public:
            double newPreR, 
            double newPreXc,
            double newPreYc,
-           std::vector<DMagnet*> magnets);
+           std::vector<double> magnets);
     DTrack(const DTrack &oldTrack);
     DTrack(DTrack &&oldTrack);
 

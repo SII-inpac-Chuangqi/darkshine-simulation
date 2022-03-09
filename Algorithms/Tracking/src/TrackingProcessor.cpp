@@ -260,6 +260,11 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         for (auto hit : *simuhit_collection.at("RecTrk1")) raw_rectrk1_hits.emplace_back(*hit);
         for (auto hit : *simuhit_collection.at("RecTrk2")) raw_rectrk2_hits.emplace_back(*hit);
 
+        std::vector<double> magnet_at_origin = {magnets.at(0) ? magnets.at(0)->GetField(0., 0., 0.) : 0.,
+                                                magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.) : con_field,
+                                                magnets.at(2) ? magnets.at(2)->GetField(0., 0., 0.) : 0.};
+
+
         if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
         {
 //................................................................................//
@@ -285,12 +290,13 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
                 for (int i = 0; i < find_tag.GetTrackNo(); i++)
                 {
+
                     TrkHitPVec tag_track((*(vec_tag_track.begin() + i)).begin(), (*(vec_tag_track.begin() + i)).end());
                     DTrack track(tag_track,
                                  find_tag.GetR(i),       //used in Kalman filter
                                  find_tag.GetCenterX(i), //not used in Kalman filter, reserved
                                  find_tag.GetCenterY(i), //not used in Kalman filter, reserved
-                                 magnets);               //magnets
+                                 magnet_at_origin);      //magnet vector to handle exception
                     track.Fit(Tag_fit_method);           //choose fitting method: Kalman filter
                     track.Evaluate();
     
@@ -353,7 +359,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                  find_rec.GetR(i),       //used in Kalman filter
                                  find_rec.GetCenterX(i), //not used in Kalman filter, reserved
                                  find_rec.GetCenterY(i), //not used in Kalman filter, reserved
-                                 magnets);               //magnets
+                                 magnet_at_origin);      //magnet vector to handle exception
                     track.Fit(Rec_fit_method);           //choose fitting method: Kalman filter
                     track.Evaluate();
       
