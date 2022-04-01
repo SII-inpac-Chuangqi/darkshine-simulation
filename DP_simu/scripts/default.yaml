@@ -40,7 +40,7 @@ general_particle_source:
 # Global Variables
 ###########################################
 # save geometry in the output root file
-save_geometry: false
+save_geometry: true
 # check geometry overlap, maybe very slow
 check_overlaps: false
 # memory check
