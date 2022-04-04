@@ -10,7 +10,25 @@
 using namespace std;
 
 namespace {
+    static bool if_introduction(true);
+
+    void PrintIntroduction() {
+        cerr << endl;
+        cerr << "**************************************************************" << endl;
+        cerr << " Copyright @DarkSHINE Project" << endl;
+        cerr << "           By Master of C++," << endl;
+        cerr << "              Master of Geant4," << endl;
+        cerr << "              Master of PhD," << endl;
+        cerr << "              Master of All Masters," << endl;
+        cerr << "              Yulei Zhang" << endl;
+        cerr << "              https://gitlab.com/yulei_zhang" << endl;
+        cerr << "**************************************************************" << endl;
+    }
+
     void PrintUsage() {
+        PrintIntroduction();
+        if_introduction = false;
+
         cerr << " Usage: " << endl;
         cerr << " DAna [ -c config ] [ -x ]" << endl;
         cerr << "   note: -x option will print all avaliable AnaProcessors" << endl;
@@ -23,6 +41,8 @@ int main(int argc, char **argv) {
         PrintUsage();
         return 1;
     }
+
+    if(if_introduction) PrintIntroduction();
 
     bool PrintUsage = false;
     std::string configfile;

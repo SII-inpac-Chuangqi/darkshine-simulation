@@ -63,15 +63,38 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 namespace {
+    static bool if_introduction(true);
+
+    void PrintIntroduction() {
+        G4cerr << G4endl;
+        G4cerr << "**************************************************************" << G4endl;
+        G4cerr << " Copyright @DarkSHINE Project" << G4endl;
+        G4cerr << "           By Master of C++," << G4endl;
+        G4cerr << "              Master of Geant4," << G4endl;
+        G4cerr << "              Master of PhD," << G4endl;
+        G4cerr << "              Master of All Masters," << G4endl;
+        G4cerr << "              Yulei Zhang" << G4endl;
+        G4cerr << "              https://gitlab.com/yulei_zhang" << G4endl;
+        G4cerr << "**************************************************************" << G4endl;
+    }
+
     void PrintUsage() {
+        PrintIntroduction();
+        if_introduction = false;
+
         G4cerr << " Usage: " << G4endl;
         G4cerr << " factory [-y yaml.file] [-m macro ] [-o OpticalMacro]" << G4endl;
         G4cerr << "   note: yaml file is necessary." << G4endl;
+        G4cerr << "**************************************************************" << G4endl;
         G4cerr << G4endl;
     }
 
     void PrintVersion() {
+        PrintIntroduction();
+        if_introduction = false;
+
         G4cerr << "DSimu " << dControl->DSimu_version << G4endl; // date: 2021-07-28
+        G4cerr << "**************************************************************" << G4endl;
     }
 }
 
@@ -115,8 +138,10 @@ int main(int argc, char **argv) {
         }
     }
 
+    if(if_introduction) PrintIntroduction();
+
 //-------------------------------------------------------------------------
-    G4cout << macro << ", " << OpticalMacro << G4endl;
+    //G4cout << macro << ", " << OpticalMacro << G4endl;
 
     // Read Configuration from YAML
     auto yaml_valid = dControl->ReadYAML(yamlFileName);

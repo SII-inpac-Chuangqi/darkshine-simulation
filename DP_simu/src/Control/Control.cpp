@@ -508,7 +508,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         signal_lookup_table = (Node["signal_lookup_table"].IsDefined() ? Node["signal_lookup_table"].as<std::string>()
                                                                        : "");
 
-        std::cout<<Node["signal_use_LUT"].IsDefined()<<" "<<Node["signal_use_LUT"].as<bool>()<<std::endl;
+        //std::cout<<Node["signal_use_LUT"].IsDefined()<<" "<<Node["signal_use_LUT"].as<bool>()<<std::endl;
         signal_use_LUT = Node["signal_use_LUT"].IsDefined() && Node["signal_use_LUT"].as<bool>();
         //========================================
         // Magnetic field
