@@ -14,13 +14,13 @@
 #include <iterator>
 #include <memory>
 
-class DStep_b1;
+class DStep_b1_5;
 
-class McParticle_b1;
+class McParticle_b1_5;
 
-class ReconstructedParticle_b1;
+class ReconstructedParticle_b1_5;
 
-class SimulatedHit_b1;
+class SimulatedHit_b1_5;
 
 class CalorimeterHit_b1;
 
@@ -30,16 +30,16 @@ class DigiForm_b1;
 
 class AnaProcessor;
 
-typedef std::vector<DStep_b1 *> DStepVec;
+typedef std::vector<DStep_b1_5 *> DStepVec;
 typedef std::map<std::string, DStepVec* > DStepMap;
 
-typedef std::vector<McParticle_b1 *> MCParticleVec;
+typedef std::vector<McParticle_b1_5 *> MCParticleVec;
 typedef std::map<std::string, MCParticleVec* > MCParticleMap;
 
-typedef std::vector<ReconstructedParticle_b1 *> RecParticleVec;
+typedef std::vector<ReconstructedParticle_b1_5 *> RecParticleVec;
 typedef std::map<std::string, RecParticleVec* > RecParticleMap;
 
-typedef std::vector<SimulatedHit_b1 *> SimulatedHitVec;
+typedef std::vector<SimulatedHit_b1_5 *> SimulatedHitVec;
 typedef std::map<std::string, SimulatedHitVec* > SimulatedHitMap;
 
 typedef std::vector<CalorimeterHit_b1 *> CalorimeterHitVec;

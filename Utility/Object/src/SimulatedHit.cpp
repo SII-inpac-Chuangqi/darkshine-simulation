@@ -7,9 +7,9 @@
 
 #include <cassert>
 
-SimulatedHit::SimulatedHit_b1() = default;
+SimulatedHit::SimulatedHit_b1_5() = default;
 
-SimulatedHit::SimulatedHit_b1(const SimulatedHit &rhs) : DHit(rhs) {
+SimulatedHit::SimulatedHit_b1_5(const SimulatedHit &rhs) : DHit(rhs) {
     *this = rhs;
 }
 
@@ -26,7 +26,7 @@ SimulatedHit &SimulatedHit::operator=(const SimulatedHit &rhs) {
 }
 
 
-SimulatedHit::~SimulatedHit_b1() {
+SimulatedHit::~SimulatedHit_b1_5() {
     SimHits_Edep.clear();
     SimHits_Edep.shrink_to_fit();
 
@@ -38,27 +38,27 @@ SimulatedHit::~SimulatedHit_b1() {
 }
 
 
-double SimulatedHit::getEdepEm() const {
+float SimulatedHit::getEdepEm() const {
     return EdepEm;
 }
 
-double SimulatedHit::getEdepHad() const {
+float SimulatedHit::getEdepHad() const {
     return EdepHad;
 }
 
-void SimulatedHit::setEdepEm(double edepEm) {
+void SimulatedHit::setEdepEm(float edepEm) {
     EdepEm = edepEm;
 }
 
-void SimulatedHit::setEdepHad(double edepHad) {
+void SimulatedHit::setEdepHad(float edepHad) {
     EdepHad = edepHad;
 }
 
-void SimulatedHit::setELeakWrapper(double eLeakWrapper) {
+void SimulatedHit::setELeakWrapper(float eLeakWrapper) {
     ELeak_Wrapper = eLeakWrapper;
 }
 
-double SimulatedHit::getELeakWrapper() const {
+float SimulatedHit::getELeakWrapper() const {
     return ELeak_Wrapper;
 }
 
@@ -77,7 +77,7 @@ bool SimulatedHit::operator!=(const SimulatedHit &rhs) const {
 }
 
 // Add the 3 particles with the most energy deposition contributed to this hit
-void SimulatedHit::addParticleContribution(const McParticle &mcp, double Edep, bool record_all) {
+void SimulatedHit::addParticleContribution(const McParticle &mcp, float Edep, bool record_all) {
     auto pdg = mcp.getPdg();
     bool target_mcp = (mcp.getId() == 1
                        || abs(pdg) == 13   // Muon

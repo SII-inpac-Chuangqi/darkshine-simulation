@@ -5,8 +5,8 @@
 #ifndef DSIMU_RECONSTRUCTEDPARTICLE_H
 #define DSIMU_RECONSTRUCTEDPARTICLE_H
 
-#include "Object/versions/ReconstructedParticle_b1.h"
+#include "Object/versions/ReconstructedParticle_b1_5.h"
 
-using ReconstructedParticle = ReconstructedParticle_b1;
+using ReconstructedParticle = ReconstructedParticle_b1_5;
 
 #endif //DSIMU_RECONSTRUCTEDPARTICLE_H

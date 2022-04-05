@@ -110,12 +110,13 @@ void FastSmear::Process(AnaEvent *evt, const string &det_name, const string &cal
                 new_hit->setE(new_E);
                 new_hit->setId(hit->getId());
                 new_hit->setCellId(hit->getCellId());
-                new_hit->setCellIdX(hit->getCellIdX());
-                new_hit->setCellIdY(hit->getCellIdY());
-                new_hit->setCellIdZ(hit->getCellIdZ());
-                new_hit->setX(hit->getX());
-                new_hit->setY(hit->getY());
-                new_hit->setZ(hit->getZ());
+                // FIXME: Set XYZ in Hit deprecated.
+//                new_hit->setCellIdX(hit->getCellIdX());
+//                new_hit->setCellIdY(hit->getCellIdY());
+//                new_hit->setCellIdZ(hit->getCellIdZ());
+//                new_hit->setX(hit->getX());
+//                new_hit->setY(hit->getY());
+//                new_hit->setZ(hit->getZ());
 
                 out_col->emplace_back(new_hit);
             }

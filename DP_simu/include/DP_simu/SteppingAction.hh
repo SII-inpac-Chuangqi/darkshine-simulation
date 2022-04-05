@@ -58,6 +58,7 @@ private:
     G4double PNEnergyECAL{0.}; // PN reaction in ECal Region
     G4double ENEnergyTar{0.};
     G4double ENEnergyECAL{0.};
+    G4double record_step_z{0.};
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
