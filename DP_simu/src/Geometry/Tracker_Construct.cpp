@@ -108,11 +108,11 @@ bool Tracker_Construct::BuildSDandField(G4int type) {
     /// Construct Sensitive Detector
 
     auto *Tracker1SD = new DetectorSD(
-            0,
+            nTracker,
             (type == dTagging ? "TagTrk1" : "RecTrk1"),
             G4ThreeVector(1, 1, No_Tracker) );
     auto *Tracker2SD = new DetectorSD(
-            0,
+            nTracker,
             (type == dTagging ? "TagTrk2" : "RecTrk2"),
             G4ThreeVector(1, 1, No_Tracker) );
 

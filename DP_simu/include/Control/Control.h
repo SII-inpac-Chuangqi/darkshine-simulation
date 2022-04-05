@@ -23,8 +23,6 @@
 
 #include "Object/DigiForm.hh"
 
-enum detector_type {Tracker, ECAL, HCAL, HCAL_APD};
-
 /// \brief The central control class which should store all the data
 
 class Control {

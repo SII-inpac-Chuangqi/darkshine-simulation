@@ -8,7 +8,7 @@
 #include "TObject.h"
 
 enum DetectorType {
-    nNone, nTracker, nECAL, nHCAL
+    nTracker, nECAL, nHCAL, nHCAL_APD, nNone
 };
 
 class DHit_b1 : public TObject {
@@ -86,7 +86,7 @@ public:
         return E;
     }
 
-    DetectorType getDetector() const {
+    int getDetector() const {
         return Detector;
     }
 
@@ -131,7 +131,7 @@ public:
         E = e;
     }
 
-    void setDetector(DetectorType detector) {
+    void setDetector(int detector) {
         Detector = detector;
     }
 
@@ -156,7 +156,7 @@ protected:
     int CellID_Y{0};
     int CellID_Z{0};
 
-    DetectorType Detector{nNone};
+    int Detector{nNone};
 
     double X{0.};
     double Y{0.};

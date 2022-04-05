@@ -14,7 +14,7 @@ verbosity:
   tracking: 0
 
 random_seed:
-  seed: 500
+  seed: 42
   restore_file: non
 
 general_particle_source:
@@ -241,7 +241,7 @@ Geometry:
     # ECAL Scintillator cell size
     ECAL_Center_Size: [ 2.5 , "cm", 2.5 , "cm", 4.0 , "cm" ]
     # ECAL Scintillator cell placement (x,y,z)
-    ECAL_Center_Module_No: [ 20, 20, 11 ]
+    ECAL_Center_Module_No: [ 21, 21, 11 ]
   HCAL:
     HCAL_Name: "HCAL"
 

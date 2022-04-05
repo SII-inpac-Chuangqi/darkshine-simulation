@@ -89,8 +89,8 @@ bool HCAL_Construct::BuildSD() {
     for (int iy = 0; iy < HCAL_Module_No.y(); iy++) {
         for (int ix = 0; ix < HCAL_Module_No.x(); ix++) {
             int index = (int) (ix + iy * HCAL_Module_No.x());
-            HCalSD.push_back(new DetectorSD(HCAL, Name + "_" + std::to_string(index), HCAL_Mod_No_Dir));
-            HCalAPDSD.emplace_back(new DetectorSD(HCAL_APD, Name + "_APD_" + std::to_string(index), HCAL_Mod_No_Dir));
+            HCalSD.push_back(new DetectorSD(nHCAL, Name + "_" + std::to_string(index), HCAL_Mod_No_Dir));
+            HCalAPDSD.emplace_back(new DetectorSD(nHCAL_APD, Name + "_APD_" + std::to_string(index), HCAL_Mod_No_Dir));
             G4SDManager::GetSDMpointer()->AddNewDetector(HCalSD[index]);
             G4SDManager::GetSDMpointer()->AddNewDetector(HCalAPDSD[index]);
             for (auto LV : HCAL_SD_LV[index])

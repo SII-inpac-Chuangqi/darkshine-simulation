@@ -70,7 +70,7 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, bool fCheckOverlaps) 
 
 bool ECAL_AllZ::BuildSD() {
     // ECAL Center SD
-    auto *ECalSD = new DetectorSD(1, Name, ECAL_Center_Module_No);
+    auto *ECalSD = new DetectorSD(nECAL, Name, ECAL_Center_Module_No);
     G4SDManager::GetSDMpointer()->AddNewDetector(ECalSD);
     for (auto &itr_LV : ECAL_Center_LV)
         itr_LV->SetSensitiveDetector(ECalSD);

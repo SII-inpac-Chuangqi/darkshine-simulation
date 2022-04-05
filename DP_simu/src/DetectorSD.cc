@@ -63,7 +63,7 @@ DetectorSD::~DetectorSD() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void DetectorSD::Initialize(G4HCofThisEvent *) {
-    if (fType != Tracker) {
+    if (fType != nTracker) {
         for (int i = 0; i < fCellID.x() * fCellID.y() * fCellID.z(); i++)
             fSimHitVec.push_back(new SimulatedHit());
 
@@ -90,20 +90,24 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     // Get calorimeter cell id
     reNumber1 = touchable->GetReplicaNumber(1); // for calo, depth=1
 
+    // Get hit accounting data for this cell
+    SimulatedHit *hit;
+    if (!fType) hit = new SimulatedHit();
+    else hit = fSimHitVec[reNumber1];
 
     auto xID = (int) fCellID.x();
     auto yID = (int) fCellID.y();
     //G4int zID = (int)fCellID.z();
     G4ThreeVector CellID(0, 0, 0);
-    CellID.setZ((int) (reNumber1 / (xID * yID)) + 1);
-    CellID.setX((reNumber1 % (xID * yID)) % xID + 1);
-    CellID.setY((int) ((reNumber1 % (xID * yID)) / yID) + 1);
-    if (fType == 0) {
-        CellID.setX( touchable->GetReplicaNumber(0) + 1 );
+    if (fType == nTracker) {
+        CellID.setX(touchable->GetReplicaNumber(0) + 1);
         CellID.setY(1);
         CellID.setZ(reNumber1 + 1);
-    }
-    if (fType == 2) {
+    } else if (fType == nECAL) {
+        CellID.setZ((int) (reNumber1 / (xID * yID)) + 1);
+        CellID.setX((reNumber1 % (xID * yID)) % xID + 1);
+        CellID.setY((int) ((reNumber1 % (xID * yID)) / yID) + 1);
+    } else if (fType == nHCAL || nHCAL_APD) {
         if ((int) CellID.z() % 2 == 0) {
             CellID.setX(1);
             CellID.setY(((reNumber1 % (xID * yID)) % yID) + 1);
@@ -111,15 +115,13 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
             CellID.setY(1);
             CellID.setX(((reNumber1 % (xID * yID)) % yID) + 1);
         }
+    } else {
+        std::cerr << "[ERROR] DetectorSD ==> Wrong Detecotr Type" << std::endl;
+        exit(EXIT_FAILURE);
     }
 
-    // Get hit accounting data for this cell
-    SimulatedHit *hit;
-    if (!fType) hit = new SimulatedHit();
-    else hit = fSimHitVec[reNumber1];
-
-    if (fType == HCAL_APD) {
-        // Save Photon
+    /// Save Photon
+    if (fType == nHCAL_APD) {
         particleName = step->GetTrack()->GetDefinition()->GetParticleName();
         if (particleName == "opticalphoton") {
             hit->addPhoton();
@@ -161,7 +163,7 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     delete fMC;
 
     hit->setCellId(reNumber1 + 1); // replica start from 0 in DetectorConstruction
-    if (!fType) {
+    if (fType == nTracker) {
         if (dControl->build_silicon_micro_strip) {
             hit->setX(CellPosition.x());
             hit->setY(CellPosition.y());
@@ -191,7 +193,7 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void DetectorSD::EndOfEvent(G4HCofThisEvent *) {
-    if (fType != 0) {
+    if (fType != nTracker) {
         for (auto simhit : fSimHitVec) {
             if (simhit->getE() >= 1e-10) dRootMng->FillSimHit(fname, simhit);
             delete simhit;
