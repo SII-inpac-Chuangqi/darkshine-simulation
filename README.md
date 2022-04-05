@@ -263,9 +263,9 @@ according to corresponding cell number along x, y and z.
 
 ### Added:
 
-- versiong b_1.5 of Object: replace double to float
+- Version b_1.5 of Object: replace double to float
 
-- merged hcal_optical branch. But HCAL WLSUnit **NOT** applied yet.
+- Merged hcal_optical branch. But HCAL WLSUnit **NOT** applied yet.
 
 ### Fixed:
 
@@ -275,7 +275,7 @@ according to corresponding cell number along x, y and z.
 
 ### Added:
 
-- library versioning of Utility/Object ( current b1 )
+- Library versioning of Utility/Object ( current b1 )
 
 ## 2021-08-11
 
