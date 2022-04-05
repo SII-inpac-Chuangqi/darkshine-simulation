@@ -263,13 +263,13 @@ according to corresponding cell number along x, y and z.
 
 ### Added:
 
-- Version b_1.5 of Object: replace double with float
+- Version b_1.5 of Object: replace double with float (storage optimization)
 
-- Merged hcal_optical branch. But HCAL WLSUnit **NOT** applied yet.
+- HCAL Optical: Merged hcal_optical branch. But HCAL WLSUnit **NOT** applied yet.
 
 ### Fixed:
 
--  SteppingAction : Only record G4Step of initial electron in tracker region
+-  SteppingAction : Only record G4Step of initial electron in tracker region (storage optimization)
 
 ## 2022-02-19
 
