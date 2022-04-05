@@ -23,6 +23,8 @@ Dark SHINE Software can be easily downloaded through GitLab.
     git clone git@gitlab.com:dark_shine/darkshine-simulation.git
 ```
 
+**Note:** For users who want to run Baseline 1 samples, don't use current commit, please use ``` git checkout tags/baseline1 ``` instead. The config files of DSimu and DAna are not compatible with different versions. See example rare process yaml file in [Gitlab Wiki](https://gitlab.com/dark_shine/darkshine-simulation/-/wikis/Sample-Production/Baseline-1).
+
 Before installing, several dependencies need to be checked.
 
 - C++17
@@ -256,6 +258,24 @@ according to corresponding cell number along x, y and z.
 ### Added:
 
 ### Fixed:
+
+## 2022-04-06
+
+### Added:
+
+- versiong b_1.5 of Object: replace double to float
+
+- merged hcal_optical branch. But HCAL WLSUnit **NOT** applied yet.
+
+### Fixed:
+
+-  SteppingAction : Only record G4Step of initial electron in tracker region
+
+## 2022-02-19
+
+### Added:
+
+- library versioning of Utility/Object ( current b1 )
 
 ## 2021-08-11
 
