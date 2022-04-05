@@ -263,7 +263,7 @@ according to corresponding cell number along x, y and z.
 
 ### Added:
 
-- Version b_1.5 of Object: replace double with float (storage optimization)
+- Version b1.5 of Object: replace double with float (storage optimization)
 
 - HCAL Optical: Merged hcal_optical into master branch. Default materials in default.yaml changed. But HCAL WLSUnit **NOT** applied yet.
 
