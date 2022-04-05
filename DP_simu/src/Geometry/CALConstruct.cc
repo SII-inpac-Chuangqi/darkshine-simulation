@@ -446,8 +446,6 @@ void CALConstruct::CalWLSUnitConstruct() {
                                    G4ThreeVector(0,0, CaloZHalfLength + APDCaloHalfGap ),
                                    APDLV, fCALName + "_APDWorld_PV",
                                    fWrapLV, false, fCopyNo, fCheckOverlap);
-    G4cerr << "[DEBUG] APD left" <<  CaloZHalfLength + APDCaloHalfGap - APDZHalfLength<< G4endl;
-    G4cerr << "[DEBUG] Fiber right" << -APDZHalfLength + (CaloZHalfLength + APDCaloHalfGap)<< G4endl;
     PVVector.emplace_back(APDPV);
 
     // -----------------------------------------------
@@ -543,7 +541,8 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
     fAPDVis = new G4VisAttributes(G4Colour(0.5, 0.5, .0));
     fFiberCladVis = new G4VisAttributes(G4Colour(0.6,0.7,0.8));
     fFiberVis = new G4VisAttributes(G4Colour(0.4,0.3,0.2));
-    CalWLSUnitConstruct();
+    CalUnit1Construct();
+    //CalWLSUnitConstruct();
 
     // Calculate total size
     auto UnitBox = dynamic_cast<G4Box*>(fOutlineLV->GetSolid());
