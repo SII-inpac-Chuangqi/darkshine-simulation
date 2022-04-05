@@ -40,11 +40,11 @@ public:
 //Set
 //................................................................................//
     void SetId(int newId) {setId(newId);}
-    void SetCellIdZ(int newIdZ) {CellID_Z = newIdZ;}
+    void SetCellIdZ(int newIdZ) {setCellIdZ(newIdZ);}
 
-    void SetX(double newX) {X = newX;}
-    void SetY(double newY) {Y = newY;}
-    void SetZ(double newZ) {Z = newZ;}
+    void SetX(double newX) {setX(newX);}
+    void SetY(double newY) {setY(newY);}
+    void SetZ(double newZ) {setZ(newZ);}
     void SetE(double newE) {setE(newE);}
 
     void SetU(double newU) {u = newU;}
@@ -69,12 +69,6 @@ protected:
 
     double u = RETURN;
     double v = RETURN;
-    double X{0};
-    double Y{0};
-    double Z{0};
-    int CellID_X{0};
-    int CellID_Y{0};
-    int CellID_Z{0};
 
 private:
 };
