@@ -275,7 +275,7 @@ according to corresponding cell number along x, y and z.
 
 ### Added:
 
-- Library versioning of Utility/Object ( version b1 for baseline1 )
+- Library versioning of Utility/Object ( version b1 for baseline1 ). Processing samples with wrong DSS version is forbidden.
 
 ## 2021-08-11
 
