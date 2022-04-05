@@ -13,11 +13,15 @@
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4PVPlacement.hh"
+#include "G4LogicalSurface.hh"
+#include "G4LogicalBorderSurface.hh"
+#include "G4LogicalSkinSurface.hh"
 
 #include <utility>
 #include <vector>
 
 /// Class decription:
+/// Logical volume configuration information
 class CALConstruct {
 public:
     CALConstruct(const G4String&, G4LogicalVolume *, G4int, G4bool, G4bool, G4bool, G4bool);
@@ -46,6 +50,7 @@ public:
     void CleanLV() {
         fCaloLVVector.clear();
         fWrapLVVector.clear();
+        fAPDLVVector.clear();
     };
 
     // Set Methods
@@ -73,23 +78,41 @@ public:
 
     void SetWrapSizeZ(G4double in) { WrapZHalfLength = in; };
 
+    void SetCaloHoleRadius(G4double in) { CaloHoleRadius = in; };
+
+    void SetFiberRadius(G4double in) { FiberRadius = in; };
+
     void SetCopyNo(G4int in) { fCopyNo = in; };
 
     void SetCALName(G4String in) { fCALName = std::move(in); };
 
     void SetCALSD(DetectorSD *in) { fCALSD = in; };
 
-    void SetVis(G4VisAttributes *in) { fVis = in; };
+    void SetAPDSD(DetectorSD *in) { fAPDSD = in; };
+
+    void SetFiberCladSD(DetectorSD *in) { fFiberCladSD = in; };
+
+    void SetFiberSD(DetectorSD *in) {fFiberSD = in; };
 
     void SetCALWrapSD(DetectorSD *in) { fCALWrapSD = in; };
 
+    void SetVis(G4VisAttributes *in) { fVis = in; };
+
     void SetWrapVis(G4VisAttributes *in) { fWrapVis = in; };
+
+    void SetFiberCladVis(G4VisAttributes *in) { fFiberCladVis = in; };
+
+    void SetFiberVis(G4VisAttributes *in) { fFiberVis = in; };
 
     void SetMotherVolume(G4LogicalVolume *in) { fMotherVolume = in; };
 
     void SetCALMaterial(G4Material *in) { fCALMaterial = in; };
 
     void SetWrapMaterial(G4Material *in) { fWrapMaterial = in; };
+
+    void SetFiberCladMaterial(G4Material *in) { fFiberCladMaterial = in; };
+
+    void SetFiberMaterial(G4Material *in) { fFiberMaterial = in; };
 
     void SetSizeXYZ(G4double x, G4double y, G4double z) {
         CaloXHalfLength = x;
@@ -119,13 +142,15 @@ public:
     };
 
     void SetAPDMat(G4Material *apd, G4Material *glue) {
-        APD_Material = apd;
-        Glue_Material = glue;
+        fAPDMaterial = apd;
+        fGlueMaterial = glue;
     };
 
     std::vector<G4LogicalVolume *> GetCaloLVVector() { return fCaloLVVector; };
 
     std::vector<G4LogicalVolume *> GetWrapLVVector() { return fWrapLVVector; };
+
+    std::vector<G4LogicalVolume *> GetAPDLVVector() { return fAPDLVVector; };
 
     double eps = 1 * um;
 
@@ -146,6 +171,7 @@ private:
     G4double UnitPosZ{0};
     G4Material *fCALMaterial{nullptr};
     G4VisAttributes *fCaloVis{nullptr};
+    DetectorSD *fCALSD{nullptr};
 
     // For Wrap
     G4double WrapXHalfLength{0};
@@ -156,13 +182,13 @@ private:
     G4String fCALName;
 
     G4LogicalVolume *fMotherVolume{nullptr};
-    DetectorSD *fCALSD{nullptr};
     DetectorSD *fCALWrapSD{nullptr};
     G4VisAttributes *fVis{nullptr};
     G4VisAttributes *fWrapVis{nullptr};
     G4Material *fWrapMaterial{nullptr};
 
     // APD Stuff (Optical Photon)
+    G4double APDCaloHalfGap{0.};
     G4double ADPwXHalfLength{0.};
     G4double APDwYHalfLength{0.};
     G4double APDwZHalfLength{0.};
@@ -175,9 +201,24 @@ private:
     G4double APDPosX{0.};
     G4double APDPosY{0.};
     G4double APDPosZ{0.};
-    G4Material *APD_Material{nullptr};
-    G4Material *Glue_Material{nullptr};
+    G4Material *fAPDMaterial{nullptr};
+    G4Material *fGlueMaterial{nullptr};
     G4VisAttributes *fAPDVis{nullptr};
+    DetectorSD *fAPDSD{nullptr};
+
+    // Optical Fiber
+    G4double CaloHoleRadius{0.}; // for WLS
+    G4double FiberRadius{0.};
+    G4VisAttributes *fFiberCladVis{nullptr};
+    G4VisAttributes *fFiberVis{nullptr};
+    G4Material *fFiberCladMaterial{nullptr};
+    G4Material *fFiberMaterial{nullptr};
+    DetectorSD *fFiberCladSD{nullptr};
+    DetectorSD *fFiberSD{nullptr};
+
+    // Surface
+    G4LogicalSkinSurface* Wrap_LSkinSurface{nullptr};
+    G4LogicalBorderSurface* APD_LBorderSurface{nullptr};
 
     // Absorber
     G4double AbsXHalfLength{0.};
@@ -194,10 +235,13 @@ private:
     G4LogicalVolume *fAPDWLV{nullptr}; // APD world
     G4LogicalVolume *fAbsLV{nullptr}; // Absorber world
     G4LogicalVolume *fOutlineLV{nullptr}; // outline of unit
+    G4LogicalVolume *fFiberCladLV{nullptr};
+    G4LogicalVolume *fFiberLV{nullptr};
 
     // For Matrix Placement Output
     std::vector<G4LogicalVolume *> fCaloLVVector{};
     std::vector<G4LogicalVolume *> fWrapLVVector{};
+    std::vector<G4LogicalVolume *> fAPDLVVector{};
 
     // For Memory Clean
     std::vector<G4PVPlacement*> PVVector;

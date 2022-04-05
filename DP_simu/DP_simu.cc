@@ -45,6 +45,7 @@
 #include "Optical/OpticalPhysics.hh"
 #include "G4EmStandardPhysics_option4.hh"
 #include "DarkPhysics/DarkMatterPhysics.hh"
+#include "G4OpticalPhysics.hh"
 
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
@@ -195,7 +196,8 @@ int main(int argc, char **argv) {
     // Optical Physics
     if (dControl->if_optical) {
         std::cout << "[Main] ==> Optical Physics Init... " << std::endl;
-        auto *opticalPhysics = new OpticalPhysics(dControl->Optical_PhysicsVerbose);
+        //auto *opticalPhysics = new OpticalPhysics(dControl->Optical_PhysicsVerbose);
+        auto *opticalPhysics = new G4OpticalPhysics(dControl->Optical_PhysicsVerbose);
         physicsList->ReplacePhysics(opticalPhysics);
     }
     physicsList->RegisterPhysics(new G4StepLimiterPhysics());

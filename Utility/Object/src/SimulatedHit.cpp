@@ -19,6 +19,7 @@ SimulatedHit &SimulatedHit::operator=(const SimulatedHit &rhs) {
     ELeak_Wrapper = rhs.ELeak_Wrapper;
     EdepEm = rhs.EdepEm;
     EdepHad = rhs.EdepHad;
+    PhotonNumber = rhs.PhotonNumber;
     MCPContribution = rhs.MCPContribution;
     SimHits_Edep = rhs.SimHits_Edep;
     CaloHits = rhs.CaloHits;
@@ -67,6 +68,7 @@ bool SimulatedHit::operator==(const SimulatedHit &rhs) const {
            ELeak_Wrapper == rhs.ELeak_Wrapper &&
            EdepEm == rhs.EdepEm &&
            EdepHad == rhs.EdepHad &&
+           PhotonNumber == rhs.PhotonNumber &&
            //PContribution_TrackID == rhs.PContribution_TrackID &&
            MCPContribution == rhs.MCPContribution &&
            CaloHits == rhs.CaloHits;

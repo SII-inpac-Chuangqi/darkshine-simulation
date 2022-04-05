@@ -45,6 +45,7 @@ private:
 
     std::vector<CALConstruct* > HCAL_vec;
     std::vector<std::vector<G4LogicalVolume *> > HCAL_SD_LV;
+    std::vector<std::vector<G4LogicalVolume *> > HCAL_APD_SD_LV;
 
     /////////////////////////
     //  APD stuff

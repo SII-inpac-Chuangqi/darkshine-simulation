@@ -1,5 +1,5 @@
 build*/
-install*
+install*/
 release*/
 debug/
 .ycm_extra_conf.py

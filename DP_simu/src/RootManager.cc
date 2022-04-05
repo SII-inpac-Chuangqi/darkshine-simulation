@@ -41,6 +41,8 @@ RootManager::RootManager()
     fStart = dControl->Run_Number;
     fEvtNb = dControl->Total_Event_Number;
 
+    OpticalHCALYield = dControl->Optical_HCAL_Yield;
+
 #ifdef MEMCK
     if (dControl->Memory_Check) {
         Printf("============================================================");
@@ -98,6 +100,7 @@ void RootManager::book() { //run level init for all
         tr->Branch("EventNumber", &fEvtN, "EventNumber/I");
         tr->Branch("Rndm", &Rndm, "Rndm[4]/D");
         tr->Branch("Weight", &weight, "Weight/D");
+        tr->Branch("OpticalHCALYield", &OpticalHCALYield, "OpticalHCALYield/D");
 
         // truth
         if (dControl->save_MC)
