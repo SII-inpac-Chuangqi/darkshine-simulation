@@ -23,7 +23,7 @@ Dark SHINE Software can be easily downloaded through GitLab.
     git clone git@gitlab.com:dark_shine/darkshine-simulation.git
 ```
 
-**Note:** for users who want to run Baseline 1 samples, please use ``` git checkout tags/baseline1 ``` instead. The config files of DSimu and DAna are not compatible with different versions. See example rare process yaml file in [Gitlab Wiki](https://gitlab.com/dark_shine/darkshine-simulation/-/wikis/Sample-Production).
+**Note:** for users who want to run Baseline 1 samples, please use ``` git checkout tags/baseline1 ``` instead. The config files of DSimu and DAna are not compatible with different versions. See example rare process yaml file on [Wiki page](https://gitlab.com/dark_shine/darkshine-simulation/-/wikis/Sample-Production).
 
 Before installing, several dependencies need to be checked.
 
