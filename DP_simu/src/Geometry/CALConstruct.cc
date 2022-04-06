@@ -87,6 +87,8 @@ CALConstruct::CALConstruct(const CALConstruct &in) {
     fFiberCladSD = in.fFiberCladSD;
     fFiberSD = in.fFiberSD;
     fAPDMaterial = in.fAPDMaterial;
+    Wrap_LSkinSurface = in.Wrap_LSkinSurface;
+    APD_LBorderSurface = in.APD_LBorderSurface;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -195,7 +197,7 @@ void CALConstruct::CalUnit1Construct() {
     PVVector.push_back(APDPV);
 
     // optical surface
-    if (fOptical) {
+    if (dControl->if_optical) {
         new G4LogicalSkinSurface(fCALName + "_WrapSkinSurface", fCaloLV, dControl->Wrap_Surface);
         new G4LogicalBorderSurface(fCALName + "_APDGlueSurface", CaloPV, APDPV, dControl->APD_Surface);
     }
@@ -295,7 +297,7 @@ void CALConstruct::CalUnit2Construct() {
     PVVector.push_back(APDPV);
 
     // optical surface
-    if (fOptical) {
+    if (dControl->if_optical) {
         new G4LogicalBorderSurface(fCALName + "_WrapSurface", CaloPV, WrapPV, dControl->Wrap_Surface);
         new G4LogicalBorderSurface(fCALName + "_APDGlueSurface", CaloPV, APDPV, dControl->APD_Surface);
     }
@@ -451,8 +453,7 @@ void CALConstruct::CalWLSUnitConstruct() {
     // -----------------------------------------------
     // SkinSurface and BorderSurface
     //
-    //if (dControl->if_optical) {
-    if (true) {
+    if (dControl->if_optical) {
         Wrap_LSkinSurface = new G4LogicalSkinSurface( "ESR_surface", fOutlineLV, dControl->Wrap_Surface); //here just use the inner skin surface, which is just between ESR and the scintallator
         APD_LBorderSurface = new G4LogicalBorderSurface('SIPM_surface', FiberPV, APDPV, dControl->APD_Surface);
     }
@@ -541,8 +542,8 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
     fAPDVis = new G4VisAttributes(G4Colour(0.5, 0.5, .0));
     fFiberCladVis = new G4VisAttributes(G4Colour(0.6,0.7,0.8));
     fFiberVis = new G4VisAttributes(G4Colour(0.4,0.3,0.2));
-    CalUnit1Construct();
-    //CalWLSUnitConstruct();
+    //CalUnit1Construct();
+    CalWLSUnitConstruct();
 
     // Calculate total size
     auto UnitBox = dynamic_cast<G4Box*>(fOutlineLV->GetSolid());
