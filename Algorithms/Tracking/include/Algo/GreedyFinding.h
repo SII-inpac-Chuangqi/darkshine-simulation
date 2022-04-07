@@ -25,7 +25,7 @@ public:
 //................................................................................//
 //Constructor
 //................................................................................//
-    GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer);
+    GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDepth = 3, double newGoodnessCut = 0.99);
     ~GreedyFinding() {}
 
     GreedyFinding(const GreedyFinding&) = delete;
@@ -68,6 +68,9 @@ private:
 //Choice storage
 //................................................................................//
 //Global choice
+    int minDepth = 3;
+    double goodnessCut = 0.99;
+
     int circleNo = 0;
     double r[NUM] = {-999.};
     double centerX[NUM] = {-999.};

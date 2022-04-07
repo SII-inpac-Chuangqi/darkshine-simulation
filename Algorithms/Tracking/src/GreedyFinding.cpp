@@ -22,8 +22,10 @@
 //................................................................................//
 //Constructor
 //
-GreedyFinding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer)
+GreedyFinding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDepth, double newGoodnessCut)
 {
+    minDepth = newMinDepth;
+    goodnessCut = newGoodnessCut;
     GreedyLooping(clusteredTrkHitsInLayer);
 }
 
@@ -42,7 +44,7 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
     {
         auto itMap = tempClusteredTrkHitsInLayer.end();
         GreedyLooping(tempClusteredTrkHitsInLayer, itMap, circleNo);
-        if(goodness[circleNo] > 0.99 && hitChosen.size() > 3)
+        if(goodness[circleNo] > goodnessCut && static_cast<int>(hitChosen.size()) > minDepth)
         {
             VecHitChosen.emplace_back(hitChosen);
 
@@ -72,7 +74,7 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
         }
         else break;
 
-        if(tempClusteredTrkHitsInLayer.size() < 3) break;
+        if(static_cast<int>(tempClusteredTrkHitsInLayer.size()) < minDepth) break;
     }
 
 }
