@@ -455,7 +455,7 @@ void CALConstruct::CalWLSUnitConstruct() {
     //
     if (dControl->if_optical) {
         Wrap_LSkinSurface = new G4LogicalSkinSurface( "ESR_surface", fOutlineLV, dControl->Wrap_Surface); //here just use the inner skin surface, which is just between ESR and the scintallator
-        APD_LBorderSurface = new G4LogicalBorderSurface('SIPM_surface', FiberPV, APDPV, dControl->APD_Surface);
+        APD_LBorderSurface = new G4LogicalBorderSurface( "SIPM_surface", FiberPV, APDPV, dControl->APD_Surface);
     }
 }
 
