@@ -24,7 +24,7 @@ void ECAL_AllZ::DefineParameters() {
     //  APD
     /////////////////////////
     APD_Mat = dControl->APD_Mat;
-    APD_Size = dControl->APD_Size;
+    ECAL_APD_Size = dControl->ECAL_APD_Size;
 
     Glue_Mat = dControl->Glue_Mat;
     Glue_Size = dControl->Glue_Size;
@@ -57,7 +57,7 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, bool fCheckOverlaps) 
         ECAL_Center->SetCALMaterial(ECAL_Center_Mat);
         ECAL_Center->SetWrapMaterial(ECAL_Wrap_Mat);
         ECAL_Center->SetVis(new G4VisAttributes(G4Colour(0.3, 0.5, 0.8)));
-        ECAL_Center->SetAPDSize(APD_Size, Glue_Size);
+        ECAL_Center->SetAPDSize(ECAL_APD_Size, Glue_Size);
         ECAL_Center->SetAPDMat(APD_Mat, Glue_Mat);
         ECAL_Center->MatrixPlacement(ECAL_Center_Module_No.x(), ECAL_Center_Module_No.y(), ECAL_Center_Module_No.z(),
                                      G4ThreeVector(0, 0, 0));

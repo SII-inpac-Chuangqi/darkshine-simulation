@@ -37,13 +37,35 @@ public:
     void CalWLSUnitConstruct();
     void AbsorberUnitConstruct();
 
+    // Construct Unit Group
+    //void GroupMatrix(G4String group_name, G4LogicalVolume *cellLV, int IdX, int IdY, int IdZ );
+    //void GroupXYCrossing(G4String group_name, G4LogicalVolume *cellLV, int IdX, int IdY, int IdZ);
+
     // Physical Volume placement
 
+    // ECAL:
+    //
+    // 4 World
+    // └-3 ECAL_Region
+    //   └-2 ECAL_GroupMatrix (21x21x1)
+    //     └-1 CalUnit1 (Outline)
+    //       └-0 SD (Calo)
+
+    // HCAL:
+    //
+    // 4 World
+    // └-3 HCAL_Region
+    //   ├-2 HCAL_GroupXYCrossing
+    //   | └-1 WLSUnit
+    //   |   ├-0 SD (Calo)
+    //   |   └-0 SD (APD)
+    //   └-0 AbsorberUnit
 
     G4ThreeVector MatrixPlacement(G4int, G4int, G4int, const G4ThreeVector &);
 
     //void MatrixPlacementXYRemoved(G4int, G4int, G4int, const G4ThreeVector &, G4int, G4int);
 
+    // Deprecated!
     void MatrixPlacementXYwithAbsorber(G4int, G4int, G4int, const G4ThreeVector &, G4double, G4Material *);
 
     // initializing the output LV

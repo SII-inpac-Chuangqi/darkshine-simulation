@@ -226,7 +226,7 @@ Control::Control() {
     LUT_FilePath = "ECAL_LUT.dat";
     LUT_Name = "ECAL_cube_2.5_2.5_2_v1";
 
-    APD_Size = G4ThreeVector(1 * cm, 1 * cm, 1 * mm); // Will deprecated, change to ECAL_APD_Size
+    ECAL_APD_Size = G4ThreeVector(1 * cm, 1 * cm, 1 * mm);
     HCAL_APD_Size = G4ThreeVector(3 * mm, 3 * mm, 1 * mm);
     Glue_Size = G4ThreeVector(1 * cm, 1 * cm, 0.1 * mm);
 
@@ -296,7 +296,7 @@ void Control::RebuildVariables() {
     //+ ECAL_Center_Module_No.x() * 2 * eps);
     Size_ECALRegion.setY((ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y()) * ECAL_Center_Module_No.y());
     //+ ECAL_Center_Module_No.y() * 2 * eps);
-    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z() + APD_Size.z()) * ECAL_Center_Module_No.z());
+    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z() + ECAL_APD_Size.z()) * ECAL_Center_Module_No.z());
     //+ ECAL_Center_Module_No.z() * 2 * eps);
 
     Pos_ECALRegion = G4ThreeVector(0, 0,
@@ -715,6 +715,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         MaterialStr["ECAL_Center_Mat"] = Node["Geometry"]["ECAL"]["ECAL_Center_Mat"].as<std::string>();
         MaterialStr["ECAL_Wrap_Mat"] = Node["Geometry"]["ECAL"]["ECAL_Wrap_Mat"].as<std::string>();
         ECAL_Center_Wrap_Size = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Wrap_Size"], true);
+        ECAL_APD_Size = readV3(Node["Geometry"]["ECAL"]["ECAL_APD_Size"], true);
         ECAL_Center_Size = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Size"], true);
         ECAL_Center_Module_No = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Module_No"]);
         //----------------------------------------
@@ -729,6 +730,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         MaterialStr["HCAL_Fiber_Mat"] = Node["Geometry"]["HCAL"]["HCAL_Fiber_Mat"].IsDefined() ?
                                         Node["Geometry"]["HCAL"]["HCAL_Fiber_Mat"].as<std::string>() : "PMMA";
         HCAL_Wrap_Size = readV3(Node["Geometry"]["HCAL"]["HCAL_Wrap_Size"], true);
+        HCAL_APD_Size = readV3(Node["Geometry"]["HCAL"]["HCAL_APD_Size"], true);
         HCAL_Size_Dir = readV3(Node["Geometry"]["HCAL"]["HCAL_Size_Dir"], true);
         HCAL_Mod_No_Dir = readV3(Node["Geometry"]["HCAL"]["HCAL_Mod_No_Dir"]);
         HCAL_Module_No = readV3(Node["Geometry"]["HCAL"]["HCAL_Module_No"]);

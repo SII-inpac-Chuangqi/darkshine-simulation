@@ -1,3 +1,17 @@
+2022-04-10
+    1. default.yaml : Added ECAL_APD_Size and HCAL_APD_Size
+
+2022-04-06
+    1. Version b1.5 of Object: Replaced double with float (storage optimization)
+    2. HCAL Optical: Merged hcal_optical into master branch. Default materials in default.yaml changed. Replaced HCAL Unit 1 with WLS Unit.
+    3. SteppingAction : Only record G4Step of initial electron in tracker region (storage optimization)
+
+2022-02-19
+    1. Library versioning of Utility/Object ( version b1 for baseline1 ). Processing samples with wrong DSS version is forbidden.
+
+2021-08-11
+    1. Integrated GenFit2 Library.
+
 v2.3.0
 DSimu:
     1. Add Signal (Dark Photon) Mass in yaml file

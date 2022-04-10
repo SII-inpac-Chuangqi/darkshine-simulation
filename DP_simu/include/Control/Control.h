@@ -274,7 +274,6 @@ public:
     //----------------------------------------
     // APD related
     G4Material *APD_Mat;
-    G4ThreeVector APD_Size;
     G4ThreeVector ECAL_APD_Size;
     G4ThreeVector HCAL_APD_Size;
 

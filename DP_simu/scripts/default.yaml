@@ -237,7 +237,9 @@ Geometry:
     # Wrapper Material
     ECAL_Wrap_Mat: "G4_C"
 
-    ECAL_Center_Wrap_Size: [ 0.3 , "mm", 0.3 , "mm", 0.3 , "mm" ]
+    ECAL_Center_Wrap_Size: [ 0.3 , "mm", 0.3 , "mm", 0.3 , "mm" ] # 2 x warpper thickness
+    # ECAL APD Size
+    ECAL_APD_Size: [1, "cm", 1, "cm", 1, "mm"]
     # ECAL Scintillator cell size
     ECAL_Center_Size: [ 2.5 , "cm", 2.5 , "cm", 4.0 , "cm" ]
     # ECAL Scintillator cell placement (x,y,z)
@@ -254,10 +256,12 @@ Geometry:
     # Wrapper Material
     HCAL_Wrap_Mat: "G4_C"
 
-    HCAL_Wrap_Size: [0.1 , "mm", 0.1 , "mm", 0.1 , "mm"]
+    HCAL_Wrap_Size: [0.3 , "mm", 0.3 , "mm", 0.3 , "mm"] # 2 x warpper thickness
+    # HCAL APD Size
+    HCAL_APD_Size: [3, "mm", 3, "mm", 1, "mm"]
     # HCAL Scintillator cell size along x, the odd layer place along x, even along y
-    HCAL_Size_Dir: [ 1, "cm", 5 , "cm", 100.57 , "cm"] # z = HCAL_Mod_No_Dir.x() * (HCAL_Size_Dir.y() + HCAL_Wrap_Size.y())
-                                                       #     -HCAL_Wrap_Size.y()
+    HCAL_Size_Dir: [ 1, "cm", 5 , "cm", 100.572 , "cm"] # z = HCAL_Mod_No_Dir.x() * (HCAL_Size_Dir.y() + HCAL_Wrap_Size.y() + eps)
+                                                       #     -HCAL_Wrap_Size.y() - eps
     # HCAL Scintillator cell placement (x,y,z)
     HCAL_Mod_No_Dir: [20, 20, 160]
     # HCAL Module Number placement (x,y,z)

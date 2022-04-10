@@ -46,7 +46,7 @@ private:
     /////////////////////////
     G4Material *APD_Mat{};
     G4Material *Glue_Mat{};
-    G4ThreeVector APD_Size;
+    G4ThreeVector ECAL_APD_Size;
     G4ThreeVector Glue_Size;
 
 };

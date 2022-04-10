@@ -258,27 +258,3 @@ according to corresponding cell number along x, y and z.
 ### Added:
 
 ### Fixed:
-
-## 2022-04-06
-
-### Added:
-
-- Version b1.5 of Object: Replaced double with float (storage optimization)
-
-- HCAL Optical: Merged hcal_optical into master branch. Default materials in default.yaml changed. Replaced HCAL Unit 1 with WLS Unit.
-
-### Fixed:
-
--  SteppingAction : Only record G4Step of initial electron in tracker region (storage optimization)
-
-## 2022-02-19
-
-### Added:
-
-- Library versioning of Utility/Object ( version b1 for baseline1 ). Processing samples with wrong DSS version is forbidden.
-
-## 2021-08-11
-
-### Added:
-
-- Integrated GenFit2 Library.
