@@ -108,9 +108,9 @@ public:
      */
     void readGeometryDetails();
 
-    int GetNECalCellX() {return N_ECal_cell_x;}
-    int GetNECalCellY() {return N_ECal_cell_y;}
-    int GetNECalCellZ() {return N_ECal_cell_z;}
+    int getNECalCellX() {return N_ECal_cell_x;}
+    int getNECalCellY() {return N_ECal_cell_y;}
+    int getNECalCellZ() {return N_ECal_cell_z;}
 
 private:
     int RunNumber{0};

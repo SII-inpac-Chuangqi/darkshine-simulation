@@ -107,7 +107,7 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
         CellID.setZ((int) (reNumber1 / (xID * yID)) + 1);
         CellID.setX((reNumber1 % (xID * yID)) % xID + 1);
         CellID.setY((int) ((reNumber1 % (xID * yID)) / yID) + 1);
-    } else if (fType == nHCAL || nHCAL_APD) {
+    } else if (fType == nHCAL || fType == nHCAL_APD) {
         if ((int) CellID.z() % 2 == 0) {
             CellID.setX(1);
             CellID.setY(((reNumber1 % (xID * yID)) % yID) + 1);
