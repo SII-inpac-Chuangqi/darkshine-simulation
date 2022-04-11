@@ -60,6 +60,8 @@ void ControlManager::run() {
 
         EvtReader->ReadGeometry(ConfMgr->getInputGeofile());
         dAnaData->setRootFile(EvtReader->getDataFile());
+
+        if (gGeoManager) this->readGeometryDetails();
     }
 
     /* Initialize and Select the AnaProcessors to use*/
@@ -68,9 +70,7 @@ void ControlManager::run() {
     algo->RegisterAnaProcessor(shared_ptr<Digitizer>(new Digitizer("Digitizer", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)));
-#ifndef _OFF_TRACKING
     algo->RegisterAnaProcessor(shared_ptr<TrackingProcessor>(new TrackingProcessor("Tracking", EvtWrt)));
-#endif
     algo->RegisterAnaProcessor(shared_ptr<CutFlowAnalysis>(new CutFlowAnalysis("CutFlowAnalysis", EvtWrt)));
 
     if (ConfMgr) {
@@ -218,5 +218,47 @@ void ControlManager::PrintConfig() {
         for (const auto &para : p.second->getStringParameters())
             cout << p.first << "." << para.first << " = " << *(para.second.second) << "  # " << para.second.first
                  << endl;
+    }
+}
+
+void ControlManager::readGeometryDetails() {
+
+    world_ = dynamic_cast<TGeoNode*>(gGeoManager->GetListOfNodes()->At(0));
+    if(!world_) {
+        std::cerr << "[WARNING] ==> No world node ..." << std::endl;
+        return;
+    }
+
+    N_ECal_cell_x = 0;
+    N_ECal_cell_y = 0;
+    N_ECal_cell_z = 0;
+    double last_pos[3] = {0., 0., -INFINITY};
+
+    for (int i = 0; i < world_->GetNdaughters(); ++i) {
+        auto *detector = dynamic_cast<TGeoNode*>(world_->GetDaughter(i));
+        auto detector_name = TString(detector->GetVolume()->GetName());
+
+        if(detector_name.Contains("ECAL")) {
+            for (int j = 0; j < detector->GetNdaughters(); ++j) {
+                auto *subdetector = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
+                auto subdetector_name = TString(subdetector->GetVolume()->GetName());
+
+                if (subdetector_name.Contains("LVW")) {
+                    auto subdetector_pos = subdetector->GetMatrix()->GetTranslation();
+
+                    if (subdetector_pos[2] != last_pos[2]) N_ECal_cell_z++;
+
+                    if (N_ECal_cell_z == 1) {
+                        if (subdetector_pos[1] != last_pos[1]) N_ECal_cell_y++;
+                        if (N_ECal_cell_y == 1) {
+                            if (subdetector_pos[0] != last_pos[0]) N_ECal_cell_x++;
+                        }
+                    }
+
+                    for (int k = 0; k < 3; ++k)
+                    last_pos[k] = subdetector_pos[k];
+                }
+            }
+        }
     }
 }

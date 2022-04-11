@@ -61,6 +61,7 @@ int main(int argc, char **argv) {
 
     auto algo = new AlgoManager();
     control->setAlgo(algo);
+
     if (!PrintUsage) control->setConfMgr(new ConfigManager(configfile, algo));
     control->run();
 

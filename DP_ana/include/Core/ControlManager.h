@@ -11,6 +11,9 @@
 #include "Core/ConfigManager.h"
 #include "Event/EventStoreAndWriter.h"
 
+#include "TGeoBBox.h"
+#include "TGeoManager.h"
+
 class ControlManager {
     /*
      * Control the whole analysis workflow
@@ -100,6 +103,15 @@ public:
         Only_PrintUsage = onlyPrintUsage;
     }
 
+    /*
+     * Read geometry
+     */
+    void readGeometryDetails();
+
+    int GetNECalCellX() {return N_ECal_cell_x;}
+    int GetNECalCellY() {return N_ECal_cell_y;}
+    int GetNECalCellZ() {return N_ECal_cell_z;}
+
 private:
     int RunNumber{0};
     int EventNumber{-1};
@@ -114,6 +126,10 @@ private:
 
     bool Only_PrintUsage = false;
 
+    TGeoNode* world_{nullptr};
+    int N_ECal_cell_x{0};
+    int N_ECal_cell_y{0};
+    int N_ECal_cell_z{0};
 };
 
 
