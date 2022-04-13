@@ -14,7 +14,7 @@
 
 //................................................................................//
 //Framework
-#include "Core/ControlManager.h"
+#include "Core/AnaData.h"
 
 //................................................................................//
 //Tracking
@@ -28,50 +28,23 @@ void Digitization::GetTrackerInfo(bool if_strip)
 
     if(if_strip_)
     {
-        world_ = dynamic_cast<TGeoNode*>(gGeoManager->GetListOfNodes()->At(0));
-    
         angles_tag_.clear();
         angles_rec_.clear();
-    
-        for(int i = 0; i < world_->GetNdaughters(); i++)
-        {
-            auto *detector = dynamic_cast<TGeoNode*>(world_->GetDaughter(i));
-            auto detector_name = TString(detector->GetVolume()->GetName());
-            if(detector_name.Contains("Trk"))
-            {
-                auto *detectorShape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
-    
-                if(detector_name.Contains("TAG"))
-                {
-                    strip_no_tag_ = detector->GetDaughter(0)->GetNdaughters();
-                    layer_width_tag_ = CUNIT*detectorShape->GetDX();
-                    layer_length_tag_ = CUNIT*detectorShape->GetDY();
-                }
-                else if(detector_name.Contains("REC"))
-                {
-                    strip_no_rec_ = detector->GetDaughter(0)->GetNdaughters();
-                    layer_width_rec_ = CUNIT*detectorShape->GetDX();
-                    layer_length_rec_ = CUNIT*detectorShape->GetDY();
-                }
-    
-                for(int j = 0; j < detector->GetNdaughters(); j++)
-                {
-                    auto *layer = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
-                    auto layer_name = TString(layer->GetVolume()->GetName());
-                    auto rotation = layer->GetMatrix()->GetRotationMatrix();
-                    if(layer_name.Contains("Tag"))
-                        angles_tag_.push_back(std::asin(rotation[1]));
-                    else if(layer_name.Contains("Rec"))
-                        angles_rec_.push_back(std::asin(rotation[1]));
-                }
-            }
-        }
-    
-        std::cout << "[INFO] ==> Tag tracker strip number: " << strip_no_tag_ << std::endl;
-        std::cout << "[INFO] ==> Recoil tracker strip number: " << strip_no_rec_ << std::endl;
+
+        strip_no_tag_     = dAnaData->getStripNoTag();
+        layer_width_tag_  = dAnaData->getStripWidthTag();
+        layer_length_tag_ = dAnaData->getStripLengthTag();
+        for(auto angle : dAnaData->getAnglesTag()) angles_tag_.push_back(angle);
+
+        strip_no_rec_     = dAnaData->getStripNoRec();
+        layer_width_rec_  = dAnaData->getStripWidthRec();
+        layer_length_rec_ = dAnaData->getStripLengthRec();
+        for(auto angle : dAnaData->getAnglesRec()) angles_rec_.push_back(angle);
+
+        std::cout << "[INFO] ==> Strip model loaded in tracking" << std::endl;
     }
     else
-        std::cout << "[WARNING] ==> No strips in trackers" << std::endl;
+        std::cout << "[WARNING] ==> Strip model not loaded in tracking" << std::endl;
 }
 
 //Separate tracker hits into vectors by layers
