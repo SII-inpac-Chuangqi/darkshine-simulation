@@ -11,9 +11,6 @@
 #include "Core/ConfigManager.h"
 #include "Event/EventStoreAndWriter.h"
 
-#include "TGeoBBox.h"
-#include "TGeoManager.h"
-
 class ControlManager {
     /*
      * Control the whole analysis workflow
@@ -103,26 +100,6 @@ public:
         Only_PrintUsage = onlyPrintUsage;
     }
 
-    /*
-     * Read geometry
-     */
-    void readGeometryDetails();
-    void printGeometryDetails() const;
-
-    int    getStripNoTag()     const {return strip_no_tag;}
-    double getStripWidthTag()  const {return strip_width_tag;}
-    double getStripLengthTag() const {return strip_length_tag;}
-    std::vector<double> getAnglesTag() const {return angles_tag;}
-
-    int    getStripNoRec()     const {return strip_no_rec;}
-    double getStripWidthRec()  const {return strip_width_rec;}
-    double getStripLengthRec() const {return strip_length_rec;}
-    std::vector<double> getAnglesRec() const {return angles_rec;}
-
-    int getNECalCellX() const {return N_ECal_cell_x;}
-    int getNECalCellY() const {return N_ECal_cell_y;}
-    int getNECalCellZ() const {return N_ECal_cell_z;}
-
 private:
     int RunNumber{0};
     int EventNumber{-1};
@@ -136,23 +113,6 @@ private:
     ConfigManager *ConfMgr{};
 
     bool Only_PrintUsage = false;
-
-    TGeoNode* world_{nullptr};
-
-    double strip_width_tag{-INFINITY};
-    double strip_length_tag{-INFINITY};
-    int strip_no_tag{-1};
-    std::vector<double> angles_tag;
-
-    double strip_width_rec{-INFINITY};
-    double strip_length_rec{-INFINITY};
-    int strip_no_rec{-1};
-    std::vector<double> angles_rec;
-
-    int N_ECal_cell_x{0};
-    int N_ECal_cell_y{0};
-    int N_ECal_cell_z{0};
-
 };
 
 
