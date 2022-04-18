@@ -89,6 +89,14 @@ void AnaData::readGeometryDetails() {
         }
 
         if(detector_name.Contains("ECAL")) {
+            auto *cur_shape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
+            ECAL_center_x = CUNIT*detector->GetMatrix()->GetTranslation()[0];
+            ECAL_center_y = CUNIT*detector->GetMatrix()->GetTranslation()[1];
+            ECAL_center_z = CUNIT*detector->GetMatrix()->GetTranslation()[2];
+            ECAL_length_x = CUNIT*2*cur_shape->GetDX();
+            ECAL_length_y = CUNIT*2*cur_shape->GetDY();
+            ECAL_length_z = CUNIT*2*cur_shape->GetDZ();
+
             for (int j = 0; j < detector->GetNdaughters(); ++j) {
                 auto *subdetector = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
                 auto subdetector_name = TString(subdetector->GetVolume()->GetName());
@@ -119,9 +127,15 @@ void AnaData::printGeometryDetails() const {
               << "                        strip width  " << strip_width_tag  << std::endl
               << "                        strip length " << strip_length_tag << std::endl
               << "           Rec tracker: strip No.    " << strip_no_rec     << std::endl
-              << "                        strip width  " << strip_width_rec  << std::endl
-              << "                        strip length " << strip_length_rec << std::endl
-              << "           ECal:        cell No. x   " << N_ECal_cell_x    << std::endl
+              << "                        strip width  " << strip_width_rec  << " mm" << std::endl
+              << "                        strip length " << strip_length_rec << " mm" << std::endl
+              << "           ECal:        center x at  " << ECAL_center_x    << " mm" << std::endl
+              << "                        center y at  " << ECAL_center_y    << " mm" << std::endl
+              << "                        center z at  " << ECAL_center_z    << " mm" << std::endl
+              << "                        length x     " << ECAL_length_x    << " mm" << std::endl
+              << "                        length y     " << ECAL_length_y    << " mm" << std::endl
+              << "                        length z     " << ECAL_length_z    << " mm" << std::endl
+              << "                        cell No. x   " << N_ECal_cell_x    << std::endl
               << "                        cell No. y   " << N_ECal_cell_y    << std::endl
               << "                        cell No. z   " << N_ECal_cell_z    << std::endl;
 }

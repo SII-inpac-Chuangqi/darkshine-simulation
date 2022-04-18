@@ -54,6 +54,12 @@ public:
     double getStripLengthRec() const {return strip_length_rec;}
     std::vector<double> getAnglesRec() const {return angles_rec;}
 
+    double getECalCenterX() const {return ECAL_center_x;}
+    double getECalCenterY() const {return ECAL_center_y;}
+    double getECalCenterZ() const {return ECAL_center_z;}
+    double getECalLengthX() const {return ECAL_length_x;}
+    double getECalLengthY() const {return ECAL_length_y;}
+    double getECalLengthZ() const {return ECAL_length_z;}
     int getNECalCellX() const {return N_ECal_cell_x;}
     int getNECalCellY() const {return N_ECal_cell_y;}
     int getNECalCellZ() const {return N_ECal_cell_z;}
@@ -74,6 +80,12 @@ protected:
     int strip_no_rec{-1};
     std::vector<double> angles_rec;
 
+    double ECAL_center_x{-INFINITY};
+    double ECAL_center_y{-INFINITY};
+    double ECAL_center_z{-INFINITY};
+    double ECAL_length_x{-INFINITY};
+    double ECAL_length_y{-INFINITY};
+    double ECAL_length_z{-INFINITY};
     int N_ECal_cell_x{0};
     int N_ECal_cell_y{0};
     int N_ECal_cell_z{0};
