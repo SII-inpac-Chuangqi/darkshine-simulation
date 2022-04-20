@@ -49,7 +49,7 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<doub
     catch(genfit::Exception& e)
     {
         std::cerr << e.what();
-        std::cerr <<"Exception, next track" << std::endl;
+        std::cerr << "Exception, next track" << std::endl;
 
         auto it = list.begin();
         double preR = *it; it++;
@@ -138,7 +138,6 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
     double bNdf;
     double fNdf;
     fitter->getChiSquNdf(fitTrack, rep, bChi2, fChi2, bNdf, fNdf);
-    //std::cout << bChi2 << std::endl;
 
     genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
     genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
@@ -154,8 +153,6 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
     xSigma = state[3]*10 - (*track.at(0)).GetX();
     //std::cout << "position error: " << xSigma << std::endl;
     ySigma = state[4]*10 - (*track.at(0)).GetY();
-
-    //delete tp; tp = nullptr;
 }
 
 //................................................................................//
@@ -174,10 +171,6 @@ int KalmanFitting::GetSign(const TrkHitPVec &track)
     double zr  = track.at(0)->GetZ();
     double zrl = track.at(1)->GetZ();
 
-    //for(auto hit : track) std::cout << hit->GetZ() << std::endl;
-
-    //std::cout << "xl: " << xl << "	xr: " << xr << std::endl;
-
     if(zr < zl)
     {
         std::swap(xl,  xr );
@@ -189,6 +182,5 @@ int KalmanFitting::GetSign(const TrkHitPVec &track)
     int s = 0;
     s = (xr - xrl)/sqrt((xr - xrl)*(xr - xrl) + (zr - zrl)*(zr - zrl)) >
         (xlr - xl)/sqrt((xl - xlr)*(xl - xlr) + (zl - zlr)*(zl - zlr)) ? 1 : -1;
-    //std::cout << "s: " << s << std::endl;
     return s;
 }
