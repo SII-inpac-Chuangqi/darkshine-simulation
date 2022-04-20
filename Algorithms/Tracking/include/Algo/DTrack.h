@@ -53,6 +53,8 @@ public:
     double GetPz() const {return pz;}
     double GetPp() const {return pp;}
     double GetPl() const {return py;}
+    double GetECalSeedX() const {return ECal_seed_x;}
+    double GetECalSeedY() const {return ECal_seed_y;}
 
     int GetSize() const {return hits.size();}
     TrkHitP At(int i) {return hits.at(i);}
@@ -81,33 +83,35 @@ public:
 private:
 //................................................................................//
 //Physical properties
-    int pdg = 11;
-    int sign = -1;
-    double px = RETURN;
-    double py = RETURN;
-    double pz = RETURN;
-    double pp = RETURN;
-    double pl = RETURN;
+    int pdg{11};
+    int sign{-1};
+    double px{RETURN};
+    double py{RETURN};
+    double pz{RETURN};
+    double pp{RETURN};
+    double pl{RETURN};
+    double ECal_seed_x{RETURN};
+    double ECal_seed_y{RETURN};
 
 //................................................................................//
 //Track properties
-    double quality = RETURN;
+    double quality{RETURN};
 
 //................................................................................//
-//Detector properties, better to read from framework
-    double By = RETURN;
+//Detector properties
+    double By{RETURN}; // manage problematic condition
 
 //................................................................................//
 //Fitting properties
-    double chi2 = RETURN;
-    double xSigma = RETURN;
-    double ySigma = RETURN;
+    double chi2{RETURN};
+    double xSigma{RETURN};
+    double ySigma{RETURN};
 
 //................................................................................//
 //Prefitting properties
-    double preR = RETURN;
-    double preXc = RETURN;
-    double preYc = RETURN;
+    double preR{RETURN};
+    double preXc{RETURN};
+    double preYc{RETURN};
  
 //................................................................................//
 //Hits collection

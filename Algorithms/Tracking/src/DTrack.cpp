@@ -109,6 +109,8 @@ void DTrack::Fit(int method)
         chi2 = fitter->GetChi2();
         xSigma = fitter->GetXSigma();
         ySigma = fitter->GetYSigma();
+        ECal_seed_x = fitter->GetECalSeedX();
+        ECal_seed_y = fitter->GetECalSeedY();
     }
     else
         pp = 0.3*preR*std::abs(By);

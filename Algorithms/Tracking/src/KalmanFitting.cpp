@@ -14,6 +14,7 @@
 //................................................................................//
 //Framework
 #include "Object/SimulatedHit.h"
+#include "Core/AnaData.h"
 
 //................................................................................//
 //GenFit
@@ -139,20 +140,40 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
     double fNdf;
     fitter->getChiSquNdf(fitTrack, rep, bChi2, fChi2, bNdf, fNdf);
 
-    genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
-    genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
-    genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
-                                                               0.,
-                                                               (*track.at(0)).GetZ()*0.1),
-                                                      TVector3(1, 0, 0),
-                                                      TVector3(0, 1, 0)));
-    rep->extrapolateToPlane(kfsop, plane);
-    const TVectorD& state = kfsop.getState();
-    //std::cout << "dimension of state: " << state.GetNoElements() << std::endl;
-    //std::cout << "momemtum error: " << 1/abs(state[0])*1000 - sqrt(pp*pp + pl*pl) << std::endl;
-    xSigma = state[3]*10 - (*track.at(0)).GetX();
-    //std::cout << "position error: " << xSigma << std::endl;
-    ySigma = state[4]*10 - (*track.at(0)).GetY();
+    {
+        genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
+        genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
+        genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
+                                                                   0.,
+                                                                   (*track.at(0)).GetZ()*0.1),
+                                                          TVector3(1, 0, 0),
+                                                          TVector3(0, 1, 0)));
+        rep->extrapolateToPlane(kfsop, plane);
+        const TVectorD& state = kfsop.getState();
+        //std::cout << "dimension of state: " << state.GetNoElements() << std::endl;
+        //std::cout << "momemtum error: " << 1/abs(state[0])*1000 - sqrt(pp*pp + pl*pl) << std::endl;
+        xSigma = state[3]*10 - (*track.at(0)).GetX();
+        //std::cout << "position error: " << xSigma << std::endl;
+        ySigma = state[4]*10 - (*track.at(0)).GetY();
+    }
+
+    {
+        double ECal_front_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
+
+        genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
+        genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
+        genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
+                                                                   0.,
+                                                                   ECal_front_surface*0.1),
+                                                          TVector3(1, 0, 0),
+                                                          TVector3(0, 1, 0)));
+        rep->extrapolateToPlane(kfsop, plane);
+        const TVectorD& state = kfsop.getState();
+        ECal_seed_x = state[3]*10;
+        ECal_seed_y = state[4]*10;
+
+        //std::cout << ECal_seed_y << std::endl;
+    }
 }
 
 //................................................................................//

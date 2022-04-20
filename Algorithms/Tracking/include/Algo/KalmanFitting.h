@@ -58,6 +58,8 @@ public:
     virtual double GetPz() const override {return pz;}
     virtual double GetPp() const override {return pp;}
     virtual double GetPl() const override {return pl;}
+    virtual double GetECalSeedX() const {return ECal_seed_x;}
+    virtual double GetECalSeedY() const {return ECal_seed_y;}
 
     virtual double GetChi2() const override {return fChi2;}
     virtual double GetXSigma() const override {return xSigma;}

@@ -119,6 +119,10 @@ private:
     std::vector<double> RecTrk2_track_x{};
     std::vector<double> RecTrk2_track_y{};
     std::vector<double> RecTrk2_track_z{};
+
+//................................................................................//
+    std::vector<double> ECal_seed_x{};
+    std::vector<double> ECal_seed_y{};
 };
 
 

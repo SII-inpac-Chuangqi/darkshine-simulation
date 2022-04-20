@@ -49,6 +49,8 @@ public:
     virtual double GetPz() const {return RETURN;}
     virtual double GetPp() const {return RETURN;}
     virtual double GetPl() const {return RETURN;}
+    virtual double GetECalSeedX() const {return RETURN;}
+    virtual double GetECalSeedY() const {return RETURN;}
 
     virtual double GetChi2() const {return RETURN;}
     virtual double GetXSigma() const {return RETURN;}
@@ -57,15 +59,17 @@ public:
 protected:
 //................................................................................//
 //Results
-    double px = RETURN;
-    double py = RETURN;
-    double pz = RETURN;
-    double pp = RETURN;
-    double pl = RETURN;
+    double px{RETURN};
+    double py{RETURN};
+    double pz{RETURN};
+    double pp{RETURN};
+    double pl{RETURN};
+    double ECal_seed_x{RETURN};
+    double ECal_seed_y{RETURN};
 
-    double fChi2 = RETURN;
-    double xSigma = RETURN;
-    double ySigma = RETURN;
+    double fChi2{RETURN};
+    double xSigma{RETURN};
+    double ySigma{RETURN};
 };
 
 #endif
