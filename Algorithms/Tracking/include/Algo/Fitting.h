@@ -44,20 +44,20 @@ public:
 
 //................................................................................//
 //Get
-    virtual double GetPx() const {return RETURN;}
-    virtual double GetPy() const {return RETURN;}
-    virtual double GetPz() const {return RETURN;}
-    virtual double GetPp() const {return RETURN;}
-    virtual double GetPl() const {return RETURN;}
-    virtual double GetECalSeedX() const {return RETURN;}
-    virtual double GetECalSeedY() const {return RETURN;}
-    virtual double GetECalDirctX() const {return RETURN;}
-    virtual double GetECalDirctY() const {return RETURN;}
-    virtual double GetECalQoP() const {return RETURN;}
+    virtual double GetPx() const {return px;}
+    virtual double GetPy() const {return py;}
+    virtual double GetPz() const {return pz;}
+    virtual double GetPp() const {return pp;}
+    virtual double GetPl() const {return pl;}
+    virtual double GetECalSeedX() const {return ECal_seed_x;}
+    virtual double GetECalSeedY() const {return ECal_seed_y;}
+    virtual double GetECalDirctX() const {return ECal_dirct_x;}
+    virtual double GetECalDirctY() const {return ECal_dirct_y;}
+    virtual double GetECalQoP() const {return ECal_qop;}
 
-    virtual double GetChi2() const {return RETURN;}
-    virtual double GetXSigma() const {return RETURN;}
-    virtual double GetYSigma() const {return RETURN;}
+    virtual double GetChi2() const {return fChi2;}
+    virtual double GetXSigma() const {return xSigma;}
+    virtual double GetYSigma() const {return ySigma;}
 
 protected:
 //................................................................................//

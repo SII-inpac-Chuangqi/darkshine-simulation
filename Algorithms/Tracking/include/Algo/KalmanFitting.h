@@ -53,20 +53,20 @@ public:
 
 //................................................................................//
 //Get
-    virtual double GetPx() const override {return px;}
-    virtual double GetPy() const override {return py;}
-    virtual double GetPz() const override {return pz;}
-    virtual double GetPp() const override {return pp;}
-    virtual double GetPl() const override {return pl;}
-    virtual double GetECalSeedX() const {return ECal_seed_x;}
-    virtual double GetECalSeedY() const {return ECal_seed_y;}
-    virtual double GetECalDirctX() const {return ECal_dirct_x;}
-    virtual double GetECalDirctY() const {return ECal_dirct_y;}
-    virtual double GetECalQoP() const {return ECal_qop;}
+    //virtual double GetPx() const override {return px;}
+    //virtual double GetPy() const override {return py;}
+    //virtual double GetPz() const override {return pz;}
+    //virtual double GetPp() const override {return pp;}
+    //virtual double GetPl() const override {return pl;}
+    //virtual double GetECalSeedX() const override {return ECal_seed_x;}
+    //virtual double GetECalSeedY() const override {return ECal_seed_y;}
+    //virtual double GetECalDirctX() const override {return ECal_dirct_x;}
+    //virtual double GetECalDirctY() const override {return ECal_dirct_y;}
+    //virtual double GetECalQoP() const override {return ECal_qop;}
 
-    virtual double GetChi2() const override {return fChi2;}
-    virtual double GetXSigma() const override {return xSigma;}
-    virtual double GetYSigma() const override {return ySigma;}
+    //virtual double GetChi2() const override {return fChi2;}
+    //virtual double GetXSigma() const override {return xSigma;}
+    //virtual double GetYSigma() const override {return ySigma;}
 
     int GetSign(const TrkHitPVec &track);
 
