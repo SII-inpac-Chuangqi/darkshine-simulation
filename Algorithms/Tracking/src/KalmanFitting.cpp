@@ -40,7 +40,7 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<doub
     }
     catch(int e)
     {
-        std::cerr << "Less than 3 hits" << std::endl;
+        std::cerr << "[WARNING] ==> Fewer than 3 hits in this track" << std::endl;
 
         auto it = list.begin();
         double preR = *it; it++;
@@ -49,8 +49,8 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<doub
     }
     catch(genfit::Exception& e)
     {
-        std::cerr << e.what();
-        std::cerr << "Exception, next track" << std::endl;
+        std::cerr << "[WARNING] ==> " << e.what();
+        std::cerr << "[WARNING] ==> Exception, next track" << std::endl;
 
         auto it = list.begin();
         double preR = *it; it++;
@@ -169,9 +169,11 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
                                                           TVector3(0, 1, 0)));
         rep->extrapolateToPlane(kfsop, plane);
         const TVectorD& state = kfsop.getState();
+        ECal_dirct_x = state[1];
+        ECal_dirct_y = state[2];
         ECal_seed_x = state[3]*10;
         ECal_seed_y = state[4]*10;
-
+        //std::cout << state[1] << "\t" << state[2] << std::endl;
         //std::cout << ECal_seed_y << std::endl;
     }
 }

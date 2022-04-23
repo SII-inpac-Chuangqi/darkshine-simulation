@@ -111,6 +111,8 @@ void DTrack::Fit(int method)
         ySigma = fitter->GetYSigma();
         ECal_seed_x = fitter->GetECalSeedX();
         ECal_seed_y = fitter->GetECalSeedY();
+        ECal_dirct_x = fitter->GetECalDirctX();
+        ECal_dirct_y = fitter->GetECalDirctY();
     }
     else
         pp = 0.3*preR*std::abs(By);

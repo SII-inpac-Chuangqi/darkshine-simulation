@@ -51,6 +51,8 @@ public:
     virtual double GetPl() const {return RETURN;}
     virtual double GetECalSeedX() const {return RETURN;}
     virtual double GetECalSeedY() const {return RETURN;}
+    virtual double GetECalDirctX() const {return RETURN;}
+    virtual double GetECalDirctY() const {return RETURN;}
 
     virtual double GetChi2() const {return RETURN;}
     virtual double GetXSigma() const {return RETURN;}
@@ -66,6 +68,8 @@ protected:
     double pl{RETURN};
     double ECal_seed_x{RETURN};
     double ECal_seed_y{RETURN};
+    double ECal_dirct_x{RETURN};
+    double ECal_dirct_y{RETURN};
 
     double fChi2{RETURN};
     double xSigma{RETURN};
