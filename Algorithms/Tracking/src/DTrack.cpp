@@ -114,7 +114,7 @@ void DTrack::Fit(int method)
         ECal_dirct_x = fitter->GetECalDirctX();
         ECal_dirct_y = fitter->GetECalDirctY();
         ECal_qop = fitter->GetECalQoP();
-        std::cout << ECal_qop << std::endl;
+        //std::cout << ECal_qop << std::endl;
     }
     else
         pp = 0.3*preR*std::abs(By);
