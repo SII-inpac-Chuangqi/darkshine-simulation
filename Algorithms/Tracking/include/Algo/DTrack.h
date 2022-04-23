@@ -57,6 +57,7 @@ public:
     double GetECalSeedY() const {return ECal_seed_y;}
     double GetECalDirctX() const {return ECal_dirct_x;}
     double GetECalDirctY() const {return ECal_dirct_y;}
+    double GetECalQoP() const {return ECal_qop;}
 
     int GetSize() const {return hits.size();}
     TrkHitP At(int i) {return hits.at(i);}
@@ -96,6 +97,7 @@ private:
     double ECal_seed_y{RETURN};
     double ECal_dirct_x{RETURN};
     double ECal_dirct_y{RETURN};
+    double ECal_qop{RETURN};
 
 //................................................................................//
 //Track properties

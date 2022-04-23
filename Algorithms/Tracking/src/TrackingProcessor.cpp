@@ -135,10 +135,11 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_track_y_sigma", &RecTrk2_track_y_sigma);
     }
 
-    EvtWrt->RegisterOutVariable("ECal_seed_x", &ECal_seed_x);
-    EvtWrt->RegisterOutVariable("ECal_seed_y", &ECal_seed_y);
+    EvtWrt->RegisterOutVariable("ECal_seed_x",  &ECal_seed_x);
+    EvtWrt->RegisterOutVariable("ECal_seed_y",  &ECal_seed_y);
     EvtWrt->RegisterOutVariable("ECal_dirct_x", &ECal_dirct_x);
     EvtWrt->RegisterOutVariable("ECal_dirct_y", &ECal_dirct_y);
+    EvtWrt->RegisterOutVariable("ECal_qop",     &ECal_qop);
 }
 
 void TrackingProcessor::CleanEvt() {
@@ -181,6 +182,7 @@ void TrackingProcessor::CleanEvt() {
     std::vector<double>().swap(ECal_seed_y);
     std::vector<double>().swap(ECal_dirct_x);
     std::vector<double>().swap(ECal_dirct_y);
+    std::vector<double>().swap(ECal_qop);
 }
 
 void TrackingProcessor::FillTruth(std::vector<DStep*> *initial_steps,
@@ -372,12 +374,15 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
       
                     RecTrk2_pp.push_back(track.GetPp());
                     RecTrk2_track_chi2.push_back(track.GetChi2());
+
                     ECal_seed_x.push_back(track.GetECalSeedX());
                     ECal_seed_y.push_back(track.GetECalSeedY());
                     ECal_dirct_x.push_back(track.GetECalDirctX());
                     ECal_dirct_y.push_back(track.GetECalDirctY());
+                    ECal_qop.push_back(track.GetECalQoP());
 
-                    std::cout << track.GetECalDirctY() << std::endl;
+                    //std::cout << track.GetECalQoP() << std::endl;
+                    //std::cout << track.GetECalDirctY() << std::endl;
 
                     if (!clean) {
                         RecTrk2_track_quality.push_back(track.GetQuality());
