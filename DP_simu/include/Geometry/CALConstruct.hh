@@ -24,6 +24,8 @@
 /// Logical volume configuration information
 class CALConstruct {
 public:
+    static constexpr double eps = 1 * um;
+
     CALConstruct(const G4String&, G4LogicalVolume *, G4int, G4bool, G4bool, G4bool, G4bool);
 
     CALConstruct(const CALConstruct &);
@@ -61,11 +63,28 @@ public:
     //   |   └-0 SD (APD)
     //   └-0 AbsorberUnit
 
+    /// @param [in] tree_height Volume tree height, usually start from 1
+    G4LogicalVolume* MatrixConstruct(G4int xNo, G4int yNo, G4int zNo,
+                                     G4LogicalVolume* elementLV,
+                                     G4Material* regionMat,
+                                     G4int tree_height,
+                                     G4double gap = 2 * eps);
+
+    /// @param [in] tree_height Volume tree height, usually start from 1
+    G4LogicalVolume* XYCrossingConstruct(G4int xNo, G4int yNo, G4int zNo,
+                                         G4LogicalVolume* elementLV,
+                                         G4Material* regionMat,
+                                         G4int tree_height,
+                                         G4double gap = 2 * eps);
+
+    //G4LogicalVolume* PeriodZConstruct(cosnt G4String LVname, G4int zNo,);
+
+    void Placement(const G4ThreeVector &centrePos, const G4LogicalVolume* daughterLV, const G4LogicalVolume* motherLV);
+
+    // deprecated!!
     G4ThreeVector MatrixPlacement(G4int, G4int, G4int, const G4ThreeVector &);
 
-    //void MatrixPlacementXYRemoved(G4int, G4int, G4int, const G4ThreeVector &, G4int, G4int);
-
-    // Deprecated!
+    // TODO: deprecate!
     void MatrixPlacementXYwithAbsorber(G4int, G4int, G4int, const G4ThreeVector &, G4double, G4Material *);
 
     // initializing the output LV
@@ -173,8 +192,6 @@ public:
     std::vector<G4LogicalVolume *> GetWrapLVVector() { return fWrapLVVector; };
 
     std::vector<G4LogicalVolume *> GetAPDLVVector() { return fAPDLVVector; };
-
-    double eps = 1 * um;
 
 private:
     G4bool fType{false}; // 0: Absorber; 1: Calorimeter

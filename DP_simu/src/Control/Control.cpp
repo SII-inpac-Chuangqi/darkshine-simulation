@@ -138,7 +138,9 @@ Control::Control() {
 
     ECAL_Center_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
     ECAL_Center_Size = G4ThreeVector(2.5 * cm, 2.5 * cm, 2.0 * cm);
-    ECAL_Center_Module_No = G4ThreeVector(20, 20, 18);
+    //ECAL_Center_Module_No = G4ThreeVector(20, 20, 18);
+    ECAL_Unit_Group_No = G4ThreeVector(21, 21, 1);
+    ECAL_Group_Module_No = G4ThreeVector(1, 1, 11);
 
     //----------------------------------------
     // Hadronic Calorimeter
@@ -292,12 +294,28 @@ void Control::RebuildVariables() {
 
     //----------------------------------------
     // Electromagnetic Calorimeter
-    Size_ECALRegion.setX((ECAL_Center_Size.x() + ECAL_Center_Wrap_Size.x()) * ECAL_Center_Module_No.x());
-    //+ ECAL_Center_Module_No.x() * 2 * eps);
-    Size_ECALRegion.setY((ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y()) * ECAL_Center_Module_No.y());
-    //+ ECAL_Center_Module_No.y() * 2 * eps);
-    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z() + ECAL_APD_Size.z()) * ECAL_Center_Module_No.z());
-    //+ ECAL_Center_Module_No.z() * 2 * eps);
+    Size_ECALUnit.setX(ECAL_Center_Size.x() + ECAL_Center_Wrap_Size.x());
+    Size_ECALUnit.setY(ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y());
+    Size_ECALUnit.setZ(ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z() + ECAL_APD_Size.z());
+
+    Size_ECALGroup.setX( ECAL_Unit_Group_No.x() * (Size_ECALUnit.x() + eps) + eps );
+    Size_ECALGroup.setY( ECAL_Unit_Group_No.y() * (Size_ECALUnit.y() + eps) + eps );
+    Size_ECALGroup.setZ( ECAL_Unit_Group_No.z() * (Size_ECALUnit.z() + eps) + eps );
+
+    Size_ECALRegion.setX( ECAL_Group_Module_No.x() * (Size_ECALGroup.x() + eps) + eps );
+    Size_ECALRegion.setY( ECAL_Group_Module_No.y() * (Size_ECALGroup.y() + eps) + eps );
+    Size_ECALRegion.setZ( ECAL_Group_Module_No.z() * (Size_ECALGroup.z() + eps) + eps );
+
+    ECAL_Center_Module_No.setX(ECAL_Unit_Group_No.x() * ECAL_Group_Module_No.x());
+    ECAL_Center_Module_No.setY(ECAL_Unit_Group_No.y() * ECAL_Group_Module_No.y());
+    ECAL_Center_Module_No.setZ(ECAL_Unit_Group_No.z() * ECAL_Group_Module_No.z());
+
+//    Size_ECALRegion.setX((ECAL_Center_Size.x() + ECAL_Center_Wrap_Size.x()) * ECAL_Center_Module_No.x());
+//    //+ ECAL_Center_Module_No.x() * 2 * eps);
+//    Size_ECALRegion.setY((ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y()) * ECAL_Center_Module_No.y());
+//    //+ ECAL_Center_Module_No.y() * 2 * eps);
+//    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z() + ECAL_APD_Size.z()) * ECAL_Center_Module_No.z());
+//    //+ ECAL_Center_Module_No.z() * 2 * eps);
 
     Pos_ECALRegion = G4ThreeVector(0, 0,
                                    0.5 * Size_ECALRegion.z() + rec_Pos_TrackerRegion.z() +
@@ -717,7 +735,9 @@ bool Control::ReadYAML(const G4String &file_in) {
         ECAL_Center_Wrap_Size = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Wrap_Size"], true);
         ECAL_APD_Size = readV3(Node["Geometry"]["ECAL"]["ECAL_APD_Size"], true);
         ECAL_Center_Size = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Size"], true);
-        ECAL_Center_Module_No = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Module_No"]);
+        ECAL_Group_Module_No = readV3(Node["Geometry"]["ECAL"]["Placement"]["Matrix_No"]);
+        ECAL_Unit_Group_No = readV3(Node["Geometry"]["ECAL"]["Placement"]["Element"]["Matrix_No"]);
+        //ECAL_Center_Module_No = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Module_No"]);
         //----------------------------------------
         // Hadronic Calorimeter
         HCAL_Name = Node["Geometry"]["HCAL"]["HCAL_Name"].as<std::string>();

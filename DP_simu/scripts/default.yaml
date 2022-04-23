@@ -242,15 +242,22 @@ Geometry:
     ECAL_APD_Size: [1, "cm", 1, "cm", 1, "mm"]
     # ECAL Scintillator cell size
     ECAL_Center_Size: [ 2.5 , "cm", 2.5 , "cm", 4.0 , "cm" ]
-    # ECAL Scintillator cell placement (x,y,z)
-    ECAL_Center_Module_No: [ 21, 21, 11 ]
+
+    Placement:
+      Type: "Matrix"
+      Matrix_No: [1, 1, 11] # ECAL Scintillator Group placement of ECAL Module (x,y,z)
+      Element:
+        Type: "Matrix"
+        Matrix_No: [ 21, 21, 1] # ECAL Scintillator placement in each Group (x,y,z)
+        Element:
+          Type: "CalUnit1"
   HCAL:
     HCAL_Name: "HCAL"
 
     # HCAL Absorber Material
     HCAL_Absorber_Mat: "G4_Fe"
     # HCAL Main Region Material
-    HCALRegion_Mat: "vacuum"
+    HCALRegion_Mat: "CarbonFiber"
     # HCAL Scintillator Material
     HCAL_Mat: "G4_POLYSTYRENE"
     # Wrapper Material
@@ -262,14 +269,34 @@ Geometry:
     # HCAL Scintillator cell size along x, the odd layer place along x, even along y
     HCAL_Size_Dir: [ 1, "cm", 5 , "cm", 100.572 , "cm"] # z = HCAL_Mod_No_Dir.x() * (HCAL_Size_Dir.y() + HCAL_Wrap_Size.y() + eps)
                                                        #     -HCAL_Wrap_Size.y() - eps
+    # tempararay
     # HCAL Scintillator cell placement (x,y,z)
     HCAL_Mod_No_Dir: [20, 20, 160]
     # HCAL Module Number placement (x,y,z)
     HCAL_Module_No: [4, 4, 1]
-    HCAL_Module_Gap: [0.5 , "mm"]
-    # HCAL Absorber Thickness
-    HCAL_Absorber_Thickness: [3 , "cm"] # Set this value to zero will not build Absorber.
+    # temperaray end
 
+    # HCAL Absorber Thickness
+    HCAL_Absorber_Thickness: [ 3 , "cm" ] # Set this value to zero will not build Absorber.
+    HCAL_Module_Gap: [0.5 , "mm"]
+
+    Placement:
+      Type: "PeriodZ"
+      Period_N: 80
+      Layer1:
+        Type: "Matrix"
+        Matrix_No: [4, 4, 1]
+        Element_Gap: [0.5, "mm"]
+        Element:
+          Type: "XYCrossing"
+          xNo: 20
+          yNo: 20
+          Element:
+            Type: "CalWLSUnit"
+      Layer2:
+        Type: "Absorber"
+
+    Absorber_Removal: [0, 0]
 
 # End of File
 ---

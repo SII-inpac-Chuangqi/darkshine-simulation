@@ -479,6 +479,96 @@ void CALConstruct::AbsorberUnitConstruct() {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo, G4LogicalVolume *elementLV,
+                                               G4Material * regionMat, G4int tree_height, G4double gap) {
+    /// check consistency
+    if (!xNo || !yNo || !zNo) {
+        G4cout << fCALName << " Construction Error: at least one of the matrix element is zero." << G4endl;
+        return nullptr;
+    }
+
+    /// construct unit LV and get size
+    auto UnitBox = dynamic_cast<G4Box*>(elementLV->GetSolid());
+    auto UnitXHalfLength = UnitBox->GetXHalfLength();
+    auto UnitYHalfLength = UnitBox->GetYHalfLength();
+    auto UnitZHalfLength = UnitBox->GetZHalfLength();
+
+    /// construct Group LV
+    auto GroupHalfSize = G4ThreeVector(xNo * UnitXHalfLength + (xNo - 1) * 0.5 * gap + eps,
+                                       yNo * UnitYHalfLength + (yNo - 1) * 0.5 * gap + eps,
+                                       zNo * UnitZHalfLength + (zNo - 1) * 0.5 * gap + eps);
+    auto GroupBox = new G4Box(fCALName + "_Box_h" + std::to_string(tree_height), GroupHalfSize.x(), GroupHalfSize.y(), GroupHalfSize.z());
+    auto GroupLV = new G4LogicalVolume(GroupBox, regionMat, fCALName + "_LV_h" + std::to_string(tree_height),
+                                       nullptr, nullptr, nullptr);
+
+    GroupLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    /// Unit LV Placement
+    G4String UnitName = (tree_height == 1 ? fCALName + "_UnitPV" : fCALName + "_PV_h" + std::to_string(tree_height - 1) );
+    fCopyNo = 0;
+    G4PVPlacement* UnitPV = nullptr;
+    for (int k = 0; k < zNo; k++) {
+        for (int j = 0; j < yNo; j++) {
+            for (int i = 0; i < xNo; i++) {
+                UnitPosX = -1. * GroupHalfSize.x() + (2 * i + 1) * UnitXHalfLength + i * gap + eps;
+                UnitPosY = -1. * GroupHalfSize.y() + (2 * j + 1) * UnitYHalfLength + j * gap + eps;
+                UnitPosZ = -1. * GroupHalfSize.z() + (2 * k + 1) * UnitZHalfLength + k * gap + eps;
+
+                UnitPV = new G4PVPlacement(nullptr,
+                                           G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                           elementLV,
+                                           UnitName,
+                                           GroupLV,
+                                           false,
+                                           fCopyNo,
+                                           fCheckOverlap);
+                PVVector.emplace_back(UnitPV);
+
+                fCopyNo++;
+            }
+        }
+    }
+
+    return GroupLV;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4LogicalVolume* CALConstruct::XYCrossingConstruct(G4int xNo, G4int yNo, G4int zNo, G4LogicalVolume *elementLV,
+                                                   G4Material *regionMat, G4int tree_height, G4double gap) {
+    /// check consistency
+    if (!xNo || !yNo || !zNo) {
+        G4cout << fCALName << " Construction Error: at least one of the matrix element is zero." << G4endl;
+        return nullptr;
+    }
+
+    /// construct unit LV and get size
+    auto UnitBox = dynamic_cast<G4Box*>(elementLV->GetSolid());
+    auto UnitXHalfLength = UnitBox->GetXHalfLength();
+    auto UnitYHalfLength = UnitBox->GetYHalfLength();
+    auto UnitZHalfLength = UnitBox->GetZHalfLength();
+
+    /// construct Group LV
+    auto GroupHalfSize = G4ThreeVector(xNo * UnitXHalfLength + (xNo - 1) * 0.5 * gap + eps,
+                                       yNo * UnitYHalfLength + (yNo - 1) * 0.5 * gap + eps,
+                                       zNo * UnitZHalfLength + (zNo - 1) * 0.5 * gap + eps);
+    auto GroupBox = new G4Box(fCALName + "_Box_h" + std::to_string(tree_height), GroupHalfSize.x(), GroupHalfSize.y(), GroupHalfSize.z());
+    auto GroupLV = new G4LogicalVolume(GroupBox, regionMat, fCALName + "_LV_h" + std::to_string(tree_height),
+                                       nullptr, nullptr, nullptr);
+
+    GroupLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    /// rotation matrix
+
+
+    /// Unit LV Placement
+    G4String UnitName = (tree_height == 1 ? fCALName + "_UnitPV" : fCALName + "_PV_h" + std::to_string(tree_height - 1) );
+    fCopyNo = 0;
+    G4PVPlacement* UnitPV = nullptr;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
 G4ThreeVector CALConstruct::MatrixPlacement(G4int xNo, G4int yNo, G4int zNo, const G4ThreeVector &CentrePos) {
     auto TotalHalfSize = G4ThreeVector(0, 0, 0);
     // check consistency

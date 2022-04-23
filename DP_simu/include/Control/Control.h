@@ -111,7 +111,7 @@ public:
     //========================================
     /* Geometry */
     //----------------------------------------
-    double eps = 1 * um;
+    static constexpr double eps = 1 * um;
 
     //----------------------------------------
     // Build Options
@@ -177,11 +177,15 @@ public:
     G4Material *ECALRegion_Mat{};
     G4Material *ECAL_Center_Mat{};
     G4Material *ECAL_Wrap_Mat{};
+    G4ThreeVector Size_ECALUnit; // dependent
+    G4ThreeVector Size_ECALGroup; // dependent
     G4ThreeVector Size_ECALRegion;  // dependent
     G4ThreeVector Pos_ECALRegion;  // dependent
     G4ThreeVector ECAL_Center_Wrap_Size;
     G4ThreeVector ECAL_Center_Size;
-    G4ThreeVector ECAL_Center_Module_No;
+    G4ThreeVector ECAL_Unit_Group_No;
+    G4ThreeVector ECAL_Group_Module_No;
+    G4ThreeVector ECAL_Center_Module_No; // dependent
 
     //----------------------------------------
     // Hadronic Calorimeter
@@ -193,12 +197,18 @@ public:
     G4Material *HCAL_Absorber_Mat{};
     G4Material *HCAL_FiberClad_Mat{};
     G4Material *HCAL_Fiber_Mat{};
+    G4ThreeVector Size_HCALUnit; // dependent
+    G4ThreeVector Size_HCALXYGroup; // dependent
+    G4ThreeVector Size_HCALAbsorber; // dependent
     G4ThreeVector Size_HCALRegion;  // dependent
     G4ThreeVector Pos_HCALRegion;  // dependent
     G4ThreeVector HCAL_Wrap_Size;
     G4ThreeVector HCAL_Size_Dir;
-    G4ThreeVector HCAL_Mod_No_Dir;
-    G4ThreeVector HCAL_Module_No;
+    G4ThreeVector HCAL_XYUnit_Group_No;
+    G4ThreeVector HCAL_Absorber_Z_No;
+    G4ThreeVector HCAL_Group_Module_No;
+    G4ThreeVector HCAL_Mod_No_Dir; /// Deprecated!!
+    G4ThreeVector HCAL_Module_No; /// Deprecated!!
     G4double HCAL_Module_Gap;
     G4double HCAL_Absorber_Thickness;
 
