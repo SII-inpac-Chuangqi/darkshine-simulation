@@ -96,8 +96,8 @@ public:
 //        }
 //    }
 
-    template<class data_type>
-    void RegisterOutVariable(const std::string &var_name, data_type *address, const std::string &leaf_type = "") {
+    template<class T>
+    void RegisterOutVariable(const std::string &var_name, T *address, const std::string &leaf_type = "") {
         //std::cerr << "[RegisterOutVariable] ==> The variable will not registered in CutFlow. " << std::endl;
         std::cerr << "[RegisterOutVariable] ==> Register variable " << var_name << (leaf_type.empty() ? "" : " as " + leaf_type) << std::endl;
 
@@ -140,6 +140,16 @@ public:
         if (StringVariables.count(name) != 0) return StringVariables.at(name);
         return nullptr;
     };
+
+    template<class T>
+    T* FindOutVariable(const std::string &var_name) {
+        if (std::find(RegisteredBranch.begin(), RegisteredBranch.end(), var_name) == RegisteredBranch.end()) {
+            std::cerr << "[WARNING] ==> Variable " << var_name << " not found" << std::endl;
+            return nullptr;
+        }
+
+        return std::get<T*>(std::get<1>(ana_var_col.at(var_name)));
+    }
 
 
 private:

@@ -53,6 +53,9 @@ void CutFlowAnalysis::Begin() {
 //    ECAL_E_total = EvtWrt->FindDoubleVar("ECAL_E_total");
 //    HCAL_E_total = EvtWrt->FindDoubleVar("HCAL_E_total");
 //    HCAL_E_Max_Cell = EvtWrt->FindDoubleVar("HCAL_E_Max_Cell");
+
+      //ECal_seed_x = std::get<std::vector<double>*>(EvtWrt->FindOutVariable("ECal_seed_x"));
+      ECal_seed_x = EvtWrt->FindOutVariable<std::vector<double>>("ECal_seed_x");
 }
 
 void CutFlowAnalysis::ProcessEvt(AnaEvent* /*evt*/) {
@@ -80,6 +83,9 @@ void CutFlowAnalysis::ProcessEvt(AnaEvent* /*evt*/) {
 //    // For extrapolation
 //    if (c4 && c5)
 //        h_tmp->Fill(*ECAL_E_total);
+
+      if(ECal_seed_x) for(auto seed : *ECal_seed_x) std::cout << seed << "\t";
+      std::cout << std::endl;
 }
 
 void CutFlowAnalysis::CheckEvt(AnaEvent* /*evt*/) {

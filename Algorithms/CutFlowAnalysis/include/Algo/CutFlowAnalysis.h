@@ -50,6 +50,8 @@ private:
 
     std::string weight;
 
+    std::vector<double> *ECal_seed_x;
+
     TH1F *h_cut{};
     TH1F *h_tmp{};
     vector<std::string> cut_chain;
