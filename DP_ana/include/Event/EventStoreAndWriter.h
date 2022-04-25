@@ -6,6 +6,9 @@
 #define DSIMU_EVENTSTOREANDWRITER_H
 
 #include <string>
+#include <variant>
+#include <tuple>
+#include <vector>
 #include <map>
 
 #include "TFile.h"
@@ -13,6 +16,10 @@
 #include "TString.h"
 
 #include "Event/AnaEvent.h"
+
+using AnaVar = std::variant<bool*, short*, int*, float*, double*, std::string*,
+                            std::vector<bool>*, std::vector<short>*, std::vector<int>*, std::vector<float>*, std::vector<double>*, std::vector<std::string>*,
+                            std::vector<std::vector<bool>>*, std::vector<std::vector<short>>*, std::vector<std::vector<int>>*, std::vector<std::vector<float>>*, std::vector<std::vector<double>>*, std::vector<std::vector<std::string>>*>;
 
 class EventStoreAndWriter {
     /*
@@ -73,19 +80,40 @@ public:
     // Register Methods
     void RegisterTree(const std::string &treename = "dp");
 
+//    template<class data_type>
+//    void RegisterOutVariable(const std::string &VarName, data_type *address, const std::string &LeafType = "") {
+//        std::cerr << "[RegisterOutVariable] ==> The variable will not registered in CutFlow. " << std::endl;
+//
+//        if (std::find(RegisteredBranch.begin(), RegisteredBranch.end(), VarName) != RegisteredBranch.end()) {
+//            std::cerr << "[WARNING] ==> Variable " << VarName << " has already been registered." << std::endl;
+//        } else {
+//            if (LeafType.empty())
+//                tout->Branch(VarName.c_str(), address);
+//            else
+//                tout->Branch(VarName.c_str(), address, LeafType.c_str());
+//
+//            RegisteredBranch.push_back(VarName);
+//        }
+//    }
+
     template<class data_type>
-    void RegisterOutVariable(const std::string &VarName, data_type *address, const std::string &LeafType = "") {
-        std::cerr << "[RegisterOutVariable] ==> The variable will not registered in CutFlow. " << std::endl;
+    void RegisterOutVariable(const std::string &var_name, data_type *address, const std::string &leaf_type = "") {
+        //std::cerr << "[RegisterOutVariable] ==> The variable will not registered in CutFlow. " << std::endl;
+        std::cerr << "[RegisterOutVariable] ==> Register variable " << var_name << (leaf_type.empty() ? "" : " as " + leaf_type) << std::endl;
 
-        if (std::find(RegisteredBranch.begin(), RegisteredBranch.end(), VarName) != RegisteredBranch.end()) {
-            std::cerr << "[WARNING] ==> Variable " << VarName << " has already been registered." << std::endl;
+        if (std::find(RegisteredBranch.begin(), RegisteredBranch.end(), var_name) != RegisteredBranch.end()) {
+            std::cerr << "[WARNING] ==> Variable " << var_name << " has already been registered." << std::endl;
         } else {
-            if (LeafType.empty())
-                tout->Branch(VarName.c_str(), address);
-            else
-                tout->Branch(VarName.c_str(), address, LeafType.c_str());
+            AnaVar ana_var_address = address;
+            std::tuple<std::string, AnaVar> ana_var_tuple(leaf_type, ana_var_address);
+            ana_var_col.insert(std::pair<std::string, std::tuple<std::string, AnaVar>>(var_name, ana_var_tuple));
 
-            RegisteredBranch.push_back(VarName);
+            if (leaf_type.empty())
+                tout->Branch(var_name.c_str(), address);
+            else
+                tout->Branch(var_name.c_str(), address, leaf_type.c_str());
+
+            RegisteredBranch.push_back(var_name);
         }
     }
 
@@ -131,6 +159,7 @@ private:
     std::map<std::string, std::pair<std::string, int *> > IntVariables;
     std::map<std::string, std::pair<std::string, double *> > DoubleVariables;
     std::map<std::string, TString *> StringVariables;
+    std::map<std::string, std::tuple<std::string, AnaVar>> ana_var_col;
 
     std::vector<std::string> RegisteredBranch;
 };
