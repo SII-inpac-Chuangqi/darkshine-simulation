@@ -45,10 +45,10 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
     RegisterDoubleParameter("con_field", "Const magnet field", &con_field, -1.5);
     RegisterIntParameter("Tag_fit_method",
                          "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
-                         &Tag_fit_method, 0);
+                         &Tag_fit_method, 1);
     RegisterIntParameter("Rec_fit_method",
                          "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
-                         &Rec_fit_method, 0);
+                         &Rec_fit_method, 1);
 }
 
 void TrackingProcessor::Begin() {
