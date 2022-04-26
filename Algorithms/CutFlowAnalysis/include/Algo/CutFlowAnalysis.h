@@ -34,29 +34,9 @@ public:
 
 private:
 
-    int* TagTrk2_track_No{};
-    int* RecTrk2_track_No{};
-
-    double* TagTrk2_pp{};
-    double* RecTrk2_pp{};
-    double* ECAL_E_total{};
-    double* HCAL_E_total{};
-    double* HCAL_E_Max_Cell{};
-
-    double momentum_diff{};
-    double ECAL_E_Min{};
-    double HCAL_E_Max{};
-    double HCAL_E_Cell_Max{};
-
-    std::string weight;
+    double *weight;
 
     std::vector<double> *ECal_seed_x;
-
-    TH1F *h_cut{};
-    TH1F *h_tmp{};
-    vector<std::string> cut_chain;
-
-    int save_new{};
 };
 
 
