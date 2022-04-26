@@ -419,7 +419,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 void TrackingProcessor::CheckEvt(AnaEvent *evt) {
    //cout << "check" << endl;
-    if (!evt) cerr << "null event" << endl;
+    if (!evt) cerr << "[Warning] ==> Empty event" << endl;
 }
 
 void TrackingProcessor::End() {
