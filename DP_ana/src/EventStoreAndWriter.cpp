@@ -4,6 +4,9 @@
 
 #include "Event/EventStoreAndWriter.h"
 
+#include "TBranch.h"
+#include "TLeaf.h"
+
 #include <utility>
 #include <iostream>
 #include <iomanip>
@@ -30,7 +33,7 @@ void EventStoreAndWriter::RegisterTree(const std::string &treename) {
     tout = new TTree(TreeName.c_str(), TreeName.c_str());
 }
 
-void EventStoreAndWriter::RegisterIntVariable(const std::string &var_name, int *address, const std::string &leaf_type) {
+void EventStoreAndWriter::RegisterIntVariable(const std::string &var_name, int *address, const std::string &leaf_type, bool active) {
 //    std::cerr<<"[RegisterIntVariable] ==> This method will be deprecated soon. "<<std::endl;
 //    std::cerr<<"                          Please use the new method: RegisterOutVariable() "<<std::endl;
 
@@ -43,10 +46,11 @@ void EventStoreAndWriter::RegisterIntVariable(const std::string &var_name, int *
 
         tout->Branch(var_name.c_str(), address, leaf_type.c_str());
         registered_branch_.push_back(var_name);
+        if(!active) inactive_branch_.push_back(var_name);
     }
 }
 
-void EventStoreAndWriter::RegisterDoubleVariable(const std::string &var_name, double *address, const std::string &leaf_type) {
+void EventStoreAndWriter::RegisterDoubleVariable(const std::string &var_name, double *address, const std::string &leaf_type, bool active) {
 //    std::cerr<<"[RegisterDoubleVariable] ==> This method will be deprecated soon. "<<std::endl;
 //    std::cerr<<"                             Please use the new method: RegisterOutVariable() "<<std::endl;
 
@@ -59,10 +63,11 @@ void EventStoreAndWriter::RegisterDoubleVariable(const std::string &var_name, do
 
         tout->Branch(var_name.c_str(), address, leaf_type.c_str());
         registered_branch_.push_back(var_name);
+        if(!active) inactive_branch_.push_back(var_name);
     }
 }
 
-void EventStoreAndWriter::RegisterStrVariable(const std::string &var_name, TString *address) {
+void EventStoreAndWriter::RegisterStrVariable(const std::string &var_name, TString *address, bool active) {
 //    std::cerr<<"[RegisterStrVariable] ==> This method will be deprecated soon. "<<std::endl;
 //    std::cerr<<"                          Please use the new method: RegisterOutVariable() "<<std::endl;
 
@@ -75,6 +80,7 @@ void EventStoreAndWriter::RegisterStrVariable(const std::string &var_name, TStri
 
         tout->Branch(var_name.c_str(), address);
         registered_branch_.push_back(var_name);
+        if(!active) inactive_branch_.push_back(var_name);
     }
 }
 
@@ -120,6 +126,18 @@ void EventStoreAndWriter::FillTree(AnaEvent* /*Evt*/) {
 void EventStoreAndWriter::CloseFile() {
     if (fout) {
         fout->cd();
+
+        for(auto branch : inactive_branch_)
+        {
+            std::cerr << "[WARNING] ==> Branch " << branch << " won't be written" << std::endl;
+
+            auto delete_b = tout->GetBranch(branch.c_str());
+            tout->GetListOfBranches()->Remove(delete_b);
+
+            auto delete_l = tout->GetLeaf(branch.c_str());
+            tout->GetListOfLeaves()->Remove(delete_l);
+        }
+
         tout->Write("", TObject::kOverwrite);
         fout->Close();
     }
@@ -130,6 +148,7 @@ void EventStoreAndWriter::CloseFile() {
     ana_var_col_.clear();
 
     registered_branch_.clear();
+    inactive_branch_.clear();
 }
 
 void EventStoreAndWriter::SaveObjectToFile(TObject* o, const TString& name) {

@@ -97,7 +97,7 @@ public:
 //    }
 
     template<class T>
-    void RegisterOutVariable(const std::string &var_name, T *address, const std::string &leaf_type = "") {
+    void RegisterOutVariable(const std::string &var_name, T *address, const std::string &leaf_type = "", bool active = true) {
         //std::cerr << "[RegisterOutVariable] ==> The variable will not registered in CutFlow. " << std::endl;
         std::cerr << "[RegisterOutVariable] ==> Register variable " << var_name << (leaf_type.empty() ? "" : " as " + leaf_type) << std::endl;
 
@@ -114,14 +114,15 @@ public:
                 tout->Branch(var_name.c_str(), address, leaf_type.c_str());
 
             registered_branch_.push_back(var_name);
+            if(!active) inactive_branch_.push_back(var_name);
         }
     }
 
-    void RegisterIntVariable(const std::string &VarName, int *address, const std::string &LeafType);
+    void RegisterIntVariable(const std::string &VarName, int *address, const std::string &LeafType, bool active = true);
 
-    void RegisterDoubleVariable(const std::string &VarName, double *address, const std::string &LeafType);
+    void RegisterDoubleVariable(const std::string &VarName, double *address, const std::string &LeafType, bool active = true);
 
-    void RegisterStrVariable(const std::string &VarName, TString *address);
+    void RegisterStrVariable(const std::string &VarName, TString *address, bool active = true);
 
     void SaveObjectToFile(TObject *o, const TString &name);
 
@@ -179,6 +180,7 @@ private:
     std::map<std::string, std::pair<std::string, AnaVar>> ana_var_col_;
 
     std::vector<std::string> registered_branch_;
+    std::vector<std::string> inactive_branch_;
 };
 
 
