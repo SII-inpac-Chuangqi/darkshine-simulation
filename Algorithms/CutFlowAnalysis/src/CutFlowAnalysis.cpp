@@ -54,7 +54,6 @@ void CutFlowAnalysis::Begin() {
 //    HCAL_E_total = EvtWrt->FindDoubleVar("HCAL_E_total");
 //    HCAL_E_Max_Cell = EvtWrt->FindDoubleVar("HCAL_E_Max_Cell");
 
-      //ECal_seed_x = std::get<std::vector<double>*>(EvtWrt->FindOutVariable("ECal_seed_x"));
       ECal_seed_x = EvtWrt->FindOutVariable<std::vector<double>>("ECal_seed_x");
 }
 
