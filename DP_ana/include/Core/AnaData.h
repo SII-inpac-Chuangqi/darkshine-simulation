@@ -86,13 +86,15 @@ protected:
     double ECAL_length_x{-INFINITY};
     double ECAL_length_y{-INFINITY};
     double ECAL_length_z{-INFINITY};
+    std::vector<double> ECal_cell_length_x;
+    std::vector<double> ECal_cell_length_y;
+    std::vector<double> ECal_cell_length_z;
     int N_ECal_cell_x{0};
     int N_ECal_cell_y{0};
     int N_ECal_cell_z{0};
 
 private:
     AnaData();
-
 
 };
 
