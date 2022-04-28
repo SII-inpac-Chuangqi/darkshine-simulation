@@ -60,6 +60,9 @@ public:
     double getECalLengthX() const {return ECAL_length_x;}
     double getECalLengthY() const {return ECAL_length_y;}
     double getECalLengthZ() const {return ECAL_length_z;}
+    std::vector<double> getECalCellLengthX() const {return ECal_cell_length_x;}
+    std::vector<double> getECalCellLengthY() const {return ECal_cell_length_y;}
+    std::vector<double> getECalCellLengthZ() const {return ECal_cell_length_z;}
     int getNECalCellX() const {return N_ECal_cell_x;}
     int getNECalCellY() const {return N_ECal_cell_y;}
     int getNECalCellZ() const {return N_ECal_cell_z;}

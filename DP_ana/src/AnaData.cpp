@@ -113,14 +113,15 @@ void AnaData::readGeometryDetails() {
 
             for (int j = 0; j < detector->GetNdaughters(); ++j) {
                 auto *subdetector = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
-                auto *subdetector_shape = dynamic_cast<TGeoBBox*>(subdetector->GetVolume()->GetShape());
                 auto subdetector_name = TString(subdetector->GetVolume()->GetName());
 
-                ECal_cell_length_x.push_back(CUNIT*2*subdetector_shape->GetDX());
-                ECal_cell_length_y.push_back(CUNIT*2*subdetector_shape->GetDY());
-                ECal_cell_length_z.push_back(CUNIT*2*subdetector_shape->GetDZ());
-
                 if (subdetector_name.Contains("LVW")) {
+                    auto *crystal = dynamic_cast<TGeoNode*>(subdetector->GetDaughter(0));
+                    auto *crystal_shape = dynamic_cast<TGeoBBox*>(crystal->GetVolume()->GetShape());
+                    ECal_cell_length_x.push_back(CUNIT*2*crystal_shape->GetDX());
+                    ECal_cell_length_y.push_back(CUNIT*2*crystal_shape->GetDY());
+                    ECal_cell_length_z.push_back(CUNIT*2*crystal_shape->GetDZ());
+
                     auto subdetector_pos = subdetector->GetMatrix()->GetTranslation();
 
                     if (subdetector_pos[2] != last_pos[2]) N_ECal_cell_z++;

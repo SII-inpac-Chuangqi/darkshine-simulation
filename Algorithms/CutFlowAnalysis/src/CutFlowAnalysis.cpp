@@ -25,9 +25,9 @@ void CutFlowAnalysis::Begin() {
 }
 
 void CutFlowAnalysis::ProcessEvt(AnaEvent* /*evt*/) {
-      if(weight) std::cout << *weight << ":\t";
-      if(ECal_seed_x) for(auto seed : *ECal_seed_x) std::cout << seed << "\t";
-      std::cout << std::endl;
+      //if(weight) std::cout << *weight << ":\t";
+      //if(ECal_seed_x) for(auto seed : *ECal_seed_x) std::cout << seed << "\t";
+      //std::cout << std::endl;
 }
 
 void CutFlowAnalysis::CheckEvt(AnaEvent* /*evt*/) {
