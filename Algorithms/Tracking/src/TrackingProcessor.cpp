@@ -135,11 +135,11 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_track_y_sigma", &RecTrk2_track_y_sigma);
     }
 
-    EvtWrt->RegisterOutVariable("ECal_seed_x",  &ECal_seed_x, "", false);
-    EvtWrt->RegisterOutVariable("ECal_seed_y",  &ECal_seed_y, "", false);
-    EvtWrt->RegisterOutVariable("ECal_dirct_x", &ECal_dirct_x, "", false);
-    EvtWrt->RegisterOutVariable("ECal_dirct_y", &ECal_dirct_y, "", false);
-    EvtWrt->RegisterOutVariable("ECal_qop",     &ECal_qop, "", false);
+    EvtWrt->RegisterOutVariable("ECal_seed_x",  &ECal_seed_x);
+    EvtWrt->RegisterOutVariable("ECal_seed_y",  &ECal_seed_y);
+    EvtWrt->RegisterOutVariable("ECal_seed_px", &ECal_seed_px);
+    EvtWrt->RegisterOutVariable("ECal_seed_py", &ECal_seed_py);
+    EvtWrt->RegisterOutVariable("ECal_seed_pz", &ECal_seed_pz);
 }
 
 void TrackingProcessor::CleanEvt() {
@@ -180,9 +180,9 @@ void TrackingProcessor::CleanEvt() {
 
     std::vector<double>().swap(ECal_seed_x);
     std::vector<double>().swap(ECal_seed_y);
-    std::vector<double>().swap(ECal_dirct_x);
-    std::vector<double>().swap(ECal_dirct_y);
-    std::vector<double>().swap(ECal_qop);
+    std::vector<double>().swap(ECal_seed_px);
+    std::vector<double>().swap(ECal_seed_py);
+    std::vector<double>().swap(ECal_seed_pz);
 }
 
 void TrackingProcessor::FillTruth(std::vector<DStep*> *initial_steps,
@@ -377,9 +377,9 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
                     ECal_seed_x.push_back(track.GetECalSeedX());
                     ECal_seed_y.push_back(track.GetECalSeedY());
-                    ECal_dirct_x.push_back(track.GetECalDirctX());
-                    ECal_dirct_y.push_back(track.GetECalDirctY());
-                    ECal_qop.push_back(track.GetECalQoP());
+                    ECal_seed_px.push_back(track.GetECalDirctX());
+                    ECal_seed_py.push_back(track.GetECalDirctY());
+                    ECal_seed_pz.push_back(track.GetECalQoP());
 
                     //std::cout << track.GetECalQoP() << std::endl;
                     //std::cout << track.GetECalDirctY() << std::endl;

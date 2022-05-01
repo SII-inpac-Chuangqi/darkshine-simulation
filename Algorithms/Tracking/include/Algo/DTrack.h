@@ -55,9 +55,9 @@ public:
     double GetPl() const {return py;}
     double GetECalSeedX() const {return ECal_seed_x;}
     double GetECalSeedY() const {return ECal_seed_y;}
-    double GetECalDirctX() const {return ECal_dirct_x;}
-    double GetECalDirctY() const {return ECal_dirct_y;}
-    double GetECalQoP() const {return ECal_qop;}
+    double GetECalDirctX() const {return ECal_seed_px;}
+    double GetECalDirctY() const {return ECal_seed_py;}
+    double GetECalQoP() const {return ECal_seed_pz;}
 
     int GetSize() const {return hits.size();}
     TrkHitP At(int i) {return hits.at(i);}
@@ -95,9 +95,9 @@ private:
     double pl{RETURN};
     double ECal_seed_x{RETURN};
     double ECal_seed_y{RETURN};
-    double ECal_dirct_x{RETURN};
-    double ECal_dirct_y{RETURN};
-    double ECal_qop{RETURN};
+    double ECal_seed_px{RETURN};
+    double ECal_seed_py{RETURN};
+    double ECal_seed_pz{RETURN};
 
 //................................................................................//
 //Track properties

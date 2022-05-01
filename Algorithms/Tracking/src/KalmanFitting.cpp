@@ -169,13 +169,18 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
                                                           TVector3(0, 1, 0)));
         rep->extrapolateToPlane(kfsop, plane);
         const TVectorD& state = kfsop.getState();
-        ECal_qop = 1./state[0]*1000.;
-        ECal_dirct_x = state[1];
-        ECal_dirct_y = state[2];
+        //ECal_qop = 1./state[0]*1000.;
+        //ECal_dirct_x = state[1];
+        //ECal_dirct_y = state[2];
         ECal_seed_x = state[3]*10;
         ECal_seed_y = state[4]*10;
-        //std::cout << ECal_qop << std::endl;
+        //std::cout << ECal_seed_pz << std::endl;
         //std::cout << ECal_seed_y << std::endl;
+
+        auto mom_on_ECal = kfsop.getMom();
+        ECal_seed_px = -mom_on_ECal[0]*1000.; //fix direction
+        ECal_seed_py =  mom_on_ECal[1]*1000.; //
+        ECal_seed_pz = -mom_on_ECal[2]*1000.; //
     }
 }
 

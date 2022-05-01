@@ -51,9 +51,9 @@ public:
     virtual double GetPl() const {return pl;}
     virtual double GetECalSeedX() const {return ECal_seed_x;}
     virtual double GetECalSeedY() const {return ECal_seed_y;}
-    virtual double GetECalDirctX() const {return ECal_dirct_x;}
-    virtual double GetECalDirctY() const {return ECal_dirct_y;}
-    virtual double GetECalQoP() const {return ECal_qop;}
+    virtual double GetECalDirctX() const {return ECal_seed_px;}
+    virtual double GetECalDirctY() const {return ECal_seed_py;}
+    virtual double GetECalQoP() const {return ECal_seed_pz;}
 
     virtual double GetChi2() const {return fChi2;}
     virtual double GetXSigma() const {return xSigma;}
@@ -69,9 +69,9 @@ protected:
     double pl{RETURN};
     double ECal_seed_x{RETURN};
     double ECal_seed_y{RETURN};
-    double ECal_dirct_x{RETURN};
-    double ECal_dirct_y{RETURN};
-    double ECal_qop{RETURN};
+    double ECal_seed_px{RETURN};
+    double ECal_seed_py{RETURN};
+    double ECal_seed_pz{RETURN};
 
     double fChi2{RETURN};
     double xSigma{RETURN};

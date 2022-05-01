@@ -123,9 +123,9 @@ private:
 //................................................................................//
     std::vector<double> ECal_seed_x{};
     std::vector<double> ECal_seed_y{};
-    std::vector<double> ECal_dirct_x{};
-    std::vector<double> ECal_dirct_y{};
-    std::vector<double> ECal_qop{};
+    std::vector<double> ECal_seed_px{};
+    std::vector<double> ECal_seed_py{};
+    std::vector<double> ECal_seed_pz{};   
 };
 
 #endif
