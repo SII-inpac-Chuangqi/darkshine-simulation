@@ -29,7 +29,7 @@ Before installing, several dependencies need to be checked.
 
 - C++17
 - Geant4 10.06
-- ROOT 6
+- ROOT 6 ( >=6.20 and <=6.24 )
 - HepMC
 - gsl
 - yaml-cpp
