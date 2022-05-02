@@ -21,7 +21,6 @@ RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProce
     RegisterStringParameter("ECollectionToUse", "Calorimeter (ECAL) Collection to Use", &ecal_col_use, "ECAL_FS0");
     RegisterStringParameter("HCollectionToUse", "Calorimeter (HCAL) Collection to Use", &hcal_col_use, "FS0");
     RegisterIntParameter("E_n_fraction", "the n-th large E fraction", &n_fraction, 20);
-
 }
 
 void RecECAL::Begin() {
@@ -33,6 +32,7 @@ void RecECAL::Begin() {
     // Register Output Variable
     if (EvtWrt) {
         EvtWrt->RegisterIntVariable("ECAL_COL_SIZE", &ecal_col_size, "ECAL_COL_SIZE/I");
+
 //        EvtWrt->RegisterDoubleVariable("ECAL_E_total", &E_total, "ECAL_E_total/D");
 //        EvtWrt->RegisterDoubleVariable("ECAL_E_max", &E_max, "ECAL_E_max/D");
 //        EvtWrt->RegisterDoubleVariable("ECAL_E_frac", &E_frac, "ECAL_E_frac/D");
@@ -45,6 +45,7 @@ void RecECAL::Begin() {
 //
 //        EvtWrt->RegisterDoubleVariable("HCAL_E_total", &HCAL_total, "HCAL_E_total/D");
 //        EvtWrt->RegisterDoubleVariable("HCAL_E_Max_Cell", &HCAL_E_Max_Cell, "HCAL_E_Max_Cell/D");
+
 
         EvtWrt->RegisterOutVariable("ECAL_E_total", &E_total);
         EvtWrt->RegisterOutVariable("ECAL_E_max", &E_max);
@@ -70,7 +71,6 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
     //const auto &HitCollection = evt->getSimulatedHitCollection();
     const auto &HitCollection = evt->getCalorimeterHitCollection();
 
-/*
     for (const auto &HitCollectionName: ecal_cols) {
         // define the collection name (RawMCParticle) to find.
         // IMPORTANT: check if the collection exists
@@ -134,7 +134,6 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
         HCAL_total.push_back(HCAL_E);
         HCAL_E_Max_Cell.push_back(HCAL_E_Max_cell);
     }
-*/
 }
 
 void RecECAL::CheckEvt(AnaEvent* /*evt*/) {

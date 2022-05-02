@@ -133,12 +133,15 @@ void EventStoreAndWriter::CloseFile() {
 
             auto delete_b = tout->GetBranch(branch.c_str());
             tout->GetListOfBranches()->Remove(delete_b);
+            tout->GetListOfBranches()->Compress();
 
             auto delete_l = tout->GetLeaf(branch.c_str());
             tout->GetListOfLeaves()->Remove(delete_l);
+            tout->GetListOfLeaves()->Compress();
         }
 
-        tout->Write("", TObject::kOverwrite);
+        tout->Write(TreeName.c_str(), TObject::kWriteDelete);
+
         fout->Close();
     }
 
@@ -157,5 +160,3 @@ void EventStoreAndWriter::SaveObjectToFile(TObject* o, const TString& name) {
         o->Write(name, TObject::kOverwrite);
     }
 }
-
-

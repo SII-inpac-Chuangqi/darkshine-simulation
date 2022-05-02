@@ -135,11 +135,11 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_track_y_sigma", &RecTrk2_track_y_sigma);
     }
 
-    EvtWrt->RegisterOutVariable("ECal_seed_x",  &ECal_seed_x);
-    EvtWrt->RegisterOutVariable("ECal_seed_y",  &ECal_seed_y);
-    EvtWrt->RegisterOutVariable("ECal_seed_px", &ECal_seed_px);
-    EvtWrt->RegisterOutVariable("ECal_seed_py", &ECal_seed_py);
-    EvtWrt->RegisterOutVariable("ECal_seed_pz", &ECal_seed_pz);
+    EvtWrt->RegisterOutVariable("ECal_seed_x",  &ECal_seed_x, "", false);
+    EvtWrt->RegisterOutVariable("ECal_seed_y",  &ECal_seed_y, "", false);
+    EvtWrt->RegisterOutVariable("ECal_seed_px", &ECal_seed_px, "", false);
+    EvtWrt->RegisterOutVariable("ECal_seed_py", &ECal_seed_py, "", false);
+    EvtWrt->RegisterOutVariable("ECal_seed_pz", &ECal_seed_pz, "", false);
 }
 
 void TrackingProcessor::CleanEvt() {
