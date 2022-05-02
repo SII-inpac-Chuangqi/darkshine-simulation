@@ -70,6 +70,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
     //const auto &HitCollection = evt->getSimulatedHitCollection();
     const auto &HitCollection = evt->getCalorimeterHitCollection();
 
+/*
     for (const auto &HitCollectionName: ecal_cols) {
         // define the collection name (RawMCParticle) to find.
         // IMPORTANT: check if the collection exists
@@ -133,6 +134,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
         HCAL_total.push_back(HCAL_E);
         HCAL_E_Max_Cell.push_back(HCAL_E_Max_cell);
     }
+*/
 }
 
 void RecECAL::CheckEvt(AnaEvent* /*evt*/) {
