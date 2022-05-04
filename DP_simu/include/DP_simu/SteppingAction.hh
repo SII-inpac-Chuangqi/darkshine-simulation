@@ -37,6 +37,7 @@
 
 
 #include "Object/McParticle.h"
+#include "Object/McPHelper.h"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -52,6 +53,8 @@ public:
 
     void UserSteppingAction(const G4Step *aStep) override;
 
+    void SetMcPHelper(const G4Step* aStep);
+
 private:
 
     G4double PNEnergyTar{0.}; // PN reaction in Target Region
@@ -59,6 +62,8 @@ private:
     G4double ENEnergyTar{0.};
     G4double ENEnergyECAL{0.};
     G4double record_step_z{0.};
+
+    McPHelper* fMCPH{};
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

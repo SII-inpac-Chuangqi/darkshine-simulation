@@ -5,9 +5,10 @@
 #ifndef DSIMU_MCPHELPER_B1_5_H
 #define DSIMU_MCPHELPER_B1_5_H
 
+#include "Object/DHit.h"
 #include "Object/McParticle.h"
 
-class McPHelper_b1_5 : public DParticle {
+class McPHelper_b1_5 : public DHit {
 public:
     McPHelper_b1_5() = default;
 
@@ -22,24 +23,24 @@ public:
     McPHelper_b1_5 &operator=(const McPHelper_b1_5 &rhs);
 
     /// getters
-    int getDetector() const {
-        return Detector;
+    int getPdg() const {
+        return PDG;
     }
 
-    int getCellId() const {
-        return CellID;
+    float getPx() const {
+        return Px;
     }
 
-    int getCellIdX() const {
-        return CellID_X;
+    float getPy() const {
+        return Py;
     }
 
-    int getCellIdY() const {
-        return CellID_Y;
+    float getPz() const {
+        return Pz;
     }
 
-    int getCellIdZ() const {
-        return CellID_Z;
+    float getMass() const {
+        return Mass;
     }
 
     bool isIncoming() const {
@@ -49,26 +50,25 @@ public:
     McParticle *getMcParticle() const {
         return MCParticle;
     }
-
     /// setters
-    void setDetector(int detector) {
-        Detector = detector;
+    void setPdg(int pdg) {
+        PDG = pdg;
     }
 
-    void setCellId(int cellId) {
-        CellID = cellId;
+    void setPx(float px) {
+        Px = px;
     }
 
-    void setCellIdX(int cellIdX) {
-        CellID_X = cellIdX;
+    void setPy(float py) {
+        Py = py;
     }
 
-    void setCellIdY(int cellIdY) {
-        CellID_Y = cellIdY;
+    void setPz(float pz) {
+        Pz = pz;
     }
 
-    void setCellIdZ(int cellIdZ) {
-        CellID_Z = cellIdZ;
+    void setMass(float mass) {
+        Mass = mass;
     }
 
     void setIsIncoming(bool isIncoming) {
@@ -85,9 +85,8 @@ public:
                          particle.id,
                          particle.PDG,
                          particle.Px, particle.Py, particle.Pz,
-                         particle.Energy, particle.Mass,
-                         particle.VertexX, particle.VertexY, particle.VertexZ,
-                         particle.EndPointX, particle.EndPointY, particle.EndPointZ,
+                         particle.E, particle.Mass,
+                         particle.X, particle.Y, particle.Z,
                          particle.Detector, particle.CellID,
                          particle.MCParticle ? particle.MCParticle->getId() : 0));
                          //particle.CreateProcess.data(), (particle.getParents()) ? particle.getParents()->getId() : 0));
@@ -97,13 +96,11 @@ public:
         return os;
     }
 private:
-    /// Detector information
-    int Detector{nNone};
-
-    int CellID{0};
-    int CellID_X{0};
-    int CellID_Y{0};
-    int CellID_Z{0};
+    int PDG;
+    float Px;
+    float Py;
+    float Pz;
+    float Mass;
 
     /// true - prev step is outside the crystal, and post step is in the crystal. false - vice versa
     bool is_incoming{false};

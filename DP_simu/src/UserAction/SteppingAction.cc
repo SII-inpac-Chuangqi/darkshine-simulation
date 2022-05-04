@@ -146,6 +146,7 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     if (dControl->save_mcp_helper) {
         if ( prev->GetPhysicalVolume()->GetName() == "TagTrk_Strip_PV") {
             if (post->GetPhysicalVolume()->GetName() != "TagTrk_Strip_PV") {
+
             }
         } else if (prev->GetPhysicalVolume()->GetName() == "RecTrk_Strip_PV" ) {
             if (post->GetPhysicalVolume()->GetName() != "RecTrk_Strip_PV" ) {
@@ -171,4 +172,13 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-
+void SteppingAction::SetMcPHelper(const G4Step *aStep) {
+    fMCPH = new McPHelper();
+    fMCPH->setId(aStep->GetTrack()->GetTrackID());
+    fMCPH->setPdg(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
+    fMCPH->setMass(aStep->GetTrack()->GetParticleDefinition()->GetPDGMass());
+    fMCPH->setE(aStep->GetPostStepPoint()->GetTotalEnergy());
+    fMCPH->setPx(aStep->GetPostStepPoint()->GetMomentum()[0]);
+    fMCPH->setPy(aStep->GetPostStepPoint()->GetMomentum()[1]);
+    fMCPH->setPz(aStep->GetPostStepPoint()->GetMomentum()[2]);
+}
