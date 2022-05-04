@@ -53,7 +53,7 @@ public:
 
     void UserSteppingAction(const G4Step *aStep) override;
 
-    void SetMcPHelper(const G4Step* aStep);
+    void SetMcPHelper(const G4Step* aStep, int detector);
 
 private:
 
@@ -62,6 +62,7 @@ private:
     G4double ENEnergyTar{0.};
     G4double ENEnergyECAL{0.};
     G4double record_step_z{0.};
+    G4int reNumber1;
 
     McPHelper* fMCPH{};
 };

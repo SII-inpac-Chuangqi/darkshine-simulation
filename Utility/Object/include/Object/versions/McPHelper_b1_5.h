@@ -7,6 +7,7 @@
 
 #include "Object/DHit.h"
 #include "Object/McParticle.h"
+#include "TVector3.h"
 
 class McPHelper_b1_5 : public DHit {
 public:
@@ -37,6 +38,11 @@ public:
 
     float getPz() const {
         return Pz;
+    }
+
+    float getP() const{
+        auto p = TVector3(Px,Py,Pz);
+        return p.Mag();
     }
 
     float getMass() const {
@@ -81,7 +87,7 @@ public:
 
     /// Dump
     friend std::ostream &operator<<(std::ostream &os, const McPHelper_b1_5 &particle) {
-        TString str(Form("| %-5d | %-6d | %8.3f, %8.3f, %8.3f | %8.3f,  %8.3f |    %8.3f, %8.3f, %8.3f | %8.3f, %8.3f, %8.3f | %-6d %-6d | %-8d |",
+        TString str(Form("| %-5d | %-6d | %8.3f, %8.3f, %8.3f | %8.3f,  %8.3f | %8.3f, %8.3f, %8.3f | %-6d %-6d | %-6d |",
                          particle.id,
                          particle.PDG,
                          particle.Px, particle.Py, particle.Pz,

@@ -136,7 +136,7 @@ void DEvent::PrintDetails() {
                 << "* MC Particle Helper Collection: " << particles.first << std::endl
                 << "*****************************************************************************************************************************************************************************"
                 << std::endl
-                << "| ID    | PDG    |  Px[MeV]   Py[MeV]   Pz[MeV] |   E[MeV]  Mass[MeV] |    x[mm]     y[mm]     z[mm] |   PVID CellID |   MCP ID |"
+                << "| ID    | PDG    |  Px[MeV]   Py[MeV]   Pz[MeV] |   E[MeV]  Mass[MeV] |    x[mm]     y[mm]     z[mm] | PVID   CellID | MCPID |"
                 << std::endl
                 << "*****************************************************************************************************************************************************************************"
                 << std::endl;

@@ -146,13 +146,18 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     if (dControl->save_mcp_helper) {
         if ( prev->GetPhysicalVolume()->GetName() == "TagTrk_Strip_PV") {
             if (post->GetPhysicalVolume()->GetName() != "TagTrk_Strip_PV") {
-
+                SetMcPHelper(aStep, nTracker);
+                dRootMng->FillMCPHelper(fMCPH, aStep->GetTrack()->GetTrackID());
             }
         } else if (prev->GetPhysicalVolume()->GetName() == "RecTrk_Strip_PV" ) {
             if (post->GetPhysicalVolume()->GetName() != "RecTrk_Strip_PV" ) {
+                SetMcPHelper(aStep, nTracker);
+                dRootMng->FillMCPHelper(fMCPH, aStep->GetTrack()->GetTrackID());
             }
         } else if (prev->GetPhysicalVolume()->GetName() == "ECAL_PV") {
             if (post->GetPhysicalVolume()->GetName() != "ECAL_PV") {
+                SetMcPHelper(aStep, nECAL);
+                dRootMng->FillMCPHelper(fMCPH, aStep->GetTrack()->GetTrackID());
             }
         }
     }
@@ -172,13 +177,36 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void SteppingAction::SetMcPHelper(const G4Step *aStep) {
+void SteppingAction::SetMcPHelper(const G4Step *aStep, int detector) {
     fMCPH = new McPHelper();
+    G4StepPoint *post = aStep->GetPostStepPoint();
+    auto *touchable = dynamic_cast<const G4TouchableHistory*> (aStep->GetPostStepPoint()->GetTouchable());
+    reNumber1 = touchable->GetReplicaNumber(1);
+
     fMCPH->setId(aStep->GetTrack()->GetTrackID());
+    fMCPH->setDetector(detector);
+    fMCPH->setCellId(reNumber1 + 1);
+    if (detector == nTracker) {
+        fMCPH->setCellIdX(touchable->GetReplicaNumber(0) + 1);
+        fMCPH->setCellIdY(1);
+        fMCPH->setCellIdZ(reNumber1 + 1);
+    } else if (detector == nECAL) {
+        fMCPH->setCellIdX(reNumber1 % ((int)dControl->ECAL_Center_Module_No.x() * (int)dControl->ECAL_Center_Module_No.y()) % (int)dControl->ECAL_Center_Module_No.x() + 1);
+        fMCPH->setCellIdY(((reNumber1 % ((int)dControl->ECAL_Center_Module_No.x() * (int)dControl->ECAL_Center_Module_No.y())) / (int) dControl->ECAL_Center_Module_No.y()) + 1);
+        fMCPH->setCellIdZ(reNumber1 / ((int)dControl->ECAL_Center_Module_No.x() * (int)dControl->ECAL_Center_Module_No.y()) + 1);
+    }
+
+    fMCPH->setX(post->GetPosition()[0]);
+    fMCPH->setY(post->GetPosition()[1]);
+    fMCPH->setZ(post->GetPosition()[2]);
+
+    fMCPH->setT(post->GetKineticEnergy());
+    fMCPH->setE(post->GetTotalEnergy());
+
     fMCPH->setPdg(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
+    fMCPH->setPx(post->GetMomentum()[0]);
+    fMCPH->setPy(post->GetMomentum()[1]);
+    fMCPH->setPz(post->GetMomentum()[2]);
     fMCPH->setMass(aStep->GetTrack()->GetParticleDefinition()->GetPDGMass());
-    fMCPH->setE(aStep->GetPostStepPoint()->GetTotalEnergy());
-    fMCPH->setPx(aStep->GetPostStepPoint()->GetMomentum()[0]);
-    fMCPH->setPy(aStep->GetPostStepPoint()->GetMomentum()[1]);
-    fMCPH->setPz(aStep->GetPostStepPoint()->GetMomentum()[2]);
+    fMCPH->setIsIncoming(true);
 }

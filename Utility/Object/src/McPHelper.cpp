@@ -16,7 +16,8 @@ McPHelper &McPHelper::operator=(const McPHelper &rhs) {
     Py = rhs.Py;
     Pz = rhs.Pz;
     Mass = rhs.Mass;
-    MCParticle = rhs.MCParticle;
+    is_incoming = rhs.is_incoming;
+    if (rhs.MCParticle) MCParticle = rhs.MCParticle;
 }
 
 bool McPHelper::operator==(const McPHelper_b1_5 &rhs) const {
@@ -26,6 +27,7 @@ bool McPHelper::operator==(const McPHelper_b1_5 &rhs) const {
     Py == rhs.Py &&
     Pz == rhs.Pz &&
     Mass == rhs.Mass &&
+    is_incoming == rhs.is_incoming;
     MCParticle == rhs.MCParticle;
 }
 

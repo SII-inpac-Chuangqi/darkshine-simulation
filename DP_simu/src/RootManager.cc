@@ -230,13 +230,11 @@ void RootManager::FillMC(McParticle *fMC, int ParentID) {
 void RootManager::FillMCPHelper(McPHelper* fMCPH, int mcpId) {
     if (if_clean) return;
 
-    auto mcph = new McPHelper(*fMCPH);
-
     auto mcphVec = Evt->getMcPHelperCollection().at(dControl->MCPHelperCollection_Name);
     auto mcps = Evt->getMcParticleCollection().at(dControl->RawMCCollection_Name);
-    mcph->setMcParticle(McParticle::SearchID(mcps, mcpId));
+    fMCPH->setMcParticle(McParticle::SearchID(mcps, mcpId));
 
-    mcphVec->emplace_back(mcph);
+    mcphVec->emplace_back(fMCPH);
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
