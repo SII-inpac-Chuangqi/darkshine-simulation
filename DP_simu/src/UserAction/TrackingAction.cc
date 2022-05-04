@@ -61,38 +61,40 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
                        aTrack->GetMomentum()[1] * aTrack->GetMomentum()[1] +
                        aTrack->GetMomentum()[2] * aTrack->GetMomentum()[2]);
 
-    if (dControl->save_all_mcp || (aTrack->GetTrackID() == 1
-                                   || pm >= 1. * GeV
-                                   || (kin_energy >= 1. * GeV && kin_energy <= 10. * GeV)
-                                   || abs(pdg) == 13   // Muon
-                                   || abs(pdg) == 111  // Pion0
-                                   || abs(pdg) == 211  // Pion+-
-                                   || abs(pdg) == 321  // Kaon+-
-                                   || abs(pdg) == 2212 // proton
-                                   || abs(pdg) == 2112 // neutron
-                                   || abs(pdg) == 14   // muon neutrino
-                                   || abs(pdg) == 12   // electron neutrino
-                                   || (abs(pdg) >= 100 &&  abs(pdg) <= 10000) // inclusive hadrons
+    if (dControl->save_MC) {
+        if (dControl->save_all_mcp || (aTrack->GetTrackID() == 1
+                                       || pm >= 1. * GeV
+                                       || (kin_energy >= 1. * GeV && kin_energy <= 10. * GeV)
+                                       || abs(pdg) == 13   // Muon
+                                       || abs(pdg) == 111  // Pion0
+                                       || abs(pdg) == 211  // Pion+-
+                                       || abs(pdg) == 321  // Kaon+-
+                                       || abs(pdg) == 2212 // proton
+                                       || abs(pdg) == 2112 // neutron
+                                       || abs(pdg) == 14   // muon neutrino
+                                       || abs(pdg) == 12   // electron neutrino
+                                       || (abs(pdg) >= 100 &&  abs(pdg) <= 10000) // inclusive hadrons
 
-    )) {
-        fMC = new McParticle();
-        fMC->setPdg(pdg);
-        fMC->setId(aTrack->GetTrackID());
-        fMC->setMass(aTrack->GetParticleDefinition()->GetPDGMass());
-        fMC->setEnergy(energy);
-        fMC->setPx(aTrack->GetMomentum()[0]);
-        fMC->setPy(aTrack->GetMomentum()[1]);
-        fMC->setPz(aTrack->GetMomentum()[2]);
-        fMC->setVertexX(aTrack->GetPosition()[0]);
-        fMC->setVertexY(aTrack->GetPosition()[1]);
-        fMC->setVertexZ(aTrack->GetPosition()[2]);
+        )) {
+            fMC = new McParticle();
+            fMC->setPdg(pdg);
+            fMC->setId(aTrack->GetTrackID());
+            fMC->setMass(aTrack->GetParticleDefinition()->GetPDGMass());
+            fMC->setEnergy(energy);
+            fMC->setPx(aTrack->GetMomentum().x());
+            fMC->setPy(aTrack->GetMomentum().y());
+            fMC->setPz(aTrack->GetMomentum().z());
+            fMC->setVertexX(aTrack->GetPosition().x());
+            fMC->setVertexY(aTrack->GetPosition().y());
+            fMC->setVertexZ(aTrack->GetPosition().z());
 
-        if (aTrack->GetCreatorProcess())
-            fMC->setCreateProcess(aTrack->GetCreatorProcess()->GetProcessName());
+            if (aTrack->GetCreatorProcess())
+                fMC->setCreateProcess(aTrack->GetCreatorProcess()->GetProcessName());
 
-        dRootMng->FillMC(fMC, aTrack->GetParentID());
-
+            dRootMng->FillMC(fMC, aTrack->GetParentID());
+        }
     }
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -103,14 +105,16 @@ void TrackingAction::PostUserTrackingAction(const G4Track *aTrack) {
         dRootMng->FillWeight( aTrack->GetWeight() );
     }
     // Find MC in collection
-    auto MCCols = dRootMng->GetEvt()->getMcParticleCollection().at(dControl->RawMCCollection_Name);
-    auto p = McParticle::SearchID(MCCols, aTrack->GetTrackID());
-    if (p) {
-        //p->setERemain(aTrack->GetKineticEnergy());
-        p->setERemain(aTrack->GetTotalEnergy());
-        p->setEndPointX(aTrack->GetStep()->GetPostStepPoint()->GetPosition()[0]);
-        p->setEndPointY(aTrack->GetStep()->GetPostStepPoint()->GetPosition()[1]);
-        p->setEndPointZ(aTrack->GetStep()->GetPostStepPoint()->GetPosition()[2]);
+    if (dControl->save_MC){
+        auto MCCols = dRootMng->GetEvt()->getMcParticleCollection().at(dControl->RawMCCollection_Name);
+        auto p = McParticle::SearchID(MCCols, aTrack->GetTrackID());
+        if (p) {
+            //p->setERemain(aTrack->GetKineticEnergy());
+            p->setERemain(aTrack->GetTotalEnergy());
+            p->setEndPointX(aTrack->GetStep()->GetPostStepPoint()->GetPosition()[0]);
+            p->setEndPointY(aTrack->GetStep()->GetPostStepPoint()->GetPosition()[1]);
+            p->setEndPointZ(aTrack->GetStep()->GetPostStepPoint()->GetPosition()[2]);
+        }
     }
 
     delete fMC;

@@ -229,12 +229,19 @@ void RootManager::FillMC(McParticle *fMC, int ParentID) {
 /// \param[in] McParticle ID
 void RootManager::FillMCPHelper(McPHelper* fMCPH, int mcpId) {
     if (if_clean) return;
+    McParticle* mc = nullptr;
+    if (dControl->save_MC) {
+        auto mcps = Evt->getMcParticleCollection().at(dControl->RawMCCollection_Name);
+        mc = McParticle::SearchID(mcps, mcpId);
+    }
+    if (mc || dControl->save_all_mcp){
+        fMCPH->setMcParticle(mc);
+        auto mcphVec = Evt->getMcPHelperCollection().at(dControl->MCPHelperCollection_Name);
+        mcphVec->emplace_back(fMCPH);
+    } else {
+        delete fMCPH;
+    }
 
-    auto mcphVec = Evt->getMcPHelperCollection().at(dControl->MCPHelperCollection_Name);
-    auto mcps = Evt->getMcParticleCollection().at(dControl->RawMCCollection_Name);
-    fMCPH->setMcParticle(McParticle::SearchID(mcps, mcpId));
-
-    mcphVec->emplace_back(fMCPH);
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......

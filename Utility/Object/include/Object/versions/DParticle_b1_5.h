@@ -31,7 +31,6 @@ public:
                Px == rhs.Px &&
                Py == rhs.Py &&
                Pz == rhs.Pz &&
-               P == rhs.P &&
                VertexX == rhs.VertexX &&
                VertexY == rhs.VertexY &&
                VertexZ == rhs.VertexZ &&
@@ -55,7 +54,6 @@ public:
         Px = rhs.Px;
         Py = rhs.Py;
         Pz = rhs.Pz;
-        P = rhs.P;
         VertexX = rhs.VertexX;
         VertexY = rhs.VertexY;
         VertexZ = rhs.VertexZ;
@@ -192,9 +190,6 @@ public:
         CreateProcess = createProcess;
     }
 
-    void setP(float p) {
-        P = p;
-    }
 
 protected:
     // internal debug only
@@ -210,7 +205,6 @@ protected:
     float Px{0.};
     float Py{0.};
     float Pz{0.};
-    float P{0.};
     float VertexX{0.};
     float VertexY{0.};
     float VertexZ{0.};

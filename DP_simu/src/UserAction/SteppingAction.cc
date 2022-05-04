@@ -57,8 +57,8 @@ SteppingAction::~SteppingAction() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void SteppingAction::UserSteppingAction(const G4Step *aStep) {
-    G4StepPoint *prev = aStep->GetPreStepPoint();
-    G4StepPoint *post = aStep->GetPostStepPoint();
+    prev = aStep->GetPreStepPoint();
+    post = aStep->GetPostStepPoint();
 
     // For default hardbrem filter
     // Requirement: gamma from initial electron with energy larger than 4 GeV in tracker region
@@ -179,7 +179,6 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
 
 void SteppingAction::SetMcPHelper(const G4Step *aStep, int detector) {
     fMCPH = new McPHelper();
-    G4StepPoint *post = aStep->GetPostStepPoint();
     auto *touchable = dynamic_cast<const G4TouchableHistory*> (aStep->GetPostStepPoint()->GetTouchable());
     reNumber1 = touchable->GetReplicaNumber(1);
 
@@ -196,17 +195,19 @@ void SteppingAction::SetMcPHelper(const G4Step *aStep, int detector) {
         fMCPH->setCellIdZ(reNumber1 / ((int)dControl->ECAL_Center_Module_No.x() * (int)dControl->ECAL_Center_Module_No.y()) + 1);
     }
 
-    fMCPH->setX(post->GetPosition()[0]);
-    fMCPH->setY(post->GetPosition()[1]);
-    fMCPH->setZ(post->GetPosition()[2]);
+    fMCPH->setX(post->GetPosition().x());
+    fMCPH->setY(post->GetPosition().y());
+    fMCPH->setZ(post->GetPosition().z());
 
     fMCPH->setT(post->GetKineticEnergy());
     fMCPH->setE(post->GetTotalEnergy());
 
     fMCPH->setPdg(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
-    fMCPH->setPx(post->GetMomentum()[0]);
-    fMCPH->setPy(post->GetMomentum()[1]);
-    fMCPH->setPz(post->GetMomentum()[2]);
-    fMCPH->setMass(aStep->GetTrack()->GetParticleDefinition()->GetPDGMass());
+
+    fMCPH->setPx((float)post->GetMomentum().x());
+    fMCPH->setPy((float)post->GetMomentum().y());
+    fMCPH->setPz((float)post->GetMomentum().z());
+
+    fMCPH->setMass((float)aStep->GetTrack()->GetParticleDefinition()->GetPDGMass());
     fMCPH->setIsIncoming(true);
 }

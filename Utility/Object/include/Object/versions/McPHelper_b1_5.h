@@ -7,7 +7,6 @@
 
 #include "Object/DHit.h"
 #include "Object/McParticle.h"
-#include "TVector3.h"
 
 class McPHelper_b1_5 : public DHit {
 public:
@@ -41,8 +40,7 @@ public:
     }
 
     float getP() const{
-        auto p = TVector3(Px,Py,Pz);
-        return p.Mag();
+        return sqrt(Px * Px + Py * Py + Pz * Pz);
     }
 
     float getMass() const {

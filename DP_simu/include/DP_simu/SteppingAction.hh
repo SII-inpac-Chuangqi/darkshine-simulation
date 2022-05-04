@@ -62,6 +62,10 @@ private:
     G4double ENEnergyTar{0.};
     G4double ENEnergyECAL{0.};
     G4double record_step_z{0.};
+
+    G4StepPoint* prev;
+    G4StepPoint* post;
+
     G4int reNumber1;
 
     McPHelper* fMCPH{};
