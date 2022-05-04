@@ -143,6 +143,9 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
         }
     }
 
+    if (dControl->save_mcp_helper) {
+    }
+
     // /* Optical Photon Detection: APD region */
     //no need for real photon, since LUT is default
     // if (dControl->if_optical && aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "opticalphoton") {

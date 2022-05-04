@@ -604,8 +604,10 @@ bool Control::ReadYAML(const G4String &file_in) {
         save_all_mcp = Node["OutCollection"]["save_all_mcp"].as<bool>();
         save_MC = Node["OutCollection"]["save_MC"].as<bool>();
         save_initial_particle_step = Node["OutCollection"]["save_initial_particle_step"].as<bool>();
+        save_mcp_helper = Node["OutCollection"]["save_mcp_helper"].as<bool>();
         RawMCCollection_Name = Node["OutCollection"]["RawMCCollection_Name"].as<std::string>();
         InitialParticleStepCollection_Name = Node["OutCollection"]["InitialParticleStepCollection_Name"].as<std::string>();
+        MCPHelperCollection_Name = Node["OutCollection"]["MCPHelperCollection_Name"].as<std::string>();
         //----------------------------------------
         // For Memory Leak
         Memory_Check = Node["memory_check"].IsDefined() ? Node["memory_check"].as<bool>() : false;
