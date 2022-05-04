@@ -79,6 +79,23 @@ public:
         MCParticle = mcParticle;
     }
 
+    /// Dump
+    friend std::ostream &operator<<(std::ostream &os, const McPHelper_b1_5 &particle) {
+        TString str(Form("| %-5d | %-6d | %8.3f, %8.3f, %8.3f | %8.3f,  %8.3f |    %8.3f, %8.3f, %8.3f | %8.3f, %8.3f, %8.3f | %-6d %-6d | %-8d |",
+                         particle.id,
+                         particle.PDG,
+                         particle.Px, particle.Py, particle.Pz,
+                         particle.Energy, particle.Mass,
+                         particle.VertexX, particle.VertexY, particle.VertexZ,
+                         particle.EndPointX, particle.EndPointY, particle.EndPointZ,
+                         particle.Detector, particle.CellID,
+                         particle.MCParticle ? particle.MCParticle->getId() : 0));
+                         //particle.CreateProcess.data(), (particle.getParents()) ? particle.getParents()->getId() : 0));
+
+        os << str;
+
+        return os;
+    }
 private:
     /// Detector information
     int Detector{nNone};

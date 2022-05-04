@@ -129,21 +129,20 @@ void DEvent::PrintDetails() {
     }
 
 
-    // TODO: add stream output of MCPHelper Collection
-//    for (const auto& particles: MCPHelperCollection) {
-//        std::cout
-//                << "*****************************************************************************************************************************************************************************"
-//                << std::endl
-//                << "* MC Particle Helper Collection: " << particles.first << std::endl
-//                << "*****************************************************************************************************************************************************************************"
-//                << std::endl
-//                << "| ID    | PDG    |  Px[MeV]   Py[MeV]   Pz[MeV] |   E[MeV]  Mass[MeV]  ER[MeV] |Vertex x[mm]     y[mm]     z[mm] |End x[mm]     y[mm]     z[mm] | Process          Parent   |"
-//                << std::endl
-//                << "*****************************************************************************************************************************************************************************"
-//                << std::endl;
-//        for (auto particle: *(particles.second))
-//            std::cout << *particle << std::endl;
-//    }
+    for (const auto& particles: MCPHelperCollection) {
+        std::cout
+                << "*****************************************************************************************************************************************************************************"
+                << std::endl
+                << "* MC Particle Helper Collection: " << particles.first << std::endl
+                << "*****************************************************************************************************************************************************************************"
+                << std::endl
+                << "| ID    | PDG    |  Px[MeV]   Py[MeV]   Pz[MeV] |   E[MeV]  Mass[MeV] |Vertex x[mm]     y[mm]     z[mm] |End x[mm]     y[mm]     z[mm] |   PVID CellID |   MCP ID |"
+                << std::endl
+                << "*****************************************************************************************************************************************************************************"
+                << std::endl;
+        for (auto particle: *(particles.second))
+            std::cout << *particle << std::endl;
+    }
 
     for (const auto& simus: SimulatedHitCollection) {
         std::cout << "**********************************************************************" << std::endl
