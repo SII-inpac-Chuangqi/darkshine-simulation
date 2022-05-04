@@ -14,7 +14,8 @@ SET(DEvent_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DigiForm.hh
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DEvent.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DMagnet.h
-        # baseline1 version
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/McPHelper.h
+        # baseline1.5 version
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DHit_b1.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DParticle_b1_5.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DStep_b1_5.h
@@ -25,6 +26,7 @@ SET(DEvent_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DigiForm_b1.hh
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DEvent_b1_5.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DMagnet_b1.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/McPHelper_b1_5.h
         )
 SET(DEvent_source
         # Reference the current persistent version:
