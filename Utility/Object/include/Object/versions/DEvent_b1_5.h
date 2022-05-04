@@ -17,6 +17,7 @@
 #include "Object/SimulatedHit.h"
 #include "Object/DigiForm.hh"
 #include "Object/DStep.h"
+#include "Object/McPHelper.h"
 
 #include "TObject.h"
 #include "TString.h"
@@ -45,15 +46,15 @@ public:
     // Operators
 
     // Get Methods
-    int getRunId() const {
+    [[nodiscard]] int getRunId() const {
         return RunID;
     }
 
-    int getEventId() const {
+    [[nodiscard]] int getEventId() const {
         return EventID;
     }
 
-    int getVerbose() const {
+    [[nodiscard]] int getVerbose() const {
         return Verbose;
     }
 
@@ -71,6 +72,10 @@ public:
 
     [[nodiscard]] const MCParticleMap &getMcParticleCollection() const {
         return MCParticleCollection;
+    }
+
+    [[nodiscard]] const MCPHelperMap &getMcPHelperCollection() const {
+        return MCPHelperCollection;
     }
 
     [[nodiscard]] const RecParticleMap &getRecParticleCollection() const {
@@ -115,6 +120,8 @@ public:
 
     MCParticleVec *RegisterMCParticleCollection(const std::string &);
 
+    MCPHelperVec *RegisterMCPHelperCollection(const std::string &);
+
     RecParticleVec *RegisterRecParticleCollection(const std::string &);
 
     SimulatedHitVec *RegisterSimulatedHitCollection(const std::string &);
@@ -133,79 +140,79 @@ public:
     /*
      * Miscellaneous (truth)
      */
-    double getPnEnergyTarget() const {
+    float getPnEnergyTarget() const {
         return PNEnergy_Target;
     }
 
-    void setPnEnergyTarget(double pnEnergyTarget) {
+    void setPnEnergyTarget(float pnEnergyTarget) {
         PNEnergy_Target = pnEnergyTarget;
     }
 
-    double getPnEnergyEcal() const {
+    float getPnEnergyEcal() const {
         return PNEnergy_ECAL;
     }
 
-    void setPnEnergyEcal(double pnEnergyEcal) {
+    void setPnEnergyEcal(float pnEnergyEcal) {
         PNEnergy_ECAL = pnEnergyEcal;
     }
 
-    void setPnZTarget(double pnzTarget) {
+    void setPnZTarget(float pnzTarget) {
         PNZ_Target = pnzTarget;
     }
 
-    void setPnZEcal(double pnzEcal) {
+    void setPnZEcal(float pnzEcal) {
         PNZ_ECAL = pnzEcal;
     }
 
-    double getEnEnergyTarget() const {
+    float getEnEnergyTarget() const {
         return ENEnergy_Target;
     }
 
-    void setEnEnergyTarget(double enEnergyTarget) {
+    void setEnEnergyTarget(float enEnergyTarget) {
         ENEnergy_Target = enEnergyTarget;
     }
 
-    double getEnEnergyEcal() const {
+    float getEnEnergyEcal() const {
         return ENEnergy_ECAL;
     }
 
-    void setEnEnergyEcal(double enEnergyEcal) {
+    void setEnEnergyEcal(float enEnergyEcal) {
         ENEnergy_ECAL = enEnergyEcal;
     }
 
-    void setEnZTarget(double enzTarget) {
+    void setEnZTarget(float enzTarget) {
         ENZ_Target = enzTarget;
     }
 
-    void setEnZEcal(double enzEcal) {
+    void setEnZEcal(float enzEcal) {
         ENZ_ECAL = enzEcal;
     }
 
-    double getEleakEcal() const {
+    float getEleakEcal() const {
         return Eleak_ECAL;
     }
 
-    void setEleakEcal(double eleakEcal) {
+    void setEleakEcal(float eleakEcal) {
         Eleak_ECAL = eleakEcal;
     }
 
-    double getPnzTarget() const {
+    float getPnzTarget() const {
         return PNZ_Target;
     }
 
-    double getPnzEcal() const {
+    float getPnzEcal() const {
         return PNZ_ECAL;
     }
 
-    double getEnzTarget() const {
+    float getEnzTarget() const {
         return ENZ_Target;
     }
 
-    double getEnzEcal() const {
+    float getEnzEcal() const {
         return ENZ_ECAL;
     }
 
-    double getWeight() const {
+    float getWeight() const {
         return weight;
     }
 
@@ -214,6 +221,13 @@ public:
     }
 
     McParticle *SearchID(MCParticleVec *mv, int ID) {
+        for (auto itr : *mv) {
+            if (itr->getId() == ID) return itr;
+        }
+        return nullptr;
+    }
+
+    McPHelper *SearchID(MCPHelperVec *mv, int ID) {
         for (auto itr : *mv) {
             if (itr->getId() == ID) return itr;
         }
@@ -236,24 +250,24 @@ protected:
     /*
      * Miscellaneous (truth)
      */
-    double weight{1.};
+    float weight{1.};
     double Rndm[4]{}; // Random Number Seeds
-    double PNEnergy_Target{0.}; // Photon-Nuclear reaction Energy in Target region
-    double PNEnergy_ECAL{0.}; // Photon-Nuclear reaction Energy in ECAL region
-    double PNZ_Target{0.};
-    double PNZ_ECAL{0.};
-    double Eleak_ECAL{0.}; // Energy leakage in ECAL holder
-    double ENEnergy_Target{0.};
-    double ENEnergy_ECAL{0.};
-    double ENZ_Target{0.};
-    double ENZ_ECAL{0.};
+    float PNEnergy_Target{0.}; // Photon-Nuclear reaction Energy in Target region
+    float PNEnergy_ECAL{0.}; // Photon-Nuclear reaction Energy in ECAL region
+    float PNZ_Target{0.};
+    float PNZ_ECAL{0.};
+    float Eleak_ECAL{0.}; // Energy leakage in ECAL holder
+    float ENEnergy_Target{0.};
+    float ENEnergy_ECAL{0.};
+    float ENZ_Target{0.};
+    float ENZ_ECAL{0.};
 
     /*
      * Miscellaneous (Reconstructed)
      */
-    double TotalRecEnergy{0.};
-    double ECALRecEnergy{0.};
-    double HCALRecEnergy{0.};
+    float TotalRecEnergy{0.};
+    float ECALRecEnergy{0.};
+    float HCALRecEnergy{0.};
 
     // Verbosity
     int Verbose{0};
@@ -266,6 +280,7 @@ protected:
 
     // Event Physics Quantities
     MCParticleMap MCParticleCollection;
+    MCPHelperMap MCPHelperCollection;
     RecParticleMap RecParticleCollection;
     SimulatedHitMap SimulatedHitCollection;
     CalorimeterHitMap CalorimeterHitCollection;

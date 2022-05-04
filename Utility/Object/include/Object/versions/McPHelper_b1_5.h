@@ -11,6 +11,16 @@ class McPHelper_b1_5 : public DParticle {
 public:
     McPHelper_b1_5() = default;
 
+    McPHelper_b1_5(const McPHelper_b1_5 &);
+
+    ~McPHelper_b1_5() override = default;
+
+    bool operator == (const McPHelper_b1_5 &rhs) const;
+
+    bool operator != (const McPHelper_b1_5 &rhs) const;
+
+    McPHelper_b1_5 &operator=(const McPHelper_b1_5 &rhs);
+
     /// getters
     int getDetector() const {
         return Detector;
@@ -36,8 +46,8 @@ public:
         return is_incoming;
     }
 
-    McParticle *getMcParticleCollectionLink() const {
-        return MCParticleCollectionLink;
+    McParticle *getMcParticle() const {
+        return MCParticle;
     }
 
     /// setters
@@ -65,8 +75,8 @@ public:
         is_incoming = isIncoming;
     }
 
-    void setMcParticleCollectionLink(McParticle *mcParticleCollectionLink) {
-        MCParticleCollectionLink = mcParticleCollectionLink;
+    void setMcParticle(McParticle *mcParticle) {
+        MCParticle = mcParticle;
     }
 
 private:
@@ -81,7 +91,7 @@ private:
     /// true - prev step is outside the crystal, and post step is in the crystal. false - vice versa
     bool is_incoming{false};
 
-    McParticle* MCParticleCollectionLink;
+    McParticle* MCParticle{nullptr};
 
 };
 

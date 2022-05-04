@@ -34,6 +34,17 @@ void DEvent::Initialization(CleanType ct) {
         if (ct == nALL) delete itr.second;
     }
     if (ct == nALL) MCParticleCollection.clear();
+
+    for (auto itr : MCPHelperCollection) {
+        for (auto itr2 : *itr.second) {
+            delete itr2;
+        }
+        (itr.second)->clear();
+        (itr.second)->shrink_to_fit();
+        if (ct == nALL) delete itr.second;
+    }
+    if (ct == nALL) MCPHelperCollection.clear();
+
     for (auto itr: RecParticleCollection) {
         for (auto itr2: *itr.second) {
             delete itr2;
@@ -117,6 +128,23 @@ void DEvent::PrintDetails() {
             std::cout << *particle << std::endl;
     }
 
+
+    // TODO: add stream output of MCPHelper Collection
+//    for (const auto& particles: MCPHelperCollection) {
+//        std::cout
+//                << "*****************************************************************************************************************************************************************************"
+//                << std::endl
+//                << "* MC Particle Helper Collection: " << particles.first << std::endl
+//                << "*****************************************************************************************************************************************************************************"
+//                << std::endl
+//                << "| ID    | PDG    |  Px[MeV]   Py[MeV]   Pz[MeV] |   E[MeV]  Mass[MeV]  ER[MeV] |Vertex x[mm]     y[mm]     z[mm] |End x[mm]     y[mm]     z[mm] | Process          Parent   |"
+//                << std::endl
+//                << "*****************************************************************************************************************************************************************************"
+//                << std::endl;
+//        for (auto particle: *(particles.second))
+//            std::cout << *particle << std::endl;
+//    }
+
     for (const auto& simus: SimulatedHitCollection) {
         std::cout << "**********************************************************************" << std::endl
                   << "* Simulated Hit Collection: " << simus.first << std::endl
@@ -179,6 +207,21 @@ MCParticleVec *DEvent::RegisterMCParticleCollection(const std::string &str) {
     return tmpVec;
 }
 
+MCPHelperVec *DEvent::RegisterMCPHelperCollection(const std::string &str) {
+    if (MCPHelperCollection.count(str) != 0) {
+        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
+        return nullptr;
+    }
+    auto tmpVec = new MCPHelperVec();
+    MCPHelperCollection.emplace(std::pair<std::string, MCPHelperVec *>(str, tmpVec));
+
+    if (Verbose > 1) {
+        std::cout << "[MCPHelper REGISTER] : (Verbosity 2) ==> A new collection " + str +
+                     " has been successfully added to MCPHelper Collection." << std::endl;
+    }
+
+    return tmpVec;
+}
 
 RecParticleVec *DEvent::RegisterRecParticleCollection(const std::string &str) {
     if (RecParticleCollection.count(str) != 0) {
@@ -243,6 +286,10 @@ std::vector<std::string> *DEvent::ListAllCollections() {
     tmp->insert(tmp->end(), s->begin(), s->end());
     delete s;
 
+    s = ListCollections(MCPHelperCollection);
+    tmp->insert(tmp->end(), s->begin(), s->end());
+    delete s;
+
     s = ListCollections(RecParticleCollection);
     tmp->insert(tmp->end(), s->begin(), s->end());
     delete s;
@@ -265,6 +312,7 @@ void DEvent::DeleteCollection(const std::string &str) {
     auto itr4 = CalorimeterHitCollection.find(str);
     auto itr5 = StepCollection.find(str);
     auto itr6 = OpticalCollection.find(str);
+    auto itr7 = MCPHelperCollection.find(str);
 
     if (itr1 != MCParticleCollection.end()) {
         MCParticleCollection.erase(itr1);
@@ -284,6 +332,8 @@ void DEvent::DeleteCollection(const std::string &str) {
     } else if (itr6 != OpticalCollection.end()) {
         OpticalCollection.erase(itr6);
         std::cout << "[Opt DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+    } else if (itr7 != MCPHelperCollection.end()) {
+        std::cout << "[MCPHelper DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
     } else
         std::cerr << "[WARNING] ==> No Key named " + str + "." << std::endl;
 }
