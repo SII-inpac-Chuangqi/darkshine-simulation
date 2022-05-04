@@ -144,6 +144,16 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     }
 
     if (dControl->save_mcp_helper) {
+        if ( prev->GetPhysicalVolume()->GetName() == "TagTrk_Strip_PV") {
+            if (post->GetPhysicalVolume()->GetName() != "TagTrk_Strip_PV") {
+            }
+        } else if (prev->GetPhysicalVolume()->GetName() == "RecTrk_Strip_PV" ) {
+            if (post->GetPhysicalVolume()->GetName() != "RecTrk_Strip_PV" ) {
+            }
+        } else if (prev->GetPhysicalVolume()->GetName() == "ECAL_PV") {
+            if (post->GetPhysicalVolume()->GetName() != "ECAL_PV") {
+            }
+        }
     }
 
     // /* Optical Photon Detection: APD region */
