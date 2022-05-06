@@ -234,13 +234,13 @@ void RootManager::FillMCPHelper(McPHelper* fMCPH, int mcpId) {
         auto mcps = Evt->getMcParticleCollection().at(dControl->RawMCCollection_Name);
         mc = McParticle::SearchID(mcps, mcpId);
     }
-    if (mc || dControl->save_all_mcp){
+//    if (mc || dControl->save_all_mcp){
         fMCPH->setMcParticle(mc);
         auto mcphVec = Evt->getMcPHelperCollection().at(dControl->MCPHelperCollection_Name);
         mcphVec->emplace_back(fMCPH);
-    } else {
-        delete fMCPH;
-    }
+//    } else {
+//        delete fMCPH;
+//    }
 
 }
 
