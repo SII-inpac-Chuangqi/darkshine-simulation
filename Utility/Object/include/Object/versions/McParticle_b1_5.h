@@ -97,7 +97,7 @@ public:
     }
 
 private:
-
+    // 00 00 00 00   00 00 00 00   00 00 00 00  -- -- -- -- // Last line of DParticle Memory
     // the remaining energy while leaving the world
     float ERemain{0.};
 
@@ -106,6 +106,8 @@ private:
 
     ReconstructedParticle_b1_5* RecParticles{};
     SimulatedHitVec SimHits;
+
+    // 00 00 00 00   00 00 00 00   00 00 00 00  00 00 00 00 // Last line of MCParticle Memory
 
 ClassDefOverride(McParticle_b1_5, 10)
 

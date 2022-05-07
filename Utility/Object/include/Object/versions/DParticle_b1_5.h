@@ -23,7 +23,7 @@ public:
 
     bool operator==(const DParticle_b1_5 &rhs) const {
         return id == rhs.id &&
-               Name == rhs.Name &&
+               //Name == rhs.Name &&
                CreateProcess == rhs.CreateProcess &&
                PDG == rhs.PDG &&
                Mass == rhs.Mass &&
@@ -31,7 +31,7 @@ public:
                Px == rhs.Px &&
                Py == rhs.Py &&
                Pz == rhs.Pz &&
-               P == rhs.P &&
+               //P == rhs.P &&
                VertexX == rhs.VertexX &&
                VertexY == rhs.VertexY &&
                VertexZ == rhs.VertexZ &&
@@ -47,7 +47,7 @@ public:
     DParticle_b1_5 &operator=(const DParticle_b1_5 &rhs) {
         if (&rhs == this) { return *this; }
         id = rhs.id;
-        Name = rhs.Name;
+        //Name = rhs.Name;
         CreateProcess = rhs.CreateProcess;
         PDG = rhs.PDG;
         Mass = rhs.Mass;
@@ -55,7 +55,7 @@ public:
         Px = rhs.Px;
         Py = rhs.Py;
         Pz = rhs.Pz;
-        P = rhs.P;
+        //P = rhs.P;
         VertexX = rhs.VertexX;
         VertexY = rhs.VertexY;
         VertexZ = rhs.VertexZ;
@@ -119,9 +119,9 @@ public:
         return EndPointZ;
     }
 
-    const std::string &getName() const {
-        return Name;
-    }
+//    const std::string &getName() const {
+//        return Name;
+//    }
 
     const std::string &getCreateProcess() const {
         return CreateProcess;
@@ -184,41 +184,47 @@ public:
         EndPointZ = endPointZ;
     }
 
-    void setName(const std::string &name) {
-        Name = name;
-    }
+//    void setName(const std::string &name) {
+//        Name = name;
+//    }
 
     void setCreateProcess(const std::string &createProcess) {
         CreateProcess = createProcess;
     }
 
-    void setP(float p) {
-        P = p;
-    }
+//    void setP(float p) {
+//        P = p;
+//    }
 
 protected:
+    // 00 00 00 00   00 00 00 00   00 00 00 00   00 00 00 00 // Last line of TObject Memory
+
     // internal debug only
-    int id{0};
-
-    // internal String
-    std::string Name;
-    std::string CreateProcess;
-
-    int PDG{0};
-    float Mass{0.};
-    float Energy{0.};
+    int id{0}; // mem 1/4
     float Px{0.};
     float Py{0.};
     float Pz{0.};
-    float P{0.};
+
+    int PDG{0}; // mem 2/4
     float VertexX{0.};
     float VertexY{0.};
     float VertexZ{0.};
+
+    float Energy{0.};
     float EndPointX{0.};
     float EndPointY{0.};
     float EndPointZ{0.};
 
+    std::string CreateProcess;
+    float Mass{0.};
+    // internal String
+    // std::string Name;
+    // 00 00 00 00   00 00 00 00   00 00 00 00   -- -- -- -- // Last line of DParticle Memory
+
 ClassDefOverride(DParticle_b1_5, 3);
+
+    /// Memory View
+
 };
 
 #endif //DSIMU_DPARTICLE_B1_5_H

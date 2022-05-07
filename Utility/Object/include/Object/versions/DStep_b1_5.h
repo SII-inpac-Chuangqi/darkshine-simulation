@@ -150,14 +150,18 @@ public:
     }
 
 private:
+    // 00 00 00 00   00 00 00 00   00 00 00 00   00 00 00 00 // Last line of TObject Memory
+
     int id{0};
     float X{0.};
     float Y{0.};
     float Z{0.};
+
     float Px{0.};
     float Py{0.};
     float Pz{0.};
     float E{0.};
+
     std::string PVName;
     std::string ProcessName;
 
