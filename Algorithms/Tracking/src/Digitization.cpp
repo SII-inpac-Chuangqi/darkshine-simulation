@@ -110,8 +110,13 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
                 {
                     for(auto hit2 : layer2)
                     {
-                        double smear1 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
-                        double smear2 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
+                        double smear1 = 0.;
+                        double smear2 = 0.;
+                        if(if_smear_)
+                        {
+                            smear1 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
+                            smear2 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
+                        }
                         double x1 = hit1->GetX() + smear1;
                         double y1 = -x1/tan(angle) + ((hit2->GetCellIdX() - 0.5*(strip_no + 1))*layer_width/strip_no + smear2)/sin(angle);
     

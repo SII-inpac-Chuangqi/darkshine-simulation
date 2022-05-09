@@ -41,14 +41,15 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
     Description = "Tracking by Yi-Fan Zhu";
 
     RegisterIntParameter("clean", "Clean mode: no truth information", &clean, 1);
-    RegisterIntParameter("if_strip", "If strip structures in trackers", &if_strip, 1);
-    RegisterDoubleParameter("con_field", "Const magnet field", &con_field, -1.5);
+    RegisterIntParameter("if_strip", "If use strip structures in trackers", &if_strip, 1);
+    RegisterIntParameter("if_smear", "If smear hits in strip structure", &if_smear, 1);
     RegisterIntParameter("Tag_fit_method",
                          "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
                          &Tag_fit_method, 1);
     RegisterIntParameter("Rec_fit_method",
                          "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
                          &Rec_fit_method, 1);
+    RegisterDoubleParameter("con_field", "Const magnet field", &con_field, -1.5);
 }
 
 void TrackingProcessor::Begin() {
@@ -56,6 +57,7 @@ void TrackingProcessor::Begin() {
 //Load Geometry
 //................................................................................//
     digitizer.GetTrackerInfo(if_strip);
+    digitizer.SetIfSmear(if_smear);
 
 //................................................................................//
 //Load magnet

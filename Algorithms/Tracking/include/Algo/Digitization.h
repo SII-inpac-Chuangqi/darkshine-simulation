@@ -39,6 +39,7 @@ public:
     Digitization() = default;
     ~Digitization() = default;
 
+    void SetIfSmear(bool if_smear) {if_smear_ = if_smear;}
 //Get tracker information
     void GetTrackerInfo(bool if_strip);
 //Separate tracker hits into vectors by layers
@@ -50,6 +51,7 @@ private:
     TGeoNode* world_;
 
     bool if_strip_{true};
+    bool if_smear_{true};
 
     std::vector<double> layer_width_tag_ = {};
     std::vector<double> layer_length_tag_ = {};
