@@ -44,13 +44,13 @@ public:
     void readGeometryDetails();
     void printGeometryDetails() const;
 
-    double getLayerWidthTag()  const {return layer_width_tag;}
-    double getLayerLengthTag() const {return layer_length_tag;}
+    std::vector<double> getLayerWidthTag()  const {return layer_width_tag;}
+    std::vector<double> getLayerLengthTag() const {return layer_length_tag;}
     std::vector<int>    getStripNoTag() const {return strip_no_tag;}
     std::vector<double> getAnglesTag()  const {return angles_tag;}
 
-    double getLayerWidthRec()  const {return layer_width_rec;}
-    double getLayerLengthRec() const {return layer_length_rec;}
+    std::vector<double> getLayerWidthRec()  const {return layer_width_rec;}
+    std::vector<double> getLayerLengthRec() const {return layer_length_rec;}
     std::vector<int>    getStripNoRec() const {return strip_no_rec;}
     std::vector<double> getAnglesRec()  const {return angles_rec;}
 
@@ -73,14 +73,14 @@ protected:
 
     TGeoNode* world_{nullptr};
 
-    double layer_width_tag{-INFINITY};
-    double layer_length_tag{-INFINITY};
+    std::vector<double> layer_width_tag;
+    std::vector<double> layer_length_tag;
     std::vector<int> strip_no_tag;
     std::vector<double> angles_tag;
 
-    double layer_width_rec{-INFINITY};
-    double layer_length_rec{-INFINITY};
-    std::vector<int> strip_no_rec{-1};
+    std::vector<double> layer_width_rec;
+    std::vector<double> layer_length_rec;
+    std::vector<int> strip_no_rec;
     std::vector<double> angles_rec;
 
     double ECAL_center_x{-INFINITY};

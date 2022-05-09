@@ -54,13 +54,13 @@ void AnaData::readGeometryDetails() {
         return;
     }
 
-    layer_width_tag.clear();
-    layer_length_tag.clear();
+    layer_width_tag = -INFINITY;
+    layer_length_tag = -INFINITY;
     strip_no_tag.clear();
     angles_tag.clear();
 
-    layer_width_rec.clear();
-    layer_length_rec.clear();
+    layer_width_rec = -INFINITY;
+    layer_length_rec = -INFINITY;
     strip_no_rec.clear();
     angles_rec.clear();
 
@@ -85,14 +85,14 @@ void AnaData::readGeometryDetails() {
                 auto rotation = layer->GetMatrix()->GetRotationMatrix();
 
                 if(layer_name.Contains("Tag")) {
-                    layer_width_tag.push_back(2.*CUNIT*layer_shape->GetDX());
-                    layer_length_tag.push_back(2.*CUNIT*layer_shape->GetDY());
+                    layer_width_tag.push_back(CUNIT*layer_shape->GetDX());
+                    layer_length_tag.push_back(CUNIT*layer_shape->GetDY());
                     strip_no_tag.push_back(layer->GetNdaughters());
                     angles_tag.push_back(std::asin(rotation[1]));
                 }
                 else if(layer_name.Contains("Rec")) {
-                    layer_width_rec.push_back(2.*CUNIT*layer_shape->GetDX());
-                    layer_length_rec.push_back(2.*CUNIT*layer_shape->GetDY());
+                    layer_width_rec.push_back(CUNIT*layer_shape->GetDX());
+                    layer_length_rec.push_back(CUNIT*layer_shape->GetDY());
                     strip_no_rec.push_back(layer->GetNdaughters());
                     angles_rec.push_back(std::asin(rotation[1]));
                 }
@@ -140,27 +140,18 @@ void AnaData::readGeometryDetails() {
 
 void AnaData::printGeometryDetails() const {
     std::cerr << "[INFO] ==> Geometry details:" << std::endl;
-    if(strip_no_tag.size() && layer_width_tag.size() && layer_length_tag.size() &&
-       strip_no_rec.size() && layer_width_rec.size() && layer_length_rec.size()   ) {
+    if(std::isnormal(layer_width_tag) && std::isnormal(layer_length_tag) &&
+       std::isnormal(layer_width_rec) && std::isnormal(layer_length_rec)   ) {
         std::cerr << "           Tag tracker: strip No.    ";
-        for(size_t i = 0; i < strip_no_tag.size();     i += 2) std::cerr << strip_no_tag.at(i) << ", ";
+        for(size_t i = 0; i < strip_no_tag.size(); i += 2) std::cerr << strip_no_tag.at(i) << "\t";
         std::cerr << std::endl;
-        std::cerr << "                        layer width  ";
-        for(size_t i = 0; i < layer_width_tag.size();  i += 2) std::cerr << layer_width_tag.at(i)  << " mm, ";
-        std::cerr << std::endl;
-        std::cerr << "                        layer length ";
-        for(size_t i = 0; i < layer_length_tag.size(); i += 2) std::cerr << layer_length_tag.at(i) << " mm, ";
-        std::cerr << std::endl;
-
+        std::cerr << "                        layer width  " << layer_width_tag          << " mm" << std::endl
+                  << "                        layer length " << layer_length_tag         << " mm" << std::endl;
         std::cerr << "           Rec tracker: strip No.    ";
-        for(size_t i = 0; i < strip_no_rec.size();     i += 2) std::cerr << strip_no_rec.at(i) << ", ";
+        for(size_t i = 0; i < strip_no_rec.size(); i += 2) std::cerr << strip_no_rec.at(i) << "\t";
         std::cerr << std::endl;
-        std::cerr << "                        layer width  ";
-        for(size_t i = 0; i < layer_width_rec.size();  i += 2) std::cerr << layer_width_rec.at(i)  << " mm, ";
-        std::cerr << std::endl;
-        std::cerr << "                        layer length ";
-        for(size_t i = 0; i < layer_length_rec.size(); i += 2) std::cerr << layer_length_rec.at(i) << " mm, ";
-        std::cerr << std::endl;
+        std::cerr << "                        layer width  " << layer_width_rec          << " mm" << std::endl
+                  << "                        layer length " << layer_length_rec         << " mm" << std::endl;
     }
     if(ECal_cell_length_x.size() && ECal_cell_length_y.size() && ECal_cell_length_z.size())
         std::cerr << "           ECal:        center x at  " << ECAL_center_x            << " mm" << std::endl
