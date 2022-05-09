@@ -54,14 +54,14 @@ void AnaData::readGeometryDetails() {
         return;
     }
 
-    strip_width_tag = -INFINITY;
-    strip_length_tag = -INFINITY;
-    strip_no_tag = -1;
+    layer_width_tag = -INFINITY;
+    layer_length_tag = -INFINITY;
+    strip_no_tag.clear();
     angles_tag.clear();
 
-    strip_width_rec = -INFINITY;
-    strip_length_rec = -INFINITY;
-    strip_no_rec = -1;
+    layer_width_rec = -INFINITY;
+    layer_length_rec = -INFINITY;
+    strip_no_rec.clear();
     angles_rec.clear();
 
     ECal_cell_length_x.clear();
@@ -81,23 +81,23 @@ void AnaData::readGeometryDetails() {
             auto *detector_shape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
 
             if(detector_name.Contains("TAG")) {
-                strip_no_tag = detector->GetDaughter(0)->GetNdaughters();
-                strip_width_tag = CUNIT*detector_shape->GetDX();
-                strip_length_tag = CUNIT*detector_shape->GetDY();
+                strip_no_tag.push_back(detector->GetDaughter(0)->GetNdaughters());
+                layer_width_tag = CUNIT*detector_shape->GetDX();
+                layer_length_tag = CUNIT*detector_shape->GetDY();
             }
             else if(detector_name.Contains("REC")) {
-                strip_no_rec = detector->GetDaughter(0)->GetNdaughters();
-                strip_width_rec = CUNIT*detector_shape->GetDX();
-                strip_length_rec = CUNIT*detector_shape->GetDY();
+                strip_no_rec.push_back(detector->GetDaughter(0)->GetNdaughters());
+                layer_width_rec = CUNIT*detector_shape->GetDX();
+                layer_length_rec = CUNIT*detector_shape->GetDY();
             }
 
             for(int j = 0; j < detector->GetNdaughters(); j++) {
                 auto *layer = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
-                auto strip_name = TString(layer->GetVolume()->GetName());
+                auto layer_name = TString(layer->GetVolume()->GetName());
                 auto rotation = layer->GetMatrix()->GetRotationMatrix();
-                if(strip_name.Contains("Tag"))
+                if(layer_name.Contains("Tag"))
                     angles_tag.push_back(std::asin(rotation[1]));
-                else if(strip_name.Contains("Rec"))
+                else if(layer_name.Contains("Rec"))
                     angles_rec.push_back(std::asin(rotation[1]));
             }
         }
@@ -143,22 +143,23 @@ void AnaData::readGeometryDetails() {
 
 void AnaData::printGeometryDetails() const {
     std::cerr << "[INFO] ==> Geometry details:" << std::endl
-              << "           Tag tracker: strip No.    " << strip_no_tag             << std::endl
-              << "                        strip width  " << strip_width_tag          << std::endl
-              << "                        strip length " << strip_length_tag         << std::endl
-              << "           Rec tracker: strip No.    " << strip_no_rec             << std::endl
-              << "                        strip width  " << strip_width_rec          << " mm" << std::endl
-              << "                        strip length " << strip_length_rec         << " mm" << std::endl
-              << "           ECal:        center x at  " << ECAL_center_x            << " mm" << std::endl
-              << "                        center y at  " << ECAL_center_y            << " mm" << std::endl
-              << "                        center z at  " << ECAL_center_z            << " mm" << std::endl
-              << "                        length x     " << ECAL_length_x            << " mm" << std::endl
-              << "                        length y     " << ECAL_length_y            << " mm" << std::endl
-              << "                        length z     " << ECAL_length_z            << " mm" << std::endl
-              << "                        cell size x  " << ECal_cell_length_x.at(0) << " mm" << std::endl
-              << "                        cell size y  " << ECal_cell_length_y.at(0) << " mm" << std::endl
-              << "                        cell size z  " << ECal_cell_length_z.at(0) << " mm" << std::endl
-              << "                        cell No. x   " << N_ECal_cell_x            << std::endl
-              << "                        cell No. y   " << N_ECal_cell_y            << std::endl
-              << "                        cell No. z   " << N_ECal_cell_z            << std::endl;
+              << "           Tag tracker: strip No.    " << strip_no_tag.at(0)       << std::endl
+              << "                        layer width  " << layer_width_tag          << " mm" << std::endl
+              << "                        layer length " << layer_length_tag         << " mm" << std::endl
+              << "           Rec tracker: strip No.    " << strip_no_rec.at(0)       << std::endl
+              << "                        layer width  " << layer_width_rec          << " mm" << std::endl
+              << "                        layer length " << layer_length_rec         << " mm" << std::endl;
+    if(ECal_cell_length_x.size() && ECal_cell_length_y.size() && ECal_cell_length_z.size())
+        std::cerr << "           ECal:        center x at  " << ECAL_center_x            << " mm" << std::endl
+                  << "                        center y at  " << ECAL_center_y            << " mm" << std::endl
+                  << "                        center z at  " << ECAL_center_z            << " mm" << std::endl
+                  << "                        length x     " << ECAL_length_x            << " mm" << std::endl
+                  << "                        length y     " << ECAL_length_y            << " mm" << std::endl
+                  << "                        length z     " << ECAL_length_z            << " mm" << std::endl
+                  << "                        cell size x  " << ECal_cell_length_x.at(0) << " mm" << std::endl
+                  << "                        cell size y  " << ECal_cell_length_y.at(0) << " mm" << std::endl
+                  << "                        cell size z  " << ECal_cell_length_z.at(0) << " mm" << std::endl
+                  << "                        cell No. x   " << N_ECal_cell_x            << std::endl
+                  << "                        cell No. y   " << N_ECal_cell_y            << std::endl
+                  << "                        cell No. z   " << N_ECal_cell_z            << std::endl;
 }

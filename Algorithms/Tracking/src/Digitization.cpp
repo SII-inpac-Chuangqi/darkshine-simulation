@@ -31,14 +31,14 @@ void Digitization::GetTrackerInfo(bool if_strip)
         angles_tag_.clear();
         angles_rec_.clear();
 
-        strip_no_tag_     = dAnaData->getStripNoTag();
-        layer_width_tag_  = dAnaData->getStripWidthTag();
-        layer_length_tag_ = dAnaData->getStripLengthTag();
+        strip_no_tag_     = dAnaData->getStripNoTag().at(0);
+        layer_width_tag_  = dAnaData->getLayerWidthTag();
+        layer_length_tag_ = dAnaData->getLayerLengthTag();
         for(auto angle : dAnaData->getAnglesTag()) angles_tag_.push_back(angle);
 
-        strip_no_rec_     = dAnaData->getStripNoRec();
-        layer_width_rec_  = dAnaData->getStripWidthRec();
-        layer_length_rec_ = dAnaData->getStripLengthRec();
+        strip_no_rec_     = dAnaData->getStripNoRec().at(0);
+        layer_width_rec_  = dAnaData->getLayerWidthRec();
+        layer_length_rec_ = dAnaData->getLayerLengthRec();
         for(auto angle : dAnaData->getAnglesRec()) angles_rec_.push_back(angle);
 
         std::cout << "[INFO] ==> Strip model loaded in tracking" << std::endl;
