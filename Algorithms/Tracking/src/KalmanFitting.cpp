@@ -74,7 +74,7 @@ void KalmanFitting::Init(const TrkHitPVec &track, std::initializer_list<double> 
     pos = TVector3((*track.at(0)).GetU()*0.1,  //pre fitting results --postion,  mm->cm
                    (*track.at(0)).GetV()*0.1,  //
                    (*track.at(0)).GetZ()*0.1); //
-    mom = TVector3(0, 0, 0.3*B*preR*0.001);   //                    --momentum, MeV->GeV
+    mom = TVector3(0, 0, 0.3*B*preR*0.001);    //                    --momentum, MeV->GeV
     hitCov.UnitMatrix();                       //covariance matrix
     hitCov(0, 0) = 0.0006*0.0006;              //resolution, cm --x 6µm
     hitCov(1, 1) = 0.006*0.006;                //               --y 60µm
@@ -156,7 +156,7 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
         //std::cout << "position error: " << xSigma << std::endl;
         ySigma = state[4]*10 - (*track.at(0)).GetY();
     }
-
+/*
     {
         double ECal_front_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
 
@@ -182,6 +182,7 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
         ECal_seed_py =  mom_on_ECal[1]*1000.; //
         ECal_seed_pz = -mom_on_ECal[2]*1000.; //
     }
+*/
 }
 
 //................................................................................//

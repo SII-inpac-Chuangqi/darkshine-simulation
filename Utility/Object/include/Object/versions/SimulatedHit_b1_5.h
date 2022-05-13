@@ -35,7 +35,7 @@ public:
 
     float getEdepHad() const;
 
-    float getELeakWrapper() const;
+    //float getELeakWrapper() const;
 
     int getPhotonNumber() const {
         return PhotonNumber;
@@ -71,7 +71,7 @@ public:
 
     void setEdepHad(float edepHad);
 
-    void setELeakWrapper(float eLeakWrapper);
+    //void setELeakWrapper(float eLeakWrapper);
 
     void setPContribution(const std::vector<McParticle_b1_5> &pContribution) {
         MCPContribution = pContribution;
@@ -94,10 +94,11 @@ public:
     void addParticleContribution(const McParticle_b1_5& mcp, float Edep, bool record_all = false);
 
 private:
-    float ELeak_Wrapper{0.};
+    // 00 00 00 00   -- -- -- --   -- -- -- --   -- -- -- -- // Last line of DHit Memory
+    int PhotonNumber{0};
     float EdepEm{0.};
     float EdepHad{0.};
-    int PhotonNumber{0};
+    //float ELeak_Wrapper{0.};
 
     // the corresponding MC particle contributing to this hit
     std::vector<McParticle_b1_5 > MCPContribution;

@@ -16,7 +16,7 @@ SimulatedHit::SimulatedHit_b1_5(const SimulatedHit &rhs) : DHit(rhs) {
 SimulatedHit &SimulatedHit::operator=(const SimulatedHit &rhs) {
     if (&rhs == this) { return *this; }
     DHit::operator=(rhs);
-    ELeak_Wrapper = rhs.ELeak_Wrapper;
+    //ELeak_Wrapper = rhs.ELeak_Wrapper;
     EdepEm = rhs.EdepEm;
     EdepHad = rhs.EdepHad;
     PhotonNumber = rhs.PhotonNumber;
@@ -55,17 +55,17 @@ void SimulatedHit::setEdepHad(float edepHad) {
     EdepHad = edepHad;
 }
 
-void SimulatedHit::setELeakWrapper(float eLeakWrapper) {
-    ELeak_Wrapper = eLeakWrapper;
-}
+//void SimulatedHit::setELeakWrapper(float eLeakWrapper) {
+//    ELeak_Wrapper = eLeakWrapper;
+//}
 
-float SimulatedHit::getELeakWrapper() const {
-    return ELeak_Wrapper;
-}
+//float SimulatedHit::getELeakWrapper() const {
+//    return ELeak_Wrapper;
+//}
 
 bool SimulatedHit::operator==(const SimulatedHit &rhs) const {
     return static_cast<const DHit &>(*this) == static_cast<const DHit &>(rhs) &&
-           ELeak_Wrapper == rhs.ELeak_Wrapper &&
+           //ELeak_Wrapper == rhs.ELeak_Wrapper &&
            EdepEm == rhs.EdepEm &&
            EdepHad == rhs.EdepHad &&
            PhotonNumber == rhs.PhotonNumber &&

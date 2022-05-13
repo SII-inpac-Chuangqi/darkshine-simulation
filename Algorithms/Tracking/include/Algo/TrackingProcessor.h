@@ -47,9 +47,10 @@ private:
 //................................................................................//
     int clean{0};
     int if_strip{1};
-    double con_field{-1.5};
+    int if_smear{1};
     int Tag_fit_method{-1};
     int Rec_fit_method{-1};
+    double con_field{-1.5};
 
 //................................................................................//
 //Geometry

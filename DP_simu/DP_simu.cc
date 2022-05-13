@@ -206,7 +206,7 @@ int main(int argc, char **argv) {
     // Biasing
     if (dControl->if_bias) {
         auto *biasingPhysics = new G4GenericBiasingPhysics();
-        if (dControl->BiasProcess.contains("electron"))
+        if (dControl->BiasProcess.contains("electron") || dControl->BiasProcess.contains("DMProcess"))
             biasingPhysics->Bias("e-", {dControl->BiasProcess});
         if (dControl->BiasProcess.contains("Gamma")
             || dControl->BiasProcess.contains("photo"))
