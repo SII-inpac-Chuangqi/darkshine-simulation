@@ -87,7 +87,7 @@ OutCollection:
   save_MC: true
   # save the initial particle step
   save_initial_particle_step: true
-  # save snapshot of particle passing through a crystal surface
+  # save snapshot of particle passing through surface of ECAL Region
   save_mcp_helper: true
 
   RawMCCollection_Name: "RawMCParticle"

@@ -7,7 +7,7 @@
 
 #include "Object/versions/McPHelper_b1_5.h"
 
-/// Snapshot of particle passing through a crystal surface
+/// Snapshot of particle passing through ECAL Region surface
 using McPHelper = McPHelper_b1_5;
 
 #endif //DSIMU_MCPHELPER_H
