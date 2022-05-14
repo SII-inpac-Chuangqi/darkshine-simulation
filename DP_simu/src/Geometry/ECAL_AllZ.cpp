@@ -57,10 +57,26 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, bool fCheckOverlaps) 
         ECAL_Center->SetCALMaterial(ECAL_Center_Mat);
         ECAL_Center->SetWrapMaterial(ECAL_Wrap_Mat);
         ECAL_Center->SetVis(new G4VisAttributes(G4Colour(0.3, 0.5, 0.8)));
+        ECAL_Center->SetAPDVis(new G4VisAttributes(G4Colour(0.5, 0.5, .0)));
         ECAL_Center->SetAPDSize(ECAL_APD_Size, Glue_Size);
         ECAL_Center->SetAPDMat(APD_Mat, Glue_Mat);
-        ECAL_Center->MatrixPlacement(ECAL_Center_Module_No.x(), ECAL_Center_Module_No.y(), ECAL_Center_Module_No.z(),
-                                     G4ThreeVector(0, 0, 0));
+        ECAL_Center->CalUnit1Construct();
+        ECal_Block_LV = ECAL_Center->MatrixConstruct(dControl->ECAL_Cell_No.x(),
+                                                     dControl->ECAL_Cell_No.y(),
+                                                     dControl->ECAL_Cell_No.z(),
+                                                     ECAL_Center->GetCaloLV(),
+                                                     ECALRegion_Mat,
+                                                     1,
+                                                     G4ThreeVector(eps,eps,eps),
+                                                     false);
+        ECAL_Center->MatrixConstruct(dControl->ECAL_Block_No.x(),
+                                     dControl->ECAL_Block_No.y(),
+                                     dControl->ECAL_Block_No.z(),
+                                     ECal_Block_LV,
+                                     ECALRegion_Mat,
+                                     2,
+                                     G4ThreeVector(0.5 * eps, 0.5 * eps, 0.5 * eps),
+                                     true);
 
         ECAL_Center_LV = ECAL_Center->GetCaloLVVector();
     }

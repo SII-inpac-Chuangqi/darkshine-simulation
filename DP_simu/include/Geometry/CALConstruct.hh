@@ -47,39 +47,38 @@ public:
 
     // ECAL:
     //
-    // 4 World
-    // └-3 ECAL_Region
-    //   └-2 ECAL_GroupMatrix (21x21x1)
-    //     └-1 CalUnit1 (Outline)
-    //       └-0 SD (Calo)
+    // 3 World
+    // └-2 ECAL_Region
+    //   └-1 ECAL_Block
+    //     └-0 CalUnit1 (Outline)
+    //       └--1 SD (Calo)
 
     // HCAL:
     //
     // 4 World
     // └-3 HCAL_Region
-    //   ├-2 HCAL_GroupXYCrossing
-    //   | └-1 WLSUnit
-    //   |   ├-0 SD (Calo)
-    //   |   └-0 SD (APD)
-    //   └-0 AbsorberUnit
+    //   ├-2 HCAL_Layer
+    //   | └-1 HCAL_Module (XY Crossing)
+    //   |   └-0 WLSUnit
+    //   |     ├--1 SD (Calo)
+    //   |     └--1 SD (APD)
+    //   └-. AbsorberUnit
 
     /// @param [in] tree_height Volume tree height, usually start from 1
     G4LogicalVolume* MatrixConstruct(G4int xNo, G4int yNo, G4int zNo,
-                                     G4LogicalVolume* elementLV,
-                                     G4Material* regionMat,
-                                     G4int tree_height,
-                                     G4double gap = 2 * eps);
+                         G4LogicalVolume* elementLV,
+                         G4Material* regionMat,
+                         G4int tree_height,
+                         G4ThreeVector gap,
+                         G4bool if_place_mother);
 
     /// @param [in] tree_height Volume tree height, usually start from 1
     G4LogicalVolume* XYCrossingConstruct(G4int xNo, G4int yNo, G4int zNo,
-                                         G4LogicalVolume* elementLV,
-                                         G4Material* regionMat,
-                                         G4int tree_height,
-                                         G4double gap = 2 * eps);
+                             G4LogicalVolume* elementLV,
+                             G4Material* regionMat,
+                             G4int tree_height,
+                             G4double gap = eps);
 
-    //G4LogicalVolume* PeriodZConstruct(cosnt G4String LVname, G4int zNo,);
-
-    void Placement(const G4ThreeVector &centrePos, const G4LogicalVolume* daughterLV, const G4LogicalVolume* motherLV);
 
     // deprecated!!
     G4ThreeVector MatrixPlacement(G4int, G4int, G4int, const G4ThreeVector &);
@@ -141,6 +140,8 @@ public:
 
     void SetWrapVis(G4VisAttributes *in) { fWrapVis = in; };
 
+    void SetAPDVis(G4VisAttributes *fApdVis) { fAPDVis = fApdVis; };
+
     void SetFiberCladVis(G4VisAttributes *in) { fFiberCladVis = in; };
 
     void SetFiberVis(G4VisAttributes *in) { fFiberVis = in; };
@@ -192,6 +193,8 @@ public:
     std::vector<G4LogicalVolume *> GetWrapLVVector() { return fWrapLVVector; };
 
     std::vector<G4LogicalVolume *> GetAPDLVVector() { return fAPDLVVector; };
+
+    G4LogicalVolume *GetCaloLV() const { return fCaloLV; };
 
 private:
     G4bool fType{false}; // 0: Absorber; 1: Calorimeter

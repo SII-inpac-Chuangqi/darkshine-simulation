@@ -425,7 +425,7 @@ void CALConstruct::CalWLSUnitConstruct() {
 
     // Place Crystal
     auto CaloPV = new G4PVPlacement(nullptr,
-                                    G4ThreeVector(0, 0, - APDZHalfLength - APDCaloHalfGap),
+                                    G4ThreeVector(0, 0, - APDZHalfLength - PDCaloHalfGap),
                                     fCaloLV, fCALName + "_PV",
                                     fWrapLV, false, fCopyNo, fCheckOverlap);
     PVVector.emplace_back(CaloPV);
@@ -479,8 +479,12 @@ void CALConstruct::AbsorberUnitConstruct() {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo, G4LogicalVolume *elementLV,
-                                               G4Material * regionMat, G4int tree_height, G4double gap) {
+G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo,
+                                               G4LogicalVolume *elementLV,
+                                               G4Material * regionMat,
+                                               G4int tree_height,
+                                               G4ThreeVector gap,
+                                               G4bool if_place_mother) {
     /// check consistency
     if (!xNo || !yNo || !zNo) {
         G4cout << fCALName << " Construction Error: at least one of the matrix element is zero." << G4endl;
@@ -494,14 +498,19 @@ G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo, 
     auto UnitZHalfLength = UnitBox->GetZHalfLength();
 
     /// construct Group LV
-    auto GroupHalfSize = G4ThreeVector(xNo * UnitXHalfLength + (xNo - 1) * 0.5 * gap + eps,
-                                       yNo * UnitYHalfLength + (yNo - 1) * 0.5 * gap + eps,
-                                       zNo * UnitZHalfLength + (zNo - 1) * 0.5 * gap + eps);
+    auto GroupHalfSize = G4ThreeVector(xNo * UnitXHalfLength + (xNo - 0.5) * 0.5 * gap.x(),
+                                       yNo * UnitYHalfLength + (yNo - 0.5) * 0.5 * gap.y(),
+                                       zNo * UnitZHalfLength + (zNo - 0.5) * 0.5 * gap.z());
     auto GroupBox = new G4Box(fCALName + "_Box_h" + std::to_string(tree_height), GroupHalfSize.x(), GroupHalfSize.y(), GroupHalfSize.z());
-    auto GroupLV = new G4LogicalVolume(GroupBox, regionMat, fCALName + "_LV_h" + std::to_string(tree_height),
-                                       nullptr, nullptr, nullptr);
 
-    GroupLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+    G4LogicalVolume* motherLV = nullptr;
+    if (if_place_mother) {
+        motherLV = fMotherVolume;
+    } else {
+        motherLV = new G4LogicalVolume(GroupBox, regionMat, fCALName + "_LV_h" + std::to_string(tree_height),
+                                           nullptr, nullptr, nullptr);
+        motherLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+    }
 
     /// Unit LV Placement
     G4String UnitName = (tree_height == 1 ? fCALName + "_UnitPV" : fCALName + "_PV_h" + std::to_string(tree_height - 1) );
@@ -510,15 +519,15 @@ G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo, 
     for (int k = 0; k < zNo; k++) {
         for (int j = 0; j < yNo; j++) {
             for (int i = 0; i < xNo; i++) {
-                UnitPosX = -1. * GroupHalfSize.x() + (2 * i + 1) * UnitXHalfLength + i * gap + eps;
-                UnitPosY = -1. * GroupHalfSize.y() + (2 * j + 1) * UnitYHalfLength + j * gap + eps;
-                UnitPosZ = -1. * GroupHalfSize.z() + (2 * k + 1) * UnitZHalfLength + k * gap + eps;
+                UnitPosX = -1. * GroupHalfSize.x() + (2 * i + 1) * UnitXHalfLength + (i + 0.25) * gap.x();
+                UnitPosY = -1. * GroupHalfSize.y() + (2 * j + 1) * UnitYHalfLength + (j + 0.25) * gap.y();
+                UnitPosZ = -1. * GroupHalfSize.z() + (2 * k + 1) * UnitZHalfLength + (k + 0.25) * gap.z();
 
                 UnitPV = new G4PVPlacement(nullptr,
                                            G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
                                            elementLV,
                                            UnitName,
-                                           GroupLV,
+                                           motherLV,
                                            false,
                                            fCopyNo,
                                            fCheckOverlap);
@@ -529,7 +538,7 @@ G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo, 
         }
     }
 
-    return GroupLV;
+    return motherLV;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
