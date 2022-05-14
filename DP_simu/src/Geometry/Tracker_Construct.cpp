@@ -28,6 +28,7 @@ void Tracker_Construct::DefineParameters(Tracker_Type type) {
             No_Tracker = dControl->tag_No_Tracker;
             Size_TrackerRegion = dControl->tag_Size_TrackerRegion;
             Pos_TrackerRegion = dControl->tag_Pos_TrackerRegion;
+            Strip_Block_N = dControl->tag_Tracker_Strip_Block_N;
 
             Tracker_MagField = dControl->tag_Tracker_MagField;
 
@@ -40,6 +41,7 @@ void Tracker_Construct::DefineParameters(Tracker_Type type) {
             No_Tracker = dControl->rec_No_Tracker;
             Size_TrackerRegion = dControl->rec_Size_TrackerRegion;
             Pos_TrackerRegion = dControl->rec_Pos_TrackerRegion;
+            Strip_Block_N = dControl->rec_Tracker_Strip_Block_N;
 
             Tracker_MagField = dControl->rec_Tracker_MagField;
 

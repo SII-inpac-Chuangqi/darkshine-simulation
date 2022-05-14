@@ -15,6 +15,11 @@
 
 #include <vector>
 
+// Volume relationship:
+// 2 Outline (Trk)
+// └-1 SMTBlock
+//   └-0 Silicon micro-strip (Strip)
+
 class TrkConstruct
 {
   public:
@@ -25,8 +30,12 @@ class TrkConstruct
     G4ThreeVector BoxConstruct();
     G4ThreeVector BoxPlacement();
     G4ThreeVector SMTConstruct();
-    G4ThreeVector SMTBlockConstruct();
-    G4ThreeVector LinearPlacement(G4int zNo, G4ThreeVector *SizeVec, G4ThreeVector *PosVec, std::vector<G4int> StripNVec, G4ThreeVector *AngleGapVec);
+    G4ThreeVector LinearPlacement(G4int zNo,
+                                  G4ThreeVector *SizeVec,
+                                  G4ThreeVector *PosVec,
+                                  std::vector<G4int> StripNVec,
+                                  G4ThreeVector *AngleGapVec,
+                                  G4int stripBlockN);
 
     // initializing the output LV
     void CleanLV() { fTrkLVVector.clear(); };
@@ -52,6 +61,7 @@ class TrkConstruct
     void SetSizeXYZ(const G4ThreeVector &in)   { fSizeX = in.x(); fSizeY = in.y(); fSizeZ = in.z(); };
     void SetPosXYZ(const G4ThreeVector &in)    { fPosX = in.x();  fPosY = in.y();  fPosZ = in.z();  };
     void SetStrip_Angle_Gap(const G4int &stripN, const G4ThreeVector &angleGap);
+    void SetStrip_Block_N(G4int in) { fStripBlockN = in;};
 
     std::vector<G4LogicalVolume*> GetTrkLVVector() { return fTrkLVVector; };
     std::vector<G4LogicalVolume*> GetStripLVVector() { return fStripLVVector; };
@@ -59,7 +69,8 @@ class TrkConstruct
   private:
     G4bool fType; //
     G4bool fCheckOverlap;
-    
+
+    G4double eps;
     G4double fSizeX;
     G4double fSizeY;
     G4double fSizeZ;
@@ -87,6 +98,11 @@ class TrkConstruct
     G4double fAngle2;
     std::vector<G4LogicalVolume*> fTrkLVVector;
 
+    // Silicon Micro-Strip-Block
+    G4int fStripBlockN;
+    G4LogicalVolume* fBlockLV;
+    std::vector<G4LogicalVolume*> fBlockLVVector;
+
     // Silicon Micro-Strip
     G4int fStripNum;
     G4double fStripSizeX;
@@ -95,7 +111,7 @@ class TrkConstruct
     G4double fStripPosX;
     G4double fStripPosY;
     G4double fStripPosZ;
-    G4double fStripGapX;
+    G4double fStripDistanceX;
     G4VisAttributes* fStripVis;
     G4LogicalVolume* fStripLV;
     std::vector<G4LogicalVolume*> fStripLVVector;
