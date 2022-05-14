@@ -1,6 +1,8 @@
+2022-04-25
+    1. Optimise data transmission between DAna processors
+
 2022-04-11
-    1. added...
-    2. dControl->ECAL_Center_Module_No become dependent.
+    1. Add geometry reader in DAna
 
 2022-04-10
     1. default.yaml : Added ECAL_APD_Size and HCAL_APD_Size

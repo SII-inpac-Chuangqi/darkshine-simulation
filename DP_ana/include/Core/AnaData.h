@@ -44,16 +44,25 @@ public:
     void readGeometryDetails();
     void printGeometryDetails() const;
 
-    int    getStripNoTag()     const {return strip_no_tag;}
-    double getStripWidthTag()  const {return strip_width_tag;}
-    double getStripLengthTag() const {return strip_length_tag;}
-    std::vector<double> getAnglesTag() const {return angles_tag;}
+    std::vector<double> getLayerWidthTag()  const {return layer_width_tag;}
+    std::vector<double> getLayerLengthTag() const {return layer_length_tag;}
+    std::vector<int>    getStripNoTag() const {return strip_no_tag;}
+    std::vector<double> getAnglesTag()  const {return angles_tag;}
 
-    int    getStripNoRec()     const {return strip_no_rec;}
-    double getStripWidthRec()  const {return strip_width_rec;}
-    double getStripLengthRec() const {return strip_length_rec;}
-    std::vector<double> getAnglesRec() const {return angles_rec;}
+    std::vector<double> getLayerWidthRec()  const {return layer_width_rec;}
+    std::vector<double> getLayerLengthRec() const {return layer_length_rec;}
+    std::vector<int>    getStripNoRec() const {return strip_no_rec;}
+    std::vector<double> getAnglesRec()  const {return angles_rec;}
 
+    double getECalCenterX() const {return ECAL_center_x;}
+    double getECalCenterY() const {return ECAL_center_y;}
+    double getECalCenterZ() const {return ECAL_center_z;}
+    double getECalLengthX() const {return ECAL_length_x;}
+    double getECalLengthY() const {return ECAL_length_y;}
+    double getECalLengthZ() const {return ECAL_length_z;}
+    std::vector<double> getECalCellLengthX() const {return ECal_cell_length_x;}
+    std::vector<double> getECalCellLengthY() const {return ECal_cell_length_y;}
+    std::vector<double> getECalCellLengthZ() const {return ECal_cell_length_z;}
     int getNECalCellX() const {return N_ECal_cell_x;}
     int getNECalCellY() const {return N_ECal_cell_y;}
     int getNECalCellZ() const {return N_ECal_cell_z;}
@@ -64,23 +73,31 @@ protected:
 
     TGeoNode* world_{nullptr};
 
-    double strip_width_tag{-INFINITY};
-    double strip_length_tag{-INFINITY};
-    int strip_no_tag{-1};
+    std::vector<double> layer_width_tag;
+    std::vector<double> layer_length_tag;
+    std::vector<int> strip_no_tag;
     std::vector<double> angles_tag;
 
-    double strip_width_rec{-INFINITY};
-    double strip_length_rec{-INFINITY};
-    int strip_no_rec{-1};
+    std::vector<double> layer_width_rec;
+    std::vector<double> layer_length_rec;
+    std::vector<int> strip_no_rec;
     std::vector<double> angles_rec;
 
+    double ECAL_center_x{-INFINITY};
+    double ECAL_center_y{-INFINITY};
+    double ECAL_center_z{-INFINITY};
+    double ECAL_length_x{-INFINITY};
+    double ECAL_length_y{-INFINITY};
+    double ECAL_length_z{-INFINITY};
+    std::vector<double> ECal_cell_length_x;
+    std::vector<double> ECal_cell_length_y;
+    std::vector<double> ECal_cell_length_z;
     int N_ECal_cell_x{0};
     int N_ECal_cell_y{0};
     int N_ECal_cell_z{0};
 
 private:
     AnaData();
-
 
 };
 

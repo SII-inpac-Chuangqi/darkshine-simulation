@@ -45,16 +45,6 @@ public:
 //................................................................................//
 //Get
 //................................................................................//
-//Inherited
-    virtual double GetPx() const override {return px;}
-    virtual double GetPy() const override {return py;}
-    virtual double GetPz() const override {return pz;}
-    virtual double GetPp() const override {return pp;}
-    virtual double GetPl() const override {return pl;}
-
-    virtual double GetChi2() const override {return fChi2;}
-    virtual double GetXSigma() const override {return xSigma;}
-    virtual double GetYSigma() const override {return ySigma;}
 
 //................................................................................//
 //Method specific

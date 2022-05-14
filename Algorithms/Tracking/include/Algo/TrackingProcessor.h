@@ -47,9 +47,10 @@ private:
 //................................................................................//
     int clean{0};
     int if_strip{1};
-    double con_field{-1.5};
+    int if_smear{1};
     int Tag_fit_method{-1};
     int Rec_fit_method{-1};
+    double con_field{-1.5};
 
 //................................................................................//
 //Geometry
@@ -119,7 +120,13 @@ private:
     std::vector<double> RecTrk2_track_x{};
     std::vector<double> RecTrk2_track_y{};
     std::vector<double> RecTrk2_track_z{};
-};
 
+//................................................................................//
+    std::vector<double> ECal_seed_x{};
+    std::vector<double> ECal_seed_y{};
+    std::vector<double> ECal_seed_px{};
+    std::vector<double> ECal_seed_py{};
+    std::vector<double> ECal_seed_pz{};   
+};
 
 #endif

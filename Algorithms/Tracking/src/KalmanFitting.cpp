@@ -14,6 +14,7 @@
 //................................................................................//
 //Framework
 #include "Object/SimulatedHit.h"
+#include "Core/AnaData.h"
 
 //................................................................................//
 //GenFit
@@ -39,7 +40,7 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<doub
     }
     catch(int e)
     {
-        std::cerr << "Less than 3 hits" << std::endl;
+        std::cerr << "[WARNING] ==> Fewer than 3 hits in this track" << std::endl;
 
         auto it = list.begin();
         double preR = *it; it++;
@@ -48,8 +49,8 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<doub
     }
     catch(genfit::Exception& e)
     {
-        std::cerr << e.what();
-        std::cerr <<"Exception, next track" << std::endl;
+        std::cerr << "[WARNING] ==> " << e.what();
+        std::cerr << "[WARNING] ==> Exception, next track" << std::endl;
 
         auto it = list.begin();
         double preR = *it; it++;
@@ -73,7 +74,7 @@ void KalmanFitting::Init(const TrkHitPVec &track, std::initializer_list<double> 
     pos = TVector3((*track.at(0)).GetU()*0.1,  //pre fitting results --postion,  mm->cm
                    (*track.at(0)).GetV()*0.1,  //
                    (*track.at(0)).GetZ()*0.1); //
-    mom = TVector3(0, 0, 0.3*B*preR*0.001);   //                    --momentum, MeV->GeV
+    mom = TVector3(0, 0, 0.3*B*preR*0.001);    //                    --momentum, MeV->GeV
     hitCov.UnitMatrix();                       //covariance matrix
     hitCov(0, 0) = 0.0006*0.0006;              //resolution, cm --x 6µm
     hitCov(1, 1) = 0.006*0.006;                //               --y 60µm
@@ -138,24 +139,50 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
     double bNdf;
     double fNdf;
     fitter->getChiSquNdf(fitTrack, rep, bChi2, fChi2, bNdf, fNdf);
-    //std::cout << bChi2 << std::endl;
 
-    genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
-    genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
-    genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
-                                                               0.,
-                                                               (*track.at(0)).GetZ()*0.1),
-                                                      TVector3(1, 0, 0),
-                                                      TVector3(0, 1, 0)));
-    rep->extrapolateToPlane(kfsop, plane);
-    const TVectorD& state = kfsop.getState();
-    //std::cout << "dimension of state: " << state.GetNoElements() << std::endl;
-    //std::cout << "momemtum error: " << 1/abs(state[0])*1000 - sqrt(pp*pp + pl*pl) << std::endl;
-    xSigma = state[3]*10 - (*track.at(0)).GetX();
-    //std::cout << "position error: " << xSigma << std::endl;
-    ySigma = state[4]*10 - (*track.at(0)).GetY();
+    {
+        genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
+        genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
+        genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
+                                                                   0.,
+                                                                   (*track.at(0)).GetZ()*0.1),
+                                                          TVector3(1, 0, 0),
+                                                          TVector3(0, 1, 0)));
+        rep->extrapolateToPlane(kfsop, plane);
+        const TVectorD& state = kfsop.getState();
+        //std::cout << "dimension of state: " << state.GetNoElements() << std::endl;
+        //std::cout << "momemtum error: " << 1/abs(state[0])*1000 - sqrt(pp*pp + pl*pl) << std::endl;
+        xSigma = state[3]*10 - (*track.at(0)).GetX();
+        //std::cout << "position error: " << xSigma << std::endl;
+        ySigma = state[4]*10 - (*track.at(0)).GetY();
+    }
+/*
+    {
+        double ECal_front_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
 
-    //delete tp; tp = nullptr;
+        genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
+        genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
+        genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
+                                                                   0.,
+                                                                   ECal_front_surface*0.1),
+                                                          TVector3(1, 0, 0),
+                                                          TVector3(0, 1, 0)));
+        rep->extrapolateToPlane(kfsop, plane);
+        const TVectorD& state = kfsop.getState();
+        //ECal_qop = 1./state[0]*1000.;
+        //ECal_dirct_x = state[1];
+        //ECal_dirct_y = state[2];
+        ECal_seed_x = state[3]*10;
+        ECal_seed_y = state[4]*10;
+        //std::cout << ECal_seed_pz << std::endl;
+        //std::cout << ECal_seed_y << std::endl;
+
+        auto mom_on_ECal = kfsop.getMom();
+        ECal_seed_px = -mom_on_ECal[0]*1000.; //fix direction
+        ECal_seed_py =  mom_on_ECal[1]*1000.; //
+        ECal_seed_pz = -mom_on_ECal[2]*1000.; //
+    }
+*/
 }
 
 //................................................................................//
@@ -174,10 +201,6 @@ int KalmanFitting::GetSign(const TrkHitPVec &track)
     double zr  = track.at(0)->GetZ();
     double zrl = track.at(1)->GetZ();
 
-    //for(auto hit : track) std::cout << hit->GetZ() << std::endl;
-
-    //std::cout << "xl: " << xl << "	xr: " << xr << std::endl;
-
     if(zr < zl)
     {
         std::swap(xl,  xr );
@@ -189,6 +212,5 @@ int KalmanFitting::GetSign(const TrkHitPVec &track)
     int s = 0;
     s = (xr - xrl)/sqrt((xr - xrl)*(xr - xrl) + (zr - zrl)*(zr - zrl)) >
         (xlr - xl)/sqrt((xl - xlr)*(xl - xlr) + (zl - zlr)*(zl - zlr)) ? 1 : -1;
-    //std::cout << "s: " << s << std::endl;
     return s;
 }

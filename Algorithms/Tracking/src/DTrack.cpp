@@ -109,6 +109,12 @@ void DTrack::Fit(int method)
         chi2 = fitter->GetChi2();
         xSigma = fitter->GetXSigma();
         ySigma = fitter->GetYSigma();
+        ECal_seed_x = fitter->GetECalSeedX();
+        ECal_seed_y = fitter->GetECalSeedY();
+        ECal_seed_px = fitter->GetECalDirctX();
+        ECal_seed_py = fitter->GetECalDirctY();
+        ECal_seed_pz = fitter->GetECalQoP();
+        //std::cout << ECal_seed_pz << std::endl;
     }
     else
         pp = 0.3*preR*std::abs(By);

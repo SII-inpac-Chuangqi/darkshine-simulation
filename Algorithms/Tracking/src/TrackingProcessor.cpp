@@ -41,14 +41,15 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
     Description = "Tracking by Yi-Fan Zhu";
 
     RegisterIntParameter("clean", "Clean mode: no truth information", &clean, 1);
-    RegisterIntParameter("if_strip", "If strip structures in trackers", &if_strip, 1);
-    RegisterDoubleParameter("con_field", "Const magnet field", &con_field, -1.5);
+    RegisterIntParameter("if_strip", "If use strip structures in trackers", &if_strip, 1);
+    RegisterIntParameter("if_smear", "If smear hits in strip structure", &if_smear, 1);
     RegisterIntParameter("Tag_fit_method",
                          "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
-                         &Tag_fit_method, 0);
+                         &Tag_fit_method, 1);
     RegisterIntParameter("Rec_fit_method",
                          "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
-                         &Rec_fit_method, 0);
+                         &Rec_fit_method, 1);
+    RegisterDoubleParameter("con_field", "Const magnet field", &con_field, -1.5);
 }
 
 void TrackingProcessor::Begin() {
@@ -56,6 +57,7 @@ void TrackingProcessor::Begin() {
 //Load Geometry
 //................................................................................//
     digitizer.GetTrackerInfo(if_strip);
+    digitizer.SetIfSmear(if_smear);
 
 //................................................................................//
 //Load magnet
@@ -135,7 +137,11 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_track_y_sigma", &RecTrk2_track_y_sigma);
     }
 
-    //if(Tag_fit_method == 1 || Rec_fit_method == 1)
+    EvtWrt->RegisterOutVariable("ECal_seed_x",  &ECal_seed_x, "", false);
+    EvtWrt->RegisterOutVariable("ECal_seed_y",  &ECal_seed_y, "", false);
+    EvtWrt->RegisterOutVariable("ECal_seed_px", &ECal_seed_px, "", false);
+    EvtWrt->RegisterOutVariable("ECal_seed_py", &ECal_seed_py, "", false);
+    EvtWrt->RegisterOutVariable("ECal_seed_pz", &ECal_seed_pz, "", false);
 }
 
 void TrackingProcessor::CleanEvt() {
@@ -173,6 +179,12 @@ void TrackingProcessor::CleanEvt() {
     std::vector<double>().swap(RecTrk2_track_quality);
     std::vector<double>().swap(RecTrk2_track_x_sigma);
     std::vector<double>().swap(RecTrk2_track_y_sigma);
+
+    std::vector<double>().swap(ECal_seed_x);
+    std::vector<double>().swap(ECal_seed_y);
+    std::vector<double>().swap(ECal_seed_px);
+    std::vector<double>().swap(ECal_seed_py);
+    std::vector<double>().swap(ECal_seed_pz);
 }
 
 void TrackingProcessor::FillTruth(std::vector<DStep*> *initial_steps,
@@ -365,6 +377,15 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     RecTrk2_pp.push_back(track.GetPp());
                     RecTrk2_track_chi2.push_back(track.GetChi2());
 
+                    ECal_seed_x.push_back(track.GetECalSeedX());
+                    ECal_seed_y.push_back(track.GetECalSeedY());
+                    ECal_seed_px.push_back(track.GetECalDirctX());
+                    ECal_seed_py.push_back(track.GetECalDirctY());
+                    ECal_seed_pz.push_back(track.GetECalQoP());
+
+                    //std::cout << track.GetECalQoP() << std::endl;
+                    //std::cout << track.GetECalDirctY() << std::endl;
+
                     if (!clean) {
                         RecTrk2_track_quality.push_back(track.GetQuality());
                         RecTrk2_track_x_sigma.push_back(track.GetXSigma());
@@ -400,7 +421,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 void TrackingProcessor::CheckEvt(AnaEvent *evt) {
    //cout << "check" << endl;
-    if (!evt) cerr << "null event" << endl;
+    if (!evt) cerr << "[Warning] ==> Empty event" << endl;
 }
 
 void TrackingProcessor::End() {

@@ -28,18 +28,25 @@ void Digitization::GetTrackerInfo(bool if_strip)
 
     if(if_strip_)
     {
+        strip_no_tag_.clear();
+        layer_width_tag_.clear();
+        layer_length_tag_.clear();
         angles_tag_.clear();
+
+        strip_no_rec_.clear();
+        layer_width_rec_.clear();
+        layer_length_rec_.clear();
         angles_rec_.clear();
 
         strip_no_tag_     = dAnaData->getStripNoTag();
-        layer_width_tag_  = dAnaData->getStripWidthTag();
-        layer_length_tag_ = dAnaData->getStripLengthTag();
-        for(auto angle : dAnaData->getAnglesTag()) angles_tag_.push_back(angle);
+        layer_width_tag_  = dAnaData->getLayerWidthTag();
+        layer_length_tag_ = dAnaData->getLayerLengthTag();
+        angles_tag_       = dAnaData->getAnglesTag();
 
         strip_no_rec_     = dAnaData->getStripNoRec();
-        layer_width_rec_  = dAnaData->getStripWidthRec();
-        layer_length_rec_ = dAnaData->getStripLengthRec();
-        for(auto angle : dAnaData->getAnglesRec()) angles_rec_.push_back(angle);
+        layer_width_rec_  = dAnaData->getLayerWidthRec();
+        layer_length_rec_ = dAnaData->getLayerLengthRec();
+        angles_rec_       = dAnaData->getAnglesRec();
 
         std::cout << "[INFO] ==> Strip model loaded in tracking" << std::endl;
     }
@@ -82,25 +89,34 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
             }
         }
     
-        double layer_width = (detector == tag) ? layer_width_tag_ : layer_width_rec_;
-        double layer_length = (detector == tag) ? layer_length_tag_ : layer_length_rec_;
-        int strip_no = (detector == tag) ? strip_no_tag_ : strip_no_rec_;
-        std::vector<double> *angles = (detector == tag) ? &angles_tag_ : &angles_rec_;
+        std::vector<double> *layer_widths  = (detector == tag) ? &layer_width_tag_  : &layer_width_rec_;
+        std::vector<double> *layer_lengths = (detector == tag) ? &layer_length_tag_ : &layer_length_rec_;
+        std::vector<int>    *strip_nos = (detector == tag) ? &strip_no_tag_ : &strip_no_rec_;
+        std::vector<double> *angles    = (detector == tag) ? &angles_tag_   : &angles_rec_;
     
         for(auto layer1 : map1)
         {
             auto it_find_layer2 = map2.find(layer1.first);
             if(it_find_layer2 != map2.end())
             {
-                double angle = angles->at((layer1.first - 1)*2 + 1);
+                double angle        = angles->at((layer1.first - 1)*2 + 1);
+                double strip_no     = strip_nos->at((layer1.first - 1)*2 + 1);
+                double layer_width  = layer_widths->at((layer1.first - 1)*2 + 1);
+                double layer_length = layer_lengths->at((layer1.first - 1)*2 + 1); 
+                //std::cout << strip_no << std::endl;
     
                 auto layer2 = map2.at(layer1.first);
                 for(auto hit1 : layer1.second)
                 {
                     for(auto hit2 : layer2)
                     {
-                        double smear1 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
-                        double smear2 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
+                        double smear1 = 0.;
+                        double smear2 = 0.;
+                        if(if_smear_)
+                        {
+                            smear1 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
+                            smear2 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
+                        }
                         double x1 = hit1->GetX() + smear1;
                         double y1 = -x1/tan(angle) + ((hit2->GetCellIdX() - 0.5*(strip_no + 1))*layer_width/strip_no + smear2)/sin(angle);
     
