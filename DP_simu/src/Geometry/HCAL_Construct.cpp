@@ -16,7 +16,6 @@ void HCAL_Construct::DefineParameters() {
     HCAL_Size_Dir = dControl->HCAL_Size_Dir;
     HCAL_Mod_No_Dir = dControl->HCAL_Mod_No_Dir;
     HCAL_Module_No = dControl->HCAL_Module_No;
-    HCAL_Module_Gap = dControl->HCAL_Module_Gap;
     HCAL_Absorber_Thickness = dControl->HCAL_Absorber_Thickness;
 
     Size_HCALRegion = dControl->Size_HCALRegion;

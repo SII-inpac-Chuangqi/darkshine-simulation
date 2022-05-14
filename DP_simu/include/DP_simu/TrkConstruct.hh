@@ -25,6 +25,7 @@ class TrkConstruct
     G4ThreeVector BoxConstruct();
     G4ThreeVector BoxPlacement();
     G4ThreeVector SMTConstruct();
+    G4ThreeVector SMTBlockConstruct();
     G4ThreeVector LinearPlacement(G4int zNo, G4ThreeVector *SizeVec, G4ThreeVector *PosVec, std::vector<G4int> StripNVec, G4ThreeVector *AngleGapVec);
 
     // initializing the output LV

@@ -157,6 +157,7 @@ public:
     std::vector<G4ThreeVector> tag_Pos_Tracker{};
     std::vector<G4ThreeVector> tag_Tracker_Angle_Gap{};
     std::vector<G4int> tag_Tracker_Strip_N{};
+    G4int tag_Tracker_Strip_Block_N{};
     int tag_No_Tracker{};  // dependent
     G4ThreeVector tag_Size_TrackerRegion;  // dependent
     G4ThreeVector tag_Pos_TrackerRegion;  // dependent
@@ -166,6 +167,7 @@ public:
     std::vector<G4ThreeVector> rec_Pos_Tracker{};
     std::vector<G4ThreeVector> rec_Tracker_Angle_Gap{};
     std::vector<G4int> rec_Tracker_Strip_N{};
+    G4int rec_Tracker_Strip_Block_N{};
     int rec_No_Tracker{};  // dependent
     G4ThreeVector rec_Size_TrackerRegion;  // dependent
     G4ThreeVector rec_Pos_TrackerRegion;  // dependent
@@ -177,14 +179,14 @@ public:
     G4Material *ECALRegion_Mat{};
     G4Material *ECAL_Center_Mat{};
     G4Material *ECAL_Wrap_Mat{};
-    G4ThreeVector Size_ECALUnit; // dependent
-    G4ThreeVector Size_ECALGroup; // dependent
+    G4ThreeVector Size_ECALCell; // dependent
+    G4ThreeVector Size_ECALBlock; // dependent
     G4ThreeVector Size_ECALRegion;  // dependent
     G4ThreeVector Pos_ECALRegion;  // dependent
     G4ThreeVector ECAL_Center_Wrap_Size;
     G4ThreeVector ECAL_Center_Size;
-    G4ThreeVector ECAL_Unit_Group_No;
-    G4ThreeVector ECAL_Group_Module_No;
+    G4ThreeVector ECAL_Block_No;
+    G4ThreeVector ECAL_Cell_No;
     G4ThreeVector ECAL_Center_Module_No; // dependent
 
     //----------------------------------------
@@ -197,9 +199,10 @@ public:
     G4Material *HCAL_Absorber_Mat{};
     G4Material *HCAL_FiberClad_Mat{};
     G4Material *HCAL_Fiber_Mat{};
-    G4ThreeVector Size_HCALUnit; // dependent
-    G4ThreeVector Size_HCALXYGroup; // dependent
-    G4ThreeVector Size_HCALAbsorber; // dependent
+    G4ThreeVector Size_HCALCell; // dependent
+    G4ThreeVector Size_HCALModule; // dependent
+    G4ThreeVector Size_HCALLayer; // dependent
+    G4double HCAL_Absorber_Thickness_Total; // dependent
     G4ThreeVector Size_HCALRegion;  // dependent
     G4ThreeVector Pos_HCALRegion;  // dependent
     G4ThreeVector HCAL_Wrap_Size;
@@ -207,9 +210,12 @@ public:
     G4ThreeVector HCAL_XYUnit_Group_No;
     G4ThreeVector HCAL_Absorber_Z_No;
     G4ThreeVector HCAL_Group_Module_No;
-    G4ThreeVector HCAL_Mod_No_Dir; /// Deprecated!!
-    G4ThreeVector HCAL_Module_No; /// Deprecated!!
-    G4double HCAL_Module_Gap;
+    G4ThreeVector HCAL_Mod_No_Dir; // TODO: deprecate!
+    G4ThreeVector HCAL_Module_No;
+    G4int HCAL_Cell_XY_N;
+    G4int HCAL_Layer_N; // dependent
+    std::vector< std::tuple<int, int, double> > HCAL_Absorber_Thickness_List;
+    G4ThreeVector HCAL_Module_Gap;
     G4double HCAL_Absorber_Thickness;
 
     //========================================

@@ -120,8 +120,9 @@ G4ThreeVector TrkConstruct::BoxPlacement() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 // Volume relationship:
-// 0 Outline (Trk)
-// └-1 Silicon micro-strip (Strip)
+// 2 Outline (Trk)
+// └-1 SMTBlock
+//   └-0 Silicon micro-strip (Strip)
 G4ThreeVector TrkConstruct::SMTConstruct() {
     auto TotalHalfSize = G4ThreeVector(0, 0, 0);
     // check consistency
@@ -178,6 +179,12 @@ G4ThreeVector TrkConstruct::SMTConstruct() {
         fStripCopyNo++;
     }
     return TotalHalfSize;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4ThreeVector TrkConstruct::SMTBlockConstruct() {
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
