@@ -47,6 +47,9 @@ private:
     std::vector<std::vector<G4LogicalVolume *> > HCAL_SD_LV;
     std::vector<std::vector<G4LogicalVolume *> > HCAL_APD_SD_LV;
 
+    G4LogicalVolume* HCAL_Module_LV;
+    G4LogicalVolume* HCAL_Layer_LV;
+
     /////////////////////////
     //  APD stuff
     /////////////////////////

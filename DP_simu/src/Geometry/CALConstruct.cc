@@ -89,6 +89,7 @@ CALConstruct::CALConstruct(const CALConstruct &in) {
     fAPDMaterial = in.fAPDMaterial;
     Wrap_LSkinSurface = in.Wrap_LSkinSurface;
     APD_LBorderSurface = in.APD_LBorderSurface;
+    fAbsLVVector = in.fAbsLVVector;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -97,7 +98,6 @@ CALConstruct::~CALConstruct() {
     delete fAPDWLV;
     delete fWrapLV;
     delete fCaloLV;
-    delete fAbsLV;
     delete fCALSD;
     delete fCALWrapSD;
     delete fWrapVis;
@@ -115,6 +115,9 @@ CALConstruct::~CALConstruct() {
 
     PVVector.clear();
     PVVector.shrink_to_fit();
+
+    fAbsLVVector.clear();
+    fAbsLVVector.shrink_to_fit();
 }
 
 
@@ -425,7 +428,7 @@ void CALConstruct::CalWLSUnitConstruct() {
 
     // Place Crystal
     auto CaloPV = new G4PVPlacement(nullptr,
-                                    G4ThreeVector(0, 0, - APDZHalfLength - PDCaloHalfGap),
+                                    G4ThreeVector(0, 0, - APDZHalfLength - APDCaloHalfGap),
                                     fCaloLV, fCALName + "_PV",
                                     fWrapLV, false, fCopyNo, fCheckOverlap);
     PVVector.emplace_back(CaloPV);
@@ -469,7 +472,7 @@ void CALConstruct::AbsorberUnitConstruct() {
     auto AbsBox = new G4Box(fCALName + "_AbsBox", AbsXHalfLength, AbsYHalfLength, AbsZHalfLength);
     auto AbsLV = new G4LogicalVolume(AbsBox, fAbsMaterial, fCALName + "_AbsLV",
                                      nullptr, nullptr, nullptr);
-    fAbsLV = AbsLV;
+    fAbsLVVector.emplace_back(AbsLV);
 
     if (fVis) {
         fVis->SetVisibility(true);
@@ -484,7 +487,7 @@ G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo,
                                                G4Material * regionMat,
                                                G4int tree_height,
                                                G4ThreeVector gap,
-                                               G4bool if_place_mother) {
+                                               G4bool if_place_to_mother) {
     /// check consistency
     if (!xNo || !yNo || !zNo) {
         G4cout << fCALName << " Construction Error: at least one of the matrix element is zero." << G4endl;
@@ -504,7 +507,7 @@ G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo,
     auto GroupBox = new G4Box(fCALName + "_Box_h" + std::to_string(tree_height), GroupHalfSize.x(), GroupHalfSize.y(), GroupHalfSize.z());
 
     G4LogicalVolume* motherLV = nullptr;
-    if (if_place_mother) {
+    if (if_place_to_mother) {
         motherLV = fMotherVolume;
     } else {
         motherLV = new G4LogicalVolume(GroupBox, regionMat, fCALName + "_LV_h" + std::to_string(tree_height),
@@ -543,10 +546,11 @@ G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo,
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4LogicalVolume* CALConstruct::XYCrossingConstruct(G4int xNo, G4int yNo, G4int zNo, G4LogicalVolume *elementLV,
+G4LogicalVolume* CALConstruct::XYCrossingConstruct(G4int xNo, G4int yNo,
+                                                   G4LogicalVolume *elementLV,
                                                    G4Material *regionMat, G4int tree_height, G4double gap) {
     /// check consistency
-    if (!xNo || !yNo || !zNo) {
+    if (!xNo || !yNo ) {
         G4cout << fCALName << " Construction Error: at least one of the matrix element is zero." << G4endl;
         return nullptr;
     }
@@ -558,9 +562,10 @@ G4LogicalVolume* CALConstruct::XYCrossingConstruct(G4int xNo, G4int yNo, G4int z
     auto UnitZHalfLength = UnitBox->GetZHalfLength();
 
     /// construct Group LV
-    auto GroupHalfSize = G4ThreeVector(xNo * UnitXHalfLength + (xNo - 1) * 0.5 * gap + eps,
-                                       yNo * UnitYHalfLength + (yNo - 1) * 0.5 * gap + eps,
-                                       zNo * UnitZHalfLength + (zNo - 1) * 0.5 * gap + eps);
+    int zNo = 2;
+    auto GroupHalfSize = G4ThreeVector(UnitZHalfLength + 0.25 * gap,
+                                       UnitZHalfLength + 0.25 * gap,
+                                       zNo * UnitXHalfLength + (zNo - 0.5) * 0.5 * gap);
     auto GroupBox = new G4Box(fCALName + "_Box_h" + std::to_string(tree_height), GroupHalfSize.x(), GroupHalfSize.y(), GroupHalfSize.z());
     auto GroupLV = new G4LogicalVolume(GroupBox, regionMat, fCALName + "_LV_h" + std::to_string(tree_height),
                                        nullptr, nullptr, nullptr);
@@ -569,11 +574,144 @@ G4LogicalVolume* CALConstruct::XYCrossingConstruct(G4int xNo, G4int yNo, G4int z
 
     /// rotation matrix
 
+    auto fRotY90 = new G4RotationMatrix();
+    fRotY90->rotateY(- 90 * degree);
+    auto fRotY90X90 = new G4RotationMatrix();
+    fRotY90X90->rotateY(90 * degree);
+    fRotY90X90->rotateX(90 * degree);
 
     /// Unit LV Placement
     G4String UnitName = (tree_height == 1 ? fCALName + "_UnitPV" : fCALName + "_PV_h" + std::to_string(tree_height - 1) );
     fCopyNo = 0;
     G4PVPlacement* UnitPV = nullptr;
+
+    /// along Y
+    for (int i = 0; i < yNo; i++) {
+        UnitPosX = 0;
+        UnitPosY = -1. * GroupHalfSize.y() + (2 * i + 1) * UnitYHalfLength + (i + 0.25) * gap;
+        UnitPosZ = -1. * GroupHalfSize.z() + UnitXHalfLength + 0.25 * gap;
+
+        UnitPV = new G4PVPlacement(fRotY90,
+                                   G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                   elementLV,
+                                   UnitName,
+                                   GroupLV,
+                                   false,
+                                   fCopyNo,
+                                   fCheckOverlap);
+        PVVector.emplace_back(UnitPV);
+        fCopyNo++;
+    }
+    /// along X
+    for (int i = 0; i < xNo; i++ ) {
+        UnitPosX = -1. * GroupHalfSize.x() + (2 * i + 1) * UnitYHalfLength + (i + 0.25) * gap;
+        UnitPosY = 0;
+        UnitPosZ = -1. * GroupHalfSize.z() + 3 * UnitXHalfLength + 1.25 * gap;
+
+        UnitPV = new G4PVPlacement(fRotY90X90,
+                                   G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                   elementLV,
+                                   UnitName,
+                                   GroupLV,
+                                   false,
+                                   fCopyNo,
+                                   fCheckOverlap);
+        PVVector.emplace_back(UnitPV);
+        fCopyNo++;
+    }
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4ThreeVector CALConstruct::LinearPlacementWithAbsorber(G4int zNo, const std::vector<std::tuple<int, int, double>> abs_thickness_list,
+                                               G4LogicalVolume *calLayerLV, G4Material *regionMat, G4Material *AbsMat,
+                                               G4double gap) {
+    auto TotalHalfSize = G4ThreeVector(0, 0, 0);
+    // check consistency
+    if (!zNo) {
+        G4cout << fCALName << " Construction Error: at least one of the matrix element is zero." << G4endl;
+        return TotalHalfSize;
+    }
+
+    // Calculate Calo layer total size
+    auto UnitBox = dynamic_cast<G4Box*>(calLayerLV->GetSolid());
+    auto UnitXHalfLength = UnitBox->GetXHalfLength();
+    auto UnitYHalfLength = UnitBox->GetYHalfLength();
+    auto UnitZHalfLength = UnitBox->GetZHalfLength();
+
+    G4int startn;
+    G4int endn;
+    G4double abs_thickness;
+    G4double total_thickness = 0;
+    std::vector<G4double> abs_thickness_vector{};
+    for (auto thick_i : abs_thickness_list) {
+        std::tie(startn, endn, abs_thickness) =  thick_i;
+        /// calculate total Thickness
+        for (int i = startn; i <= endn; i++) {
+            total_thickness += abs_thickness;
+            abs_thickness_vector.emplace_back(abs_thickness);
+        }
+    }
+
+    TotalHalfSize = G4ThreeVector(UnitXHalfLength,
+                                  UnitYHalfLength,
+                                  zNo * UnitZHalfLength + 0.5 * total_thickness + (zNo - 1) * gap);
+
+    // Construct Absorber LV
+    AbsXHalfLength = UnitXHalfLength;
+    AbsYHalfLength = UnitYHalfLength;
+    fAbsMaterial = AbsMat;
+    fVis = new G4VisAttributes(G4Colour(0.5, 0.23, 0.89));
+    for (auto thickness_i : abs_thickness_vector) {
+        AbsZHalfLength = 0.5 * thickness_i;
+        if (AbsZHalfLength > 0) AbsorberUnitConstruct();
+        else fAbsLVVector.emplace_back(nullptr);
+    }
+
+    // Initialize
+    G4int Abs_No = 0;
+    G4PVPlacement* UnitPV = nullptr;
+    G4PVPlacement* AbsPV = nullptr;
+    G4LogicalVolume* abs_LV_current;
+    fCopyNo = 0;
+
+    UnitPosX = 0;
+    UnitPosY = 0;
+    UnitPosZ = -TotalHalfSize.z() - gap
+
+    for (int i = 0; i < zNo; i++) {
+        /// place Calo Layer
+        UnitPosX = 0;
+        UnitPosY = 0;
+        UnitPosZ += gap + UnitZHalfLength;
+
+        UnitPV = new G4PVPlacement(nullptr,
+                                   G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                   calLayerLV,
+                                   fCALName + "_LayerPV",
+                                   fMotherVolume,
+                                   false,
+                                   fCopyNo,
+                                   fCheckOverlap);
+        PVVector.emplace_back(UnitPV);
+        fCopyNo++;
+        /// place Abs Layer
+        if (i < zNo - 1) {
+            UnitPosZ += UnitZHalfLength + gap + 0.5 * abs_thickness_vector.at(i);
+            AbsPV = new G4PVPlacement(nullptr,
+                                      G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                      fAbsLVVector.at(i),
+                                      fCALName + "_AbsPV",
+                                      fMotherVolume,
+                                      false,
+                                      Abs_No,
+                                      fCheckOverlap);
+            PVVector.emplace_back(AbsPV);
+            Abs_No++;
+        }
+    }
+
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -720,7 +858,7 @@ void CALConstruct::MatrixPlacementXYwithAbsorber(G4int xNo, G4int yNo, G4int zNo
             if ( ifAbsorber ) {
                 AbsPV = new G4PVPlacement(nullptr,
                                           G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
-                                          fAbsLV,
+                                          fAbsLVVector.at(0),
                                           fCALName + "_AbsPV",
                                           fMotherVolume,
                                           false,

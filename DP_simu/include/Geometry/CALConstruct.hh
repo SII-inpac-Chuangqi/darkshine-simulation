@@ -70,14 +70,21 @@ public:
                          G4Material* regionMat,
                          G4int tree_height,
                          G4ThreeVector gap,
-                         G4bool if_place_mother);
+                         G4bool if_place_to_mother);
 
     /// @param [in] tree_height Volume tree height, usually start from 1
-    G4LogicalVolume* XYCrossingConstruct(G4int xNo, G4int yNo, G4int zNo,
+    G4LogicalVolume* XYCrossingConstruct(G4int xNo, G4int yNo,
                              G4LogicalVolume* elementLV,
                              G4Material* regionMat,
                              G4int tree_height,
                              G4double gap = eps);
+
+    G4ThreeVector LinearPlacementWithAbsorber(G4int zNo,
+                                     const std::vector< std::tuple<int, int, double> > abs_thickness_list,
+                                     G4LogicalVolume* calLayerLV,
+                                     G4Material* regionMat,
+                                     G4Material *AbsMat,
+                                     G4double gap = eps);
 
 
     // deprecated!!
@@ -196,6 +203,8 @@ public:
 
     G4LogicalVolume *GetCaloLV() const { return fCaloLV; };
 
+    G4LogicalVolume *GetOutlineLV() const { return fOutlineLV; };
+
 private:
     G4bool fType{false}; // 0: Absorber; 1: Calorimeter
     G4bool fWrap{false}; // 0: No Wrap around; 1: with Wrap
@@ -275,7 +284,6 @@ private:
     G4LogicalVolume *fCaloLV{nullptr}; // Core Detector Region
     G4LogicalVolume *fWrapLV{nullptr}; // Wrapper
     G4LogicalVolume *fAPDWLV{nullptr}; // APD world
-    G4LogicalVolume *fAbsLV{nullptr}; // Absorber world
     G4LogicalVolume *fOutlineLV{nullptr}; // outline of unit
     G4LogicalVolume *fFiberCladLV{nullptr};
     G4LogicalVolume *fFiberLV{nullptr};
@@ -284,6 +292,8 @@ private:
     std::vector<G4LogicalVolume *> fCaloLVVector{};
     std::vector<G4LogicalVolume *> fWrapLVVector{};
     std::vector<G4LogicalVolume *> fAPDLVVector{};
+    std::vector<G4LogicalVolume *> fAbsLVVector{};
+//    std::vector<std::tuple<G4double, G4double, G4LogicalVolume*>> fAbsLVList; // abs_back_z, thickness, LV.
 
     // For Memory Clean
     std::vector<G4PVPlacement*> PVVector;

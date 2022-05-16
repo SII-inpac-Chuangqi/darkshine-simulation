@@ -209,8 +209,7 @@ public:
     G4ThreeVector HCAL_Size_Dir;
     G4ThreeVector HCAL_XYUnit_Group_No;
     G4ThreeVector HCAL_Absorber_Z_No;
-    G4ThreeVector HCAL_Group_Module_No;
-    G4ThreeVector HCAL_Mod_No_Dir; // TODO: deprecate!
+    G4ThreeVector HCAL_Mod_No_Dir; // dependent
     G4ThreeVector HCAL_Module_No;
     G4int HCAL_Cell_XY_N;
     G4int HCAL_Layer_N; // dependent

@@ -336,6 +336,10 @@ void Control::RebuildVariables() {
         HCAL_Layer_N = endn + 1;
     }
 
+    HCAL_Mod_No_Dir.setX(HCAL_Cell_XY_N);
+    HCAL_Mod_No_Dir.setY(HCAL_Cell_XY_N);
+    HCAL_Mod_No_Dir.setZ(2 * HCAL_Layer_N - 1);
+
     Size_HCALCell.setX(HCAL_Size_Dir.x() + HCAL_Wrap_Size.x());
     Size_HCALCell.setY(HCAL_Size_Dir.y() + HCAL_Wrap_Size.y());
     Size_HCALCell.setZ(HCAL_Size_Dir.z() + HCAL_Wrap_Size.z() + HCAL_APD_Size.z());
