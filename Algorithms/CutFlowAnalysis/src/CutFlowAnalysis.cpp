@@ -22,12 +22,19 @@ void CutFlowAnalysis::Begin() {
       weight = EvtWrt->FindOutVariable<double>("weight");
       //weight = EvtWrt->FindDoubleVar("weight");
       ECal_seed_x = EvtWrt->FindOutVariable<std::vector<double>>("ECal_seed_x");
+
+      EvtWrt->RegisterOutVariable("test_store",  &test_store);
 }
 
 void CutFlowAnalysis::ProcessEvt(AnaEvent* /*evt*/) {
       //if(weight) std::cout << *weight << ":\t";
-      //if(ECal_seed_x) for(auto seed : *ECal_seed_x) std::cout << seed << "\t";
-      //std::cout << std::endl;
+
+      test_store.clear();
+
+      if(ECal_seed_x) for(auto seed : *ECal_seed_x) std::cout << seed << "\t";
+      std::cout << std::endl;
+
+      test_store.assign(ECal_seed_x->begin(), ECal_seed_x->end());
 }
 
 void CutFlowAnalysis::CheckEvt(AnaEvent* /*evt*/) {

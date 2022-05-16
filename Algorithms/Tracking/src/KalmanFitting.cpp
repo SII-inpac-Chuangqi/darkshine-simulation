@@ -156,7 +156,7 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
         //std::cout << "position error: " << xSigma << std::endl;
         ySigma = state[4]*10 - (*track.at(0)).GetY();
     }
-/*
+
     {
         double ECal_front_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
 
@@ -182,7 +182,6 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
         ECal_seed_py =  mom_on_ECal[1]*1000.; //
         ECal_seed_pz = -mom_on_ECal[2]*1000.; //
     }
-*/
 }
 
 //................................................................................//

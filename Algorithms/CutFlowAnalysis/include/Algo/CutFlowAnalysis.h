@@ -37,6 +37,7 @@ private:
     double *weight;
 
     std::vector<double> *ECal_seed_x;
+    std::vector<double> test_store;
 };
 
 
