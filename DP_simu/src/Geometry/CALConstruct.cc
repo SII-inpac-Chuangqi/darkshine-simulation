@@ -677,7 +677,7 @@ G4ThreeVector CALConstruct::LinearPlacementWithAbsorber(G4int zNo, const std::ve
 
     UnitPosX = 0;
     UnitPosY = 0;
-    UnitPosZ = -TotalHalfSize.z() - gap
+    UnitPosZ = -TotalHalfSize.z() - gap;
 
     for (int i = 0; i < zNo; i++) {
         /// place Calo Layer
