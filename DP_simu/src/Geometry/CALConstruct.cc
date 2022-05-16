@@ -619,6 +619,7 @@ G4LogicalVolume* CALConstruct::XYCrossingConstruct(G4int xNo, G4int yNo,
         PVVector.emplace_back(UnitPV);
         fCopyNo++;
     }
+    return GroupLV;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -708,10 +709,11 @@ G4ThreeVector CALConstruct::LinearPlacementWithAbsorber(G4int zNo, const std::ve
                                       fCheckOverlap);
             PVVector.emplace_back(AbsPV);
             Abs_No++;
+            UnitPosZ += 0.5 * abs_thickness_vector.at(i);
         }
     }
 
-
+    return TotalHalfSize;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

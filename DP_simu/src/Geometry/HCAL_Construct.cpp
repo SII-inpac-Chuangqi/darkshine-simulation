@@ -91,21 +91,17 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, bool fCheckOverlaps) {
 }
 
 bool HCAL_Construct::BuildSD() {
-    std::vector<DetectorSD *> HCalSD;
-    std::vector<DetectorSD *> HCalAPDSD;
-    for (int iy = 0; iy < HCAL_Module_No.y(); iy++) {
-        for (int ix = 0; ix < HCAL_Module_No.x(); ix++) {
-            int index = (int) (ix + iy * HCAL_Module_No.x());
-            HCalSD.push_back(new DetectorSD(nHCAL, Name + "_" + std::to_string(index), HCAL_Mod_No_Dir));
-            HCalAPDSD.emplace_back(new DetectorSD(nHCAL_APD, Name + "_APD_" + std::to_string(index), HCAL_Mod_No_Dir));
-            G4SDManager::GetSDMpointer()->AddNewDetector(HCalSD[index]);
-            G4SDManager::GetSDMpointer()->AddNewDetector(HCalAPDSD[index]);
-            for (auto LV : HCAL_SD_LV[index])
-                LV->SetSensitiveDetector(HCalSD[index]);
-            for (auto LV : HCAL_APD_SD_LV[index])
-                LV->SetSensitiveDetector(HCalAPDSD[index]);
-        }
+    auto *HCalSD = new DetectorSD(nHCAL, Name + "_0", HCAL_Mod_No_Dir );
+    auto *HCalAPDSD = new DetectorSD(nHCAL_APD, Name + "_APD_0", HCAL_Mod_No_Dir);
+    G4SDManager::GetSDMpointer()->AddNewDetector(HCalSD);
+    G4SDManager::GetSDMpointer()->AddNewDetector(HCalAPDSD);
+    for (auto LV : HCAL_SD_LV.at(0)) {
+        LV->SetSensitiveDetector(HCalSD);
     }
+    for (auto LV: HCAL_APD_SD_LV.at(0)) {
+        LV->SetSensitiveDetector(HCalAPDSD);
+    }
+
     return false;
 }
 

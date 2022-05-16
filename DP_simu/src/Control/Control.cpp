@@ -265,7 +265,7 @@ void Control::RebuildVariables() {
             2.0 * tag_Size_Tracker[0].x(),
             2.0 * tag_Size_Tracker[0].y(),
             tag_Pos_Tracker[tag_No_Tracker - 1].z() - tag_Pos_Tracker[0].z() +
-            2.0 * (tag_Size_Tracker[0].z() + 2.0 * eps ) + 0.5 * eps);
+            2.0 * (tag_Size_Tracker[0].z() + 3.0 * eps ) + eps);
 
     tag_Pos_TrackerRegion = G4ThreeVector(
             0 * cm, 0 * cm,
@@ -281,7 +281,7 @@ void Control::RebuildVariables() {
             2.0 * rec_Size_Tracker[rec_No_Tracker - 1].x(),
             2.0 * rec_Size_Tracker[rec_No_Tracker - 1].y(),
             rec_Pos_Tracker[rec_No_Tracker - 1].z() - rec_Pos_Tracker[0].z() +
-            2.0 * (rec_Size_Tracker[rec_No_Tracker - 1].z() + 2.0 * eps) + 0.5 * eps );
+            2.0 * (rec_Size_Tracker[rec_No_Tracker - 1].z() + 3.0 * eps) + eps );
 
     rec_Pos_TrackerRegion = G4ThreeVector(
             0 * cm, 0 * cm,
@@ -346,7 +346,7 @@ void Control::RebuildVariables() {
 
     Size_HCALModule.setX(Size_HCALCell.z() + eps);
     Size_HCALModule.setY(Size_HCALCell.z() + eps);
-    Size_HCALModule.setZ(Size_HCALCell.x() + eps);
+    Size_HCALModule.setZ(2 * ( Size_HCALCell.x() + eps) );
 
     Size_HCALLayer.setX(HCAL_Module_No.x() * (Size_HCALModule.x() + HCAL_Module_Gap.x()) );
     Size_HCALLayer.setY(HCAL_Module_No.y() * (Size_HCALModule.y() + HCAL_Module_Gap.y()) );
