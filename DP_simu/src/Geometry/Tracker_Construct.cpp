@@ -79,6 +79,8 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, G4bool fChe
             TrackerRegion_LV, 0, fCheckOverlaps
     );
 
+    TrackerRegion_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
     Tracker->SetTrkMaterial(Tracker_Mat);
     Tracker->SetVis1(new G4VisAttributes(G4Colour(Tracker1_Color[0], Tracker1_Color[1], Tracker1_Color[2])));
     Tracker->SetVis2(new G4VisAttributes(G4Colour(Tracker2_Color[0], Tracker2_Color[1], Tracker2_Color[2])));
@@ -111,11 +113,11 @@ bool Tracker_Construct::BuildSDandField(G4int type) {
     /// Construct Sensitive Detector
 
     auto *Tracker1SD = new DetectorSD(
-            nTracker,
+            (type == dTagging ? nTagTracker : nRecTracker),
             (type == dTagging ? "TagTrk1" : "RecTrk1"),
             G4ThreeVector(1, 1, No_Tracker) );
     auto *Tracker2SD = new DetectorSD(
-            nTracker,
+            (type == dTagging ? nTagTracker : nRecTracker),
             (type == dTagging ? "TagTrk2" : "RecTrk2"),
             G4ThreeVector(1, 1, No_Tracker) );
 

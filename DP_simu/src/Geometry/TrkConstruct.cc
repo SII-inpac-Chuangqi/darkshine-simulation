@@ -245,6 +245,7 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
 
         if (! dControl->build_silicon_micro_strip ) {
             fStripNum = 1;
+            fStripBlockN = 1;
             fStripDistanceX = fSizeX;
             fStripSizeX = fSizeX;
         }
@@ -261,7 +262,7 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
 
         G4ThreeVector CurColor = dControl->Tracker1_Color;
         fVis = fVis1;
-        fStripVis = fVis1;
+        //fStripVis = fVis1;
         SMTConstruct();
         UnitPV = new G4PVPlacement(HepRot1,
                                    fPos1,
@@ -274,7 +275,7 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         PVVector.emplace_back(UnitPV);
 
         fVis = fVis2;
-        fStripVis = fVis2;
+        //fStripVis = fVis2;
         SMTConstruct();
         UnitPV = new G4PVPlacement(HepRot2,
                                    fPos2,

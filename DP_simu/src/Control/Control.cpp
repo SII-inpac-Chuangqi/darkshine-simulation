@@ -316,7 +316,7 @@ void Control::RebuildVariables() {
     // Hadronic Calorimeter
 
     /// calculate absorber thickness
-    int prev_endn = 0;
+    [[maybe_unused]] int prev_endn = 0;
     int startn;
     int endn;
     double thickness;

@@ -403,7 +403,7 @@ void CALConstruct::CalWLSUnitConstruct() {
     fFiberLV = FiberLV;
 
     if (fFiberVis) {
-        fFiberVis->SetVisibility(fFiberVis);
+        fFiberVis->SetVisibility(true);
         FiberLV->SetVisAttributes(fFiberVis);
     } else FiberLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
@@ -416,7 +416,7 @@ void CALConstruct::CalWLSUnitConstruct() {
     fAPDWLV = APDLV;
     fAPDLVVector.emplace_back(APDLV);
     if (fAPDVis) {
-        fAPDVis->SetVisibility(fAPDVis);
+        fAPDVis->SetVisibility(true);
         APDLV->SetVisAttributes(fAPDVis);
     } else APDLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 

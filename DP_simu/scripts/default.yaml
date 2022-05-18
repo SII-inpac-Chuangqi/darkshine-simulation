@@ -269,7 +269,10 @@ Geometry:
     HCAL_Module_No: [4, 4, 1]
     HCAL_Cell_XY_N: 20
     HCAL_Absorber_Thickness_List:
-      - [1, 80, 3 , "cm"] # [start, end, thickness, unit]. Start from 1. Set thickness value to zero will skip this Absorber layer.
+      - [  1,  40,   5, "mm"] # [start, end, thickness, unit]. Start from 1. Set thickness value to zero will skip this Absorber layer.
+      - [ 41,  65,  20, "mm"]
+      - [ 66,  85,  30, "mm"]
+      - [ 86, 100,  50, "mm"]
     HCAL_Module_Gap: [0.5 , "mm", 0.5, "mm", 1, "um"]
 
 # End of File
