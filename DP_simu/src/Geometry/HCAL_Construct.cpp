@@ -57,12 +57,12 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, bool fCheckOverlaps) {
     HCAL->SetFiberCladMaterial(dControl->HCAL_FiberClad_Mat);
     HCAL->SetFiberMaterial(dControl->HCAL_Fiber_Mat);
     HCAL->SetWrapMaterial(HCAL_Wrap_Mat);
-    //HCAL->SetVis(new G4VisAttributes(G4Colour(0.2, 0.37, 0.8)));
+    if (dControl->HCAL_Show_Cell) HCAL->SetVis(new G4VisAttributes(G4Colour(0.2, 0.37, 0.8)));
     HCAL->SetAPDSize(APD_Size, Glue_Size);
     HCAL->SetAPDMat(APD_Mat, Glue_Mat);
 
     // construct
-    //HCAL->SetAPDVis(new G4VisAttributes(G4Colour(0.5, 0.5, .0)));
+    if (dControl->HCAL_Show_Cell) HCAL->SetAPDVis(new G4VisAttributes(G4Colour(0.5, 0.5, .0)));
     //HCAL->SetFiberCladVis(new G4VisAttributes(G4Colour(0.6,0.7,0.8)));
     //HCAL->SetFiberVis(new G4VisAttributes(G4Colour(0.4,0.3,0.2)));
     HCAL->CalWLSUnitConstruct();
@@ -70,8 +70,8 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, bool fCheckOverlaps) {
                                                HCAL->GetOutlineLV(),
                                                dControl->World_Mat,
                                                1, eps);
-
-    HCAL_Module_LV->SetVisAttributes(new G4VisAttributes(true,G4Colour(0.2, 0.37, 0.8)));
+    if(!dControl->HCAL_Show_Cell)
+        HCAL_Module_LV->SetVisAttributes(new G4VisAttributes(true,G4Colour(0, 0.5, 0.5)));
     HCAL_Layer_LV = HCAL->MatrixConstruct(dControl->HCAL_Module_No.x(), dControl->HCAL_Module_No.y(), dControl->HCAL_Module_No.z(),
                                           HCAL_Module_LV,
                                           HCALRegion_Mat,

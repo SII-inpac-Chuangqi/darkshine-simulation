@@ -793,6 +793,9 @@ bool Control::ReadYAML(const G4String &file_in) {
         HCAL_FiberRadius = Node["Geometry"]["HCAL"]["HCAL_FiberRadius"].IsDefined() ?
                            Node["Geometry"]["HCAL"]["HCAL_FiberRadius"].as<double>() : 0.98 * 1.2 * mm;
 
+        HCAL_Show_Cell = Node["Geometry"]["HCAL"]["HCAL_Show_Cell"].IsDefined() ?
+                         Node["Geometry"]["HCAL"]["HCAL_Show_Cell"].as<bool>() : false;
+
         //========================================
         /* Optical */
         //----------------------------------------

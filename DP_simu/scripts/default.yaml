@@ -274,7 +274,7 @@ Geometry:
       - [ 66,  85,  30, "mm"]
       - [ 86, 100,  50, "mm"]
     HCAL_Module_Gap: [0.5 , "mm", 0.5, "mm", 1, "um"]
-
+    HCAL_Show_Cell: false
 # End of File
 ---
 
