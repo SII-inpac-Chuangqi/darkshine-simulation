@@ -113,6 +113,7 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
         CellID.setZ(dDetectorIDMaps->GetECALIDZ(reNumber1, reNumber2));
         cellId = CellID.getX() + (CellID.getY() - 1) * xID  + (CellID.getZ() - 1) * (xID * yID);
     } else if (fType == nHCAL || fType == nHCAL_APD) {
+        reNumber3 = touchable->GetReplicaNumber(3);
         cellId = reNumber1 % (int)xID + 1;
         CellID.setX(dDetectorIDMaps->GetHCALIDX(reNumber2));
         CellID.setY(dDetectorIDMaps->GetHCALIDY(reNumber2));
