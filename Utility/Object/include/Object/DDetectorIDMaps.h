@@ -1,0 +1,8 @@
+//
+// Created by xuliang on 2022/5/22.
+//
+
+#ifndef DSIMU_DDETECTORIDMAPS_H
+#define DSIMU_DDETECTORIDMAPS_H
+
+#endif //DSIMU_DDETECTORIDMAPS_H

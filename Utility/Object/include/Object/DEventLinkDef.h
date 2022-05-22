@@ -52,6 +52,7 @@
 
 #pragma link C++ class DEvent+;
 
+#pragma link C++ class DDetectorIDMaps+;
 
 #endif
 
