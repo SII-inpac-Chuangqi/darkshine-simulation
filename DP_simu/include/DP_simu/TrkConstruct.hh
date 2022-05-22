@@ -112,7 +112,7 @@ class TrkConstruct
     G4double fStripPosY;
     G4double fStripPosZ;
     G4double fStripDistanceX;
-    G4VisAttributes* fStripVis;
+    G4VisAttributes* fStripVis{nullptr};
     G4LogicalVolume* fStripLV;
     std::vector<G4LogicalVolume*> fStripLVVector;
 
