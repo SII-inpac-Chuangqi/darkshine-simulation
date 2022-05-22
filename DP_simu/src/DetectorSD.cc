@@ -30,6 +30,7 @@
 
 #include "DP_simu/RootManager.hh"
 #include "DP_simu/DetectorSD.hh"
+#include "Object/DDetectorIDMaps.h"
 #include "G4HCofThisEvent.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
@@ -100,28 +101,22 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     auto yID = (int) fCellID.y();
     //G4int zID = (int)fCellID.z();
     G4ThreeVector CellID(0, 0, 0);
-    if (fType == nTagTracker) {
+    if (fType == nTagTracker || fType == nRecTracker) {
         reNumber0 = touchable->GetReplicaNumber(0);
-        CellID.setX(touchable->GetReplicaNumber(0) + 1);
-        CellID.setY(1);
-        CellID.setZ(reNumber2 + 1);
-    } else if (fType == nRecTracker) {
-        reNumber0 = touchable->GetReplicaNumber(0);
-        CellID.setX(dControl->rec_Tracker_Strip_Block_N * reNumber1 + reNumber0 + 1);
+        cellId = reNumber1 * xID + reNumber0 + 1;
+        CellID.setX(cellId);
         CellID.setY(1);
         CellID.setZ(reNumber2 + 1);
     } else if (fType == nECAL) {
-        CellID.setZ((int) ((reNumber2 % (int)dControl->ECAL_Block_No.x() + reNumber1) / (xID * yID)) + 1);
-        CellID.setX((reNumber1 % (xID * yID)) % xID + 1);
-        CellID.setY((int) ((reNumber1 % (xID * yID)) / yID) + 1);
+        CellID.setX(dDetectorIDMaps->GetECALIDX(reNumber1, reNumber2));
+        CellID.setY(dDetectorIDMaps->GetECALIDY(reNumber1, reNumber2));
+        CellID.setZ(dDetectorIDMaps->GetECALIDZ(reNumber1, reNumber2));
+        cellId = CellID.getX() + (CellID.getY() - 1) * xID  + (CellID.getZ() - 1) * (xID * yID);
     } else if (fType == nHCAL || fType == nHCAL_APD) {
-        if ((int) CellID.z() % 2 == 0) {
-            CellID.setX(1);
-            CellID.setY(((reNumber1 % (xID * yID)) % yID) + 1);
-        } else {
-            CellID.setY(1);
-            CellID.setX(((reNumber1 % (xID * yID)) % yID) + 1);
-        }
+        cellId = reNumber1 % (int)xID + 1;
+        CellID.setX(dDetectorIDMaps->GetHCALIDX(reNumber2));
+        CellID.setY(dDetectorIDMaps->GetHCALIDY(reNumber2));
+        CellID.setZ(2 * reNumber3 + (int)( reNumber1 / (int)xID ) + 1);
     } else {
         std::cerr << "[ERROR] DetectorSD ==> Wrong Detecotr Type" << std::endl;
         exit(EXIT_FAILURE);

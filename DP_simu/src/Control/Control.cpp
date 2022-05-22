@@ -387,6 +387,13 @@ void Control::RebuildVariables() {
 
     //----------------------------------------
     // Optical
+
+    //----------------------------------------
+    // DetectorMap
+    dDetectorIDMaps->SetECALCellNo(ECAL_Cell_No.x(),ECAL_Cell_No.y(),ECAL_Cell_No.z());
+    dDetectorIDMaps->SetECALBlockNo(ECAL_Block_No.x(),ECAL_Block_No.y(),ECAL_Block_No.z());
+    dDetectorIDMaps->SetHCALModuleNo(HCAL_Module_No.x(),HCAL_Module_No.y(),HCAL_Module_No.z());
+    dDetectorIDMaps->BuildMap();
 }
 
 

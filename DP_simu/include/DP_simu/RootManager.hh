@@ -30,6 +30,7 @@
 #include "RootGlobal.hh"
 
 #include "Object/DEvent.h"
+#include "Object/DDetectorIDMaps.h"
 #include "Bias_Filter/FilterManager.hh"
 
 

@@ -22,6 +22,7 @@
 #include <map>
 
 #include "Object/DigiForm.hh"
+#include "Object/DDetectorIDMaps.h"
 
 /// \brief The central control class which should store all the data
 

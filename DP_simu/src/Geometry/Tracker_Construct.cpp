@@ -115,11 +115,15 @@ bool Tracker_Construct::BuildSDandField(G4int type) {
     auto *Tracker1SD = new DetectorSD(
             (type == dTagging ? nTagTracker : nRecTracker),
             (type == dTagging ? "TagTrk1" : "RecTrk1"),
-            G4ThreeVector(1, 1, No_Tracker) );
+            G4ThreeVector((type == dTagging ? dControl->tag_Tracker_Strip_Block_N : dControl->rec_Tracker_Strip_Block_N),
+                          1,
+                          No_Tracker) );
     auto *Tracker2SD = new DetectorSD(
             (type == dTagging ? nTagTracker : nRecTracker),
             (type == dTagging ? "TagTrk2" : "RecTrk2"),
-            G4ThreeVector(1, 1, No_Tracker) );
+            G4ThreeVector((type == dTagging ? dControl->tag_Tracker_Strip_Block_N : dControl->rec_Tracker_Strip_Block_N),
+                          1,
+                          No_Tracker) );
 
     G4SDManager::GetSDMpointer()->AddNewDetector(Tracker1SD);
     G4SDManager::GetSDMpointer()->AddNewDetector(Tracker2SD);

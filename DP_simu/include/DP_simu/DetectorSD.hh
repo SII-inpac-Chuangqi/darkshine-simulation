@@ -76,6 +76,7 @@ private:
     G4int reNumber0{-1};
     G4int reNumber1{-1}; // replical number of PV
     G4int reNumber2{-1};
+    G4int reNumber3{-1};
     G4String particleName;
 
     std::vector<SimulatedHit *> fSimHitVec;

@@ -37,6 +37,7 @@ SET(DEvent_source
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DigiForm.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DEvent.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DMagnet.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/DDetectorIDMaps.cpp
         )
 
 root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF include/Object/DEventLinkDef.h)
