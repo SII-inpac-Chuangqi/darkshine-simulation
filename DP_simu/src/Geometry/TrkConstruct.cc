@@ -31,7 +31,6 @@ TrkConstruct::TrkConstruct(G4String TrkName,
 
     fVis = nullptr;
     fTrkMaterial = nullptr;
-    eps = dControl->eps;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
