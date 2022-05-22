@@ -309,11 +309,69 @@ TEveBox *DEventDisplay::makeBox(const double *abs_pos, const double *half_size) 
     return box;
 }
 
+TEveBox *DEventDisplay::makeRotBox(const double *abs_pos, const double *half_size,  const TRotation& rot) {
+    auto *box = new TEveBox();
+    double vertex[24] = {0.};
+    TVector3 Vec;
+    // (a,b,-c)
+    Vec.SetXYZ(half_size[0], half_size[1], -half_size[2]);
+    Vec.Transform(rot);
+    vertex[0] = Vec.x() + abs_pos[0];
+    vertex[1] = Vec.y() + abs_pos[1];
+    vertex[2] = Vec.z() + abs_pos[2];
+    // (a,-b,-c)
+    Vec.SetXYZ(half_size[0], -half_size[1], -half_size[2]);
+    Vec.Transform(rot);
+    vertex[3] = Vec.x() + abs_pos[0];
+    vertex[4] = Vec.y() + abs_pos[1];
+    vertex[5] = Vec.z() + abs_pos[2];
+    // (-a,-b,-c)
+    Vec.SetXYZ(-half_size[0], -half_size[1], -half_size[2]);
+    Vec.Transform(rot);
+    vertex[6] = Vec.x() + abs_pos[0];
+    vertex[7] = Vec.y() + abs_pos[1];
+    vertex[8] = Vec.z() + abs_pos[2];
+    // (-a,b,-c)
+    Vec.SetXYZ(-half_size[0], half_size[1], -half_size[2]);
+    Vec.Transform(rot);
+    vertex[9] = Vec.x() + abs_pos[0];
+    vertex[10] = Vec.y() + abs_pos[1];
+    vertex[11] = Vec.z() + abs_pos[2];
+    // (a,b,c)
+    Vec.SetXYZ(half_size[0], half_size[1], half_size[2]);
+    Vec.Transform(rot);
+    vertex[12] = Vec.x() + abs_pos[0];
+    vertex[13] = Vec.y() + abs_pos[1];
+    vertex[14] = Vec.z() + abs_pos[2];
+    // (a,-b,c)
+    Vec.SetXYZ(half_size[0], -half_size[1], half_size[2]);
+    Vec.Transform(rot);
+    vertex[15] = Vec.x() + abs_pos[0];
+    vertex[16] = Vec.y() + abs_pos[1];
+    vertex[17] = Vec.z() + abs_pos[2];
+    // (-a,-b,c)
+    Vec.SetXYZ(-half_size[0], -half_size[1], half_size[2]);
+    Vec.Transform(rot);
+    vertex[18] = Vec.x() + abs_pos[0];
+    vertex[19] = Vec.y() + abs_pos[1];
+    vertex[20] = Vec.z() + abs_pos[2];
+    // (-a,b,c)
+    Vec.SetXYZ(-half_size[0], half_size[1], half_size[2]);
+    Vec.Transform(rot);
+    vertex[21] = Vec.x() + abs_pos[0];
+    vertex[22] = Vec.y() + abs_pos[1];
+    vertex[23] = Vec.z() + abs_pos[2];
+    for (int k = 0; k < 24; k += 3) box->SetVertex((k / 3), vertex[k], vertex[k + 1], vertex[k + 2]);
+    return box;
+}
+
+
 TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) const {
     auto cur_node = gGeoManager->FindNode(hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT);
-    auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
+    //auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
 
     auto *mother_node = gGeoManager->GetMother();
+    auto *cur_shape = dynamic_cast<TGeoBBox *>(mother_node->GetVolume()->GetShape());
     auto RotationMatrix = mother_node->GetMatrix()->GetRotationMatrix();
 
     double hx = fabs(cur_shape->GetDX() * RotationMatrix[0] + cur_shape->GetDY() * RotationMatrix[1] + cur_shape->GetDZ() * RotationMatrix[2]);
@@ -379,12 +437,20 @@ TEveBox *DEventDisplay::makeRecCaloBox(CalorimeterHit *hit, double /*EMax*/) {
 
 template<class Hit>
 TEveBox *DEventDisplay::makeTrackerBox(Hit *hit, double scale) {
-    auto cur_node = gGeoManager->FindNode(hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT + 1e-6);
+    auto cur_node = gGeoManager->FindNode(hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT );
     auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
     double abs_pos[3] = {hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT};
-    double half_size[3] = {cur_shape->GetDX() * scale, cur_shape->GetDY() * scale, cur_shape->GetDZ() * 0.1};
+    double half_size[3] = {cur_shape->GetDX() * scale, cur_shape->GetDY() * scale, cur_shape->GetDZ() * scale};
 
-    auto *box = makeBox(abs_pos, half_size);
+    auto *mother2_node = gGeoManager->GetMother(2);
+    auto RotationMatrix = mother2_node->GetMatrix()->GetRotationMatrix();
+
+    TRotation rot;
+    rot.RotateZ(-TMath::ACos(RotationMatrix[0]));
+    std::cout << "[DEBUG]" << TMath::ACos(RotationMatrix[0]) << std::endl;
+    auto *box = makeRotBox(abs_pos, half_size, rot);
+
+//    auto *box = makeBox(abs_pos, half_size);
     box->SetName((Form("Tracker Hit %d", hit->getCellId())));
 
     auto color = kMagenta;
