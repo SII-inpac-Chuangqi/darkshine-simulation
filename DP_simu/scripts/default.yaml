@@ -202,7 +202,7 @@ Geometry:
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 5
       - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 6
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 7
-    tag_Tracker_Strip_N: [ 1000 , 1000 , 1000 , 1000 , 1000 , 1000 , 1000 ]
+    tag_Tracker_Strip_N: [ 3350 , 3350 , 3350 , 3350 , 3350 , 3350 , 3350 ]
     tag_Tracker_Strip_Block_N: 50 # Strip number per block. This number must be a common divisor of tag_Tracker_Strip_N !
     # Recoil Tracker
     rec_Size_Tracker:
@@ -226,7 +226,7 @@ Geometry:
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 4
       - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 5
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 6
-    rec_Tracker_Strip_N: [ 2000, 2000 , 2000 , 2000 , 2000 , 2000 ]
+    rec_Tracker_Strip_N: [ 3350, 3350 , 3350 , 4000 , 6000 , 8350 ]
     rec_Tracker_Strip_Block_N: 50 # Strip number per Block. This number must be a common divisor of rec_Tracker_Strip_N !
   ECAL:
     ECAL_Name: "ECAL"
