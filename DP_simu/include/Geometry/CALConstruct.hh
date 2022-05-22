@@ -82,7 +82,6 @@ public:
     G4ThreeVector LinearPlacementWithAbsorber(G4int zNo,
                                      const std::vector< std::tuple<int, int, double> > abs_thickness_list,
                                      G4LogicalVolume* calLayerLV,
-                                     G4Material* regionMat,
                                      G4Material *AbsMat,
                                      G4double gap = eps);
 
@@ -221,7 +220,7 @@ private:
     G4double UnitPosY{0};
     G4double UnitPosZ{0};
     G4Material *fCALMaterial{nullptr};
-    G4VisAttributes *fCaloVis{nullptr};
+    //G4VisAttributes *fCaloVis{nullptr};
     DetectorSD *fCALSD{nullptr};
 
     // For Wrap
@@ -240,18 +239,18 @@ private:
 
     // APD Stuff (Optical Photon)
     G4double APDCaloHalfGap{0.};
-    G4double ADPwXHalfLength{0.};
-    G4double APDwYHalfLength{0.};
-    G4double APDwZHalfLength{0.};
+//    G4double ADPwXHalfLength{0.};
+//    G4double APDwYHalfLength{0.};
+//    G4double APDwZHalfLength{0.};
     G4double APDXHalfLength{0.};
     G4double APDYHalfLength{0.};
     G4double APDZHalfLength{0.};
     G4double GlueXHalfLength{0.};
     G4double GlueYHalfLength{0.};
     G4double GlueZHalfLength{0.};
-    G4double APDPosX{0.};
-    G4double APDPosY{0.};
-    G4double APDPosZ{0.};
+//    G4double APDPosX{0.};
+//    G4double APDPosY{0.};
+//    G4double APDPosZ{0.};
     G4Material *fAPDMaterial{nullptr};
     G4Material *fGlueMaterial{nullptr};
     G4VisAttributes *fAPDVis{nullptr};
@@ -277,7 +276,7 @@ private:
     G4double AbsZHalfLength{0.};
     G4Material *fAbsMaterial{nullptr};
 
-    G4RotationMatrix *HepRot{nullptr};
+//    G4RotationMatrix *HepRot{nullptr};
 
     // Unity LV
     // 0: all Z, 1: XYcrossing

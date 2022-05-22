@@ -625,7 +625,7 @@ G4LogicalVolume* CALConstruct::XYCrossingConstruct(G4int xNo, G4int yNo,
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4ThreeVector CALConstruct::LinearPlacementWithAbsorber(G4int zNo, const std::vector<std::tuple<int, int, double>> abs_thickness_list,
-                                               G4LogicalVolume *calLayerLV, G4Material *regionMat, G4Material *AbsMat,
+                                               G4LogicalVolume *calLayerLV, G4Material *AbsMat,
                                                G4double gap) {
     auto TotalHalfSize = G4ThreeVector(0, 0, 0);
     // check consistency
@@ -673,7 +673,6 @@ G4ThreeVector CALConstruct::LinearPlacementWithAbsorber(G4int zNo, const std::ve
     G4int Abs_No = 0;
     G4PVPlacement* UnitPV = nullptr;
     G4PVPlacement* AbsPV = nullptr;
-    G4LogicalVolume* abs_LV_current;
     fCopyNo = 0;
 
     UnitPosX = 0;

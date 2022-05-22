@@ -81,7 +81,6 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, bool fCheckOverlaps) {
     HCAL->LinearPlacementWithAbsorber(dControl->HCAL_Layer_N,
                                       dControl->HCAL_Absorber_Thickness_List,
                                       HCAL_Layer_LV,
-                                      dControl->World_Mat,
                                       HCAL_Absorber_Mat,
                                       eps);
 
