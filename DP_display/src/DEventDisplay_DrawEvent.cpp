@@ -446,7 +446,7 @@ TEveBox *DEventDisplay::makeTrackerBox(Hit *hit, double scale) {
     auto RotationMatrix = mother2_node->GetMatrix()->GetRotationMatrix();
 
     TRotation rot;
-    rot.RotateZ(-TMath::ACos(RotationMatrix[0]));
+    rot.RotateZ(-TMath::ASin(RotationMatrix[1]));
     std::cout << "[DEBUG]" << TMath::ACos(RotationMatrix[0]) << std::endl;
     auto *box = makeRotBox(abs_pos, half_size, rot);
 
