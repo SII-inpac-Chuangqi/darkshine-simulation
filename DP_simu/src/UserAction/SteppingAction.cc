@@ -148,6 +148,9 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
             if (post->GetPhysicalVolume() && post->GetPhysicalVolume()->GetName() == "ECAL") {
                 SetMcPHelper(aStep, nECAL);
                 dRootMng->FillMCPHelper(fMCPH, aStep->GetTrack()->GetTrackID());
+            } else if (post->GetPhysicalVolume() && post->GetPhysicalVolume()->GetName() == "HCAL") {
+                SetMcPHelper(aStep, nHCAL);
+                dRootMng->FillMCPHelper(fMCPH, aStep->GetTrack()->GetTrackID());
             }
         }
     }
