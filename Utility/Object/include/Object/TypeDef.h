@@ -18,6 +18,8 @@ class DStep_b1_5;
 
 class McParticle_b1_5;
 
+class McPHelper_b1_5;
+
 class ReconstructedParticle_b1_5;
 
 class SimulatedHit_b1_5;
@@ -35,6 +37,9 @@ typedef std::map<std::string, DStepVec* > DStepMap;
 
 typedef std::vector<McParticle_b1_5 *> MCParticleVec;
 typedef std::map<std::string, MCParticleVec* > MCParticleMap;
+
+typedef std::vector<McPHelper_b1_5 *> MCPHelperVec;
+typedef std::map<std::string, MCPHelperVec* > MCPHelperMap;
 
 typedef std::vector<ReconstructedParticle_b1_5 *> RecParticleVec;
 typedef std::map<std::string, RecParticleVec* > RecParticleMap;

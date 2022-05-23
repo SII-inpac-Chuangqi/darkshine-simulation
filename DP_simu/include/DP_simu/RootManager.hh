@@ -2,6 +2,7 @@
 #define RootManager_h 1
 
 #include "Object/McParticle.h"
+#include "Object/McPHelper.h"
 #include "Object/SimulatedHit.h"
 #include "RootMessenger.hh"
 #include "DP_simu/DetectorConstruction.hh"
@@ -82,6 +83,8 @@ public:
     void FillSimHit(const G4String &, SimulatedHit *);
 
     void FillMC(McParticle *, int);
+
+    void FillMCPHelper(McPHelper *, int);
 
     void FillPNE(G4double E1, G4double E2, G4double Z);
 

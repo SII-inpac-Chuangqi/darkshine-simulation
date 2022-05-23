@@ -15,7 +15,9 @@ SET(DEvent_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DEvent.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DMagnet.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DDetectorIDMaps.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/McPHelper.h
         # baseline1 version
+        # baseline1.5 version
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DHit_b1_4.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DParticle_b1_5.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DStep_b1_5.h
@@ -27,6 +29,7 @@ SET(DEvent_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DEvent_b1_5.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DMagnet_b1.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DDetectorIDMaps_b1_5.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/McPHelper_b1_5.h
         )
 SET(DEvent_source
         # Reference the current persistent version:
@@ -38,6 +41,7 @@ SET(DEvent_source
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DEvent.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DMagnet.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DDetectorIDMaps.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/McPHelper.cpp
         )
 
 root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF include/Object/DEventLinkDef.h)

@@ -101,9 +101,11 @@ public:
     bool save_all_mcp; // save all the mc particles
     bool save_MC;
     bool save_initial_particle_step;
+    bool save_mcp_helper;
 
     G4String RawMCCollection_Name;
     G4String InitialParticleStepCollection_Name;
+    G4String MCPHelperCollection_Name;
 
     //----------------------------------------
     // For Memory Leak
