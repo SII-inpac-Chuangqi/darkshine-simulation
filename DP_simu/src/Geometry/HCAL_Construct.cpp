@@ -91,8 +91,8 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, bool fCheckOverlaps) {
 }
 
 bool HCAL_Construct::BuildSD() {
-    auto *HCalSD = new DetectorSD(nHCAL, Name + "_0", HCAL_Mod_No_Dir );
-    auto *HCalAPDSD = new DetectorSD(nHCAL_APD, Name + "_APD_0", HCAL_Mod_No_Dir);
+    auto *HCalSD = new DetectorSD(nHCAL, Name , HCAL_Mod_No_Dir );
+    auto *HCalAPDSD = new DetectorSD(nHCAL_APD, Name + "_APD", HCAL_Mod_No_Dir);
     G4SDManager::GetSDMpointer()->AddNewDetector(HCalSD);
     G4SDManager::GetSDMpointer()->AddNewDetector(HCalAPDSD);
     for (auto LV : HCAL_SD_LV.at(0)) {
