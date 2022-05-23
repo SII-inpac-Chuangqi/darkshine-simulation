@@ -112,12 +112,12 @@ Filters:
   if_filter: false
   # if to apply filter on hard-brem event
   if_HardBrem: false
-  # Parameters description:
-  # max Energy -  set to a minus value = Infinity
-  # fInclude - true: including filter, only save event when particle/process is in the filter; false: excluding filter, abort particle/process in the filter
-  # fStage0 - true: apply filter on primary track; false: not apply on primary track
-  # fStage1 - true: apply filter on secondaries track; false: not apply on secondary track
-  particle_filters_parameters: # - [ 22, 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, true, false ] # help GMM / PN / EN ECAL
+  # Filter Parameters description:
+    # max Energy -  set to a minus value = Infinity
+    # fInclude - true: inclusive filter, only save event when particle/process is in the filter; false: exclusive filter, abort particle/process in the filter
+    # fStage0 - true: apply filter on primary track; false: not apply on primary track
+    # fStage1 - true: apply filter on secondaries track; false: not apply on secondary track
+  particle_filters_parameters: # PDG, min Energy [Unit], max Energy [Unit] , min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
   # - [ 22, 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, true, false ] # help GMM / PN / EN ECAL
   process_filters_parameters: # Process Name, min Energy [Unit], max Energy [Unit], min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
   # - [ "GammaToMuPair", 4, "GeV", -1, "GeV", -607.5, "mm", 180, "mm", true, false, true] # GMM Target
