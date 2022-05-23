@@ -103,10 +103,10 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     G4ThreeVector CellID(0, 0, 0);
     if (fType == nTagTracker || fType == nRecTracker) {
         reNumber0 = touchable->GetReplicaNumber(0);
-        cellId = reNumber1 * xID + reNumber0 + 1;
-        CellID.setX(cellId);
+        cellId = reNumber2 + 1;
+        CellID.setX(reNumber1 * xID + reNumber0 + 1);
         CellID.setY(1);
-        CellID.setZ(reNumber2 + 1);
+        CellID.setZ(cellId);
     } else if (fType == nECAL) {
         CellID.setX(dDetectorIDMaps->GetECALIDX(reNumber1, reNumber2));
         CellID.setY(dDetectorIDMaps->GetECALIDY(reNumber1, reNumber2));
