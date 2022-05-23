@@ -57,8 +57,8 @@ SteppingAction::~SteppingAction() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void SteppingAction::UserSteppingAction(const G4Step *aStep) {
-    G4StepPoint *prev = aStep->GetPreStepPoint();
-    G4StepPoint *post = aStep->GetPostStepPoint();
+    prev = aStep->GetPreStepPoint();
+    post = aStep->GetPostStepPoint();
 
     // For default hardbrem filter
     // Requirement: gamma from initial electron with energy larger than 4 GeV in tracker region
@@ -143,6 +143,18 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
         }
     }
 
+    if (dControl->save_mcp_helper) {
+        if (prev->GetPhysicalVolume()->GetName() == "World") {
+            if (post->GetPhysicalVolume() && post->GetPhysicalVolume()->GetName() == "ECAL") {
+                SetMcPHelper(aStep, nECAL);
+                dRootMng->FillMCPHelper(fMCPH, aStep->GetTrack()->GetTrackID());
+            } else if (post->GetPhysicalVolume() && post->GetPhysicalVolume()->GetName() == "HCAL") {
+                SetMcPHelper(aStep, nHCAL);
+                dRootMng->FillMCPHelper(fMCPH, aStep->GetTrack()->GetTrackID());
+            }
+        }
+    }
+
     // /* Optical Photon Detection: APD region */
     //no need for real photon, since LUT is default
     // if (dControl->if_optical && aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "opticalphoton") {
@@ -158,4 +170,37 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+void SteppingAction::SetMcPHelper(const G4Step *aStep, int detector) {
+    fMCPH = new McPHelper();
+    auto *touchable = dynamic_cast<const G4TouchableHistory*> (aStep->GetPostStepPoint()->GetTouchable());
+//    reNumber1 = touchable->GetReplicaNumber(1);
 
+    fMCPH->setId(aStep->GetTrack()->GetTrackID());
+    fMCPH->setDetector(detector);
+//    fMCPH->setCellId(reNumber1 + 1);
+//    if (detector == nTracker) {
+//        fMCPH->setCellIdX(touchable->GetReplicaNumber(0) + 1);
+//        fMCPH->setCellIdY(1);
+//        fMCPH->setCellIdZ(reNumber1 + 1);
+//    } else if (detector == nECAL) {
+//        fMCPH->setCellIdX(reNumber1 % ((int)dControl->ECAL_Center_Module_No.x() * (int)dControl->ECAL_Center_Module_No.y()) % (int)dControl->ECAL_Center_Module_No.x() + 1);
+//        fMCPH->setCellIdY(((reNumber1 % ((int)dControl->ECAL_Center_Module_No.x() * (int)dControl->ECAL_Center_Module_No.y())) / (int) dControl->ECAL_Center_Module_No.y()) + 1);
+//        fMCPH->setCellIdZ(reNumber1 / ((int)dControl->ECAL_Center_Module_No.x() * (int)dControl->ECAL_Center_Module_No.y()) + 1);
+//    }
+
+    fMCPH->setX(post->GetPosition().x());
+    fMCPH->setY(post->GetPosition().y());
+    fMCPH->setZ(post->GetPosition().z());
+
+    fMCPH->setT(post->GetKineticEnergy());
+    fMCPH->setE(post->GetTotalEnergy());
+
+    fMCPH->setPdg(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
+
+    fMCPH->setPx((float)post->GetMomentum().x());
+    fMCPH->setPy((float)post->GetMomentum().y());
+    fMCPH->setPz((float)post->GetMomentum().z());
+
+    fMCPH->setMass((float)aStep->GetTrack()->GetParticleDefinition()->GetPDGMass());
+    fMCPH->setIsIncoming(true);
+}

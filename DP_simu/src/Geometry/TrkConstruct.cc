@@ -50,11 +50,14 @@ TrkConstruct::TrkConstruct(const TrkConstruct &in) {
     fTrkMaterial = in.fTrkMaterial;
     fVis = in.fVis;
     fTrkLVVector = in.fTrkLVVector;
+    fBlockLVVector = in.fBlockLVVector;
+    fStripBlockN = in.fStripBlockN;
     fAngle = in.fAngle;
     fZMove = in.fZMove;
     fPos1 = in.fPos1;
     fPos2 = in.fPos2;
     fTrkLV = in.fTrkLV;
+    fBlockLV = in.fBlockLV;
     fAngle1 = in.fAngle1;
     fAngle2 = in.fAngle2;
     fStripNum = in.fStripNum;
@@ -64,11 +67,12 @@ TrkConstruct::TrkConstruct(const TrkConstruct &in) {
     fStripPosX = in.fStripPosX;
     fStripPosY = in.fStripPosY;
     fStripPosZ = in.fStripPosZ;
-    fStripGapX = in.fStripGapX;
+    fStripDistanceX = in.fStripDistanceX;
     fStripVis = in.fStripVis;
     fStripLV = in.fStripLV;
     fStripLVVector = in.fStripLVVector;
     PVVector = in.PVVector;
+    eps = in.eps;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -88,7 +92,7 @@ G4ThreeVector TrkConstruct::BoxConstruct() {
         return TotalHalfSize;
     }
     // box LV
-    auto box = new G4Box(fTrkName + "_Box", fSizeX / 2., fSizeY / 2., fSizeZ / 2.);
+    auto box = new G4Box(fTrkName + "_Box", (fSizeX + eps) / 2., fSizeY / 2., fSizeZ / 2.);
     auto boxLV = new G4LogicalVolume(box, fTrkMaterial, fTrkName + "_LV", nullptr, nullptr, nullptr);
 
     fTrkLV = boxLV;
@@ -120,8 +124,9 @@ G4ThreeVector TrkConstruct::BoxPlacement() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 // Volume relationship:
-// 0 Outline (Trk)
-// └-1 Silicon micro-strip (Strip)
+// 2 Outline (Trk)
+// └-1 SMTBlock
+//   └-0 Silicon micro-strip (Strip)
 G4ThreeVector TrkConstruct::SMTConstruct() {
     auto TotalHalfSize = G4ThreeVector(0, 0, 0);
     // check consistency
@@ -130,7 +135,7 @@ G4ThreeVector TrkConstruct::SMTConstruct() {
         return TotalHalfSize;
     }
     // outline
-    auto TrkBox = new G4Box(fTrkName + "_Box", fSizeX / 2., fSizeY / 2., fSizeZ / 2.);
+    auto TrkBox = new G4Box(fTrkName + "_Box", (fSizeX + 2 * eps) / 2., (fSizeY + 2 * eps) / 2., (fSizeZ + 2 * eps) / 2.);
     auto TrkLV = new G4LogicalVolume(TrkBox,
                                      G4Material::GetMaterial("vacuum"),
                                      fTrkName + "_LV",
@@ -142,6 +147,17 @@ G4ThreeVector TrkConstruct::SMTConstruct() {
         fVis->SetVisibility(true);
         TrkLV->SetVisAttributes(fVis);
     } else TrkLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    // SMT Block
+    assert(fStripNum % fStripBlockN == 0 && "Strip number per Block number must be a common divisor of Strip Number.");
+    auto BlockBox = new G4Box(fTrkName + "_Block_Box", (fStripBlockN * fStripDistanceX) * 0.5, (fSizeY + eps) * 0.5, (fSizeZ + eps) * 0.5);
+    auto BlockLV = new G4LogicalVolume(BlockBox,
+                                       G4Material::GetMaterial("vacuum"),
+                                       fTrkName + "_Block_LV",
+                                       nullptr, nullptr, nullptr);
+    fBlockLV = BlockLV;
+    fBlockLVVector.emplace_back(BlockLV);
+    BlockLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
     // Silicon micro-strip
     auto StripBox = new G4Box(fTrkName + "_Strip_Box", fStripSizeX / 2., fStripSizeY / 2., fStripSizeZ / 2.);
@@ -157,26 +173,49 @@ G4ThreeVector TrkConstruct::SMTConstruct() {
 
     /// construct nphysical volume
     // place strip
-    TotalHalfSize = G4ThreeVector(0.5 * fSizeX,
+    TotalHalfSize = G4ThreeVector(0.5 * fStripBlockN * fStripDistanceX,
                                   0.5 * fSizeY,
                                   0.5 * fSizeZ);
     fStripPosY = 0;
     fStripPosZ = 0;
     // G4PVPlacement* StripPV = nullptr;
     G4int fStripCopyNo = 0;
-    for (int i = 0; i < fStripNum; i++) {
-        fStripPosX = -1 * TotalHalfSize.x() + (i + 0.5) * fStripGapX;
+    for (int i = 0; i < fStripBlockN; i++) {
+        fStripPosX = -1 * TotalHalfSize.x() + (i + 0.5) * fStripDistanceX;
         auto StripPV = new G4PVPlacement(nullptr,
                                          G4ThreeVector(fStripPosX, fStripPosY, fStripPosZ),
                                          fStripLV,
                                          fTrkName + "_Strip_PV",
-                                         fTrkLV,
+                                         fBlockLV,
                                          false,
                                          fStripCopyNo,
                                          fCheckOverlap);
         PVVector.emplace_back(StripPV);
         fStripCopyNo++;
     }
+
+    TotalHalfSize = G4ThreeVector(0.5 * fSizeX,
+                                  0.5 * fSizeY,
+                                  0.5 * fSizeZ);
+    G4double fBlockPosX = 0;
+    G4double fBlockPosY = 0;
+    G4double fBlockPosZ = 0;
+
+    G4int fBlockCopyNo = 0;
+    for (int i = 0; i < fStripNum / fStripBlockN; i++) {
+        fBlockPosX = -1 * TotalHalfSize.x() + (i + 0.5) * fStripBlockN * fStripDistanceX;
+        auto BlockPV = new G4PVPlacement(nullptr,
+                                         G4ThreeVector(fBlockPosX, fBlockPosY, fBlockPosZ),
+                                         fBlockLV,
+                                         fTrkName + "_Block_PV",
+                                         fTrkLV,
+                                         false,
+                                         fBlockCopyNo,
+                                         fCheckOverlap);
+        PVVector.emplace_back(BlockPV);
+        fBlockCopyNo++;
+    }
+
     return TotalHalfSize;
 }
 
@@ -186,7 +225,8 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
                                             G4ThreeVector *SizeVec,
                                             G4ThreeVector *PosVec,
                                             std::vector<G4int> StripNVec,
-                                            G4ThreeVector *AngleGapVec) {
+                                            G4ThreeVector *AngleGapVec,
+                                            G4int stripBlockN) {
     auto TotalHalfSize = G4ThreeVector(0, 0, 0);
 
     G4PVPlacement *UnitPV = nullptr;
@@ -200,10 +240,12 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         SetSizeXYZ(CurSizeVec);
         SetPosXYZ(CurPosVec);
         SetStrip_Angle_Gap(CurStripN, CurAngleGapVec);
+        SetStrip_Block_N(stripBlockN);
 
         if (! dControl->build_silicon_micro_strip ) {
             fStripNum = 1;
-            fStripGapX = fSizeX;
+            fStripBlockN = 1;
+            fStripDistanceX = fSizeX;
             fStripSizeX = fSizeX;
         }
 
@@ -212,14 +254,14 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         auto HepRot2 = new G4RotationMatrix();
         HepRot2->rotateZ(fAngle2);
 
-        fZMove = 0.5 * fSizeZ + dControl->eps;
+        fZMove = 0.5 * fSizeZ + 2 * eps;
         fPos1 = G4ThreeVector(fPosX, fPosY, fPosZ - fZMove);
         fPos2 = G4ThreeVector(fPosX, fPosY, fPosZ + fZMove);
 
 
         G4ThreeVector CurColor = dControl->Tracker1_Color;
         fVis = fVis1;
-        fStripVis = fVis1;
+        //fStripVis = fVis1;
         SMTConstruct();
         UnitPV = new G4PVPlacement(HepRot1,
                                    fPos1,
@@ -232,7 +274,7 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         PVVector.emplace_back(UnitPV);
 
         fVis = fVis2;
-        fStripVis = fVis2;
+        //fStripVis = fVis2;
         SMTConstruct();
         UnitPV = new G4PVPlacement(HepRot2,
                                    fPos2,
@@ -253,8 +295,8 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
 
 void TrkConstruct::SetStrip_Angle_Gap(const G4int &stripN, const G4ThreeVector &angleGap) {
     fStripNum = stripN;
-    fStripGapX = fSizeX / stripN;
-    fStripSizeX = fStripGapX - angleGap.z();
+    fStripDistanceX = fSizeX / stripN;
+    fStripSizeX = fStripDistanceX - angleGap.z();
     fStripSizeY = fSizeY;
     fStripSizeZ = fSizeZ;
 

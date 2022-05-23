@@ -33,6 +33,9 @@
 #pragma link C++ class std::vector<McParticle*>+;
 //#pragma link C++ class std::map<std::string, std::vector<McParticle*>* >;
 
+#pragma link C++ class McPHelper+;
+#pragma link C++ class std::vector<McPHelper*>+;
+
 #pragma link C++ class SimulatedHit+;
 #pragma link C++ class std::vector<SimulatedHit*>+;
 //#pragma link C++ class std::map<std::string, std::vector<SimulatedHit*>* >;
@@ -52,6 +55,7 @@
 
 #pragma link C++ class DEvent+;
 
+#pragma link C++ class DDetectorIDMaps+;
 
 #endif
 

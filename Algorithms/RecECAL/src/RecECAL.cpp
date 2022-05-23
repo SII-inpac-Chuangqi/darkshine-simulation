@@ -120,8 +120,8 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
         // temporary HCAL Analyzer
         double HCAL_E = 0;
         double HCAL_E_Max_cell = 0;
-        for (int i = 0; i < 16; i++) {
-            auto Collection_String = Form("HCAL_%d_%s", i, HCAL_Collection_Name.c_str());
+//        for (int i = 0; i < 1; i++) {
+            auto Collection_String = Form("HCAL_%s", HCAL_Collection_Name.c_str());
             if (HitCollection.count(Collection_String) != 0) {
                 const auto &hits = HitCollection.at(Collection_String);
 
@@ -130,7 +130,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                     HCAL_E_Max_cell = (HCAL_E_Max_cell >= hit->getE()) ? HCAL_E_Max_cell : hit->getE();
                 }
             }
-        }
+//        }
         HCAL_total.push_back(HCAL_E);
         HCAL_E_Max_Cell.push_back(HCAL_E_Max_cell);
     }

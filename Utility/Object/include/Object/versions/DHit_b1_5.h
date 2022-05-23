@@ -8,7 +8,7 @@
 #include "TObject.h"
 
 enum DetectorType {
-    nNone, nTracker, nECAL, nHCAL
+    nTagTracker, nRecTracker, nECAL, nHCAL, nHCAL_APD, nNone
 };
 
 class DHit_b1_5 : public TObject {

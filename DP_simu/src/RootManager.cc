@@ -107,6 +107,8 @@ void RootManager::book() { //run level init for all
             Evt->RegisterMCParticleCollection(dControl->RawMCCollection_Name);
         if (dControl->save_initial_particle_step)
             Evt->RegisterStepCollection(dControl->InitialParticleStepCollection_Name);
+        if (dControl->save_mcp_helper)
+            Evt->RegisterMCPHelperCollection(dControl->MCPHelperCollection_Name);
     }
 
     tr->Branch("DEvent", &Evt, 320000000, 0);
@@ -219,6 +221,27 @@ void RootManager::FillMC(McParticle *fMC, int ParentID) {
     mc->setCreateProcess(std::string(tmp2));
 
     mcps->emplace_back(mc);
+}
+
+//....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
+/// \brief
+/// \param[in] McPHelper
+/// \param[in] McParticle ID
+void RootManager::FillMCPHelper(McPHelper* fMCPH, int mcpId) {
+    if (if_clean) return;
+    McParticle* mc = nullptr;
+    if (dControl->save_MC) {
+        auto mcps = Evt->getMcParticleCollection().at(dControl->RawMCCollection_Name);
+        mc = McParticle::SearchID(mcps, mcpId);
+    }
+//    if (mc || dControl->save_all_mcp){
+        fMCPH->setMcParticle(mc);
+        auto mcphVec = Evt->getMcPHelperCollection().at(dControl->MCPHelperCollection_Name);
+        mcphVec->emplace_back(fMCPH);
+//    } else {
+//        delete fMCPH;
+//    }
+
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......

@@ -46,6 +46,7 @@ private:
     G4Material *TrackerRegion_Mat = nullptr; 
     std::vector<G4ThreeVector> Size_Tracker{};
     std::vector<G4ThreeVector> Pos_Tracker{};
+    G4int Strip_Block_N{};
     std::vector<G4int> StripN_Tracker{};
     std::vector<G4ThreeVector> Strip_Angle_Gap_Tracker{};
     G4int No_Tracker{};

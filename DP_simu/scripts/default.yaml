@@ -34,7 +34,7 @@ general_particle_source:
     ene/mono: "8 GeV"
     #direction: "0 0 1"
     #position: "0 0 -61 cm"
-  beam_on: 10
+  beam_on: 100
 
 ###########################################
 # Global Variables
@@ -87,9 +87,12 @@ OutCollection:
   save_MC: true
   # save the initial particle step
   save_initial_particle_step: true
+  # save snapshot of particle passing through surface of ECAL Region
+  save_mcp_helper: false
 
   RawMCCollection_Name: "RawMCParticle"
   InitialParticleStepCollection_Name: "Initial_Particle_Step"
+  MCPHelperCollection_Name: "MCPHelper"
 
 ###########################################
 # Event Biasing
@@ -99,7 +102,7 @@ Biasing:
   if_bias_target: false
   if_bias_ECAL: false
 
-  BiasProcess: "GammaToMuPair"
+  BiasProcess: "photonNuclear"
   # BiasProcess: "DMProcessDMBrem"
   BiasFactor: 1e20
   BiasEmin: [ 4.0, "GeV" ]
@@ -112,18 +115,20 @@ Filters:
   if_filter: false
   # if to apply filter on hard-brem event
   if_HardBrem: false
-  # Parameters description:
-  # max Energy -  set to a minus value = Infinity
-  # fInclude - true: including filter, only save event when particle/process is in the filter; false: excluding filter, abort particle/process in the filter
-  # fStage0 - true: apply filter on primary track; false: not apply on primary track
-  # fStage1 - true: apply filter on secondaries track; false: not apply on secondary track
-  # PDG, min Energy [Unit], max Energy [Unit] , min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
-  particle_filters_parameters:
-    # - [ 22, 6, "GeV", 8, "GeV", -1, "m", 0.2, "m", true, true, true ]
-    # - [ 11, 2, "GeV", 3, "GeV", -1, "m", 0.2, "m", false, true, true ]
-  # Process Name, min Energy [Unit], max Energy [Unit], min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
-  process_filters_parameters:
-    # - [ "GammaToMuPair", 2, "GeV", 4, "GeV", -10, "cm", 2, "cm", false, true, true]
+  # Filter Parameters description:
+    # max Energy -  set to a minus value = Infinity
+    # fInclude - true: inclusive filter, only save event when particle/process is in the filter; false: exclusive filter, abort particle/process in the filter
+    # fStage0 - true: apply filter on primary track; false: not apply on primary track
+    # fStage1 - true: apply filter on secondaries track; false: not apply on secondary track
+  particle_filters_parameters: # PDG, min Energy [Unit], max Energy [Unit] , min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
+  # - [ 22, 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, true, false ] # help GMM / PN / EN ECAL
+  process_filters_parameters: # Process Name, min Energy [Unit], max Energy [Unit], min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
+  # - [ "GammaToMuPair", 4, "GeV", -1, "GeV", -607.5, "mm", 180, "mm", true, false, true] # GMM Target
+  # - [ "GammaToMuPair", 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, false, true] # GMM ECAL
+  # - [ "photonNuclear", 4, "GeV", -1, "GeV", -607.5, "mm", 180, "mm", true, false, true] # PN Target
+  # - [ "photonNuclear", 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, false, true] # PN ECAL
+  # - [ "electronNuclear", 4, "GeV", -1, "GeV", -607.5, "mm", 180, "mm", true, true, false] # EN Target
+  # - [ "electronNuclear", 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, true, false] # EN ECAL
 
 ###########################################
 # Optical Options
@@ -202,7 +207,8 @@ Geometry:
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 5
       - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 6
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 7
-    tag_Tracker_Strip_N: [ 1000 , 1000 , 1000 , 1000 , 1000 , 1000 , 1000 ]
+    tag_Tracker_Strip_N: [ 3350 , 3350 , 3350 , 3350 , 3350 , 3350 , 3350 ]
+    tag_Tracker_Strip_Block_N: 50 # Strip number per block. This number must be a common divisor of tag_Tracker_Strip_N !
     # Recoil Tracker
     rec_Size_Tracker:
       - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 1
@@ -225,7 +231,8 @@ Geometry:
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 4
       - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 5
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 6
-    rec_Tracker_Strip_N: [ 2000, 2000 , 2000 , 2000 , 2000 , 2000 ]
+    rec_Tracker_Strip_N: [ 3350, 3350 , 3350 , 4000 , 6000 , 8350 ]
+    rec_Tracker_Strip_Block_N: 50 # Strip number per Block. This number must be a common divisor of rec_Tracker_Strip_N !
   ECAL:
     ECAL_Name: "ECAL"
 
@@ -237,40 +244,42 @@ Geometry:
     # Wrapper Material
     ECAL_Wrap_Mat: "G4_C"
 
-    ECAL_Center_Wrap_Size: [ 0.3 , "mm", 0.3 , "mm", 0.3 , "mm" ] # 2 x warpper thickness
+    ECAL_Center_Wrap_Size: [ 0.3 , "mm", 0.3 , "mm", 0.3 , "mm" ] # ECAL_Center_Wrap_Size = 2 x wrapper thickness
     # ECAL APD Size
     ECAL_APD_Size: [1, "cm", 1, "cm", 1, "mm"]
     # ECAL Scintillator cell size
     ECAL_Center_Size: [ 2.5 , "cm", 2.5 , "cm", 4.0 , "cm" ]
-    # ECAL Scintillator cell placement (x,y,z)
-    ECAL_Center_Module_No: [ 21, 21, 11 ]
+
+    ECAL_Block_No: [3, 3, 11]
+    ECAL_Cell_No: [7, 7, 1] # Cell Number per Block
+
   HCAL:
     HCAL_Name: "HCAL"
 
     # HCAL Absorber Material
     HCAL_Absorber_Mat: "G4_Fe"
     # HCAL Main Region Material
-    HCALRegion_Mat: "vacuum"
+    HCALRegion_Mat: "CarbonFiber"
     # HCAL Scintillator Material
     HCAL_Mat: "G4_POLYSTYRENE"
     # Wrapper Material
     HCAL_Wrap_Mat: "G4_C"
 
-    HCAL_Wrap_Size: [0.3 , "mm", 0.3 , "mm", 0.3 , "mm"] # 2 x warpper thickness
+    HCAL_Wrap_Size: [0.3 , "mm", 0.3 , "mm", 0.3 , "mm"] # HCAL_Wrap_Size = 2 x wrapper thickness
     # HCAL APD Size
     HCAL_APD_Size: [3, "mm", 3, "mm", 1, "mm"]
     # HCAL Scintillator cell size along x, the odd layer place along x, even along y
-    HCAL_Size_Dir: [ 1, "cm", 5 , "cm", 100.572 , "cm"] # z = HCAL_Mod_No_Dir.x() * (HCAL_Size_Dir.y() + HCAL_Wrap_Size.y() + eps)
-                                                       #     -HCAL_Wrap_Size.y() - eps
-    # HCAL Scintillator cell placement (x,y,z)
-    HCAL_Mod_No_Dir: [20, 20, 160]
-    # HCAL Module Number placement (x,y,z)
+    HCAL_Size_Dir: [ 1, "cm", 5 , "cm", 100.5719 , "cm"] # z = HCAL_Cell_XY_N * y + (HCAL_Cell_XY_N - 1) * (HCAL_Wrap_Size.y + eps)
+
     HCAL_Module_No: [4, 4, 1]
-    HCAL_Module_Gap: [0.5 , "mm"]
-    # HCAL Absorber Thickness
-    HCAL_Absorber_Thickness: [3 , "cm"] # Set this value to zero will not build Absorber.
-
-
+    HCAL_Cell_XY_N: 20
+    HCAL_Absorber_Thickness_List:
+      - [  1,  40,   5, "mm"] # [start, end, thickness, unit]. Start from 1. Set thickness value to zero will skip this Absorber layer.
+      - [ 41,  65,  20, "mm"]
+      - [ 66,  85,  30, "mm"]
+      - [ 86, 100,  50, "mm"]
+    HCAL_Module_Gap: [0.5 , "mm", 0.5, "mm", 1, "um"]
+    HCAL_Show_Cell: false
 # End of File
 ---
 

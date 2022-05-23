@@ -39,6 +39,7 @@ private:
     G4ThreeVector ECAL_Center_Module_No = G4ThreeVector(20, 20, 18);
 
     G4LogicalVolume* ECal_LV;
+    G4LogicalVolume* ECal_Block_LV;
     std::vector<G4LogicalVolume *> ECAL_Center_LV;
 
     /////////////////////////
