@@ -137,8 +137,8 @@ void AnaData::readGeometryDetails() {
                             }
                         }
 
-                        for (int k = 0; k < 3; ++k)
-                        last_pos[k] = subdetector_pos[k];
+                        for (int l = 0; l < 3; ++l)
+                        last_pos[l] = subdetector_pos[l];
                     }
                 }
             }

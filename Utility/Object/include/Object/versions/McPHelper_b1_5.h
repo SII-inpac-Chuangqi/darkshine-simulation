@@ -111,6 +111,7 @@ private:
 
     McParticle* MCParticle{nullptr};
 
+ClassDefOverride(McPHelper_b1_5, 1);
 };
 
 #endif //DSIMU_MCPHELPER_B1_5_H

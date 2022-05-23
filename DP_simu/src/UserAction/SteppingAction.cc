@@ -172,7 +172,7 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
 
 void SteppingAction::SetMcPHelper(const G4Step *aStep, int detector) {
     fMCPH = new McPHelper();
-    auto *touchable = dynamic_cast<const G4TouchableHistory*> (aStep->GetPostStepPoint()->GetTouchable());
+//    auto *touchable = dynamic_cast<const G4TouchableHistory*> (aStep->GetPostStepPoint()->GetTouchable());
 //    reNumber1 = touchable->GetReplicaNumber(1);
 
     fMCPH->setId(aStep->GetTrack()->GetTrackID());

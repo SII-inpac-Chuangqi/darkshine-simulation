@@ -367,8 +367,8 @@ TEveBox *DEventDisplay::makeRotBox(const double *abs_pos, const double *half_siz
 
 
 TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) const {
-    auto cur_node = gGeoManager->FindNode(hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT);
-    //auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
+    gGeoManager->FindNode(hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT);
+//    auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
 
     auto *mother_node = gGeoManager->GetMother();
     auto *cur_shape = dynamic_cast<TGeoBBox *>(mother_node->GetVolume()->GetShape());

@@ -66,8 +66,6 @@ private:
     G4StepPoint* prev;
     G4StepPoint* post;
 
-    G4int reNumber1;
-
     McPHelper* fMCPH{};
 };
 
