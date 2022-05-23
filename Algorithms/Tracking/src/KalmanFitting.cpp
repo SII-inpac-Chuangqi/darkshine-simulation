@@ -157,8 +157,9 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
         ySigma = state[4]*10 - (*track.at(0)).GetY();
     }
 
+    double ECal_front_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
+    if(std::isnormal(ECal_front_surface) || ECal_front_surface == 0.)
     {
-        double ECal_front_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
 
         genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
         genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));

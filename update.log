@@ -1,3 +1,7 @@
+2022-05-23
+    1. DSimu: Update geometry hierarchy to speed up spatial search
+    2. Related updates in DAna and DDis
+
 2022-05-05
     1. DSimu: Add MCPHelperCollection and save_mcp_helper option, allowing save snapshot of particle passing through ECAL Region surface
 

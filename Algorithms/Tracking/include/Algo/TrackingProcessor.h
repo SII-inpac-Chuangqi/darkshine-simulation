@@ -84,6 +84,11 @@ private:
 //................................................................................//
 //Reconstructed
 //................................................................................//
+    int TagTrk2_original_hit_No{-1};
+    int TagTrk2_reco_hit_No{-1};
+    int RecTrk2_original_hit_No{-1};
+    int RecTrk2_reco_hit_No{-1};
+
     int TagTrk2_track_No{-1};
     int TagTrk2_rechit_No{-1};
     std::vector<int> TagTrk2_rectrk_hit_No{};

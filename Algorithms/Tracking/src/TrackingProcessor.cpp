@@ -100,6 +100,11 @@ void TrackingProcessor::Begin() {
 //................................................................................//
 //Reconstructed
 //................................................................................//
+    EvtWrt->RegisterOutVariable("TagTrk2_original_hit_No", &TagTrk2_original_hit_No);
+    EvtWrt->RegisterOutVariable("TagTrk2_reco_hit_No", &TagTrk2_reco_hit_No);
+    EvtWrt->RegisterOutVariable("RecTrk2_original_hit_No", &RecTrk2_original_hit_No);
+    EvtWrt->RegisterOutVariable("RecTrk2_reco_hit_No", &RecTrk2_reco_hit_No);
+
     EvtWrt->RegisterIntVariable("TagTrk2_track_No", &TagTrk2_track_No, "TagTrk2_track_No/I");
     EvtWrt->RegisterOutVariable("TagTrk2_pp", &TagTrk2_pp);
     EvtWrt->RegisterOutVariable("TagTrk2_track_chi2", &TagTrk2_track_chi2);
@@ -238,6 +243,13 @@ void TrackingProcessor::FillTruth(std::vector<DStep*> *initial_steps,
     }
 }
 
+int GetRecoHitNo(const TrkHitPVecMap &map)
+{
+    int hit_No = 0;
+    for(const auto &layer : map) hit_No += layer.second.size();
+    return hit_No;
+}
+
 void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     this->CleanEvt();
 
@@ -275,6 +287,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                 magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.) : con_field,
                                                 magnets.at(2) ? magnets.at(2)->GetField(0., 0., 0.) : 0.};
 
+        TagTrk2_original_hit_No = raw_tagtrk2_hits.size();
+        RecTrk2_original_hit_No = raw_rectrk2_hits.size();
+        TagTrk2_reco_hit_No = 0;
+        RecTrk2_reco_hit_No = 0;
 
         if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
         {
@@ -284,6 +300,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //Digitization
             TrkHitPVecMap clus_tag_trkhit_map;
             digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, clus_tag_trkhit_map, tag);
+
+            TagTrk2_reco_hit_No = GetRecoHitNo(clus_tag_trkhit_map);
 
             if(clus_tag_trkhit_map.size())
             {
@@ -349,6 +367,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //Digitization
             TrkHitPVecMap clus_rec_trkhit_map;
             digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, clus_rec_trkhit_map, rec);
+
+            RecTrk2_reco_hit_No = GetRecoHitNo(clus_rec_trkhit_map);
 
             if(clus_rec_trkhit_map.size())
             {
