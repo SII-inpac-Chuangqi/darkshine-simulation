@@ -30,6 +30,7 @@
 
 #include "DP_simu/RootManager.hh"
 #include "DP_simu/DetectorSD.hh"
+#include "Object/DDetectorIDMaps.h"
 #include "G4HCofThisEvent.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
@@ -63,7 +64,7 @@ DetectorSD::~DetectorSD() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void DetectorSD::Initialize(G4HCofThisEvent *) {
-    if (fType != nTracker) {
+    if (fType != nTagTracker && fType != nRecTracker) {
         for (int i = 0; i < fCellID.x() * fCellID.y() * fCellID.z(); i++)
             fSimHitVec.push_back(new SimulatedHit());
 
@@ -89,32 +90,34 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
 
     // Get calorimeter cell id
     reNumber1 = touchable->GetReplicaNumber(1); // for calo, depth=1
+    reNumber2 = touchable->GetReplicaNumber(2);
 
     // Get hit accounting data for this cell
     SimulatedHit *hit;
-    if (!fType) hit = new SimulatedHit();
+    if (fType == nTagTracker || fType == nRecTracker) hit = new SimulatedHit();
     else hit = fSimHitVec[reNumber1];
 
     auto xID = (int) fCellID.x();
     auto yID = (int) fCellID.y();
     //G4int zID = (int)fCellID.z();
     G4ThreeVector CellID(0, 0, 0);
-    if (fType == nTracker) {
-        CellID.setX(touchable->GetReplicaNumber(0) + 1);
+    if (fType == nTagTracker || fType == nRecTracker) {
+        reNumber0 = touchable->GetReplicaNumber(0);
+        cellId = reNumber2 + 1;
+        CellID.setX(reNumber1 * xID + reNumber0 + 1);
         CellID.setY(1);
-        CellID.setZ(reNumber1 + 1);
+        CellID.setZ(cellId);
     } else if (fType == nECAL) {
-        CellID.setZ((int) (reNumber1 / (xID * yID)) + 1);
-        CellID.setX((reNumber1 % (xID * yID)) % xID + 1);
-        CellID.setY((int) ((reNumber1 % (xID * yID)) / yID) + 1);
+        CellID.setX(dDetectorIDMaps->GetECALIDX(reNumber1, reNumber2));
+        CellID.setY(dDetectorIDMaps->GetECALIDY(reNumber1, reNumber2));
+        CellID.setZ(dDetectorIDMaps->GetECALIDZ(reNumber1, reNumber2));
+        cellId = CellID.getX() + (CellID.getY() - 1) * xID  + (CellID.getZ() - 1) * (xID * yID);
     } else if (fType == nHCAL || fType == nHCAL_APD) {
-        if ((int) CellID.z() % 2 == 0) {
-            CellID.setX(1);
-            CellID.setY(((reNumber1 % (xID * yID)) % yID) + 1);
-        } else {
-            CellID.setY(1);
-            CellID.setX(((reNumber1 % (xID * yID)) % yID) + 1);
-        }
+        reNumber3 = touchable->GetReplicaNumber(3);
+        cellId = reNumber1 % (int)xID + 1;
+        CellID.setX(dDetectorIDMaps->GetHCALIDX(reNumber2));
+        CellID.setY(dDetectorIDMaps->GetHCALIDY(reNumber2));
+        CellID.setZ(2 * reNumber3 + (int)( reNumber1 / (int)xID ) + 1);
     } else {
         std::cerr << "[ERROR] DetectorSD ==> Wrong Detecotr Type" << std::endl;
         exit(EXIT_FAILURE);
@@ -159,11 +162,11 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     fMC->setPz(step->GetTrack()->GetMomentum()[2]);
     if (step->GetTrack()->GetCreatorProcess())
         fMC->setCreateProcess(step->GetTrack()->GetCreatorProcess()->GetProcessName());
-    hit->addParticleContribution(*fMC, edep, !fType);
+    hit->addParticleContribution(*fMC, edep, fType == nTagTracker || fType == nRecTracker);
     delete fMC;
 
-    hit->setCellId(reNumber1 + 1); // replica start from 0 in DetectorConstruction
-    if (fType == nTracker) {
+    hit->setCellId(cellId); // replica start from 0 in DetectorConstruction
+    if (fType == nTagTracker || fType == nRecTracker) {
         if (dControl->build_silicon_micro_strip) {
             hit->setX(CellPosition.x());
             hit->setY(CellPosition.y());
@@ -193,7 +196,7 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void DetectorSD::EndOfEvent(G4HCofThisEvent *) {
-    if (fType != nTracker) {
+    if (fType != nTagTracker && fType != nRecTracker) {
         for (auto simhit : fSimHitVec) {
             if (simhit->getE() >= 1e-10) dRootMng->FillSimHit(fname, simhit);
             delete simhit;

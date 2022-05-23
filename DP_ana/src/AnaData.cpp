@@ -77,27 +77,31 @@ void AnaData::readGeometryDetails() {
         auto *detector = dynamic_cast<TGeoNode*>(world_->GetDaughter(i));
         auto detector_name = TString(detector->GetVolume()->GetName());
 
-        if(detector_name.Contains("Trk")) {
+        if(detector_name.Contains("Trk")) { // TAGTrk or RECTrk
             for(int j = 0; j < detector->GetNdaughters(); j++) {
                 auto *layer = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
                 auto *layer_shape = dynamic_cast<TGeoBBox*>(layer->GetVolume()->GetShape());
                 auto layer_name = TString(layer->GetVolume()->GetName());
                 auto rotation = layer->GetMatrix()->GetRotationMatrix();
 
-                if(layer_name.Contains("Tag")) {
+                if(layer_name.Contains("Tag")) { // TagTrk1_LV or TagTRk2_LV
                     layer_width_tag.push_back(2.*CUNIT*layer_shape->GetDX());
                     layer_length_tag.push_back(2.*CUNIT*layer_shape->GetDY());
-                    strip_no_tag.push_back(layer->GetNdaughters());
+                    auto *block0 = dynamic_cast<TGeoNode*>(layer->GetDaughter(0));
+                    strip_no_tag.push_back(layer->GetNdaughters() * block0->GetNdaughters());
                     angles_tag.push_back(std::asin(rotation[1]));
                 }
                 else if(layer_name.Contains("Rec")) {
                     layer_width_rec.push_back(2.*CUNIT*layer_shape->GetDX());
                     layer_length_rec.push_back(2.*CUNIT*layer_shape->GetDY());
-                    strip_no_rec.push_back(layer->GetNdaughters());
+                    auto *block0 = dynamic_cast<TGeoNode*>(layer->GetDaughter(0));
+                    strip_no_rec.push_back(layer->GetNdaughters() * block0->GetNdaughters());
                     angles_rec.push_back(std::asin(rotation[1]));
                 }
             }
         }
+
+
 
         if(detector_name.Contains("ECAL")) {
             auto *detector_shape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
@@ -109,29 +113,33 @@ void AnaData::readGeometryDetails() {
             ECAL_length_z = CUNIT*2*detector_shape->GetDZ();
 
             for (int j = 0; j < detector->GetNdaughters(); ++j) {
-                auto *subdetector = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
-                auto subdetector_name = TString(subdetector->GetVolume()->GetName());
+                auto *block = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
+                auto block_name = TString(block->GetVolume()->GetName());
+                for (int k = 0; k < block->GetNdaughters(); ++k ) {
+                    auto *subdetector = dynamic_cast<TGeoNode*>(block->GetDaughter(k));
+                    auto subdetector_name = TString(subdetector->GetVolume()->GetName());
 
-                if (subdetector_name.Contains("LVW")) {
-                    auto *crystal = dynamic_cast<TGeoNode*>(subdetector->GetDaughter(0));
-                    auto *crystal_shape = dynamic_cast<TGeoBBox*>(crystal->GetVolume()->GetShape());
-                    ECal_cell_length_x.push_back(CUNIT*2*crystal_shape->GetDX());
-                    ECal_cell_length_y.push_back(CUNIT*2*crystal_shape->GetDY());
-                    ECal_cell_length_z.push_back(CUNIT*2*crystal_shape->GetDZ());
+                    if (subdetector_name.Contains("LVW")) {
+                        auto *crystal = dynamic_cast<TGeoNode*>(subdetector->GetDaughter(0));
+                        auto *crystal_shape = dynamic_cast<TGeoBBox*>(crystal->GetVolume()->GetShape());
+                        ECal_cell_length_x.push_back(CUNIT*2*crystal_shape->GetDX());
+                        ECal_cell_length_y.push_back(CUNIT*2*crystal_shape->GetDY());
+                        ECal_cell_length_z.push_back(CUNIT*2*crystal_shape->GetDZ());
 
-                    auto subdetector_pos = subdetector->GetMatrix()->GetTranslation();
+                        auto subdetector_pos = subdetector->GetMatrix()->GetTranslation();
 
-                    if (subdetector_pos[2] != last_pos[2]) N_ECal_cell_z++;
+                        if (subdetector_pos[2] != last_pos[2]) N_ECal_cell_z++;
 
-                    if (N_ECal_cell_z == 1) {
-                        if (subdetector_pos[1] != last_pos[1]) N_ECal_cell_y++;
-                        if (N_ECal_cell_y == 1) {
-                            if (subdetector_pos[0] != last_pos[0]) N_ECal_cell_x++;
+                        if (N_ECal_cell_z == 1) {
+                            if (subdetector_pos[1] != last_pos[1]) N_ECal_cell_y++;
+                            if (N_ECal_cell_y == 1) {
+                                if (subdetector_pos[0] != last_pos[0]) N_ECal_cell_x++;
+                            }
                         }
-                    }
 
-                    for (int k = 0; k < 3; ++k)
-                    last_pos[k] = subdetector_pos[k];
+                        for (int k = 0; k < 3; ++k)
+                        last_pos[k] = subdetector_pos[k];
+                    }
                 }
             }
         }

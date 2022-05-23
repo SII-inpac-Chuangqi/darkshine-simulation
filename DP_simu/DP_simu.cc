@@ -156,6 +156,9 @@ int main(int argc, char **argv) {
     // Initiate RootManager Class
     RootManager::CreateInstance();
 
+    // Initiate DDetectorIDMaps Class
+    DDetectorIDMaps::CreateInstance();
+
     // Rebuild all dependent variables
     // All the parameters are locked for now
     dControl->RebuildVariables();

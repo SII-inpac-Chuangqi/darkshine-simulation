@@ -138,7 +138,7 @@ Control::Control() {
 
     ECAL_Center_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
     ECAL_Center_Size = G4ThreeVector(2.5 * cm, 2.5 * cm, 2.0 * cm);
-    ECAL_Center_Module_No = G4ThreeVector(20, 20, 18);
+    //ECAL_Center_Module_No = G4ThreeVector(20, 20, 18);
 
     //----------------------------------------
     // Hadronic Calorimeter
@@ -152,9 +152,7 @@ Control::Control() {
     HCAL_Wrap_Size = G4ThreeVector(0.3 * mm, 0.3 * mm, 0.3 * mm);
     //HCAL_Size_Dir = G4ThreeVector(100 * cm + 19 * HCAL_Wrap_Size.x(), 5 * cm, 1 * cm);
     HCAL_Size_Dir = G4ThreeVector(1 * cm, 5 * cm, 100 * cm + 19 * HCAL_Wrap_Size.x());
-    HCAL_Mod_No_Dir = G4ThreeVector(1, 20, 120);
     HCAL_Module_No = G4ThreeVector(3, 3, 1);
-    HCAL_Module_Gap = 0.5 * mm;
     HCAL_Absorber_Thickness = 3 * cm;
 
     //========================================
@@ -266,8 +264,8 @@ void Control::RebuildVariables() {
     tag_Size_TrackerRegion = G4ThreeVector(
             2.0 * tag_Size_Tracker[0].x(),
             2.0 * tag_Size_Tracker[0].y(),
-            tag_Pos_Tracker[tag_No_Tracker - 1].z() - tag_Pos_Tracker[0].z() + 2.0 * tag_Size_Tracker[0].z() +
-            2 * eps * (tag_No_Tracker + 1));
+            tag_Pos_Tracker[tag_No_Tracker - 1].z() - tag_Pos_Tracker[0].z() +
+            2.0 * (tag_Size_Tracker[0].z() + 3.0 * eps ) + eps);
 
     tag_Pos_TrackerRegion = G4ThreeVector(
             0 * cm, 0 * cm,
@@ -283,7 +281,7 @@ void Control::RebuildVariables() {
             2.0 * rec_Size_Tracker[rec_No_Tracker - 1].x(),
             2.0 * rec_Size_Tracker[rec_No_Tracker - 1].y(),
             rec_Pos_Tracker[rec_No_Tracker - 1].z() - rec_Pos_Tracker[0].z() +
-            2.0 * rec_Size_Tracker[rec_No_Tracker - 1].z() + 2 * eps * (rec_No_Tracker + 1));
+            2.0 * (rec_Size_Tracker[rec_No_Tracker - 1].z() + 3.0 * eps) + eps );
 
     rec_Pos_TrackerRegion = G4ThreeVector(
             0 * cm, 0 * cm,
@@ -292,29 +290,71 @@ void Control::RebuildVariables() {
 
     //----------------------------------------
     // Electromagnetic Calorimeter
-    Size_ECALRegion.setX((ECAL_Center_Size.x() + ECAL_Center_Wrap_Size.x()) * ECAL_Center_Module_No.x());
-    //+ ECAL_Center_Module_No.x() * 2 * eps);
-    Size_ECALRegion.setY((ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y()) * ECAL_Center_Module_No.y());
-    //+ ECAL_Center_Module_No.y() * 2 * eps);
-    Size_ECALRegion.setZ((ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z() + ECAL_APD_Size.z()) * ECAL_Center_Module_No.z());
-    //+ ECAL_Center_Module_No.z() * 2 * eps);
+
+    Size_ECALCell.setX(ECAL_Center_Size.x() + ECAL_Center_Wrap_Size.x());
+    Size_ECALCell.setY(ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y());
+    Size_ECALCell.setZ(ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z() + ECAL_APD_Size.z());
+
+    Size_ECALBlock.setX(ECAL_Cell_No.x() * (Size_ECALCell.x() + eps) - 0.5 * eps );
+    Size_ECALBlock.setY(ECAL_Cell_No.y() * (Size_ECALCell.y() + eps) - 0.5 * eps );
+    Size_ECALBlock.setZ(ECAL_Cell_No.z() * (Size_ECALCell.z() + eps) - 0.5 * eps );
+
+    Size_ECALRegion.setX( ECAL_Block_No.x() * (Size_ECALBlock.x() + 0.5 * eps) );
+    Size_ECALRegion.setY( ECAL_Block_No.y() * (Size_ECALBlock.y() + 0.5 * eps) );
+    Size_ECALRegion.setZ( ECAL_Block_No.z() * (Size_ECALBlock.z() + 0.5 * eps) );
 
     Pos_ECALRegion = G4ThreeVector(0, 0,
                                    0.5 * Size_ECALRegion.z() + rec_Pos_TrackerRegion.z() +
                                    0.5 * rec_Size_TrackerRegion.z() + 1.0 * mm);
     if (build_only_ECAL) Pos_ECALRegion = G4ThreeVector(0, 0, 0);
 
+    ECAL_Center_Module_No.setX(ECAL_Cell_No.x() * ECAL_Block_No.x());
+    ECAL_Center_Module_No.setY(ECAL_Cell_No.y() * ECAL_Block_No.y());
+    ECAL_Center_Module_No.setZ(ECAL_Cell_No.z() * ECAL_Block_No.z());
+
     //----------------------------------------
     // Hadronic Calorimeter
-    Size_HCALRegion.setX(
-            HCAL_Module_No.x() * (HCAL_Size_Dir.z() + HCAL_Wrap_Size.z() + HCAL_APD_Size.z())
-            + HCAL_Module_Gap * (HCAL_Module_No.x() - 1)
-            + HCAL_Module_No.x() * 2 * eps);
-    Size_HCALRegion.setY(Size_HCALRegion.x());
-    Size_HCALRegion.setZ(
-            ceil(HCAL_Mod_No_Dir.z() * 0.5) * 2 * (HCAL_Size_Dir.x() + HCAL_Wrap_Size.x())
-            + floor(HCAL_Mod_No_Dir.z() / 2) * HCAL_Absorber_Thickness
-            + HCAL_Module_Gap * (HCAL_Module_No.z() - 1) + HCAL_Module_No.x() * 2 * eps);
+
+    /// calculate absorber thickness
+    [[maybe_unused]] int prev_endn = 0;
+    int startn;
+    int endn;
+    double thickness;
+
+    HCAL_Absorber_Thickness_Total = 0;
+    for (auto thick_i : HCAL_Absorber_Thickness_List) {
+        std::tie(startn, endn, thickness) = thick_i;
+        /// sanity check
+        assert(startn <= endn && "[ERROR] HCAL_Absorber_Thickness_List invalid");
+        assert(startn == prev_endn + 1 && "[ERROR] HCAL_Absorber_Thickness_List must be continuous, and start from 1");
+        assert(thickness >=0 && "[ERROR] HCAL_Absorber_Thickness_List invalid");
+        /// add Thickness
+        for (int i = startn; i <= endn; i++) {
+            HCAL_Absorber_Thickness_Total += thickness;
+        }
+        prev_endn = endn;
+        HCAL_Layer_N = endn + 1;
+    }
+
+    HCAL_Mod_No_Dir.setX(HCAL_Cell_XY_N);
+    HCAL_Mod_No_Dir.setY(HCAL_Cell_XY_N);
+    HCAL_Mod_No_Dir.setZ(2 * HCAL_Layer_N - 1);
+
+    Size_HCALCell.setX(HCAL_Size_Dir.x() + HCAL_Wrap_Size.x());
+    Size_HCALCell.setY(HCAL_Size_Dir.y() + HCAL_Wrap_Size.y());
+    Size_HCALCell.setZ(HCAL_Size_Dir.z() + HCAL_Wrap_Size.z() + HCAL_APD_Size.z());
+
+    Size_HCALModule.setX(Size_HCALCell.z() + eps);
+    Size_HCALModule.setY(Size_HCALCell.z() + eps);
+    Size_HCALModule.setZ(2 * ( Size_HCALCell.x() + eps) );
+
+    Size_HCALLayer.setX(HCAL_Module_No.x() * (Size_HCALModule.x() + HCAL_Module_Gap.x()) );
+    Size_HCALLayer.setY(HCAL_Module_No.y() * (Size_HCALModule.y() + HCAL_Module_Gap.y()) );
+    Size_HCALLayer.setZ(HCAL_Module_No.z() * (Size_HCALModule.z() + HCAL_Module_Gap.z()) );
+
+    Size_HCALRegion.setX(Size_HCALLayer.x() + eps);
+    Size_HCALRegion.setY(Size_HCALLayer.y() + eps);
+    Size_HCALRegion.setZ(HCAL_Layer_N * (Size_HCALLayer.z() + eps) + HCAL_Absorber_Thickness_Total);
 
     Pos_HCALRegion = G4ThreeVector(0, 0,
                                    0.5 * Size_HCALRegion.z() + Pos_ECALRegion.z() + 0.5 * Size_ECALRegion.z() + 1 * mm);
@@ -347,6 +387,13 @@ void Control::RebuildVariables() {
 
     //----------------------------------------
     // Optical
+
+    //----------------------------------------
+    // DetectorMap
+    dDetectorIDMaps->SetECALCellNo(ECAL_Cell_No.x(),ECAL_Cell_No.y(),ECAL_Cell_No.z());
+    dDetectorIDMaps->SetECALBlockNo(ECAL_Block_No.x(),ECAL_Block_No.y(),ECAL_Block_No.z());
+    dDetectorIDMaps->SetHCALModuleNo(HCAL_Module_No.x(),HCAL_Module_No.y(),HCAL_Module_No.z());
+    dDetectorIDMaps->BuildMap();
 }
 
 
@@ -604,8 +651,10 @@ bool Control::ReadYAML(const G4String &file_in) {
         save_all_mcp = Node["OutCollection"]["save_all_mcp"].as<bool>();
         save_MC = Node["OutCollection"]["save_MC"].as<bool>();
         save_initial_particle_step = Node["OutCollection"]["save_initial_particle_step"].as<bool>();
+        save_mcp_helper = Node["OutCollection"]["save_mcp_helper"].as<bool>();
         RawMCCollection_Name = Node["OutCollection"]["RawMCCollection_Name"].as<std::string>();
         InitialParticleStepCollection_Name = Node["OutCollection"]["InitialParticleStepCollection_Name"].as<std::string>();
+        MCPHelperCollection_Name = Node["OutCollection"]["MCPHelperCollection_Name"].as<std::string>();
         //----------------------------------------
         // For Memory Leak
         Memory_Check = Node["memory_check"].IsDefined() ? Node["memory_check"].as<bool>() : false;
@@ -689,6 +738,7 @@ bool Control::ReadYAML(const G4String &file_in) {
             tag_Tracker_Angle_Gap.emplace_back(readV3(node, true));
         for (auto node : Node["Geometry"]["Tracker"]["tag_Tracker_Strip_N"])
             tag_Tracker_Strip_N.emplace_back(node.as<int>());
+        tag_Tracker_Strip_Block_N = Node["Geometry"]["Tracker"]["tag_Tracker_Strip_Block_N"].as<int>();
         assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size()); // Sanity Check
         assert(tag_Tracker_Angle_Gap.size() == tag_Size_Tracker.size());
         assert(tag_Tracker_Strip_N.size() == tag_Tracker_Angle_Gap.size());
@@ -705,6 +755,7 @@ bool Control::ReadYAML(const G4String &file_in) {
             rec_Tracker_Angle_Gap.emplace_back(readV3(node, true));
         for (auto node : Node["Geometry"]["Tracker"]["rec_Tracker_Strip_N"])
             rec_Tracker_Strip_N.emplace_back(node.as<int>());
+        rec_Tracker_Strip_Block_N = Node["Geometry"]["Tracker"]["rec_Tracker_Strip_Block_N"].as<int>();
         assert(rec_Size_Tracker.size() == rec_Pos_Tracker.size()); // Sanity Check
         assert(rec_Tracker_Angle_Gap.size() == rec_Size_Tracker.size());
         assert(rec_Tracker_Strip_N.size() == rec_Tracker_Angle_Gap.size());
@@ -717,7 +768,9 @@ bool Control::ReadYAML(const G4String &file_in) {
         ECAL_Center_Wrap_Size = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Wrap_Size"], true);
         ECAL_APD_Size = readV3(Node["Geometry"]["ECAL"]["ECAL_APD_Size"], true);
         ECAL_Center_Size = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Size"], true);
-        ECAL_Center_Module_No = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Module_No"]);
+        ECAL_Block_No = readV3(Node["Geometry"]["ECAL"]["ECAL_Block_No"]);
+        ECAL_Cell_No = readV3(Node["Geometry"]["ECAL"]["ECAL_Cell_No"]);
+        //ECAL_Center_Module_No = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Module_No"]);
         //----------------------------------------
         // Hadronic Calorimeter
         HCAL_Name = Node["Geometry"]["HCAL"]["HCAL_Name"].as<std::string>();
@@ -732,14 +785,25 @@ bool Control::ReadYAML(const G4String &file_in) {
         HCAL_Wrap_Size = readV3(Node["Geometry"]["HCAL"]["HCAL_Wrap_Size"], true);
         HCAL_APD_Size = readV3(Node["Geometry"]["HCAL"]["HCAL_APD_Size"], true);
         HCAL_Size_Dir = readV3(Node["Geometry"]["HCAL"]["HCAL_Size_Dir"], true);
-        HCAL_Mod_No_Dir = readV3(Node["Geometry"]["HCAL"]["HCAL_Mod_No_Dir"]);
         HCAL_Module_No = readV3(Node["Geometry"]["HCAL"]["HCAL_Module_No"]);
-        HCAL_Module_Gap = readV2(Node["Geometry"]["HCAL"]["HCAL_Module_Gap"]);
-        HCAL_Absorber_Thickness = readV2(Node["Geometry"]["HCAL"]["HCAL_Absorber_Thickness"]);
+        HCAL_Module_Gap = readV3(Node["Geometry"]["HCAL"]["HCAL_Module_Gap"], true);
+        HCAL_Cell_XY_N = Node["Geometry"]["HCAL"]["HCAL_Cell_XY_N"].as<int>();
+        //HCAL_Absorber_Thickness = readV2(Node["Geometry"]["HCAL"]["HCAL_Absorber_Thickness"]);
+        HCAL_Absorber_Thickness_List.clear();
+        for (auto i: Node["Geometry"]["HCAL"]["HCAL_Absorber_Thickness_List"]) {
+            HCAL_Absorber_Thickness_List.emplace_back(
+                    i[0].as<int>(),
+                    i[1].as<int>(),
+                    i[2].as<double>() * G4UnitDefinition::GetValueOf(i[3].as<std::string>()) );
+        }
+
         HCAL_CaloHoleRadius = Node["Geometry"]["HCAL"]["HCAL_CaloHoleRadius"].IsDefined() ?
                               Node["Geometry"]["HCAL"]["HCAL_CaloHoleRadius"].as<double>() : 1.2 * mm;
         HCAL_FiberRadius = Node["Geometry"]["HCAL"]["HCAL_FiberRadius"].IsDefined() ?
                            Node["Geometry"]["HCAL"]["HCAL_FiberRadius"].as<double>() : 0.98 * 1.2 * mm;
+
+        HCAL_Show_Cell = Node["Geometry"]["HCAL"]["HCAL_Show_Cell"].IsDefined() ?
+                         Node["Geometry"]["HCAL"]["HCAL_Show_Cell"].as<bool>() : false;
 
         //========================================
         /* Optical */

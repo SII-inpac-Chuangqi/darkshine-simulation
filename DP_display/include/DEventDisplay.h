@@ -156,6 +156,8 @@ public:
 
     static TEveBox *makeBox(const double *abs_pos, const double *half_size);
 
+    static TEveBox *makeRotBox(const double *abs_pos, const double *half_size, const TRotation& rot);
+
     template<class CaloCol>
     void makeCaloLego(CaloCol col, CaloHitsDisplay *calo_dis, bool if_draw_lego = true);
 
@@ -251,7 +253,7 @@ private:
     double ECAL_Emin = 0.;
     double HCAL_Emin = 0.;
     double Trk_Emin = 0.;
-    double _scale_factor_SimuTrkHits = 1e-2;
+    double _scale_factor_SimuTrkHits = 1.0;
     double _scale_factor_SimuCaloHits = 1.0;
 
     // CaloHits Lego Options

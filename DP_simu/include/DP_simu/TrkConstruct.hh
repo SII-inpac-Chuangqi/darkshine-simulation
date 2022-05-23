@@ -15,6 +15,11 @@
 
 #include <vector>
 
+// Volume relationship:
+// 2 Outline (Trk)
+// └-1 SMTBlock
+//   └-0 Silicon micro-strip (Strip)
+
 class TrkConstruct
 {
   public:
@@ -25,7 +30,12 @@ class TrkConstruct
     G4ThreeVector BoxConstruct();
     G4ThreeVector BoxPlacement();
     G4ThreeVector SMTConstruct();
-    G4ThreeVector LinearPlacement(G4int zNo, G4ThreeVector *SizeVec, G4ThreeVector *PosVec, std::vector<G4int> StripNVec, G4ThreeVector *AngleGapVec);
+    G4ThreeVector LinearPlacement(G4int zNo,
+                                  G4ThreeVector *SizeVec,
+                                  G4ThreeVector *PosVec,
+                                  std::vector<G4int> StripNVec,
+                                  G4ThreeVector *AngleGapVec,
+                                  G4int stripBlockN);
 
     // initializing the output LV
     void CleanLV() { fTrkLVVector.clear(); };
@@ -51,14 +61,16 @@ class TrkConstruct
     void SetSizeXYZ(const G4ThreeVector &in)   { fSizeX = in.x(); fSizeY = in.y(); fSizeZ = in.z(); };
     void SetPosXYZ(const G4ThreeVector &in)    { fPosX = in.x();  fPosY = in.y();  fPosZ = in.z();  };
     void SetStrip_Angle_Gap(const G4int &stripN, const G4ThreeVector &angleGap);
+    void SetStrip_Block_N(G4int in) { fStripBlockN = in;};
 
     std::vector<G4LogicalVolume*> GetTrkLVVector() { return fTrkLVVector; };
     std::vector<G4LogicalVolume*> GetStripLVVector() { return fStripLVVector; };
 
   private:
-    G4bool fType; //
+    G4bool fType{false}; //
     G4bool fCheckOverlap;
-    
+
+    G4double eps = dControl->eps;
     G4double fSizeX;
     G4double fSizeY;
     G4double fSizeZ;
@@ -76,27 +88,32 @@ class TrkConstruct
 
     G4LogicalVolume* fMotherVolume;
     G4VisAttributes* fVis;
-    G4VisAttributes* fVis1;
-    G4VisAttributes* fVis2;
+    G4VisAttributes* fVis1{nullptr};
+    G4VisAttributes* fVis2{nullptr};
 
     G4Material* fTrkMaterial;
 
-    G4LogicalVolume* fTrkLV;
+    G4LogicalVolume* fTrkLV{nullptr};
     G4double fAngle1;
     G4double fAngle2;
     std::vector<G4LogicalVolume*> fTrkLVVector;
 
+    // Silicon Micro-Strip-Block
+    G4int fStripBlockN{-1};
+    G4LogicalVolume* fBlockLV{nullptr};
+    std::vector<G4LogicalVolume*> fBlockLVVector;
+
     // Silicon Micro-Strip
-    G4int fStripNum;
-    G4double fStripSizeX;
-    G4double fStripSizeY;
-    G4double fStripSizeZ;
-    G4double fStripPosX;
-    G4double fStripPosY;
-    G4double fStripPosZ;
-    G4double fStripGapX;
-    G4VisAttributes* fStripVis;
-    G4LogicalVolume* fStripLV;
+    G4int fStripNum{-1};
+    G4double fStripSizeX{0};
+    G4double fStripSizeY{0};
+    G4double fStripSizeZ{0};
+    G4double fStripPosX{0};
+    G4double fStripPosY{0};
+    G4double fStripPosZ{0};
+    G4double fStripDistanceX{0};
+    G4VisAttributes* fStripVis{nullptr};
+    G4LogicalVolume* fStripLV{nullptr};
     std::vector<G4LogicalVolume*> fStripLVVector;
 
 

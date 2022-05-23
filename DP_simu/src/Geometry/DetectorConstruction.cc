@@ -168,6 +168,7 @@ void DetectorConstruction::DefineWorld() {
     auto World_Box = new G4Box("World_Box", Size_World.x() / 2, Size_World.y() / 2,
                                Size_World.z() / 2); // Solid of World.
     World_LV = new G4LogicalVolume(World_Box, World_Mat, "World_LV");
+    World_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
     World_PV = new G4PVPlacement(nullptr, G4ThreeVector(), World_LV, "World", nullptr, false, 0, fCheckOverlaps);
 }
 
@@ -240,8 +241,8 @@ void DetectorConstruction::SaveGeometry() {
 
     /* Save GDML to ROOT File */
     auto filename = "geometry.gdml";
-//    if (std::filesystem::exists(filename))
-//        std::remove(filename);
+    if (std::filesystem::exists(filename))
+        std::remove(filename);
 
     G4GDMLParser parser;
     parser.Write(filename, World_PV);

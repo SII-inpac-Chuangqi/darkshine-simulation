@@ -28,6 +28,7 @@ void Tracker_Construct::DefineParameters(Tracker_Type type) {
             No_Tracker = dControl->tag_No_Tracker;
             Size_TrackerRegion = dControl->tag_Size_TrackerRegion;
             Pos_TrackerRegion = dControl->tag_Pos_TrackerRegion;
+            Strip_Block_N = dControl->tag_Tracker_Strip_Block_N;
 
             Tracker_MagField = dControl->tag_Tracker_MagField;
 
@@ -40,6 +41,7 @@ void Tracker_Construct::DefineParameters(Tracker_Type type) {
             No_Tracker = dControl->rec_No_Tracker;
             Size_TrackerRegion = dControl->rec_Size_TrackerRegion;
             Pos_TrackerRegion = dControl->rec_Pos_TrackerRegion;
+            Strip_Block_N = dControl->rec_Tracker_Strip_Block_N;
 
             Tracker_MagField = dControl->rec_Tracker_MagField;
 
@@ -77,11 +79,14 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, G4bool fChe
             TrackerRegion_LV, 0, fCheckOverlaps
     );
 
+    TrackerRegion_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
+
     Tracker->SetTrkMaterial(Tracker_Mat);
     Tracker->SetVis1(new G4VisAttributes(G4Colour(Tracker1_Color[0], Tracker1_Color[1], Tracker1_Color[2])));
     Tracker->SetVis2(new G4VisAttributes(G4Colour(Tracker2_Color[0], Tracker2_Color[1], Tracker2_Color[2])));
     Tracker->LinearPlacement(No_Tracker, &Size_Tracker[0], &Pos_Tracker[0], StripN_Tracker,
-                            &Strip_Angle_Gap_Tracker[0]);
+                            &Strip_Angle_Gap_Tracker[0],
+                            type == dTagging ? dControl->tag_Tracker_Strip_Block_N : dControl->rec_Tracker_Strip_Block_N);
 
     Tracker_LV = Tracker->GetTrkLVVector();
     TrackerStrip_LV = Tracker->GetStripLVVector();
@@ -108,13 +113,17 @@ bool Tracker_Construct::BuildSDandField(G4int type) {
     /// Construct Sensitive Detector
 
     auto *Tracker1SD = new DetectorSD(
-            nTracker,
+            (type == dTagging ? nTagTracker : nRecTracker),
             (type == dTagging ? "TagTrk1" : "RecTrk1"),
-            G4ThreeVector(1, 1, No_Tracker) );
+            G4ThreeVector((type == dTagging ? dControl->tag_Tracker_Strip_Block_N : dControl->rec_Tracker_Strip_Block_N),
+                          1,
+                          No_Tracker) );
     auto *Tracker2SD = new DetectorSD(
-            nTracker,
+            (type == dTagging ? nTagTracker : nRecTracker),
             (type == dTagging ? "TagTrk2" : "RecTrk2"),
-            G4ThreeVector(1, 1, No_Tracker) );
+            G4ThreeVector((type == dTagging ? dControl->tag_Tracker_Strip_Block_N : dControl->rec_Tracker_Strip_Block_N),
+                          1,
+                          No_Tracker) );
 
     G4SDManager::GetSDMpointer()->AddNewDetector(Tracker1SD);
     G4SDManager::GetSDMpointer()->AddNewDetector(Tracker2SD);

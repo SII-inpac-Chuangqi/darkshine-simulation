@@ -108,9 +108,10 @@ void Digitizer::ProcessEvt(AnaEvent *evt) {
     // For FastSmear
     if (fs_apply_to_ecal) fs->Process(evt, "ECAL", "ECAL");
     if (fs_apply_to_hcal) {
-        for (int i = 1; i <= 16; ++i) {
-            fs->Process(evt, "HCAL_" + to_string(i), "HCAL");
-        }
+        fs->Process(evt,"HCAL", "HCAL");
+//        for (int i = 1; i <= 1; ++i) {
+//            fs->Process(evt, "HCAL_" + to_string(i), "HCAL");
+//        }
     }
 }
 

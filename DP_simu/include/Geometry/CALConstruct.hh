@@ -24,6 +24,8 @@
 /// Logical volume configuration information
 class CALConstruct {
 public:
+    static constexpr double eps = 1 * um;
+
     CALConstruct(const G4String&, G4LogicalVolume *, G4int, G4bool, G4bool, G4bool, G4bool);
 
     CALConstruct(const CALConstruct &);
@@ -45,27 +47,49 @@ public:
 
     // ECAL:
     //
-    // 4 World
-    // └-3 ECAL_Region
-    //   └-2 ECAL_GroupMatrix (21x21x1)
-    //     └-1 CalUnit1 (Outline)
-    //       └-0 SD (Calo)
+    // 3 World
+    // └-2 ECAL_Region
+    //   └-1 ECAL_Block
+    //     └-0 CalUnit1 (Outline)
+    //       └--1 SD (Calo)
 
     // HCAL:
     //
     // 4 World
     // └-3 HCAL_Region
-    //   ├-2 HCAL_GroupXYCrossing
-    //   | └-1 WLSUnit
-    //   |   ├-0 SD (Calo)
-    //   |   └-0 SD (APD)
-    //   └-0 AbsorberUnit
+    //   ├-2 HCAL_Layer
+    //   | └-1 HCAL_Module (XY Crossing)
+    //   |   └-0 WLSUnit
+    //   |     ├--1 SD (Calo)
+    //   |     └--1 SD (APD)
+    //   └-. AbsorberUnit
 
+    /// @param [in] tree_height Volume tree height, usually start from 1
+    G4LogicalVolume* MatrixConstruct(G4int xNo, G4int yNo, G4int zNo,
+                         G4LogicalVolume* elementLV,
+                         G4Material* regionMat,
+                         G4int tree_height,
+                         G4ThreeVector gap,
+                         G4bool if_place_to_mother);
+
+    /// @param [in] tree_height Volume tree height, usually start from 1
+    G4LogicalVolume* XYCrossingConstruct(G4int xNo, G4int yNo,
+                             G4LogicalVolume* elementLV,
+                             G4Material* regionMat,
+                             G4int tree_height,
+                             G4double gap = eps);
+
+    G4ThreeVector LinearPlacementWithAbsorber(G4int zNo,
+                                     const std::vector< std::tuple<int, int, double> > abs_thickness_list,
+                                     G4LogicalVolume* calLayerLV,
+                                     G4Material *AbsMat,
+                                     G4double gap = eps);
+
+
+    // deprecated!!
     G4ThreeVector MatrixPlacement(G4int, G4int, G4int, const G4ThreeVector &);
 
-    //void MatrixPlacementXYRemoved(G4int, G4int, G4int, const G4ThreeVector &, G4int, G4int);
-
-    // Deprecated!
+    // TODO: deprecate!
     void MatrixPlacementXYwithAbsorber(G4int, G4int, G4int, const G4ThreeVector &, G4double, G4Material *);
 
     // initializing the output LV
@@ -122,6 +146,8 @@ public:
 
     void SetWrapVis(G4VisAttributes *in) { fWrapVis = in; };
 
+    void SetAPDVis(G4VisAttributes *fApdVis) { fAPDVis = fApdVis; };
+
     void SetFiberCladVis(G4VisAttributes *in) { fFiberCladVis = in; };
 
     void SetFiberVis(G4VisAttributes *in) { fFiberVis = in; };
@@ -174,7 +200,9 @@ public:
 
     std::vector<G4LogicalVolume *> GetAPDLVVector() { return fAPDLVVector; };
 
-    double eps = 1 * um;
+    G4LogicalVolume *GetCaloLV() const { return fCaloLV; };
+
+    G4LogicalVolume *GetOutlineLV() const { return fOutlineLV; };
 
 private:
     G4bool fType{false}; // 0: Absorber; 1: Calorimeter
@@ -192,7 +220,7 @@ private:
     G4double UnitPosY{0};
     G4double UnitPosZ{0};
     G4Material *fCALMaterial{nullptr};
-    G4VisAttributes *fCaloVis{nullptr};
+    //G4VisAttributes *fCaloVis{nullptr};
     DetectorSD *fCALSD{nullptr};
 
     // For Wrap
@@ -211,18 +239,18 @@ private:
 
     // APD Stuff (Optical Photon)
     G4double APDCaloHalfGap{0.};
-    G4double ADPwXHalfLength{0.};
-    G4double APDwYHalfLength{0.};
-    G4double APDwZHalfLength{0.};
+//    G4double ADPwXHalfLength{0.};
+//    G4double APDwYHalfLength{0.};
+//    G4double APDwZHalfLength{0.};
     G4double APDXHalfLength{0.};
     G4double APDYHalfLength{0.};
     G4double APDZHalfLength{0.};
     G4double GlueXHalfLength{0.};
     G4double GlueYHalfLength{0.};
     G4double GlueZHalfLength{0.};
-    G4double APDPosX{0.};
-    G4double APDPosY{0.};
-    G4double APDPosZ{0.};
+//    G4double APDPosX{0.};
+//    G4double APDPosY{0.};
+//    G4double APDPosZ{0.};
     G4Material *fAPDMaterial{nullptr};
     G4Material *fGlueMaterial{nullptr};
     G4VisAttributes *fAPDVis{nullptr};
@@ -248,14 +276,13 @@ private:
     G4double AbsZHalfLength{0.};
     G4Material *fAbsMaterial{nullptr};
 
-    G4RotationMatrix *HepRot{nullptr};
+//    G4RotationMatrix *HepRot{nullptr};
 
     // Unity LV
     // 0: all Z, 1: XYcrossing
     G4LogicalVolume *fCaloLV{nullptr}; // Core Detector Region
     G4LogicalVolume *fWrapLV{nullptr}; // Wrapper
     G4LogicalVolume *fAPDWLV{nullptr}; // APD world
-    G4LogicalVolume *fAbsLV{nullptr}; // Absorber world
     G4LogicalVolume *fOutlineLV{nullptr}; // outline of unit
     G4LogicalVolume *fFiberCladLV{nullptr};
     G4LogicalVolume *fFiberLV{nullptr};
@@ -264,6 +291,8 @@ private:
     std::vector<G4LogicalVolume *> fCaloLVVector{};
     std::vector<G4LogicalVolume *> fWrapLVVector{};
     std::vector<G4LogicalVolume *> fAPDLVVector{};
+    std::vector<G4LogicalVolume *> fAbsLVVector{};
+//    std::vector<std::tuple<G4double, G4double, G4LogicalVolume*>> fAbsLVList; // abs_back_z, thickness, LV.
 
     // For Memory Clean
     std::vector<G4PVPlacement*> PVVector;
