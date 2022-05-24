@@ -25,7 +25,7 @@
     #define MAX_ECAL_CELLS (25*25*15)
 #endif
 #pragma message "The maximum support Ncell now is (increase if you need and pay attention of the stack)" 
-#pragma message MAX_ECAL_CELLS
+//#pragma message MAX_ECAL_CELLS
 
 //HMAP is larger than cell, to allow for the overflwo/underflow bin
 #if MAX_ECAL_CELLS < 1000

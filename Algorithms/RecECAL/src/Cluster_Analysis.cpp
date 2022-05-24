@@ -26,7 +26,7 @@
 #else
     #define WEIGHT(E) ((E)/EM_ENERGY_SCALE_MeV)
 #endif
-#pragma message WEIGHT(E)
+//#pragma message WEIGHT(E)
 
 // enable debugging (~1k lines/event)
 // #define CLUSTER_DEBUG
