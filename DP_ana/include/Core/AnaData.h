@@ -10,6 +10,7 @@
 #include "TFile.h"
 #include "TGeoBBox.h"
 #include "TGeoManager.h"
+#include "TVector3.h"
 
 #include "Object/DMagnet.h"
 
@@ -17,6 +18,8 @@
 #include <tuple>
 
 using std::vector,std::tuple;
+
+#define MAX_ECAL_CELLS (25*25*15)
 
 class AnaData {
 public:
@@ -54,18 +57,21 @@ public:
     std::vector<int>    getStripNoRec() const {return strip_no_rec;}
     std::vector<double> getAnglesRec()  const {return angles_rec;}
 
-    double getECalCenterX() const {return ECAL_center_x;}
-    double getECalCenterY() const {return ECAL_center_y;}
-    double getECalCenterZ() const {return ECAL_center_z;}
-    double getECalLengthX() const {return ECAL_length_x;}
-    double getECalLengthY() const {return ECAL_length_y;}
-    double getECalLengthZ() const {return ECAL_length_z;}
-    std::vector<double> getECalCellLengthX() const {return ECal_cell_length_x;}
-    std::vector<double> getECalCellLengthY() const {return ECal_cell_length_y;}
-    std::vector<double> getECalCellLengthZ() const {return ECal_cell_length_z;}
+    const std::array<TVector3,MAX_ECAL_CELLS>& getECalPosMap() const {return ECAL_posmap;};
+    [[maybe_unused]] double getECalCenterX() const {return ECAL_center_x;}
+    [[maybe_unused]] double getECalCenterY() const {return ECAL_center_y;}
+    [[maybe_unused]] double getECalCenterZ() const {return ECAL_center_z;}
+    [[maybe_unused]] double getECalLengthX() const {return ECAL_length_x;}
+    [[maybe_unused]] double getECalLengthY() const {return ECAL_length_y;}
+    [[maybe_unused]] double getECalLengthZ() const {return ECAL_length_z;}
+    [[maybe_unused]] std::vector<double> getECalCellLengthX() const {return ECal_cell_length_x;}
+    [[maybe_unused]] std::vector<double> getECalCellLengthY() const {return ECal_cell_length_y;}
+    [[maybe_unused]] std::vector<double> getECalCellLengthZ() const {return ECal_cell_length_z;}
     int getNECalCellX() const {return N_ECal_cell_x;}
     int getNECalCellY() const {return N_ECal_cell_y;}
     int getNECalCellZ() const {return N_ECal_cell_z;}
+    double getECalSurfaceZ() const {return ECAL_center_z - 0.5*ECAL_length_z;}
+
 
 protected:
     vector<DMagnet*> mag_field_vec;
@@ -95,6 +101,7 @@ protected:
     int N_ECal_cell_x{0};
     int N_ECal_cell_y{0};
     int N_ECal_cell_z{0};
+    std::array<TVector3,MAX_ECAL_CELLS> ECAL_posmap{};
 
 private:
     AnaData();
