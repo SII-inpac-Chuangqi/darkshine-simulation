@@ -16,6 +16,7 @@
 
 #include <vector>
 #include <tuple>
+#include <unordered_map>
 
 using std::vector,std::tuple;
 
@@ -72,6 +73,8 @@ public:
     int getNECalCellZ() const {return N_ECal_cell_z;}
     double getECalSurfaceZ() const {return ECAL_center_z - 0.5*ECAL_length_z;}
 
+    int getProcessId(const std::string& n);
+    void printProcessMap();
 
 protected:
     vector<DMagnet*> mag_field_vec;
@@ -103,6 +106,8 @@ protected:
     int N_ECal_cell_z{0};
     std::array<TVector3,MAX_ECAL_CELLS> ECAL_posmap{};
 
+    std::unordered_map<std::string,int> processMap{};
+    std::unordered_map<int,std::string> rev_processMap{};
 private:
     AnaData();
 

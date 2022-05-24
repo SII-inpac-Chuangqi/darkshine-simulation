@@ -22,7 +22,8 @@ AnaData *AnaData::CreateInstance() {
 }
 
 AnaData::AnaData() {
-
+    processMap["__max"]=0;
+    rev_processMap[0]="Unknown";
 }
 
 void AnaData::ReadMagField() {
@@ -188,3 +189,22 @@ void AnaData::printGeometryDetails() const {
                   << "                        cell No. y   " << N_ECal_cell_y            << std::endl
                   << "                        cell No. z   " << N_ECal_cell_z            << std::endl;
 }
+
+int AnaData::getProcessId(const std::string& n){
+    //find the processName corresponding id or add a new one
+    if(processMap.count(n)==0){
+        processMap[n]=processMap["__max"]+1;
+        processMap["__max"]+=1;
+        rev_processMap[processMap["__max"]]=n;
+        // std::cerr << "[DEBUG] ==> process added "<<n<<std::endl;
+    }
+    // return processMap[n]; //use arb. id
+    return static_cast<int>(std::hash<std::string>{}(n)); //now use hash
+}
+
+void AnaData::printProcessMap(){
+    std::cerr << "[INFO] ==> ProcessMap details: " << processMap["__max"] << std::endl;
+    for(int i=1;i<=processMap["__max"];i++)
+        std::cerr <<i<<" : "<<rev_processMap[i]<<" -> "<< static_cast<int>(std::hash<std::string>{}(rev_processMap[i])) << std::endl;
+}
+
