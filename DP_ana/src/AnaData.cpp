@@ -127,6 +127,7 @@ void AnaData::readGeometryDetails() {
                         ECal_cell_length_z.push_back(CUNIT*2*crystal_shape->GetDZ());
 
                         auto subdetector_pos = subdetector->GetMatrix()->GetTranslation();
+                        ECAL_posmap[j]=TVector3(subdetector_pos[0],subdetector_pos[1],subdetector_pos[2]);
 
                         if (subdetector_pos[2] != last_pos[2]) N_ECal_cell_z++;
 
@@ -180,6 +181,9 @@ void AnaData::printGeometryDetails() const {
                   << "                        cell size x  " << ECal_cell_length_x.at(0) << " mm" << std::endl
                   << "                        cell size y  " << ECal_cell_length_y.at(0) << " mm" << std::endl
                   << "                        cell size z  " << ECal_cell_length_z.at(0) << " mm" << std::endl
+                  << "                        cell[0] pos x  "  << ECAL_posmap.at(0).X()    << " mm" << std::endl
+                  << "                        cell[0] pos y  "  << ECAL_posmap.at(0).Y()    << " mm" << std::endl
+                  << "                        cell[0] pos z  "  << ECAL_posmap.at(0).Z()    << " mm" << std::endl
                   << "                        cell No. x   " << N_ECal_cell_x            << std::endl
                   << "                        cell No. y   " << N_ECal_cell_y            << std::endl
                   << "                        cell No. z   " << N_ECal_cell_z            << std::endl;
