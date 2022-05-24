@@ -53,7 +53,9 @@ G4double DMBremProcess::GetMeanFreePath(const G4Track &aTrack, G4double, /*previ
 void DMBremProcess::LUTRandom() {
     TString file_name = dControl->signal_lookup_table;
     TString graph_name = std::to_string((int) dControl->signal_mass) + "MEV";
+#ifdef DEBUG
     std::cout << graph_name << std::endl;
+#endif
     if (!f || !Lut_hist) {
         f = new TFile(file_name, "READ");
         Lut_hist = (TH2F *) f->Get(graph_name);
@@ -88,7 +90,9 @@ G4VParticleChange *DMBremProcess::PostStepDoIt(const G4Track &aTrack, const G4St
         //double temp_var[2] ={0,0};
         electron.rec_theta = var_LUT[1];
         XAcc = 1 - var_LUT[0] / 8;
+#ifdef DEBUG
         std::cout << "This time XAcc : " << XAcc << std::endl;
+#endif
 
         electron.rec_phi = G4UniformRand() * 2. * M_PI;
         dark_photon.rec_phi = -electron.rec_phi;
