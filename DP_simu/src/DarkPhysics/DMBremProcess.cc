@@ -36,8 +36,10 @@ G4double DMBremProcess::GetMeanFreePath(const G4Track &aTrack, G4double, /*previ
 
     //Define if we can emission of Dark Matter/Dark Photon
     if (myDarkMatter->EmissionAllowed(ekin, DensityMat)) {
-        G4double XMeanFreePath = myDarkMatter->GetMeanFreePathFactor() / myDarkMatter->GetSigmaTot(ekin);
+        // prevent the XMeanFreePath to be negative temperatory
+        G4double XMeanFreePath = myDarkMatter->GetMeanFreePathFactor() / abs(myDarkMatter->GetSigmaTot(ekin));
         XMeanFreePath /= BiasSigmaFactor;
+        if(XMeanFreePath<0) XMeanFreePath=abs(XMeanFreePath);
 //        std::cout << "DMMeanFreePath = " << myDarkMatter->GetMeanFreePathFactor() << std::endl;
 //        std::cout << "SigmaTotal = " << myDarkMatter->GetSigmaTot(ekin) << " [pb]" << std::endl;
 //        std::cout << "XMeanFreePath = " << XMeanFreePath << std::endl;
