@@ -344,7 +344,9 @@ double DarkMatter::SimulateEmissionWithAngle(double E0, DM_Mom& angles) {
         double UU = G4UniformRand() * sigmaMax;
 
         if (sigma > sigmaMax) {
+            #ifdef DEBUG
             printf("Maximum violated: ratio = % .18f\n", sigma / sigmaMax);
+            #endif
             sigmaMax = 1.05 * sigma;
         }
 

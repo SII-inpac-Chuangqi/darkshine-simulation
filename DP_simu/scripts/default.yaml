@@ -104,7 +104,7 @@ Biasing:
 
   BiasProcess: "photonNuclear"
   # BiasProcess: "DMProcessDMBrem"
-  BiasFactor: 1e20
+  BiasFactor: 1e21
   BiasEmin: [ 4.0, "GeV" ]
 
 ###########################################
