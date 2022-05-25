@@ -49,7 +49,7 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
             VecHitChosen.emplace_back(hitChosen);
 
             auto it_eraseMap = tempClusteredTrkHitsInLayer.end();
-            for(int i = 0; i < static_cast<int>(hitChosen.size()); i++)
+            for(size_t i = 0; i < hitChosen.size(); i++)
             {
                 it_eraseMap--;
                 it_eraseMap->second.erase(it_eraseMap->second.begin() + hitNoChosen.at(i));
@@ -86,7 +86,7 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
     itMap--;
     if(itMap == clusteredTrkHitsInLayer.begin())
     {
-        for(int hitsNo = 0; hitsNo < static_cast<int>(itMap->second.size()); hitsNo++)
+        for(size_t hitsNo = 0; hitsNo < itMap->second.size(); hitsNo++)
         {
             xStore.push_back((*itMap->second.at(hitsNo)).GetU());
             yStore.push_back((*itMap->second.at(hitsNo)).GetZ());
@@ -114,7 +114,7 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
         return;
     }
 
-    for(int hitsNo = 0; hitsNo < static_cast<int>(itMap->second.size()); ++hitsNo)
+    for(size_t hitsNo = 0; hitsNo < itMap->second.size(); ++hitsNo)
     {
         hitNoStore.push_back(hitsNo);
         hitStore.emplace_back(itMap->second.at(hitsNo));

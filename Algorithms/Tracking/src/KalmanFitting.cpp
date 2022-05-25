@@ -98,7 +98,7 @@ void KalmanFitting::Fit(const TrkHitPVec &track, std::initializer_list<double>)
     int hitId = 0;
     TVectorD hitCoords(2);
     //genfit::PlanarMeasurement* measurement = nullptr;
-    for(int i = 0; i < static_cast<int>(track.size()); i++)
+    for(size_t i = 0; i < track.size(); i++)
     {
         hitCoords[0] = 0.1*(*track.at(i)).GetU();
         hitCoords[1] = 0.1*(*track.at(i)).GetV();
