@@ -102,8 +102,6 @@ void AnaData::readGeometryDetails() {
             }
         }
 
-
-
         if(detector_name.Contains("ECAL")) {
             auto *detector_shape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
             ECAL_center_x = CUNIT*detector->GetMatrix()->GetTranslation()[0];
@@ -208,3 +206,23 @@ void AnaData::printProcessMap(){
         std::cerr <<i<<" : "<<rev_processMap[i]<<" -> "<< static_cast<int>(std::hash<std::string>{}(rev_processMap[i])) << std::endl;
 }
 
+void AnaData::LoadTruthMcPHelper(const MCPHelperMap &helper_collection)
+{
+    if(!helper_collection.size() || helper_collection.find("MCPHelper") == helper_collection.end())
+        std::cerr << "[WARNING] ==> No McPHelper to load" << std::endl;
+    else
+        helper = helper_collection.at("MCPHelper");
+}
+
+void AnaData::PrintTruthMcPHelper()
+{
+    if(!helper) std::cerr << "[WARNING] ==> No McPHelper to print" << std::endl;
+    else
+    {
+        std::cout << "| ID    | PDG    |  Px[MeV]   Py[MeV]   Pz[MeV] |   E[MeV]  Mass[MeV] |    x[mm]     y[mm]     z[mm] | PVID   CellID | MCPID  |"
+                  << std::endl;
+        for(const auto &particle : *helper) std::cout << *particle << std::endl;
+        std::cout << "*******************************************************************************************************************************"
+                  << std::endl;
+    }
+}

@@ -13,6 +13,7 @@
 #include "TVector3.h"
 
 #include "Object/DMagnet.h"
+#include "Object/McPHelper.h"
 
 #include <vector>
 #include <tuple>
@@ -45,6 +46,8 @@ public:
         ReadMagField();
     }
 
+//................................................................................//
+//Geometry manager
     void readGeometryDetails();
     void printGeometryDetails() const;
 
@@ -76,6 +79,11 @@ public:
     int getProcessId(const std::string& n);
     void printProcessMap();
 
+//................................................................................//
+//Truth helper manager
+    void LoadTruthMcPHelper(const MCPHelperMap &helper_collection);
+    void PrintTruthMcPHelper();
+
 protected:
     vector<DMagnet*> mag_field_vec;
     TFile* root_file;
@@ -105,6 +113,8 @@ protected:
     int N_ECal_cell_y{0};
     int N_ECal_cell_z{0};
     std::array<TVector3,MAX_ECAL_CELLS> ECAL_posmap{};
+
+    MCPHelperVec* helper{nullptr};
 
     std::unordered_map<std::string,int> processMap{};
     std::unordered_map<int,std::string> rev_processMap{};

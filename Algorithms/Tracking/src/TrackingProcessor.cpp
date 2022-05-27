@@ -142,11 +142,18 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_track_y_sigma", &RecTrk2_track_y_sigma);
     }
 
+/*
     EvtWrt->RegisterOutVariable("ECal_seed_x",  &ECal_seed_x, "", false);
     EvtWrt->RegisterOutVariable("ECal_seed_y",  &ECal_seed_y, "", false);
     EvtWrt->RegisterOutVariable("ECal_seed_px", &ECal_seed_px, "", false);
     EvtWrt->RegisterOutVariable("ECal_seed_py", &ECal_seed_py, "", false);
     EvtWrt->RegisterOutVariable("ECal_seed_pz", &ECal_seed_pz, "", false);
+*/
+    EvtWrt->RegisterOutVariable("ECal_seed_x",  &ECal_seed_x);
+    EvtWrt->RegisterOutVariable("ECal_seed_y",  &ECal_seed_y);
+    EvtWrt->RegisterOutVariable("ECal_seed_px", &ECal_seed_px);
+    EvtWrt->RegisterOutVariable("ECal_seed_py", &ECal_seed_py);
+    EvtWrt->RegisterOutVariable("ECal_seed_pz", &ECal_seed_pz);
 }
 
 void TrackingProcessor::CleanEvt() {
@@ -270,6 +277,9 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     {
 //................................................................................//
 //Read
+        dAnaData->LoadTruthMcPHelper(evt->getMcPHelperCollection());
+        dAnaData->PrintTruthMcPHelper();
+
         //const auto &mc = MCCollection.at("RawMCParticle");
         const auto &initial_steps = step_collection.at("Initial_Particle_Step");
 
