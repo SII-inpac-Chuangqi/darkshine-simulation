@@ -150,7 +150,7 @@ G4ThreeVector TrkConstruct::SMTConstruct() {
 
     // SMT Block
     assert(fStripNum % fStripBlockN == 0 && "Strip number per Block number must be a common divisor of Strip Number.");
-    auto BlockBox = new G4Box(fTrkName + "_Block_Box", (fStripBlockN * fStripDistanceX) * 0.5, (fSizeY + eps) * 0.5, (fSizeZ + eps) * 0.5);
+    auto BlockBox = new G4Box(fTrkName + "_Block_Box", (fStripBlockN * fStripDistanceX) * 0.5 - 0.25 * fStripGap, (fSizeY + eps) * 0.5, (fSizeZ + eps) * 0.5);
     auto BlockLV = new G4LogicalVolume(BlockBox,
                                        G4Material::GetMaterial("vacuum"),
                                        fTrkName + "_Block_LV",
@@ -246,7 +246,8 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
             fStripNum = 1;
             fStripBlockN = 1;
             fStripDistanceX = fSizeX;
-            fStripSizeX = fSizeX;
+            fStripGap = eps;
+            fStripSizeX = fSizeX - fStripGap;
         }
 
         auto HepRot1 = new G4RotationMatrix();
@@ -299,6 +300,7 @@ void TrkConstruct::SetStrip_Angle_Gap(const G4int &stripN, const G4ThreeVector &
     fStripSizeX = fStripDistanceX - angleGap.z();
     fStripSizeY = fSizeY;
     fStripSizeZ = fSizeZ;
+    fStripGap = angleGap.z();
 
     fAngle1 = angleGap.x();
     fAngle2 = angleGap.y();

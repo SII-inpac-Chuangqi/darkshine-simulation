@@ -67,10 +67,14 @@ void EventAction::BeginOfEventAction(const G4Event *event) {
     fPrintModulo = dRootMng->GetNbEvent() / 100;
 
     G4int eventID = event->GetEventID();
+#ifdef DEBUG
+    G4cout << "---> End of event: " << eventID << G4endl;
+#else
     if (eventID < 100 || eventID % fPrintModulo == 0) {
         G4cout << "\n---> Begin of event: " << eventID << G4endl;
         //CLHEP::HepRandom::showEngineStatus();
     }
+#endif
 
     G4RunManager::GetRunManager()->StoreRandomNumberStatusToG4Event(1);
 
@@ -120,9 +124,13 @@ void EventAction::EndOfEventAction(const G4Event *event) {
     // print per event (modulo n)
 
     G4int eventID = event->GetEventID();
+#ifdef DEBUG
+    G4cout << "---> End of event: " << eventID << G4endl;
+#else
     if (eventID < 100 || eventID % fPrintModulo == 0) {
         G4cout << "---> End of event: " << eventID << G4endl;
     }
+#endif
     if(dControl->if_optical) dRootMng->FinalizeOptical();
 
     dRootMng->FillSim(eventID, rndm); //refresh event level data, so any fill should before this!

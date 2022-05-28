@@ -44,7 +44,9 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, bool fCheckOverlaps) {
     auto HCAL_Box = new G4Box("hcal", Size_HCALRegion.x() / 2, Size_HCALRegion.y() / 2, Size_HCALRegion.z() / 2);
     auto HCAL_LV = new G4LogicalVolume(HCAL_Box, HCALRegion_Mat, "HCAL", nullptr, nullptr, nullptr);
     new G4PVPlacement(nullptr, Pos_HCALRegion, HCAL_LV, "HCAL", World_LV, false, 0, fCheckOverlaps);
+#ifndef DEBUG
     HCAL_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
+#endif
 
     auto HCAL = new CALConstruct("HCAL", HCAL_LV, 0,
                                  true, true, dControl->if_optical, fCheckOverlaps);

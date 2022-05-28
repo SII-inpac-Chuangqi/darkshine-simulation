@@ -46,8 +46,9 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, bool fCheckOverlaps) 
     auto ECAL_Box = new G4Box("ecal", Size_ECALRegion.x() / 2, Size_ECALRegion.y() / 2, Size_ECALRegion.z() / 2);
     ECal_LV = new G4LogicalVolume(ECAL_Box, ECALRegion_Mat, "ECAL", nullptr, nullptr, nullptr);
     new G4PVPlacement(nullptr, Pos_ECALRegion, ECal_LV, "ECAL", World_LV, false, 0, fCheckOverlaps);
+#ifndef DEBUG
     ECal_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
-
+#endif
     if (build_ECAL_Center) {
         auto ECAL_Center = new CALConstruct("ECAL", ECal_LV, 0, true, true, dControl->if_optical,
                                             fCheckOverlaps);

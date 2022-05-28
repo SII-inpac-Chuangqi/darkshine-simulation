@@ -79,7 +79,9 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, G4bool fChe
             TrackerRegion_LV, 0, fCheckOverlaps
     );
 
+#ifndef DEBUG
     TrackerRegion_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
+#endif
 
     Tracker->SetTrkMaterial(Tracker_Mat);
     Tracker->SetVis1(new G4VisAttributes(G4Colour(Tracker1_Color[0], Tracker1_Color[1], Tracker1_Color[2])));
