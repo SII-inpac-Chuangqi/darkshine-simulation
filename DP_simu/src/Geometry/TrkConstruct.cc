@@ -157,7 +157,9 @@ G4ThreeVector TrkConstruct::SMTConstruct() {
                                        nullptr, nullptr, nullptr);
     fBlockLV = BlockLV;
     fBlockLVVector.emplace_back(BlockLV);
+#ifndef DEBUG
     BlockLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+#endif
 
     // Silicon micro-strip
     auto StripBox = new G4Box(fTrkName + "_Strip_Box", fStripSizeX / 2., fStripSizeY / 2., fStripSizeZ / 2.);
@@ -165,6 +167,9 @@ G4ThreeVector TrkConstruct::SMTConstruct() {
                                        nullptr, nullptr, nullptr);
     fStripLV = StripLV;
     fStripLVVector.emplace_back(StripLV);
+#ifdef DEBUG
+    fStripVis = fVis;
+#endif
     if (fStripVis)
     {
         fStripVis->SetVisibility(true);

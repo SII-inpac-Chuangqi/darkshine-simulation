@@ -512,7 +512,9 @@ G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo,
     } else {
         motherLV = new G4LogicalVolume(GroupBox, regionMat, fCALName + "_LV_h" + std::to_string(tree_height),
                                            nullptr, nullptr, nullptr);
+#ifndef DEBUG
         motherLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+#endif
     }
 
     /// Unit LV Placement

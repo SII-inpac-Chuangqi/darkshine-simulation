@@ -58,6 +58,9 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, bool fCheckOverlaps) 
         ECAL_Center->SetCALMaterial(ECAL_Center_Mat);
         ECAL_Center->SetWrapMaterial(ECAL_Wrap_Mat);
         ECAL_Center->SetVis(new G4VisAttributes(G4Colour(0.3, 0.5, 0.8)));
+#ifdef DEBUG
+        ECAL_Center->SetWrapVis(new G4VisAttributes(G4Colour(1, 1, 1)));
+#endif
         ECAL_Center->SetAPDVis(new G4VisAttributes(G4Colour(0.5, 0.5, .0)));
         ECAL_Center->SetAPDSize(ECAL_APD_Size, Glue_Size);
         ECAL_Center->SetAPDMat(APD_Mat, Glue_Mat);
