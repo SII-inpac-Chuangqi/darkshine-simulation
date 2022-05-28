@@ -82,7 +82,8 @@ public:
 //................................................................................//
 //Truth helper manager
     void LoadTruthMcPHelper(const MCPHelperMap &helper_collection);
-    void PrintTruthMcPHelper();
+    void PrintTruthMcPHelper() const;
+    const McPHelper* getInitialElectron() const;
 
 protected:
     vector<DMagnet*> mag_field_vec;

@@ -214,7 +214,7 @@ void AnaData::LoadTruthMcPHelper(const MCPHelperMap &helper_collection)
         helper = helper_collection.at("MCPHelper");
 }
 
-void AnaData::PrintTruthMcPHelper()
+void AnaData::PrintTruthMcPHelper() const
 {
     if(!helper) std::cerr << "[WARNING] ==> No McPHelper to print" << std::endl;
     else
@@ -225,4 +225,28 @@ void AnaData::PrintTruthMcPHelper()
         std::cout << "*******************************************************************************************************************************"
                   << std::endl;
     }
+}
+
+const McPHelper* AnaData::getInitialElectron() const
+{
+    if(!helper)
+    {
+        std::cerr << "[WARNING] ==> No McPHelper to get" << std::endl;
+        return nullptr;
+    }
+
+    int n_particle = -1;
+    double energy = -INFINITY;
+    for(auto particle = helper->begin(); particle != helper->end(); ++particle)
+    {
+        if((*particle)->getId() == 1 && (*particle)->getE() > energy)
+        {
+            energy = (*particle)->getE();
+            n_particle = particle - helper->begin();
+        }
+    }
+
+    if(n_particle >= 0) return helper->at(n_particle);
+
+    return nullptr;
 }

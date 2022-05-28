@@ -149,6 +149,13 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("ECal_seed_py", &ECal_seed_py, "", false);
     EvtWrt->RegisterOutVariable("ECal_seed_pz", &ECal_seed_pz, "", false);
 */
+
+    EvtWrt->RegisterOutVariable("ECal_seed_x_truth",  &ECal_seed_x_truth);
+    EvtWrt->RegisterOutVariable("ECal_seed_y_truth",  &ECal_seed_y_truth);
+    EvtWrt->RegisterOutVariable("ECal_seed_px_truth", &ECal_seed_px_truth);
+    EvtWrt->RegisterOutVariable("ECal_seed_py_truth", &ECal_seed_py_truth);
+    EvtWrt->RegisterOutVariable("ECal_seed_pz_truth", &ECal_seed_pz_truth);
+
     EvtWrt->RegisterOutVariable("ECal_seed_x",  &ECal_seed_x);
     EvtWrt->RegisterOutVariable("ECal_seed_y",  &ECal_seed_y);
     EvtWrt->RegisterOutVariable("ECal_seed_px", &ECal_seed_px);
@@ -191,6 +198,12 @@ void TrackingProcessor::CleanEvt() {
     std::vector<double>().swap(RecTrk2_track_quality);
     std::vector<double>().swap(RecTrk2_track_x_sigma);
     std::vector<double>().swap(RecTrk2_track_y_sigma);
+
+    std::vector<double>().swap(ECal_seed_x_truth);
+    std::vector<double>().swap(ECal_seed_y_truth);
+    std::vector<double>().swap(ECal_seed_px_truth);
+    std::vector<double>().swap(ECal_seed_py_truth);
+    std::vector<double>().swap(ECal_seed_pz_truth);
 
     std::vector<double>().swap(ECal_seed_x);
     std::vector<double>().swap(ECal_seed_y);
@@ -278,7 +291,24 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Read
         dAnaData->LoadTruthMcPHelper(evt->getMcPHelperCollection());
-        dAnaData->PrintTruthMcPHelper();
+        //dAnaData->PrintTruthMcPHelper();
+        auto init_elec_helper = dAnaData->getInitialElectron();
+        if(init_elec_helper)
+        {
+            ECal_seed_x_truth.push_back(init_elec_helper->getX());
+            ECal_seed_y_truth.push_back(init_elec_helper->getY());
+            ECal_seed_px_truth.push_back(init_elec_helper->getPx());
+            ECal_seed_py_truth.push_back(init_elec_helper->getPy());
+            ECal_seed_pz_truth.push_back(init_elec_helper->getPz());
+        }
+        else
+        {
+            ECal_seed_x_truth.push_back(std::nan("RETURN"));
+            ECal_seed_y_truth.push_back(std::nan("RETURN"));
+            ECal_seed_px_truth.push_back(std::nan("RETURN"));
+            ECal_seed_py_truth.push_back(std::nan("RETURN"));
+            ECal_seed_pz_truth.push_back(std::nan("RETURN"));
+        }
 
         //const auto &mc = MCCollection.at("RawMCParticle");
         const auto &initial_steps = step_collection.at("Initial_Particle_Step");
