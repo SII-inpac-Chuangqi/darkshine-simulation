@@ -251,7 +251,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                     std::vector<double> _ECAL_trkSeed_cosTheta{};
                     std::vector<double> _ECAL_trkSeed_phi{};
 
-                    assert(_ECal_seed_x->size()==_RecTrk2_track_chi2.size());
+                    assert(_ECal_seed_x->size()==_RecTrk2_track_chi2->size());
                     for(size_t i=0;i<_ECal_seed_x->size();i++){
                         TVector3 P(_ECal_seed_px->at(i),_ECal_seed_py->at(i),_ECal_seed_pz->at(i));
                         double seed_x=_ECal_seed_x->at(i);

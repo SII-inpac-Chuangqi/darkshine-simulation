@@ -80,6 +80,12 @@ IF (ROOT_FOUND)
     endif ()
 ENDIF ()
 
+#----------------------------------------------------------------------------
+# For Debug
+#
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    add_definitions("-DDEBUG")
+endif ()
 
 #----------------------------------------------------------------------------
 # For Memory Check
