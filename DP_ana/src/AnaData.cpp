@@ -72,7 +72,7 @@ void AnaData::readGeometryDetails() {
     N_ECal_cell_x = 0;
     N_ECal_cell_y = 0;
     N_ECal_cell_z = 0;
-    double last_pos[3] = {0., 0., -INFINITY};
+    double last_pos[3] = {-INFINITY, -INFINITY, -INFINITY};
 
     for (int i = 0; i < world_->GetNdaughters(); ++i) {
         auto *detector = dynamic_cast<TGeoNode*>(world_->GetDaughter(i));
@@ -110,7 +110,9 @@ void AnaData::readGeometryDetails() {
             ECAL_length_x = CUNIT*2*detector_shape->GetDX();
             ECAL_length_y = CUNIT*2*detector_shape->GetDY();
             ECAL_length_z = CUNIT*2*detector_shape->GetDZ();
+            double subdetector_pos[3];
 
+            // Setting EECal_cell_xyz
             for (int j = 0; j < detector->GetNdaughters(); ++j) {
                 auto *block = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
                 auto block_name = TString(block->GetVolume()->GetName());
@@ -125,20 +127,38 @@ void AnaData::readGeometryDetails() {
                         ECal_cell_length_y.push_back(CUNIT*2*crystal_shape->GetDY());
                         ECal_cell_length_z.push_back(CUNIT*2*crystal_shape->GetDZ());
 
-                        auto subdetector_pos = subdetector->GetMatrix()->GetTranslation();
-                        ECAL_posmap[j]=TVector3(subdetector_pos[0],subdetector_pos[1],subdetector_pos[2]);
+                        for (int l = 0; l < 3; l++)
+                            subdetector_pos[l] = subdetector->GetMatrix()->GetTranslation()[l] + block->GetMatrix()->GetTranslation()[l];
+                        if ( !ECAL_pos0 ) ECAL_pos0 = new TVector3(subdetector_pos[0],subdetector_pos[1],subdetector_pos[2]);
 
-                        if (subdetector_pos[2] != last_pos[2]) N_ECal_cell_z++;
-
-                        if (N_ECal_cell_z == 1) {
-                            if (subdetector_pos[1] != last_pos[1]) N_ECal_cell_y++;
-                            if (N_ECal_cell_y == 1) {
-                                if (subdetector_pos[0] != last_pos[0]) N_ECal_cell_x++;
-                            }
+                        if (subdetector_pos[2] > last_pos[2]) {
+                            if (ECAL_cell_dz == 0 && N_ECal_cell_z == 1) ECAL_cell_dz = fabs(subdetector_pos[2] - last_pos[2]);
+                            last_pos[2] = subdetector_pos[2];
+                            N_ECal_cell_z++;
                         }
+                        if (subdetector_pos[1] > last_pos[1]) {
+                            if (ECAL_cell_dy == 0 && N_ECal_cell_y == 1) ECAL_cell_dy = fabs(subdetector_pos[1] - last_pos[1]);
+                            last_pos[1] = subdetector_pos[1];
+                            N_ECal_cell_y++;
+                        }
+                        if (subdetector_pos[0] > last_pos[0]) {
+                            if (ECAL_cell_dx == 0 && N_ECal_cell_x == 1) ECAL_cell_dx = fabs(subdetector_pos[0] - last_pos[0]);
+                            last_pos[0] = subdetector_pos[0];
+                            N_ECal_cell_x++;
+                        }
+                    }
+                }
+            }
 
-                        for (int l = 0; l < 3; ++l)
-                        last_pos[l] = subdetector_pos[l];
+            int ecal_n = 0;
+            // Calculate ECAL_posmap
+            for (int zi = 0; zi < N_ECal_cell_z; zi++) {
+                for (int yi = 0; yi < N_ECal_cell_y; yi++) {
+                    for (int xi = 0; xi < N_ECal_cell_x; xi++) {
+                        ECAL_posmap[ecal_n] = TVector3( ECAL_pos0->x() + xi * ECAL_cell_dx,
+                                                    ECAL_pos0->y() + yi * ECAL_cell_dy,
+                                                    ECAL_pos0->z() + zi * ECAL_cell_dz);
+                        ecal_n++;
                     }
                 }
             }

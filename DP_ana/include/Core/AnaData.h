@@ -113,6 +113,10 @@ protected:
     int N_ECal_cell_x{0};
     int N_ECal_cell_y{0};
     int N_ECal_cell_z{0};
+    double ECAL_cell_dx{0};
+    double ECAL_cell_dy{0};
+    double ECAL_cell_dz{0};
+    TVector3* ECAL_pos0{nullptr};
     std::array<TVector3,MAX_ECAL_CELLS> ECAL_posmap{};
 
     MCPHelperVec* helper{nullptr};
