@@ -252,6 +252,12 @@ int main(int argc, char **argv) {
         std::cout << macro.size() << ", " << OpticalMacro.size() << std::endl;
     }
 
+
+#ifdef DEBUG
+    std::cout << "[INFO] Navigator CheckMode ON" << std::endl;
+    UImanager->ApplyCommand("/geometry/navigator/check_mode 1");
+#endif
+
     if (gui_mode) {
         auto *ui = new G4UIExecutive(argc, argv);
         UImanager->ApplyCommand("/control/execute init_vis.mac");
