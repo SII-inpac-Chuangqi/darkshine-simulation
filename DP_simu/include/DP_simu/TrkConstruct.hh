@@ -66,11 +66,11 @@ class TrkConstruct
     std::vector<G4LogicalVolume*> GetTrkLVVector() { return fTrkLVVector; };
     std::vector<G4LogicalVolume*> GetStripLVVector() { return fStripLVVector; };
 
+    static constexpr double eps = 0;
   private:
     G4bool fType{false}; //
     G4bool fCheckOverlap;
 
-    G4double eps = dControl->eps;
     G4double fSizeX;
     G4double fSizeY;
     G4double fSizeZ;

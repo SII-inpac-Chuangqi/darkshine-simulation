@@ -26,7 +26,7 @@ public:
 
     bool BuildSD();
 
-    double eps = dControl->eps;
+    static constexpr double eps = 0;
 private:
     G4String Name;
 

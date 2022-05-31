@@ -37,8 +37,7 @@ public:
 
     bool BuildSDandField(G4int type);
 
-    double eps = dControl->eps;
-
+    static constexpr double eps = 0;
 private:
 
     /// Tracker parameters

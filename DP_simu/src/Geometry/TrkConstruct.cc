@@ -72,7 +72,6 @@ TrkConstruct::TrkConstruct(const TrkConstruct &in) {
     fStripLV = in.fStripLV;
     fStripLVVector = in.fStripLVVector;
     PVVector = in.PVVector;
-    eps = in.eps;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
