@@ -114,7 +114,7 @@ public:
     //========================================
     /* Geometry */
     //----------------------------------------
-    static constexpr double eps = 1 * um;
+    static constexpr double eps = 10 * um;
 
     //----------------------------------------
     // Build Options

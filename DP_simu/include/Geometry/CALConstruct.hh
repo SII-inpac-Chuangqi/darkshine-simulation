@@ -24,7 +24,7 @@
 /// Logical volume configuration information
 class CALConstruct {
 public:
-    static constexpr double eps = 1 * um;
+    static constexpr double eps = 0;
 
     CALConstruct(const G4String&, G4LogicalVolume *, G4int, G4bool, G4bool, G4bool, G4bool);
 
