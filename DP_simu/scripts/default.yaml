@@ -177,7 +177,7 @@ Geometry:
     Target_Size: [ 10 , "cm", 20 , "cm", 350 , "um" ]
     Target_Pos: [ 0 , "cm", 0 , "cm", 0 , "cm" ]
   MagnetShield:
-    MagnetShield_Thickness: [ 20, "cm" ]
+    MagnetShield_Thickness: [ 50, "cm" ]
   Tracker:
     build_silicon_micro_strip: true # false - only build one silicon micro strip in one tracker volume
     Trk_Tar_Dis: [ 7.5, "mm" ]

@@ -274,23 +274,7 @@ void Control::RebuildVariables() {
     if (build_only_tag_tracker) tag_Pos_TrackerRegion = G4ThreeVector(0, 0, 0);
 
     //----------------------------------------
-    // Recoil Tracker
-    assert(rec_Size_Tracker.size() == rec_Pos_Tracker.size());
-    rec_No_Tracker = rec_Size_Tracker.size();
-    /// Size and Position of Recoil Tracker Region
-    rec_Size_TrackerRegion = G4ThreeVector(
-            2.0 * rec_Size_Tracker[rec_No_Tracker - 1].x(),
-            2.0 * rec_Size_Tracker[rec_No_Tracker - 1].y(),
-            rec_Pos_Tracker[rec_No_Tracker - 1].z() - rec_Pos_Tracker[0].z() +
-            2.0 * (rec_Size_Tracker[rec_No_Tracker - 1].z()) + eps );
-
-    rec_Pos_TrackerRegion = G4ThreeVector(
-            0 * cm, 0 * cm,
-            0.5 * rec_Size_TrackerRegion.z() + Trk_Tar_Dis + 0.5 * Target_Size.z());
-    if (build_only_rec_tracker) rec_Pos_TrackerRegion = G4ThreeVector(0, 0, 0);
-
-    //----------------------------------------
-    // Electromagnetic Calorimeter
+    // Electromagnetic Calorimeter Size
 
     Size_ECALCell.setX(ECAL_Center_Size.x() + ECAL_Center_Wrap_Size.x());
     Size_ECALCell.setY(ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y());
@@ -303,6 +287,25 @@ void Control::RebuildVariables() {
     Size_ECALRegion.setX( ECAL_Block_No.x() * Size_ECALBlock.x() + eps);
     Size_ECALRegion.setY( ECAL_Block_No.y() * Size_ECALBlock.y() + eps);
     Size_ECALRegion.setZ( ECAL_Block_No.z() * Size_ECALBlock.z() + eps );
+
+    //----------------------------------------
+    // Recoil Tracker
+    assert(rec_Size_Tracker.size() == rec_Pos_Tracker.size());
+    rec_No_Tracker = rec_Size_Tracker.size();
+    /// Size and Position of Recoil Tracker Region
+    rec_Size_TrackerRegion = G4ThreeVector(
+            2.0 * rec_Size_Tracker[rec_No_Tracker - 1].x(),
+            Size_ECALRegion.y(),
+            rec_Pos_Tracker[rec_No_Tracker - 1].z() - rec_Pos_Tracker[0].z() +
+            2.0 * (rec_Size_Tracker[rec_No_Tracker - 1].z()) + eps );
+
+    rec_Pos_TrackerRegion = G4ThreeVector(
+            0 * cm, 0 * cm,
+            0.5 * rec_Size_TrackerRegion.z() + Trk_Tar_Dis + 0.5 * Target_Size.z());
+    if (build_only_rec_tracker) rec_Pos_TrackerRegion = G4ThreeVector(0, 0, 0);
+
+    //----------------------------------------
+    // Electromagnetic Calorimeter Position
 
     Pos_ECALRegion = G4ThreeVector(0, 0,
                                    0.5 * Size_ECALRegion.z() + rec_Pos_TrackerRegion.z() +
