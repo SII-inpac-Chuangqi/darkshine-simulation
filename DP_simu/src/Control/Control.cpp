@@ -251,6 +251,7 @@ void Control::RebuildVariables() {
     if (build_only_target || build_only_tag_tracker || build_only_rec_tracker ||
         build_only_ECAL || build_only_HCAL) {
         build_target = !(build_only_tag_tracker || build_only_rec_tracker || build_only_ECAL || build_only_HCAL);
+        build_MagnetShield = !(build_only_tag_tracker || build_only_rec_tracker || build_only_ECAL || build_only_HCAL);
         build_tag_tracker = !(build_only_target || build_only_rec_tracker || build_only_ECAL || build_only_HCAL);
         build_rec_tracker = !(build_only_target || build_only_tag_tracker || build_only_ECAL || build_only_HCAL);
         build_ECAL = !(build_only_target || build_only_tag_tracker || build_only_rec_tracker || build_only_HCAL);
@@ -702,6 +703,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         //----------------------------------------
         // Build Options
         build_target = Node["Geometry"]["build_target"].as<bool>();
+        build_MagnetShield = Node["Geometry"]["build_MagnetShield"].as<bool>();
         build_tag_tracker = Node["Geometry"]["build_tag_tracker"].as<bool>();
         build_rec_tracker = Node["Geometry"]["build_rec_tracker"].as<bool>();
         build_ECAL = Node["Geometry"]["build_ECAL"].as<bool>();
@@ -716,6 +718,9 @@ bool Control::ReadYAML(const G4String &file_in) {
         MaterialStr["Target_Mat"] = Node["Geometry"]["Target"]["Target_Mat"].as<std::string>();
         Target_Size = readV3(Node["Geometry"]["Target"]["Target_Size"], true);
         Target_Pos = readV3(Node["Geometry"]["Target"]["Target_Pos"], true);
+        //----------------------------------------
+        // MagnetShield
+        MagnetShield_Thickness = readV2(Node["Geometry"]["MagnetShield"]["MagnetShield_Thickness"]);
         //----------------------------------------
         // Tracker
         build_silicon_micro_strip = Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].IsDefined()

@@ -129,6 +129,8 @@ G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
 
     // Build Target
     if (dControl->build_target) DefineTarget();
+    // Build MagnetShield
+    if (dControl->build_MagnetShield) DefineMagnetShield();
     // Build Tagging Tracker
     if (dControl->build_tag_tracker) TagTrk->Build(dTagging, World_LV, fCheckOverlaps);
     // Build Recoil Tracker
@@ -172,6 +174,32 @@ void DetectorConstruction::DefineWorld() {
     World_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
 #endif
     World_PV = new G4PVPlacement(nullptr, G4ThreeVector(), World_LV, "World", nullptr, false, 0, fCheckOverlaps);
+}
+
+void DetectorConstruction::DefineMagnetShield() {
+    double MagShieldHalfX = 0.5 * std::max(dControl->rec_Size_TrackerRegion.x(), dControl->Size_ECALRegion.x());
+    double MagShieldHalfY = 0.5 * std::max(dControl->rec_Size_TrackerRegion.y(), dControl->Size_ECALRegion.y());
+    double MagShieldHalfZ = dControl->rec_Pos_TrackerRegion.z() + 0.5 * dControl->rec_Size_TrackerRegion.z() + 1 * mm + dControl->Size_ECALRegion.z();
+    auto MagShield_Outer_Box = new G4Box("MagnetShield_Outer_Box",
+                                   MagShieldHalfX + dControl->MagnetShield_Thickness,
+                                   MagShieldHalfY + dControl->MagnetShield_Thickness,
+                                   MagShieldHalfZ );
+    auto MagShield_Inner_Box = new G4Box("MagnetShield_Inner_Box",
+                                         MagShieldHalfX,
+                                         MagShieldHalfY,
+                                         2 * MagShieldHalfZ);
+    auto MagShield_Solid = new G4SubtractionSolid("MagnetShield_Solid",
+                                                  MagShield_Outer_Box,
+                                                  MagShield_Inner_Box,
+                                                  nullptr,
+                                                  G4ThreeVector(0,0,0));
+    auto MagShield_LV = new G4LogicalVolume(MagShield_Solid,
+                                           G4Material::GetMaterial("G4_Fe"),
+                                           "MagnetShield_LV",
+                                           nullptr, nullptr, nullptr);
+    MagShield_LV->SetVisAttributes(new G4VisAttributes(G4Colour(1,0,0)));
+    new G4PVPlacement(nullptr, dControl->Target_Pos, MagShield_LV, "MagnetShield",
+                      World_LV, false, 0, fCheckOverlaps);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

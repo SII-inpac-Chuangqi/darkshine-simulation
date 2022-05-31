@@ -119,6 +119,7 @@ public:
     //----------------------------------------
     // Build Options
     bool build_target;
+    bool build_MagnetShield;
     bool build_tag_tracker;
     bool build_rec_tracker;
     bool build_ECAL;
@@ -139,6 +140,10 @@ public:
     // World
     G4Material *World_Mat{};
     G4ThreeVector Size_World;  // dependent
+
+    //----------------------------------------
+    // Magnet Shield
+    G4double MagnetShield_Thickness{};
 
     //----------------------------------------
     // Target

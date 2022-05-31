@@ -103,6 +103,8 @@ private:
 
     void DefineWorld();
 
+    void DefineMagnetShield();
+
     void SetBiasLayer();
 
     /// Tracker Construction Class

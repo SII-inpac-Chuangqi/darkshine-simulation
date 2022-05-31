@@ -90,6 +90,10 @@ bool DEventDisplay::drawDetector() {
             volume->SetLineColor(40);
             volume->SetTransparency(75);
             volume->SetVisibility(kTRUE);
+        } else if (name == "MagnetShield_LV") {
+            volume->SetLineColor(40);
+            volume->SetTransparency(75);
+            volume->SetVisibility(kTRUE);
         }
     }
 

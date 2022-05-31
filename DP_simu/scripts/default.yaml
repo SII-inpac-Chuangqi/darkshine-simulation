@@ -55,7 +55,7 @@ signal_mass: [ 500, "MeV" ]
 # If to use signal LUT
 signal_use_LUT: false
 # signal LUT place
-signal_lookup_table: "signal.root"
+signal_lookup_table: "dp_lookup_table.root"
 
 ###########################################
 # Magnetic field
@@ -158,6 +158,7 @@ Optical:
 Geometry:
   # Build options
   build_target: true
+  build_MagnetShield: true
   build_tag_tracker: true
   build_rec_tracker: true
   build_ECAL: true
@@ -175,6 +176,8 @@ Geometry:
     Target_Mat: "G4_W"
     Target_Size: [ 10 , "cm", 20 , "cm", 350 , "um" ]
     Target_Pos: [ 0 , "cm", 0 , "cm", 0 , "cm" ]
+  MagnetShield:
+    MagnetShield_Thickness: [ 20, "cm" ]
   Tracker:
     build_silicon_micro_strip: true # false - only build one silicon micro strip in one tracker volume
     Trk_Tar_Dis: [ 7.5, "mm" ]
