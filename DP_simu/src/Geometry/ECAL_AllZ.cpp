@@ -71,7 +71,7 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, bool fCheckOverlaps) 
                                                      ECAL_Center->GetOutlineLV(),
                                                      ECALRegion_Mat,
                                                      1,
-                                                     G4ThreeVector(eps,eps,eps),
+                                                     dControl->ECAL_Cell_Gap,
                                                      false);
         ECAL_Center->MatrixConstruct(dControl->ECAL_Block_No.x(),
                                      dControl->ECAL_Block_No.y(),
@@ -79,7 +79,7 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, bool fCheckOverlaps) 
                                      ECal_Block_LV,
                                      ECALRegion_Mat,
                                      2,
-                                     G4ThreeVector(0.5 * eps, 0.5 * eps, 0.5 * eps),
+                                     G4ThreeVector(0, 0, 0),
                                      true);
 
         ECAL_Center_LV = ECAL_Center->GetCaloLVVector();

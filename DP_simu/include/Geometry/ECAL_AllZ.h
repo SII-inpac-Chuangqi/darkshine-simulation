@@ -26,7 +26,6 @@ public:
 
     bool BuildBias(BOptrMultiParticleChangeCrossSection *bias);
 
-    static constexpr double eps = 0;
 private:
     G4String Name;
     G4Material *ECALRegion_Mat{};

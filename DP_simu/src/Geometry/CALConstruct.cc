@@ -356,7 +356,7 @@ void CALConstruct::CalWLSUnitConstruct() {
     auto CaloBox = new G4Box(fCALName + "_Box", CaloXHalfLength, CaloYHalfLength, CaloZHalfLength);
 
     auto CaloHoleTubs = new G4Tubs(fCALName + "_Tubs", 0, CaloHoleRadius,
-                                   (CaloZHalfLength + eps) * 2,
+                                   CaloZHalfLength * 2,
                                    0*deg, 360*deg );
     auto CaloWithHole = new G4SubtractionSolid(fCALName + "_Box_1",
                                                 CaloBox,
@@ -501,9 +501,9 @@ G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo,
     auto UnitZHalfLength = UnitBox->GetZHalfLength();
 
     /// construct Group LV
-    auto GroupHalfSize = G4ThreeVector(xNo * UnitXHalfLength + (xNo - 0.5) * 0.5 * gap.x(),
-                                       yNo * UnitYHalfLength + (yNo - 0.5) * 0.5 * gap.y(),
-                                       zNo * UnitZHalfLength + (zNo - 0.5) * 0.5 * gap.z());
+    auto GroupHalfSize = G4ThreeVector(xNo * UnitXHalfLength + xNo * 0.5 * gap.x(),
+                                       yNo * UnitYHalfLength + yNo * 0.5 * gap.y(),
+                                       zNo * UnitZHalfLength + zNo * 0.5 * gap.z());
     auto GroupBox = new G4Box(fCALName + "_Box_h" + std::to_string(tree_height), GroupHalfSize.x(), GroupHalfSize.y(), GroupHalfSize.z());
 
     G4LogicalVolume* motherLV = nullptr;
@@ -524,9 +524,9 @@ G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo,
     for (int k = 0; k < zNo; k++) {
         for (int j = 0; j < yNo; j++) {
             for (int i = 0; i < xNo; i++) {
-                UnitPosX = -1. * GroupHalfSize.x() + (2 * i + 1) * UnitXHalfLength + (i + 0.25) * gap.x();
-                UnitPosY = -1. * GroupHalfSize.y() + (2 * j + 1) * UnitYHalfLength + (j + 0.25) * gap.y();
-                UnitPosZ = -1. * GroupHalfSize.z() + (2 * k + 1) * UnitZHalfLength + (k + 0.25) * gap.z();
+                UnitPosX = -1. * GroupHalfSize.x() + (2 * i + 1) * UnitXHalfLength + (i + 0.5) * gap.x();
+                UnitPosY = -1. * GroupHalfSize.y() + (2 * j + 1) * UnitYHalfLength + (j + 0.5) * gap.y();
+                UnitPosZ = -1. * GroupHalfSize.z() + (2 * k + 1) * UnitZHalfLength + (k + 0.5) * gap.z();
 
                 UnitPV = new G4PVPlacement(nullptr,
                                            G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),

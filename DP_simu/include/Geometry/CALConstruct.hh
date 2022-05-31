@@ -24,7 +24,6 @@
 /// Logical volume configuration information
 class CALConstruct {
 public:
-    static constexpr double eps = 0;
 
     CALConstruct(const G4String&, G4LogicalVolume *, G4int, G4bool, G4bool, G4bool, G4bool);
 
@@ -77,13 +76,13 @@ public:
                              G4LogicalVolume* elementLV,
                              G4Material* regionMat,
                              G4int tree_height,
-                             G4double gap = eps);
+                             G4double gap);
 
     G4ThreeVector LinearPlacementWithAbsorber(G4int zNo,
                                      const std::vector< std::tuple<int, int, double> > abs_thickness_list,
                                      G4LogicalVolume* calLayerLV,
                                      G4Material *AbsMat,
-                                     G4double gap = eps);
+                                     G4double gap);
 
 
     // deprecated!!

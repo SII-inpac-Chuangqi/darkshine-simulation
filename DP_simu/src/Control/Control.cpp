@@ -265,7 +265,7 @@ void Control::RebuildVariables() {
             2.0 * tag_Size_Tracker[0].x(),
             2.0 * tag_Size_Tracker[0].y(),
             tag_Pos_Tracker[tag_No_Tracker - 1].z() - tag_Pos_Tracker[0].z() +
-            2.0 * (tag_Size_Tracker[0].z() + 3.0 * eps ) + eps);
+            2.0 * (tag_Size_Tracker[0].z() ) + eps);
 
     tag_Pos_TrackerRegion = G4ThreeVector(
             0 * cm, 0 * cm,
@@ -281,7 +281,7 @@ void Control::RebuildVariables() {
             2.0 * rec_Size_Tracker[rec_No_Tracker - 1].x(),
             2.0 * rec_Size_Tracker[rec_No_Tracker - 1].y(),
             rec_Pos_Tracker[rec_No_Tracker - 1].z() - rec_Pos_Tracker[0].z() +
-            2.0 * (rec_Size_Tracker[rec_No_Tracker - 1].z() + 3.0 * eps) + eps );
+            2.0 * (rec_Size_Tracker[rec_No_Tracker - 1].z()) + eps );
 
     rec_Pos_TrackerRegion = G4ThreeVector(
             0 * cm, 0 * cm,
@@ -295,13 +295,13 @@ void Control::RebuildVariables() {
     Size_ECALCell.setY(ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y());
     Size_ECALCell.setZ(ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z() + ECAL_APD_Size.z());
 
-    Size_ECALBlock.setX(ECAL_Cell_No.x() * (Size_ECALCell.x() + eps) - 0.5 * eps );
-    Size_ECALBlock.setY(ECAL_Cell_No.y() * (Size_ECALCell.y() + eps) - 0.5 * eps );
-    Size_ECALBlock.setZ(ECAL_Cell_No.z() * (Size_ECALCell.z() + eps) - 0.5 * eps );
+    Size_ECALBlock.setX(ECAL_Cell_No.x() * (Size_ECALCell.x() + ECAL_Cell_Gap.x()) );
+    Size_ECALBlock.setY(ECAL_Cell_No.y() * (Size_ECALCell.y() + ECAL_Cell_Gap.y()) );
+    Size_ECALBlock.setZ(ECAL_Cell_No.z() * (Size_ECALCell.z() + ECAL_Cell_Gap.z()) );
 
-    Size_ECALRegion.setX( ECAL_Block_No.x() * (Size_ECALBlock.x() + 0.5 * eps) );
-    Size_ECALRegion.setY( ECAL_Block_No.y() * (Size_ECALBlock.y() + 0.5 * eps) );
-    Size_ECALRegion.setZ( ECAL_Block_No.z() * (Size_ECALBlock.z() + 0.5 * eps) );
+    Size_ECALRegion.setX( ECAL_Block_No.x() * Size_ECALBlock.x() + eps);
+    Size_ECALRegion.setY( ECAL_Block_No.y() * Size_ECALBlock.y() + eps);
+    Size_ECALRegion.setZ( ECAL_Block_No.z() * Size_ECALBlock.z() + eps );
 
     Pos_ECALRegion = G4ThreeVector(0, 0,
                                    0.5 * Size_ECALRegion.z() + rec_Pos_TrackerRegion.z() +
@@ -344,9 +344,9 @@ void Control::RebuildVariables() {
     Size_HCALCell.setY(HCAL_Size_Dir.y() + HCAL_Wrap_Size.y());
     Size_HCALCell.setZ(HCAL_Size_Dir.z() + HCAL_Wrap_Size.z() + HCAL_APD_Size.z());
 
-    Size_HCALModule.setX(Size_HCALCell.z() + eps);
-    Size_HCALModule.setY(Size_HCALCell.z() + eps);
-    Size_HCALModule.setZ(2 * ( Size_HCALCell.x() + eps) );
+    Size_HCALModule.setX(Size_HCALCell.z());
+    Size_HCALModule.setY(Size_HCALCell.z());
+    Size_HCALModule.setZ(2 * ( Size_HCALCell.x()) );
 
     Size_HCALLayer.setX(HCAL_Module_No.x() * (Size_HCALModule.x() + HCAL_Module_Gap.x()) );
     Size_HCALLayer.setY(HCAL_Module_No.y() * (Size_HCALModule.y() + HCAL_Module_Gap.y()) );
@@ -354,7 +354,7 @@ void Control::RebuildVariables() {
 
     Size_HCALRegion.setX(Size_HCALLayer.x() + eps);
     Size_HCALRegion.setY(Size_HCALLayer.y() + eps);
-    Size_HCALRegion.setZ(HCAL_Layer_N * (Size_HCALLayer.z() + eps) + HCAL_Absorber_Thickness_Total);
+    Size_HCALRegion.setZ(HCAL_Layer_N * Size_HCALLayer.z() + HCAL_Absorber_Thickness_Total + eps);
 
     Pos_HCALRegion = G4ThreeVector(0, 0,
                                    0.5 * Size_HCALRegion.z() + Pos_ECALRegion.z() + 0.5 * Size_ECALRegion.z() + 1 * mm);
@@ -770,6 +770,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         ECAL_Center_Size = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Size"], true);
         ECAL_Block_No = readV3(Node["Geometry"]["ECAL"]["ECAL_Block_No"]);
         ECAL_Cell_No = readV3(Node["Geometry"]["ECAL"]["ECAL_Cell_No"]);
+        ECAL_Cell_Gap = readV3(Node["Geometry"]["ECAL"]["ECAL_Cell_Gap"], true);
         //ECAL_Center_Module_No = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Module_No"]);
         //----------------------------------------
         // Hadronic Calorimeter

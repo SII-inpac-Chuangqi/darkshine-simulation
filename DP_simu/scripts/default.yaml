@@ -252,6 +252,7 @@ Geometry:
 
     ECAL_Block_No: [3, 3, 11]
     ECAL_Cell_No: [7, 7, 1] # Cell Number per Block
+    ECAL_Cell_Gap: [0.1 , "mm", 0.1, "mm", 0.1, "mm"]
 
   HCAL:
     HCAL_Name: "HCAL"
@@ -269,7 +270,7 @@ Geometry:
     # HCAL APD Size
     HCAL_APD_Size: [3, "mm", 3, "mm", 1, "mm"]
     # HCAL Scintillator cell size along x, the odd layer place along x, even along y
-    HCAL_Size_Dir: [ 1, "cm", 5 , "cm", 100.5719 , "cm"] # z = HCAL_Cell_XY_N * y + (HCAL_Cell_XY_N - 1) * (HCAL_Wrap_Size.y + eps)
+    HCAL_Size_Dir: [ 1, "cm", 5 , "cm", 100.57 , "cm"] # z = HCAL_Cell_XY_N * y + (HCAL_Cell_XY_N - 1) * (HCAL_Wrap_Size.y)
 
     HCAL_Module_No: [4, 4, 1]
     HCAL_Cell_XY_N: 20
@@ -278,7 +279,7 @@ Geometry:
       - [ 41,  65,  20, "mm"]
       - [ 66,  85,  30, "mm"]
       - [ 86, 100,  50, "mm"]
-    HCAL_Module_Gap: [0.5 , "mm", 0.5, "mm", 1, "um"]
+    HCAL_Module_Gap: [0.5 , "mm", 0.5, "mm", 0, "um"]
     HCAL_Show_Cell: false
 # End of File
 ---

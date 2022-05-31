@@ -191,6 +191,7 @@ public:
     G4ThreeVector ECAL_Block_No;
     G4ThreeVector ECAL_Cell_No;
     G4ThreeVector ECAL_Center_Module_No; // dependent
+    G4ThreeVector ECAL_Cell_Gap;
 
     //----------------------------------------
     // Hadronic Calorimeter
