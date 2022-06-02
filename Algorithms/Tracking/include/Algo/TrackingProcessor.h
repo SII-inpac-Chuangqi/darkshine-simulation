@@ -84,38 +84,19 @@ private:
 //................................................................................//
 //Reconstructed
 //................................................................................//
-    int TagTrk2_original_hit_No{-1};
-    int TagTrk2_reco_hit_No{-1};
-    int RecTrk2_original_hit_No{-1};
-    int RecTrk2_reco_hit_No{-1};
-
     int TagTrk2_track_No{-1};
-    int TagTrk2_rechit_No{-1};
-    std::vector<int> TagTrk2_rectrk_hit_No{};
     std::vector<double> TagTrk2_pp{};
     std::vector<double> TagTrk2_pl{};
-    std::vector<double> TagTrk2_track_r{};
-    std::vector<double> TagTrk2_track_xcenter{};
-    std::vector<double> TagTrk2_track_zcenter{};
 
     std::vector<double> TagTrk2_track_quality{};
     std::vector<double> TagTrk2_track_chi2{};
     std::vector<double> TagTrk2_track_x_sigma{};
     std::vector<double> TagTrk2_track_y_sigma{};
 
-    std::vector<double> TagTrk2_track_x{};
-    std::vector<double> TagTrk2_track_y{};
-    std::vector<double> TagTrk2_track_z{};
-
 //................................................................................//
     int RecTrk2_track_No{-1};
-    int RecTrk2_rechit_No{-1};
-    std::vector<int> RecTrk2_rectrk_hit_No{};
     std::vector<double> RecTrk2_pp{};
     std::vector<double> RecTrk2_pl{};
-    std::vector<double> RecTrk2_track_r{};
-    std::vector<double> RecTrk2_track_xcenter{};
-    std::vector<double> RecTrk2_track_zcenter{};
 
     std::vector<double> RecTrk2_track_quality{};
     std::vector<double> RecTrk2_track_chi2{};
