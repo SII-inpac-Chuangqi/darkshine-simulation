@@ -400,14 +400,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                         std::vector<double> track_z;
                         for(int hit = 0; hit < track.GetSize(); hit++)
                         {
-                            track_x.push_back(track.At(hit)->GetX());
-                            track_y.push_back(track.At(hit)->GetY());
-                            track_z.push_back(track.At(hit)->GetZ());
+                            track_x.push_back(track_x.At(hit)->->GetX());
+                            track_y.push_back(track_y.At(hit)->->GetY());
+                            track_z.push_back(track_z.At(hit)->->GetZ());
                         }
-
-                        RecTrk2_track_x.push_back(track_x);
-                        RecTrk2_track_y.push_back(track_y);
-                        RecTrk2_track_z.push_back(track_z);
                     }
                 }
             }
