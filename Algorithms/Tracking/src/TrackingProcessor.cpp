@@ -159,6 +159,14 @@ void TrackingProcessor::CleanEvt() {
         std::vector<double>().swap(RecTrk2_e);
     }
 
+    TagTrk2_track_No = 0;
+    RecTrk2_track_No = 0;
+
+    TagTrk2_pp_truth_ini = RETURN;
+    TagTrk2_pp_truth_fin = RETURN;
+    RecTrk2_pp_truth_ini = RETURN;
+    RecTrk2_pp_truth_fin = RETURN;
+
     std::vector<double>().swap(TagTrk2_pp);
     std::vector<double>().swap(TagTrk2_track_chi2);
     std::vector<double>().swap(TagTrk2_track_quality);
@@ -240,6 +248,16 @@ void TrackingProcessor::FillTruth(std::vector<DStep*> *initial_steps,
 }
 
 void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
+    [[maybe_unused]] bool if_initial_steps(false);
+    [[maybe_unused]] bool if_raw_tag_hits(false);
+    [[maybe_unused]] bool if_raw_rec_hits(false);
+    [[maybe_unused]] bool if_raw_tag_hit_number(false);
+    [[maybe_unused]] bool if_raw_rec_hit_number(false);
+    [[maybe_unused]] bool if_reco_tag_hits(false);
+    [[maybe_unused]] bool if_reco_rec_hits(false);
+
+//................................................................................//
+//Initialize vars
     this->CleanEvt();
 
     const auto &step_collection = evt->getStepCollection();
@@ -257,6 +275,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         it_find_rec1 != simuhit_collection.end() &&
         it_find_rec2 != simuhit_collection.end())
     {
+        if_initial_steps = true;
+        if_raw_tag_hits = true;
+        if_raw_rec_hits = true;
+
 //................................................................................//
 //Read
         dAnaData->LoadTruthMcPHelper(evt->getMcPHelperCollection());
@@ -296,146 +318,145 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                 magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.) : con_field,
                                                 magnets.at(2) ? magnets.at(2)->GetField(0., 0., 0.) : 0.};
 
-        if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
-        {
 //................................................................................//
 //Tag tracker
-//................................................................................//
+        std::vector<DTrack> tag_tracks;
+
+        TrkHitPVecMap clus_tag_trkhit_map;
+        if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
+        {
+            if_raw_tag_hit_number = true;
+
 //Digitization
-            TrkHitPVecMap clus_tag_trkhit_map;
-            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, clus_tag_trkhit_map, tag);
+            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, clus_tag_trkhit_map, tag);            
 
             if(clus_tag_trkhit_map.size())
             {
-//................................................................................//
-//Finding, by pre-fitting
-                std::vector<TrkHitPVec> vec_tag_track;
-                GreedyFinding find_tag(clus_tag_trkhit_map);
-                vec_tag_track.assign(find_tag.First(), find_tag.Last());
+                if_reco_tag_hits = true;
 
-//................................................................................//
-//Fitting, by Genfit, Kalman filter/by Riemann fitting
-                TagTrk2_track_No = find_tag.GetTrackNo();
-
-                for (int i = 0; i < find_tag.GetTrackNo(); i++)
+                if(if_raw_tag_hit_number && if_reco_tag_hits)
                 {
-
-                    TrkHitPVec tag_track((*(vec_tag_track.begin() + i)).begin(), (*(vec_tag_track.begin() + i)).end());
-                    DTrack track(tag_track,
-                                 find_tag.GetR(i),       //used in Kalman filter
-                                 find_tag.GetCenterX(i), //not used in Kalman filter, reserved
-                                 find_tag.GetCenterY(i), //not used in Kalman filter, reserved
-                                 magnet_at_origin);      //magnet vector to handle exception
-                    track.Fit(Tag_fit_method);           //choose fitting method: Kalman filter
-                    track.Evaluate();
-    
-                    TagTrk2_pp.push_back(track.GetPp());
-                    TagTrk2_track_chi2.push_back(track.GetChi2());
-
-                    if (!clean)
+//Finding, by pre-fitting
+                    std::vector<TrkHitPVec> vec_tag_track;
+                    GreedyFinding find_tag(clus_tag_trkhit_map);
+                    vec_tag_track.assign(find_tag.First(), find_tag.Last());
+        
+//Fitting, by Genfit, Kalman filter/by Riemann fitting
+                    TagTrk2_track_No = find_tag.GetTrackNo();
+        
+                    for (int i = 0; i < find_tag.GetTrackNo(); i++)
                     {
-                        TagTrk2_track_quality.push_back(track.GetQuality());
-                        TagTrk2_track_x_sigma.push_back(track.GetXSigma());
-                        TagTrk2_track_y_sigma.push_back(track.GetYSigma());
+        
+                        TrkHitPVec tag_track_hits((*(vec_tag_track.begin() + i)).begin(), (*(vec_tag_track.begin() + i)).end());
+                        DTrack track(tag_track_hits,
+                                     find_tag.GetR(i),       //used in Kalman filter
+                                     find_tag.GetCenterX(i), //not used in Kalman filter, reserved
+                                     find_tag.GetCenterY(i), //not used in Kalman filter, reserved
+                                     magnet_at_origin);      //magnet vector to handle exception
+                        track.Fit(Tag_fit_method);           //choose fitting method: Kalman filter
+                        track.Evaluate();
+
+                        tag_tracks.push_back(track);
                     }
                 }
             }
-            else
-            {
-                TagTrk2_track_No = 0;
-            }
-        }
-        else
-        {
-            TagTrk2_track_No = 0;
         }
 
-        if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
-        {
 //................................................................................//
 //Recoil tracker
-//................................................................................//
+        std::vector<DTrack> rec_tracks;
+
+        TrkHitPVecMap clus_rec_trkhit_map;
+        if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
+        {
+            if_raw_rec_hit_number = true;
+
 //Digitization
-            TrkHitPVecMap clus_rec_trkhit_map;
-            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, clus_rec_trkhit_map, rec);
+            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, clus_rec_trkhit_map, rec);            
 
             if(clus_rec_trkhit_map.size())
             {
-//................................................................................//
+                if_reco_rec_hits = true;
+
+                if(if_raw_rec_hit_number && if_reco_rec_hits)
+                {
 //Finding, by pre-fitting
-                std::vector<TrkHitPVec> vec_rec_track;
-                GreedyFinding find_rec(clus_rec_trkhit_map);
-                vec_rec_track.assign(find_rec.First(), find_rec.Last());
+                    std::vector<TrkHitPVec> vec_rec_track;
+                    GreedyFinding find_rec(clus_rec_trkhit_map);
+                    vec_rec_track.assign(find_rec.First(), find_rec.Last());
 
-//................................................................................//
 //Fitting, by Genfit, Kalman filter/by Riemann fitting
-                RecTrk2_track_No = find_rec.GetTrackNo();
-      
-                for (int i = 0; i < find_rec.GetTrackNo(); i++) {
-                    TrkHitPVec rec_track((*(vec_rec_track.begin() + i)).begin(), (*(vec_rec_track.begin() + i)).end());
-                    DTrack track(rec_track,
-                                 find_rec.GetR(i),       //used in Kalman filter
-                                 find_rec.GetCenterX(i), //not used in Kalman filter, reserved
-                                 find_rec.GetCenterY(i), //not used in Kalman filter, reserved
-                                 magnet_at_origin);      //magnet vector to handle exception
-                    track.Fit(Rec_fit_method);           //choose fitting method: Kalman filter
-                    track.Evaluate();
-      
-                    RecTrk2_pp.push_back(track.GetPp());
-                    RecTrk2_track_chi2.push_back(track.GetChi2());
+                    RecTrk2_track_No = find_rec.GetTrackNo();
+              
+                    for (int i = 0; i < find_rec.GetTrackNo(); i++) {
+                        TrkHitPVec rec_track((*(vec_rec_track.begin() + i)).begin(), (*(vec_rec_track.begin() + i)).end());
+                        DTrack track(rec_track,
+                                     find_rec.GetR(i),       //used in Kalman filter
+                                     find_rec.GetCenterX(i), //not used in Kalman filter, reserved
+                                     find_rec.GetCenterY(i), //not used in Kalman filter, reserved
+                                     magnet_at_origin);      //magnet vector to handle exception
+                        track.Fit(Rec_fit_method);           //choose fitting method: Kalman filter
+                        track.Evaluate();
 
-                    ECal_seed_x.push_back(track.GetECalSeedX());
-                    ECal_seed_y.push_back(track.GetECalSeedY());
-                    ECal_seed_px.push_back(track.GetECalDirctX());
-                    ECal_seed_py.push_back(track.GetECalDirctY());
-                    ECal_seed_pz.push_back(track.GetECalQoP());
-
-                    if (!clean) {
-                        RecTrk2_track_quality.push_back(track.GetQuality());
-                        RecTrk2_track_x_sigma.push_back(track.GetXSigma());
-                        RecTrk2_track_y_sigma.push_back(track.GetYSigma());
-
-                        std::vector<double> track_x;
-                        std::vector<double> track_y;
-                        std::vector<double> track_z;
-                        for(int hit = 0; hit < track.GetSize(); hit++)
-                        {
-                            track_x.push_back(track.At(hit)->GetX());
-                            track_y.push_back(track.At(hit)->GetY());
-                            track_z.push_back(track.At(hit)->GetZ());
-                        }
-
-                        RecTrk2_track_x.push_back(track_x);
-                        RecTrk2_track_y.push_back(track_y);
-                        RecTrk2_track_z.push_back(track_z);
+                        rec_tracks.push_back(track);
                     }
                 }
             }
-            else
+        }
+
+//................................................................................//
+//Post-processing
+        for(auto &track : tag_tracks)
+        {
+            TagTrk2_pp.push_back(track.GetPp());
+            TagTrk2_track_chi2.push_back(track.GetChi2());
+        
+            if (!clean)
             {
-                RecTrk2_track_No = 0;
+                TagTrk2_track_quality.push_back(track.GetQuality());
+                TagTrk2_track_x_sigma.push_back(track.GetXSigma());
+                TagTrk2_track_y_sigma.push_back(track.GetYSigma());
             }
         }
-        else
+
+        for(auto &track : rec_tracks)
         {
-            RecTrk2_track_No = 0;
+            RecTrk2_pp.push_back(track.GetPp());
+            RecTrk2_track_chi2.push_back(track.GetChi2());
+
+            std::cout << track.GetECalQoP() << " MeV"  << std::endl;
+
+            ECal_seed_x.push_back(track.GetECalSeedX());
+            ECal_seed_y.push_back(track.GetECalSeedY());
+            ECal_seed_px.push_back(track.GetECalDirctX());
+            ECal_seed_py.push_back(track.GetECalDirctY());
+            ECal_seed_pz.push_back(track.GetECalQoP());
+         
+            if (!clean) {
+                RecTrk2_track_quality.push_back(track.GetQuality());
+                RecTrk2_track_x_sigma.push_back(track.GetXSigma());
+                RecTrk2_track_y_sigma.push_back(track.GetYSigma());
+         
+                std::vector<double> track_x;
+                std::vector<double> track_y;
+                std::vector<double> track_z;
+                for(int hit = 0; hit < track.GetSize(); hit++)
+                {
+                    track_x.push_back(track.At(hit)->GetX());
+                    track_y.push_back(track.At(hit)->GetY());
+                    track_z.push_back(track.At(hit)->GetZ());
+                }
+         
+                RecTrk2_track_x.push_back(track_x);
+                RecTrk2_track_y.push_back(track_y);
+                RecTrk2_track_z.push_back(track_z);
+            }
         }
-        
+        std::cout << std::endl;
+
 //................................................................................//
 //Write truth
         this->FillTruth(initial_steps, raw_tagtrk2_hits, raw_rectrk2_hits);
-    }
-    else
-    {
-        TagTrk2_No = 0;
-        RecTrk2_No = 0;
-        TagTrk2_pp_truth_ini = RETURN;
-        TagTrk2_pp_truth_fin = RETURN;
-        RecTrk2_pp_truth_ini = RETURN;
-        RecTrk2_pp_truth_fin = RETURN;
-
-        TagTrk2_track_No = 0;
-        RecTrk2_track_No = 0;
     }
 }
 

@@ -39,6 +39,11 @@ DTrack::DTrack(const DTrack &oldTrack) : pdg(oldTrack.pdg),         //physical p
                                          pz(oldTrack.pz),
                                          pp(oldTrack.pp),
                                          pl(oldTrack.pl),
+                                         ECal_seed_x(oldTrack.ECal_seed_x),
+                                         ECal_seed_y(oldTrack.ECal_seed_y),
+                                         ECal_seed_px(oldTrack.ECal_seed_px),
+                                         ECal_seed_py(oldTrack.ECal_seed_py),
+                                         ECal_seed_pz(oldTrack.ECal_seed_pz),
 
                                          quality(oldTrack.quality), //track properties
 
@@ -62,6 +67,11 @@ DTrack::DTrack(DTrack &&oldTrack) : pdg(std::move(oldTrack.pdg)),         //phys
                                     pz(std::move(oldTrack.pz)),
                                     pp(std::move(oldTrack.pp)),
                                     pl(std::move(oldTrack.pl)),
+                                    ECal_seed_x(std::move(oldTrack.ECal_seed_x)),
+                                    ECal_seed_y(std::move(oldTrack.ECal_seed_y)),
+                                    ECal_seed_px(std::move(oldTrack.ECal_seed_px)),
+                                    ECal_seed_py(std::move(oldTrack.ECal_seed_py)),
+                                    ECal_seed_pz(std::move(oldTrack.ECal_seed_pz)),
 
                                     quality(std::move(oldTrack.quality)), //track properties
 
