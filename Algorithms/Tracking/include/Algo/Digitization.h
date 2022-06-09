@@ -39,7 +39,7 @@ public:
     Digitization() = default;
     ~Digitization() = default;
 
-    void SetIfSmear(bool if_smear) {if_smear_ = if_smear;}
+    void SetIfSmear(bool if_smear);
 //Get tracker information
     void GetTrackerInfo(bool if_strip);
 //Separate tracker hits into vectors by layers

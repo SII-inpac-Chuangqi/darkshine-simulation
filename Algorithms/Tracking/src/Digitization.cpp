@@ -21,6 +21,12 @@
 #include "Algo/TrkHit.h"
 #include "Algo/Digitization.h"
 
+void Digitization::SetIfSmear(bool if_smear)
+{
+    if_smear_ = if_smear;
+    if(if_smear_) std::cerr << "[INFO] ==> Hits smeared in tracking" << std::endl;
+}
+
 //Get world node from TGeoManager
 void Digitization::GetTrackerInfo(bool if_strip)
 {
