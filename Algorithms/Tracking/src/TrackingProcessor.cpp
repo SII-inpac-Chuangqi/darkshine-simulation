@@ -424,8 +424,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             RecTrk2_pp.push_back(track.GetPp());
             RecTrk2_track_chi2.push_back(track.GetChi2());
 
-            std::cout << track.GetECalQoP() << " MeV"  << std::endl;
-
             ECal_seed_x.push_back(track.GetECalSeedX());
             ECal_seed_y.push_back(track.GetECalSeedY());
             ECal_seed_px.push_back(track.GetECalDirctX());
@@ -452,7 +450,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 RecTrk2_track_z.push_back(track_z);
             }
         }
-        std::cout << std::endl;
 
 //................................................................................//
 //Write truth
