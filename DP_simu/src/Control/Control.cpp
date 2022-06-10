@@ -368,24 +368,27 @@ void Control::RebuildVariables() {
     // World
     World_Mat = G4Material::GetMaterial("vacuum");
     //G4double l = 2.0 * (Pos_HCALRegion.z() + Size_HCALRegion.x());
-    G4double borderX[5] = {0.2 * m,
+    G4double borderX[6] = {0.2 * m,
                            build_rec_tracker * (fabs(rec_Pos_TrackerRegion.x()) + rec_Size_TrackerRegion.x()),
                            build_tag_tracker * (fabs(tag_Pos_TrackerRegion.x()) + tag_Size_TrackerRegion.x()),
                            build_ECAL * (fabs(Pos_ECALRegion.x()) + Size_ECALRegion.x()),
-                           build_HCAL * (fabs(Pos_HCALRegion.x()) + Size_HCALRegion.x())};
-    G4double borderY[5] = {0.2 * m,
+                           build_HCAL * (fabs(Pos_HCALRegion.x()) + Size_HCALRegion.x()),
+                           build_MagnetShield * ( std::max(rec_Size_TrackerRegion.x(),Size_ECALRegion.x()) + 2 * MagnetShield_Thickness )};
+    G4double borderY[6] = {0.2 * m,
                            build_rec_tracker * (fabs(rec_Pos_TrackerRegion.y()) + rec_Size_TrackerRegion.y()),
                            build_tag_tracker * (fabs(tag_Pos_TrackerRegion.y()) + tag_Size_TrackerRegion.y()),
                            build_ECAL * (fabs(Pos_ECALRegion.y()) + Size_ECALRegion.y()),
-                           build_HCAL * (fabs(Pos_HCALRegion.y()) + Size_HCALRegion.y())};
-    G4double borderZ[5] = {0.2 * m,
+                           build_HCAL * (fabs(Pos_HCALRegion.y()) + Size_HCALRegion.y()),
+                           build_MagnetShield * ( std::max(rec_Size_TrackerRegion.y(), Size_ECALRegion.y()) + 2 * MagnetShield_Thickness )};
+    G4double borderZ[6] = {0.2 * m,
                            build_rec_tracker * (fabs(rec_Pos_TrackerRegion.z()) + rec_Size_TrackerRegion.z()),
                            build_tag_tracker * (fabs(tag_Pos_TrackerRegion.z()) + tag_Size_TrackerRegion.z()),
                            build_ECAL * (fabs(Pos_ECALRegion.z()) + Size_ECALRegion.z()),
-                           build_HCAL * (fabs(Pos_HCALRegion.z()) + Size_HCALRegion.z())};
-    G4double lx = *std::max_element(borderX, borderX + 5);
-    G4double ly = *std::max_element(borderY, borderY + 5);
-    G4double lz = *std::max_element(borderZ, borderZ + 5);
+                           build_HCAL * (fabs(Pos_HCALRegion.z()) + Size_HCALRegion.z()),
+                           build_MagnetShield * 2 * ( rec_Pos_TrackerRegion.z() + 0.5 * rec_Size_TrackerRegion.z() + 1 * mm + Size_ECALRegion.z() )};
+    G4double lx = *std::max_element(borderX, borderX + 6);
+    G4double ly = *std::max_element(borderY, borderY + 6);
+    G4double lz = *std::max_element(borderZ, borderZ + 6);
     G4double lzoom = 2;
     Size_World = G4ThreeVector(lzoom * lx, lzoom * ly, lzoom * lz);
 
