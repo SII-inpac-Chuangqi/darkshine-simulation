@@ -1,6 +1,5 @@
 #!/bin/bash
 export _DSS_TEST_ORIGIN=${PWD}
-cd ..
 if [[ ! -f "CMakeLists.txt" ]]; then
     echo "Oscar:Build=Wrong#Path@${_DSS_TEST_ORIGIN}"
     exit 1
