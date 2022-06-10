@@ -8,6 +8,16 @@
 # can use versions as well, like gcc:5.2
 # see https://hub.docker.com/_/gcc/
 
+workflow:
+  rules:
+    - if: $CI_COMMIT_MESSAGE =~ /VIP/
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: never
+    - when: always
+
 image: qibin2020/dss-base
 
 build:
