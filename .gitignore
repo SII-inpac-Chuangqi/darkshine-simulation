@@ -16,3 +16,5 @@ binana/err.txt
 binana/log.txt
 /Run_Workspace/
 run/
+test/
+Automaton/*.log
