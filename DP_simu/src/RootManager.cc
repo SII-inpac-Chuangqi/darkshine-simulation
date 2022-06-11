@@ -5,6 +5,7 @@
 #include "TTree.h"
 #include "TString.h"
 #include "TGeoManager.h"
+#include "TSystem.h"
 
 #include "TObjectTable.h"
 #include "TROOT.h"
@@ -403,11 +404,11 @@ void RootManager::FillParticleStep(const G4Step *aStep) {
 
 void RootManager::FillGeometry(const G4String &filename) {
 
-    auto geoM = new TGeoManager();
-    TGeoManager::Import(filename);
+    gSystem->Load("libGeom");
+    TGeoManager::Import(filename.data());
 
     rootFile->cd();
-    geoM->Write("DetGeoManager");
+    gGeoManager->Write("DetGeoManager");
 
     std::remove(filename);
 
