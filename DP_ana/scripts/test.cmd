@@ -1,24 +1,33 @@
-DAna -x > DAna.test.config 2>DAna.export.log
+_obj=DAna
+_type=Export
+_log=${_obj}.${_type}.log
+DAna -x > DAna.test.config |& tee ${_log} 1>/dev/null
 _DSS_TEST_STATUS=$?
 if [ ${_DSS_TEST_STATUS} -ne 0 ]; then
-    export _DSS_TEST_FATAL="Export"
-    export _DSS_TEST_LOG="${PWD}/DAna.export.log"
+    export _DSS_TEST_FATAL="${_type}"
+    export _DSS_TEST_LOG="${PWD}/${_log}"
     return
 fi
 
-DAna -c DAna.test.config >DAna.test.log 2>&1
+_obj=DAna
+_type=Test
+_log=${_obj}.${_type}.log
+DAna -c DAna.test.config |& tee ${_log} 1>/dev/null
 _DSS_TEST_STATUS=$?
 if [ ${_DSS_TEST_STATUS} -ne 0 ]; then
-    export _DSS_TEST_FATAL="Test"
-    export _DSS_TEST_LOG="${PWD}/DAna.test.log"
+    export _DSS_TEST_FATAL="${_type}"
+    export _DSS_TEST_LOG="${PWD}/${_log}"
     return
 fi
 
-rootdrawtree -i dp_ana.root -t dp -hs "hECAL=ECAL_E_total[0]" -o DAna.hist.root >DAna.draw.log 2>&1
-rootprint -f png DAna.hist.root:hECAL >>DAna.draw.log 2>&1
+_obj=ROOT
+_type=Draw
+_log=${_obj}.${_type}.log
+rootdrawtree -i dp_ana.root -t dp -hs "hECAL=ECAL_E_total[0]" -o DAna.hist.root |& tee ${_log} 1>/dev/null
+rootprint -f png DAna.hist.root:hECAL |& tee -a ${_log} 1>/dev/null
 _DSS_TEST_STATUS=$?
 if [ ${_DSS_TEST_STATUS} -ne 0 ]; then
-    export _DSS_TEST_FATAL="Draw"
-    export _DSS_TEST_LOG="${PWD}/DAna.draw.log"
+    export _DSS_TEST_FATAL="${_type}"
+    export _DSS_TEST_LOG="${PWD}/${_log}"
     return
 fi
