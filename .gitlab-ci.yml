@@ -46,4 +46,4 @@ test:
   artifacts:
     paths:
       - "test/*"
-    when: on_failure
+    when: always
