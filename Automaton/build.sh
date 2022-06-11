@@ -21,7 +21,7 @@ cd ${_DSS_TEST_PREFIX}/build
 ls -la # test cache
 cmake -DWITH_GEANT4_UIVIS=OFF -DCMAKE_INSTALL_PREFIX=${_DSS_TEST_PREFIX}/install -DCMAKE_BUILD_TYPE=RelWithDebInfo ../ |& tee ${_DSS_TEST_PREFIX}/test/DSS.build.log \
                 && make install -j16 |& tee -a ${_DSS_TEST_PREFIX}/test/DSS.build.log # 1>/dev/null
-_DSS_TEST_STATUS=$?
+_DSS_TEST_STATUS=${PIPESTATUS[0]}
 if [ ${_DSS_TEST_STATUS} -ne 0 ]; then
     diagnostic
     # cat ${_DSS_TEST_PREFIX}/test/DSS.build.log
