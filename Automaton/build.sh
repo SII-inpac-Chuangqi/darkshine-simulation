@@ -18,12 +18,13 @@ mkdir -p install
 mkdir -p test
 
 cd ${_DSS_TEST_PREFIX}/build
-cmake -DWITH_GEANT4_UIVIS=OFF -DCMAKE_INSTALL__DSS_TEST_PREFIX=${_DSS_TEST_PREFIX}/install -DCMAKE_BUILD_TYPE=RelWithDebInfo ../ |& tee ${_DSS_TEST_PREFIX}/test/DSS.build.log 1>/dev/null \
+cmake -DWITH_GEANT4_UIVIS=OFF -DCMAKE_INSTALL_PREFIX=${_DSS_TEST_PREFIX}/install -DCMAKE_BUILD_TYPE=RelWithDebInfo ../ |& tee ${_DSS_TEST_PREFIX}/test/DSS.build.log 1>/dev/null \
                 && make install -j16 |& tee -a ${_DSS_TEST_PREFIX}/test/DSS.build.log 1>/dev/null
 _DSS_TEST_STATUS=$?
 if [ ${_DSS_TEST_STATUS} -ne 0 ]; then
     diagnostic
-    echo "Oscar:Build=Fail#Build@$${_DSS_TEST_PREFIX}/test/DSS.build.log"
+    cat ${_DSS_TEST_PREFIX}/test/DSS.build.log
+    echo "Oscar:Build=Fail#Build@${_DSS_TEST_PREFIX}/test/DSS.build.log"
     exit 2
 fi
 

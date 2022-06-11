@@ -24,6 +24,7 @@ do
     . ${_DSS_TEST_ROOT}/test.cmd
     if [ -n "${_DSS_TEST_FATAL}" ]; then 
         diagnostic
+        cat ${_DSS_TEST_LOG}
         echo "Oscar:Test=Fail#${obj}#${_DSS_TEST_FATAL}@${_DSS_TEST_LOG}"
         exit 2
     fi
