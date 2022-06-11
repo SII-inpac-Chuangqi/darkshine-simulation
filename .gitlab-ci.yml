@@ -41,10 +41,10 @@ build:
   artifacts:
     paths:
       - "install/*"
-      - "test/DSS.build.log"
+      - "test/*"
   cache:
     paths:
-      - "build/*"
+      - "build/ccache/*"
 
 # run tests using the binary built before
 test:
