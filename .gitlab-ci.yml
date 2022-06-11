@@ -30,8 +30,7 @@ build:
     - ./Automaton/build.sh
   artifacts:
     paths:
-#      - "install/*"
-      - "Automaton/*.log"
+      - "install/*"
 # depending on your build setup it's most likely a good idea to cache outputs to reduce the build time
   cache:
     paths:
@@ -40,8 +39,11 @@ build:
 # run tests using the binary built before
 test:
   stage: test
+  dependencies: 
+    - build
   script:
     - ./Automaton/test.sh
   artifacts:
     paths:
       - "test/*"
+    when: on_failure
