@@ -1,7 +1,7 @@
 _obj=DAna
 _type=Export
 _log=${_obj}.${_type}.log
-DAna -x |$ tee ${_log} > DAna.test.config
+DAna -x |& tee ${_log} > DAna.test.config
 _DSS_TEST_STATUS=${PIPESTATUS[0]}
 if [ ${_DSS_TEST_STATUS} -ne 0 ]; then
     export _DSS_TEST_FATAL="${_type}"

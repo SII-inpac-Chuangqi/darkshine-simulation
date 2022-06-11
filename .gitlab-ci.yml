@@ -28,14 +28,17 @@ workflow:
     # run in other cases like manual trig and merge finished
     - when: always
 
+variables:
+  # set to local to run at local server
+  BUILD_RUNNER: remote
+
 image: qibin2020/dss-base
 
-build:
+build with ccache:
   stage: build
-  # instead of calling g++ directly you can also use some build toolkit like make
-  # install the necessary build tools when needed
-  # before_script:
-  #   - apt update && apt -y install make autoconf
+  tags:
+    - long
+    - $BUILD_RUNNER
   script:
     - ./Automaton/build.sh
   artifacts:
@@ -47,13 +50,17 @@ build:
       - "build/ccache/*"
 
 # run tests using the binary built before
-test:
+# we use a central script to tun all the test, or it could be decomposed later
+test simu and ana:
   stage: test
+  tags:
+    - short
   dependencies: 
     - build
   script:
     - ./Automaton/test.sh
   artifacts:
+    when: always
     paths:
       - "test/*"
-    when: always
+
