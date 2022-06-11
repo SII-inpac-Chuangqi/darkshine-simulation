@@ -56,7 +56,7 @@ test simu and ana:
   tags:
     - short
   dependencies: 
-    - build
+    - build with ccache
   script:
     - ./Automaton/test.sh
   artifacts:
