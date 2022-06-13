@@ -36,9 +36,6 @@ image: qibin2020/dss-base
 
 build with ccache:
   stage: build
-  tags:
-    - long
-    - $BUILD_RUNNER
   script:
     - ./Automaton/build.sh
   artifacts:
@@ -53,10 +50,8 @@ build with ccache:
 # we use a central script to tun all the test, or it could be decomposed later
 test simu and ana:
   stage: test
-  tags:
-    - short
   dependencies: 
-    - build
+    - build with ccache
   script:
     - ./Automaton/test.sh
   artifacts:
