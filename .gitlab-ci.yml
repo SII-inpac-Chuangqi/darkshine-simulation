@@ -13,19 +13,19 @@ workflow:
     # prevent run dulicate pipelines
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
       when: never
+    # always run branch pipeline when merge launched from (note for merged result the pipeline will run again: it needs PREMIUM :-(
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"
+      when: always
+    - if: $CI_COMMIT_MESSAGE =~ /[NOCI]/
+      when: never
     # run when [CI] in msg
     - if: $CI_COMMIT_MESSAGE =~ /[CI]/
       when: always
     # run when [VIP] in msg
     - if: $CI_COMMIT_MESSAGE =~ /[VIP]/
       when: always
-    # always run branch pipeline when merge launched from (note for merged result the pipeline will run again: it needs PREMIUM :-(
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"
-      when: always
     # prevent others
     - if: $CI_PIPELINE_SOURCE == "push"
-      when: never
-    - if: $CI_COMMIT_MESSAGE =~ /[NOCI]/
       when: never
     # run in other cases like manual trig and merge finished
     - when: always
@@ -80,6 +80,8 @@ ci write wiki:
       - "test/*.md"
       - "test/*.upload"
   rules:
+    - if:  $CI_COMMIT_MESSAGE =~ /[NOWIKI]/
+      when: never
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_MESSAGE !~ /[WIKI]/
       when: never
     - if:  $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME != "master"
