@@ -18,3 +18,4 @@ binana/log.txt
 run/
 test/
 Automaton/*.log
+Automaton/update_wiki.sh
