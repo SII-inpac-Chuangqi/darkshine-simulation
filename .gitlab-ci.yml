@@ -16,13 +16,13 @@ workflow:
     # always run branch pipeline when merge launched from (note for merged result the pipeline will run again: it needs PREMIUM :-(
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"
       when: always
-    - if: $CI_COMMIT_MESSAGE =~ /[NOCI]/
+    - if: $CI_COMMIT_TITLE =~ /[NOCI]/
       when: never
     # run when [CI] in msg
-    - if: $CI_COMMIT_MESSAGE =~ /[CI]/
+    - if: $CI_COMMIT_TITLE =~ /[CI]/
       when: always
     # run when [VIP] in msg
-    - if: $CI_COMMIT_MESSAGE =~ /[VIP]/
+    - if: $CI_COMMIT_TITLE =~ /[VIP]/
       when: always
     # prevent others
     - if: $CI_PIPELINE_SOURCE == "push"
@@ -80,9 +80,9 @@ ci write wiki:
       - "test/*.md"
       - "test/*.upload"
   rules:
-    - if:  $CI_COMMIT_MESSAGE =~ /[NOWIKI]/
+    - if:  $CI_COMMIT_TITLE =~ /[NOWIKI]/
       when: never
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_MESSAGE !~ /[WIKI]/
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TITLE !~ /[WIKI]/
       when: never
     - if:  $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME != "master"
       when: never
