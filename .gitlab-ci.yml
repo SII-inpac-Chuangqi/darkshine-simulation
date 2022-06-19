@@ -20,10 +20,12 @@ workflow:
     - if: $CI_COMMIT_MESSAGE =~ /[VIP]/
       when: always
     # always run branch pipeline when merge launched from (note for merged result the pipeline will run again: it needs PREMIUM :-(
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"
       when: always
     # prevent others
     - if: $CI_PIPELINE_SOURCE == "push"
+      when: never
+    - if: $CI_COMMIT_MESSAGE =~ /[NOCI]/
       when: never
     # run in other cases like manual trig and merge finished
     - when: always
@@ -44,6 +46,7 @@ build with ccache:
   script:
     - ./Automaton/build.sh
   artifacts:
+    expire_in: 1 week
     paths:
       - "install/*"
       - "test/*"
@@ -73,7 +76,7 @@ ci write wiki:
   artifacts:
     when: always
     paths:
-      - "test/*.DSS.wiki.log"
+      - "test/DSS.wiki.log"
       - "test/*.md"
       - "test/*.upload"
   rules:
