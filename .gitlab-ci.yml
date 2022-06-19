@@ -34,6 +34,11 @@ variables:
 
 image: qibin2020/dss-base
 
+stages:
+  - build
+  - test
+  - post
+
 build with ccache:
   stage: build
   script:
@@ -60,10 +65,17 @@ test simu and ana:
       - "test/*"
 
 ci write wiki:
+  stage: post
   dependencies: 
     - test simu and ana
   script:
     - ./Automaton/make_wiki.sh
+  artifacts:
+    when: always
+    paths:
+      - "test/*.DSS.wiki.log"
+      - "test/*.md"
+      - "test/*.upload"
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_MESSAGE !~ /[WIKI]/
       when: never
