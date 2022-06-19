@@ -18,7 +18,7 @@ export PATH="${_DSS_TEST_PREFIX}/install/bin:${PATH}"
 
 mkdir -p ${_DSS_TEST_PREFIX}/test
 cd ${_DSS_TEST_PREFIX}/test
-for obj in DP_simu DP_ana
+for obj in DP_simu DP_ana Tools
 do
     export _DSS_TEST_ROOT=${_DSS_TEST_PREFIX}/${obj}/scripts
     . ${_DSS_TEST_ROOT}/test.cmd
