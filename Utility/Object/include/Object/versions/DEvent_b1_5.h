@@ -19,6 +19,8 @@
 #include "Object/DStep.h"
 #include "Object/McPHelper.h"
 
+#include "Object/DTruth.h"
+
 #include "TObject.h"
 #include "TString.h"
 #include "TBuffer.h"
@@ -140,8 +142,15 @@ public:
     /*
      * Miscellaneous (truth)
      */
+
+
+
     float getPnEnergyTarget() const {
         return PNEnergy_Target;
+    }
+
+    [[nodiscard]] DTruth *getTruthInfo() {
+        return &truth_info;
     }
 
     void setPnEnergyTarget(float pnEnergyTarget) {
@@ -221,14 +230,14 @@ public:
     }
 
     McParticle *SearchID(MCParticleVec *mv, int ID) {
-        for (auto itr : *mv) {
+        for (auto itr: *mv) {
             if (itr->getId() == ID) return itr;
         }
         return nullptr;
     }
 
     McPHelper *SearchID(MCPHelperVec *mv, int ID) {
-        for (auto itr : *mv) {
+        for (auto itr: *mv) {
             if (itr->getId() == ID) return itr;
         }
         return nullptr;
@@ -237,7 +246,9 @@ public:
     void LinkChildren();
 
 #ifdef MEMCK
-    static void PrintObjectStatistics(const TString& str="");
+
+    static void PrintObjectStatistics(const TString &str = "");
+
 #endif
 
 protected:
@@ -285,6 +296,9 @@ protected:
     SimulatedHitMap SimulatedHitCollection;
     CalorimeterHitMap CalorimeterHitCollection;
 
+    // Truth Information
+    DTruth truth_info;
+
 ClassDefOverride(DEvent_b1_5, 1);
 
 };
@@ -293,7 +307,7 @@ ClassDefOverride(DEvent_b1_5, 1);
 template<class T>
 std::vector<std::string> *DEvent_b1_5::ListCollections(const T &in) {
     auto tmp = new std::vector<std::string>;
-    for (auto itr : in) tmp->emplace_back(itr.first);
+    for (auto itr: in) tmp->emplace_back(itr.first);
 
     return tmp;
 }

@@ -28,6 +28,9 @@ export _DSS_TEST_PREFIX=${PWD}
 
 mkdir -p ${_DSS_TEST_PREFIX}/test
 cd ${_DSS_TEST_PREFIX}/test
+#update perf stats
+export DSS_PERF_STATS="`grep "Performance Statistics" DSimu.Default.log`"
+#
 for wiki in validation.md
 do
     envsubst < ${wiki} >> wiki.md |& tee ${_DSS_TEST_PREFIX}/test/DSS.wiki.log

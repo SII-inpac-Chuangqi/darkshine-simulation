@@ -34,7 +34,7 @@ general_particle_source:
     ene/mono: "8 GeV"
     #direction: "0 0 1"
     #position: "0 0 -61 cm"
-  beam_on: 2500
+  beam_on: 100
 
 ###########################################
 # Global Variables
@@ -88,7 +88,7 @@ OutCollection:
   # save the initial particle step
   save_initial_particle_step: true
   # save snapshot of particle passing through surface of ECAL Region
-  save_mcp_helper: false
+  save_mcp_helper: true
 
   RawMCCollection_Name: "RawMCParticle"
   InitialParticleStepCollection_Name: "Initial_Particle_Step"

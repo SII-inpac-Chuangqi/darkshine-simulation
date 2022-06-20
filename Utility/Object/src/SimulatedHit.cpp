@@ -28,14 +28,14 @@ SimulatedHit &SimulatedHit::operator=(const SimulatedHit &rhs) {
 
 
 SimulatedHit::~SimulatedHit_b1_5() {
-    SimHits_Edep.clear();
-    SimHits_Edep.shrink_to_fit();
-
-    MCPContribution.clear();
-    MCPContribution.shrink_to_fit();
-
-    CaloHits.clear();
-    CaloHits.shrink_to_fit();
+//    SimHits_Edep.clear();
+//    SimHits_Edep.shrink_to_fit();
+//
+//    MCPContribution.clear();
+//    MCPContribution.shrink_to_fit();
+//
+//    CaloHits.clear();
+//    CaloHits.shrink_to_fit();
 }
 
 

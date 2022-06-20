@@ -10,7 +10,7 @@
 using namespace std;
 
 namespace {
-    static bool if_introduction(true);
+    bool if_introduction(true);
 
     void PrintIntroduction() {
         cerr << endl;

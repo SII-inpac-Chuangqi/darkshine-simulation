@@ -35,6 +35,7 @@
 #include "globals.hh"
 #include "RootManager.hh"
 
+#include "Utility/TruthManager.h"
 
 #include "Object/McParticle.h"
 #include "Object/McPHelper.h"
@@ -55,6 +56,10 @@ public:
 
     void SetMcPHelper(const G4Step* aStep, int detector);
 
+    void UpdateTruthInfo(DTruthParticle *tp, const G4Step *aStep);
+
+    void UpdateTruthStatesInCalo(const G4Step *aStep);
+
 private:
 
     G4double PNEnergyTar{0.}; // PN reaction in Target Region
@@ -63,8 +68,8 @@ private:
     G4double ENEnergyECAL{0.};
     G4double record_step_z{0.};
 
-    G4StepPoint* prev;
-    G4StepPoint* post;
+    G4StepPoint* prev{};
+    G4StepPoint* post{};
 
     McPHelper* fMCPH{};
 };

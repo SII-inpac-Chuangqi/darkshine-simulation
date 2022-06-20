@@ -6,6 +6,11 @@ Name: ${CI_COMMIT_TITLE}
 
 ======================================================
 
+Performance Stats
+```bash
+${DSS_PERF_STATS}
+```
+
 Validation of ECAL variables
 
 ![plot](validation_plots/fig_0.png)

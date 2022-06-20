@@ -228,6 +228,13 @@ Control::Control() {
     HCAL_APD_Size = G4ThreeVector(3 * mm, 3 * mm, 1 * mm);
     Glue_Size = G4ThreeVector(1 * cm, 1 * cm, 0.1 * mm);
 
+    E_kin_min_record = 500 * MeV;
+    E_kin_min_step = 100 * MeV;
+    E_leak_min = 50 * MeV;
+    E_remain_min = 100 * MeV;
+
+    E_min_process = 1 * GeV;
+    E_process_ratio = 0.5;
 }
 
 void Control::RebuildVariables() {
@@ -266,7 +273,7 @@ void Control::RebuildVariables() {
             2.0 * tag_Size_Tracker[0].x(),
             2.0 * tag_Size_Tracker[0].y(),
             tag_Pos_Tracker[tag_No_Tracker - 1].z() - tag_Pos_Tracker[0].z() +
-            2.0 * (tag_Size_Tracker[0].z() ) + eps);
+            2.0 * (tag_Size_Tracker[0].z()) + eps);
 
     tag_Pos_TrackerRegion = G4ThreeVector(
             0 * cm, 0 * cm,
@@ -280,13 +287,13 @@ void Control::RebuildVariables() {
     Size_ECALCell.setY(ECAL_Center_Size.y() + ECAL_Center_Wrap_Size.y());
     Size_ECALCell.setZ(ECAL_Center_Size.z() + ECAL_Center_Wrap_Size.z() + ECAL_APD_Size.z());
 
-    Size_ECALBlock.setX(ECAL_Cell_No.x() * (Size_ECALCell.x() + ECAL_Cell_Gap.x()) );
-    Size_ECALBlock.setY(ECAL_Cell_No.y() * (Size_ECALCell.y() + ECAL_Cell_Gap.y()) );
-    Size_ECALBlock.setZ(ECAL_Cell_No.z() * (Size_ECALCell.z() + ECAL_Cell_Gap.z()) );
+    Size_ECALBlock.setX(ECAL_Cell_No.x() * (Size_ECALCell.x() + ECAL_Cell_Gap.x()));
+    Size_ECALBlock.setY(ECAL_Cell_No.y() * (Size_ECALCell.y() + ECAL_Cell_Gap.y()));
+    Size_ECALBlock.setZ(ECAL_Cell_No.z() * (Size_ECALCell.z() + ECAL_Cell_Gap.z()));
 
-    Size_ECALRegion.setX( ECAL_Block_No.x() * Size_ECALBlock.x() + eps);
-    Size_ECALRegion.setY( ECAL_Block_No.y() * Size_ECALBlock.y() + eps);
-    Size_ECALRegion.setZ( ECAL_Block_No.z() * Size_ECALBlock.z() + eps );
+    Size_ECALRegion.setX(ECAL_Block_No.x() * Size_ECALBlock.x() + eps);
+    Size_ECALRegion.setY(ECAL_Block_No.y() * Size_ECALBlock.y() + eps);
+    Size_ECALRegion.setZ(ECAL_Block_No.z() * Size_ECALBlock.z() + eps);
 
     //----------------------------------------
     // Recoil Tracker
@@ -297,7 +304,7 @@ void Control::RebuildVariables() {
             2.0 * rec_Size_Tracker[rec_No_Tracker - 1].x(),
             Size_ECALRegion.y(),
             rec_Pos_Tracker[rec_No_Tracker - 1].z() - rec_Pos_Tracker[0].z() +
-            2.0 * (rec_Size_Tracker[rec_No_Tracker - 1].z()) + eps );
+            2.0 * (rec_Size_Tracker[rec_No_Tracker - 1].z()) + eps);
 
     rec_Pos_TrackerRegion = G4ThreeVector(
             0 * cm, 0 * cm,
@@ -326,12 +333,12 @@ void Control::RebuildVariables() {
     double thickness;
 
     HCAL_Absorber_Thickness_Total = 0;
-    for (auto thick_i : HCAL_Absorber_Thickness_List) {
+    for (auto thick_i: HCAL_Absorber_Thickness_List) {
         std::tie(startn, endn, thickness) = thick_i;
         /// sanity check
         assert(startn <= endn && "[ERROR] HCAL_Absorber_Thickness_List invalid");
         assert(startn == prev_endn + 1 && "[ERROR] HCAL_Absorber_Thickness_List must be continuous, and start from 1");
-        assert(thickness >=0 && "[ERROR] HCAL_Absorber_Thickness_List invalid");
+        assert(thickness >= 0 && "[ERROR] HCAL_Absorber_Thickness_List invalid");
         /// add Thickness
         for (int i = startn; i <= endn; i++) {
             HCAL_Absorber_Thickness_Total += thickness;
@@ -350,11 +357,11 @@ void Control::RebuildVariables() {
 
     Size_HCALModule.setX(Size_HCALCell.z());
     Size_HCALModule.setY(Size_HCALCell.z());
-    Size_HCALModule.setZ(2 * ( Size_HCALCell.x()) );
+    Size_HCALModule.setZ(2 * (Size_HCALCell.x()));
 
-    Size_HCALLayer.setX(HCAL_Module_No.x() * (Size_HCALModule.x() + HCAL_Module_Gap.x()) );
-    Size_HCALLayer.setY(HCAL_Module_No.y() * (Size_HCALModule.y() + HCAL_Module_Gap.y()) );
-    Size_HCALLayer.setZ(HCAL_Module_No.z() * (Size_HCALModule.z() + HCAL_Module_Gap.z()) );
+    Size_HCALLayer.setX(HCAL_Module_No.x() * (Size_HCALModule.x() + HCAL_Module_Gap.x()));
+    Size_HCALLayer.setY(HCAL_Module_No.y() * (Size_HCALModule.y() + HCAL_Module_Gap.y()));
+    Size_HCALLayer.setZ(HCAL_Module_No.z() * (Size_HCALModule.z() + HCAL_Module_Gap.z()));
 
     Size_HCALRegion.setX(Size_HCALLayer.x() + eps);
     Size_HCALRegion.setY(Size_HCALLayer.y() + eps);
@@ -397,9 +404,9 @@ void Control::RebuildVariables() {
 
     //----------------------------------------
     // DetectorMap
-    dDetectorIDMaps->SetECALCellNo(ECAL_Cell_No.x(),ECAL_Cell_No.y(),ECAL_Cell_No.z());
-    dDetectorIDMaps->SetECALBlockNo(ECAL_Block_No.x(),ECAL_Block_No.y(),ECAL_Block_No.z());
-    dDetectorIDMaps->SetHCALModuleNo(HCAL_Module_No.x(),HCAL_Module_No.y(),HCAL_Module_No.z());
+    dDetectorIDMaps->SetECALCellNo(ECAL_Cell_No.x(), ECAL_Cell_No.y(), ECAL_Cell_No.z());
+    dDetectorIDMaps->SetECALBlockNo(ECAL_Block_No.x(), ECAL_Block_No.y(), ECAL_Block_No.z());
+    dDetectorIDMaps->SetHCALModuleNo(HCAL_Module_No.x(), HCAL_Module_No.y(), HCAL_Module_No.z());
     dDetectorIDMaps->BuildMap();
 }
 
@@ -495,47 +502,47 @@ void Control::ConstructG4MaterialTable() const {
     // Add Material and PropertiesTable
 
     // Calo
-    G4double wls_Energy[] = {2.00*eV,2.87*eV,2.90*eV,3.47*eV};
-    const G4int wlsnum = sizeof(wls_Energy)/sizeof(G4double);
-    G4double rIndexPstyrene[]={ 1.5, 1.5, 1.5, 1.5};
-    G4double absorption1[]={2.*cm, 2.*cm, 2.*cm, 2.*cm};
-    G4double scintilFast[]={0.00, 0.00, 1.00, 1.00};
+    G4double wls_Energy[] = {2.00 * eV, 2.87 * eV, 2.90 * eV, 3.47 * eV};
+    const G4int wlsnum = sizeof(wls_Energy) / sizeof(G4double);
+    G4double rIndexPstyrene[] = {1.5, 1.5, 1.5, 1.5};
+    G4double absorption1[] = {2. * cm, 2. * cm, 2. * cm, 2. * cm};
+    G4double scintilFast[] = {0.00, 0.00, 1.00, 1.00};
 
     assert(sizeof(rIndexPstyrene) == sizeof(wls_Energy));
     assert(sizeof(absorption1) == sizeof(wls_Energy));
     assert(sizeof(scintilFast) == sizeof(wls_Energy));
 
     auto *MPTPStyrene = new G4MaterialPropertiesTable();
-    MPTPStyrene->AddProperty("RINDEX",wls_Energy,rIndexPstyrene,wlsnum);
-    MPTPStyrene->AddProperty("ABSLENGTH",wls_Energy,absorption1,wlsnum);
-    MPTPStyrene->AddProperty("FASTCOMPONENT",wls_Energy, scintilFast,wlsnum);
-    MPTPStyrene->AddConstProperty("SCINTILLATIONYIELD",Optical_HCAL_Yield); //VIP
-    MPTPStyrene->AddConstProperty("RESOLUTIONSCALE",1.0);
-    MPTPStyrene->AddConstProperty("FASTTIMECONSTANT", 10.*ns);
+    MPTPStyrene->AddProperty("RINDEX", wls_Energy, rIndexPstyrene, wlsnum);
+    MPTPStyrene->AddProperty("ABSLENGTH", wls_Energy, absorption1, wlsnum);
+    MPTPStyrene->AddProperty("FASTCOMPONENT", wls_Energy, scintilFast, wlsnum);
+    MPTPStyrene->AddConstProperty("SCINTILLATIONYIELD", Optical_HCAL_Yield); //VIP
+    MPTPStyrene->AddConstProperty("RESOLUTIONSCALE", 1.0);
+    MPTPStyrene->AddConstProperty("FASTTIMECONSTANT", 10. * ns);
 
     // Fiber Clad
-    G4double RefractiveIndexClad1[]={ 1.49, 1.49, 1.49, 1.49};
-    G4double AbsFiber[]={9.00*m,9.00*m,0.1*mm,0.1*mm};
+    G4double RefractiveIndexClad1[] = {1.49, 1.49, 1.49, 1.49};
+    G4double AbsFiber[] = {9.00 * m, 9.00 * m, 0.1 * mm, 0.1 * mm};
 
     assert(sizeof(RefractiveIndexClad1) == sizeof(wls_Energy));
     assert(sizeof(AbsFiber) == sizeof(wls_Energy));
 
     auto *clad1Property = new G4MaterialPropertiesTable();
-    clad1Property->AddProperty("RINDEX",wls_Energy,RefractiveIndexClad1,wlsnum);
-    clad1Property->AddProperty("ABSLENGTH",wls_Energy,AbsFiber,wlsnum);
+    clad1Property->AddProperty("RINDEX", wls_Energy, RefractiveIndexClad1, wlsnum);
+    clad1Property->AddProperty("ABSLENGTH", wls_Energy, AbsFiber, wlsnum);
 
     // Fiber
-    G4double RefractiveIndexFiber[]={ 1.60, 1.60, 1.60, 1.60};
-    G4double EmissionFib[]={1.0, 1.0, 0.0, 0.0};
+    G4double RefractiveIndexFiber[] = {1.60, 1.60, 1.60, 1.60};
+    G4double EmissionFib[] = {1.0, 1.0, 0.0, 0.0};
 
     assert(sizeof(RefractiveIndexFiber) == sizeof(wls_Energy));
     assert(sizeof(EmissionFib) == sizeof(wls_Energy));
 
     auto *fiberProperty = new G4MaterialPropertiesTable();
-    fiberProperty->AddProperty("RINDEX",wls_Energy,RefractiveIndexFiber,wlsnum);
-    fiberProperty->AddProperty("WLSABSLENGTH",wls_Energy,AbsFiber,wlsnum);
-    fiberProperty->AddProperty("WLSCOMPONENT",wls_Energy,EmissionFib,wlsnum);
-    fiberProperty->AddConstProperty("WLSTIMECONSTANT", 0.5*ns);
+    fiberProperty->AddProperty("RINDEX", wls_Energy, RefractiveIndexFiber, wlsnum);
+    fiberProperty->AddProperty("WLSABSLENGTH", wls_Energy, AbsFiber, wlsnum);
+    fiberProperty->AddProperty("WLSCOMPONENT", wls_Energy, EmissionFib, wlsnum);
+    fiberProperty->AddConstProperty("WLSTIMECONSTANT", 0.5 * ns);
 
     // -----------------------------------------------------
     // Add Material
@@ -544,16 +551,16 @@ void Control::ConstructG4MaterialTable() const {
     // Calo
     auto *G4_PS = nistManager->FindOrBuildMaterial("G4_POLYSTYRENE");
     G4_PS->SetMaterialPropertiesTable(MPTPStyrene);
-    G4_PS->GetIonisation()->SetBirksConstant(0.126*mm/MeV);
+    G4_PS->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
 
     // Fiber clad
     auto *G4_PE = nistManager->FindOrBuildMaterial("G4_POLYETHYLENE");
     G4_PE->SetMaterialPropertiesTable(clad1Property);
 
     // Fiber
-    auto *PMMA = new G4Material("PMMA",1190*kg/m3,3);
+    auto *PMMA = new G4Material("PMMA", 1190 * kg / m3, 3);
     PMMA->AddElement(elH, 6 + 2 * Optical_polyPMMA);
-    PMMA->AddElement(elC,3 + 2 * Optical_polyPMMA);
+    PMMA->AddElement(elC, 3 + 2 * Optical_polyPMMA);
     PMMA->AddElement(elO, 2);
     PMMA->SetMaterialPropertiesTable(fiberProperty);
 
@@ -606,7 +613,8 @@ void Control::AssignG4Material() {
         APD_Surface_Mat->AddProperty("REFLECTIVITY", ephoton, reflectivityAPD, cNum); //reflect fraction, default=1
         APD_Surface_Mat->AddProperty("EFFICIENCY", ephoton, efficiencyAPD,
                                      cNum); //detection  fraction (abs=1-reflet-trans, then at efficiency, detectition(invoke post-step SD)),default=0
-        APD_Surface_Mat->AddProperty("TRANSMITTANCE", ephoton, transmittanceAPD, cNum); //transmission fraction, default=0
+        APD_Surface_Mat->AddProperty("TRANSMITTANCE", ephoton, transmittanceAPD,
+                                     cNum); //transmission fraction, default=0
 
         APD_Surface = new G4OpticalSurface("APDSurfaceOptical");
         APD_Surface->SetType(dielectric_LUT);
@@ -626,9 +634,9 @@ bool Control::ReadYAML(const G4String &file_in) {
         //========================================
         /* Global Variables */
         //----------------------------------------
-        save_geometry = Node["save_geometry"].IsDefined() ? Node["save_geometry"].as<bool>() : false;
-        check_overlaps = Node["check_overlaps"].IsDefined() ? Node["check_overlaps"].as<bool>() : false;
-        signal_production = Node["signal_production"].IsDefined() ? Node["signal_production"].as<bool>() : false;
+        save_geometry = Node["save_geometry"].IsDefined() && Node["save_geometry"].as<bool>();
+        check_overlaps = Node["check_overlaps"].IsDefined() && Node["check_overlaps"].as<bool>();
+        signal_production = Node["signal_production"].IsDefined() && Node["signal_production"].as<bool>();
         if (Node["signal_mass"].IsDefined()) signal_mass = readV2(Node["signal_mass"]);
         signal_lookup_table = (Node["signal_lookup_table"].IsDefined() ? Node["signal_lookup_table"].as<std::string>()
                                                                        : "");
@@ -640,8 +648,8 @@ bool Control::ReadYAML(const G4String &file_in) {
         //----------------------------------------
         mag_field_input = Node["MagField"]["mag_field_input"].IsDefined()
                           ? Node["MagField"]["mag_field_input"].as<std::string>() : "mag_default.root";
-        uniform_mag_field = Node["MagField"]["uniform_mag_field"].IsDefined()
-                            ? Node["MagField"]["uniform_mag_field"].as<bool>() : true;
+        uniform_mag_field =
+                !Node["MagField"]["uniform_mag_field"].IsDefined() || Node["MagField"]["uniform_mag_field"].as<bool>();
         tag_Tracker_MagField = Node["MagField"]["tag_Tracker_MagField"].IsDefined() ? readV3(
                 Node["MagField"]["tag_Tracker_MagField"], true) : G4ThreeVector(0, -1.5 * tesla, 0);
         rec_Tracker_MagField = Node["MagField"]["rec_Tracker_MagField"].IsDefined() ? readV3(
@@ -664,7 +672,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         MCPHelperCollection_Name = Node["OutCollection"]["MCPHelperCollection_Name"].as<std::string>();
         //----------------------------------------
         // For Memory Leak
-        Memory_Check = Node["memory_check"].IsDefined() ? Node["memory_check"].as<bool>() : false;
+        Memory_Check = Node["memory_check"].IsDefined() && Node["memory_check"].as<bool>();
         //========================================
         /* Biasing */
         //----------------------------------------
@@ -681,7 +689,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         if_filter = Node["Filters"]["if_filter"].as<bool>();
         if_HardBrem = Node["Filters"]["if_HardBrem"].as<bool>();
         particle_filters_parameters.clear();
-        for (auto i : Node["Filters"]["particle_filters_parameters"]) {
+        for (auto i: Node["Filters"]["particle_filters_parameters"]) {
             particle_filters_parameters.emplace_back(
                     i[0].as<int>(),
                     i[1].as<double>() * G4UnitDefinition::GetValueOf(i[2].as<std::string>()),
@@ -693,7 +701,7 @@ bool Control::ReadYAML(const G4String &file_in) {
                     i[11].as<bool>());
         }
         process_filters_parameters.clear();
-        for (auto i : Node["Filters"]["process_filters_parameters"]) {
+        for (auto i: Node["Filters"]["process_filters_parameters"]) {
             process_filters_parameters.emplace_back(
                     i[0].as<std::string>(),
                     i[1].as<double>() * G4UnitDefinition::GetValueOf(i[2].as<std::string>()),
@@ -729,8 +737,8 @@ bool Control::ReadYAML(const G4String &file_in) {
         MagnetShield_Thickness = readV2(Node["Geometry"]["MagnetShield"]["MagnetShield_Thickness"]);
         //----------------------------------------
         // Tracker
-        build_silicon_micro_strip = Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].IsDefined()
-                                    ? Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].as<bool>() : false;
+        build_silicon_micro_strip = Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].IsDefined() &&
+                                    Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].as<bool>();
         Trk_Tar_Dis = readV2(Node["Geometry"]["Tracker"]["Trk_Tar_Dis"]);
         MaterialStr["Tracker_Mat"] = Node["Geometry"]["Tracker"]["Tracker_Mat"].as<std::string>();
         MaterialStr["TrackerRegion_Mat"] = Node["Geometry"]["Tracker"]["TrackerRegion_Mat"].as<std::string>();
@@ -741,13 +749,13 @@ bool Control::ReadYAML(const G4String &file_in) {
         tag_Pos_Tracker.clear();
         tag_Tracker_Angle_Gap.clear();
         tag_Tracker_Strip_N.clear();
-        for (auto node : Node["Geometry"]["Tracker"]["tag_Size_Tracker"])
+        for (auto node: Node["Geometry"]["Tracker"]["tag_Size_Tracker"])
             tag_Size_Tracker.emplace_back(readV3(node, true));
-        for (auto node : Node["Geometry"]["Tracker"]["tag_Pos_Tracker"])
+        for (auto node: Node["Geometry"]["Tracker"]["tag_Pos_Tracker"])
             tag_Pos_Tracker.emplace_back(readV3(node, true));
-        for (auto node : Node["Geometry"]["Tracker"]["tag_Tracker_Angle_Gap"])
+        for (auto node: Node["Geometry"]["Tracker"]["tag_Tracker_Angle_Gap"])
             tag_Tracker_Angle_Gap.emplace_back(readV3(node, true));
-        for (auto node : Node["Geometry"]["Tracker"]["tag_Tracker_Strip_N"])
+        for (auto node: Node["Geometry"]["Tracker"]["tag_Tracker_Strip_N"])
             tag_Tracker_Strip_N.emplace_back(node.as<int>());
         tag_Tracker_Strip_Block_N = Node["Geometry"]["Tracker"]["tag_Tracker_Strip_Block_N"].as<int>();
         assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size()); // Sanity Check
@@ -758,13 +766,13 @@ bool Control::ReadYAML(const G4String &file_in) {
         rec_Pos_Tracker.clear();
         rec_Tracker_Angle_Gap.clear();
         rec_Tracker_Strip_N.clear();
-        for (auto node : Node["Geometry"]["Tracker"]["rec_Size_Tracker"])
+        for (auto node: Node["Geometry"]["Tracker"]["rec_Size_Tracker"])
             rec_Size_Tracker.emplace_back(readV3(node, true));
-        for (auto node : Node["Geometry"]["Tracker"]["rec_Pos_Tracker"])
+        for (auto node: Node["Geometry"]["Tracker"]["rec_Pos_Tracker"])
             rec_Pos_Tracker.emplace_back(readV3(node, true));
-        for (auto node : Node["Geometry"]["Tracker"]["rec_Tracker_Angle_Gap"])
+        for (auto node: Node["Geometry"]["Tracker"]["rec_Tracker_Angle_Gap"])
             rec_Tracker_Angle_Gap.emplace_back(readV3(node, true));
-        for (auto node : Node["Geometry"]["Tracker"]["rec_Tracker_Strip_N"])
+        for (auto node: Node["Geometry"]["Tracker"]["rec_Tracker_Strip_N"])
             rec_Tracker_Strip_N.emplace_back(node.as<int>());
         rec_Tracker_Strip_Block_N = Node["Geometry"]["Tracker"]["rec_Tracker_Strip_Block_N"].as<int>();
         assert(rec_Size_Tracker.size() == rec_Pos_Tracker.size()); // Sanity Check
@@ -791,7 +799,8 @@ bool Control::ReadYAML(const G4String &file_in) {
         MaterialStr["HCAL_Mat"] = Node["Geometry"]["HCAL"]["HCAL_Mat"].as<std::string>();
         MaterialStr["HCAL_Wrap_Mat"] = Node["Geometry"]["HCAL"]["HCAL_Wrap_Mat"].as<std::string>();
         MaterialStr["HCAL_FiberClad_Mat"] = Node["Geometry"]["HCAL"]["HCAL_FiberClad_Mat"].IsDefined() ?
-                                            Node["Geometry"]["HCAL"]["HCAL_FiberClad_Mat"].as<std::string>() : "G4_POLYSTYRENE";
+                                            Node["Geometry"]["HCAL"]["HCAL_FiberClad_Mat"].as<std::string>()
+                                                                                                       : "G4_POLYSTYRENE";
         MaterialStr["HCAL_Fiber_Mat"] = Node["Geometry"]["HCAL"]["HCAL_Fiber_Mat"].IsDefined() ?
                                         Node["Geometry"]["HCAL"]["HCAL_Fiber_Mat"].as<std::string>() : "PMMA";
         HCAL_Wrap_Size = readV3(Node["Geometry"]["HCAL"]["HCAL_Wrap_Size"], true);
@@ -806,7 +815,7 @@ bool Control::ReadYAML(const G4String &file_in) {
             HCAL_Absorber_Thickness_List.emplace_back(
                     i[0].as<int>(),
                     i[1].as<int>(),
-                    i[2].as<double>() * G4UnitDefinition::GetValueOf(i[3].as<std::string>()) );
+                    i[2].as<double>() * G4UnitDefinition::GetValueOf(i[3].as<std::string>()));
         }
 
         HCAL_CaloHoleRadius = Node["Geometry"]["HCAL"]["HCAL_CaloHoleRadius"].IsDefined() ?
@@ -814,8 +823,8 @@ bool Control::ReadYAML(const G4String &file_in) {
         HCAL_FiberRadius = Node["Geometry"]["HCAL"]["HCAL_FiberRadius"].IsDefined() ?
                            Node["Geometry"]["HCAL"]["HCAL_FiberRadius"].as<double>() : 0.98 * 1.2 * mm;
 
-        HCAL_Show_Cell = Node["Geometry"]["HCAL"]["HCAL_Show_Cell"].IsDefined() ?
-                         Node["Geometry"]["HCAL"]["HCAL_Show_Cell"].as<bool>() : false;
+        HCAL_Show_Cell = Node["Geometry"]["HCAL"]["HCAL_Show_Cell"].IsDefined() &&
+                         Node["Geometry"]["HCAL"]["HCAL_Show_Cell"].as<bool>();
 
         //========================================
         /* Optical */
@@ -838,6 +847,18 @@ bool Control::ReadYAML(const G4String &file_in) {
         // LUT
         LUT_FilePath = Node["Optical"]["LUT"]["LUT_FilePath"].as<std::string>();
         LUT_Name = Node["Optical"]["LUT"]["LUT_Name"].as<std::string>();
+
+        //========================================
+        /* Truth Analysis Parameters */
+        //----------------------------------------
+        if (auto nt = Node["TruthAnalysis"]; nt.IsDefined()) {
+            if (auto n = nt["E_kin_min_record"]; n.IsDefined()) E_kin_min_record = readV2(n);
+            if (auto n = nt["E_kin_min_step"]; n.IsDefined()) E_kin_min_step = readV2(n);
+            if (auto n = nt["E_leak_min"]; n.IsDefined()) E_leak_min = readV2(n);
+            if (auto n = nt["E_remain_min"]; n.IsDefined()) E_remain_min = readV2(n);
+            if (auto n = nt["E_min_process"]; n.IsDefined()) E_min_process = readV2(n);
+            if (auto n = nt["E_process_ratio"]; n.IsDefined()) E_process_ratio = n.as<double>();
+        }
     }
     catch (YAML::BadConversion &e) {
         std::cerr << "[Read YAML] ==> " << e.msg << std::endl;
@@ -856,7 +877,7 @@ G4ThreeVector Control::readV3(const YAML::Node &n, bool unit) {
     // Sanity Check
     if ((n.size() != 3 && !unit) || (n.size() != 6 && unit)) {
         std::cerr << "[Reading Vector from YAML] ==> vector size is incompatible with unit..." << std::endl;
-        return G4ThreeVector();
+        return {};
     }
 
     double tmp[3] = {0.};
@@ -905,7 +926,7 @@ DigiScheme Control::Optical_GetDigiScheme(const G4String &cIn) {
 void Control::ReadAndSetVerbosity() {
     auto node = Node["verbosity"];
 
-    for (auto subnode : node) {
+    for (auto subnode: node) {
         UIManager->ApplyCommand("/" + subnode.first.as<std::string>() + "/verbose " +
                                 subnode.second.as<std::string>());
     }
@@ -914,7 +935,7 @@ void Control::ReadAndSetVerbosity() {
 void Control::ReadAndSetGPS() {
     auto node = Node["general_particle_source"]["settings"];
     UIManager = G4UImanager::GetUIpointer();
-    for (auto subnode : node) {
+    for (auto subnode: node) {
         printf("GPS settings: /gps/%s %s \n", subnode.first.as<std::string>().data(),
                subnode.second.as<std::string>().data());
         UIManager->ApplyCommand("/gps/" + subnode.first.as<std::string>() + " " +
