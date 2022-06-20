@@ -8,7 +8,6 @@ Name: ${CI_COMMIT_TITLE}
 
 Validation of ECAL variables
 
-<<<<<<< HEAD
 ![plot](validation_plots/fig_0.png)
 
 ![plot](validation_plots/fig_1.png)
@@ -30,13 +29,4 @@ Validation of ECAL variables
 ![plot](validation_plots/fig_8.png)
 
 ![plot](validation_plots/fig_9.png)
-=======
-![E_total](validation_plots/fig_0.png)
-
-![E_clustered](validation_plots/fig_1.png)
-
-![E_leading_cluster](validation_plots/fig_2.png)
-
-
->>>>>>> master
 
