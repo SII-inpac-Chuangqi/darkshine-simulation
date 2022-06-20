@@ -3,6 +3,7 @@
 # Example by Yulei Zhang
 
 name: "validation_plots"
+<<<<<<< HEAD
 inject_hist: false
 
 global_normalize: true
@@ -64,6 +65,38 @@ variables:
   - name: "ECAL_Cluster_N"
     range: [ 25, 0,25 ] # [bin size, min, max]
     label: [ "N_Cluster", "" ]
+=======
+global_y_scale: 0.01
+
+variables:
+  - name: "ECAL_E_total[0]"
+    range: [ 50, 6000,8000 ] # [bin size, min, max]
+    label: [ "Truth E_{total}", "MeV" ]
+    # Optional
+    selection_title: "Inclusive Validation"
+    y_scale: 0.15
+    log_y: false
+    normalize: true
+    grid_y : true
+  - name: "ECAL_Cluster_E_total"
+    range: [ 50, 2000,8000 ] # [bin size, min, max]
+    label: [ "Clustered E_{total}", "MeV" ]
+    # Optional
+    selection_title: "Inclusive"
+    y_scale: 0.15
+    log_y: false
+    normalize: true
+    grid_y : true
+  - name: "ECAL_Cluster_E[0]"
+    range: [ 50, 2000,8000 ] # [bin size, min, max]
+    label: [ "Leading E_{cluster}", "MeV" ]
+    # Optional
+    y_scale: 0.15
+    selection_title: "Inclusive"
+    log_y: false
+    normalize: true
+    grid_y : true
+>>>>>>> master
 
 samples:
   - name: "Testing"
@@ -71,7 +104,11 @@ samples:
     file_name: "dp_ana.root"
     tree_name: "dp"
     # Optional
+<<<<<<< HEAD
     # selection: "1"
+=======
+    selection: "1"
+>>>>>>> master
     line_attr: [ 4, 5 ] # [ color, width ]
     # marker_attr: [ 2, 0.95 , 3, 1 ] #[ color, transparency, width, style ]
     fill_attr: [ 4, 0.6, 1001 ] # [ color, transparency, style ]
@@ -81,9 +118,18 @@ samples:
     file_name: "ref.dp_ana.root"
     tree_name: "dp"
     # Optional
+<<<<<<< HEAD
+=======
+    selection: "1"
+>>>>>>> master
     line_attr: [ 6, 4 ] # [ color, width ]
     # marker_attr: [ 2, 3 ] #[ color, width, style ]
     fill_attr: [ 6, 0.6, 1001 ] # [ color, transparency, style ]
 
 
+<<<<<<< HEAD
 # End Of File
+=======
+# End Of File
+...
+>>>>>>> master

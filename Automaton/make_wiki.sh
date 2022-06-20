@@ -39,7 +39,11 @@ do
     fi
 done
 
+<<<<<<< HEAD
 ${_DSS_TEST_PREFIX}/Automaton/update_wiki wiki.md ${CI_COMMIT_SHORT_SHA} "${CI_COMMIT_TIMESTAMP} ${CI_COMMIT_SHORT_SHA} : ${CI_COMMIT_TITLE}" Validation-History Validation-History  |& tee -a ${_DSS_TEST_PREFIX}/test/DSS.wiki.log
+=======
+${_DSS_TEST_PREFIX}/Automaton/update_wiki wiki.md ${CI_COMMIT_SHORT_SHA} ${CI_COMMIT_TIMESTAMP} Validation-History Validation-History  |& tee -a ${_DSS_TEST_PREFIX}/test/DSS.wiki.log
+>>>>>>> master
 _DSS_TEST_STATUS=${PIPESTATUS[0]}
 if [ ${_DSS_TEST_STATUS} -ne 0 ]; then
     diagnostic

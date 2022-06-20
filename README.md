@@ -2,6 +2,9 @@
 
 The second version of dark shine simulation. :v:
 
+
+[![pipeline status](https://gitlab.com/dark_shine/darkshine-simulation/badges/master/pipeline.svg)](https://gitlab.com/dark_shine/darkshine-simulation/-/commits/master) 
+
 [[_TOC_]]
 
 # Get Started
