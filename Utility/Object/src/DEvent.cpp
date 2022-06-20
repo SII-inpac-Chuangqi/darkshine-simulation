@@ -95,6 +95,7 @@ void DEvent::Initialization(CleanType ct) {
     }
     if (ct == nALL) OpticalCollection.clear();
 
+    truth_info.Clean();
 }
 
 void DEvent::PrintDetails() {

@@ -68,7 +68,7 @@ public:
 
     void bookCollection(const G4String &);
 
-    void save();
+    Long64_t save();
 
     void initialize();
 
@@ -82,7 +82,7 @@ public:
 
     void FillSimHit(const G4String &, SimulatedHit *);
 
-    void FillMC(McParticle *, int);
+    McParticle * FillMC(McParticle *, int);
 
     void FillMCPHelper(McPHelper *, int);
 
@@ -111,6 +111,10 @@ public:
         weight = w;
     }
 
+    Long64_t getFEvtNRecorded() const {
+        return fEvtNRecorded;
+    }
+
 private:
 
     RootMessenger *fMessenger;
@@ -128,6 +132,7 @@ private:
     Int_t fStart; // Run Number, Initialized to 0. Set method: RootManager::SetStartID(int id)
     Int_t fEvtNb; // Event Number, Initialized to 100000. Set method: RootManager::SetNbEvent(int id)
     Int_t fEvtN{};
+    Long64_t fEvtNRecorded{0};
     Double_t weight{0.};
     Double_t OpticalHCALYield{0.};
 

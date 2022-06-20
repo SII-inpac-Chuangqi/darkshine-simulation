@@ -35,6 +35,8 @@
 #include "RootManager.hh"
 #include "globals.hh"
 
+#include <ctime>
+
 class DetectorConstruction;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -53,6 +55,8 @@ class RunAction : public G4UserRunAction
     void   EndOfRunAction(const G4Run* run) override;
 
   private:
+    time_t start_time;
+    time_t end_time;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

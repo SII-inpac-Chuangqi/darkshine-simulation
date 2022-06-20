@@ -68,7 +68,7 @@ void EventAction::BeginOfEventAction(const G4Event *event) {
 
     G4int eventID = event->GetEventID();
 #ifdef DEBUG
-    G4cout << "---> End of event: " << eventID << G4endl;
+    G4cout << "---> Begin of event: " << eventID << G4endl;
 #else
     if (eventID < 100 || eventID % fPrintModulo == 0) {
         G4cout << "\n---> Begin of event: " << eventID << G4endl;

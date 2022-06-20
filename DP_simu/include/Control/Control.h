@@ -44,7 +44,7 @@ public:
     void RebuildVariables();
 
     // Read data from yaml
-    bool ReadYAML(const G4String& file_in);
+    bool ReadYAML(const G4String &file_in);
 
     void ReadAndSetVerbosity();
 
@@ -222,7 +222,7 @@ public:
     G4ThreeVector HCAL_Module_No;
     G4int HCAL_Cell_XY_N;
     G4int HCAL_Layer_N; // dependent
-    std::vector< std::tuple<int, int, double> > HCAL_Absorber_Thickness_List;
+    std::vector<std::tuple<int, int, double> > HCAL_Absorber_Thickness_List;
     G4ThreeVector HCAL_Module_Gap;
     G4double HCAL_Absorber_Thickness;
     G4bool HCAL_Show_Cell{false};
@@ -254,7 +254,7 @@ public:
     /* Optical */
     //----------------------------------------
     // if to open optical process
-    bool if_optical=true;
+    bool if_optical = true;
     bool Optical_UseLUT;
     double Optical_YieldFactor;
     double Optical_HCAL_Yield;
@@ -262,9 +262,13 @@ public:
     //LUT loader
     G4String LUT_FilePath;
     G4String LUT_Name;
-    std::map<G4String,std::pair<G4String, G4String>> Optical_GetLUTDefinations();
-    DigiScheme Optical_GetDigiScheme(const G4String& cIn);
-    DetUnitType Optical_GetDetType(const G4String& cIn);
+
+    std::map<G4String, std::pair<G4String, G4String>> Optical_GetLUTDefinations();
+
+    DigiScheme Optical_GetDigiScheme(const G4String &cIn);
+
+    DetUnitType Optical_GetDetType(const G4String &cIn);
+
     //Digitizer
     bool Optical_digitizerDebug;
     bool Optical_usePositivePolarity;
@@ -280,11 +284,12 @@ public:
     double Optical_pulseTimeZero;
     int Optical_nBits;
     double Optical_fullRangeMV;
-    double Optical_voltageToADC(){return Optical_fullRangeMV/Optical_nBits;};
+
+    double Optical_voltageToADC() { return Optical_fullRangeMV / Optical_nBits; };
     // double Optical_voltageToADC;
     int Optical_range_min;
-    int Optical_range_max; 
-    int Optical_pedestalLevel;          
+    int Optical_range_max;
+    int Optical_pedestalLevel;
     int Optical_noiseSigma;
     double Optical_clockJitterSigma;
     double Optical_apertureJitterSigma;
@@ -310,16 +315,29 @@ public:
     // Optical Fiber related
     int Optical_polyPMMA = 1;
 
+    //========================================
+    /* Truth Analysis Parameters */
+    //----------------------------------------
 
+    /** For Truth Particle */
+    double E_kin_min_record = 0;
+    double E_kin_min_step = 0;
+    double E_leak_min = 0;
+    double E_remain_min = 0;
+    /** For Truth Process */
+    double E_min_process = 0.;
+    double E_process_ratio = 0.;
 
 private:
     Control();
+
     YAML::Node Node;
 
     // for geant4 internal settings
-    G4UImanager* UIManager;
+    G4UImanager *UIManager;
 
-    static G4ThreeVector readV3(const YAML::Node &n, bool unit=false);
+    static G4ThreeVector readV3(const YAML::Node &n, bool unit = false);
+
     static double readV2(const YAML::Node &n);
 };
 

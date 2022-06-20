@@ -53,6 +53,13 @@
 #pragma link C++ class DMagnet::MagSlice+;
 #pragma link C++ class DMagnet+;
 
+#pragma link C++ class DTruthParticle+;
+#pragma link C++ class DTruthProcess+;
+#pragma link C++ class DTruthState+;
+#pragma link C++ class std::vector<DTruthParticle*>+;
+#pragma link C++ class std::map<std::pair<int,int>, std::vector<DTruthState *>>;
+#pragma link C++ class DTruth+;
+
 #pragma link C++ class DEvent+;
 
 #pragma link C++ class DDetectorIDMaps+;

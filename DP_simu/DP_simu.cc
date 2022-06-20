@@ -38,6 +38,7 @@
 #include "DP_simu/RootManager.hh"
 #include "Control/Control.h"
 #include "Bias_Filter/FilterManager.hh"
+#include "Utility/TruthManager.h"
 
 #include "G4StepLimiterPhysics.hh"  // Geant4.10
 #include "G4GenericBiasingPhysics.hh"
@@ -64,7 +65,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 namespace {
-    static bool if_introduction(true);
+    bool if_introduction(true);
 
     void PrintIntroduction() {
         G4cerr << G4endl;
@@ -155,6 +156,9 @@ int main(int argc, char **argv) {
 
     // Initiate RootManager Class
     RootManager::CreateInstance();
+
+    // Initiate Truth Manager
+    TruthManager::CreateInstance();
 
     // Initiate DDetectorIDMaps Class
     DDetectorIDMaps::CreateInstance();

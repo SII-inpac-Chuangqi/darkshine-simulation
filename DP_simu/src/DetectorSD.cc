@@ -53,7 +53,7 @@ DetectorSD::DetectorSD(G4int Type,
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorSD::~DetectorSD() {
-    for (auto simhit : fSimHitVec) {
+    for (auto simhit: fSimHitVec) {
         delete simhit;
     }
 
@@ -65,7 +65,9 @@ DetectorSD::~DetectorSD() {
 
 void DetectorSD::Initialize(G4HCofThisEvent *) {
     if (fType != nTagTracker && fType != nRecTracker) {
-        for (int i = 0; i < fCellID.x() * fCellID.y() * fCellID.z(); i++)
+        auto N = static_cast<unsigned int>( fCellID.x() * fCellID.y() * fCellID.z());
+        fSimHitVec.reserve(N);
+        for (unsigned int i = 0; i < N; i++)
             fSimHitVec.push_back(new SimulatedHit());
 
     }
@@ -111,13 +113,13 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
         CellID.setX(dDetectorIDMaps->GetECALIDX(reNumber1, reNumber2));
         CellID.setY(dDetectorIDMaps->GetECALIDY(reNumber1, reNumber2));
         CellID.setZ(dDetectorIDMaps->GetECALIDZ(reNumber1, reNumber2));
-        cellId = CellID.getX() + (CellID.getY() - 1) * xID  + (CellID.getZ() - 1) * (xID * yID);
+        cellId = CellID.getX() + (CellID.getY() - 1) * xID + (CellID.getZ() - 1) * (xID * yID);
     } else if (fType == nHCAL || fType == nHCAL_APD) {
         reNumber3 = touchable->GetReplicaNumber(3);
-        cellId = reNumber1 % (int)xID + 1;
+        cellId = reNumber1 % (int) xID + 1;
         CellID.setX(dDetectorIDMaps->GetHCALIDX(reNumber2));
         CellID.setY(dDetectorIDMaps->GetHCALIDY(reNumber2));
-        CellID.setZ(2 * reNumber3 + (int)( reNumber1 / (int)xID ) + 1);
+        CellID.setZ(2 * reNumber3 + (int) (reNumber1 / (int) xID) + 1);
     } else {
         std::cerr << "[ERROR] DetectorSD ==> Wrong Detecotr Type" << std::endl;
         exit(EXIT_FAILURE);
@@ -162,7 +164,7 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     fMC->setPz(step->GetTrack()->GetMomentum()[2]);
     if (step->GetTrack()->GetCreatorProcess())
         fMC->setCreateProcess(step->GetTrack()->GetCreatorProcess()->GetProcessName());
-    hit->addParticleContribution(*fMC, edep, fType == nTagTracker || fType == nRecTracker);
+//    hit->addParticleContribution(*fMC, edep, fType == nTagTracker || fType == nRecTracker);
     delete fMC;
 
     hit->setCellId(cellId); // replica start from 0 in DetectorConstruction
@@ -197,7 +199,7 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
 
 void DetectorSD::EndOfEvent(G4HCofThisEvent *) {
     if (fType != nTagTracker && fType != nRecTracker) {
-        for (auto simhit : fSimHitVec) {
+        for (auto simhit: fSimHitVec) {
             if (simhit->getE() >= 1e-10) dRootMng->FillSimHit(fname, simhit);
             delete simhit;
         }

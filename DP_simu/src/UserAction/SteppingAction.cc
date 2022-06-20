@@ -77,11 +77,11 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
                 G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
                 G4EventManager::GetEventManager()->AbortCurrentEvent();
             }
-        } else if(fabs(prev->GetKineticEnergy() - post->GetKineticEnergy()) >= 4 *GeV) {
+        } else if (fabs(prev->GetKineticEnergy() - post->GetKineticEnergy()) >= 4 * GeV) {
             // Search for all secondaries in current step
-            for (auto sec : *(aStep->GetSecondaryInCurrentStep())) {
+            for (auto sec: *(aStep->GetSecondaryInCurrentStep())) {
                 if (sec->GetParticleDefinition()->GetPDGEncoding() == 22
-                    && sec->GetTotalEnergy() >= 4 * GeV){
+                    && sec->GetTotalEnergy() >= 4 * GeV) {
                     dFilterManager->SetHardbremFound(true);
                 }
             }
@@ -115,12 +115,12 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     if (!post) return;
     if (dControl->save_initial_particle_step
         && aStep->GetTrack()->GetTrackID() == 1
-        && aStep->GetPreStepPoint()->GetPosition().z() <= record_step_z ) {
+        && aStep->GetPreStepPoint()->GetPosition().z() <= record_step_z) {
         /* Record all steps for certain particle */
         dRootMng->FillParticleStep(aStep);
     }
     if (aStep->GetTrack()->GetTrackID() == 1) {
-        if (post->GetProcessDefinedStep()->GetProcessName().contains("electronNuclear") ) {
+        if (post->GetProcessDefinedStep()->GetProcessName().contains("electronNuclear")) {
 //            || post->GetProcessDefinedStep()->GetProcessName() == "biasWrapper(electronNuclear)" ) {
             G4double deltaE = fabs(prev->GetKineticEnergy() - post->GetKineticEnergy());
             if (post->GetPosition()[2] <= 100. * mm) {
@@ -174,6 +174,12 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     //     }
 
     // }
+
+
+    // For new truth classification
+    UpdateTruthStatesInCalo(aStep);
+    if (auto p = dTMgr->getTruthParticle(); p->E_kin >= dControl->E_kin_min_step)
+        UpdateTruthInfo(p, aStep);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -205,10 +211,120 @@ void SteppingAction::SetMcPHelper(const G4Step *aStep, int detector) {
 
     fMCPH->setPdg(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
 
-    fMCPH->setPx((float)post->GetMomentum().x());
-    fMCPH->setPy((float)post->GetMomentum().y());
-    fMCPH->setPz((float)post->GetMomentum().z());
+    fMCPH->setPx((float) post->GetMomentum().x());
+    fMCPH->setPy((float) post->GetMomentum().y());
+    fMCPH->setPz((float) post->GetMomentum().z());
 
-    fMCPH->setMass((float)aStep->GetTrack()->GetParticleDefinition()->GetPDGMass());
+    fMCPH->setMass((float) aStep->GetTrack()->GetParticleDefinition()->GetPDGMass());
     fMCPH->setIsIncoming(true);
+}
+
+void SteppingAction::UpdateTruthInfo(DTruthParticle *tp, const G4Step *aStep) {
+    if (post && post->GetPhysicalVolume()) {
+        auto Region_name = post->GetPhysicalVolume()->GetName();
+
+        // Only Energy deposit in the detector
+        auto e_deposit = static_cast<float>(aStep->GetTotalEnergyDeposit());
+        // Including generating secondaries
+        auto e_change = static_cast<float>(prev->GetKineticEnergy() - post->GetKineticEnergy());
+
+        // reject too small energy deposit
+        if (e_change < 1e-10) return;
+
+        auto E_sec = e_change - e_deposit;
+
+        tp->E_secondaries += E_sec;
+
+        if (dTMgr->checkInterest(Region_name))
+            tp->E_leak += e_deposit;
+
+        auto region_idx = dTMgr->getDetPVIndex(Region_name);
+        auto process_idx = dTMgr->getProcessIndex(post->GetProcessDefinedStep()->GetProcessName());
+
+        if (auto change = tp->E_deposit_details.find({region_idx, process_idx}); change != tp->E_deposit_details.end()) {
+            change->second += e_change;
+        }
+        else
+            tp->E_deposit_details.insert({{region_idx, process_idx}, e_change});
+
+
+        // Analyze the truth process
+        if (auto n = aStep->GetNumberOfSecondariesInCurrentStep(); n > 0) {
+
+            // Record this process if the production energy is larger than ratio * E_kin_current
+            if (E_sec >= dControl->E_min_process || E_sec >= dControl->E_process_ratio * prev->GetKineticEnergy()) {
+
+                auto process = new DTruthProcess();
+                tp->sec_process_link.push_back(process);
+
+                process->vertex[0] = static_cast<float>(post->GetPosition().x());
+                process->vertex[1] = static_cast<float>(post->GetPosition().y());
+                process->vertex[2] = static_cast<float>(post->GetPosition().z());
+
+                process->E = E_sec;
+                process->index = process_idx;
+
+                process->in_p = tp;
+            }
+        }
+    }
+}
+
+void SteppingAction::UpdateTruthStatesInCalo(const G4Step *aStep) {
+    if (post && post->GetPhysicalVolume()) {
+        auto Region_name = post->GetPhysicalVolume()->GetName();
+
+        // Analyze the tracker region
+        auto assignV3 = [](DTruthState *dState, G4StepPoint *step) {
+            dState->vertex[0] = static_cast<float>(step->GetPosition().x() / mm);
+            dState->vertex[1] = static_cast<float>(step->GetPosition().y() / mm);
+            dState->vertex[2] = static_cast<float>(step->GetPosition().z() / mm);
+
+            dState->momentum[0] = static_cast<float>(step->GetMomentum().x() / MeV);
+            dState->momentum[1] = static_cast<float>(step->GetMomentum().y() / MeV);
+            dState->momentum[2] = static_cast<float>(step->GetMomentum().z() / MeV);
+
+            dState->E = static_cast<float>(step->GetKineticEnergy() / MeV);
+        };
+        if (prev->GetPhysicalVolume() && dTMgr->getTruthState()) {
+            auto Region_name_prev = prev->GetPhysicalVolume()->GetName();
+
+            bool entry_state = Region_name_prev == "World" && Region_name == "TAGTrk";
+            bool end_state = Region_name_prev == "RECTrk" && Region_name == "World";
+            bool middle_state = (Region_name == "TAGTrk" || Region_name == "RECTrk") &&
+                                !(entry_state || end_state);
+
+            if (entry_state || middle_state || end_state ||
+                (Region_name == "Target_PV" && !dTMgr->getTruthState()->empty())) {
+                // Add a start status
+                if (dTMgr->getTruthState()->empty()) {
+                    auto dState = new DTruthState();
+                    assignV3(dState, prev);
+                    dTMgr->getTruthState()->push_back(dState);
+                }
+                // Calculate the process index
+                auto dState = new DTruthState();
+                assignV3(dState, post);
+                dState->process_index = dTMgr->getProcessIndex(post->GetProcessDefinedStep()->GetProcessName());
+
+                dTMgr->getTruthState()->push_back(dState);
+            }
+        }
+        // Analyze the Calorimeter region
+        {
+            auto Region_name_prev = prev->GetPhysicalVolume()->GetName();
+            bool ecal_state = Region_name_prev == "World" && Region_name == "ECAL";
+            bool hcal_state = Region_name_prev != "HCAL" && Region_name == "HCAL";
+
+            if ( (ecal_state || hcal_state) && post->GetKineticEnergy() > 0.01 * MeV) {
+                auto dState_prev = new DTruthState();
+                assignV3(dState_prev, prev);
+                auto dState_post = new DTruthState();
+                assignV3(dState_post, post);
+                dRootMng->GetEvt()->getTruthInfo()->UpdateTruthDetTrack(
+                        {aStep->GetTrack()->GetTrackID(), aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding()},
+                        {dState_prev, dState_post});
+            }
+        }
+    }
 }

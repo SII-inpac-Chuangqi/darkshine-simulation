@@ -61,7 +61,7 @@ RootManager::RootManager()
 /// \brief Clean Optical stuff.
 void RootManager::initialize() { //event level init
     EventID = 0;
-    for (double &i : Rndm) i = 0;
+    for (double &i: Rndm) i = 0;
 
     Evt->Initialization(nVector);
 
@@ -145,12 +145,16 @@ void RootManager::bookCollection(const G4String &cIn) {  //run level initilize b
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 /// \brief Save ROOT file of Simulation tree.
-void RootManager::save() {
+Long64_t RootManager::save() {
+    Long64_t file_size = 0.;
     if (rootFile) {
         rootFile->WriteTObject(tr, "", "Overwrite");
+        file_size = rootFile->GetSize();
         rootFile->Close();
         G4cout << "[Root Manager] ==> Simulation Tree is saved \n" << G4endl;
     }
+
+    return file_size;
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
@@ -205,8 +209,8 @@ void RootManager::FillENE(G4double E1, G4double E2, G4double Z) {
 /// \brief
 /// \param[in] mc
 /// \param[in] ParentID
-void RootManager::FillMC(McParticle *fMC, int ParentID) {
-    if (if_clean) return;
+McParticle *RootManager::FillMC(McParticle *fMC, int ParentID) {
+    if (if_clean) return nullptr;
 
     auto mc = new McParticle(*fMC);
 
@@ -222,23 +226,25 @@ void RootManager::FillMC(McParticle *fMC, int ParentID) {
     mc->setCreateProcess(std::string(tmp2));
 
     mcps->emplace_back(mc);
+
+    return mc;
 }
 
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 /// \brief
 /// \param[in] McPHelper
 /// \param[in] McParticle ID
-void RootManager::FillMCPHelper(McPHelper* fMCPH, int mcpId) {
+void RootManager::FillMCPHelper(McPHelper *fMCPH, int mcpId) {
     if (if_clean) return;
-    McParticle* mc = nullptr;
+    McParticle *mc = nullptr;
     if (dControl->save_MC) {
         auto mcps = Evt->getMcParticleCollection().at(dControl->RawMCCollection_Name);
         mc = McParticle::SearchID(mcps, mcpId);
     }
 //    if (mc || dControl->save_all_mcp){
-        fMCPH->setMcParticle(mc);
-        auto mcphVec = Evt->getMcPHelperCollection().at(dControl->MCPHelperCollection_Name);
-        mcphVec->emplace_back(fMCPH);
+    fMCPH->setMcParticle(mc);
+    auto mcphVec = Evt->getMcPHelperCollection().at(dControl->MCPHelperCollection_Name);
+    mcphVec->emplace_back(fMCPH);
 //    } else {
 //        delete fMCPH;
 //    }
@@ -262,6 +268,17 @@ void RootManager::FillSim(Int_t eventID, const Double_t *Rnd) {
     Evt->setWeight(weight);
 
     tr->Fill();
+
+    ++fEvtNRecorded;
+
+#ifdef DEBUG
+    /* Get DTruth (Truth Info) from DEvent */
+    auto truth_info = Evt->getTruthInfo();
+    /* Print event topology */
+    truth_info->printTruthTopology();
+    truth_info->printTruthTracks();
+    truth_info->printTruthTracksCalorimeter();
+#endif
 
 #ifdef MEMCK
     if (dControl->Memory_Check) DEvent::PrintObjectStatistics("Waiting for Filling the tree");
@@ -298,7 +315,8 @@ void RootManager::FillEleak(const G4Step *in, const G4String &type) {
 //....ooooo0ooooo........ooooo0ooooo........ooooo0ooooo........ooooo0ooooo......
 // Optical Part Start ///////////////////////////////////////////////////////////
 
-bool RootManager::SetOpticalTimeZero(G4double /*T0*/, const G4String& /*cIn*/) { //global T0 for on unit across many particles
+bool RootManager::SetOpticalTimeZero(G4double /*T0*/,
+                                     const G4String & /*cIn*/) { //global T0 for on unit across many particles
     //dummy, not used here. 
     //Time zero is used for pileup simulation
     return true;
@@ -324,7 +342,7 @@ bool RootManager::FillOpticalLUTs(std::vector<OpticalHit *> *hits, G4int GenNo, 
         return false;
     }
 
-    for (auto h:*hits)
+    for (auto h: *hits)
         DiGi->AddTimeSeq(h->GetArrivalT());
     DiGi->SetVoltageToADC(dControl->Optical_voltageToADC());
     DiGi->SetYieldFactor(dControl->Optical_YieldFactor);
@@ -337,7 +355,7 @@ bool RootManager::FillOpticalLUTs(std::vector<OpticalHit *> *hits, G4int GenNo, 
 }
 
 bool RootManager::FinalizeOptical() {
-    for (const auto &imap : Evt->getOpticalCollection()) {
+    for (const auto &imap: Evt->getOpticalCollection()) {
         auto DiGis = imap.second; //vec
         auto cIn = imap.first;
         auto digitizer = fDigitizers[cIn];
