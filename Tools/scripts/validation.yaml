@@ -71,11 +71,7 @@ samples:
     file_name: "dp_ana.root"
     tree_name: "dp"
     # Optional
-<<<<<<< HEAD
-    # selection: "1"
-=======
     selection: "1"
->>>>>>> master
     line_attr: [ 4, 5 ] # [ color, width ]
     # marker_attr: [ 2, 0.95 , 3, 1 ] #[ color, transparency, width, style ]
     fill_attr: [ 4, 0.6, 1001 ] # [ color, transparency, style ]
@@ -85,18 +81,10 @@ samples:
     file_name: "ref.dp_ana.root"
     tree_name: "dp"
     # Optional
-<<<<<<< HEAD
-=======
     selection: "1"
->>>>>>> master
     line_attr: [ 6, 4 ] # [ color, width ]
     # marker_attr: [ 2, 3 ] #[ color, width, style ]
     fill_attr: [ 6, 0.6, 1001 ] # [ color, transparency, style ]
 
 
-<<<<<<< HEAD
 # End Of File
-=======
-# End Of File
-...
->>>>>>> master
