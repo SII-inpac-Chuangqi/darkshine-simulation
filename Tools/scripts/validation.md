@@ -8,11 +8,25 @@ Name: ${CI_COMMIT_TITLE}
 
 Validation of ECAL variables
 
-![E_total](validation_plots/fig_0.png)
+![plot](validation_plots/fig_0.png)
 
-![E_clustered](validation_plots/fig_1.png)
+![plot](validation_plots/fig_1.png)
 
-![E_leading_cluster](validation_plots/fig_2.png)
+![plot](validation_plots/fig_2.png)
 
+![plot](validation_plots/fig_2.png)
 
+![plot](validation_plots/fig_3.png)
+
+![plot](validation_plots/fig_4.png)
+
+![plot](validation_plots/fig_5.png)
+
+![plot](validation_plots/fig_6.png)
+
+![plot](validation_plots/fig_7.png)
+
+![plot](validation_plots/fig_8.png)
+
+![plot](validation_plots/fig_9.png)
 

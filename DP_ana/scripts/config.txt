@@ -26,7 +26,7 @@ MemoryCheck.Verbose           = 0
 # Tracking: Tracking by Yi-Fan Zhu (Genius in SJTU)
 # CutFlowAnalysis: None
 ###
-Algorithm.List = Digitizer MCTruthAnalysis RecECAL Tracking CutFlowAnalysis 
+Algorithm.List = Digitizer MCTruthAnalysis RecECAL Tracking
 
 ### Algorithm Configuration
 
