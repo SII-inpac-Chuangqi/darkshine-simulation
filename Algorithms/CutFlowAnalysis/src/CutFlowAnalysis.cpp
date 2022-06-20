@@ -31,8 +31,8 @@ void CutFlowAnalysis::ProcessEvt(AnaEvent* /*evt*/) {
 
       test_store.clear();
 
-      if(ECal_seed_x) for(auto seed : *ECal_seed_x) std::cout << seed << "\t";
-      std::cout << std::endl;
+    //   if(ECal_seed_x) for(auto seed : *ECal_seed_x) std::cout << seed << "\t";
+    //   std::cout << std::endl;
 
       test_store.assign(ECal_seed_x->begin(), ECal_seed_x->end());
 }

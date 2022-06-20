@@ -19,3 +19,4 @@ run/
 test/
 Automaton/*.log
 Automaton/update_wiki.sh
+*~
