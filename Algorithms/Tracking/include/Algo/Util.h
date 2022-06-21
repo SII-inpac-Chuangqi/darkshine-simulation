@@ -86,5 +86,4 @@ double GetMedian(const std::vector<T> &vec)
     }
 }
 
-
 #endif

@@ -11,7 +11,7 @@
 #include <initializer_list>
 
 #ifndef RETURN
-#define RETURN -INFINITY
+#define RETURN std::nan("RETURN")
 #endif
 
 //................................................................................//

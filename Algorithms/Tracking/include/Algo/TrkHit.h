@@ -2,7 +2,7 @@
 #define TRKHIT_H
 
 #ifndef RETURN
-#define RETURN -INFINITY
+#define RETURN std::nan("RETURN")
 #endif
 
 //................................................................................//

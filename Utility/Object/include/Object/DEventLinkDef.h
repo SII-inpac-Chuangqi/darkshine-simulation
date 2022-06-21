@@ -53,6 +53,7 @@
 #pragma link C++ class DMagnet::MagSlice+;
 #pragma link C++ class DMagnet+;
 
+#pragma link C++ struct PhysicsDef+;
 #pragma link C++ class DTruthParticle+;
 #pragma link C++ class DTruthProcess+;
 #pragma link C++ class DTruthState+;

@@ -73,7 +73,6 @@ struct PhysicsDef {
         cout << "[Physics Process Table] ==> Construction completed with " << dPhyTypeVec.size() << " processes."
              << endl;
     }
-
 };
 
 #endif //DSIMU_PHYSICSPROCESSDEF_H
