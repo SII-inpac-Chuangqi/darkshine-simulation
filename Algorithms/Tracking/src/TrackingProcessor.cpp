@@ -62,10 +62,10 @@ void TrackingProcessor::Begin() {
 //................................................................................//
 //Load magnet
 //................................................................................//
+    magnets = dAnaData->getMagFieldVec();
     if(Tag_fit_method == dKalman || Rec_fit_method == dKalman)
     {
         genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
-        magnets = dAnaData->getMagFieldVec();
         if (magnets.size() == 3 && magnets.at(0) && magnets.at(1) && magnets.at(2)) {
             genfit::FieldManager::getInstance()->init(new genfit::MapField(*(magnets.at(0)),
                                                                            *(magnets.at(1)),
@@ -256,6 +256,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     [[maybe_unused]] bool if_reco_tag_hits(false);
     [[maybe_unused]] bool if_reco_rec_hits(false);
 
+    std::vector<double> magnet_at_origin = {magnets.at(0) ? magnets.at(0)->GetField(0., 0., 0.) : 0.,
+                                            magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.) : con_field,
+                                            magnets.at(2) ? magnets.at(2)->GetField(0., 0., 0.) : 0.};
+
 //................................................................................//
 //Initialize vars
     this->CleanEvt();
@@ -313,10 +317,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         std::vector<TrkHit> raw_rectrk2_hits;
         for (auto hit : *simuhit_collection.at("RecTrk1")) raw_rectrk1_hits.emplace_back(*hit);
         for (auto hit : *simuhit_collection.at("RecTrk2")) raw_rectrk2_hits.emplace_back(*hit);
-
-        std::vector<double> magnet_at_origin = {magnets.at(0) ? magnets.at(0)->GetField(0., 0., 0.) : 0.,
-                                                magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.) : con_field,
-                                                magnets.at(2) ? magnets.at(2)->GetField(0., 0., 0.) : 0.};
 
 //................................................................................//
 //Tag tracker
