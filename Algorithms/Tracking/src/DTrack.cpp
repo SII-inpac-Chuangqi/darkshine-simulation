@@ -103,11 +103,10 @@ void DTrack::Fit(int method)
                                                   );
                         break;
         case dNone    :
-                        std::cout << "No fitting." << std::endl;
+                        std::cout << "[INFO] ==> Fit not required" << std::endl;
                         break;
         default :
-                        std::cout << "No fitter specified." << std::endl
-                                  << "Use default fitter: " << std::endl;
+                        std::cerr << "[WARNING] ==> Fit method not found. Use default fitter GenFit Kalman fitter" << std::endl;
     }
 
     if(fitter)

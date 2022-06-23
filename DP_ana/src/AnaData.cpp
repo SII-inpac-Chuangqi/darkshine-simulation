@@ -226,6 +226,41 @@ void AnaData::printProcessMap(){
         std::cerr <<i<<" : "<<rev_processMap[i]<<" -> "<< static_cast<int>(std::hash<std::string>{}(rev_processMap[i])) << std::endl;
 }
 
+void AnaData::LoadTruthInfo(DTruth *truth)
+{
+    if(!truth) {std::cerr << "[WARNING] ==> No truth info found in event" << std::endl; truth_ = nullptr;}
+    else       truth_ = truth;
+}
+
+void AnaData::PrintTruthInfo() const
+{
+    if(!truth_) std::cerr << "[WARNING] ==> No truth info found in event" << std::endl;
+    else        truth_->printTruthTopology();
+    //else        truth_->printTruthTracks();
+}
+
+std::vector<const DTruthState*> AnaData::getTruthTracksAtECalFront() const
+{
+    auto tracker_keys = truth_->getTracksKey(DTruth::DTruthDetPV::All);
+    auto ECal_states  = truth_->getStatesInECAL();
+
+    std::vector<const DTruthState*> truth_tracks_at_ECal_front;
+    for(auto key : tracker_keys)
+    {
+        auto if_in_ECal = ECal_states.find(key);
+        if(if_in_ECal != ECal_states.end())
+            truth_tracks_at_ECal_front.push_back(if_in_ECal->second.first);
+    }
+
+    return truth_tracks_at_ECal_front;
+}
+
+const DTruth* AnaData::getInitialElectron() const
+{
+    return nullptr;
+}
+
+/*
 void AnaData::LoadTruthMcPHelper(const MCPHelperMap &helper_collection)
 {
     if(!helper_collection.size() || helper_collection.find("MCPHelper") == helper_collection.end())
@@ -270,3 +305,4 @@ const McPHelper* AnaData::getInitialElectron() const
 
     return nullptr;
 }
+*/

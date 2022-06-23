@@ -12,6 +12,7 @@
 #include "TGeoManager.h"
 #include "TVector3.h"
 
+#include "Object/DTruth.h"
 #include "Object/DMagnet.h"
 #include "Object/McPHelper.h"
 
@@ -81,9 +82,13 @@ public:
 
 //................................................................................//
 //Truth helper manager
-    void LoadTruthMcPHelper(const MCPHelperMap &helper_collection);
-    void PrintTruthMcPHelper() const;
-    const McPHelper* getInitialElectron() const;
+    //void LoadTruthMcPHelper(const MCPHelperMap &helper_collection);
+    void LoadTruthInfo(DTruth *truth);
+    //void PrintTruthMcPHelper() const;
+    void PrintTruthInfo() const;
+    //const McPHelper* getInitialElectron() const;
+    std::vector<const DTruthState*> getTruthTracksAtECalFront() const;
+    const DTruth* getInitialElectron() const;
 
 protected:
     vector<DMagnet*> mag_field_vec;
@@ -119,10 +124,12 @@ protected:
     TVector3* ECAL_pos0{nullptr};
     std::array<TVector3,MAX_ECAL_CELLS> ECAL_posmap{};
 
-    MCPHelperVec* helper{nullptr};
+    //MCPHelperVec* helper{nullptr};
+    DTruth *truth_{nullptr};
 
     std::unordered_map<std::string,int> processMap{};
     std::unordered_map<int,std::string> rev_processMap{};
+
 private:
     AnaData();
 

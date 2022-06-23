@@ -196,9 +196,45 @@ void TrackingProcessor::CleanEvt() {
     std::vector<double>().swap(ECal_seed_pz);
 }
 
-void TrackingProcessor::FillTruth(std::vector<DStep*> *initial_steps,
+void TrackingProcessor::FillTruth(AnaEvent *evt,
+                                  std::vector<DStep*> *initial_steps,
                                   std::vector<TrkHit> raw_tagtrk2_hits,
                                   std::vector<TrkHit> raw_rectrk2_hits) {
+/*
+        dAnaData->LoadTruthMcPHelper(evt->getMcPHelperCollection());
+        dAnaData->PrintTruthMcPHelper();
+        auto init_elec = dAnaData->getInitialElectron();
+        auto init_elec = dAnaData->getInitialElectron();
+        if(init_elec)
+        {
+            ECal_seed_x_truth.push_back(init_elec->getX());
+            ECal_seed_y_truth.push_back(init_elec->getY());
+            ECal_seed_px_truth.push_back(init_elec->getPx());
+            ECal_seed_py_truth.push_back(init_elec->getPy());
+            ECal_seed_pz_truth.push_back(init_elec->getPz());
+        }
+        else
+        {
+            ECal_seed_x_truth.push_back(std::nan("RETURN"));
+            ECal_seed_y_truth.push_back(std::nan("RETURN"));
+            ECal_seed_px_truth.push_back(std::nan("RETURN"));
+            ECal_seed_py_truth.push_back(std::nan("RETURN"));
+            ECal_seed_pz_truth.push_back(std::nan("RETURN"));
+        }
+*/
+
+        dAnaData->LoadTruthInfo(evt->getTruthInfo());
+        //dAnaData->PrintTruthInfo();
+
+        auto tracks = dAnaData->getTruthTracksAtECalFront();
+        for(auto track : tracks)
+        {
+            ECal_seed_x_truth.push_back(track->vertex[0]);
+            ECal_seed_y_truth.push_back(track->vertex[1]);
+            ECal_seed_px_truth.push_back(track->momentum[0]);
+            ECal_seed_py_truth.push_back(track->momentum[1]);
+            ECal_seed_pz_truth.push_back(track->momentum[2]);
+        }
 
     if (!clean) {
         TagTrk2_No = raw_tagtrk2_hits.size();
@@ -285,26 +321,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Read
-        dAnaData->LoadTruthMcPHelper(evt->getMcPHelperCollection());
-        //dAnaData->PrintTruthMcPHelper();
-        auto init_elec_helper = dAnaData->getInitialElectron();
-        if(init_elec_helper)
-        {
-            ECal_seed_x_truth.push_back(init_elec_helper->getX());
-            ECal_seed_y_truth.push_back(init_elec_helper->getY());
-            ECal_seed_px_truth.push_back(init_elec_helper->getPx());
-            ECal_seed_py_truth.push_back(init_elec_helper->getPy());
-            ECal_seed_pz_truth.push_back(init_elec_helper->getPz());
-        }
-        else
-        {
-            ECal_seed_x_truth.push_back(std::nan("RETURN"));
-            ECal_seed_y_truth.push_back(std::nan("RETURN"));
-            ECal_seed_px_truth.push_back(std::nan("RETURN"));
-            ECal_seed_py_truth.push_back(std::nan("RETURN"));
-            ECal_seed_pz_truth.push_back(std::nan("RETURN"));
-        }
-
         //const auto &mc = MCCollection.at("RawMCParticle");
         const auto &initial_steps = step_collection.at("Initial_Particle_Step");
 
@@ -453,7 +469,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Write truth
-        this->FillTruth(initial_steps, raw_tagtrk2_hits, raw_rectrk2_hits);
+        this->FillTruth(evt, initial_steps, raw_tagtrk2_hits, raw_rectrk2_hits);
     }
 }
 
