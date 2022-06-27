@@ -63,9 +63,9 @@ void AnaData::setConstMagnetField(const vector<double> &const_value)
     }
 
     const_mag_field_vec.reserve(3);
-    const_mag_field_vec.at(0) = const_value.at(0);
-    const_mag_field_vec.at(1) = const_value.at(1);
-    const_mag_field_vec.at(2) = const_value.at(2);
+    const_mag_field_vec.push_back(const_value.at(0));
+    const_mag_field_vec.push_back(const_value.at(1));
+    const_mag_field_vec.push_back(const_value.at(2));
 }
 
 const vector<double> AnaData::getMagnetFieldAt(const vector<double> &pos) const
