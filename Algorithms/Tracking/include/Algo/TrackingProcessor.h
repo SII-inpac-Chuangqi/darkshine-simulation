@@ -28,9 +28,11 @@ public:
     ~TrackingProcessor() {};
 
     void Begin() override;
-
+//................................................................................//
+//Initialize all vars to be stored in output files
     void CleanEvt();
-
+//................................................................................//
+//Fill truth variables
     void FillTruth(AnaEvent *evt, std::vector<DStep*> *stepIni,
                    std::vector<TrkHit> rawTagTrk2Hits, std::vector<TrkHit> rawRecTrk2Hits);
 
@@ -45,11 +47,30 @@ private:
 //................................................................................//
 //Parameters from config file
 //................................................................................//
+//Clean mode
+//-- 0: False, store all vars in output files
+//-- 1: True, store reco level only
     int clean{0};
+//................................................................................//
+//Strip structure
+//-- 0: False
+//-- 1: True, automatically load strip structures from geometry
     int if_strip{1};
+//................................................................................//
+//Smear
+//-- 0: False
+//-- 1: True, add smear in hit reconstruction
     int if_smear{1};
+//................................................................................//
+//Fit method
+//-- 0/dNone: No method specified, return pre-fitting results from track finding
+//-- 1/dKalman: Kalman filter fitter from GenFit
     int Tag_fit_method{-1};
     int Rec_fit_method{-1};
+//................................................................................//
+//Magnet
+//Const magnet field value to be implemented in const magnet condition or handle
+//exceptions
     double con_field{-1.5};
 
 //................................................................................//
