@@ -1,3 +1,7 @@
+2022-06-20
+    1. Truth information stored in DTruth
+    2. CICD suppot
+
 2022-05-23
     1. DSimu: Update geometry hierarchy to speed up spatial search
     2. Related updates in DAna and DDis
