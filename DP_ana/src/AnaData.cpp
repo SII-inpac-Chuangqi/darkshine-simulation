@@ -34,12 +34,15 @@ void AnaData::ReadMagField() {
 
     if (! root_file->Get("magnet0") ) {
         std::cerr << "[READFILE WARNING] ==> Magnet x not found" << std::endl;
+        return;
     }
     if (! root_file->Get("magnet1") ) {
         std::cerr << "[READFILE WARNING] ==> Magnet y not found" << std::endl;
+        return;
     }
     if (! root_file->Get("magnet2") ) {
         std::cerr << "[READFILE WARNING] ==> Magnet z not found" << std::endl;
+        return;
     }
 
     mag_field_vec = std::vector<DMagnet*>({dynamic_cast<DMagnet*>(root_file->Get("magnet0")),
@@ -47,6 +50,35 @@ void AnaData::ReadMagField() {
                                            dynamic_cast<DMagnet*>(root_file->Get("magnet2"))});
 }
 
+void AnaData::setConstMagnetField(const vector<double> &const_value)
+{
+    if_const_field_ = true;
+
+    if(const_value.size() != 3)
+    {
+        std::cerr << "[WARNING] ==> Input const field size not compatible, "
+                  << "input size: " << const_value.size() << ", "
+                  << "required size: 3" << std::endl;
+        return;
+    }
+
+    const_mag_field_vec.reserve(3);
+    const_mag_field_vec.at(0) = const_value.at(0);
+    const_mag_field_vec.at(1) = const_value.at(1);
+    const_mag_field_vec.at(2) = const_value.at(2);
+}
+
+const vector<double> AnaData::getMagnetFieldAt(const vector<double> &pos) const
+{
+    if(if_const_field_) return const_mag_field_vec;
+
+    vector<double> field = {RETURN, RETURN, RETURN};
+    field.at(0) = mag_field_vec.at(0)->GetField(pos.at(0), pos.at(1), pos.at(2));
+    field.at(1) = mag_field_vec.at(1)->GetField(pos.at(0), pos.at(1), pos.at(2));
+    field.at(2) = mag_field_vec.at(2)->GetField(pos.at(0), pos.at(1), pos.at(2));
+
+    return field;
+}
 
 void AnaData::readGeometryDetails() {
     world_ = dynamic_cast<TGeoNode*>(gGeoManager->GetListOfNodes()->At(0));

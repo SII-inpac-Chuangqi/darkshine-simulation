@@ -5,6 +5,10 @@
 #ifndef DSIMU_ANADATA_H
 #define DSIMU_ANADATA_H
 
+#ifndef RETURN
+#define RETURN std::nan("RETURN")
+#endif
+
 #include "yaml-cpp/yaml.h"
 
 #include "TFile.h"
@@ -20,7 +24,7 @@
 #include <tuple>
 #include <unordered_map>
 
-using std::vector,std::tuple;
+using std::vector, std::tuple;
 
 #define MAX_ECAL_CELLS (25*25*15)
 
@@ -37,6 +41,8 @@ public:
     [[nodiscard]] const vector<DMagnet *> &getMagFieldVec() const {
         return mag_field_vec;
     }
+    void setConstMagnetField(const vector<double> &const_value);
+    [[nodiscard]] const vector<double> getMagnetFieldAt(const vector<double> &pos) const;
 
     [[nodiscard]] TFile *getRootFile() const {
         return root_file;
@@ -92,8 +98,11 @@ public:
     const DTruth* getInitialElectron() const;
 
 protected:
-    vector<DMagnet*> mag_field_vec;
     TFile* root_file;
+
+    bool if_const_field_{false};
+    vector<DMagnet*> mag_field_vec;
+    vector<double>   const_mag_field_vec;
 
     TGeoNode* world_{nullptr};
 
