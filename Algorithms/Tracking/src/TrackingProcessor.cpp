@@ -88,6 +88,7 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("TagTrk2_y", &TagTrk2_y);
         EvtWrt->RegisterOutVariable("TagTrk2_z", &TagTrk2_z);
         EvtWrt->RegisterOutVariable("TagTrk2_e", &TagTrk2_e);
+        EvtWrt->RegisterIntVariable("TagTrk2_track_No_truth", &TagTrk2_track_No_truth, "TagTrk2_track_No_truth/I");
 
         EvtWrt->RegisterIntVariable("RecTrk2_No", &RecTrk2_No, "RecTrk2_No/I");
         EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_ini", &RecTrk2_pp_truth_ini, "RecTrk2_pp_truth_ini/D");
@@ -96,6 +97,7 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_y", &RecTrk2_y);
         EvtWrt->RegisterOutVariable("RecTrk2_z", &RecTrk2_z);
         EvtWrt->RegisterOutVariable("RecTrk2_e", &RecTrk2_e);
+        EvtWrt->RegisterIntVariable("RecTrk2_track_No_truth", &RecTrk2_track_No_truth, "RecTrk2_track_No_truth/I");
     }
 //................................................................................//
 //Reconstructed
@@ -159,6 +161,8 @@ void TrackingProcessor::CleanEvt() {
         std::vector<double>().swap(RecTrk2_e);
     }
 
+    TagTrk2_track_No_truth = 0;
+    RecTrk2_track_No_truth = 0;
     TagTrk2_track_No = 0;
     RecTrk2_track_No = 0;
 
@@ -226,6 +230,8 @@ void TrackingProcessor::FillTruth(AnaEvent *evt,
         dAnaData->LoadTruthInfo(evt->getTruthInfo());
         //dAnaData->PrintTruthInfo();
 
+        TagTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::TagTrk);
+        RecTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::RecTrk);
         auto tracks = dAnaData->getTruthTracksAtECalFront();
         for(auto track : tracks)
         {

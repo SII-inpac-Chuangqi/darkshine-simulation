@@ -186,7 +186,7 @@ public:
     getCriticalProcessInTrack(pair<int, int> key, float ratio = 0., DTruthDetPV DetPV = DTruthDetPV::All);
 
     /** Return a map of tracks which in certain region */
-    map<pair<int, int>, vector<DTruthState *>> getTracksInRegion(DTruthDetPV DetPV, float E_min = 0);
+    map<pair<int, int>, vector<DTruthState *>> getTracksInRegion(DTruthDetPV DetPV, float E_min = 0, int min_hits = 0);
 
     /** Return a map of two DTruthStates (prev, post) of particles in certain region */
     map<pair<int, int>, pair<DTruthState *, DTruthState *>> getStatesInCalorimeter(DTruthDetPV DetPV, float E_min = 0);
