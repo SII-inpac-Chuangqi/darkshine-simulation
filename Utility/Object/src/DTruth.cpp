@@ -203,15 +203,17 @@ vector <pair<int, int>> DTruth::getTracksKey(DTruthDetPV DetPV, float E_min) {
     return keys;
 }
 
-map <pair<int, int>, vector<DTruthState *>> DTruth::getTracksInRegion(DTruthDetPV DetPV, float E_min) {
+map <pair<int, int>, vector<DTruthState *>> DTruth::getTracksInRegion(DTruthDetPV DetPV, float E_min, int min_hits) {
     map <pair<int, int>, vector<DTruthState *>> result = {};
 
     for (auto track: truth_tracks) {
         // Ensure the initial Energy should larger than the min E_kin
-        if (track.second.front()->E >= E_min) {
+        if (track.second.front()->E >= E_min && track.second.size() >= min_hits) {
             // Find the DTruthStates in certain Detector Region
             if (DetPV == DTruthDetPV::All) result.insert(track);
             else {
+                int n_hits = 0;
+
                 auto t = vector<DTruthState *>();
                 // Loop all states in one track to retrieve states in required region
                 for (auto itr = track.second.begin(); itr != track.second.end(); ++itr) {
@@ -220,9 +222,11 @@ map <pair<int, int>, vector<DTruthState *>> DTruth::getTracksInRegion(DTruthDetP
                         if ((itr != track.second.begin()) && t.empty()) t.push_back(*(itr - 1));
                         // insert the current state if satisfied z range
                         t.push_back((*itr));
+
+                        n_hits++;
                     }
                 }
-                if (!t.empty()) result.insert({track.first, t});
+                if (!t.empty() && n_hits >= min_hits) result.insert({track.first, t});
             }
         }
     }

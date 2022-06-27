@@ -255,6 +255,14 @@ std::vector<const DTruthState*> AnaData::getTruthTracksAtECalFront() const
     return truth_tracks_at_ECal_front;
 }
 
+unsigned int AnaData::getNTruthTracks(DTruth::DTruthDetPV DetPV, double min_energy, int min_hits) const
+{
+    unsigned int n_track(0);
+
+    if(truth_) n_track = truth_->getTracksInRegion(DetPV, min_energy, min_hits).size();
+    return n_track;
+}
+
 const DTruth* AnaData::getInitialElectron() const
 {
     return nullptr;

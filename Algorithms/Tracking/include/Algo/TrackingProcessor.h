@@ -72,6 +72,7 @@ private:
     std::vector<double> TagTrk2_y{};
     std::vector<double> TagTrk2_z{};
     std::vector<double> TagTrk2_e{};
+    int TagTrk2_track_No_truth{0};
     
     int RecTrk2_No{-1};
     double RecTrk2_pp_truth_ini{RETURN};
@@ -80,6 +81,7 @@ private:
     std::vector<double> RecTrk2_y{};
     std::vector<double> RecTrk2_z{};
     std::vector<double> RecTrk2_e{};
+    int RecTrk2_track_No_truth{0};
 
 //................................................................................//
 //Reconstructed
