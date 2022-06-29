@@ -98,15 +98,23 @@ void DTrack::Fit(int method)
     {
         case dKalman  :
                         fitter = new KalmanFitting(hits,
-                                                   {preR, //Fix to 2 ordered parameters! --bending radius as fitting seed
-                                                    By}   //                             --magnet value to manage exception condition
+                                                   {preR,   //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                    By},    //                             --magnet value to manage exception condition
+                                                   verbose_ //Verbose
                                                   );
                         break;
         case dNone    :
-                        std::cout << "[INFO] ==> Fit not required" << std::endl;
+                        if(verbose_ > 0)
+                            std::cout << "[INFO] ==> Fit not required" << std::endl;
                         break;
         default :
-                        std::cerr << "[WARNING] ==> Fit method not found. Use default fitter GenFit Kalman fitter" << std::endl;
+                        if(verbose_ > 0)
+                            std::cerr << "[WARNING] ==> Fit method not found. Use default fitter GenFit Kalman fitter" << std::endl;
+                        fitter = new KalmanFitting(hits,
+                                                   {preR,   //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                    By},    //                             --magnet value to manage exception condition
+                                                   verbose_ //Verbose
+                                                  );
     }
 
     if(fitter)

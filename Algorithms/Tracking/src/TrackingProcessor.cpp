@@ -40,6 +40,7 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
     // Add description for this AnaProcessor
     Description = "Tracking by Yi-Fan Zhu";
 
+    RegisterIntParameter("verbose", "Verbose", &Verbose, 0);
     RegisterIntParameter("clean", "Clean mode: no truth information", &clean, 1);
     RegisterIntParameter("if_strip", "If use strip structures in trackers", &if_strip, 1);
     RegisterIntParameter("if_smear", "If smear hits in strip structure", &if_smear, 1);
@@ -383,6 +384,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                      find_tag.GetCenterX(i), //not used in Kalman filter, reserved
                                      find_tag.GetCenterY(i), //not used in Kalman filter, reserved
                                      magnet_at_origin);      //magnet vector to handle exception
+                        track.SetVerbose(Verbose);
                         track.Fit(Tag_fit_method);           //choose fitting method: Kalman filter
                         track.Evaluate();
 
@@ -425,6 +427,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                      find_rec.GetCenterX(i), //not used in Kalman filter, reserved
                                      find_rec.GetCenterY(i), //not used in Kalman filter, reserved
                                      magnet_at_origin);      //magnet vector to handle exception
+                        track.SetVerbose(Verbose);
                         track.Fit(Rec_fit_method);           //choose fitting method: Kalman filter
                         track.Evaluate();
 

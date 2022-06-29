@@ -46,6 +46,7 @@ public:
 //................................................................................//
 //Get
 //................................................................................//
+    int GetVerbose() const {return verbose_;}
     int GetPDG()  const {return pdg;}
     int GetSign() const {return sign;}
     double GetPx() const {return px;}
@@ -70,11 +71,12 @@ public:
 //................................................................................//
 //Set
 //................................................................................//
-    void SetPDG(int newPDG)  {pdg = newPDG;}
+    void SetVerbose(int verbose) {verbose_ = verbose;}
+    void SetPDG(int newPDG)   {pdg = newPDG;}
     void SetSign(int newSign) {sign = newSign;}
-    void SetPx(double newPx) {px = newPx;}
-    void SetPy(double newPy) {py = newPy;}
-    void SetPz(double newPz) {pz = newPz;}
+    void SetPx(double newPx)  {px = newPx;}
+    void SetPy(double newPy)  {py = newPy;}
+    void SetPz(double newPz)  {pz = newPz;}
     void SetChi2(double newChi2) {chi2 = newChi2;}
 
 //................................................................................//
@@ -84,6 +86,10 @@ public:
     void Evaluate();
 
 private:
+//................................................................................//
+//Verbose
+    int verbose_{0};
+
 //................................................................................//
 //Physical properties
     int pdg{11};
