@@ -66,8 +66,10 @@ public:
 
     // Process
     void RegisterParameters();
+    void RegisterParameters_visible();
 
     McParticle* FindSecondary(int PDG = 0, double Emin = 0., McParticle *mcp = nullptr);
+    McParticle* FindDPDecay(McParticle *mcp);
 
 private:
 
@@ -82,6 +84,14 @@ private:
     double Secondary_MaxE_P[3];
     TString Secondary_MaxE_PVName;
     TString Secondary_MaxE_Process;
+    // add for visible decay
+    int DP_decay{0};
+    double E_decay_1{0};
+    double E_decay_2{0};
+    double P_decay_1[3];
+    double P_decay_2[3];
+    int PDG_decay_1{0};
+    int PDG_decay_2{0};
 
 };
 

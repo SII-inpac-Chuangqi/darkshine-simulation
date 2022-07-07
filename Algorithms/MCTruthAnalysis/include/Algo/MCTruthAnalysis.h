@@ -61,6 +61,17 @@ private:
     double Pi{0.};
     double Pf{0.};
 
+    double trans_sep{0};
+    double Truth_P[3]={0};
+    double Truth_Recoil_E;
+    double Truth_Recoil_theta;
+    //double trans_sep;
+    double Signal_Detectable=1;
+    // For visible decay
+    double Decay_X{0};
+    double Decay_Y{0};
+    double Decay_Z{0};
+
 };
 
 
