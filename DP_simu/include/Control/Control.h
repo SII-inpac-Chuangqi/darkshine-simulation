@@ -77,6 +77,9 @@ public:
     double signal_mass;
     G4String signal_lookup_table;
     bool signal_use_LUT{};
+    bool visible_decay;
+    G4String dp_decay_channel;
+    double dp_eplsion;
 
     //----------------------------------------
     // Magnetic field

@@ -49,18 +49,18 @@ memory_check: false
 # if signal production is activated, program will automatically
 # bias for DMProcessDMBrem and record all the MC particles
 # A process filter on target region will be applied
-signal_production: false
+signal_production: true
 # Dark Photon Mass
 signal_mass: [ 500, "MeV" ]
 # If to use signal LUT
-signal_use_LUT: false
+signal_use_LUT: true
 # signal LUT place
 signal_lookup_table: "/lustre/collider/chenxiang/Dark_Photon/generator/dp_lookup_table_20220515.root"
 # setups for visble decay (Currently visible decay mode only supports signal_mass < 500 MeV --Xiang Chen on 6/7/2022)
-visible_decay: false
+visible_decay: true 
 # decay channel: [ee or mumu]
 dp_decay_channel: "ee"
-dp_eplsion: 1e-3
+dp_eplsion: 1e-4
 
 ###########################################
 # Magnetic field

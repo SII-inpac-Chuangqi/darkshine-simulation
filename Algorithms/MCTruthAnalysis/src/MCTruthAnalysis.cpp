@@ -47,10 +47,23 @@ void MCTruthAnalysis::Begin() {
         EvtWrt->RegisterDoubleVariable("Truth_Pi", &Pi, "Truth_Pi/D");
         EvtWrt->RegisterDoubleVariable("Truth_Pf", &Pf, "Truth_Pf/D");
 
+        EvtWrt->RegisterDoubleVariable("Truth_Pi", &Pi, "Truth_Pi/D");
+        EvtWrt->RegisterDoubleVariable("Truth_Pf", &Pf, "Truth_Pf/D");
+        EvtWrt->RegisterDoubleVariable("Truth_P", Truth_P, "Truth_P[3]/D");
+        EvtWrt->RegisterDoubleVariable("Target_Recoil_E", &Truth_Recoil_E, "Target_Recoil_E/D");
+        EvtWrt->RegisterDoubleVariable("Target_Recoil_theta", &Truth_Recoil_theta, "Target_Recoil_theta/D");
+        EvtWrt->RegisterDoubleVariable("trans_sep", &trans_sep,"trans_sep/D");
+        // here for visible decay 
+        EvtWrt->RegisterDoubleVariable("Decay_X", &Decay_X, "Decay_X/D");
+        EvtWrt->RegisterDoubleVariable("Decay_Y", &Decay_Y, "Decay_Y/D");
+        EvtWrt->RegisterDoubleVariable("Decay_Z", &Decay_Z, "Decay_Z/D");
+
     }
 
     SecFinder->RegisterParameters();
+    SecFinder->RegisterParameters_visible();
     PCFinder->RegisterParameters();
+
 }
 
 void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
@@ -131,7 +144,35 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
                 Pf = electron_post.P();
             }
             prev_s = s;
+            if (s->getZ() <0.175 && s->getZ() > -0.175){
+                Truth_P[0]=s->getPx();
+                Truth_P[1]=s->getPy();
+                Truth_P[2]=s->getPz();
+                Truth_Recoil_E=s->getE();
+            }
+
+            if (s->getZ() < 181 && s->getZ() > 180){
+                //Truth_Recoil_E=s->getE();
+                double x= s->getX()-Initial_X;
+                double y= s->getY()-Initial_Y;
+                trans_sep= pow((x*x+y*y),0.5);
+            }
+             // Find dark photon and decay vertex
+            
+
         }
+        // here for visible decay
+        auto mcDP = SecFinder->FindSecondary(500012);
+        if (mcDP) {
+            auto mcDecayLepton = SecFinder->FindSecondary(0, 0.0, mcDP);
+            auto n = SecFinder->FindDPDecay(mcDP);
+            if (mcDecayLepton) {
+                Decay_X = mcDecayLepton->getVertexX();
+                Decay_Y = mcDecayLepton->getVertexY();
+                Decay_Z = mcDecayLepton->getVertexZ();
+            }
+        }
+
     } else {
         // if not exists, print out error
         if (verbose > 0)

@@ -21,6 +21,8 @@ DMParticleAPrime *DMParticleAPrime::Definition() {
     G4ParticleDefinition *anInstance = pTable->FindParticle(name);
     //here don't define decay width
     //G4double BenchmarkWidth = 1./(64.*pi)*30.*30.*30.*0.001*0.001;
+    G4bool stable_label = true;
+    if (dControl->visible_decay) stable_label= false;
     if (!anInstance) {
         anInstance = new G4ParticleDefinition(
                 /* Name ..................... */ name,
@@ -39,13 +41,44 @@ DMParticleAPrime *DMParticleAPrime::Definition() {
                 /* baryon number ............ */ 0,
                 /* PDG encoding ............. */
                                                  500012, // https://pdg.lbl.gov/2019/reviews/rpp2019-rev-monte-carlo-numbering.pdf
-                /* stable ................... */ true,
+                /* stable ................... */ stable_label,
                 /* lifetime.................. */ 0,
                 /* decay table .............. */ nullptr,
                 /* shortlived ............... */ false,
                 /* subType .................. */ "DMParticleAPrime",
                 /* anti particle encoding ... */ 500022
         );
+
+        //inset for visible decay 
+        if (dControl->visible_decay){
+            G4double mA = anInstance->GetPDGMass();
+            G4double eplsion= dControl->dp_eplsion;
+            G4double width = 1;
+
+            if (dControl->dp_decay_channel == "ee" && mA>2*0.511) width=  1./3. * 1./137. * eplsion * eplsion * mA * sqrt(1-4*0.511*0.511/mA/mA) * (1+2*0.511*0.511/mA/mA);
+            if (dControl->dp_decay_channel == "mumu" && mA>2*105.66) width= 1./3. * 1./137. *eplsion * eplsion * mA * sqrt(1-4*105.66*105.66/mA/mA) * (1+2*105.66*105.66/mA/mA) ;
+
+
+            //G4double widthToEe = mA>2*0.511? 1./3. * 1./137. * 1e-8 * mA * sqrt(1-4*0.511*0.511/mA/mA) * (1+2*0.511*0.511/mA/mA) : 0;
+            //G4double widthToMm = mA>2*105.66? 1./3. * 1./137. * 1e-8 * mA * sqrt(1-4*105.66*105.66/mA/mA) * (1+2*105.66*105.66/mA/mA) : 0;
+            //G4double totalWidth = widthToEe + widthToMm;
+            anInstance->SetPDGLifeTime( hbar_Planck/width );
+            std::cout<<"Inject Decay Width:" << width <<std::endl;
+
+            G4DecayTable* table = new G4DecayTable();
+        
+            G4VDecayChannel *mode; // assume onle one channel
+            if (dControl->dp_decay_channel == "mumu" && mA>2*105.66) mode = new G4PhaseSpaceDecayChannel("DMParticle", 1, 2, "mu-", "mu+");
+            if (dControl->dp_decay_channel == "ee" && mA>2*0.511) mode = new G4PhaseSpaceDecayChannel("DMParticle", 1, 2, "e-", "e+");
+            //mode1 = new G4PhaseSpaceDecayChannel("DMParticle", widthToEe/totalWidth, 2, "e-", "e+");
+            //mode2 = new G4PhaseSpaceDecayChannel("DMParticle", widthToMm/totalWidth, 2, "mu-", "mu+");
+            table->Insert(mode);
+            //table->Insert(mode2);
+            anInstance->SetDecayTable(table);
+        }
+        //Here is how to setup decay table
+        //create Decay Table
+        //G4DecayTable* table = new G4DecayTable();
 
         // Life time is given from width
         //anInstance->SetPDGLifeTime( hbar_Planck/(anInstance->GetPDGWidth()) ); // Benchmark life time
