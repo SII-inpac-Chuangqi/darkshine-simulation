@@ -17,7 +17,7 @@ DMBremProcess::DMBremProcess(DarkPhotons *DarkMatterPointerIn, G4ParticleDefinit
           BiasSigmaFactor(BiasSigmaFactorIn) {
 //here I don't think what to define
     SetProcessSubType(500);
-    theDMParticlePtr->SetPDGLifeTime(CLHEP::hbar_Planck / (myDarkMatter->Width() * GeV));
+    //theDMParticlePtr->SetPDGLifeTime(CLHEP::hbar_Planck / (myDarkMatter->Width() * GeV));
 }
 
 G4bool DMBremProcess::IsApplicable(const G4ParticleDefinition &pDef) {

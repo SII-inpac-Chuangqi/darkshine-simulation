@@ -47,6 +47,9 @@ Control::Control() {
     // Signal Option
     signal_mass = 17 * MeV;
     signal_lookup_table = "";
+    visible_decay = false;
+    dp_decay_channel = "ee";
+    dp_eplsion = 1e-4;
 
     //----------------------------------------
     // Root Manager Options
@@ -643,6 +646,11 @@ bool Control::ReadYAML(const G4String &file_in) {
 
         //std::cout<<Node["signal_use_LUT"].IsDefined()<<" "<<Node["signal_use_LUT"].as<bool>()<<std::endl;
         signal_use_LUT = Node["signal_use_LUT"].IsDefined() && Node["signal_use_LUT"].as<bool>();
+        visible_decay = Node["visible_decay"].IsDefined() && Node["visible_decay"].as<bool>();
+        dp_decay_channel = Node["dp_decay_channel"].IsDefined()
+                          ? Node["dp_decay_channel"].as<std::string>() : "ee";
+        dp_eplsion = Node["dp_eplsion"].as<double>();
+        
         //========================================
         // Magnetic field
         //----------------------------------------
