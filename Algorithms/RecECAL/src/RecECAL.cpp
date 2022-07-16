@@ -26,7 +26,7 @@ RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProce
     // Register parameters
     RegisterIntParameter("Verbose", "Verbosity Variable", &verbose, 0);
     RegisterIntParameter("SkipEmpty", "Skip Empty Hits", &SkipEmpty, 0);
-    RegisterStringParameter("ECollectionToUse", "Calorimeter (ECAL) Collection to Use", &ecal_col_use, "ECAL_FS0");
+    RegisterStringParameter("ECollectionToUse", "Calorimeter (ECAL) Collection to Use", &ecal_col_use, "ECAL_FS0,ECAL_FS1,ECAL_FS2,ECAL_FS3,ECAL_FS4");
     RegisterStringParameter("HCollectionToUse", "Calorimeter (HCAL) Collection to Use", &hcal_col_use, "FS0");
     RegisterIntParameter("E_n_fraction", "the n-th large E fraction", &n_fraction, 20);
     RegisterIntParameter("Advance", "Advanced analysis level", &enAda, 2);
