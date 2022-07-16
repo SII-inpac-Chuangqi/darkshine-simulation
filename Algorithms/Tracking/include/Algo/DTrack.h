@@ -40,6 +40,7 @@ public:
            std::vector<double> magnets);
     DTrack(const DTrack &oldTrack);
     DTrack(DTrack &&oldTrack);
+    DTrack& operator=(const DTrack&);
 
     ~DTrack() = default;
 

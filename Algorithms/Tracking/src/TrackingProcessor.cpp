@@ -4,6 +4,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <algorithm>
 
 //................................................................................//
 //ROOT
@@ -439,6 +440,11 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Post-processing
+        std::sort(tag_tracks.begin(), tag_tracks.end(), [](const DTrack &track1, const DTrack &track2)
+                                                        { return track1.GetPp() > track2.GetPp(); }   );
+        std::sort(rec_tracks.begin(), rec_tracks.end(), [](const DTrack &track1, const DTrack &track2)
+                                                        { return track1.GetPp() > track2.GetPp(); }   );
+
         for(auto &track : tag_tracks)
         {
             TagTrk2_pp.push_back(track.GetPp());
