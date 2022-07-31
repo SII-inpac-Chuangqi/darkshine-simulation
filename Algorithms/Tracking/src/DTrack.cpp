@@ -123,6 +123,8 @@ DTrack& DTrack::operator=(const DTrack &old_track)
 
     hits.clear();
     hits.assign(old_track.hits.begin(), old_track.hits.end());
+
+    return *this;
 }
 
 void DTrack::Fit(int method)
@@ -187,13 +189,16 @@ void DTrack::Evaluate()
     for(auto hit : hits)
     {
         auto contribution = hit->getPContribution();
-        for(auto particle : contribution)
+        if(contribution.size())
         {
-            auto itSearchParticle = particleCount.find(particle.getId());
-            if(itSearchParticle != particleCount.end())
-                itSearchParticle->second++;
-            else
-                particleCount.insert(std::pair(particle.getId(), 1));
+            for(auto particle : contribution)
+            {
+                auto itSearchParticle = particleCount.find(particle.getId());
+                if(itSearchParticle != particleCount.end())
+                    itSearchParticle->second++;
+                else
+                    particleCount.insert(std::pair(particle.getId(), 1));
+            }
         }
     }
 
