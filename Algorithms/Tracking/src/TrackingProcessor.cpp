@@ -26,7 +26,6 @@
 #include "Algo/Util.h"
 #include "Algo/TrkHit.h"
 #include "Algo/GreedyFinding.h"
-#include "Algo/DTrack.h"
 
 TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(
         std::move(name), std::move(evtwrt)) {
@@ -159,6 +158,10 @@ void TrackingProcessor::Begin() {
 }
 
 void TrackingProcessor::CleanEvt() {
+
+    std::vector<DTrack>().swap(tag_tracks_);
+    std::vector<DTrack>().swap(rec_tracks_);
+
     if(!clean)
     {
         std::vector<double>().swap(TagTrk2_x);
@@ -214,36 +217,39 @@ void TrackingProcessor::FillTruth(AnaEvent *evt,
                                   std::vector<DStep*> *initial_steps,
                                   std::vector<TrkHit> raw_tagtrk2_hits,
                                   std::vector<TrkHit> raw_rectrk2_hits) {
-/*
-        dAnaData->LoadTruthMcPHelper(evt->getMcPHelperCollection());
-        dAnaData->PrintTruthMcPHelper();
-        auto init_elec = dAnaData->getInitialElectron();
-        auto init_elec = dAnaData->getInitialElectron();
-        if(init_elec)
-        {
-            ECal_seed_x_truth.push_back(init_elec->getX());
-            ECal_seed_y_truth.push_back(init_elec->getY());
-            ECal_seed_px_truth.push_back(init_elec->getPx());
-            ECal_seed_py_truth.push_back(init_elec->getPy());
-            ECal_seed_pz_truth.push_back(init_elec->getPz());
-        }
-        else
-        {
-            ECal_seed_x_truth.push_back(std::nan("RETURN"));
-            ECal_seed_y_truth.push_back(std::nan("RETURN"));
-            ECal_seed_px_truth.push_back(std::nan("RETURN"));
-            ECal_seed_py_truth.push_back(std::nan("RETURN"));
-            ECal_seed_pz_truth.push_back(std::nan("RETURN"));
-        }
-*/
 
         dAnaData->LoadTruthInfo(evt->getTruthInfo());
         //dAnaData->PrintTruthInfo();
 
         TagTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::TagTrk);
         RecTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::RecTrk);
-        auto tracks = dAnaData->getTruthTracksAtECalFront();
-        for(auto track : tracks)
+        auto truth_tracks = dAnaData->getTruthTracksAtECalFront();
+
+        std::vector<const DTruthState*> truth_tracks_sorted;
+
+        for(const auto &track : rec_tracks_)
+        {
+            int min_id(-1);
+            double min_dis(INFINITY);
+
+            for(size_t i = 0; i < truth_tracks.size(); i++)
+            {
+                double dis = (std::hypot(truth_tracks.at(i)->vertex[0] - track.GetECalSeedX(),
+                                         truth_tracks.at(i)->vertex[1] - track.GetECalSeedY())
+                             );
+                if(dis < min_dis) {min_dis = dis; min_id = i;}
+            }
+
+            if(min_id >= 0 && min_id < static_cast<int>(truth_tracks.size()))
+            {
+                truth_tracks_sorted.push_back(truth_tracks.at(min_id));
+                truth_tracks.at(min_id) = nullptr;
+                truth_tracks.erase(std::remove(truth_tracks.begin(), truth_tracks.end(), nullptr), truth_tracks.end());
+            }
+        }
+
+        for(auto track : truth_tracks_sorted)
+        //for(auto track : truth_tracks)
         {
             ECal_seed_x_truth.push_back(track->vertex[0]);
             ECal_seed_y_truth.push_back(track->vertex[1]);
@@ -352,8 +358,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Tag tracker
-        std::vector<DTrack> tag_tracks;
-
         TrkHitPVecMap clus_tag_trkhit_map;
         if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
         {
@@ -389,7 +393,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                         track.Fit(Tag_fit_method);           //choose fitting method: Kalman filter
                         track.Evaluate();
 
-                        tag_tracks.push_back(track);
+                        tag_tracks_.push_back(track);
                     }
                 }
             }
@@ -397,8 +401,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Recoil tracker
-        std::vector<DTrack> rec_tracks;
-
         TrkHitPVecMap clus_rec_trkhit_map;
         if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
         {
@@ -430,9 +432,9 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                      magnet_at_origin);      //magnet vector to handle exception
                         track.SetVerbose(Verbose);
                         track.Fit(Rec_fit_method);           //choose fitting method: Kalman filter
-                        track.Evaluate();
+                        //track.Evaluate();
 
-                        rec_tracks.push_back(track);
+                        rec_tracks_.push_back(track);
                     }
                 }
             }
@@ -440,12 +442,12 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Post-processing
-        std::sort(tag_tracks.begin(), tag_tracks.end(), [](const DTrack &track1, const DTrack &track2)
+        std::sort(tag_tracks_.begin(), tag_tracks_.end(), [](const DTrack &track1, const DTrack &track2)
                                                         { return track1.GetPp() > track2.GetPp(); }   );
-        std::sort(rec_tracks.begin(), rec_tracks.end(), [](const DTrack &track1, const DTrack &track2)
+        std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](const DTrack &track1, const DTrack &track2)
                                                         { return track1.GetPp() > track2.GetPp(); }   );
 
-        for(auto &track : tag_tracks)
+        for(auto &track : tag_tracks_)
         {
             TagTrk2_pp.push_back(track.GetPp());
             TagTrk2_track_chi2.push_back(track.GetChi2());
@@ -458,7 +460,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             }
         }
 
-        for(auto &track : rec_tracks)
+        for(auto &track : rec_tracks_)
         {
             RecTrk2_pp.push_back(track.GetPp());
             RecTrk2_track_chi2.push_back(track.GetChi2());

@@ -16,6 +16,7 @@
 //................................................................................//
 //TRACKING
 #include "Algo/TrkHit.h"
+#include "Algo/DTrack.h"
 #include "Algo/Digitization.h"
 
 using namespace std;
@@ -107,6 +108,9 @@ private:
 //................................................................................//
 //Reconstructed
 //................................................................................//
+    std::vector<DTrack> tag_tracks_;
+    std::vector<DTrack> rec_tracks_;
+
     int TagTrk2_track_No{-1};
     std::vector<double> TagTrk2_pp{};
     std::vector<double> TagTrk2_pl{};
