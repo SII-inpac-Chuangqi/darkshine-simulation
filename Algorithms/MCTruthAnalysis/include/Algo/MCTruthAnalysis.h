@@ -65,6 +65,7 @@ private:
     double Truth_P[3]={0};
     double Truth_Recoil_E;
     double Truth_Recoil_theta;
+    double Truth_Recoil_pT;
     //double trans_sep;
     double Signal_Detectable=1;
     // For visible decay

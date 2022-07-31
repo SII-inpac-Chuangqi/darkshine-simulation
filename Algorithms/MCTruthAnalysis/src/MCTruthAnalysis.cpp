@@ -47,11 +47,12 @@ void MCTruthAnalysis::Begin() {
         EvtWrt->RegisterDoubleVariable("Truth_Pi", &Pi, "Truth_Pi/D");
         EvtWrt->RegisterDoubleVariable("Truth_Pf", &Pf, "Truth_Pf/D");
 
-        EvtWrt->RegisterDoubleVariable("Truth_Pi", &Pi, "Truth_Pi/D");
-        EvtWrt->RegisterDoubleVariable("Truth_Pf", &Pf, "Truth_Pf/D");
+        //EvtWrt->RegisterDoubleVariable("Truth_Pi", &Pi, "Truth_Pi/D");
+        //EvtWrt->RegisterDoubleVariable("Truth_Pf", &Pf, "Truth_Pf/D");
         EvtWrt->RegisterDoubleVariable("Truth_P", Truth_P, "Truth_P[3]/D");
         EvtWrt->RegisterDoubleVariable("Target_Recoil_E", &Truth_Recoil_E, "Target_Recoil_E/D");
         EvtWrt->RegisterDoubleVariable("Target_Recoil_theta", &Truth_Recoil_theta, "Target_Recoil_theta/D");
+        EvtWrt->RegisterDoubleVariable("Target_Recoil_pT", &Truth_Recoil_pT, "Target_Recoil_pT/D");
         EvtWrt->RegisterDoubleVariable("trans_sep", &trans_sep,"trans_sep/D");
         // here for visible decay 
         EvtWrt->RegisterDoubleVariable("Decay_X", &Decay_X, "Decay_X/D");
@@ -145,17 +146,20 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
             }
             prev_s = s;
             if (s->getZ() <0.175 && s->getZ() > -0.175){
-                Truth_P[0]=s->getPx();
-                Truth_P[1]=s->getPy();
-                Truth_P[2]=s->getPz();
-                Truth_Recoil_E=s->getE();
+                Truth_P[0] = s->getPx();
+                Truth_P[1] = s->getPy();
+                Truth_P[2] = s->getPz();
+                Truth_Recoil_E = s->getE();
+                TLorentzVector m(Truth_P,Truth_Recoil_E);
+                Truth_Recoil_theta = m.Theta();
+                Truth_Recoil_pT = m.Perp();
             }
 
             if (s->getZ() < 181 && s->getZ() > 180){
                 //Truth_Recoil_E=s->getE();
-                double x= s->getX()-Initial_X;
-                double y= s->getY()-Initial_Y;
-                trans_sep= pow((x*x+y*y),0.5);
+                double x = s->getX()-Initial_X;
+                double y = s->getY()-Initial_Y;
+                trans_sep = pow((x*x+y*y),0.5);
             }
              // Find dark photon and decay vertex
             
