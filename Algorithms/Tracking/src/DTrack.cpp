@@ -90,6 +90,41 @@ DTrack::DTrack(DTrack &&oldTrack) : pdg(std::move(oldTrack.pdg)),         //phys
     oldTrack.hits.clear();
 }
 
+DTrack& DTrack::operator=(const DTrack &old_track)
+{
+    if(this == &old_track) return *this;
+
+    verbose_ = old_track.verbose_;
+
+    pdg = old_track.pdg;
+    sign = old_track.sign;
+    px = old_track.px;
+    py = old_track.py;
+    pz = old_track.pz;
+    pp = old_track.pp;
+    pl = old_track.pl;
+    ECal_seed_x = old_track.ECal_seed_x;
+    ECal_seed_y = old_track.ECal_seed_y;
+    ECal_seed_px = old_track.ECal_seed_px;
+    ECal_seed_py = old_track.ECal_seed_py;
+    ECal_seed_pz = old_track.ECal_seed_pz;
+
+    quality = old_track.quality;
+
+    By = old_track.By; 
+
+    chi2 = old_track.chi2;
+    xSigma = old_track.xSigma;
+    ySigma = old_track.ySigma;
+
+    preR = old_track.preR;
+    preXc = old_track.preXc;
+    preYc = old_track.preYc;
+
+    hits.clear();
+    hits.assign(old_track.hits.begin(), old_track.hits.end());
+}
+
 void DTrack::Fit(int method)
 {
     Fitting *fitter = nullptr;
@@ -98,15 +133,23 @@ void DTrack::Fit(int method)
     {
         case dKalman  :
                         fitter = new KalmanFitting(hits,
-                                                   {preR, //Fix to 2 ordered parameters! --bending radius as fitting seed
-                                                    By}   //                             --magnet value to manage exception condition
+                                                   {preR,   //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                    By},    //                             --magnet value to manage exception condition
+                                                   verbose_ //Verbose
                                                   );
                         break;
         case dNone    :
-                        std::cout << "[INFO] ==> Fit not required" << std::endl;
+                        if(verbose_ > 0)
+                            std::cout << "[INFO] ==> Fit not required" << std::endl;
                         break;
         default :
-                        std::cerr << "[WARNING] ==> Fit method not found. Use default fitter GenFit Kalman fitter" << std::endl;
+                        if(verbose_ > 0)
+                            std::cerr << "[WARNING] ==> Fit method not found. Use default fitter GenFit Kalman fitter" << std::endl;
+                        fitter = new KalmanFitting(hits,
+                                                   {preR,   //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                    By},    //                             --magnet value to manage exception condition
+                                                   verbose_ //Verbose
+                                                  );
     }
 
     if(fitter)

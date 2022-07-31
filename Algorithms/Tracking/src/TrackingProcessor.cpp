@@ -4,6 +4,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <algorithm>
 
 //................................................................................//
 //ROOT
@@ -40,15 +41,18 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
     // Add description for this AnaProcessor
     Description = "Tracking by Yi-Fan Zhu";
 
+    RegisterIntParameter("verbose", "Verbose", &Verbose, 0);
     RegisterIntParameter("clean", "Clean mode: no truth information", &clean, 1);
     RegisterIntParameter("if_strip", "If use strip structures in trackers", &if_strip, 1);
     RegisterIntParameter("if_smear", "If smear hits in strip structure", &if_smear, 1);
     RegisterIntParameter("Tag_fit_method",
                          "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
-                         &Tag_fit_method, 1);
+                         &Tag_fit_method,
+                         1);
     RegisterIntParameter("Rec_fit_method",
                          "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
-                         &Rec_fit_method, 1);
+                         &Rec_fit_method,
+                         1);
     RegisterDoubleParameter("con_field", "Const magnet field", &con_field, -1.5);
 }
 
@@ -63,6 +67,9 @@ void TrackingProcessor::Begin() {
 //Load magnet
 //................................................................................//
     magnets = dAnaData->getMagFieldVec();
+    if(magnets.size() != 3 || !magnets.at(0) || !magnets.at(1) || !magnets.at(2))
+        dAnaData->setConstMagnetField({0., con_field, 0.});
+
     if(Tag_fit_method == dKalman || Rec_fit_method == dKalman)
     {
         genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
@@ -72,9 +79,12 @@ void TrackingProcessor::Begin() {
                                                                            *(magnets.at(2)),
                                                                            genfit::Tesla)); //T->kGs
         } else {
-            genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., con_field*10., 0.));
+            genfit::FieldManager::getInstance()->init(new genfit::ConstField(dAnaData->getMagnetFieldAt({0., 0., 0.}).at(0)*10.,
+                                                                             dAnaData->getMagnetFieldAt({0., 0., 0.}).at(1)*10., //T->kGs
+                                                                             dAnaData->getMagnetFieldAt({0., 0., 0.}).at(2)*10.));
         }
     }
+
 //................................................................................//
 //Register dp_ana.root
 //................................................................................//
@@ -298,9 +308,9 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     [[maybe_unused]] bool if_reco_tag_hits(false);
     [[maybe_unused]] bool if_reco_rec_hits(false);
 
-    std::vector<double> magnet_at_origin = {magnets.at(0) ? magnets.at(0)->GetField(0., 0., 0.) : 0.,
-                                            magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.) : con_field,
-                                            magnets.at(2) ? magnets.at(2)->GetField(0., 0., 0.) : 0.};
+    std::vector<double> magnet_at_origin = {magnets.size() && magnets.at(0) ? magnets.at(0)->GetField(0., 0., 0.) : 0.,
+                                            magnets.size() && magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.) : con_field,
+                                            magnets.size() && magnets.at(2) ? magnets.at(2)->GetField(0., 0., 0.) : 0.};
 
 //................................................................................//
 //Initialize vars
@@ -375,6 +385,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                      find_tag.GetCenterX(i), //not used in Kalman filter, reserved
                                      find_tag.GetCenterY(i), //not used in Kalman filter, reserved
                                      magnet_at_origin);      //magnet vector to handle exception
+                        track.SetVerbose(Verbose);
                         track.Fit(Tag_fit_method);           //choose fitting method: Kalman filter
                         track.Evaluate();
 
@@ -417,6 +428,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                      find_rec.GetCenterX(i), //not used in Kalman filter, reserved
                                      find_rec.GetCenterY(i), //not used in Kalman filter, reserved
                                      magnet_at_origin);      //magnet vector to handle exception
+                        track.SetVerbose(Verbose);
                         track.Fit(Rec_fit_method);           //choose fitting method: Kalman filter
                         track.Evaluate();
 
@@ -428,6 +440,11 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Post-processing
+        std::sort(tag_tracks.begin(), tag_tracks.end(), [](const DTrack &track1, const DTrack &track2)
+                                                        { return track1.GetPp() > track2.GetPp(); }   );
+        std::sort(rec_tracks.begin(), rec_tracks.end(), [](const DTrack &track1, const DTrack &track2)
+                                                        { return track1.GetPp() > track2.GetPp(); }   );
+
         for(auto &track : tag_tracks)
         {
             TagTrk2_pp.push_back(track.GetPp());

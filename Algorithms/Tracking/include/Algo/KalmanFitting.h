@@ -34,7 +34,7 @@ public:
 //................................................................................//
 //Constructor
     KalmanFitting() {}
-    KalmanFitting(const TrkHitPVec &track, std::initializer_list<double>);
+    KalmanFitting(const TrkHitPVec &track, std::initializer_list<double>, int verbose = 0);
     ~KalmanFitting()
     {
         //delete measurement; measurement = nullptr;

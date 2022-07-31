@@ -44,6 +44,7 @@ public:
 
 //................................................................................//
 //Get
+    virtual int    GetVerbose() const {return verbose_;}
     virtual double GetPx() const {return px;}
     virtual double GetPy() const {return py;}
     virtual double GetPz() const {return pz;}
@@ -59,7 +60,15 @@ public:
     virtual double GetXSigma() const {return xSigma;}
     virtual double GetYSigma() const {return ySigma;}
 
+//................................................................................//
+//Set
+    virtual void   SetVerbose(int verbose) {verbose_ = verbose;}
+
 protected:
+//................................................................................//
+//Verbose
+    int verbose_{0};
+
 //................................................................................//
 //Results
     double px{RETURN};

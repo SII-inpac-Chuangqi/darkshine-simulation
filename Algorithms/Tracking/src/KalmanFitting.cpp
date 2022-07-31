@@ -28,8 +28,10 @@
 
 //................................................................................//
 //Constructor
-KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<double> list) : hitCov(2)
+KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<double> list, int verbose) : hitCov(2)
 {
+    verbose_ = verbose;
+
     try
     {
         if(track.size() < 3) throw -1;
@@ -40,7 +42,8 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<doub
     }
     catch(int e)
     {
-        std::cerr << "[WARNING] ==> Fewer than 3 hits in this track" << std::endl;
+        if(verbose_ > 0)
+            std::cerr << "[WARNING] ==> Fewer than 3 hits in this track" << std::endl;
 
         auto it = list.begin();
         double preR = *it; it++;
@@ -49,8 +52,11 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<doub
     }
     catch(genfit::Exception& e)
     {
-        std::cerr << "[WARNING] ==> " << e.what();
-        std::cerr << "[WARNING] ==> Exception, next track" << std::endl;
+        if(verbose_ > 0)
+        {
+            std::cerr << "[WARNING] ==> " << e.what();
+            std::cerr << "[WARNING] ==> Exception, next track" << std::endl;
+        }
 
         auto it = list.begin();
         double preR = *it; it++;

@@ -40,11 +40,14 @@ public:
     ~Digitization() = default;
 
     void SetIfSmear(bool if_smear);
+//................................................................................//
 //Get tracker information
     void GetTrackerInfo(bool if_strip);
+//................................................................................//
 //Separate tracker hits into vectors by layers
     void Layering(const std::vector<TrkHit> &trk1_hits, const std::vector<TrkHit> &trk2_hits, TrkHitPVecMap &recoTrkHitMap,
                   int detector);
+//................................................................................//
 //Set strip cluster width
     void SetClusterWidth(double cluster_width) {cluster_width_ = cluster_width;}
 

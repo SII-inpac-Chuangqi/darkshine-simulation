@@ -24,8 +24,8 @@
 
 //................................................................................//
 //Fitting methods implemented in Dark Shine tracking
-//--dNone: No method specified, return pre-fitting results from track finding
-//--dKalman: Kalman fitter from GenFit
+//-- dNone: No method specified, return pre-fitting results from track finding
+//-- dKalman: Kalman fitter from GenFit
 enum FittingMethods {dNone, dKalman};
 
 class DTrack
@@ -40,12 +40,14 @@ public:
            std::vector<double> magnets);
     DTrack(const DTrack &oldTrack);
     DTrack(DTrack &&oldTrack);
+    DTrack& operator=(const DTrack&);
 
     ~DTrack() = default;
 
 //................................................................................//
 //Get
 //................................................................................//
+    int GetVerbose() const {return verbose_;}
     int GetPDG()  const {return pdg;}
     int GetSign() const {return sign;}
     double GetPx() const {return px;}
@@ -70,11 +72,12 @@ public:
 //................................................................................//
 //Set
 //................................................................................//
-    void SetPDG(int newPDG)  {pdg = newPDG;}
+    void SetVerbose(int verbose) {verbose_ = verbose;}
+    void SetPDG(int newPDG)   {pdg = newPDG;}
     void SetSign(int newSign) {sign = newSign;}
-    void SetPx(double newPx) {px = newPx;}
-    void SetPy(double newPy) {py = newPy;}
-    void SetPz(double newPz) {pz = newPz;}
+    void SetPx(double newPx)  {px = newPx;}
+    void SetPy(double newPy)  {py = newPy;}
+    void SetPz(double newPz)  {pz = newPz;}
     void SetChi2(double newChi2) {chi2 = newChi2;}
 
 //................................................................................//
@@ -84,6 +87,10 @@ public:
     void Evaluate();
 
 private:
+//................................................................................//
+//Verbose
+    int verbose_{0};
+
 //................................................................................//
 //Physical properties
     int pdg{11};
