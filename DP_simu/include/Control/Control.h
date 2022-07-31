@@ -127,6 +127,7 @@ public:
     bool build_rec_tracker;
     bool build_ECAL;
     bool build_HCAL;
+    bool build_SideHCAL;
 
     bool build_only_target;
     bool build_only_tag_tracker;
@@ -229,6 +230,19 @@ public:
     G4ThreeVector HCAL_Module_Gap;
     G4double HCAL_Absorber_Thickness;
     G4bool HCAL_Show_Cell{false};
+
+
+    //----------------------------------------
+    // Side HCAL
+    G4String SideHCAL_Name;
+    G4ThreeVector Pos_SideHCALRegion_0;
+    std::vector<G4ThreeVector> Pos_SideHCALRegion; // dependent
+    G4ThreeVector Size_SideHCALRegion;
+    G4ThreeVector SideHCAL_Size_Dir;
+    std::vector<std::tuple<int, int, double> > SideHCAL_Absorber_Thickness_List;
+    G4double SideHCAL_Absorber_Thickness_Total;
+    G4int SideHCAL_Layer_N; // dependent
+    G4ThreeVector Size_SideHCALCell; // dependent
 
     //========================================
     /* Biasing */

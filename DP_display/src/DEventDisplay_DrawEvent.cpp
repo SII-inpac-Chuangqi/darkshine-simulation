@@ -373,10 +373,16 @@ TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) const {
     auto *mother_node = gGeoManager->GetMother();
     auto *cur_shape = dynamic_cast<TGeoBBox *>(mother_node->GetVolume()->GetShape());
     auto RotationMatrix = mother_node->GetMatrix()->GetRotationMatrix();
+    auto *mother2_node = gGeoManager->GetMother(2);
+    auto RotationMatrix2 = mother2_node->GetMatrix()->GetRotationMatrix();
 
-    double hx = fabs(cur_shape->GetDX() * RotationMatrix[0] + cur_shape->GetDY() * RotationMatrix[1] + cur_shape->GetDZ() * RotationMatrix[2]);
-    double hy = fabs(cur_shape->GetDX() * RotationMatrix[3] + cur_shape->GetDY() * RotationMatrix[4] + cur_shape->GetDZ() * RotationMatrix[5]);
-    double hz = fabs(cur_shape->GetDX() * RotationMatrix[6] + cur_shape->GetDY() * RotationMatrix[7] + cur_shape->GetDZ() * RotationMatrix[8]);
+    double hx0 = fabs(cur_shape->GetDX() * RotationMatrix[0] + cur_shape->GetDY() * RotationMatrix[1] + cur_shape->GetDZ() * RotationMatrix[2]);
+    double hy0 = fabs(cur_shape->GetDX() * RotationMatrix[3] + cur_shape->GetDY() * RotationMatrix[4] + cur_shape->GetDZ() * RotationMatrix[5]);
+    double hz0 = fabs(cur_shape->GetDX() * RotationMatrix[6] + cur_shape->GetDY() * RotationMatrix[7] + cur_shape->GetDZ() * RotationMatrix[8]);
+
+    double hx = fabs(hx0 * RotationMatrix2[0] + hy0 * RotationMatrix2[1] + hz0 * RotationMatrix2[2]);
+    double hy = fabs(hx0 * RotationMatrix2[3] + hy0 * RotationMatrix2[4] + hz0 * RotationMatrix2[5]);
+    double hz = fabs(hx0 * RotationMatrix2[6] + hy0 * RotationMatrix2[7] + hz0 * RotationMatrix2[8]);
 
     double abs_pos[3] = {hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT};
     double half_size[3] = {hx, hy, hz};

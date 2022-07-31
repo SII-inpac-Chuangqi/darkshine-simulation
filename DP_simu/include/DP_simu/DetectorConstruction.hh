@@ -51,6 +51,7 @@
 #include "Geometry/ECAL_AllZ.h"
 #include "Geometry/HCAL_Construct.h"
 #include "Geometry/Tracker_Construct.h"
+#include "Geometry/SideHCAL_Construct.h"
 
 #include <vector>
 
@@ -73,6 +74,8 @@ class ECAL_XYCrossing;
 class ECAL_AllZ;
 
 class HCAL_Construct;
+
+class SideHCAL_Construct;
 
 class DetectorConstruction : public G4VUserDetectorConstruction {
 public:
@@ -118,6 +121,9 @@ private:
 
     // HCAL Construction Class
     HCAL_Construct *HCAL_Con;
+
+    // Side HCAL Construction Class
+    SideHCAL_Construct *SideHCAL_Con;
 
     //global option
     G4UserLimits *fStepLimit; // pointer to user step limits

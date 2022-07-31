@@ -72,6 +72,8 @@ DetectorConstruction::DetectorConstruction() {
     // Build-in HCAL Configuration definition
     HCAL_Con = new HCAL_Construct();
 
+    SideHCAL_Con = new SideHCAL_Construct();
+
     fCheckOverlaps = dControl->check_overlaps;
     fStepLimit = nullptr;
 
@@ -86,6 +88,7 @@ DetectorConstruction::~DetectorConstruction() {
     delete ECAL_Con1;
     delete ECAL_Con2;
     delete HCAL_Con;
+    delete SideHCAL_Con;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -116,6 +119,9 @@ void DetectorConstruction::DefineParameters() {
     /// HCAL
     HCAL_Con->DefineParameters();
 
+    /// Side HCAL
+    SideHCAL_Con->DefineParameters();
+
     ///  World
     World_Mat = dControl->World_Mat;
     Size_World = dControl->Size_World;
@@ -139,6 +145,8 @@ G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
     if (dControl->build_ECAL) ECAL_Con2->Build(0, World_LV, fCheckOverlaps);
     // Build HCAL
     if (dControl->build_HCAL) HCAL_Con->Build(World_LV, fCheckOverlaps);
+    // Build Side HCAL
+    if (dControl->build_SideHCAL) SideHCAL_Con->Build(World_LV, fCheckOverlaps);
 
     // Book RootMng
     dRootMng->book();
@@ -179,7 +187,8 @@ void DetectorConstruction::DefineWorld() {
 void DetectorConstruction::DefineMagnetShield() {
     double MagShieldHalfX = 0.5 * std::max(dControl->rec_Size_TrackerRegion.x(), dControl->Size_ECALRegion.x());
     double MagShieldHalfY = 0.5 * std::max(dControl->rec_Size_TrackerRegion.y(), dControl->Size_ECALRegion.y());
-    double MagShieldHalfZ = dControl->rec_Pos_TrackerRegion.z() + 0.5 * dControl->rec_Size_TrackerRegion.z() + 1 * mm + dControl->Size_ECALRegion.z();
+//    double MagShieldHalfZ = dControl->rec_Pos_TrackerRegion.z() + 0.5 * dControl->rec_Size_TrackerRegion.z() + 1 * mm + dControl->Size_ECALRegion.z();
+    double MagShieldHalfZ = 0.5 * dControl->tag_Size_TrackerRegion.z() + dControl->Target_Size.z() + 2 * dControl->Trk_Tar_Dis + dControl->rec_Size_TrackerRegion.z();
     auto MagShield_Outer_Box = new G4Box("MagnetShield_Outer_Box",
                                    MagShieldHalfX + dControl->MagnetShield_Thickness,
                                    MagShieldHalfY + dControl->MagnetShield_Thickness,
@@ -198,7 +207,7 @@ void DetectorConstruction::DefineMagnetShield() {
                                            "MagnetShield_LV",
                                            nullptr, nullptr, nullptr);
     MagShield_LV->SetVisAttributes(new G4VisAttributes(G4Colour(1,0,0)));
-    new G4PVPlacement(nullptr, dControl->Target_Pos, MagShield_LV, "MagnetShield",
+    new G4PVPlacement(nullptr, dControl->tag_Pos_TrackerRegion, MagShield_LV, "MagnetShield",
                       World_LV, false, 0, fCheckOverlaps);
 }
 
@@ -228,6 +237,7 @@ void DetectorConstruction::ConstructSDandField() {
     if (dControl->build_rec_tracker) RecTrk->BuildSDandField(dRecoil);
     if (dControl->build_ECAL) ECAL_Con2->BuildSD();
     if (dControl->build_HCAL) HCAL_Con->BuildSD();
+    if (dControl->build_SideHCAL) SideHCAL_Con->BuildSD();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

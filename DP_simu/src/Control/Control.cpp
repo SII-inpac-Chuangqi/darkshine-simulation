@@ -375,30 +375,74 @@ void Control::RebuildVariables() {
     if (build_only_HCAL) Pos_HCALRegion = G4ThreeVector(0, 0, 0);
 
     //----------------------------------------
+    // Side HCAL
+    prev_endn = 0;
+    for (auto thick_i: SideHCAL_Absorber_Thickness_List) {
+        std::tie(startn, endn, thickness) = thick_i;
+        /// sanity check
+        assert(startn <= endn && "[ERROR] SideHCAL_Absorber_Thickness_List invalid");
+        assert(startn == prev_endn + 1 && "[ERROR] SideHCAL_Absorber_Thickness_List must be continuous, and start from 1");
+        assert(thickness >= 0 && "[ERROR] SideHCAL_Absorber_Thickness_List invalid");
+        /// add Thickness
+        SideHCAL_Absorber_Thickness_Total += thickness * (endn - startn + 1);
+        prev_endn = endn;
+        SideHCAL_Layer_N = endn + 1;
+    }
+    Size_SideHCALCell.setX(SideHCAL_Size_Dir.x() + HCAL_Wrap_Size.x());
+    Size_SideHCALCell.setY(SideHCAL_Size_Dir.y() + HCAL_Wrap_Size.y());
+    Size_SideHCALCell.setZ(SideHCAL_Size_Dir.z() + HCAL_Wrap_Size.z() + HCAL_APD_Size.z());
+
+    // ┌──╥──┬────────┐
+    // │  0  │════ 1 ═│
+    // │  ║  ├──┬──╥──┤
+    // ├──╨──┴──┤  ║  │
+    // │═ 3 ════│  2  │   y
+    // └────────┴──╨──┘ x─┘⊗z
+    Size_SideHCALRegion.setX(SideHCAL_Layer_N * Size_SideHCALCell.x() + SideHCAL_Absorber_Thickness_Total + eps);
+    Size_SideHCALRegion.setY(Size_SideHCALCell.z() + eps);
+    Size_SideHCALRegion.setZ(Size_SideHCALCell.y() + eps);
+
+    Pos_SideHCALRegion_0 = G4ThreeVector(0.5 * Size_ECALRegion.x() + 0.5 * Size_SideHCALRegion.x() + 1 * mm,
+                                         -0.5 * Size_ECALRegion.y() + 0.5 * Size_SideHCALRegion.y(),
+                                         Pos_HCALRegion.z() - 0.5 * Size_HCALRegion.z() - 0.5 * Size_SideHCALRegion.z() - 1 * mm);
+    Pos_SideHCALRegion.emplace_back(Pos_SideHCALRegion_0);
+    Pos_SideHCALRegion.emplace_back(G4ThreeVector(- Pos_SideHCALRegion_0.y(),
+                                               Pos_SideHCALRegion_0.x(),
+                                               Pos_SideHCALRegion_0.z()));
+    Pos_SideHCALRegion.emplace_back(G4ThreeVector(-Pos_SideHCALRegion_0.x(),
+                                               -Pos_SideHCALRegion_0.y(),
+                                               Pos_SideHCALRegion_0.z()));
+    Pos_SideHCALRegion.emplace_back(G4ThreeVector(Pos_SideHCALRegion_0.y(),
+                                                  -Pos_SideHCALRegion_0.x(),
+                                                  Pos_SideHCALRegion_0.z()));
+    //----------------------------------------
     // World
     World_Mat = G4Material::GetMaterial("vacuum");
     //G4double l = 2.0 * (Pos_HCALRegion.z() + Size_HCALRegion.x());
-    G4double borderX[6] = {0.2 * m,
+    G4double borderX[7] = {0.2 * m,
                            build_rec_tracker * (fabs(rec_Pos_TrackerRegion.x()) + rec_Size_TrackerRegion.x()),
                            build_tag_tracker * (fabs(tag_Pos_TrackerRegion.x()) + tag_Size_TrackerRegion.x()),
                            build_ECAL * (fabs(Pos_ECALRegion.x()) + Size_ECALRegion.x()),
                            build_HCAL * (fabs(Pos_HCALRegion.x()) + Size_HCALRegion.x()),
+                           build_SideHCAL * (fabs(Pos_SideHCALRegion_0.y() + Size_SideHCALRegion.y())),
                            build_MagnetShield * ( std::max(rec_Size_TrackerRegion.x(),Size_ECALRegion.x()) + 2 * MagnetShield_Thickness )};
-    G4double borderY[6] = {0.2 * m,
+    G4double borderY[7] = {0.2 * m,
                            build_rec_tracker * (fabs(rec_Pos_TrackerRegion.y()) + rec_Size_TrackerRegion.y()),
                            build_tag_tracker * (fabs(tag_Pos_TrackerRegion.y()) + tag_Size_TrackerRegion.y()),
                            build_ECAL * (fabs(Pos_ECALRegion.y()) + Size_ECALRegion.y()),
                            build_HCAL * (fabs(Pos_HCALRegion.y()) + Size_HCALRegion.y()),
+                           build_SideHCAL * (fabs(Pos_SideHCALRegion_0.y() + Size_SideHCALRegion.y())),
                            build_MagnetShield * ( std::max(rec_Size_TrackerRegion.y(), Size_ECALRegion.y()) + 2 * MagnetShield_Thickness )};
-    G4double borderZ[6] = {0.2 * m,
+    G4double borderZ[7] = {0.2 * m,
                            build_rec_tracker * (fabs(rec_Pos_TrackerRegion.z()) + rec_Size_TrackerRegion.z()),
                            build_tag_tracker * (fabs(tag_Pos_TrackerRegion.z()) + tag_Size_TrackerRegion.z()),
                            build_ECAL * (fabs(Pos_ECALRegion.z()) + Size_ECALRegion.z()),
                            build_HCAL * (fabs(Pos_HCALRegion.z()) + Size_HCALRegion.z()),
+                           build_SideHCAL * (fabs(Pos_SideHCALRegion_0.z() + Size_SideHCALRegion.z())),
                            build_MagnetShield * 2 * ( rec_Pos_TrackerRegion.z() + 0.5 * rec_Size_TrackerRegion.z() + 1 * mm + Size_ECALRegion.z() )};
-    G4double lx = *std::max_element(borderX, borderX + 6);
-    G4double ly = *std::max_element(borderY, borderY + 6);
-    G4double lz = *std::max_element(borderZ, borderZ + 6);
+    G4double lx = *std::max_element(borderX, borderX + 7);
+    G4double ly = *std::max_element(borderY, borderY + 7);
+    G4double lz = *std::max_element(borderZ, borderZ + 7);
     G4double lzoom = 2;
     Size_World = G4ThreeVector(lzoom * lx, lzoom * ly, lzoom * lz);
 
@@ -730,6 +774,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         build_rec_tracker = Node["Geometry"]["build_rec_tracker"].as<bool>();
         build_ECAL = Node["Geometry"]["build_ECAL"].as<bool>();
         build_HCAL = Node["Geometry"]["build_HCAL"].as<bool>();
+        build_SideHCAL = Node["Geometry"]["build_SideHCAL"].as<bool>();
         build_only_target = Node["Geometry"]["build_only_target"].as<bool>();
         build_only_tag_tracker = Node["Geometry"]["build_only_tag_tracker"].as<bool>();
         build_only_rec_tracker = Node["Geometry"]["build_only_rec_tracker"].as<bool>();
@@ -833,6 +878,14 @@ bool Control::ReadYAML(const G4String &file_in) {
 
         HCAL_Show_Cell = Node["Geometry"]["HCAL"]["HCAL_Show_Cell"].IsDefined() &&
                          Node["Geometry"]["HCAL"]["HCAL_Show_Cell"].as<bool>();
+        SideHCAL_Name = Node["Geometry"]["HCAL"]["SideHCAL_Name"].as<std::string>();
+        SideHCAL_Size_Dir = readV3(Node["Geometry"]["HCAL"]["SideHCAL_Size_Dir"],true);
+        for (auto i: Node["Geometry"]["HCAL"]["SideHCAL_Absorber_Thickness_List"]) {
+            SideHCAL_Absorber_Thickness_List.emplace_back(
+                    i[0].as<int>(),
+                    i[1].as<int>(),
+                    i[2].as<double>() * G4UnitDefinition::GetValueOf(i[3].as<std::string>()));
+        }
 
         //========================================
         /* Optical */
