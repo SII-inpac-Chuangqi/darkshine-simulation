@@ -45,6 +45,11 @@ struct DetPVDef {
             "HCAL_FiberClad_PV",                   // 25
             "HCAL_PV",                             // 26
             "MagnetShield",                        // 27
+            "SideHCAL",                            // 28
+            "SideHCAL_AbsPV",                      // 29
+            "SideHCAL_LayerPV",                    // 30
+            "SideHCAL_APDWorld_PV",                // 31
+            "SideHCAL_PV"                          // 32
     };
     /** the map of process types */
     unordered_map<string, int> dDetPVMap;
