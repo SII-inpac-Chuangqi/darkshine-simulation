@@ -34,7 +34,7 @@ general_particle_source:
     ene/mono: "8 GeV"
     #direction: "0 0 1"
     #position: "0 0 -61 cm"
-  beam_on: 10
+  beam_on: 5000
 
 ###########################################
 # Global Variables
@@ -181,11 +181,12 @@ Optical:
 Geometry:
   # Build options
   build_target: true
-  build_MagnetShield: true
+  build_MagnetShield: false
   build_tag_tracker: true
   build_rec_tracker: true
   build_ECAL: true
   build_HCAL: true
+  build_SideHCAL: true
 
   # Build only
   build_only_target: false
@@ -307,6 +308,14 @@ Geometry:
       - [ 86, 100,  50, "mm"]
     HCAL_Module_Gap: [0.5 , "mm", 0.5, "mm", 0, "um"]
     HCAL_Show_Cell: false
+
+    # Side HCAL
+    SideHCAL_Name: "SideHCAL"
+    SideHCAL_Size_Dir: [1, "cm", 45.511, "cm", 228.041, "cm"]
+    SideHCAL_Absorber_Thickness_List:
+      - [  1,  40,   5, "mm"] # [start, end, thickness, unit]. Start from 1. Set thickness value to zero will skip this Absorber layer.
+      - [ 41,  65,  20, "mm"]
+      - [ 66,  74,  30, "mm"]
 # End of File
 ---
 

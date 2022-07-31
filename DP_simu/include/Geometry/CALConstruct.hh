@@ -193,6 +193,10 @@ public:
         fGlueMaterial = glue;
     };
 
+    void SetHepRot(G4RotationMatrix *hepRot) {
+        HepRot = hepRot;
+    }
+
     std::vector<G4LogicalVolume *> GetCaloLVVector() { return fCaloLVVector; };
 
     std::vector<G4LogicalVolume *> GetWrapLVVector() { return fWrapLVVector; };
@@ -275,7 +279,7 @@ private:
     G4double AbsZHalfLength{0.};
     G4Material *fAbsMaterial{nullptr};
 
-//    G4RotationMatrix *HepRot{nullptr};
+    G4RotationMatrix *HepRot{nullptr};
 
     // Unity LV
     // 0: all Z, 1: XYcrossing

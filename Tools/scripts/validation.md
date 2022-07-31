@@ -35,3 +35,7 @@ Validation of ECAL variables
 
 ![plot](validation_plots/fig_9.png)
 
+![plot](validation_plots/fig_10.png)
+
+![plot](validation_plots/fig_11.png)
+

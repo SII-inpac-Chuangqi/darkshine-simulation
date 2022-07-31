@@ -65,6 +65,13 @@ variables:
     range: [ 25, 0,25 ] # [bin size, min, max]
     label: [ "N_Cluster", "" ]
 
+  - name: "HCAL_E_total[0]"
+    range: [ 20, 0, 1200 ] # [bin size, min, max]
+    label: [ "E^{HCAL}_{total}", "MeV" ]
+  - name: "HCAL_E_Max_Cell[0]"
+    range: [ 20, 0, 450 ]
+    label: [ "E^{HCAL}_{Cell Max}", "MeV"]
+
 samples:
   - name: "Testing"
     # Mandatory
