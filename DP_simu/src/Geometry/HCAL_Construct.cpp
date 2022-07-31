@@ -104,7 +104,7 @@ bool HCAL_Construct::BuildSD() {
         LV->SetSensitiveDetector(HCalAPDSD);
     }
 
-    return false;
+    return true;
 }
 
 HCAL_Construct::~HCAL_Construct() {

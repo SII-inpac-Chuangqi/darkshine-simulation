@@ -638,9 +638,13 @@ G4ThreeVector CALConstruct::LinearPlacementWithAbsorber(G4int zNo, const std::ve
 
     // Calculate Calo layer total size
     auto UnitBox = dynamic_cast<G4Box*>(calLayerLV->GetSolid());
-    auto UnitXHalfLength = UnitBox->GetXHalfLength();
-    auto UnitYHalfLength = UnitBox->GetYHalfLength();
-    auto UnitZHalfLength = UnitBox->GetZHalfLength();
+    auto vec = G4ThreeVector(UnitBox->GetXHalfLength(),
+                                 UnitBox->GetYHalfLength(),
+                                 UnitBox->GetZHalfLength());
+    if (HepRot) vec.transform(HepRot->inverse());
+    auto UnitXHalfLength = std::fabs(vec.x());
+    auto UnitYHalfLength = std::fabs(vec.y());
+    auto UnitZHalfLength = std::fabs(vec.z());
 
     G4int startn;
     G4int endn;
@@ -687,7 +691,7 @@ G4ThreeVector CALConstruct::LinearPlacementWithAbsorber(G4int zNo, const std::ve
         UnitPosY = 0;
         UnitPosZ += gap + UnitZHalfLength;
 
-        UnitPV = new G4PVPlacement(nullptr,
+        UnitPV = new G4PVPlacement(HepRot,
                                    G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
                                    calLayerLV,
                                    fCALName + "_LayerPV",
@@ -700,16 +704,18 @@ G4ThreeVector CALConstruct::LinearPlacementWithAbsorber(G4int zNo, const std::ve
         /// place Abs Layer
         if (i < zNo - 1) {
             UnitPosZ += UnitZHalfLength + gap + 0.5 * abs_thickness_vector.at(i);
-            AbsPV = new G4PVPlacement(nullptr,
-                                      G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
-                                      fAbsLVVector.at(i),
-                                      fCALName + "_AbsPV",
-                                      fMotherVolume,
-                                      false,
-                                      Abs_No,
-                                      fCheckOverlap);
-            PVVector.emplace_back(AbsPV);
-            Abs_No++;
+            if (fAbsLVVector.at(i)) {
+                AbsPV = new G4PVPlacement(nullptr,
+                                          G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                          fAbsLVVector.at(i),
+                                          fCALName + "_AbsPV",
+                                          fMotherVolume,
+                                          false,
+                                          Abs_No,
+                                          fCheckOverlap);
+                PVVector.emplace_back(AbsPV);
+                Abs_No++;
+            }
             UnitPosZ += 0.5 * abs_thickness_vector.at(i);
         }
     }

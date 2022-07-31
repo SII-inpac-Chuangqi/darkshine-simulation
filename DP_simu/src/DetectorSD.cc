@@ -120,13 +120,18 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
         CellID.setX(dDetectorIDMaps->GetHCALIDX(reNumber2));
         CellID.setY(dDetectorIDMaps->GetHCALIDY(reNumber2));
         CellID.setZ(2 * reNumber3 + (int) (reNumber1 / (int) xID) + 1);
+    } else if (fType == nSideHCAL || fType == nSideHCAL_APD) {
+        cellId = reNumber1 + 1;
+        CellID.setX(reNumber2 + 1);
+        CellID.setY(cellId);
+        CellID.setZ(1);
     } else {
         std::cerr << "[ERROR] DetectorSD ==> Wrong Detecotr Type" << std::endl;
         exit(EXIT_FAILURE);
     }
 
     /// Save Photon
-    if (fType == nHCAL_APD) {
+    if (fType == nHCAL_APD || fType == nSideHCAL_APD) {
         particleName = step->GetTrack()->GetDefinition()->GetParticleName();
         if (particleName == "opticalphoton") {
             hit->addPhoton();
