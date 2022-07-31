@@ -208,7 +208,7 @@ map <pair<int, int>, vector<DTruthState *>> DTruth::getTracksInRegion(DTruthDetP
 
     for (auto track: truth_tracks) {
         // Ensure the initial Energy should larger than the min E_kin
-        if (track.second.front()->E >= E_min && track.second.size() >= min_hits) {
+        if (track.second.front()->E >= E_min && track.second.size() >= static_cast<size_t>(min_hits)) {
             // Find the DTruthStates in certain Detector Region
             if (DetPV == DTruthDetPV::All) result.insert(track);
             else {
