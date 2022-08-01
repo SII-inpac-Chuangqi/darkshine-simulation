@@ -18,6 +18,7 @@
 #include "Algo/TrkHit.h"
 #include "Algo/DTrack.h"
 #include "Algo/Digitization.h"
+#include <TLorentzVector.h>
 
 using namespace std;
 
@@ -140,6 +141,11 @@ private:
     std::vector<double> ECal_seed_px_truth{};
     std::vector<double> ECal_seed_py_truth{};
     std::vector<double> ECal_seed_pz_truth{};
+    std::vector<double> ECal_seed_e_truth{};
+    std::vector<double> ECal_seed_theta_truth{};
+    std::vector<double> ECal_seed_phi_truth{};
+    std::vector<int> ECal_seed_pdg{};
+    std::vector<int> ECal_seed_id_rec_track{};
 
     std::vector<double> ECal_seed_x{};
     std::vector<double> ECal_seed_y{};
