@@ -10,6 +10,7 @@
 //ROOT
 #include "TString.h"
 #include "TGeoManager.h"
+#include <Math/Vector4D.h>
 
 //................................................................................//
 //GENFIT
@@ -149,7 +150,7 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("ECal_seed_px_truth", &ECal_seed_px_truth);
     EvtWrt->RegisterOutVariable("ECal_seed_py_truth", &ECal_seed_py_truth);
     EvtWrt->RegisterOutVariable("ECal_seed_pz_truth", &ECal_seed_pz_truth);
-    EvtWrt->RegisterOutVariable("ECal_seed_e_truth", &ECal_seed_e_truth);
+    EvtWrt->RegisterOutVariable("ECal_seed_e_truth",  &ECal_seed_e_truth);
     EvtWrt->RegisterOutVariable("ECal_seed_theta_truth", &ECal_seed_theta_truth);
     EvtWrt->RegisterOutVariable("ECal_seed_phi_truth", &ECal_seed_phi_truth);
     EvtWrt->RegisterOutVariable("ECal_seed_pdg", &ECal_seed_pdg);
@@ -234,16 +235,16 @@ void TrackingProcessor::FillTruth(AnaEvent *evt,
         TagTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::TagTrk);
         RecTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::RecTrk);
         auto truth_tracks = dAnaData->getTruthTracksAtECalFront();
-        auto _n_truth=truth_tracks.size();
+        auto n_truth_tracks = truth_tracks.size();
 
-        std::vector<std::pair<int,std::pair<const DTruthState*,int>>> truth_tracks_sorted; // If not match std::get<0>=-1
+        std::vector<std::pair<int, std::pair<const DTruthState*, int>>> truth_tracks_sorted; // If not match std::get<0>=-1
         // //first sort by truth E
         // std::sort(truth_tracks.begin(), truth_tracks.end(),
         //             [&](std::pair<const DTruthState*,int> A, std::pair<const DTruthState*,int> B) -> bool {
         //                     return A.second->E > B.second->E;
         //         });
         
-         //then match rec track
+        //then match rec track
         int id_rec_track=-1;
         for(const auto &track : rec_tracks_)
         {
@@ -271,34 +272,34 @@ void TrackingProcessor::FillTruth(AnaEvent *evt,
         }
 
         for(auto track : truth_tracks){ // appending other truth tracks (unmatched)
-            truth_tracks_sorted.push_back(std::make_pair(-1,track));
+            truth_tracks_sorted.push_back(std::make_pair(-1, track));
         }
 
         //sanity check
-        if(_n_truth!=truth_tracks_sorted.size()){
-            std::cerr<<"[FATAL] ==> Internal Error!! Contact master of Tracking."<<std::endl;
+        if(Verbose > 0 && n_truth_tracks != truth_tracks_sorted.size()) {
+            std::cerr << "[WARNING] ==> Number of sorted truth tracks changed" << std::endl;
             return;
         }
 
-        for(auto track_pack : truth_tracks_sorted)
+        auto temp_v = new ROOT::Math::PxPyPzEVector();
+        for(auto truth_track_sorted : truth_tracks_sorted)
         {
-            auto id_rec_track=track_pack.first;
-            auto track=track_pack.second.first;
-            auto pdg=track_pack.second.second;
+            auto track = truth_track_sorted.second.first;
+            auto pdg = truth_track_sorted.second.second;
+            temp_v->SetPxPyPzE(track->momentum[0], track->momentum[1], track->momentum[2], track->E);
+
             ECal_seed_x_truth.push_back(track->vertex[0]);
             ECal_seed_y_truth.push_back(track->vertex[1]);
             ECal_seed_px_truth.push_back(track->momentum[0]);
             ECal_seed_py_truth.push_back(track->momentum[1]);
             ECal_seed_pz_truth.push_back(track->momentum[2]);
             ECal_seed_e_truth.push_back(track->E);
-            auto v=new TLorentzVector();
-            v->SetPxPyPzE(track->momentum[0],track->momentum[1],track->momentum[2],track->E);
-            ECal_seed_theta_truth.push_back(v->Theta());
-            ECal_seed_phi_truth.push_back(v->Phi());
+            ECal_seed_theta_truth.push_back(temp_v->Theta());
+            ECal_seed_phi_truth.push_back(temp_v->Phi());
             ECal_seed_pdg.push_back(pdg);
-            ECal_seed_id_rec_track.push_back(id_rec_track);
-            delete v;
+            ECal_seed_id_rec_track.push_back(truth_track_sorted.first);
         }
+        delete temp_v;
 
     if (!clean) {
         TagTrk2_No = raw_tagtrk2_hits.size();
