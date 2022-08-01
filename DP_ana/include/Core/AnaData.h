@@ -93,7 +93,7 @@ public:
     //void PrintTruthMcPHelper() const;
     void PrintTruthInfo() const;
     //const McPHelper* getInitialElectron() const;
-    std::vector<const DTruthState*> getTruthTracksAtECalFront() const;
+    std::vector<std::pair<const DTruthState*,int>> getTruthTracksAtECalFront() const;
     unsigned int getNTruthTracks(DTruth::DTruthDetPV DetPV, double min_energy = 50., int min_hits = 4) const;
     const DTruth* getInitialElectron() const;
 

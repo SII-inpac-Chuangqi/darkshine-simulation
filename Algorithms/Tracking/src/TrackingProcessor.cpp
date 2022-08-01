@@ -149,6 +149,11 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("ECal_seed_px_truth", &ECal_seed_px_truth);
     EvtWrt->RegisterOutVariable("ECal_seed_py_truth", &ECal_seed_py_truth);
     EvtWrt->RegisterOutVariable("ECal_seed_pz_truth", &ECal_seed_pz_truth);
+    EvtWrt->RegisterOutVariable("ECal_seed_e_truth", &ECal_seed_e_truth);
+    EvtWrt->RegisterOutVariable("ECal_seed_theta_truth", &ECal_seed_theta_truth);
+    EvtWrt->RegisterOutVariable("ECal_seed_phi_truth", &ECal_seed_phi_truth);
+    EvtWrt->RegisterOutVariable("ECal_seed_pdg", &ECal_seed_pdg);
+    EvtWrt->RegisterOutVariable("ECal_seed_id_rec_track", &ECal_seed_id_rec_track);
 
     EvtWrt->RegisterOutVariable("ECal_seed_x",  &ECal_seed_x);
     EvtWrt->RegisterOutVariable("ECal_seed_y",  &ECal_seed_y);
@@ -205,6 +210,11 @@ void TrackingProcessor::CleanEvt() {
     std::vector<double>().swap(ECal_seed_px_truth);
     std::vector<double>().swap(ECal_seed_py_truth);
     std::vector<double>().swap(ECal_seed_pz_truth);
+    std::vector<double>().swap(ECal_seed_e_truth);
+    std::vector<double>().swap(ECal_seed_theta_truth);
+    std::vector<double>().swap(ECal_seed_phi_truth);
+    std::vector<int>().swap(ECal_seed_pdg);
+    std::vector<int>().swap(ECal_seed_id_rec_track);
 
     std::vector<double>().swap(ECal_seed_x);
     std::vector<double>().swap(ECal_seed_y);
@@ -224,38 +234,70 @@ void TrackingProcessor::FillTruth(AnaEvent *evt,
         TagTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::TagTrk);
         RecTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::RecTrk);
         auto truth_tracks = dAnaData->getTruthTracksAtECalFront();
+        auto _n_truth=truth_tracks.size();
 
-        std::vector<const DTruthState*> truth_tracks_sorted;
-
+        std::vector<std::pair<int,std::pair<const DTruthState*,int>>> truth_tracks_sorted; // If not match std::get<0>=-1
+        // //first sort by truth E
+        // std::sort(truth_tracks.begin(), truth_tracks.end(),
+        //             [&](std::pair<const DTruthState*,int> A, std::pair<const DTruthState*,int> B) -> bool {
+        //                     return A.second->E > B.second->E;
+        //         });
+        
+         //then match rec track
+        int id_rec_track=-1;
         for(const auto &track : rec_tracks_)
         {
+            id_rec_track++;
             int min_id(-1);
             double min_dis(INFINITY);
 
             for(size_t i = 0; i < truth_tracks.size(); i++)
             {
-                double dis = (std::hypot(truth_tracks.at(i)->vertex[0] - track.GetECalSeedX(),
-                                         truth_tracks.at(i)->vertex[1] - track.GetECalSeedY())
+                double dis = (std::hypot(truth_tracks.at(i).first->vertex[0] - track.GetECalSeedX(),
+                                         truth_tracks.at(i).first->vertex[1] - track.GetECalSeedY())
                              );
                 if(dis < min_dis) {min_dis = dis; min_id = i;}
             }
 
             if(min_id >= 0 && min_id < static_cast<int>(truth_tracks.size()))
             {
-                truth_tracks_sorted.push_back(truth_tracks.at(min_id));
-                truth_tracks.at(min_id) = nullptr;
-                truth_tracks.erase(std::remove(truth_tracks.begin(), truth_tracks.end(), nullptr), truth_tracks.end());
+                truth_tracks_sorted.push_back(std::make_pair(
+                        id_rec_track,truth_tracks.at(min_id)
+                    )
+                );
+                truth_tracks.at(min_id).first = nullptr;
+                truth_tracks.erase(truth_tracks.begin() + min_id);
             }
         }
 
-        for(auto track : truth_tracks_sorted)
-        //for(auto track : truth_tracks)
+        for(auto track : truth_tracks){ // appending other truth tracks (unmatched)
+            truth_tracks_sorted.push_back(std::make_pair(-1,track));
+        }
+
+        //sanity check
+        if(_n_truth!=truth_tracks_sorted.size()){
+            std::cerr<<"[FATAL] ==> Internal Error!! Contact master of Tracking."<<std::endl;
+            return;
+        }
+
+        for(auto track_pack : truth_tracks_sorted)
         {
+            auto id_rec_track=track_pack.first;
+            auto track=track_pack.second.first;
+            auto pdg=track_pack.second.second;
             ECal_seed_x_truth.push_back(track->vertex[0]);
             ECal_seed_y_truth.push_back(track->vertex[1]);
             ECal_seed_px_truth.push_back(track->momentum[0]);
             ECal_seed_py_truth.push_back(track->momentum[1]);
             ECal_seed_pz_truth.push_back(track->momentum[2]);
+            ECal_seed_e_truth.push_back(track->E);
+            auto v=new TLorentzVector();
+            v->SetPxPyPzE(track->momentum[0],track->momentum[1],track->momentum[2],track->E);
+            ECal_seed_theta_truth.push_back(v->Theta());
+            ECal_seed_phi_truth.push_back(v->Phi());
+            ECal_seed_pdg.push_back(pdg);
+            ECal_seed_id_rec_track.push_back(id_rec_track);
+            delete v;
         }
 
     if (!clean) {
