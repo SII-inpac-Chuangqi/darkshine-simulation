@@ -23,12 +23,10 @@
 DTrack::DTrack(const TrkHitPVec &newHits,
                double newPreR,
                double newPreXc,
-               double newPreYc, 
-               std::vector<double> magnets) : By(magnets.at(1)),
-                                              preR(newPreR),
-                                              preXc(newPreXc),
-                                              preYc(newPreYc),
-                                              hits(newHits)
+               double newPreYc) : preR(newPreR),
+                                  preXc(newPreXc),
+                                  preYc(newPreYc),
+                                  hits(newHits)
 {
 }
 
@@ -125,6 +123,19 @@ DTrack& DTrack::operator=(const DTrack &old_track)
     hits.assign(old_track.hits.begin(), old_track.hits.end());
 
     return *this;
+}
+
+void DTrack::ExceptionHandler(const std::vector<double> &magnet)
+{
+    if(verbose_ > 0 && magnet.size() != 3)
+    {
+        std::cerr << "[WARNING] ==> Magnet dimension != 3 in exception handler in DTrack, default magnet set"
+                  << std::endl;
+        By = -1.5;
+        return;
+    }
+
+    By = magnet.at(1);
 }
 
 void DTrack::Fit(int method)

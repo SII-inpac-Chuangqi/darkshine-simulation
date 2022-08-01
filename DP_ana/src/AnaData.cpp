@@ -271,12 +271,12 @@ void AnaData::PrintTruthInfo() const
     //else        truth_->printTruthTracks();
 }
 
-std::vector<std::pair<const DTruthState*,int>> AnaData::getTruthTracksAtECalFront() const
+std::vector<std::pair<const DTruthState*, int>> AnaData::getTruthTracksAtECalFront() const
 {
     auto tracker_keys = truth_->getTracksKey(DTruth::DTruthDetPV::All);
     auto ECal_states  = truth_->getStatesInECAL();
 
-    std::vector<std::pair<const DTruthState*,int>> truth_tracks_at_ECal_front;
+    std::vector<std::pair<const DTruthState*, int>> truth_tracks_at_ECal_front;
     for(auto key : tracker_keys)
     {
         auto if_in_ECal = ECal_states.find(key);

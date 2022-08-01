@@ -240,7 +240,7 @@ void TrackingProcessor::FillTruth(AnaEvent *evt,
         std::vector<std::pair<int, std::pair<const DTruthState*, int>>> truth_tracks_sorted; // If not match std::get<0>=-1
         // //first sort by truth E
         // std::sort(truth_tracks.begin(), truth_tracks.end(),
-        //             [&](std::pair<const DTruthState*,int> A, std::pair<const DTruthState*,int> B) -> bool {
+        //             [&](std::pair<const DTruthState*, int> A, std::pair<const DTruthState*, int> B) -> bool {
         //                     return A.second->E > B.second->E;
         //         });
         
@@ -262,10 +262,7 @@ void TrackingProcessor::FillTruth(AnaEvent *evt,
 
             if(min_id >= 0 && min_id < static_cast<int>(truth_tracks.size()))
             {
-                truth_tracks_sorted.push_back(std::make_pair(
-                        id_rec_track,truth_tracks.at(min_id)
-                    )
-                );
+                truth_tracks_sorted.push_back(std::make_pair(id_rec_track, truth_tracks.at(min_id)));
                 truth_tracks.at(min_id).first = nullptr;
                 truth_tracks.erase(truth_tracks.begin() + min_id);
             }
@@ -428,12 +425,12 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         
                         TrkHitPVec tag_track_hits((*(vec_tag_track.begin() + i)).begin(), (*(vec_tag_track.begin() + i)).end());
                         DTrack track(tag_track_hits,
-                                     find_tag.GetR(i),       //used in Kalman filter
-                                     find_tag.GetCenterX(i), //not used in Kalman filter, reserved
-                                     find_tag.GetCenterY(i), //not used in Kalman filter, reserved
-                                     magnet_at_origin);      //magnet vector to handle exception
+                                     find_tag.GetR(i),        //used in Kalman filter
+                                     find_tag.GetCenterX(i),  //not used in Kalman filter, reserved
+                                     find_tag.GetCenterY(i)); //not used in Kalman filter, reserved
                         track.SetVerbose(Verbose);
-                        track.Fit(Tag_fit_method);           //choose fitting method: Kalman filter
+                        track.ExceptionHandler(magnet_at_origin);
+                        track.Fit(Tag_fit_method);            //choose fitting method: Kalman filter
                         track.Evaluate();
 
                         tag_tracks_.push_back(track);
@@ -469,12 +466,12 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     for (int i = 0; i < find_rec.GetTrackNo(); i++) {
                         TrkHitPVec rec_track((*(vec_rec_track.begin() + i)).begin(), (*(vec_rec_track.begin() + i)).end());
                         DTrack track(rec_track,
-                                     find_rec.GetR(i),       //used in Kalman filter
-                                     find_rec.GetCenterX(i), //not used in Kalman filter, reserved
-                                     find_rec.GetCenterY(i), //not used in Kalman filter, reserved
-                                     magnet_at_origin);      //magnet vector to handle exception
+                                     find_rec.GetR(i),        //used in Kalman filter
+                                     find_rec.GetCenterX(i),  //not used in Kalman filter, reserved
+                                     find_rec.GetCenterY(i)); //not used in Kalman filter, reserved
                         track.SetVerbose(Verbose);
-                        track.Fit(Rec_fit_method);           //choose fitting method: Kalman filter
+                        track.ExceptionHandler(magnet_at_origin);
+                        track.Fit(Rec_fit_method);            //choose fitting method: Kalman filter
                         //track.Evaluate();
 
                         rec_tracks_.push_back(track);
