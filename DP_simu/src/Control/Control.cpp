@@ -519,7 +519,6 @@ void Control::ConstructG4MaterialTable() const {
     //
     // ------------ Generate & Add Material Properties Table ------------
     //
-    std::cout << "[Control] ==> optical enabled. " << std::endl;
 
     double photonEnergy[] = {0.1 * eV, 2.21 * eV, 2.58 * eV, 2.82 * eV, 2.95 * eV, 3.10 * eV, 4.00 * eV};
 
@@ -681,7 +680,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         //========================================
         /* Global Variables */
         //----------------------------------------
-        save_geometry = Node["save_geometry"].IsDefined() && Node["save_geometry"].as<bool>();
+        if (read_yaml_save_geometry) save_geometry = Node["save_geometry"].IsDefined() && Node["save_geometry"].as<bool>();
         check_overlaps = Node["check_overlaps"].IsDefined() && Node["check_overlaps"].as<bool>();
         signal_production = Node["signal_production"].IsDefined() && Node["signal_production"].as<bool>();
         if (Node["signal_mass"].IsDefined()) signal_mass = readV2(Node["signal_mass"]);
@@ -709,10 +708,12 @@ bool Control::ReadYAML(const G4String &file_in) {
         mag_verbose = Node["MagField"]["mag_verbose"].IsDefined() ? Node["MagField"]["mag_verbose"].as<int>() : 0;
         //----------------------------------------
         // Root Manager Options
-        outfile_Name = Node["RootManager"]["outfile_Name"].as<std::string>();
+        if (read_yaml_outfile_Name) outfile_Name = Node["RootManager"]["outfile_Name"].as<std::string>();
+        else std::cout << "[Control] ==> outfile_Name read from arguments: " << outfile_Name << std::endl;
         tree_Name = Node["RootManager"]["tree_Name"].as<std::string>();
-        Run_Number = Node["RootManager"]["Run_Number"].as<int>();
-        Total_Event_Number = Node["general_particle_source"]["beam_on"].as<int>();
+        if (read_yaml_Run_Number) Run_Number = Node["RootManager"]["Run_Number"].as<int>();
+        else std::cout << "[Control] ==> Run_Number read from arguments: " << Run_Number << std::endl;
+        if (read_yaml_BeamOnNumber) Total_Event_Number = Node["general_particle_source"]["beam_on"].as<int>();
         //----------------------------------------
         // Out Collection Options
         save_all_mcp = Node["OutCollection"]["save_all_mcp"].as<bool>();
@@ -984,6 +985,15 @@ DigiScheme Control::Optical_GetDigiScheme(const G4String &cIn) {
         return UnknownDigi;
 }
 
+void Control::ReadAndSetBias(G4VModularPhysicsList* physicsList) {
+    auto *biasingPhysics = new G4GenericBiasingPhysics();
+    auto node = Node["Biasing"]["BiasParticle"];
+    for (auto subnode:node) {
+        if (subnode.second.as<bool>()) biasingPhysics->Bias(subnode.first.as<std::string>(), {BiasProcess});
+    }
+    physicsList->RegisterPhysics(biasingPhysics);
+}
+
 void Control::ReadAndSetVerbosity() {
     auto node = Node["verbosity"];
 
@@ -1002,11 +1012,13 @@ void Control::ReadAndSetGPS() {
         UIManager->ApplyCommand("/gps/" + subnode.first.as<std::string>() + " " +
                                 subnode.second.as<std::string>());
     }
-    BeamOnNumber = Node["general_particle_source"]["beam_on"].as<int>();
+    if (read_yaml_BeamOnNumber) BeamOnNumber = Node["general_particle_source"]["beam_on"].as<int>();
+    else std::cout << "[Control] ==> beam_on read from arguments: " << BeamOnNumber << std::endl;
 }
 
 void Control::ReadAndSetRandomSeed() {
-    random_seed = Node["random_seed"]["seed"].IsDefined() ? Node["random_seed"]["seed"].as<long int>() : 0;
+    if (read_yaml_random_seed) random_seed = Node["random_seed"]["seed"].IsDefined() ? Node["random_seed"]["seed"].as<long int>() : 0;
+    else std::cout << "[Control] ==> random_seed read from arguments: " << random_seed << std::endl;
     random_restore_file = Node["random_seed"]["restore_file"].IsDefined()
                           ? Node["random_seed"]["restore_file"].as<std::string>()
                           : "";
