@@ -36,8 +36,7 @@ public:
     DTrack(const TrkHitPVec &newHits,
            double newPreR, 
            double newPreXc,
-           double newPreYc,
-           std::vector<double> magnets);
+           double newPreYc);
     DTrack(const DTrack &oldTrack);
     DTrack(DTrack &&oldTrack);
     DTrack& operator=(const DTrack&);
@@ -72,6 +71,7 @@ public:
 //................................................................................//
 //Set
 //................................................................................//
+    void ExceptionHandler(const std::vector<double> &magnet);
     void SetVerbose(int verbose) {verbose_ = verbose;}
     void SetPDG(int newPDG)   {pdg = newPDG;}
     void SetSign(int newSign) {sign = newSign;}
