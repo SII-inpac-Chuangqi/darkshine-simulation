@@ -34,7 +34,7 @@ general_particle_source:
     ene/mono: "8 GeV"
     #direction: "0 0 1"
     #position: "0 0 -61 cm"
-  beam_on: 5000
+  beam_on: 10
 
 ###########################################
 # Global Variables
@@ -125,6 +125,9 @@ Biasing:
   if_bias_target: false
   if_bias_ECAL: false
 
+  BiasParticle:
+    e-: false # for electron*, DMProcess, etc.
+    gamma: true # for Gamma*, photon*, conv, etc.
   BiasProcess: "photonNuclear"
   # BiasProcess: "DMProcessDMBrem"
   BiasFactor: 1e21

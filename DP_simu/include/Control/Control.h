@@ -13,6 +13,8 @@
 #include "G4PhysicalConstants.hh"
 #include "G4OpticalSurface.hh"
 #include "G4UImanager.hh"
+#include "G4GenericBiasingPhysics.hh"
+#include "G4VModularPhysicsList.hh"
 
 // yaml-cpp
 #include "yaml-cpp/yaml.h"
@@ -46,6 +48,8 @@ public:
     // Read data from yaml
     bool ReadYAML(const G4String &file_in);
 
+    void ReadAndSetBias(G4VModularPhysicsList* physicsList);
+
     void ReadAndSetVerbosity();
 
     void ReadAndSetGPS();
@@ -57,17 +61,20 @@ public:
     /*  Define all the variables needed  */
     /*************************************/
 
-    G4String DSimu_version = "1.0.0"; // DSimu version
+    G4String DSimu_version = "1.5.3"; // DSimu version
 
     //========================================
     /* Geant4 settings */
     //----------------------------------------
     int BeamOnNumber = 0;
+    bool read_yaml_BeamOnNumber = true;
     long random_seed = 0;
+    bool read_yaml_random_seed = true;
     G4String random_restore_file = "non";
     //========================================
     /* Global Variables */
     //----------------------------------------
+    bool read_yaml_save_geometry = true;
     bool save_geometry; // save the geometry in root
     bool check_overlaps; // check the geometry overlap, may be very slow and verbose
     bool signal_production; // production of signal Dark Photon Process
@@ -93,10 +100,12 @@ public:
     //----------------------------------------
     // Root Manager Options
     G4String outfile_Name;
+    bool read_yaml_outfile_Name = true;
     G4String tree_Name;
 
     /* event_id = id + Run_Number * Total_Event_Number */
     int Run_Number; // run number
+    bool read_yaml_Run_Number = true;
     int Total_Event_Number; // event number
 
     //----------------------------------------
