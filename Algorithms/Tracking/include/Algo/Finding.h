@@ -38,6 +38,8 @@ public:
     virtual double GetChi2   (int i) const = 0;
     virtual int    GetTrackNo(     ) const = 0;
 
+    virtual std::vector<double> GetMagnetFieldAt(double x, double y, double z);
+
     virtual std::vector<TrkHitPVec>::iterator First() = 0;
     virtual std::vector<TrkHitPVec>::iterator Last () = 0;
 };
