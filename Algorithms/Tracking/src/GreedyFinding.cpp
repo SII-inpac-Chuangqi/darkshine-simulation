@@ -80,8 +80,8 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
 }
 
 void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
-                            TrkHitPVecMap::iterator itMap,
-                            int cirNo)
+                                  TrkHitPVecMap::iterator itMap,
+                                  int cirNo)
 {
     itMap--;
     if(itMap == clusteredTrkHitsInLayer.begin())
@@ -93,7 +93,7 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
             hitStore.emplace_back(itMap->second.at(hitsNo));
             hitNoStore.push_back(hitsNo);
 
-            MethodKasa(xStore, yStore);
+            MethodLooping(xStore, yStore);
             if(goodness[cirNo] < goodnessKasa)
             {
                 r[cirNo] = rKasa;
@@ -135,15 +135,23 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
 
 //................................................................................//
 //Kasa method
-void GreedyFinding::MethodKasa(std::vector<double> xVec, std::vector<double> yVec)
+
+void GreedyFinding::MethodLooping(const std::vector<double> &track_x, const std::vector<double> &track_y)
 {
-    if(xVec.size() != yVec.size())
+    double A(0.), B(0.);
+
+    MethodKasa(track_x, track_y, A, B);
+}
+
+double GreedyFinding::MethodKasa(const std::vector<double> &track_x, const std::vector<double> &track_y, const double &cur_A, const double &cur_B)
+{
+    if(track_x.size() != track_y.size())
     {
 	std::cout << "x and y have different sizes" << std::endl;
-        return;
+        return 0.;
     }
 
-    int pointNo = xVec.size();
+    int pointNo = track_x.size();
 
     double X1 = 0.;
     double Y1 = 0.;
@@ -157,15 +165,15 @@ void GreedyFinding::MethodKasa(std::vector<double> xVec, std::vector<double> yVe
 
     for(int i = 0; i < pointNo; ++i)
     {
-        X1 += xVec[i];
-        Y1 += yVec[i];
-        X2 += xVec[i]*xVec[i];
-        Y2 += yVec[i]*yVec[i];
-        X3 += xVec[i]*xVec[i]*xVec[i];
-        Y3 += yVec[i]*yVec[i]*yVec[i];
-        X1Y1 += xVec[i]*yVec[i];
-        X1Y2 += xVec[i]*yVec[i]*yVec[i];
-        X2Y1 += xVec[i]*xVec[i]*yVec[i];
+        X1 += track_x[i];
+        Y1 += track_y[i];
+        X2 += track_x[i]*track_x[i];
+        Y2 += track_y[i]*track_y[i];
+        X3 += track_x[i]*track_x[i]*track_x[i];
+        Y3 += track_y[i]*track_y[i]*track_y[i];
+        X1Y1 += track_x[i]*track_y[i];
+        X1Y2 += track_x[i]*track_y[i]*track_y[i];
+        X2Y1 += track_x[i]*track_x[i]*track_y[i];
     }
 
     double C, D, E, G, H, N;
@@ -192,10 +200,12 @@ void GreedyFinding::MethodKasa(std::vector<double> xVec, std::vector<double> yVe
     double s = 0.;
     for (int i = 0; i < pointNo; i++)
     {
-        double x = xVec.at(i) - A;
-        double y = yVec.at(i) - B;
+        double x = track_x.at(i) - A;
+        double y = track_y.at(i) - B;
         double z = sqrt(x*x + y*y);
         s += (R - z)*(R - z);
     }
     goodnessKasa = 1 - sqrt(s/(pointNo*R*R));
+
+    return 0.;
 }

@@ -71,8 +71,7 @@ private:
     int Rec_fit_method{-1};
 //................................................................................//
 //Magnet
-//Const magnet field value to be implemented in const magnet condition or handle
-//exceptions
+//Const magnet field value to be used in const magnet condition or handle exceptions
     double con_field{-1.5};
 
 //................................................................................//
@@ -88,13 +87,18 @@ private:
 //................................................................................//
 //Truth
 //................................................................................//
+//Number of truth hit
     int TagTrk2_No{-1};
+//Momentum entering Tag Tracker from Initial Particle Step
     double TagTrk2_pp_truth_ini{RETURN};
+//Momentum exiting Tag Tracker from Initial Particle Step
     double TagTrk2_pp_truth_fin{RETURN};
+//x, y, z & energy deposition of truth hits
     std::vector<double> TagTrk2_x{};
     std::vector<double> TagTrk2_y{};
     std::vector<double> TagTrk2_z{};
     std::vector<double> TagTrk2_e{};
+//No of truth tracks from DTruth
     int TagTrk2_track_No_truth{0};
     
     int RecTrk2_No{-1};
@@ -112,12 +116,17 @@ private:
     std::vector<DTrack> tag_tracks_;
     std::vector<DTrack> rec_tracks_;
 
+//No of reconstructed tracks
     int TagTrk2_track_No{-1};
+//Reconstructed momentum perpendicular to magnet
     std::vector<double> TagTrk2_pp{};
+//Reconstructed momentum parallel to magnet
     std::vector<double> TagTrk2_pl{};
 
     std::vector<double> TagTrk2_track_quality{};
+//χ2 of reconstructed tracks from helix fitting
     std::vector<double> TagTrk2_track_chi2{};
+//x/y resolution of reconstructed tracks from helix fitting
     std::vector<double> TagTrk2_track_x_sigma{};
     std::vector<double> TagTrk2_track_y_sigma{};
 
@@ -131,6 +140,7 @@ private:
     std::vector<double> RecTrk2_track_x_sigma{};
     std::vector<double> RecTrk2_track_y_sigma{};
 
+//x, y & z of reconstucted hits that in tracks
     std::vector<std::vector<double>> RecTrk2_track_x{};
     std::vector<std::vector<double>> RecTrk2_track_y{};
     std::vector<std::vector<double>> RecTrk2_track_z{};
