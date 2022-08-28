@@ -13,7 +13,7 @@
 //................................................................................//
 //Tracking
 #include "Algo/DTrack.h"
-#include "Algo/KalmanFitting.h"
+//#include "Algo/KalmanFitting.h"
 
 //................................................................................//
 //public:
@@ -140,16 +140,16 @@ void DTrack::ExceptionHandler(const std::vector<double> &magnet)
 
 void DTrack::Fit(int method)
 {
-    Fitting *fitter = nullptr;
+//    Fitting *fitter_ = nullptr;
 
     switch(method)
     {
         case dKalman  :
-                        fitter = new KalmanFitting(hits,
-                                                   {preR,   //Fix to 2 ordered parameters! --bending radius as fitting seed
-                                                    By},    //                             --magnet value to manage exception condition
-                                                   verbose_ //Verbose
-                                                  );
+                        fitter_ = new KalmanFitting(hits,
+                                                    {preR,   //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                     By},    //                             --magnet value to manage exception condition
+                                                    verbose_ //Verbose
+                                                   );
                         break;
         case dNone    :
                         if(verbose_ > 0)
@@ -157,39 +157,52 @@ void DTrack::Fit(int method)
                         break;
         default :
                         if(verbose_ > 0)
-                            std::cerr << "[WARNING] ==> Fit method not found. Use default fitter GenFit Kalman fitter" << std::endl;
-                        fitter = new KalmanFitting(hits,
-                                                   {preR,   //Fix to 2 ordered parameters! --bending radius as fitting seed
-                                                    By},    //                             --magnet value to manage exception condition
-                                                   verbose_ //Verbose
-                                                  );
+                            std::cerr << "[WARNING] ==> Fit method not found. Use default fitter_ GenFit Kalman fitter_" << std::endl;
+                        fitter_ = new KalmanFitting(hits,
+                                                    {preR,   //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                     By},    //                             --magnet value to manage exception condition
+                                                    verbose_ //Verbose
+                                                   );
     }
 
-    if(fitter)
+    if(fitter_)
     {
-        px = fitter->GetPx();
-        py = fitter->GetPy();
-        pz = fitter->GetPz();
-        pp = fitter->GetPp();
-        chi2 = fitter->GetChi2();
-        xSigma = fitter->GetXSigma();
-        ySigma = fitter->GetYSigma();
-        ECal_seed_x = fitter->GetECalSeedX();
-        ECal_seed_y = fitter->GetECalSeedY();
-        ECal_seed_px = fitter->GetECalDirctX();
-        ECal_seed_py = fitter->GetECalDirctY();
-        ECal_seed_pz = fitter->GetECalQoP();
+        px = fitter_->GetPx();
+        py = fitter_->GetPy();
+        pz = fitter_->GetPz();
+        pp = fitter_->GetPp();
+        chi2 = fitter_->GetChi2();
+        xSigma = fitter_->GetXSigma();
+        ySigma = fitter_->GetYSigma();
+        ECal_seed_x = fitter_->GetECalSeedX();
+        ECal_seed_y = fitter_->GetECalSeedY();
+        ECal_seed_px = fitter_->GetECalDirctX();
+        ECal_seed_py = fitter_->GetECalDirctY();
+        ECal_seed_pz = fitter_->GetECalQoP();
         //std::cout << ECal_seed_pz << std::endl;
     }
     else
         pp = 0.3*preR*std::abs(By);
 
-    delete fitter;
-    fitter = nullptr;
+//    delete fitter_;
+//    fitter_ = nullptr;
+}
+
+std::vector<double> DTrack::ExtrapolateTo(const std::vector<double> &planes)
+{
+    if(!fitter_)
+    {
+        if(verbose_ > 0) 
+            std::cerr << "[WARNING] ==> No fitter to extrapolate" << std::endl;
+        return {};
+    }
+
+    
 }
 
 void DTrack::Evaluate()
 {
+/*
     if(hits.size() <= 0)
     {
         quality = 0;
@@ -218,4 +231,5 @@ void DTrack::Evaluate()
         if(1.*count.second/hits.size() > quality)
             quality = 1.*count.second/hits.size();
     }
+*/
 }

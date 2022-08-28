@@ -145,6 +145,13 @@ private:
     std::vector<std::vector<double>> RecTrk2_track_y{};
     std::vector<std::vector<double>> RecTrk2_track_z{};
 
+    std::vector<std::vector<double>> RecTrk2_track_extrapolated_x{};
+    std::vector<std::vector<double>> RecTrk2_track_extrapolated_y{};
+
+    std::vector<double> RecTrk2_track_preA{};
+    std::vector<double> RecTrk2_track_preB{};
+    std::vector<double> RecTrk2_track_preR{};
+
 //................................................................................//
     std::vector<double> ECal_seed_x_truth{};
     std::vector<double> ECal_seed_y_truth{};

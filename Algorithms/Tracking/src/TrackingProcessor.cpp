@@ -132,18 +132,17 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_track_x_sigma", &RecTrk2_track_x_sigma);
         EvtWrt->RegisterOutVariable("RecTrk2_track_y_sigma", &RecTrk2_track_y_sigma);
 
-        EvtWrt->RegisterOutVariable("RecTrk2_track_x", &RecTrk2_track_x); 
+        EvtWrt->RegisterOutVariable("RecTrk2_track_x", &RecTrk2_track_x);
         EvtWrt->RegisterOutVariable("RecTrk2_track_y", &RecTrk2_track_y);
         EvtWrt->RegisterOutVariable("RecTrk2_track_z", &RecTrk2_track_z);
-    }
 
-/*
-    EvtWrt->RegisterOutVariable("ECal_seed_x",  &ECal_seed_x, "", false);
-    EvtWrt->RegisterOutVariable("ECal_seed_y",  &ECal_seed_y, "", false);
-    EvtWrt->RegisterOutVariable("ECal_seed_px", &ECal_seed_px, "", false);
-    EvtWrt->RegisterOutVariable("ECal_seed_py", &ECal_seed_py, "", false);
-    EvtWrt->RegisterOutVariable("ECal_seed_pz", &ECal_seed_pz, "", false);
-*/
+        EvtWrt->RegisterOutVariable("RecTrk2_track_extrapolated_x", &RecTrk2_track_extrapolated_x);
+        EvtWrt->RegisterOutVariable("RecTrk2_track_extrapolated_y", &RecTrk2_track_extrapolated_y);
+
+        EvtWrt->RegisterOutVariable("RecTrk2_track_preA", &RecTrk2_track_preA);
+        EvtWrt->RegisterOutVariable("RecTrk2_track_preB", &RecTrk2_track_preB);
+        EvtWrt->RegisterOutVariable("RecTrk2_track_preR", &RecTrk2_track_preR);
+    }
 
     EvtWrt->RegisterOutVariable("ECal_seed_x_truth",  &ECal_seed_x_truth);
     EvtWrt->RegisterOutVariable("ECal_seed_y_truth",  &ECal_seed_y_truth);
@@ -168,17 +167,14 @@ void TrackingProcessor::CleanEvt() {
     std::vector<DTrack>().swap(tag_tracks_);
     std::vector<DTrack>().swap(rec_tracks_);
 
-    if(!clean)
-    {
-        std::vector<double>().swap(TagTrk2_x);
-        std::vector<double>().swap(TagTrk2_y);
-        std::vector<double>().swap(TagTrk2_z);
-        std::vector<double>().swap(TagTrk2_e);
-        std::vector<double>().swap(RecTrk2_x);
-        std::vector<double>().swap(RecTrk2_y);
-        std::vector<double>().swap(RecTrk2_z);
-        std::vector<double>().swap(RecTrk2_e);
-    }
+    std::vector<double>().swap(TagTrk2_x);
+    std::vector<double>().swap(TagTrk2_y);
+    std::vector<double>().swap(TagTrk2_z);
+    std::vector<double>().swap(TagTrk2_e);
+    std::vector<double>().swap(RecTrk2_x);
+    std::vector<double>().swap(RecTrk2_y);
+    std::vector<double>().swap(RecTrk2_z);
+    std::vector<double>().swap(RecTrk2_e);
 
     TagTrk2_track_No_truth = 0;
     RecTrk2_track_No_truth = 0;
@@ -205,6 +201,13 @@ void TrackingProcessor::CleanEvt() {
     std::vector<std::vector<double>>().swap(RecTrk2_track_x);
     std::vector<std::vector<double>>().swap(RecTrk2_track_y);
     std::vector<std::vector<double>>().swap(RecTrk2_track_z);
+
+    std::vector<std::vector<double>>().swap(RecTrk2_track_extrapolated_x);
+    std::vector<std::vector<double>>().swap(RecTrk2_track_extrapolated_y);
+
+    std::vector<double>().swap(RecTrk2_track_preA);
+    std::vector<double>().swap(RecTrk2_track_preB);
+    std::vector<double>().swap(RecTrk2_track_preR);
 
     std::vector<double>().swap(ECal_seed_x_truth);
     std::vector<double>().swap(ECal_seed_y_truth);
@@ -525,10 +528,16 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     track_y.push_back(track.At(hit)->GetY());
                     track_z.push_back(track.At(hit)->GetZ());
                 }
-         
                 RecTrk2_track_x.push_back(track_x);
                 RecTrk2_track_y.push_back(track_y);
                 RecTrk2_track_z.push_back(track_z);
+
+                auto extrapolated_x = track.ExtrapolateTo(track_z);
+                RecTrk2_track_extrapolated_x.push_back(extrapolated_x);
+
+                RecTrk2_track_preA.push_back(track.GetPreXc());
+                RecTrk2_track_preB.push_back(track.GetPreYc());
+                RecTrk2_track_preR.push_back(track.GetPreR());
             }
         }
 
