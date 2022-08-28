@@ -220,3 +220,31 @@ int KalmanFitting::GetSign(const TrkHitPVec &track)
         (xlr - xl)/sqrt((xl - xlr)*(xl - xlr) + (zl - zlr)*(zl - zlr)) ? 1 : -1;
     return s;
 }
+
+std::vector<double> KalmanFitting::ExtrapolateTo(const std::vector<double> &planes_z)
+{
+    if(!rep || !fitTrack)
+    {
+        if(verbose_ > 0)
+            std::cerr << "[WARNING] ==> No track to extrapolate" << std::endl;
+
+        return {};
+    }
+
+    std::vector<double> extrapolated_x;
+    for(const auto &plane_z : planes_z)
+    {
+        genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
+        genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
+        genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
+                                                                   0.,
+                                                                   plane_z*0.1),
+                                                          TVector3(1, 0, 0),
+                                                          TVector3(0, 1, 0)));
+        rep->extrapolateToPlane(kfsop, plane);
+        const TVectorD& state = kfsop.getState();
+        extrapolated_x.push_back(state[3]*10);
+    }
+
+    return extrapolated_x;
+}

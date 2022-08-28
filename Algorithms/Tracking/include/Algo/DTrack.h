@@ -88,7 +88,7 @@ public:
 //Processor
 //................................................................................//
     void Fit(int method);
-    std::vector<double> ExtrapolateTo(const std::vector<double> &planes);
+    std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z);
     void Evaluate();
 
 private:
