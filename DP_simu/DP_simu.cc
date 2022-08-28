@@ -121,11 +121,6 @@ int main(int argc, char **argv) {
 //-------------------------------------------------------------------------------
 // Evaluate Arguments
 
-    if (argc > 9) {
-        PrintUsage();
-        return 1;
-    }
-
     G4String macro;
     G4String OpticalMacro;
     G4String yamlFileName;
