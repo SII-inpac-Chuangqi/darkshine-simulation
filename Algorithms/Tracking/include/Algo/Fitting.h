@@ -60,7 +60,7 @@ public:
     virtual double GetXSigma() const {return xSigma;}
     virtual double GetYSigma() const {return ySigma;}
 
-    virtual std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z) {return {};}
+    virtual std::vector<double> ExtrapolateTo([[maybe_unused]] const std::vector<double> &planes_z) {return {};}
 
 //................................................................................//
 //Set
