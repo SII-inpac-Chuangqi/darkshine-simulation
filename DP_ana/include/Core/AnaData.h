@@ -97,6 +97,8 @@ public:
     unsigned int getNTruthTracks(DTruth::DTruthDetPV DetPV, double min_energy = 50., int min_hits = 4) const;
     const DTruth* getInitialElectron() const;
 
+    std::vector<std::pair<const DTruthParticle*, const DTruthState*>> getTruthsAtECalFront() const;
+
 protected:
     TFile* root_file;
 
