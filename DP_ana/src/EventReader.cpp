@@ -39,7 +39,8 @@ void EventReader::RegisterOutput() {
     EvtWrt->RegisterDoubleVariable("ENZ_ECAL", &ENZ_ECAL, "ENZ_ECAL/D");
 
     // Initialized Processed Number
-    eventProcessedNumber = 0;
+    //eventProcessedNumber = 0;
+    eventProcessedNumber = beamonNumber * runNumber - 1;
 }
 
 
@@ -64,8 +65,8 @@ void EventReader::Convert() {
     ENZ_Target = evt->getEnzTarget();
     ENZ_ECAL = evt->getEnzEcal();
 
-
     eventProcessedNumber++;
+
     if (Verbose > 1) {
         cout << "======================================================================" << endl;
         std::cout << "[ READ EVENT ] : Convert (Verbosity 2)" << std::endl;
