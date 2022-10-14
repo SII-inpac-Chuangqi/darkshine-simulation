@@ -11,6 +11,7 @@ OutputFile     = dp_ana.root
 RunNumber      = 0
 EventNumber    = -1
 SkipNumber     = 0
+BeamOnNumber   = 0
 
 ### Verbosity Settings
 AlgoManager.Verbose           = 0

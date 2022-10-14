@@ -39,7 +39,8 @@ void EventReader::RegisterOutput() {
     EvtWrt->RegisterDoubleVariable("ENZ_ECAL", &ENZ_ECAL, "ENZ_ECAL/D");
 
     // Initialized Processed Number
-    eventProcessedNumber = 0;
+    //eventProcessedNumber = 0;
+    eventProcessedNumber = beamonNumber * runNumber - 1;
 }
 
 
