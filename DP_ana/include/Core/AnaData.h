@@ -82,6 +82,7 @@ public:
     int getNECalCellY() const {return N_ECal_cell_y;}
     int getNECalCellZ() const {return N_ECal_cell_z;}
     double getECalSurfaceZ() const {return ECAL_center_z - 0.5*ECAL_length_z;}
+    TString getRegionName(const float vertex[3]);
 
     int getProcessId(const std::string& n);
     void printProcessMap();
