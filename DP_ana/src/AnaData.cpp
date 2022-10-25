@@ -240,6 +240,20 @@ void AnaData::printGeometryDetails() const {
                   << "                        cell No. z   " << N_ECal_cell_z            << std::endl;
 }
 
+TString AnaData::getRegionName(const float *vertex) {
+    if (vertex[2] < getECalSurfaceZ()) {
+        return "Target";
+    } else if (vertex[2] < getECalCenterZ() + 0.5 * getECalLengthZ()) {
+        if (vertex[0] < getECalCenterX() + 0.5 * getECalLengthX() &&
+            vertex[1] < getECalCenterY() + 0.5 * getECalLengthY())
+            return "ECAL";
+        else
+            return "SideHCAL";
+    } else {
+        return "HCAL";
+    }
+}
+
 int AnaData::getProcessId(const std::string& n){
     //find the processName corresponding id or add a new one
     if(processMap.count(n)==0){
