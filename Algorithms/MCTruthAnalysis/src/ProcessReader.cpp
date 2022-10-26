@@ -58,13 +58,13 @@ void ProcessReader::ReadProcess(AnaEvent *Evt) {
             }
             // Set process flag
             if ( process->E > 4000. && process->index == eBrem_Id) { // HardBrem
-                process_HardBrem = 1;
-                if (dAnaData->getRegionName(process->vertex) == "Target") process_HardBrem_Target = 1;
-                else if (dAnaData->getRegionName(process->vertex) == "ECAL") process_HardBrem_ECAL = 1;
+                process_HardBrem++;
+                if (dAnaData->getRegionName(process->vertex) == "Target") process_HardBrem_Target++;
+                else if (dAnaData->getRegionName(process->vertex) == "ECAL") process_HardBrem_ECAL++;
             } else if ( process->index == GMM_Id ) { // GammaToMuPair
-                process_GMM = 1;
-                if (dAnaData->getRegionName(process->vertex) == "Target") process_GMM_Target = 1;
-                if (dAnaData->getRegionName(process->vertex) == "ECAL") process_GMM_ECAL = 1;
+                process_GMM++;
+                if (dAnaData->getRegionName(process->vertex) == "Target") process_GMM_Target++;
+                if (dAnaData->getRegionName(process->vertex) == "ECAL") process_GMM_ECAL++;
             }
             // fill process
             process_ID.emplace_back(process->index);
