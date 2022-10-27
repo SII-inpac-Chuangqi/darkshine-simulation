@@ -266,6 +266,7 @@ void Control::RebuildVariables() {
         build_rec_tracker = !(build_only_target || build_only_tag_tracker || build_only_ECAL || build_only_HCAL);
         build_ECAL = !(build_only_target || build_only_tag_tracker || build_only_rec_tracker || build_only_HCAL);
         build_HCAL = !(build_only_target || build_only_tag_tracker || build_only_rec_tracker || build_only_ECAL);
+        build_SideHCAL = !(build_only_target || build_only_tag_tracker || build_only_rec_tracker || build_only_ECAL);
     }
     //----------------------------------------
     // Tagging Tracker
@@ -281,7 +282,7 @@ void Control::RebuildVariables() {
     tag_Pos_TrackerRegion = G4ThreeVector(
             0 * cm, 0 * cm,
             -0.5 * tag_Size_TrackerRegion.z() - Trk_Tar_Dis - 0.5 * Target_Size.z());
-    if (build_only_tag_tracker) tag_Pos_TrackerRegion = G4ThreeVector(0, 0, 0);
+    //if (build_only_tag_tracker) tag_Pos_TrackerRegion = G4ThreeVector(0, 0, 0);
 
     //----------------------------------------
     // Electromagnetic Calorimeter Size
@@ -312,7 +313,7 @@ void Control::RebuildVariables() {
     rec_Pos_TrackerRegion = G4ThreeVector(
             0 * cm, 0 * cm,
             0.5 * rec_Size_TrackerRegion.z() + Trk_Tar_Dis + 0.5 * Target_Size.z());
-    if (build_only_rec_tracker) rec_Pos_TrackerRegion = G4ThreeVector(0, 0, 0);
+    //if (build_only_rec_tracker) rec_Pos_TrackerRegion = G4ThreeVector(0, 0, 0);
 
     //----------------------------------------
     // Electromagnetic Calorimeter Position
@@ -320,7 +321,7 @@ void Control::RebuildVariables() {
     Pos_ECALRegion = G4ThreeVector(0, 0,
                                    0.5 * Size_ECALRegion.z() + rec_Pos_TrackerRegion.z() +
                                    0.5 * rec_Size_TrackerRegion.z() + 1.0 * mm);
-    if (build_only_ECAL) Pos_ECALRegion = G4ThreeVector(0, 0, 0);
+    //if (build_only_ECAL) Pos_ECALRegion = G4ThreeVector(0, 0, 0);
 
     ECAL_Center_Module_No.setX(ECAL_Cell_No.x() * ECAL_Block_No.x());
     ECAL_Center_Module_No.setY(ECAL_Cell_No.y() * ECAL_Block_No.y());
@@ -372,7 +373,7 @@ void Control::RebuildVariables() {
 
     Pos_HCALRegion = G4ThreeVector(0, 0,
                                    0.5 * Size_HCALRegion.z() + Pos_ECALRegion.z() + 0.5 * Size_ECALRegion.z() + 1 * mm);
-    if (build_only_HCAL) Pos_HCALRegion = G4ThreeVector(0, 0, 0);
+    //if (build_only_HCAL) Pos_HCALRegion = G4ThreeVector(0, 0, 0);
 
     //----------------------------------------
     // Side HCAL
