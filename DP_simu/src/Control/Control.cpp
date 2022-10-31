@@ -261,7 +261,7 @@ void Control::RebuildVariables() {
     if (build_only_target || build_only_tag_tracker || build_only_rec_tracker ||
         build_only_ECAL || build_only_HCAL) {
         build_target = !(build_only_tag_tracker || build_only_rec_tracker || build_only_ECAL || build_only_HCAL);
-        build_MagnetShield = !(build_only_tag_tracker || build_only_rec_tracker || build_only_ECAL || build_only_HCAL);
+        build_MagnetShield = !(build_only_target || build_only_tag_tracker || build_only_rec_tracker || build_only_ECAL || build_only_HCAL);
         build_tag_tracker = !(build_only_target || build_only_rec_tracker || build_only_ECAL || build_only_HCAL);
         build_rec_tracker = !(build_only_target || build_only_tag_tracker || build_only_ECAL || build_only_HCAL);
         build_ECAL = !(build_only_target || build_only_tag_tracker || build_only_rec_tracker || build_only_HCAL);
