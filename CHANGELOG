@@ -1,3 +1,7 @@
+2022-10-25
+    DSimu v1.5, DAna v1.5.4
+    1. Add Algo/ProcessReader.h . Deprecate ProcessClassifier.
+
 2022-08-14
     1. Add DSimu arguments --seed --save_geometry --outfile_Name --Run_Number --beam_on
     2. Add yaml Biasing/BiasParticle

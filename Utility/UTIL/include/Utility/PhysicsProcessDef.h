@@ -70,7 +70,7 @@ struct PhysicsDef {
             dPhyTypeMap.insert({dPhyTypeVec.at(i), i});
         }
 
-        cout << "[Physics Process Table] ==> Construction completed with " << dPhyTypeVec.size() << " processes."
+        cerr << "[Physics Process Table] ==> Construction completed with " << dPhyTypeVec.size() << " processes."
              << endl;
     }
 };

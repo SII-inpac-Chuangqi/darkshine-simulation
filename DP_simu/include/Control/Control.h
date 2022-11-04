@@ -61,7 +61,7 @@ public:
     /*  Define all the variables needed  */
     /*************************************/
 
-    G4String DSimu_version = "v1.5.3"; // DSimu version
+    G4String DSimu_version = "v1.5"; // DSimu version
 
     //========================================
     /* Geant4 settings */
