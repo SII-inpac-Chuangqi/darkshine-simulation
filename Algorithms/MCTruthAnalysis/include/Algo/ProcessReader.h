@@ -24,6 +24,7 @@ public:
         eBrem_Id = pDef.dPhyTypeMap["eBrem"];
         EN_Id = pDef.dPhyTypeMap["electronNuclear"];
         GMM_Id = pDef.dPhyTypeMap["GammaToMuPair"];
+        PN_Id = pDef.dPhyTypeMap["photonNuclear"];
     };
 
     void initialization();
@@ -58,6 +59,7 @@ private:
     unsigned int eBrem_Id{};
     unsigned int EN_Id{};
     unsigned int GMM_Id{};
+    unsigned int PN_Id{};
     Bool_t if_refresh_hardbrem;
 
     // Event Type
@@ -71,9 +73,14 @@ private:
     int process_GMM;
     int process_GMM_Target;
     int process_GMM_ECAL;
+    int process_EN;
+    int process_EN_Target;
+    int process_EN_ECAL;
+    int process_PN;
+    int process_PN_Target;
+    int process_PN_ECAL;
     // detailed process
     std::vector<Int_t> process_ID; // Process index defined in PhysicsDef::dPhyTypeVec
-    std::vector<TString> process_Name;
     std::vector<TString>  process_PVName;
     std::vector<TVector3> process_vertex;
     std::vector<float>  process_energy;
