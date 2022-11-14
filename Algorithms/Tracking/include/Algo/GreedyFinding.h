@@ -58,7 +58,8 @@ private:
 
 //................................................................................//
 //Kasa method
-    void MethodKasa(const std::vector<double> RecTrk2_x, const std::vector<double> RecTrk2_y);
+    void MethodLooping(const std::vector<double> &track_x, const std::vector<double> &track_y);
+    double MethodKasa(const std::vector<double> &track_x, const std::vector<double> &track_y, const double &cur_A, const double &cur_B);
     double rKasa = -999.;
     double centerXKasa = -999.;
     double centerYKasa = -999.;

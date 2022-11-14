@@ -132,18 +132,17 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_track_x_sigma", &RecTrk2_track_x_sigma);
         EvtWrt->RegisterOutVariable("RecTrk2_track_y_sigma", &RecTrk2_track_y_sigma);
 
-        EvtWrt->RegisterOutVariable("RecTrk2_track_x", &RecTrk2_track_x); 
+        EvtWrt->RegisterOutVariable("RecTrk2_track_x", &RecTrk2_track_x);
         EvtWrt->RegisterOutVariable("RecTrk2_track_y", &RecTrk2_track_y);
         EvtWrt->RegisterOutVariable("RecTrk2_track_z", &RecTrk2_track_z);
-    }
 
-/*
-    EvtWrt->RegisterOutVariable("ECal_seed_x",  &ECal_seed_x, "", false);
-    EvtWrt->RegisterOutVariable("ECal_seed_y",  &ECal_seed_y, "", false);
-    EvtWrt->RegisterOutVariable("ECal_seed_px", &ECal_seed_px, "", false);
-    EvtWrt->RegisterOutVariable("ECal_seed_py", &ECal_seed_py, "", false);
-    EvtWrt->RegisterOutVariable("ECal_seed_pz", &ECal_seed_pz, "", false);
-*/
+        EvtWrt->RegisterOutVariable("RecTrk2_track_extrapolated_x", &RecTrk2_track_extrapolated_x);
+        EvtWrt->RegisterOutVariable("RecTrk2_track_extrapolated_y", &RecTrk2_track_extrapolated_y);
+
+        EvtWrt->RegisterOutVariable("RecTrk2_track_preA", &RecTrk2_track_preA);
+        EvtWrt->RegisterOutVariable("RecTrk2_track_preB", &RecTrk2_track_preB);
+        EvtWrt->RegisterOutVariable("RecTrk2_track_preR", &RecTrk2_track_preR);
+    }
 
     EvtWrt->RegisterOutVariable("ECal_seed_x_truth",  &ECal_seed_x_truth);
     EvtWrt->RegisterOutVariable("ECal_seed_y_truth",  &ECal_seed_y_truth);
@@ -165,20 +164,21 @@ void TrackingProcessor::Begin() {
 
 void TrackingProcessor::CleanEvt() {
 
-    std::vector<DTrack>().swap(tag_tracks_);
-    std::vector<DTrack>().swap(rec_tracks_);
+    //std::vector<DTrack>().swap(tag_tracks_);
+    //std::vector<DTrack>().swap(rec_tracks_);
+    for(size_t i = 0; i < tag_tracks_.size(); i++) {delete tag_tracks_.at(i); tag_tracks_.at(i) = nullptr;}
+    for(size_t i = 0; i < rec_tracks_.size(); i++) {delete rec_tracks_.at(i); rec_tracks_.at(i) = nullptr;}
+    tag_tracks_.clear();
+    rec_tracks_.clear();
 
-    if(!clean)
-    {
-        std::vector<double>().swap(TagTrk2_x);
-        std::vector<double>().swap(TagTrk2_y);
-        std::vector<double>().swap(TagTrk2_z);
-        std::vector<double>().swap(TagTrk2_e);
-        std::vector<double>().swap(RecTrk2_x);
-        std::vector<double>().swap(RecTrk2_y);
-        std::vector<double>().swap(RecTrk2_z);
-        std::vector<double>().swap(RecTrk2_e);
-    }
+    std::vector<double>().swap(TagTrk2_x);
+    std::vector<double>().swap(TagTrk2_y);
+    std::vector<double>().swap(TagTrk2_z);
+    std::vector<double>().swap(TagTrk2_e);
+    std::vector<double>().swap(RecTrk2_x);
+    std::vector<double>().swap(RecTrk2_y);
+    std::vector<double>().swap(RecTrk2_z);
+    std::vector<double>().swap(RecTrk2_e);
 
     TagTrk2_track_No_truth = 0;
     RecTrk2_track_No_truth = 0;
@@ -205,6 +205,13 @@ void TrackingProcessor::CleanEvt() {
     std::vector<std::vector<double>>().swap(RecTrk2_track_x);
     std::vector<std::vector<double>>().swap(RecTrk2_track_y);
     std::vector<std::vector<double>>().swap(RecTrk2_track_z);
+
+    std::vector<std::vector<double>>().swap(RecTrk2_track_extrapolated_x);
+    std::vector<std::vector<double>>().swap(RecTrk2_track_extrapolated_y);
+
+    std::vector<double>().swap(RecTrk2_track_preA);
+    std::vector<double>().swap(RecTrk2_track_preB);
+    std::vector<double>().swap(RecTrk2_track_preR);
 
     std::vector<double>().swap(ECal_seed_x_truth);
     std::vector<double>().swap(ECal_seed_y_truth);
@@ -246,7 +253,7 @@ void TrackingProcessor::FillTruth(AnaEvent *evt,
         
         //then match rec track
         int id_rec_track=-1;
-        for(const auto &track : rec_tracks_)
+        for(auto track : rec_tracks_)
         {
             id_rec_track++;
             int min_id(-1);
@@ -254,8 +261,8 @@ void TrackingProcessor::FillTruth(AnaEvent *evt,
 
             for(size_t i = 0; i < truth_tracks.size(); i++)
             {
-                double dis = (std::hypot(truth_tracks.at(i).first->vertex[0] - track.GetECalSeedX(),
-                                         truth_tracks.at(i).first->vertex[1] - track.GetECalSeedY())
+                double dis = (std::hypot(truth_tracks.at(i).first->vertex[0] - track->GetECalSeedX(),
+                                         truth_tracks.at(i).first->vertex[1] - track->GetECalSeedY())
                              );
                 if(dis < min_dis) {min_dis = dis; min_id = i;}
             }
@@ -424,14 +431,14 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     {
         
                         TrkHitPVec tag_track_hits((*(vec_tag_track.begin() + i)).begin(), (*(vec_tag_track.begin() + i)).end());
-                        DTrack track(tag_track_hits,
-                                     find_tag.GetR(i),        //used in Kalman filter
-                                     find_tag.GetCenterX(i),  //not used in Kalman filter, reserved
-                                     find_tag.GetCenterY(i)); //not used in Kalman filter, reserved
-                        track.SetVerbose(Verbose);
-                        track.ExceptionHandler(magnet_at_origin);
-                        track.Fit(Tag_fit_method);            //choose fitting method: Kalman filter
-                        track.Evaluate();
+                        auto track = new DTrack(tag_track_hits,
+                                                find_tag.GetR(i),        //used in Kalman filter
+                                                find_tag.GetCenterX(i),  //not used in Kalman filter, reserved
+                                                find_tag.GetCenterY(i)); //not used in Kalman filter, reserved
+                        track->SetVerbose(Verbose);
+                        track->ExceptionHandler(magnet_at_origin);
+                        track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter
+                        //track->Evaluate();
 
                         tag_tracks_.push_back(track);
                     }
@@ -465,14 +472,14 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
               
                     for (int i = 0; i < find_rec.GetTrackNo(); i++) {
                         TrkHitPVec rec_track((*(vec_rec_track.begin() + i)).begin(), (*(vec_rec_track.begin() + i)).end());
-                        DTrack track(rec_track,
-                                     find_rec.GetR(i),        //used in Kalman filter
-                                     find_rec.GetCenterX(i),  //not used in Kalman filter, reserved
-                                     find_rec.GetCenterY(i)); //not used in Kalman filter, reserved
-                        track.SetVerbose(Verbose);
-                        track.ExceptionHandler(magnet_at_origin);
-                        track.Fit(Rec_fit_method);            //choose fitting method: Kalman filter
-                        //track.Evaluate();
+                        auto track = new DTrack(rec_track,
+                                                find_rec.GetR(i),        //used in Kalman filter
+                                                find_rec.GetCenterX(i),  //not used in Kalman filter, reserved
+                                                find_rec.GetCenterY(i)); //not used in Kalman filter, reserved
+                        track->SetVerbose(Verbose);
+                        track->ExceptionHandler(magnet_at_origin);
+                        track->Fit(Rec_fit_method);            //choose fitting method: Kalman filter
+                        //track->Evaluate();
 
                         rec_tracks_.push_back(track);
                     }
@@ -482,53 +489,59 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Post-processing
-        std::sort(tag_tracks_.begin(), tag_tracks_.end(), [](const DTrack &track1, const DTrack &track2)
-                                                        { return track1.GetPp() > track2.GetPp(); }   );
-        std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](const DTrack &track1, const DTrack &track2)
-                                                        { return track1.GetPp() > track2.GetPp(); }   );
+        std::sort(tag_tracks_.begin(), tag_tracks_.end(), [](const DTrack *track1, const DTrack *track2)
+                                                        { return track1->GetPp() > track2->GetPp(); } );
+        std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](const DTrack *track1, const DTrack *track2)
+                                                        { return track1->GetPp() > track2->GetPp(); } );
 
         for(auto &track : tag_tracks_)
         {
-            TagTrk2_pp.push_back(track.GetPp());
-            TagTrk2_track_chi2.push_back(track.GetChi2());
+            TagTrk2_pp.push_back(track->GetPp());
+            TagTrk2_track_chi2.push_back(track->GetChi2());
         
             if (!clean)
             {
-                TagTrk2_track_quality.push_back(track.GetQuality());
-                TagTrk2_track_x_sigma.push_back(track.GetXSigma());
-                TagTrk2_track_y_sigma.push_back(track.GetYSigma());
+                TagTrk2_track_quality.push_back(track->GetQuality());
+                TagTrk2_track_x_sigma.push_back(track->GetXSigma());
+                TagTrk2_track_y_sigma.push_back(track->GetYSigma());
             }
         }
 
         for(auto &track : rec_tracks_)
         {
-            RecTrk2_pp.push_back(track.GetPp());
-            RecTrk2_track_chi2.push_back(track.GetChi2());
+            RecTrk2_pp.push_back(track->GetPp());
+            RecTrk2_track_chi2.push_back(track->GetChi2());
 
-            ECal_seed_x.push_back(track.GetECalSeedX());
-            ECal_seed_y.push_back(track.GetECalSeedY());
-            ECal_seed_px.push_back(track.GetECalDirctX());
-            ECal_seed_py.push_back(track.GetECalDirctY());
-            ECal_seed_pz.push_back(track.GetECalQoP());
+            ECal_seed_x.push_back(track->GetECalSeedX());
+            ECal_seed_y.push_back(track->GetECalSeedY());
+            ECal_seed_px.push_back(track->GetECalDirctX());
+            ECal_seed_py.push_back(track->GetECalDirctY());
+            ECal_seed_pz.push_back(track->GetECalQoP());
          
             if (!clean) {
-                RecTrk2_track_quality.push_back(track.GetQuality());
-                RecTrk2_track_x_sigma.push_back(track.GetXSigma());
-                RecTrk2_track_y_sigma.push_back(track.GetYSigma());
+                RecTrk2_track_quality.push_back(track->GetQuality());
+                RecTrk2_track_x_sigma.push_back(track->GetXSigma());
+                RecTrk2_track_y_sigma.push_back(track->GetYSigma());
          
                 std::vector<double> track_x;
                 std::vector<double> track_y;
                 std::vector<double> track_z;
-                for(int hit = 0; hit < track.GetSize(); hit++)
+                for(int hit = 0; hit < track->GetSize(); hit++)
                 {
-                    track_x.push_back(track.At(hit)->GetX());
-                    track_y.push_back(track.At(hit)->GetY());
-                    track_z.push_back(track.At(hit)->GetZ());
+                    track_x.push_back(track->At(hit)->GetX());
+                    track_y.push_back(track->At(hit)->GetY());
+                    track_z.push_back(track->At(hit)->GetZ());
                 }
-         
                 RecTrk2_track_x.push_back(track_x);
                 RecTrk2_track_y.push_back(track_y);
                 RecTrk2_track_z.push_back(track_z);
+
+                auto extrapolated_x = track->ExtrapolateTo(track_z);
+                RecTrk2_track_extrapolated_x.push_back(extrapolated_x);
+
+                RecTrk2_track_preA.push_back(track->GetPreXc());
+                RecTrk2_track_preB.push_back(track->GetPreYc());
+                RecTrk2_track_preR.push_back(track->GetPreR());
             }
         }
 

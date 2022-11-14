@@ -21,11 +21,12 @@
 //................................................................................//
 //Tracking
 #include "Algo/TypeDef.h"
+#include "Algo/KalmanFitting.h"
 
 //................................................................................//
 //Fitting methods implemented in Dark Shine tracking
 //-- dNone: No method specified, return pre-fitting results from track finding
-//-- dKalman: Kalman fitter from GenFit
+//-- dKalman: Kalman fitter_ from GenFit
 enum FittingMethods {dNone, dKalman};
 
 class DTrack
@@ -41,7 +42,7 @@ public:
     DTrack(DTrack &&oldTrack);
     DTrack& operator=(const DTrack&);
 
-    ~DTrack() = default;
+    ~DTrack() {delete fitter_; fitter_ = nullptr;};
 
 //................................................................................//
 //Get
@@ -54,6 +55,9 @@ public:
     double GetPz() const {return pz;}
     double GetPp() const {return pp;}
     double GetPl() const {return py;}
+    double GetPreR()  const {return preR;}
+    double GetPreXc() const {return preXc;}
+    double GetPreYc() const {return preYc;}
     double GetECalSeedX() const {return ECal_seed_x;}
     double GetECalSeedY() const {return ECal_seed_y;}
     double GetECalDirctX() const {return ECal_seed_px;}
@@ -84,6 +88,7 @@ public:
 //Processor
 //................................................................................//
     void Fit(int method);
+    std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z);
     void Evaluate();
 
 private:
@@ -125,6 +130,8 @@ private:
     double preR{RETURN};
     double preXc{RETURN};
     double preYc{RETURN};
+
+    Fitting *fitter_{nullptr};
  
 //................................................................................//
 //Hits collection
