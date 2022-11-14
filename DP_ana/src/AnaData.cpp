@@ -240,6 +240,20 @@ void AnaData::printGeometryDetails() const {
                   << "                        cell No. z   " << N_ECal_cell_z            << std::endl;
 }
 
+TString AnaData::getRegionName(const float *vertex) {
+    if (vertex[2] < getECalSurfaceZ()) {
+        return "Target";
+    } else if (vertex[2] < getECalCenterZ() + 0.5 * getECalLengthZ()) {
+        if (vertex[0] < getECalCenterX() + 0.5 * getECalLengthX() &&
+            vertex[1] < getECalCenterY() + 0.5 * getECalLengthY())
+            return "ECAL";
+        else
+            return "SideHCAL";
+    } else {
+        return "HCAL";
+    }
+}
+
 int AnaData::getProcessId(const std::string& n){
     //find the processName corresponding id or add a new one
     if(processMap.count(n)==0){
@@ -285,6 +299,22 @@ std::vector<std::pair<const DTruthState*, int>> AnaData::getTruthTracksAtECalFro
     }
 
     return truth_tracks_at_ECal_front;
+}
+
+std::vector<std::pair<const DTruthParticle*, const DTruthState*>> AnaData::getTruthsAtECalFront() const {
+    std::vector<std::pair<const DTruthParticle*, const DTruthState*>> v_truthStateParticle;
+    // m_states is map<{trackID, PDG}, {prev_state, post_state}>
+    map<pair<int, int>, pair<DTruthState *, DTruthState *>> m_states = truth_->getStatesInECAL();
+    // scan DTruthParticles
+    for (auto tp : truth_->getTruthParticles()) {
+        auto state_key = std::make_pair(tp->id, tp->pdg);
+        auto itr_states = m_states.find(state_key);
+        if (itr_states != m_states.end()) {
+            v_truthStateParticle.emplace_back(std::make_pair(tp, itr_states->second.first));
+            //std::cout << "[AnaData] ==> Truths at " << " StateZ: " << itr_states->second.first->vertex[2] << " id: " << tp->id << " pdg: " << tp->pdg << std::endl;
+        }
+    }
+    return v_truthStateParticle;
 }
 
 unsigned int AnaData::getNTruthTracks(DTruth::DTruthDetPV DetPV, double min_energy, int min_hits) const
