@@ -81,7 +81,7 @@ namespace {
     }
 
     void PrintVersion() {
-        G4cout << "DSimu " << dControl->DSimu_version << G4endl; // date: 2021-07-28
+        G4cerr << "DSimu " << dControl->DSimu_version << G4endl; // date: 2021-07-28
     }
 
     void PrintUsage() {
@@ -89,6 +89,7 @@ namespace {
         if_introduction = false;
         PrintVersion();
 
+        G4cerr << G4endl;
         G4cerr << " Usage: " << G4endl;
         G4cerr << " DSimu [-y default.yaml] [-m macro ] [-o OpticalMacro]" << G4endl;
         G4cerr << "   note: yaml file is necessary." << G4endl;
@@ -120,11 +121,6 @@ int main(int argc, char **argv) {
 
 //-------------------------------------------------------------------------------
 // Evaluate Arguments
-
-    if (argc > 9) {
-        PrintUsage();
-        return 1;
-    }
 
     G4String macro;
     G4String OpticalMacro;
@@ -171,6 +167,7 @@ int main(int argc, char **argv) {
     }
 
     if(if_introduction) PrintIntroduction();
+    PrintVersion();
 
 //-------------------------------------------------------------------------
     //G4cout << macro << ", " << OpticalMacro << G4endl;

@@ -14,11 +14,12 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TString.h"
+#include "TVector3.h"
 
 #include "Event/AnaEvent.h"
 
 using AnaVar = std::variant<bool*, short*, int*, float*, double*, std::string*, TString*,
-                            std::vector<bool>*, std::vector<short>*, std::vector<int>*, std::vector<float>*, std::vector<double>*, std::vector<std::string>*, std::vector<TString>*,
+                            std::vector<bool>*, std::vector<short>*, std::vector<int>*, std::vector<float>*, std::vector<double>*, std::vector<std::string>*, std::vector<TString>*, std::vector<TVector3>*,
                             std::vector<std::vector<bool>>*, std::vector<std::vector<short>>*, std::vector<std::vector<int>>*, std::vector<std::vector<float>>*, std::vector<std::vector<double>>*, std::vector<std::vector<std::string>>*, std::vector<std::vector<TString>>*>;
 
 class EventStoreAndWriter {

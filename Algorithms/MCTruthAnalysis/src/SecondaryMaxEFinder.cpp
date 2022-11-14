@@ -23,7 +23,7 @@ void SecondaryMaxEFinder::RegisterParameters_visible(){
     EvtWrt->RegisterIntVariable("DP_decay", &DP_decay, "DP_decay/I");
     EvtWrt->RegisterDoubleVariable("E_decay_1", &E_decay_1, "E_decay_1/D");
     EvtWrt->RegisterDoubleVariable("E_decay_2", &E_decay_2, "E_decay_2/D");
-    EvtWrt->RegisterDoubleVariable("P_decay_1", P_decay_1, "P_decay_2[3]/D");
+    EvtWrt->RegisterDoubleVariable("P_decay_1", P_decay_1, "P_decay_1[3]/D");
     EvtWrt->RegisterDoubleVariable("P_decay_2", P_decay_2, "P_decay_2[3]/D");
     EvtWrt->RegisterIntVariable("PDG_decay_1", &PDG_decay_1, "PDG_decay_1/I");
     EvtWrt->RegisterIntVariable("PDG_decay_2", &PDG_decay_2, "PDG_decay_2/I");

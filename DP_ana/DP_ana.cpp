@@ -25,6 +25,10 @@ namespace {
         cerr << "**************************************************************" << endl;
     }
 
+    void PrintVersion() {
+        cerr << "DAna " << "v1.5.4" << endl;
+    }
+
     void PrintUsage() {
         PrintIntroduction();
         if_introduction = false;
@@ -42,14 +46,18 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    if(if_introduction) PrintIntroduction();
-
     bool PrintUsage = false;
     std::string configfile;
     if (std::string(argv[1]) == "-c") configfile = argv[2];
-    else if (std::string(argv[1]) == "-x"){
+    else if (std::string(argv[1]) == "-x") {
         PrintUsage = true;
+    } else if (std::string(argv[1]) == "-v") {
+        PrintVersion();
+        return EXIT_SUCCESS;
     } else return -1;
+
+    if(if_introduction) PrintIntroduction();
+    PrintVersion();
 
     AnaData::CreateInstance();
 

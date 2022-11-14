@@ -203,7 +203,7 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
             guiEvent = new TGNumberEntry(hf, 0, 9, 999, TGNumberFormat::kNESInteger,
                                          TGNumberFormat::kNEANonNegative,
                                          TGNumberFormat::kNELLimitMinMax,
-                                         0, 99999);
+                                         0, 2147483647);
             hf->AddFrame(guiEvent);
             guiEvent->Connect("ValueSet(Long_t)", "DEventDisplay", fh, "guiGoto()");
 

@@ -82,6 +82,7 @@ public:
     int getNECalCellY() const {return N_ECal_cell_y;}
     int getNECalCellZ() const {return N_ECal_cell_z;}
     double getECalSurfaceZ() const {return ECAL_center_z - 0.5*ECAL_length_z;}
+    TString getRegionName(const float vertex[3]);
 
     int getProcessId(const std::string& n);
     void printProcessMap();
@@ -96,6 +97,8 @@ public:
     std::vector<std::pair<const DTruthState*,int>> getTruthTracksAtECalFront() const;
     unsigned int getNTruthTracks(DTruth::DTruthDetPV DetPV, double min_energy = 50., int min_hits = 4) const;
     const DTruth* getInitialElectron() const;
+
+    std::vector<std::pair<const DTruthParticle*, const DTruthState*>> getTruthsAtECalFront() const;
 
 protected:
     TFile* root_file;
