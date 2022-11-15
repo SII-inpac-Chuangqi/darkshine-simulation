@@ -144,25 +144,25 @@ void DTrack::Fit(int method)
 
     switch(method)
     {
-        case dKalman  :
-                        fitter_ = new KalmanFitting(hits,
-                                                    {preR,   //Fix to 2 ordered parameters! --bending radius as fitting seed
-                                                     By},    //                             --magnet value to manage exception condition
-                                                    verbose_ //Verbose
-                                                   );
-                        break;
-        case dNone    :
-                        if(verbose_ > 0)
-                            std::cout << "[INFO] ==> Fit not required" << std::endl;
-                        break;
+        case tracking::dKalman :
+                                 fitter_ = new KalmanFitting(hits,
+                                                             {preR,   //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                              By},    //                             --magnet value to manage exception condition
+                                                             verbose_ //Verbose
+                                                            );
+                                 break;
+        case tracking::dNone :
+                                 if(verbose_ > 0)
+                                     std::cout << "[INFO] ==> Fit not required" << std::endl;
+                                 break;
         default :
-                        if(verbose_ > 0)
-                            std::cerr << "[WARNING] ==> Fit method not found. Use default fitter_ GenFit Kalman fitter_" << std::endl;
-                        fitter_ = new KalmanFitting(hits,
-                                                    {preR,   //Fix to 2 ordered parameters! --bending radius as fitting seed
-                                                     By},    //                             --magnet value to manage exception condition
-                                                    verbose_ //Verbose
-                                                   );
+                                 if(verbose_ > 0)
+                                     std::cerr << "[WARNING] ==> Fit method not found. Use default fitter_ GenFit Kalman fitter_" << std::endl;
+                                 fitter_ = new KalmanFitting(hits,
+                                                             {preR,   //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                              By},    //                             --magnet value to manage exception condition
+                                                             verbose_ //Verbose
+                                                            );
     }
 
     if(fitter_)

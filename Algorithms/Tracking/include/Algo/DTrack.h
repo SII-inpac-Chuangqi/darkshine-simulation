@@ -27,7 +27,10 @@
 //Fitting methods implemented in Dark Shine tracking
 //-- dNone: No method specified, return pre-fitting results from track finding
 //-- dKalman: Kalman fitter_ from GenFit
-enum FittingMethods {dNone, dKalman};
+namespace tracking
+{
+    enum FittingMethods {dNone, dKalman};
+}
 
 class DTrack
 {
