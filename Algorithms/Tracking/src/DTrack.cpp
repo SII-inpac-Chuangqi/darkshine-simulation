@@ -188,7 +188,7 @@ void DTrack::Fit(int method)
 //    fitter_ = nullptr;
 }
 
-std::vector<double> DTrack::ExtrapolateTo(const std::vector<double> &planes_z)
+std::vector<double> DTrack::ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir)
 {
     if(!fitter_)
     {
@@ -197,7 +197,7 @@ std::vector<double> DTrack::ExtrapolateTo(const std::vector<double> &planes_z)
         return {};
     }
 
-    return fitter_->ExtrapolateTo(planes_z);
+    return fitter_->ExtrapolateTo(planes_z, extrop_dir);
 }
 
 void DTrack::Evaluate()

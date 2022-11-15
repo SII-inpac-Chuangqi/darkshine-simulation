@@ -536,8 +536,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 RecTrk2_track_y.push_back(track_y);
                 RecTrk2_track_z.push_back(track_z);
 
-                auto extrapolated_x = track->ExtrapolateTo(track_z);
+                auto extrapolated_x = track->ExtrapolateTo(track_z, tracking::dX);
+                auto extrapolated_y = track->ExtrapolateTo(track_z, tracking::dY);
                 RecTrk2_track_extrapolated_x.push_back(extrapolated_x);
+                RecTrk2_track_extrapolated_y.push_back(extrapolated_y);
 
                 RecTrk2_track_preA.push_back(track->GetPreXc());
                 RecTrk2_track_preB.push_back(track->GetPreYc());

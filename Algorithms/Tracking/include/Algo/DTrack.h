@@ -91,7 +91,7 @@ public:
 //Processor
 //................................................................................//
     void Fit(int method);
-    std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z);
+    std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir = tracking::dX);
     void Evaluate();
 
 private:
