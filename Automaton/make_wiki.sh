@@ -1,5 +1,5 @@
 #!/bin/bash
-apt-get update && apt-get install -y gettext jq
+#apt-get update && apt-get install -y gettext jq
 # this script will build wiki and put it into the correct folder in test
 # then it will be uploaded automatically
 # note: this could only add something and upload the plots, never delete nor edit

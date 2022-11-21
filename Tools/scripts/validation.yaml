@@ -42,13 +42,13 @@ variables:
     label: [ "Leading E_{cluster}", "MeV" ]
 
   - name: "ECAL_Cluster_X[0]"
-    range: [ 20, -30,30 ] # [bin size, min, max]
+    range: [ 20, -300,300 ] # [bin size, min, max]
     label: [ "Leading X_{cluster}", "mm" ]
   - name: "ECAL_Cluster_Y[0]"
-    range: [ 20, -15,15 ] # [bin size, min, max]
+    range: [ 20, -150,150 ] # [bin size, min, max]
     label: [ "Leading Y_{cluster}", "mm" ]
   - name: "ECAL_Cluster_Z[0]"
-    range: [ 20, -25, 0 ] # [bin size, min, max]
+    range: [ 20, -250, 0 ] # [bin size, min, max]
     label: [ "Leading Z_{cluster}", "mm" ]
 
   - name: "ECAL_Cluster_NCell[0]"
