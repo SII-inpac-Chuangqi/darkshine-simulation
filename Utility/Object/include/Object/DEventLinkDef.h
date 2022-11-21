@@ -65,6 +65,8 @@
 
 #pragma link C++ class DDetectorIDMaps+;
 
+#pragma link C++ class std::vector<TVector3>+;
+
 #endif
 
 #endif //DSIMU_DEVENTLINKDEF_H

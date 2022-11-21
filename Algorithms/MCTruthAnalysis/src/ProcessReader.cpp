@@ -18,9 +18,14 @@ void ProcessReader::RegisterParameters() {
     EvtWrt->RegisterOutVariable("process_GMM", &process_GMM);
     EvtWrt->RegisterOutVariable("process_GMM_Target", &process_GMM_Target);
     EvtWrt->RegisterOutVariable("process_GMM_ECAL", &process_GMM_ECAL);
+    EvtWrt->RegisterOutVariable("process_EN",&process_EN);
+    EvtWrt->RegisterOutVariable("process_EN_Target",&process_EN_Target);
+    EvtWrt->RegisterOutVariable("process_EN_ECAL", &process_EN_ECAL);
+    EvtWrt->RegisterOutVariable("process_PN", &process_PN);
+    EvtWrt->RegisterOutVariable("process_PN_Target", &process_PN_Target);
+    EvtWrt->RegisterOutVariable("process_PN_ECAL",&process_PN_ECAL);
     // detailed process
     EvtWrt->RegisterOutVariable("process_ID", &process_ID);
-    EvtWrt->RegisterOutVariable("process_Name", &process_Name);
     EvtWrt->RegisterOutVariable("process_PVName", &process_PVName);
     EvtWrt->RegisterOutVariable("process_vertex", &process_vertex);
     EvtWrt->RegisterOutVariable("process_energy", &process_energy);
@@ -64,13 +69,20 @@ void ProcessReader::ReadProcess(AnaEvent *Evt) {
             } else if ( process->index == GMM_Id ) { // GammaToMuPair
                 process_GMM++;
                 if (dAnaData->getRegionName(process->vertex) == "Target") process_GMM_Target++;
-                if (dAnaData->getRegionName(process->vertex) == "ECAL") process_GMM_ECAL++;
+                else if (dAnaData->getRegionName(process->vertex) == "ECAL") process_GMM_ECAL++;
+            } else if ( process->index == PN_Id ) {
+                process_PN++;
+                if (dAnaData->getRegionName(process->vertex) == "Target") process_PN_Target++;
+                else if (dAnaData->getRegionName(process->vertex) == "ECAL") process_PN_ECAL++;
+            } else if ( process->index == EN_Id ) {
+                process_EN++;
+                if (dAnaData->getRegionName(process->vertex) == "Target") process_EN_Target++;
+                else if (dAnaData->getRegionName(process->vertex) == "ECAL") process_EN_ECAL++;
             }
             // fill process
             process_ID.emplace_back(process->index);
-            process_Name.emplace_back(pDef.dPhyTypeVec.at(process->index));
             process_PVName.emplace_back(dAnaData->getRegionName(process->vertex));
-            process_vertex.emplace_back(process->vertex);
+            process_vertex.emplace_back(TVector3(process->vertex));
             process_energy.emplace_back(process->E);
             process_parent_pdg.emplace_back(tp->pdg);
             process_parent_id.emplace_back(tp->id);
@@ -89,8 +101,13 @@ void ProcessReader::initialization() {
     process_GMM = 0;
     process_GMM_Target = 0;
     process_GMM_ECAL = 0;
+    process_EN = 0;
+    process_EN_Target = 0;
+    process_EN_ECAL = 0;
+    process_PN = 0;
+    process_PN_Target = 0;
+    process_PN_ECAL = 0;
     process_ID.clear(); process_ID.shrink_to_fit();
-    process_Name.clear(); process_Name.shrink_to_fit();
     process_PVName.clear(); process_PVName.shrink_to_fit();
     process_vertex.clear(); process_vertex.shrink_to_fit();
     process_energy.clear(); process_energy.shrink_to_fit();
