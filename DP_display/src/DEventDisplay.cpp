@@ -79,9 +79,11 @@ bool DEventDisplay::drawDetector() {
         } else if (name.Contains("TagTrk")) {
             volume->SetLineColor(30);
             volume->SetTransparency(70);
+            _build_Tracker_BField = true;
         } else if (name.Contains("RecTrk")) {
             volume->SetLineColor(32);
             volume->SetTransparency(70);
+            _build_Tracker_BField = true;
         } else if (name == "ECAL") {
             volume->SetLineColor(38);
             volume->SetTransparency(75);
