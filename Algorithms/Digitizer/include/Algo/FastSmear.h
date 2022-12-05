@@ -33,6 +33,7 @@ public:
     explicit FastSmear(const shared_ptr<EventStoreAndWriter> &evtWrt) : EvtWrt(evtWrt) {
         cal_info.insert(pair<string, vector<Calibration_Table>>(ECAL_Name, vector<Calibration_Table>()));
         cal_info.insert(pair<string, vector<Calibration_Table>>(HCAL_Name, vector<Calibration_Table>()));
+        cal_info.insert(pair<string,vector<Calibration_Table>>(SideHCAL_Name,vector<Calibration_Table>()));
     }
 
     void RegisterParameters(const std::string& cf, bool aecal, bool ahcal, int seed);
@@ -57,6 +58,7 @@ private:
 
     string ECAL_Name = "ECAL";
     string HCAL_Name = "HCAL";
+    string SideHCAL_Name = "SideHCAL";
     map<string, vector<Calibration_Table>> cal_info;
 };
 

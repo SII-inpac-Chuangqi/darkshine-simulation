@@ -26,7 +26,7 @@ namespace {
     }
 
     void PrintVersion() {
-        cerr << "DAna " << "v1.5.4" << endl;
+        cerr << "DAna " << "v1.5.5" << endl;
     }
 
     void PrintUsage() {

@@ -37,6 +37,8 @@ public:
         Moments_Lat.clear();
         HCAL_total.clear();
         HCAL_E_Max_Cell.clear();
+        SideHCAL_total.clear();
+        SideHCAL_E_Max_Cell.clear();
         E_frac_vec.clear();
         Moments_R.clear();
         Moments_X.clear();
@@ -108,6 +110,8 @@ private:
 
     vector<double> HCAL_total;
     vector<double> HCAL_E_Max_Cell;
+    vector<double> SideHCAL_total;
+    vector<double> SideHCAL_E_Max_Cell;
 
     // output variables
     vector<double> E_total{};
@@ -200,12 +204,15 @@ private:
     int SaveTruthInfo{0};
     string ecal_col_use;
     string hcal_col_use;
+    string sidehcal_col_use;
 
     vector<string> ecal_cols;
     int ecal_col_size;
 
     vector<string> hcal_cols;
+    vector<string> sidehcal_cols;
     int hcal_col_size;
+    int sidehcal_col_size;
 
     int _dNX,_dNY,_dNZ,_SurfaceZ; //geometry parameter extracted from dANA
 
