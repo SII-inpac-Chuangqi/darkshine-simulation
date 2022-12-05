@@ -112,7 +112,8 @@ void DEventDisplay::drawMCParticles() {
     auto *gMCTrackList = new TEveTrackList("MC Tracks");
     gEve->AddElement(gMCTrackList);
     auto *trkProp = gMCTrackList->GetPropagator();
-    trkProp->SetMagFieldObj(new DSMagneticField());
+    if (_build_Tracker_BField) trkProp->SetMagFieldObj(new DSMagneticField());
+    else trkProp->SetMagField(0,0,0);
 
     auto MCCols = evt->getMcParticleCollection();
     for (const auto &MCCol : MCCols) {

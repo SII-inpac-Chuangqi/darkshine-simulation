@@ -161,20 +161,20 @@ void AnaData::readGeometryDetails() {
 
                         for (int l = 0; l < 3; l++)
                             subdetector_pos[l] = subdetector->GetMatrix()->GetTranslation()[l] + block->GetMatrix()->GetTranslation()[l];
-                        if ( !ECAL_pos0 ) ECAL_pos0 = new TVector3(subdetector_pos[0],subdetector_pos[1],subdetector_pos[2]);
+                        if ( !ECAL_pos0 ) ECAL_pos0 = new TVector3(CUNIT * subdetector_pos[0],CUNIT * subdetector_pos[1],CUNIT * subdetector_pos[2]);
 
                         if (subdetector_pos[2] > last_pos[2]) {
-                            if (ECAL_cell_dz == 0 && N_ECal_cell_z == 1) ECAL_cell_dz = fabs(subdetector_pos[2] - last_pos[2]);
+                            if (ECAL_cell_dz == 0 && N_ECal_cell_z == 1) ECAL_cell_dz = CUNIT * fabs(subdetector_pos[2] - last_pos[2]);
                             last_pos[2] = subdetector_pos[2];
                             N_ECal_cell_z++;
                         }
                         if (subdetector_pos[1] > last_pos[1]) {
-                            if (ECAL_cell_dy == 0 && N_ECal_cell_y == 1) ECAL_cell_dy = fabs(subdetector_pos[1] - last_pos[1]);
+                            if (ECAL_cell_dy == 0 && N_ECal_cell_y == 1) ECAL_cell_dy = CUNIT * fabs(subdetector_pos[1] - last_pos[1]);
                             last_pos[1] = subdetector_pos[1];
                             N_ECal_cell_y++;
                         }
                         if (subdetector_pos[0] > last_pos[0]) {
-                            if (ECAL_cell_dx == 0 && N_ECal_cell_x == 1) ECAL_cell_dx = fabs(subdetector_pos[0] - last_pos[0]);
+                            if (ECAL_cell_dx == 0 && N_ECal_cell_x == 1) ECAL_cell_dx = CUNIT * fabs(subdetector_pos[0] - last_pos[0]);
                             last_pos[0] = subdetector_pos[0];
                             N_ECal_cell_x++;
                         }
