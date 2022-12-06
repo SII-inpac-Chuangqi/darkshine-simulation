@@ -25,6 +25,11 @@
 #include "Algo/TypeDef.h"
 #include "Algo/TrkHit.h"
 
+namespace tracking
+{
+    enum direction {dX, dY, dZ};
+}
+
 class Fitting
 {
 public:
@@ -60,7 +65,9 @@ public:
     virtual double GetXSigma() const {return xSigma;}
     virtual double GetYSigma() const {return ySigma;}
 
-    virtual std::vector<double> ExtrapolateTo([[maybe_unused]] const std::vector<double> &planes_z) {return {};}
+    virtual std::vector<double> ExtrapolateTo([[maybe_unused]] const std::vector<double> &planes_z,
+                                              [[maybe_unused]] tracking::direction extrop_dir = tracking::dX)
+                                             {return {};}
 
 //................................................................................//
 //Set

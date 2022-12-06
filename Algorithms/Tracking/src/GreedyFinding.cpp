@@ -143,7 +143,8 @@ void GreedyFinding::MethodLooping(const std::vector<double> &track_x, const std:
     MethodKasa(track_x, track_y, A, B);
 }
 
-double GreedyFinding::MethodKasa(const std::vector<double> &track_x, const std::vector<double> &track_y, const double &cur_A, const double &cur_B)
+double GreedyFinding::MethodKasa(const std::vector<double> &track_x, const std::vector<double> &track_y,
+                                 [[maybe_unused]] const double &cur_A, [[maybe_unused]] const double &cur_B)
 {
     if(track_x.size() != track_y.size())
     {

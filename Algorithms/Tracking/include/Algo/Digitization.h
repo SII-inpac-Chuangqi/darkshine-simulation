@@ -30,7 +30,10 @@
 #include "Algo/TypeDef.h"
 #include "Algo/TrkHit.h"
 
-enum {tag = 1, rec = 2};
+namespace tracking
+{
+    enum detector {tag = 1, rec = 2};
+}
 
 class Digitization
 {

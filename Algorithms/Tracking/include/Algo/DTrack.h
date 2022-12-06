@@ -27,7 +27,10 @@
 //Fitting methods implemented in Dark Shine tracking
 //-- dNone: No method specified, return pre-fitting results from track finding
 //-- dKalman: Kalman fitter_ from GenFit
-enum FittingMethods {dNone, dKalman};
+namespace tracking
+{
+    enum FittingMethods {dNone, dKalman};
+}
 
 class DTrack
 {
@@ -88,8 +91,9 @@ public:
 //Processor
 //................................................................................//
     void Fit(int method);
-    std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z);
+    std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir = tracking::dX);
     void Evaluate();
+    void Reverse() {std::reverse(hits.begin(), hits.end());}
 
 private:
 //................................................................................//
