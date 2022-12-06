@@ -70,7 +70,7 @@ void TrackingProcessor::Begin() {
     if(magnets.size() != 3 || !magnets.at(0) || !magnets.at(1) || !magnets.at(2))
         dAnaData->setConstMagnetField({0., con_field, 0.});
 
-    if(Tag_fit_method == dKalman || Rec_fit_method == dKalman)
+    if(Tag_fit_method == tracking::dKalman || Rec_fit_method == tracking::dKalman)
     {
         genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
         if (magnets.size() == 3 && magnets.at(0) && magnets.at(1) && magnets.at(2)) {
@@ -411,7 +411,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             if_raw_tag_hit_number = true;
 
 //Digitization
-            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, clus_tag_trkhit_map, tag);            
+            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, clus_tag_trkhit_map, tracking::tag);            
 
             if(clus_tag_trkhit_map.size())
             {
@@ -437,6 +437,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                 find_tag.GetCenterY(i)); //not used in Kalman filter, reserved
                         track->SetVerbose(Verbose);
                         track->ExceptionHandler(magnet_at_origin);
+                        //track->Reverse();
                         track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter
                         //track->Evaluate();
 
@@ -454,7 +455,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             if_raw_rec_hit_number = true;
 
 //Digitization
-            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, clus_rec_trkhit_map, rec);            
+            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, clus_rec_trkhit_map, tracking::rec);            
 
             if(clus_rec_trkhit_map.size())
             {
@@ -478,6 +479,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                 find_rec.GetCenterY(i)); //not used in Kalman filter, reserved
                         track->SetVerbose(Verbose);
                         track->ExceptionHandler(magnet_at_origin);
+                        //track->Reverse();
                         track->Fit(Rec_fit_method);            //choose fitting method: Kalman filter
                         //track->Evaluate();
 
@@ -536,8 +538,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 RecTrk2_track_y.push_back(track_y);
                 RecTrk2_track_z.push_back(track_z);
 
-                auto extrapolated_x = track->ExtrapolateTo(track_z);
+                auto extrapolated_x = track->ExtrapolateTo(track_z, tracking::dX);
+                auto extrapolated_y = track->ExtrapolateTo(track_z, tracking::dY);
                 RecTrk2_track_extrapolated_x.push_back(extrapolated_x);
+                RecTrk2_track_extrapolated_y.push_back(extrapolated_y);
 
                 RecTrk2_track_preA.push_back(track->GetPreXc());
                 RecTrk2_track_preB.push_back(track->GetPreYc());
