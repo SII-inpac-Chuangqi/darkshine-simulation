@@ -437,6 +437,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                 find_tag.GetCenterY(i)); //not used in Kalman filter, reserved
                         track->SetVerbose(Verbose);
                         track->ExceptionHandler(magnet_at_origin);
+                        //track->Reverse();
                         track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter
                         //track->Evaluate();
 
@@ -478,6 +479,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                 find_rec.GetCenterY(i)); //not used in Kalman filter, reserved
                         track->SetVerbose(Verbose);
                         track->ExceptionHandler(magnet_at_origin);
+                        //track->Reverse();
                         track->Fit(Rec_fit_method);            //choose fitting method: Kalman filter
                         //track->Evaluate();
 

@@ -93,6 +93,7 @@ public:
     void Fit(int method);
     std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir = tracking::dX);
     void Evaluate();
+    void Reverse() {std::reverse(hits.begin(), hits.end());}
 
 private:
 //................................................................................//
