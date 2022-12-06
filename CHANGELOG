@@ -1,3 +1,7 @@
+2022-12-05
+    DSimu v1.5, DAna v1.5.5
+    1. DAna: Add branch SideHCAL_E_total and SideHCAL_E_Max_Cell
+
 2022-10-25
     DSimu v1.5, DAna v1.5.4
     1. Add Algo/ProcessReader.h . Deprecate ProcessClassifier.

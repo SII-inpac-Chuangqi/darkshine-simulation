@@ -55,6 +55,7 @@ void FastSmear::ReadConfigFile() {
         cal_info.at(ECAL_Name).push_back(ct4);
 
         cal_info.at(HCAL_Name).push_back(ct);
+        cal_info.at(SideHCAL_Name).push_back(ct);
     }
 }
 

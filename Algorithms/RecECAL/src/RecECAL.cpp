@@ -45,6 +45,7 @@ void RecECAL::Begin() {
     ReadCollections();
     ecal_col_size = static_cast<int>(ecal_cols.size());
     hcal_col_size = static_cast<int>(hcal_cols.size());
+    sidehcal_col_size = static_cast<int>(sidehcal_cols.size());
 
     // Register Output Variable
     if (EvtWrt) {
@@ -77,6 +78,9 @@ void RecECAL::Begin() {
         EvtWrt->RegisterIntVariable("HCAL_COL_SIZE", &hcal_col_size, "HCAL_COL_SIZE/I");
         EvtWrt->RegisterOutVariable("HCAL_E_total", &HCAL_total);
         EvtWrt->RegisterOutVariable("HCAL_E_Max_Cell", &HCAL_E_Max_Cell);
+        EvtWrt->RegisterOutVariable("SideHCAL_COL_SIZE", &sidehcal_col_size);
+        EvtWrt->RegisterOutVariable("SideHCAL_E_total", &SideHCAL_total);
+        EvtWrt->RegisterOutVariable("SideHCAL_E_Max_Cell", &SideHCAL_E_Max_Cell);
 
         if(enAda>3){
             EvtWrt->RegisterOutVariable("ECAL_ECell_XY", &ECAL_ECell_XY);
@@ -530,6 +534,21 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
         HCAL_total.push_back(HCAL_E);
         HCAL_E_Max_Cell.push_back(HCAL_E_Max_cell);
     }
+    for (const auto &SideHCAL_Collection_Name: sidehcal_cols) {
+        // temporary Side HCAL Analyzer
+        double sideHCAL_E = 0;
+        double sideHCAL_E_Max_Cell = 0;
+        auto Collection_String = Form("SideHCAL_%s", SideHCAL_Collection_Name.c_str());
+        if (HitCollection.count(Collection_String) != 0) {
+            const auto &hits = HitCollection.at(Collection_String);
+            for (auto hit: *hits) {
+                sideHCAL_E += hit->getE();
+                if (sideHCAL_E_Max_Cell < hit->getE()) sideHCAL_E_Max_Cell = hit->getE();
+            }
+        }
+        SideHCAL_total.emplace_back(sideHCAL_E);
+        SideHCAL_E_Max_Cell.emplace_back(sideHCAL_E_Max_Cell);
+    }
 }
 
 void RecECAL::CheckEvt(AnaEvent* /*evt*/) {
@@ -557,6 +576,8 @@ void RecECAL::ReadCollections() {
 
     format_str(ecal_col_use, ecal_cols);
     format_str(hcal_col_use, hcal_cols);
+    sidehcal_col_use = hcal_col_use;
+    format_str(sidehcal_col_use, sidehcal_cols);
 }
 
 

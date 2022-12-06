@@ -46,7 +46,7 @@ SteppingAction::SteppingAction()
     if (dControl->build_ECAL)
         record_step_z = dControl->Pos_ECALRegion.z() - 0.5 * dControl->Size_ECALRegion.z();
     else if (dControl->build_HCAL)
-        record_step_z = dControl->Pos_HCALRegion.z() - 0.5 * dControl->Size_HCALRegion.z();
+        record_step_z = dControl->Pos_HCALRegion.z() + 0.5 * dControl->Size_HCALRegion.z();
     else if (dControl->build_rec_tracker)
         record_step_z = dControl->rec_Pos_TrackerRegion.z() + 0.5 * dControl->rec_Size_TrackerRegion.z();
     else

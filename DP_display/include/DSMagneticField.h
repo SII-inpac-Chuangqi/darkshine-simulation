@@ -17,10 +17,10 @@ public:
 
     TEveVectorD GetFieldD(Double_t /*x*/, Double_t /*y*/, Double_t z) const override
     {
-        if (TMath::Abs(z) >= -60.7825 && TMath::Abs(z) <= -0.7825)
+        if (TMath::Abs(z) >= -60.7825 && TMath::Abs(z) <= 18.0225)
             return TEveVectorD(0, -1.5, 0.);
-        else if (TMath::Abs(z) >= 0.7725 && TMath::Abs(z) <= 18.0225)
-            return TEveVectorD(0, -0.5, 0.);
+//        else if (TMath::Abs(z) >= 0.7725 && TMath::Abs(z) <= 18.0225)
+//            return TEveVectorD(0, -0.5, 0.);
         return TEveVectorD(0., 0., 0.);
     }
 

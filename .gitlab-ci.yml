@@ -46,7 +46,7 @@ stages:
 build with ccache:
   stage: build
   script:
-    - ./Automaton/build.sh
+    - cat ./Automaton/build.sh | /bin/bash --login
   artifacts:
     expire_in: 1 week
     paths:
@@ -63,7 +63,7 @@ test simu and ana:
   dependencies: 
     - build with ccache
   script:
-    - ./Automaton/test.sh
+    - cat ./Automaton/test.sh | /bin/bash --login
   artifacts:
     when: always
     paths:
@@ -74,7 +74,7 @@ ci write wiki:
   dependencies: 
     - test simu and ana
   script:
-    - ./Automaton/make_wiki.sh
+    - cat ./Automaton/make_wiki.sh | /bin/bash --login
   artifacts:
     when: always
     paths:

@@ -255,6 +255,7 @@ private:
     double Trk_Emin = 0.;
     double _scale_factor_SimuTrkHits = 1.0;
     double _scale_factor_SimuCaloHits = 1.0;
+    bool _build_Tracker_BField = false;
 
     // CaloHits Lego Options
     CaloHitsDisplay *CaloDisplay{nullptr};

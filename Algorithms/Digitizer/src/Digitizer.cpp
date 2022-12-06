@@ -109,6 +109,7 @@ void Digitizer::ProcessEvt(AnaEvent *evt) {
     if (fs_apply_to_ecal) fs->Process(evt, "ECAL", "ECAL");
     if (fs_apply_to_hcal) {
         fs->Process(evt,"HCAL", "HCAL");
+        fs->Process(evt,"SideHCAL","SideHCAL");
 //        for (int i = 1; i <= 1; ++i) {
 //            fs->Process(evt, "HCAL_" + to_string(i), "HCAL");
 //        }
