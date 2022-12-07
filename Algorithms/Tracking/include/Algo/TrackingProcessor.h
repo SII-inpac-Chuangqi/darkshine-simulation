@@ -126,6 +126,7 @@ private:
     std::vector<double> TagTrk2_track_quality{};
 //χ2 of reconstructed tracks from helix fitting
     std::vector<double> TagTrk2_track_chi2{};
+    std::vector<double> TagTrk2_track_chi2_algo{};
 //x/y resolution of reconstructed tracks from helix fitting
     std::vector<double> TagTrk2_track_x_sigma{};
     std::vector<double> TagTrk2_track_y_sigma{};
@@ -137,6 +138,7 @@ private:
 
     std::vector<double> RecTrk2_track_quality{};
     std::vector<double> RecTrk2_track_chi2{};
+    std::vector<double> RecTrk2_track_chi2_algo{};
     std::vector<double> RecTrk2_track_x_sigma{};
     std::vector<double> RecTrk2_track_y_sigma{};
 

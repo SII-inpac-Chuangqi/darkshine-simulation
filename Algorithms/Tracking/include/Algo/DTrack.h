@@ -71,9 +71,11 @@ public:
     TrkHitP At(int i) {return hits_.at(i);}
     double GetQuality() const {return quality_;}
 
-    double GetChi2() const {return chi2_;}
+    double GetChi2();
+    double GetChi2Algo() const {return chi2_algo_;}
     double GetXSigma() const {return xSigma_;}
     double GetYSigma() const {return ySigma_;}
+    std::vector<double> GetExtrapolated(tracking::direction extrop_dir = tracking::dX);
 
 //................................................................................//
 //Set
@@ -126,15 +128,21 @@ private:
 //................................................................................//
 //Fitting properties
     double chi2_{RETURN};
+    double chi2_algo_{RETURN};
     double xSigma_{RETURN};
     double ySigma_{RETURN};
+    bool   if_extrapolated_{false};
+    std::vector<double> extrapolated_x_;
+    std::vector<double> extrapolated_y_;
 
 //................................................................................//
-//Prefitting properties
+//Finding properties
     double preR_{RETURN};
     double preXc_{RETURN};
     double preYc_{RETURN};
 
+//................................................................................//
+//Fitter
     Fitting *fitter_{nullptr};
  
 //................................................................................//
