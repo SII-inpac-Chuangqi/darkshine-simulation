@@ -51,41 +51,44 @@ public:
 //Get
 //................................................................................//
     int GetVerbose() const {return verbose_;}
-    int GetPDG()  const {return pdg;}
-    int GetSign() const {return sign;}
-    double GetPx() const {return px;}
-    double GetPy() const {return py;}
-    double GetPz() const {return pz;}
-    double GetPp() const {return pp;}
-    double GetPl() const {return py;}
-    double GetPreR()  const {return preR;}
-    double GetPreXc() const {return preXc;}
-    double GetPreYc() const {return preYc;}
-    double GetECalSeedX() const {return ECal_seed_x;}
-    double GetECalSeedY() const {return ECal_seed_y;}
-    double GetECalDirctX() const {return ECal_seed_px;}
-    double GetECalDirctY() const {return ECal_seed_py;}
-    double GetECalQoP() const {return ECal_seed_pz;}
+    int GetPDG()  const {return pdg_;}
+    int GetSign() const {return sign_;}
+    double GetPx() const {return px_;}
+    double GetPy() const {return py_;}
+    double GetPz() const {return pz_;}
+    double GetPp() const {return pp_;}
+    double GetPl() const {return py_;}
+    double GetPreR()  const {return preR_;}
+    double GetPreXc() const {return preXc_;}
+    double GetPreYc() const {return preYc_;}
+    double GetECalSeedX() const {return ECal_seed_x_;}
+    double GetECalSeedY() const {return ECal_seed_y_;}
+    double GetECalDirctX() const {return ECal_seed_px_;}
+    double GetECalDirctY() const {return ECal_seed_py_;}
+    double GetECalQoP() const {return ECal_seed_pz_;}
 
-    int GetSize() const {return hits.size();}
-    TrkHitP At(int i) {return hits.at(i);}
-    double GetQuality() const {return quality;}
+    int GetSize() const {return hits_.size();}
+    TrkHitP At(int i) {return hits_.at(i);}
+    double GetQuality() const {return quality_;}
 
-    double GetChi2() const {return chi2;}
-    double GetXSigma() const {return xSigma;}
-    double GetYSigma() const {return ySigma;}
+    double GetNdf() const {return ndf_;}
+    double GetChi2();
+    double GetChi2Algo() const {return chi2_algo_;}
+    double GetXSigma() const {return xSigma_;}
+    double GetYSigma() const {return ySigma_;}
+    std::vector<double> GetExtrapolated(tracking::direction extrop_dir = tracking::dX);
 
 //................................................................................//
 //Set
 //................................................................................//
     void ExceptionHandler(const std::vector<double> &magnet);
     void SetVerbose(int verbose) {verbose_ = verbose;}
-    void SetPDG(int newPDG)   {pdg = newPDG;}
-    void SetSign(int newSign) {sign = newSign;}
-    void SetPx(double newPx)  {px = newPx;}
-    void SetPy(double newPy)  {py = newPy;}
-    void SetPz(double newPz)  {pz = newPz;}
-    void SetChi2(double newChi2) {chi2 = newChi2;}
+    void SetPDG(int newPDG)   {pdg_ = newPDG;}
+    void SetSign(int newSign) {sign_ = newSign;}
+    void SetPx(double newPx)  {px_ = newPx;}
+    void SetPy(double newPy)  {py_ = newPy;}
+    void SetPz(double newPz)  {pz_ = newPz;}
+    void SetChi2(double newChi2) {chi2_ = newChi2;}
 
 //................................................................................//
 //Processor
@@ -93,7 +96,7 @@ public:
     void Fit(int method);
     std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir = tracking::dX);
     void Evaluate();
-    void Reverse() {std::reverse(hits.begin(), hits.end());}
+    void Reverse() {std::reverse(hits_.begin(), hits_.end());}
 
 private:
 //................................................................................//
@@ -102,44 +105,51 @@ private:
 
 //................................................................................//
 //Physical properties
-    int pdg{11};
-    int sign{-1};
-    double px{RETURN};
-    double py{RETURN};
-    double pz{RETURN};
-    double pp{RETURN};
-    double pl{RETURN};
-    double ECal_seed_x{RETURN};
-    double ECal_seed_y{RETURN};
-    double ECal_seed_px{RETURN};
-    double ECal_seed_py{RETURN};
-    double ECal_seed_pz{RETURN};
+    int pdg_{11};
+    int sign_{-1};
+    double px_{RETURN};
+    double py_{RETURN};
+    double pz_{RETURN};
+    double pp_{RETURN};
+    double pl_{RETURN};
+    double ECal_seed_x_{RETURN};
+    double ECal_seed_y_{RETURN};
+    double ECal_seed_px_{RETURN};
+    double ECal_seed_py_{RETURN};
+    double ECal_seed_pz_{RETURN};
 
 //................................................................................//
 //Track properties
-    double quality{RETURN};
+    double quality_{RETURN};
 
 //................................................................................//
 //Detector properties
-    double By{RETURN}; // manage problematic condition
+    double By_{RETURN}; // manage problematic condition
 
 //................................................................................//
 //Fitting properties
-    double chi2{RETURN};
-    double xSigma{RETURN};
-    double ySigma{RETURN};
+    double ndf_{0.};
+    double chi2_{RETURN};
+    double chi2_algo_{RETURN};
+    double xSigma_{RETURN};
+    double ySigma_{RETURN};
+    bool   if_extrapolated_{false};
+    std::vector<double> extrapolated_x_;
+    std::vector<double> extrapolated_y_;
 
 //................................................................................//
-//Prefitting properties
-    double preR{RETURN};
-    double preXc{RETURN};
-    double preYc{RETURN};
+//Finding properties
+    double preR_{RETURN};
+    double preXc_{RETURN};
+    double preYc_{RETURN};
 
+//................................................................................//
+//Fitter
     Fitting *fitter_{nullptr};
  
 //................................................................................//
 //Hits collection
-    TrkHitPVec hits;
+    TrkHitPVec hits_;
 };
 
 #endif
