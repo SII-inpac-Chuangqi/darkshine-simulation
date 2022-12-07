@@ -35,7 +35,7 @@ public:
     void CleanEvt();
 //................................................................................//
 //Fill truth variables
-    void FillTruth(AnaEvent *evt, std::vector<DStep*> *stepIni,
+    void FillTruth(DTruth *truth_info, std::vector<DStep*> *stepIni,
                    std::vector<TrkHit> rawTagTrk2Hits, std::vector<TrkHit> rawRecTrk2Hits);
 
     void ProcessEvt(AnaEvent* evt) override;

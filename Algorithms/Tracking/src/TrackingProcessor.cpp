@@ -235,12 +235,12 @@ void TrackingProcessor::CleanEvt() {
     std::vector<double>().swap(ECal_seed_pz);
 }
 
-void TrackingProcessor::FillTruth(AnaEvent *evt,
+void TrackingProcessor::FillTruth(DTruth *truth_info,
                                   std::vector<DStep*> *initial_steps,
                                   std::vector<TrkHit> raw_tagtrk2_hits,
                                   std::vector<TrkHit> raw_rectrk2_hits) {
 
-        dAnaData->LoadTruthInfo(evt->getTruthInfo());
+        dAnaData->LoadTruthInfo(truth_info);
         //dAnaData->PrintTruthInfo();
 
         TagTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::TagTrk);
@@ -559,7 +559,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Write truth
-        this->FillTruth(evt, initial_steps, raw_tagtrk2_hits, raw_rectrk2_hits);
+        this->FillTruth(evt->getTruthInfo(), initial_steps, raw_tagtrk2_hits, raw_rectrk2_hits);
     }
 }
 

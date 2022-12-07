@@ -71,6 +71,7 @@ public:
     TrkHitP At(int i) {return hits_.at(i);}
     double GetQuality() const {return quality_;}
 
+    double GetNdf() const {return ndf_;}
     double GetChi2();
     double GetChi2Algo() const {return chi2_algo_;}
     double GetXSigma() const {return xSigma_;}
@@ -127,6 +128,7 @@ private:
 
 //................................................................................//
 //Fitting properties
+    double ndf_{0.};
     double chi2_{RETURN};
     double chi2_algo_{RETURN};
     double xSigma_{RETURN};

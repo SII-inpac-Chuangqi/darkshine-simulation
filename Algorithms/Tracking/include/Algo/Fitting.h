@@ -61,6 +61,7 @@ public:
     virtual double GetECalDirctY() const {return ECal_seed_py;}
     virtual double GetECalQoP() const {return ECal_seed_pz;}
 
+    virtual double GetNdf()  const {return fNdf;}
     virtual double GetChi2() const {return fChi2;}
     virtual double GetXSigma() const {return xSigma;}
     virtual double GetYSigma() const {return ySigma;}
@@ -91,6 +92,7 @@ protected:
     double ECal_seed_py{RETURN};
     double ECal_seed_pz{RETURN};
 
+    double fNdf{0.};
     double fChi2{RETURN};
     double xSigma{RETURN};
     double ySigma{RETURN};

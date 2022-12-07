@@ -47,7 +47,8 @@ DTrack::DTrack(const DTrack &oldTrack) : pdg_(oldTrack.pdg_),         //physical
 
                                          By_(oldTrack.By_),           //detector properties
 
-                                         chi2_(oldTrack.chi2_),       //fitting properties
+                                         ndf_(oldTrack.ndf_),         //fitting properties
+                                         chi2_(oldTrack.chi2_),
                                          chi2_algo_(oldTrack.chi2_algo_),
                                          xSigma_(oldTrack.xSigma_),
                                          ySigma_(oldTrack.ySigma_),
@@ -79,7 +80,8 @@ DTrack::DTrack(DTrack &&oldTrack) : pdg_(std::move(oldTrack.pdg_)),         //ph
 
                                     By_(std::move(oldTrack.By_)),           //detector properties
 
-                                    chi2_(std::move(oldTrack.chi2_)),       //fitting properties
+                                    ndf_(std::move(oldTrack.ndf_)),         //finding properties
+                                    chi2_(std::move(oldTrack.chi2_)),
                                     chi2_algo_(std::move(oldTrack.chi2_algo_)),
                                     xSigma_(std::move(oldTrack.xSigma_)),
                                     ySigma_(std::move(oldTrack.ySigma_)),
@@ -119,6 +121,7 @@ DTrack& DTrack::operator=(const DTrack &old_track)
 
     By_ = old_track.By_; 
 
+    ndf_ = old_track.ndf_;
     chi2_ = old_track.chi2_;
     chi2_algo_ = old_track.chi2_algo_;
     xSigma_ = old_track.xSigma_;
@@ -147,6 +150,8 @@ double DTrack::GetChi2()
         return chi2_;
     }
 
+    double mean_x = 0.;
+    double mean_y = 0.;
     std::vector<double> track_x;
     std::vector<double> track_y;
     std::vector<double> track_z;
@@ -155,7 +160,12 @@ double DTrack::GetChi2()
         track_x.push_back(hit->GetX());
         track_y.push_back(hit->GetY());
         track_z.push_back(hit->GetZ());
+
+        mean_x += hit->GetX();
+        mean_y += hit->GetY();
     }
+    mean_x /= track_x.size();
+    mean_y /= track_x.size();
 
     if(!if_extrapolated_)
     {
@@ -169,13 +179,14 @@ double DTrack::GetChi2()
 
     double std_variance = 0.;
     double deviation = 0.;
-    for(int i = 0; i < track_x.size(); i++)
+    for(size_t i = 0; i < track_x.size(); i++)
     {
         deviation += (track_x.at(i) - extrapolated_x_.at(i))*(track_x.at(i) - extrapolated_x_.at(i)) + 
                      (track_y.at(i) - extrapolated_y_.at(i))*(track_y.at(i) - extrapolated_y_.at(i));
-        std_variance += track_x.at(i)*track_x.at(i) + track_y.at(i)*track_y.at(i);
+        std_variance += (track_x.at(i) - mean_x)*(track_x.at(i) - mean_x) +
+                        (track_y.at(i) - mean_y)*(track_y.at(i) - mean_y);
     }
-    chi2_ = deviation/std_variance*track_x.size()/(2*track_x.size() - 3);
+    chi2_ = deviation/std_variance*track_x.size()/ndf_;
 
     return chi2_;
 }
@@ -247,6 +258,7 @@ void DTrack::Fit(int method)
         py_ = fitter_->GetPy();
         pz_ = fitter_->GetPz();
         pp_ = fitter_->GetPp();
+        ndf_ = fitter_->GetNdf();
         chi2_algo_ = fitter_->GetChi2();
         xSigma_ = fitter_->GetXSigma();
         ySigma_ = fitter_->GetYSigma();
@@ -256,6 +268,7 @@ void DTrack::Fit(int method)
         ECal_seed_py_ = fitter_->GetECalDirctY();
         ECal_seed_pz_ = fitter_->GetECalQoP();
         //std::cout << ECal_seed_pz << std::endl;
+        //std::cout << ndf_ << std::endl;
     }
     else
         pp_ = 0.3*preR_*std::abs(By_);
