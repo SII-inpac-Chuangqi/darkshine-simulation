@@ -143,7 +143,6 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
 
     double bChi2;
     double bNdf;
-    double fNdf;
     fitter->getChiSquNdf(fitTrack, rep, bChi2, fChi2, bNdf, fNdf);
 
     {

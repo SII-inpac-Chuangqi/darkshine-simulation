@@ -23,69 +23,79 @@
 DTrack::DTrack(const TrkHitPVec &newHits,
                double newPreR,
                double newPreXc,
-               double newPreYc) : preR(newPreR),
-                                  preXc(newPreXc),
-                                  preYc(newPreYc),
-                                  hits(newHits)
+               double newPreYc) : preR_(newPreR),
+                                  preXc_(newPreXc),
+                                  preYc_(newPreYc),
+                                  hits_(newHits)
 {
 }
 
-DTrack::DTrack(const DTrack &oldTrack) : pdg(oldTrack.pdg),         //physical properties
-                                         sign(oldTrack.sign),
-                                         px(oldTrack.px),
-                                         py(oldTrack.py),
-                                         pz(oldTrack.pz),
-                                         pp(oldTrack.pp),
-                                         pl(oldTrack.pl),
-                                         ECal_seed_x(oldTrack.ECal_seed_x),
-                                         ECal_seed_y(oldTrack.ECal_seed_y),
-                                         ECal_seed_px(oldTrack.ECal_seed_px),
-                                         ECal_seed_py(oldTrack.ECal_seed_py),
-                                         ECal_seed_pz(oldTrack.ECal_seed_pz),
+DTrack::DTrack(const DTrack &oldTrack) : pdg_(oldTrack.pdg_),         //physical properties
+                                         sign_(oldTrack.sign_),
+                                         px_(oldTrack.px_),
+                                         py_(oldTrack.py_),
+                                         pz_(oldTrack.pz_),
+                                         pp_(oldTrack.pp_),
+                                         pl_(oldTrack.pl_),
+                                         ECal_seed_x_(oldTrack.ECal_seed_x_),
+                                         ECal_seed_y_(oldTrack.ECal_seed_y_),
+                                         ECal_seed_px_(oldTrack.ECal_seed_px_),
+                                         ECal_seed_py_(oldTrack.ECal_seed_py_),
+                                         ECal_seed_pz_(oldTrack.ECal_seed_pz_),
 
-                                         quality(oldTrack.quality), //track properties
+                                         quality_(oldTrack.quality_), //track properties
 
-                                         By(oldTrack.By),           //detector properties
+                                         By_(oldTrack.By_),           //detector properties
 
-                                         chi2(oldTrack.chi2),       //fitting properties
-                                         xSigma(oldTrack.xSigma),
-                                         ySigma(oldTrack.ySigma),
+                                         ndf_(oldTrack.ndf_),         //fitting properties
+                                         chi2_(oldTrack.chi2_),
+                                         chi2_algo_(oldTrack.chi2_algo_),
+                                         xSigma_(oldTrack.xSigma_),
+                                         ySigma_(oldTrack.ySigma_),
+                                         if_extrapolated_(oldTrack.if_extrapolated_),
+                                         extrapolated_x_(oldTrack.extrapolated_x_),
+                                         extrapolated_y_(oldTrack.extrapolated_y_),
 
-                                         preR(oldTrack.preR),       //prefitting properties
-                                         preXc(oldTrack.preXc),
-                                         preYc(oldTrack.preYc),
+                                         preR_(oldTrack.preR_),       //finding properties
+                                         preXc_(oldTrack.preXc_),
+                                         preYc_(oldTrack.preYc_),
 
-                                         hits(oldTrack.hits)        //hits collection
+                                         hits_(oldTrack.hits_)        //hits collection
 {}
 
-DTrack::DTrack(DTrack &&oldTrack) : pdg(std::move(oldTrack.pdg)),         //physical properties
-                                    sign(std::move(oldTrack.sign)),
-                                    px(std::move(oldTrack.px)),
-                                    py(std::move(oldTrack.py)),
-                                    pz(std::move(oldTrack.pz)),
-                                    pp(std::move(oldTrack.pp)),
-                                    pl(std::move(oldTrack.pl)),
-                                    ECal_seed_x(std::move(oldTrack.ECal_seed_x)),
-                                    ECal_seed_y(std::move(oldTrack.ECal_seed_y)),
-                                    ECal_seed_px(std::move(oldTrack.ECal_seed_px)),
-                                    ECal_seed_py(std::move(oldTrack.ECal_seed_py)),
-                                    ECal_seed_pz(std::move(oldTrack.ECal_seed_pz)),
+DTrack::DTrack(DTrack &&oldTrack) : pdg_(std::move(oldTrack.pdg_)),         //physical properties
+                                    sign_(std::move(oldTrack.sign_)),
+                                    px_(std::move(oldTrack.px_)),
+                                    py_(std::move(oldTrack.py_)),
+                                    pz_(std::move(oldTrack.pz_)),
+                                    pp_(std::move(oldTrack.pp_)),
+                                    pl_(std::move(oldTrack.pl_)),
+                                    ECal_seed_x_(std::move(oldTrack.ECal_seed_x_)),
+                                    ECal_seed_y_(std::move(oldTrack.ECal_seed_y_)),
+                                    ECal_seed_px_(std::move(oldTrack.ECal_seed_px_)),
+                                    ECal_seed_py_(std::move(oldTrack.ECal_seed_py_)),
+                                    ECal_seed_pz_(std::move(oldTrack.ECal_seed_pz_)),
 
-                                    quality(std::move(oldTrack.quality)), //track properties
+                                    quality_(std::move(oldTrack.quality_)), //track properties
 
-                                    By(std::move(oldTrack.By)),           //detector properties
+                                    By_(std::move(oldTrack.By_)),           //detector properties
 
-                                    chi2(std::move(oldTrack.chi2)),       //fitting properties
-                                    xSigma(std::move(oldTrack.xSigma)),
-                                    ySigma(std::move(oldTrack.ySigma)),
+                                    ndf_(std::move(oldTrack.ndf_)),         //finding properties
+                                    chi2_(std::move(oldTrack.chi2_)),
+                                    chi2_algo_(std::move(oldTrack.chi2_algo_)),
+                                    xSigma_(std::move(oldTrack.xSigma_)),
+                                    ySigma_(std::move(oldTrack.ySigma_)),
+                                    if_extrapolated_(std::move(oldTrack.if_extrapolated_)),
+                                    extrapolated_x_(std::move(oldTrack.extrapolated_x_)),
+                                    extrapolated_y_(std::move(oldTrack.extrapolated_y_)),
 
-                                    preR(std::move(oldTrack.preR)),       //prefitting properties
-                                    preXc(std::move(oldTrack.preXc)),
-                                    preYc(std::move(oldTrack.preYc)),
+                                    preR_(std::move(oldTrack.preR_)),       //prefitting properties
+                                    preXc_(std::move(oldTrack.preXc_)),
+                                    preYc_(std::move(oldTrack.preYc_)),
 
-                                    hits(oldTrack.hits)                   //hits collection
+                                    hits_(oldTrack.hits_)                   //hits collection
 {
-    oldTrack.hits.clear();
+    oldTrack.hits_.clear();
 }
 
 DTrack& DTrack::operator=(const DTrack &old_track)
@@ -94,35 +104,112 @@ DTrack& DTrack::operator=(const DTrack &old_track)
 
     verbose_ = old_track.verbose_;
 
-    pdg = old_track.pdg;
-    sign = old_track.sign;
-    px = old_track.px;
-    py = old_track.py;
-    pz = old_track.pz;
-    pp = old_track.pp;
-    pl = old_track.pl;
-    ECal_seed_x = old_track.ECal_seed_x;
-    ECal_seed_y = old_track.ECal_seed_y;
-    ECal_seed_px = old_track.ECal_seed_px;
-    ECal_seed_py = old_track.ECal_seed_py;
-    ECal_seed_pz = old_track.ECal_seed_pz;
+    pdg_ = old_track.pdg_;
+    sign_ = old_track.sign_;
+    px_ = old_track.px_;
+    py_ = old_track.py_;
+    pz_ = old_track.pz_;
+    pp_ = old_track.pp_;
+    pl_ = old_track.pl_;
+    ECal_seed_x_ = old_track.ECal_seed_x_;
+    ECal_seed_y_ = old_track.ECal_seed_y_;
+    ECal_seed_px_ = old_track.ECal_seed_px_;
+    ECal_seed_py_ = old_track.ECal_seed_py_;
+    ECal_seed_pz_ = old_track.ECal_seed_pz_;
 
-    quality = old_track.quality;
+    quality_ = old_track.quality_;
 
-    By = old_track.By; 
+    By_ = old_track.By_; 
 
-    chi2 = old_track.chi2;
-    xSigma = old_track.xSigma;
-    ySigma = old_track.ySigma;
+    ndf_ = old_track.ndf_;
+    chi2_ = old_track.chi2_;
+    chi2_algo_ = old_track.chi2_algo_;
+    xSigma_ = old_track.xSigma_;
+    ySigma_ = old_track.ySigma_;
+    if_extrapolated_ = old_track.if_extrapolated_;
+    extrapolated_x_.clear();
+    extrapolated_x_.assign(old_track.extrapolated_x_.begin(), old_track.extrapolated_x_.end());
+    extrapolated_y_.clear();
+    extrapolated_y_.assign(old_track.extrapolated_y_.begin(), old_track.extrapolated_y_.end());
 
-    preR = old_track.preR;
-    preXc = old_track.preXc;
-    preYc = old_track.preYc;
+    preR_ = old_track.preR_;
+    preXc_ = old_track.preXc_;
+    preYc_ = old_track.preYc_;
 
-    hits.clear();
-    hits.assign(old_track.hits.begin(), old_track.hits.end());
+    hits_.clear();
+    hits_.assign(old_track.hits_.begin(), old_track.hits_.end());
 
     return *this;
+}
+
+double DTrack::GetChi2()
+{
+    if(hits_.size() == 0)
+    {
+        chi2_ = RETURN;
+        return chi2_;
+    }
+
+    double mean_x = 0.;
+    double mean_y = 0.;
+    std::vector<double> track_x;
+    std::vector<double> track_y;
+    std::vector<double> track_z;
+    for(const auto &hit : hits_)
+    {
+        track_x.push_back(hit->GetX());
+        track_y.push_back(hit->GetY());
+        track_z.push_back(hit->GetZ());
+
+        mean_x += hit->GetX();
+        mean_y += hit->GetY();
+    }
+    mean_x /= track_x.size();
+    mean_y /= track_x.size();
+
+    if(!if_extrapolated_)
+    {
+        extrapolated_x_.clear();
+        extrapolated_y_.clear();
+        extrapolated_x_ = this->ExtrapolateTo(track_z, tracking::dX);
+        extrapolated_y_ = this->ExtrapolateTo(track_z, tracking::dY);
+
+        if_extrapolated_ = true;
+    }
+
+    double std_variance = 0.;
+    double deviation = 0.;
+    for(size_t i = 0; i < track_x.size(); i++)
+    {
+        deviation += (track_x.at(i) - extrapolated_x_.at(i))*(track_x.at(i) - extrapolated_x_.at(i)) + 
+                     (track_y.at(i) - extrapolated_y_.at(i))*(track_y.at(i) - extrapolated_y_.at(i));
+        std_variance += (track_x.at(i) - mean_x)*(track_x.at(i) - mean_x) +
+                        (track_y.at(i) - mean_y)*(track_y.at(i) - mean_y);
+    }
+    chi2_ = deviation/std_variance*track_x.size()/ndf_;
+
+    return chi2_;
+}
+
+std::vector<double> DTrack::GetExtrapolated(tracking::direction extrop_dir)
+{
+    if(!if_extrapolated_)
+    {
+        std::vector<double> track_z;
+        for(const auto &hit : hits_) track_z.push_back(hit->GetZ());
+
+        extrapolated_x_.clear();
+        extrapolated_y_.clear();
+        extrapolated_x_ = this->ExtrapolateTo(track_z, tracking::dX);
+        extrapolated_y_ = this->ExtrapolateTo(track_z, tracking::dY);
+
+        if_extrapolated_ = true;
+    }
+
+    if     (extrop_dir == tracking::dX) return extrapolated_x_;
+    else if(extrop_dir == tracking::dY) return extrapolated_y_;
+
+    return {};
 }
 
 void DTrack::ExceptionHandler(const std::vector<double> &magnet)
@@ -131,11 +218,11 @@ void DTrack::ExceptionHandler(const std::vector<double> &magnet)
     {
         std::cerr << "[WARNING] ==> Magnet dimension != 3 in exception handler in DTrack, default magnet set"
                   << std::endl;
-        By = -1.5;
+        By_ = -1.5;
         return;
     }
 
-    By = magnet.at(1);
+    By_ = magnet.at(1);
 }
 
 void DTrack::Fit(int method)
@@ -145,9 +232,9 @@ void DTrack::Fit(int method)
     switch(method)
     {
         case tracking::dKalman :
-                                 fitter_ = new KalmanFitting(hits,
-                                                             {preR,   //Fix to 2 ordered parameters! --bending radius as fitting seed
-                                                              By},    //                             --magnet value to manage exception condition
+                                 fitter_ = new KalmanFitting(hits_,
+                                                             {preR_,   //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                              By_},    //                             --magnet value to manage exception condition
                                                              verbose_ //Verbose
                                                             );
                                  break;
@@ -158,34 +245,33 @@ void DTrack::Fit(int method)
         default :
                                  if(verbose_ > 0)
                                      std::cerr << "[WARNING] ==> Fit method not found. Use default fitter_ GenFit Kalman fitter_" << std::endl;
-                                 fitter_ = new KalmanFitting(hits,
-                                                             {preR,   //Fix to 2 ordered parameters! --bending radius as fitting seed
-                                                              By},    //                             --magnet value to manage exception condition
+                                 fitter_ = new KalmanFitting(hits_,
+                                                             {preR_,   //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                              By_},    //                             --magnet value to manage exception condition
                                                              verbose_ //Verbose
                                                             );
     }
 
     if(fitter_)
     {
-        px = fitter_->GetPx();
-        py = fitter_->GetPy();
-        pz = fitter_->GetPz();
-        pp = fitter_->GetPp();
-        chi2 = fitter_->GetChi2();
-        xSigma = fitter_->GetXSigma();
-        ySigma = fitter_->GetYSigma();
-        ECal_seed_x = fitter_->GetECalSeedX();
-        ECal_seed_y = fitter_->GetECalSeedY();
-        ECal_seed_px = fitter_->GetECalDirctX();
-        ECal_seed_py = fitter_->GetECalDirctY();
-        ECal_seed_pz = fitter_->GetECalQoP();
+        px_ = fitter_->GetPx();
+        py_ = fitter_->GetPy();
+        pz_ = fitter_->GetPz();
+        pp_ = fitter_->GetPp();
+        ndf_ = fitter_->GetNdf();
+        chi2_algo_ = fitter_->GetChi2();
+        xSigma_ = fitter_->GetXSigma();
+        ySigma_ = fitter_->GetYSigma();
+        ECal_seed_x_ = fitter_->GetECalSeedX();
+        ECal_seed_y_ = fitter_->GetECalSeedY();
+        ECal_seed_px_ = fitter_->GetECalDirctX();
+        ECal_seed_py_ = fitter_->GetECalDirctY();
+        ECal_seed_pz_ = fitter_->GetECalQoP();
         //std::cout << ECal_seed_pz << std::endl;
+        //std::cout << ndf_ << std::endl;
     }
     else
-        pp = 0.3*preR*std::abs(By);
-
-//    delete fitter_;
-//    fitter_ = nullptr;
+        pp_ = 0.3*preR_*std::abs(By_);
 }
 
 std::vector<double> DTrack::ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir)
@@ -203,14 +289,14 @@ std::vector<double> DTrack::ExtrapolateTo(const std::vector<double> &planes_z, t
 void DTrack::Evaluate()
 {
 /*
-    if(hits.size() <= 0)
+    if(hits_.size() <= 0)
     {
-        quality = 0;
+        quality_ = 0;
         return;
     }
 
     std::map<int, int> particleCount;
-    for(auto hit : hits)
+    for(auto hit : hits_)
     {
         auto contribution = hit->getPContribution();
         if(contribution.size())
@@ -228,8 +314,8 @@ void DTrack::Evaluate()
 
     for(auto count : particleCount)
     {
-        if(1.*count.second/hits.size() > quality)
-            quality = 1.*count.second/hits.size();
+        if(1.*count.second/hits.size() > quality_)
+            quality_ = 1.*count.second/hits.size();
     }
 */
 }
