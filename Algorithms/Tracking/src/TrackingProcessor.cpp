@@ -70,7 +70,7 @@ void TrackingProcessor::Begin() {
     if(magnets.size() != 3 || !magnets.at(0) || !magnets.at(1) || !magnets.at(2))
         dAnaData->setConstMagnetField({0., con_field, 0.});
 
-    if(Tag_fit_method == dKalman || Rec_fit_method == dKalman)
+    if(Tag_fit_method == tracking::dKalman || Rec_fit_method == tracking::dKalman)
     {
         genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
         if (magnets.size() == 3 && magnets.at(0) && magnets.at(1) && magnets.at(2)) {
@@ -114,7 +114,8 @@ void TrackingProcessor::Begin() {
 //................................................................................//
     EvtWrt->RegisterIntVariable("TagTrk2_track_No", &TagTrk2_track_No, "TagTrk2_track_No/I");
     EvtWrt->RegisterOutVariable("TagTrk2_pp", &TagTrk2_pp);
-    EvtWrt->RegisterOutVariable("TagTrk2_track_chi2", &TagTrk2_track_chi2);
+    EvtWrt->RegisterOutVariable("TagTrk2_track_chi2",      &TagTrk2_track_chi2);
+    EvtWrt->RegisterOutVariable("TagTrk2_track_chi2_algo", &TagTrk2_track_chi2_algo);
 
     if (!clean) {
         EvtWrt->RegisterOutVariable("TagTrk2_track_quality", &TagTrk2_track_quality);
@@ -125,7 +126,8 @@ void TrackingProcessor::Begin() {
 //................................................................................//
     EvtWrt->RegisterIntVariable("RecTrk2_track_No", &RecTrk2_track_No, "RecTrk2_track_No/I");
     EvtWrt->RegisterOutVariable("RecTrk2_pp", &RecTrk2_pp);
-    EvtWrt->RegisterOutVariable("RecTrk2_track_chi2", &RecTrk2_track_chi2);
+    EvtWrt->RegisterOutVariable("RecTrk2_track_chi2",      &RecTrk2_track_chi2);
+    EvtWrt->RegisterOutVariable("RecTrk2_track_chi2_algo", &RecTrk2_track_chi2_algo);
 
     if (!clean) {
         EvtWrt->RegisterOutVariable("RecTrk2_track_quality", &RecTrk2_track_quality);
@@ -192,12 +194,14 @@ void TrackingProcessor::CleanEvt() {
 
     std::vector<double>().swap(TagTrk2_pp);
     std::vector<double>().swap(TagTrk2_track_chi2);
+    std::vector<double>().swap(TagTrk2_track_chi2_algo);
     std::vector<double>().swap(TagTrk2_track_quality);
     std::vector<double>().swap(TagTrk2_track_x_sigma);
     std::vector<double>().swap(TagTrk2_track_y_sigma);
 
     std::vector<double>().swap(RecTrk2_pp);
     std::vector<double>().swap(RecTrk2_track_chi2);
+    std::vector<double>().swap(RecTrk2_track_chi2_algo);
     std::vector<double>().swap(RecTrk2_track_quality);
     std::vector<double>().swap(RecTrk2_track_x_sigma);
     std::vector<double>().swap(RecTrk2_track_y_sigma);
@@ -231,12 +235,12 @@ void TrackingProcessor::CleanEvt() {
     std::vector<double>().swap(ECal_seed_pz);
 }
 
-void TrackingProcessor::FillTruth(AnaEvent *evt,
+void TrackingProcessor::FillTruth(DTruth *truth_info,
                                   std::vector<DStep*> *initial_steps,
                                   std::vector<TrkHit> raw_tagtrk2_hits,
                                   std::vector<TrkHit> raw_rectrk2_hits) {
 
-        dAnaData->LoadTruthInfo(evt->getTruthInfo());
+        dAnaData->LoadTruthInfo(truth_info);
         //dAnaData->PrintTruthInfo();
 
         TagTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::TagTrk);
@@ -411,7 +415,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             if_raw_tag_hit_number = true;
 
 //Digitization
-            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, clus_tag_trkhit_map, tag);            
+            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, clus_tag_trkhit_map, tracking::tag);            
 
             if(clus_tag_trkhit_map.size())
             {
@@ -437,6 +441,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                 find_tag.GetCenterY(i)); //not used in Kalman filter, reserved
                         track->SetVerbose(Verbose);
                         track->ExceptionHandler(magnet_at_origin);
+                        //track->Reverse();
                         track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter
                         //track->Evaluate();
 
@@ -454,7 +459,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             if_raw_rec_hit_number = true;
 
 //Digitization
-            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, clus_rec_trkhit_map, rec);            
+            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, clus_rec_trkhit_map, tracking::rec);            
 
             if(clus_rec_trkhit_map.size())
             {
@@ -478,6 +483,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                 find_rec.GetCenterY(i)); //not used in Kalman filter, reserved
                         track->SetVerbose(Verbose);
                         track->ExceptionHandler(magnet_at_origin);
+                        //track->Reverse();
                         track->Fit(Rec_fit_method);            //choose fitting method: Kalman filter
                         //track->Evaluate();
 
@@ -498,6 +504,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         {
             TagTrk2_pp.push_back(track->GetPp());
             TagTrk2_track_chi2.push_back(track->GetChi2());
+            TagTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
         
             if (!clean)
             {
@@ -511,6 +518,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         {
             RecTrk2_pp.push_back(track->GetPp());
             RecTrk2_track_chi2.push_back(track->GetChi2());
+            RecTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
 
             ECal_seed_x.push_back(track->GetECalSeedX());
             ECal_seed_y.push_back(track->GetECalSeedY());
@@ -525,19 +533,23 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
          
                 std::vector<double> track_x;
                 std::vector<double> track_y;
-                std::vector<double> track_z;
+                //std::vector<double> track_z;
                 for(int hit = 0; hit < track->GetSize(); hit++)
                 {
                     track_x.push_back(track->At(hit)->GetX());
                     track_y.push_back(track->At(hit)->GetY());
-                    track_z.push_back(track->At(hit)->GetZ());
+                    //track_z.push_back(track->At(hit)->GetZ());
                 }
                 RecTrk2_track_x.push_back(track_x);
                 RecTrk2_track_y.push_back(track_y);
-                RecTrk2_track_z.push_back(track_z);
+                //RecTrk2_track_z.push_back(track_z);
 
-                auto extrapolated_x = track->ExtrapolateTo(track_z);
+                //auto extrapolated_x = track->ExtrapolateTo(track_z, tracking::dX);
+                //auto extrapolated_y = track->ExtrapolateTo(track_z, tracking::dY);
+                auto extrapolated_x = track->GetExtrapolated(tracking::dX);
+                auto extrapolated_y = track->GetExtrapolated(tracking::dY);
                 RecTrk2_track_extrapolated_x.push_back(extrapolated_x);
+                RecTrk2_track_extrapolated_y.push_back(extrapolated_y);
 
                 RecTrk2_track_preA.push_back(track->GetPreXc());
                 RecTrk2_track_preB.push_back(track->GetPreYc());
@@ -547,7 +559,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Write truth
-        this->FillTruth(evt, initial_steps, raw_tagtrk2_hits, raw_rectrk2_hits);
+        this->FillTruth(evt->getTruthInfo(), initial_steps, raw_tagtrk2_hits, raw_rectrk2_hits);
     }
 }
 

@@ -66,10 +66,10 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
 {
     if(if_strip_)
     {
-        std::vector<double> *layer_widths  = (detector == tag) ? &layer_width_tag_  : &layer_width_rec_;
-        std::vector<double> *layer_lengths = (detector == tag) ? &layer_length_tag_ : &layer_length_rec_;
-        std::vector<int>    *strip_nos = (detector == tag) ? &strip_no_tag_ : &strip_no_rec_;
-        std::vector<double> *angles    = (detector == tag) ? &angles_tag_   : &angles_rec_;
+        std::vector<double> *layer_widths  = (detector == tracking::tag) ? &layer_width_tag_  : &layer_width_rec_;
+        std::vector<double> *layer_lengths = (detector == tracking::tag) ? &layer_length_tag_ : &layer_length_rec_;
+        std::vector<int>    *strip_nos = (detector == tracking::tag) ? &strip_no_tag_ : &strip_no_rec_;
+        std::vector<double> *angles    = (detector == tracking::tag) ? &angles_tag_   : &angles_rec_;
  
         TrkHitPVec clustered_trk1_hits;
         TrkHitPVec clustered_trk2_hits;

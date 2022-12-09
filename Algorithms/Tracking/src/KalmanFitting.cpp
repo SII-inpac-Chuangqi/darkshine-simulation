@@ -143,7 +143,6 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
 
     double bChi2;
     double bNdf;
-    double fNdf;
     fitter->getChiSquNdf(fitTrack, rep, bChi2, fChi2, bNdf, fNdf);
 
     {
@@ -221,7 +220,7 @@ int KalmanFitting::GetSign(const TrkHitPVec &track)
     return s;
 }
 
-std::vector<double> KalmanFitting::ExtrapolateTo(const std::vector<double> &planes_z)
+std::vector<double> KalmanFitting::ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir)
 {
     if(!rep || !fitTrack)
     {
@@ -231,7 +230,7 @@ std::vector<double> KalmanFitting::ExtrapolateTo(const std::vector<double> &plan
         return {};
     }
 
-    std::vector<double> extrapolated_x;
+    std::vector<double> extrapolated;
     for(const auto &plane_z : planes_z)
     {
         genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
@@ -243,8 +242,9 @@ std::vector<double> KalmanFitting::ExtrapolateTo(const std::vector<double> &plan
                                                           TVector3(0, 1, 0)));
         rep->extrapolateToPlane(kfsop, plane);
         const TVectorD& state = kfsop.getState();
-        extrapolated_x.push_back(state[3]*10);
+        if     (extrop_dir == tracking::dX) extrapolated.push_back(state[3]*10);
+        else if(extrop_dir == tracking::dY) extrapolated.push_back(state[4]*10);
     }
 
-    return extrapolated_x;
+    return extrapolated;
 }
