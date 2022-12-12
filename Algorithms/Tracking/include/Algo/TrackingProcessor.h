@@ -32,7 +32,7 @@ public:
     void Begin() override;
 //................................................................................//
 //Initialize all vars to be stored in output files
-    void CleanEvt();
+    void InitEvt() override;
 //................................................................................//
 //Fill truth variables
     void FillTruth(DTruth *truth_info, std::vector<DStep*> *stepIni,

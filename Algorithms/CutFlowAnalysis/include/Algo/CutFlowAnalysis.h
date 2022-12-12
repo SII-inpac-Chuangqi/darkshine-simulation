@@ -23,6 +23,8 @@ public:
 
     void Begin() override;
 
+    void InitEvt() override { std::vector<double>().swap(test_store);}
+
     void ProcessEvt(AnaEvent *evt) override;
 
     void CheckEvt(AnaEvent *evt) override;

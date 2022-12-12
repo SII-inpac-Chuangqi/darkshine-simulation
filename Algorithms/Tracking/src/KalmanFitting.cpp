@@ -34,7 +34,7 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<doub
 
     try
     {
-        if(track.size() < 3) throw -1;
+        if(track.size() < 4) throw -1;
         
         Init(track, list);
         Fit (track, {});
@@ -43,7 +43,7 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<doub
     catch(int e)
     {
         if(verbose_ > 0)
-            std::cerr << "[WARNING] ==> Fewer than 3 hits in this track" << std::endl;
+            std::cerr << "[WARNING] ==> Fewer than 4 hits in this track" << std::endl;
 
         auto it = list.begin();
         double preR = *it; it++;
@@ -240,10 +240,25 @@ std::vector<double> KalmanFitting::ExtrapolateTo(const std::vector<double> &plan
                                                                    plane_z*0.1),
                                                           TVector3(1, 0, 0),
                                                           TVector3(0, 1, 0)));
-        rep->extrapolateToPlane(kfsop, plane);
-        const TVectorD& state = kfsop.getState();
-        if     (extrop_dir == tracking::dX) extrapolated.push_back(state[3]*10);
-        else if(extrop_dir == tracking::dY) extrapolated.push_back(state[4]*10);
+
+        try
+        {
+            rep->extrapolateToPlane(kfsop, plane);
+            const TVectorD& state = kfsop.getState();
+            if     (extrop_dir == tracking::dX) extrapolated.push_back(state[3]*10);
+            else if(extrop_dir == tracking::dY) extrapolated.push_back(state[4]*10);
+        }
+        catch(genfit::Exception& e)
+        {
+            if(verbose_ > 1)
+            {
+                std::cerr << "[WARNING] ==> When extrapolating track at z=" << plane_z << "mm:" << std::endl;
+                std::cerr << "              " << e.what();
+            }
+
+            if     (extrop_dir == tracking::dX) extrapolated.push_back(RETURN);
+            else if(extrop_dir == tracking::dY) extrapolated.push_back(RETURN);
+        }
     }
 
     return extrapolated;

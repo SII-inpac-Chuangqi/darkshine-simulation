@@ -164,7 +164,7 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("ECal_seed_pz", &ECal_seed_pz);
 }
 
-void TrackingProcessor::CleanEvt() {
+void TrackingProcessor::InitEvt() {
 
     //std::vector<DTrack>().swap(tag_tracks_);
     //std::vector<DTrack>().swap(rec_tracks_);
@@ -371,7 +371,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Initialize vars
-    this->CleanEvt();
+    this->InitEvt();
 
     const auto &step_collection = evt->getStepCollection();
     //const auto &MCCollection = evt->getMcParticleCollection();
@@ -525,7 +525,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             ECal_seed_px.push_back(track->GetECalDirctX());
             ECal_seed_py.push_back(track->GetECalDirctY());
             ECal_seed_pz.push_back(track->GetECalQoP());
-         
+
             if (!clean) {
                 RecTrk2_track_quality.push_back(track->GetQuality());
                 RecTrk2_track_x_sigma.push_back(track->GetXSigma());
