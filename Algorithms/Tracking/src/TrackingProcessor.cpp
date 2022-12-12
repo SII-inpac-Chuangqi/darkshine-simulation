@@ -525,7 +525,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             ECal_seed_px.push_back(track->GetECalDirctX());
             ECal_seed_py.push_back(track->GetECalDirctY());
             ECal_seed_pz.push_back(track->GetECalQoP());
-         
+
             if (!clean) {
                 RecTrk2_track_quality.push_back(track->GetQuality());
                 RecTrk2_track_x_sigma.push_back(track->GetXSigma());
