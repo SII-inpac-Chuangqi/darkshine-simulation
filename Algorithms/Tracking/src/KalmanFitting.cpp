@@ -240,6 +240,7 @@ std::vector<double> KalmanFitting::ExtrapolateTo(const std::vector<double> &plan
                                                                    plane_z*0.1),
                                                           TVector3(1, 0, 0),
                                                           TVector3(0, 1, 0)));
+
         try
         {
             rep->extrapolateToPlane(kfsop, plane);

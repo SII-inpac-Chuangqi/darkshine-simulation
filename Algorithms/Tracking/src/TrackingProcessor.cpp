@@ -164,7 +164,7 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("ECal_seed_pz", &ECal_seed_pz);
 }
 
-void TrackingProcessor::CleanEvt() {
+void TrackingProcessor::InitEvt() {
 
     //std::vector<DTrack>().swap(tag_tracks_);
     //std::vector<DTrack>().swap(rec_tracks_);
@@ -371,7 +371,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Initialize vars
-    this->CleanEvt();
+    this->InitEvt();
 
     const auto &step_collection = evt->getStepCollection();
     //const auto &MCCollection = evt->getMcParticleCollection();
