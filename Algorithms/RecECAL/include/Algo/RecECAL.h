@@ -30,7 +30,7 @@ public:
     void End() override;
 
     // Define some functions here if necessary
-    void initialization() {
+    void InitEvt() override {
         E_total.clear();
         E_max.clear();
         E_frac.clear();

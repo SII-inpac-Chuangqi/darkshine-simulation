@@ -23,6 +23,38 @@ public:
 
     void Begin() override;
 
+    void InitEvt() override
+    {
+        Initial_Px = RETURN;
+        Initial_Py = RETURN;
+        Initial_Pz = RETURN;
+        Initial_X = RETURN;
+        Initial_Y = RETURN;
+        Initial_Z = RETURN;
+
+        Recoil_E = RETURN;
+        Recoil_P[0] = RETURN; Recoil_P[1] = RETURN; Recoil_P[2] = RETURN;
+        Recoil_pT = RETURN;
+        Recoil_theta = RETURN;
+
+        Parent_E = RETURN;
+        Parent_P[0] = RETURN; Parent_P[1] = RETURN; Parent_P[2] = RETURN;
+        Parent_PVName = "";
+
+        Pi = RETURN;
+        Pf = RETURN;
+
+        Truth_P[0] = RETURN; Truth_P[1] = RETURN; Truth_P[2] = RETURN;
+        Truth_Recoil_E = RETURN;
+        Truth_Recoil_theta = RETURN;
+        Truth_Recoil_pT = RETURN;
+        trans_sep = RETURN;
+        
+        Decay_X = RETURN;
+        Decay_Y = RETURN;
+        Decay_Z = RETURN;
+    }
+
     void ProcessEvt(AnaEvent *evt) override;
 
     void CheckEvt(AnaEvent *evt) override;

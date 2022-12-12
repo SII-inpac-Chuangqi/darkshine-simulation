@@ -39,6 +39,8 @@ public:
 
     virtual void Begin() = 0;
 
+    virtual void InitEvt() = 0;
+
     virtual void ProcessEvt(AnaEvent *) = 0;
 
     virtual void CheckEvt(AnaEvent *) = 0;
