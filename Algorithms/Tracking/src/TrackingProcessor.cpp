@@ -85,6 +85,10 @@ void TrackingProcessor::Begin() {
         }
     }
 
+    if(Tag_fit_method == tracking::dRiemann || Rec_fit_method == tracking::dRiemann)
+    {
+    }
+
 //................................................................................//
 //Register dp_ana.root
 //................................................................................//
