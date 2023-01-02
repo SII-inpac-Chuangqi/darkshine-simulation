@@ -45,6 +45,8 @@ void AnaData::ReadMagField() {
         return;
     }
 
+    mag_field_vec.clear();
+    const_mag_field_vec.shrink_to_fit();
     mag_field_vec = std::vector<DMagnet*>({dynamic_cast<DMagnet*>(root_file->Get("magnet0")),
                                            dynamic_cast<DMagnet*>(root_file->Get("magnet1")),
                                            dynamic_cast<DMagnet*>(root_file->Get("magnet2"))});
@@ -62,7 +64,9 @@ void AnaData::setConstMagnetField(const vector<double> &const_value)
         return;
     }
 
-    const_mag_field_vec.reserve(3);
+    const_mag_field_vec.clear();
+    const_mag_field_vec.shrink_to_fit();
+    //const_mag_field_vec.reserve(3);
     const_mag_field_vec.push_back(const_value.at(0));
     const_mag_field_vec.push_back(const_value.at(1));
     const_mag_field_vec.push_back(const_value.at(2));
