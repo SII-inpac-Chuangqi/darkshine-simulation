@@ -29,7 +29,7 @@
 //-- dKalman: Kalman fitter_ from GenFit
 namespace tracking
 {
-    enum FittingMethods {dNone, dKalman};
+    enum FittingMethods {dNone, dKalman, dRiemann};
 }
 
 class DTrack
