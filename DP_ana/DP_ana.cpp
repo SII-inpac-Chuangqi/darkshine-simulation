@@ -28,7 +28,7 @@ namespace {
 
     void PrintVersion() {
 #ifdef DANA_VERSION
-        cerr << "DAna " << (std::string)DANA_VERSION << endl;
+        cerr << "DAna " << (std::string)DANA_VERSION << std::endl;
 #else
         cerr << "DAna " << "v1.5.5" << endl;
 #endif

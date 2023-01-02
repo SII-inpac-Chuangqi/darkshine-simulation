@@ -442,7 +442,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                         track->SetVerbose(Verbose);
                         track->ExceptionHandler(magnet_at_origin);
                         //track->Reverse();
-                        track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter
+                        track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
                         //track->Evaluate();
 
                         tag_tracks_.push_back(track);
@@ -484,7 +484,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                         track->SetVerbose(Verbose);
                         track->ExceptionHandler(magnet_at_origin);
                         //track->Reverse();
-                        track->Fit(Rec_fit_method);            //choose fitting method: Kalman filter
+                        track->Fit(Rec_fit_method);            //choose fitting method: Kalman filter/Riemann fit
                         //track->Evaluate();
 
                         rec_tracks_.push_back(track);
