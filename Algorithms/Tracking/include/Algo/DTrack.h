@@ -22,6 +22,7 @@
 //Tracking
 #include "Algo/TypeDef.h"
 #include "Algo/KalmanFitting.h"
+#include "Algo/RiemannFit/RiemannFitHandler.h"
 
 //................................................................................//
 //Fitting methods implemented in Dark Shine tracking
