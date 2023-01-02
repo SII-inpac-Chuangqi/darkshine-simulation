@@ -27,6 +27,7 @@
 #include "Algo/Util.h"
 #include "Algo/TrkHit.h"
 #include "Algo/GreedyFinding.h"
+#include "Algo/RiemannFit/RiemannFitHandler.h"
 
 TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(
         std::move(name), std::move(evtwrt)) {
@@ -58,13 +59,13 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
 
 void TrackingProcessor::Begin() {
 //................................................................................//
-//Load Geometry
+//Load geometry
 //................................................................................//
     digitizer.GetTrackerInfo(if_strip);
     digitizer.SetIfSmear(if_smear);
 
 //................................................................................//
-//Load magnet
+//Load fitter info
 //................................................................................//
     magnets = dAnaData->getMagFieldVec();
     if(magnets.size() != 3 || !magnets.at(0) || !magnets.at(1) || !magnets.at(2))
@@ -87,6 +88,8 @@ void TrackingProcessor::Begin() {
 
     if(Tag_fit_method == tracking::dRiemann || Rec_fit_method == tracking::dRiemann)
     {
+        RiemannFitHandler::CreateInstance();
+        dRFitHandler->SetVerbose(Verbose);
     }
 
 //................................................................................//
@@ -414,7 +417,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Tag tracker
         TrkHitPVecMap clus_tag_trkhit_map;
-        if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
+        //if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
+        if (raw_tagtrk2_hits.size() > 2)
         {
             if_raw_tag_hit_number = true;
 
@@ -458,7 +462,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Recoil tracker
         TrkHitPVecMap clus_rec_trkhit_map;
-        if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
+        //if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
+        if (raw_rectrk2_hits.size() > 2)
         {
             if_raw_rec_hit_number = true;
 
