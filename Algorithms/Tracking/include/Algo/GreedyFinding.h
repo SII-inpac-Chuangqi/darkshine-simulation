@@ -4,6 +4,7 @@
 //................................................................................//
 //CPP STL
 #include <utility>
+#include <limits>
 
 //................................................................................//
 //FRAMEWORK
@@ -17,7 +18,17 @@
 #include "Algo/TrkHit.h"
 #include "Algo/Finding.h"
 
-#define NUM 50
+#ifndef RETURN
+#define RETURN std::nan("RETURN")
+#endif
+
+#ifndef NEGINF_DOUBLE
+#define NEGINF_DOUBLE -std::numeric_limits<double>::infinity()
+#endif
+
+#ifndef MAX_CIRCLE
+#define MAX_CIRCLE 50
+#endif
 
 class GreedyFinding : public Finding
 {
@@ -34,13 +45,15 @@ public:
 //................................................................................//
 //Get
 //................................................................................//
-    virtual double GetR      (int i) const override {return r[i];       }
-    virtual double GetCenterX(int i) const override {return centerX[i]; } //x direction in detector!
-    virtual double GetCenterY(int i) const override {return centerY[i]; } //z direction in detector!
-    virtual double GetChi2   (int i) const override {return goodness[i];}
-    virtual int    GetTrackNo(     ) const override {return circleNo;   }
+    virtual double GetR      (int i) const override {return r_.at(i);       }
+    virtual double GetCenterX(int i) const override {return center_x_.at(i); } //x direction in detector!
+    virtual double GetCenterY(int i) const override {return center_y_.at(i); } //z direction in detector!
+    virtual double GetChi2   (int i) const override {return goodness_.at(i);}
+    virtual int    GetTrackNo(     ) const override {return VecHitChosen.size();}
     virtual std::vector<TrkHitPVec>::iterator First() override {return VecHitChosen.begin();}
     virtual std::vector<TrkHitPVec>::iterator Last () override {return VecHitChosen.end();  }
+
+    int GetCircleNo() const {return circleNo;}
 
 private:
 //................................................................................//
@@ -58,12 +71,14 @@ private:
 
 //................................................................................//
 //Kasa method
-    void MethodLooping(const std::vector<double> &track_x, const std::vector<double> &track_y);
-    double MethodKasa(const std::vector<double> &track_x, const std::vector<double> &track_y, const double &cur_A, const double &cur_B);
-    double rKasa = -999.;
-    double centerXKasa = -999.;
-    double centerYKasa = -999.;
-    double goodnessKasa = -999.;
+    void MethodLooping(const std::vector<double> &track_x, const std::vector<double> &track_y,
+                       double &cur_A, double &cur_B, double &cur_R, double &cur_goodness);
+    double MethodKasa(const std::vector<double> &track_x, const std::vector<double> &track_y,
+                      double &cur_A, double &cur_B, double &cur_R, double &cur_goodness);
+    double r_Kasa_{RETURN};
+    double center_x_Kasa_{RETURN};
+    double center_y_Kasa_{RETURN};
+    double goodness_Kasa_{NEGINF_DOUBLE};
 
 //................................................................................//
 //Choice storage
@@ -72,11 +87,15 @@ private:
     int minDepth = 3;
     double goodnessCut = 0.99;
 
-    int circleNo = 0;
-    double r[NUM] = {-999.};
-    double centerX[NUM] = {-999.};
-    double centerY[NUM] = {-999.};
-    double goodness[NUM] = {-999.};
+    int circleNo{0};
+    std::vector<double> r_;
+    std::vector<double> center_x_;
+    std::vector<double> center_y_;
+    std::vector<double> goodness_;
+    //double r[NUM] = {RETURN};
+    //double centerX[NUM] = {RETURN};
+    //double centerY[NUM] = {RETURN};
+    //double goodness[NUM] = {RETURN};
     std::vector<TrkHitPVec> VecHitChosen;
 
 //................................................................................//
