@@ -1,5 +1,5 @@
-#ifndef KALMAN_FITTING_H
-#define KALMAN_FITTING_H
+#ifndef KALMAN_FILTER_FITTER_H
+#define KALMAN_FILTER_FITTER_H
 
 //................................................................................//
 //CPP STL
@@ -26,24 +26,24 @@
 //Tracking
 #include "Algo/TypeDef.h"
 #include "Algo/TrkHit.h"
-#include "Algo/Fitting.h"
+#include "Algo/Fitter.h"
 
-class KalmanFitting : public Fitting
+class KalmanFilterFitter : public Fitter
 {
 public:
 //................................................................................//
 //Constructor
-    KalmanFitting() {}
-    KalmanFitting(const TrkHitPVec &track, std::initializer_list<double>, int verbose = 0);
-    ~KalmanFitting()
+    KalmanFilterFitter() {}
+    KalmanFilterFitter(const TrkHitPVec &track, std::initializer_list<double>, int verbose = 0);
+    ~KalmanFilterFitter()
     {
         //delete measurement; measurement = nullptr;
         delete fitTrack; fitTrack = nullptr;
         //delete fitter; fitter = nullptr;
     };
 
-    KalmanFitting(const KalmanFitting&) = delete;
-    KalmanFitting& operator =(const KalmanFitting&) = delete;
+    KalmanFilterFitter(const KalmanFilterFitter&) = delete;
+    KalmanFilterFitter& operator =(const KalmanFilterFitter&) = delete;
 
 //................................................................................//
 //Processor
