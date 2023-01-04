@@ -437,7 +437,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     GreedyFinding find_tag(clus_tag_trkhit_map);
                     vec_tag_track.assign(find_tag.First(), find_tag.Last());
         
-//Fitting, by Genfit, Kalman filter/by Riemann fitting
+//Fit, by Genfit, Kalman filter/by Riemann fitting
                     TagTrk2_track_No = find_tag.GetTrackNo();
         
                     for (int i = 0; i < find_tag.GetTrackNo(); i++)
@@ -482,7 +482,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     GreedyFinding find_rec(clus_rec_trkhit_map);
                     vec_rec_track.assign(find_rec.First(), find_rec.Last());
 
-//Fitting, by Genfit, Kalman filter/by Riemann fitting
+//Fit, by Genfit, Kalman filter/by Riemann fitting
                     RecTrk2_track_No = find_rec.GetTrackNo();
               
                     for (int i = 0; i < find_rec.GetTrackNo(); i++) {

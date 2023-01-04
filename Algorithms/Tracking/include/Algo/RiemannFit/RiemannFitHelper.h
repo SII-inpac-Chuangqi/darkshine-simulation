@@ -1,7 +1,7 @@
 #ifndef RIEMANNFIT_RIEMANN_FIT_HELPER_H
 #define RIEMANNFIT_RIEMANN_FIT_HELPER_H
 
-#include "Algo/RiemannFit/RiemannFitting.h"
+#include "Algo/RiemannFit/RiemannFitter.h"
 
 class RiemannFitHelper
 {

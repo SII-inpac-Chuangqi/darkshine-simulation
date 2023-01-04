@@ -22,19 +22,19 @@
 //Tracking
 #include "Algo/TypeDef.h"
 #include "Algo/TrkHit.h"
-#include "Algo/Fitting.h"
+#include "Algo/Fitter.h"
 
-class RiemannFitting : public Fitting
+class RiemannFitter : public Fitter
 {
 public:
 //................................................................................//
 //Constructor
-    RiemannFitting() {}
-    RiemannFitting(const TrkHitPVec &track, std::initializer_list<double>);
-    ~RiemannFitting() {};
+    RiemannFitter() {}
+    RiemannFitter(const TrkHitPVec &track, std::initializer_list<double>);
+    ~RiemannFitter() {};
 
-    RiemannFitting(const RiemannFitting&) = delete;
-    RiemannFitting& operator =(const RiemannFitting&) = delete;
+    RiemannFitter(const RiemannFitter&) = delete;
+    RiemannFitter& operator =(const RiemannFitter&) = delete;
 
 //................................................................................//
 //Processor

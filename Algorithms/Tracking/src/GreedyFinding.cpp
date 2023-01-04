@@ -36,9 +36,9 @@ GreedyFinding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinD
 //................................................................................//
 
 //................................................................................//
-//Fitting method
+//Finding method
 //................................................................................//
-//Fitting control
+//Finding control
 void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
 {
     TrkHitPVecMap tempClusteredTrkHitsInLayer = clusteredTrkHitsInLayer;

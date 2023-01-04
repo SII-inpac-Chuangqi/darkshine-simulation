@@ -20,11 +20,11 @@
 //................................................................................//
 //Tracking
 #include "Algo/TrkHit.h"
-#include "Algo/RiemannFitting.h"
+#include "Algo/RiemannFitter.h"
 
 //................................................................................//
 //Constructor
-RiemannFitting::RiemannFitting(const TrkHitPVec &track,
+RiemannFitter::RiemannFitter(const TrkHitPVec &track,
                                std::initializer_list<double> list)
 {
     auto it = list.begin();
@@ -52,7 +52,7 @@ RiemannFitting::RiemannFitting(const TrkHitPVec &track,
 //Processor
 //................................................................................//
 //Initialize the fitter, set up magnetic, material manager, track representation, fitter and track model
-void RiemannFitting::Init(const TrkHitPVec &track, std::initializer_list<double>)
+void RiemannFitter::Init(const TrkHitPVec &track, std::initializer_list<double>)
 {
     dim = track.size();
     preTheta = GetTheta(track);
@@ -60,7 +60,7 @@ void RiemannFitting::Init(const TrkHitPVec &track, std::initializer_list<double>
 
 //................................................................................//
 //Do the fit
-void RiemannFitting::Fit(const TrkHitPVec &track, std::initializer_list<double>)
+void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
 {
     for(int i = 0; i < 100; i++)
     {
@@ -120,7 +120,7 @@ void RiemannFitting::Fit(const TrkHitPVec &track, std::initializer_list<double>)
 
 //................................................................................//
 //Fill results
-void RiemannFitting::Fill(const TrkHitPVec&, std::initializer_list<double> list)
+void RiemannFitter::Fill(const TrkHitPVec&, std::initializer_list<double> list)
 {
     auto it = list.begin();
     double B = *it;
@@ -132,7 +132,7 @@ void RiemannFitting::Fill(const TrkHitPVec&, std::initializer_list<double> list)
 //Get
 //................................................................................//
 //Calculate helix slope from prefitting
-double RiemannFitting::GetTheta(const TrkHitPVec &track)
+double RiemannFitter::GetTheta(const TrkHitPVec &track)
 {
     double ax = track.at(0)->GetX() - preXc;
     double ay = track.at(0)->GetZ() - preYc;
@@ -147,7 +147,7 @@ double RiemannFitting::GetTheta(const TrkHitPVec &track)
 
 //................................................................................//
 //Paraboloid projection in Cartesian coordinate
-TMatrixD RiemannFitting::GetCartCoo(const TrkHitPVec &track)
+TMatrixD RiemannFitter::GetCartCoo(const TrkHitPVec &track)
 {
     TArrayD data(3*dim);
     for (int i = 0; i < dim; i++)
@@ -167,7 +167,7 @@ TMatrixD RiemannFitting::GetCartCoo(const TrkHitPVec &track)
 
 //................................................................................//
 //Paraboloid projection in Polar coordinate
-TMatrixD RiemannFitting::GetPolarCoo(const TrkHitPVec &track)
+TMatrixD RiemannFitter::GetPolarCoo(const TrkHitPVec &track)
 {
     TArrayD data(2*dim);
     for (int i = 0; i < dim; i++)
@@ -187,7 +187,7 @@ TMatrixD RiemannFitting::GetPolarCoo(const TrkHitPVec &track)
 
 //................................................................................//
 //Covariance matrix of measurement in Cartesian coordinate
-TMatrixD RiemannFitting::GetVcart0()
+TMatrixD RiemannFitter::GetVcart0()
 {
     TArrayD data(4*dim*dim);
     for (int i = 0; i < dim; i++)
@@ -219,7 +219,7 @@ TMatrixD RiemannFitting::GetVcart0()
 
 //................................................................................//
 //Jacobian matrix from Cartesian to polar coordinate
-TMatrixD RiemannFitting::GetJ1(const TrkHitPVec &track)
+TMatrixD RiemannFitter::GetJ1(const TrkHitPVec &track)
 {
     TArrayD data(4*dim*dim);
     for (int i = 0; i < dim; i++)
@@ -255,7 +255,7 @@ TMatrixD RiemannFitting::GetJ1(const TrkHitPVec &track)
 
 //................................................................................//
 //Jacobian matrix from R-Φ to RΦ-R
-TMatrixD RiemannFitting::GetJ2(const TrkHitPVec &track)
+TMatrixD RiemannFitter::GetJ2(const TrkHitPVec &track)
 {
     TArrayD data(2*dim*dim);
     for (int i = 0; i < dim; i++)
@@ -286,7 +286,7 @@ TMatrixD RiemannFitting::GetJ2(const TrkHitPVec &track)
 
 //................................................................................//
 //Covariance matrix of measurement in RΦ-R coordinate
-TMatrixD RiemannFitting::GetVrad0(const TMatrixD &Vcart0,
+TMatrixD RiemannFitter::GetVrad0(const TMatrixD &Vcart0,
                                   const TMatrixD &J1, const TMatrixD &J2)
 {
     TMatrixD Vrad0(J2*J1*Vcart0, TMatrixD::kMultTranspose, J2*J1);
@@ -295,14 +295,14 @@ TMatrixD RiemannFitting::GetVrad0(const TMatrixD &Vcart0,
 
 //................................................................................//
 //Variance from multiple scattering
-double RiemannFitting::GetSigma()
+double RiemannFitter::GetSigma()
 {
     return 13.6/8000*sqrt(0.1/93.70)*(1 + 0.038*log(0.1/93.70));
 }
 
 //................................................................................//
 //Element of ovariance matrix of multiple scattering
-double RiemannFitting::GetVradmsIJ(const TMatrixD &PolarCoo, int i, int j)
+double RiemannFitter::GetVradmsIJ(const TMatrixD &PolarCoo, int i, int j)
 {
     double vradmsIJ = 0.;
 
@@ -323,7 +323,7 @@ double RiemannFitting::GetVradmsIJ(const TMatrixD &PolarCoo, int i, int j)
 
 //................................................................................//
 //Covariance matrix of multiple scattering
-TMatrixD RiemannFitting::GetVradms(const TMatrixD &PolarCoo)
+TMatrixD RiemannFitter::GetVradms(const TMatrixD &PolarCoo)
 {
     TArrayD data(dim*dim);
 
@@ -343,7 +343,7 @@ TMatrixD RiemannFitting::GetVradms(const TMatrixD &PolarCoo)
 
 //................................................................................//
 //Weight
-TMatrixD RiemannFitting::GetG(const TMatrixD &Vrad0, const TMatrixD &Vradms)
+TMatrixD RiemannFitter::GetG(const TMatrixD &Vrad0, const TMatrixD &Vradms)
 {
     TMatrixD G(Vrad0, TMatrixD::kPlus, Vradms);
     G.Invert();
@@ -353,7 +353,7 @@ TMatrixD RiemannFitting::GetG(const TMatrixD &Vrad0, const TMatrixD &Vradms)
 
 //................................................................................//
 //Weight of center of gravity
-TMatrixD RiemannFitting::GetW(const TMatrixD &G)
+TMatrixD RiemannFitter::GetW(const TMatrixD &G)
 {
     const double *element = G.GetMatrixArray();
 
@@ -377,7 +377,7 @@ TMatrixD RiemannFitting::GetW(const TMatrixD &G)
 
 //................................................................................//
 //Center of gravity
-TMatrixD RiemannFitting::GetXc(const TMatrixD &CartCoo, const TMatrixD &W)
+TMatrixD RiemannFitter::GetXc(const TMatrixD &CartCoo, const TMatrixD &W)
 {
     TMatrixD Xc(CartCoo, TMatrixD::kMultTranspose, W);
     return Xc;
@@ -385,7 +385,7 @@ TMatrixD RiemannFitting::GetXc(const TMatrixD &CartCoo, const TMatrixD &W)
 
 //................................................................................//
 //Center of gravity
-TMatrixD RiemannFitting::GetXg(const TMatrixD &CartCoo, const TMatrixD &Xc)
+TMatrixD RiemannFitter::GetXg(const TMatrixD &CartCoo, const TMatrixD &Xc)
 {
     TMatrixD Xg(CartCoo);
     const double *element = Xc.GetMatrixArray();
@@ -402,7 +402,7 @@ TMatrixD RiemannFitting::GetXg(const TMatrixD &CartCoo, const TMatrixD &Xc)
 
 //................................................................................//
 //Normal vector of fitteed plane
-TMatrixD RiemannFitting::GetNVecs(const TMatrixD &G, const TMatrixD &Xg)
+TMatrixD RiemannFitter::GetNVecs(const TMatrixD &G, const TMatrixD &Xg)
 {
     TMatrixD XGX(Xg*G, TMatrixD::kMultTranspose, Xg);
     const double *element = XGX.GetMatrixArray();
