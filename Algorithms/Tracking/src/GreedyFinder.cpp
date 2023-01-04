@@ -95,6 +95,8 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
     itMap--;
     if(itMap == clusteredTrkHitsInLayer.begin())
     {
+        goodness_Kasa_ = -INFINITY;
+
         for(size_t hitsNo = 0; hitsNo < itMap->second.size(); hitsNo++)
         {
             xStore.push_back((*itMap->second.at(hitsNo)).GetU());

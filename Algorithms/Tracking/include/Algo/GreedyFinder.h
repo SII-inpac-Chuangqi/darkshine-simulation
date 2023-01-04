@@ -22,9 +22,9 @@
 #define RETURN std::nan("RETURN")
 #endif
 
-#ifndef NEGINF_DOUBLE
-#define NEGINF_DOUBLE -std::numeric_limits<double>::infinity()
-#endif
+//#ifndef NEGINF_DOUBLE
+//#define NEGINF_DOUBLE -std::numeric_limits<double>::infinity()
+//#endif
 
 #ifndef MAX_CIRCLE
 #define MAX_CIRCLE 50
@@ -78,7 +78,7 @@ private:
     double r_Kasa_{RETURN};
     double center_x_Kasa_{RETURN};
     double center_y_Kasa_{RETURN};
-    double goodness_Kasa_{NEGINF_DOUBLE};
+    double goodness_Kasa_{-INFINITY};
 
 //................................................................................//
 //Choice storage

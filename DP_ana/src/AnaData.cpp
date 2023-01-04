@@ -59,8 +59,8 @@ void AnaData::setConstMagnetField(const vector<double> &const_value)
     if(const_value.size() != 3)
     {
         std::cerr << "[WARNING] ==> Input const field size not compatible, "
-                  << "input size: " << const_value.size() << ", "
-                  << "required size: 3" << std::endl;
+                  << "              input size: " << const_value.size() << ", "
+                  << "              required size: 3" << std::endl;
         return;
     }
 
@@ -93,11 +93,13 @@ void AnaData::readGeometryDetails() {
 
     layer_width_tag.clear();
     layer_length_tag.clear();
+    layer_thickness_tag.clear();
     strip_no_tag.clear();
     angles_tag.clear();
 
     layer_width_rec.clear();
     layer_length_rec.clear();
+    layer_thickness_rec.clear();
     strip_no_rec.clear();
     angles_rec.clear();
 
@@ -124,6 +126,7 @@ void AnaData::readGeometryDetails() {
                 if(layer_name.Contains("Tag")) { // TagTrk1_LV or TagTRk2_LV
                     layer_width_tag.push_back(2.*CUNIT*layer_shape->GetDX());
                     layer_length_tag.push_back(2.*CUNIT*layer_shape->GetDY());
+                    layer_thickness_tag.push_back(2.*CUNIT*layer_shape->GetDZ());
                     auto *block0 = dynamic_cast<TGeoNode*>(layer->GetDaughter(0));
                     strip_no_tag.push_back(layer->GetNdaughters() * block0->GetNdaughters());
                     angles_tag.push_back(std::asin(rotation[1]));
@@ -131,6 +134,7 @@ void AnaData::readGeometryDetails() {
                 else if(layer_name.Contains("Rec")) {
                     layer_width_rec.push_back(2.*CUNIT*layer_shape->GetDX());
                     layer_length_rec.push_back(2.*CUNIT*layer_shape->GetDY());
+                    layer_thickness_rec.push_back(2.*CUNIT*layer_shape->GetDZ());
                     auto *block0 = dynamic_cast<TGeoNode*>(layer->GetDaughter(0));
                     strip_no_rec.push_back(layer->GetNdaughters() * block0->GetNdaughters());
                     angles_rec.push_back(std::asin(rotation[1]));
@@ -206,42 +210,48 @@ void AnaData::printGeometryDetails() const {
     std::cerr << "[INFO] ==> Geometry details:" << std::endl;
     if(strip_no_tag.size() && layer_width_tag.size() && layer_length_tag.size() &&
        strip_no_rec.size() && layer_width_rec.size() && layer_length_rec.size()   ) {
-        std::cerr << "           Tag tracker: strip No.    ";
+        std::cerr << "           Tag tracker: strip No.       ";
         for(size_t i = 0; i < strip_no_tag.size();     i += 2) std::cerr << strip_no_tag.at(i) << ", ";
         std::cerr << std::endl;
-        std::cerr << "                        layer width  ";
+        std::cerr << "                        layer width     ";
         for(size_t i = 0; i < layer_width_tag.size();  i += 2) std::cerr << layer_width_tag.at(i)  << " mm, ";
         std::cerr << std::endl;
-        std::cerr << "                        layer length ";
+        std::cerr << "                        layer length    ";
         for(size_t i = 0; i < layer_length_tag.size(); i += 2) std::cerr << layer_length_tag.at(i) << " mm, ";
         std::cerr << std::endl;
+        std::cerr << "                        layer thickness ";
+        for(size_t i = 0; i < layer_thickness_tag.size(); i += 2) std::cerr << layer_thickness_tag.at(i) << " mm, ";
+        std::cerr << std::endl;
 
-        std::cerr << "           Rec tracker: strip No.    ";
+        std::cerr << "           Rec tracker: strip No.       ";
         for(size_t i = 0; i < strip_no_rec.size();     i += 2) std::cerr << strip_no_rec.at(i) << ", ";
         std::cerr << std::endl;
-        std::cerr << "                        layer width  ";
+        std::cerr << "                        layer width     ";
         for(size_t i = 0; i < layer_width_rec.size();  i += 2) std::cerr << layer_width_rec.at(i)  << " mm, ";
         std::cerr << std::endl;
-        std::cerr << "                        layer length ";
+        std::cerr << "                        layer length    ";
         for(size_t i = 0; i < layer_length_rec.size(); i += 2) std::cerr << layer_length_rec.at(i) << " mm, ";
+        std::cerr << std::endl;
+        std::cerr << "                        layer thickness ";
+        for(size_t i = 0; i < layer_thickness_rec.size(); i += 2) std::cerr << layer_thickness_rec.at(i) << " mm, ";
         std::cerr << std::endl;
     }
     if(ECal_cell_length_x.size() && ECal_cell_length_y.size() && ECal_cell_length_z.size())
-        std::cerr << "           ECal:        center x at  " << ECAL_center_x            << " mm" << std::endl
-                  << "                        center y at  " << ECAL_center_y            << " mm" << std::endl
-                  << "                        center z at  " << ECAL_center_z            << " mm" << std::endl
-                  << "                        length x     " << ECAL_length_x            << " mm" << std::endl
-                  << "                        length y     " << ECAL_length_y            << " mm" << std::endl
-                  << "                        length z     " << ECAL_length_z            << " mm" << std::endl
-                  << "                        cell size x  " << ECal_cell_length_x.at(0) << " mm" << std::endl
-                  << "                        cell size y  " << ECal_cell_length_y.at(0) << " mm" << std::endl
-                  << "                        cell size z  " << ECal_cell_length_z.at(0) << " mm" << std::endl
-                  << "                        cell[0] pos x  "  << ECAL_posmap.at(0).X()    << " mm" << std::endl
-                  << "                        cell[0] pos y  "  << ECAL_posmap.at(0).Y()    << " mm" << std::endl
-                  << "                        cell[0] pos z  "  << ECAL_posmap.at(0).Z()    << " mm" << std::endl
-                  << "                        cell No. x   " << N_ECal_cell_x            << std::endl
-                  << "                        cell No. y   " << N_ECal_cell_y            << std::endl
-                  << "                        cell No. z   " << N_ECal_cell_z            << std::endl;
+        std::cerr << "           ECal:        center x at     " << ECAL_center_x            << " mm" << std::endl
+                  << "                        center y at     " << ECAL_center_y            << " mm" << std::endl
+                  << "                        center z at     " << ECAL_center_z            << " mm" << std::endl
+                  << "                        length x        " << ECAL_length_x            << " mm" << std::endl
+                  << "                        length y        " << ECAL_length_y            << " mm" << std::endl
+                  << "                        length z        " << ECAL_length_z            << " mm" << std::endl
+                  << "                        cell size x     " << ECal_cell_length_x.at(0) << " mm" << std::endl
+                  << "                        cell size y     " << ECal_cell_length_y.at(0) << " mm" << std::endl
+                  << "                        cell size z     " << ECal_cell_length_z.at(0) << " mm" << std::endl
+                  << "                        cell[0] pos x   "  << ECAL_posmap.at(0).X()    << " mm" << std::endl
+                  << "                        cell[0] pos y   "  << ECAL_posmap.at(0).Y()    << " mm" << std::endl
+                  << "                        cell[0] pos z   "  << ECAL_posmap.at(0).Z()    << " mm" << std::endl
+                  << "                        cell No. x      " << N_ECal_cell_x            << std::endl
+                  << "                        cell No. y      " << N_ECal_cell_y            << std::endl
+                  << "                        cell No. z      " << N_ECal_cell_z            << std::endl;
 }
 
 TString AnaData::getRegionName(const float *vertex) {
