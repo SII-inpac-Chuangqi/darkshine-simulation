@@ -13,7 +13,7 @@
 //................................................................................//
 //Tracking
 #include "Algo/DTrack.h"
-//#include "Algo/KalmanFitting.h"
+//#include "Algo/KalmanFilterFitter.h"
 
 //................................................................................//
 //public:
@@ -227,16 +227,16 @@ void DTrack::ExceptionHandler(const std::vector<double> &magnet)
 
 void DTrack::Fit(int method)
 {
-//    Fitting *fitter_ = nullptr;
+//    Fitter *fitter_ = nullptr;
 
     switch(method)
     {
         case tracking::dKalman  :
-                                  fitter_ = new KalmanFitting(hits_,
-                                                              {preR_,   //Fix to 2 ordered parameters! --bending radius as fitting seed
-                                                               By_},    //                             --magnet value to manage exception condition
-                                                              verbose_ //Verbose
-                                                             );
+                                  fitter_ = new KalmanFilterFitter(hits_,
+                                                                   {preR_,   //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                                    By_},    //                             --magnet to manage exception condition
+                                                                   verbose_  //Verbose
+                                                                  );
                                   break;
         case tracking::dRiemann :
                                   fitter_ = nullptr;
@@ -251,11 +251,11 @@ void DTrack::Fit(int method)
         default :
                                   if(verbose_ > 0)
                                       std::cerr << "[WARNING] ==> Fit method not found. Use default GenFit Kalman fitter" << std::endl;
-                                  fitter_ = new KalmanFitting(hits_,
-                                                             {preR_,   //Fix to 2 ordered parameters! --bending radius as fitting seed
-                                                              By_},    //                             --magnet value to manage exception condition
-                                                             verbose_ //Verbose
-                                                            );
+                                  fitter_ = new KalmanFilterFitter(hits_,
+                                                                   {preR_,   //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                                    By_},    //                             --magnet to manage exception condition
+                                                                   verbose_  //Verbose
+                                                                  );
     }
 
     if(fitter_)
