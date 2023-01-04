@@ -24,8 +24,10 @@
 //
 GreedyFinding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDepth, double newGoodnessCut)
 {
+    circleNo = 0;
     minDepth = newMinDepth;
     goodnessCut = newGoodnessCut;
+
     GreedyLooping(clusteredTrkHitsInLayer);
 }
 
@@ -44,10 +46,15 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
     {
         auto itMap = tempClusteredTrkHitsInLayer.end();
         GreedyLooping(tempClusteredTrkHitsInLayer, itMap, circleNo);
-        if(goodness[circleNo] > goodnessCut && static_cast<int>(hitChosen.size()) > minDepth)
+        //if(goodness[circleNo] > goodnessCut && static_cast<int>(hitChosen.size()) > minDepth)
+        if(goodness_Kasa_ > goodnessCut && static_cast<int>(hitChosen.size()) > minDepth)
         {
             VecHitChosen.emplace_back(hitChosen);
-
+            r_.push_back(r_Kasa_);
+            center_x_.push_back(center_x_Kasa_);
+            center_y_.push_back(center_y_Kasa_);
+            goodness_.push_back(goodness_Kasa_);                                      
+ 
             auto it_eraseMap = tempClusteredTrkHitsInLayer.end();
             for(size_t i = 0; i < hitChosen.size(); i++)
             {
@@ -74,6 +81,8 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
         }
         else break;
 
+        if(circleNo >= MAX_CIRCLE - 1) break;
+
         if(static_cast<int>(tempClusteredTrkHitsInLayer.size()) < minDepth) break;
     }
 
@@ -93,18 +102,31 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
             hitStore.emplace_back(itMap->second.at(hitsNo));
             hitNoStore.push_back(hitsNo);
 
-            MethodLooping(xStore, yStore);
-            if(goodness[cirNo] < goodnessKasa)
-            {
-                r[cirNo] = rKasa;
-                centerX[cirNo] = centerXKasa;
-                centerY[cirNo] = centerYKasa;
-                goodness[cirNo] = goodnessKasa;
+            double cur_A;
+            double cur_B;
+            double cur_R;
+            double cur_goodness;
+            MethodLooping(xStore, yStore, cur_A, cur_B, cur_R, cur_goodness);
+            //if(goodness[cirNo] < goodnessKasa)
+            //{
+            //    r[cirNo] = rKasa;
+            //    centerX[cirNo] = centerXKasa;
+            //    centerY[cirNo] = centerYKasa;
+            //    goodness[cirNo] = goodnessKasa;
 
-                hitChosen.assign(hitStore.begin(), hitStore.end());
+            //    hitChosen.assign(hitStore.begin(), hitStore.end());
+            //    hitNoChosen.assign(hitNoStore.begin(), hitNoStore.end());
+            //}
+            if(cur_goodness > goodness_Kasa_)
+            {
+                goodness_Kasa_ = cur_goodness;
+                center_x_Kasa_ = cur_A;
+                center_y_Kasa_ = cur_B;
+                r_Kasa_        = cur_R;
+                hitChosen.assign(hitStore.begin(),     hitStore.end());
                 hitNoChosen.assign(hitNoStore.begin(), hitNoStore.end());
             }
-
+                                                                    
             xStore.erase(xStore.end() - 1);
             yStore.erase(yStore.end() - 1);
             hitStore.erase(hitStore.end() - 1);
@@ -136,23 +158,22 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
 //................................................................................//
 //Kasa method
 
-void GreedyFinding::MethodLooping(const std::vector<double> &track_x, const std::vector<double> &track_y)
+void GreedyFinding::MethodLooping(const std::vector<double> &track_x, const std::vector<double> &track_y,
+                                  double &cur_A, double &cur_B, double &cur_R, double &cur_goodness)
 {
-    double A(0.), B(0.);
-
-    MethodKasa(track_x, track_y, A, B);
+    MethodKasa(track_x, track_y, cur_A, cur_B, cur_R, cur_goodness);
 }
 
 double GreedyFinding::MethodKasa(const std::vector<double> &track_x, const std::vector<double> &track_y,
-                                 [[maybe_unused]] const double &cur_A, [[maybe_unused]] const double &cur_B)
+                                 double &cur_A, double &cur_B, double &cur_R, double &cur_goodness)
 {
     if(track_x.size() != track_y.size())
     {
-	std::cout << "x and y have different sizes" << std::endl;
+	std::cout << "[ERROR] ==> x and y have different sizes" << std::endl;
         return 0.;
     }
 
-    int pointNo = track_x.size();
+    const int pointNo = track_x.size();
 
     double X1 = 0.;
     double Y1 = 0.;
@@ -194,9 +215,12 @@ double GreedyFinding::MethodKasa(const std::vector<double> &track_x, const std::
     B = -0.5*b;
     R = 0.5*sqrt(a*a + b*b - 4*c);
 
-    centerXKasa = A;
-    centerYKasa = B;
-    rKasa = R;
+    //centerXKasa = A;
+    //centerYKasa = B;
+    //rKasa = R;
+    cur_A = A;
+    cur_B = B;
+    cur_R = R;
 
     double s = 0.;
     for (int i = 0; i < pointNo; i++)
@@ -206,7 +230,8 @@ double GreedyFinding::MethodKasa(const std::vector<double> &track_x, const std::
         double z = sqrt(x*x + y*y);
         s += (R - z)*(R - z);
     }
-    goodnessKasa = 1 - sqrt(s/(pointNo*R*R));
+    //goodnessKasa = 1 - sqrt(s/(pointNo*R*R));
+    cur_goodness = 1 - sqrt(s/(pointNo*R*R));
 
     return 0.;
 }
