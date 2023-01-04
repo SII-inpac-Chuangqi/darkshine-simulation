@@ -18,7 +18,6 @@
 #include "Algo/TrkHit.h"
 #include "Algo/DTrack.h"
 #include "Algo/Digitization.h"
-#include <TLorentzVector.h>
 
 using namespace std;
 

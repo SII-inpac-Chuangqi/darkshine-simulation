@@ -12,9 +12,9 @@
 
 //................................................................................//
 //Tracking
-#include "Algo/Finding.h"
+#include "Algo/Finder.h"
 
-std::vector<double> Finding::GetMagnetFieldAt(double x, double y, double z)
+std::vector<double> Finder::GetMagnetFieldAt(double x, double y, double z)
 {
     return dAnaData->getMagnetFieldAt({x, y, z});
 }

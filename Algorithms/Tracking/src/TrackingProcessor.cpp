@@ -11,6 +11,7 @@
 #include "TString.h"
 #include "TGeoManager.h"
 #include <Math/Vector4D.h>
+//#include <TLorentzVector.h>
 
 //................................................................................//
 //GENFIT
@@ -26,7 +27,7 @@
 #include "Algo/TypeDef.h"
 #include "Algo/Util.h"
 #include "Algo/TrkHit.h"
-#include "Algo/GreedyFinding.h"
+#include "Algo/GreedyFinder.h"
 #include "Algo/RiemannFit/RiemannFitHelper.h"
 
 TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(
@@ -434,7 +435,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 {
 //Finding, by pre-fitting
                     std::vector<TrkHitPVec> vec_tag_track;
-                    GreedyFinding find_tag(clus_tag_trkhit_map);
+                    GreedyFinder find_tag(clus_tag_trkhit_map);
                     vec_tag_track.assign(find_tag.First(), find_tag.Last());
         
 //Fit, by Genfit, Kalman filter/by Riemann fitting
@@ -442,7 +443,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         
                     for (int i = 0; i < find_tag.GetTrackNo(); i++)
                     {
-        
                         TrkHitPVec tag_track_hits((*(vec_tag_track.begin() + i)).begin(), (*(vec_tag_track.begin() + i)).end());
                         auto track = new DTrack(tag_track_hits,
                                                 find_tag.GetR(i),        //used in Kalman filter
@@ -479,7 +479,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 {
 //Finding, by pre-fitting
                     std::vector<TrkHitPVec> vec_rec_track;
-                    GreedyFinding find_rec(clus_rec_trkhit_map);
+                    GreedyFinder find_rec(clus_rec_trkhit_map);
                     vec_rec_track.assign(find_rec.First(), find_rec.Last());
 
 //Fit, by Genfit, Kalman filter/by Riemann fitting

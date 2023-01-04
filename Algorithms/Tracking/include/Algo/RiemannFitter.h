@@ -1,5 +1,5 @@
-#ifndef RIEMANN_FITTING_H
-#define RIEMANN_FITTING_H
+#ifndef RIEMANN_FITTER_H
+#define RIEMANN_FITTER_H
 
 //................................................................................//
 //CPP STL

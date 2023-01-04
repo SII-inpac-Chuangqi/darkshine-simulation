@@ -1,5 +1,5 @@
-#ifndef KALMAN_FITTING_H
-#define KALMAN_FITTING_H
+#ifndef KALMAN_FILTER_FITTER_H
+#define KALMAN_FILTER_FITTER_H
 
 //................................................................................//
 //CPP STL
