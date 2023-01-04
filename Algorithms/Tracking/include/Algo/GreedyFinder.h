@@ -1,5 +1,5 @@
-#ifndef GREEDY_FINDING_H
-#define GREEDY_FINDING_H
+#ifndef GREEDY_FINDER_H
+#define GREEDY_FINDER_H
 
 //................................................................................//
 //CPP STL
@@ -16,7 +16,7 @@
 //................................................................................//
 //TRACKING
 #include "Algo/TrkHit.h"
-#include "Algo/Finding.h"
+#include "Algo/Finder.h"
 
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
@@ -30,17 +30,17 @@
 #define MAX_CIRCLE 50
 #endif
 
-class GreedyFinding : public Finding
+class GreedyFinder : public Finder
 {
 public:
 //................................................................................//
 //Constructor
 //................................................................................//
-    GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDepth = 3, double newGoodnessCut = 0.99);
-    ~GreedyFinding() {}
+    GreedyFinder(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDepth = 3, double newGoodnessCut = 0.99);
+    ~GreedyFinder() {}
 
-    GreedyFinding(const GreedyFinding&) = delete;
-    GreedyFinding& operator =(const GreedyFinding&) = delete;
+    GreedyFinder(const GreedyFinder&) = delete;
+    GreedyFinder& operator =(const GreedyFinder&) = delete;
 
 //................................................................................//
 //Get

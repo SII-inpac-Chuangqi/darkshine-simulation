@@ -15,14 +15,14 @@
 //TRACKING
 #include "Algo/TypeDef.h"
 #include "Algo/TrkHit.h"
-#include "Algo/GreedyFinding.h"
+#include "Algo/GreedyFinder.h"
 
 //................................................................................//
 //public:
 //................................................................................//
 //Constructor
 //
-GreedyFinding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDepth, double newGoodnessCut)
+GreedyFinder::GreedyFinder(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDepth, double newGoodnessCut)
 {
     circleNo = 0;
     minDepth = newMinDepth;
@@ -36,10 +36,10 @@ GreedyFinding::GreedyFinding(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinD
 //................................................................................//
 
 //................................................................................//
-//Fitting method
+//Finding method
 //................................................................................//
-//Fitting control
-void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
+//Finding control
+void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
 {
     TrkHitPVecMap tempClusteredTrkHitsInLayer = clusteredTrkHitsInLayer;
     for(;;)
@@ -88,7 +88,7 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
 
 }
 
-void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
+void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                                   TrkHitPVecMap::iterator itMap,
                                   int cirNo)
 {
@@ -158,13 +158,13 @@ void GreedyFinding::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
 //................................................................................//
 //Kasa method
 
-void GreedyFinding::MethodLooping(const std::vector<double> &track_x, const std::vector<double> &track_y,
+void GreedyFinder::MethodLooping(const std::vector<double> &track_x, const std::vector<double> &track_y,
                                   double &cur_A, double &cur_B, double &cur_R, double &cur_goodness)
 {
     MethodKasa(track_x, track_y, cur_A, cur_B, cur_R, cur_goodness);
 }
 
-double GreedyFinding::MethodKasa(const std::vector<double> &track_x, const std::vector<double> &track_y,
+double GreedyFinder::MethodKasa(const std::vector<double> &track_x, const std::vector<double> &track_y,
                                  double &cur_A, double &cur_B, double &cur_R, double &cur_goodness)
 {
     if(track_x.size() != track_y.size())
