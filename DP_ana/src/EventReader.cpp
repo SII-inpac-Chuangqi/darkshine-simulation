@@ -64,8 +64,8 @@ void EventReader::Convert() {
     ENZ_Target = evt->getEnzTarget();
     ENZ_ECAL = evt->getEnzEcal();
 
-
     eventProcessedNumber++;
+
     if (Verbose > 1) {
         cout << "======================================================================" << endl;
         std::cout << "[ READ EVENT ] : Convert (Verbosity 2)" << std::endl;

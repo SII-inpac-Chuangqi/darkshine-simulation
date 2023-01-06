@@ -58,6 +58,7 @@ public:
     double GetPy() const {return py_;}
     double GetPz() const {return pz_;}
     double GetPp() const {return pp_;}
+    double GetFixedPp() const {return 0.000004517*pp_*pp_ + 0.89787*pp_;}
     double GetPl() const {return py_;}
     double GetPreR()  const {return preR_;}
     double GetPreXc() const {return preXc_;}
