@@ -133,6 +133,7 @@ private:
 //................................................................................//
     int RecTrk2_track_No{-1};
     std::vector<double> RecTrk2_pp{};
+    std::vector<double> RecTrk2_fixed_pp{};
     std::vector<double> RecTrk2_pl{};
 
     std::vector<double> RecTrk2_track_quality{};
