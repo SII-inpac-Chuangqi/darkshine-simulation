@@ -28,7 +28,7 @@ void Digitization::SetIfSmear(bool if_smear)
 }
 
 //Get world node from TGeoManager
-void Digitization::GetTrackerInfo(bool if_strip)
+void Digitization::ReadTrackerInfo(bool if_strip)
 {
     if_strip_ = if_strip;
 
