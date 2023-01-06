@@ -135,6 +135,7 @@ void TrackingProcessor::Begin() {
 //................................................................................//
     EvtWrt->RegisterIntVariable("RecTrk2_track_No", &RecTrk2_track_No, "RecTrk2_track_No/I");
     EvtWrt->RegisterOutVariable("RecTrk2_pp", &RecTrk2_pp);
+    EvtWrt->RegisterOutVariable("RecTrk2_fixed_pp", &RecTrk2_fixed_pp);
     EvtWrt->RegisterOutVariable("RecTrk2_track_chi2",      &RecTrk2_track_chi2);
     EvtWrt->RegisterOutVariable("RecTrk2_track_chi2_algo", &RecTrk2_track_chi2_algo);
 
@@ -209,6 +210,7 @@ void TrackingProcessor::InitEvt() {
     std::vector<double>().swap(TagTrk2_track_y_sigma);
 
     std::vector<double>().swap(RecTrk2_pp);
+    std::vector<double>().swap(RecTrk2_fixed_pp);
     std::vector<double>().swap(RecTrk2_track_chi2);
     std::vector<double>().swap(RecTrk2_track_chi2_algo);
     std::vector<double>().swap(RecTrk2_track_quality);
@@ -527,6 +529,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         for(auto &track : rec_tracks_)
         {
             RecTrk2_pp.push_back(track->GetPp());
+            RecTrk2_fixed_pp.push_back(track->GetFixedPp());
             RecTrk2_track_chi2.push_back(track->GetChi2());
             RecTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
 
