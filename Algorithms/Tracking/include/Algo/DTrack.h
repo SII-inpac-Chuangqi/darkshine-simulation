@@ -66,6 +66,7 @@ public:
 
             p_fixed = 4.517 * p_rcs^2 + 0.89787 * p_rcs
      */
+
     double GetPl() const {return py_;}
     double GetPreR()  const {return preR_;}
     double GetPreXc() const {return preXc_;}
