@@ -21,7 +21,6 @@ void ConfigManager::ReadConst() {
     RunNumber = config->Read("RunNumber", 0);
     EventNumber = config->Read("EventNumber", -1);
     SkipNumber = config->Read("SkipNumber", 0);
-    BeamOnNumber = config->Read("BeamOnNumber", 0);
 
     // Read Verbosity
     AlgoManager_Verbose = config->Read("AlgoManager.Verbose", 0);
