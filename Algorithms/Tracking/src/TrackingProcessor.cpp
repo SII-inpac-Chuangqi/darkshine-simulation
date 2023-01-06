@@ -11,6 +11,7 @@
 #include "TString.h"
 #include "TGeoManager.h"
 #include <Math/Vector4D.h>
+//#include <TLorentzVector.h>
 
 //................................................................................//
 //GENFIT
@@ -26,7 +27,8 @@
 #include "Algo/TypeDef.h"
 #include "Algo/Util.h"
 #include "Algo/TrkHit.h"
-#include "Algo/GreedyFinding.h"
+#include "Algo/GreedyFinder.h"
+#include "Algo/RiemannFit/RiemannFitHelper.h"
 
 TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(
         std::move(name), std::move(evtwrt)) {
@@ -58,13 +60,13 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
 
 void TrackingProcessor::Begin() {
 //................................................................................//
-//Load Geometry
+//Load geometry
 //................................................................................//
     digitizer.GetTrackerInfo(if_strip);
     digitizer.SetIfSmear(if_smear);
 
 //................................................................................//
-//Load magnet
+//Load fitter info
 //................................................................................//
     magnets = dAnaData->getMagFieldVec();
     if(magnets.size() != 3 || !magnets.at(0) || !magnets.at(1) || !magnets.at(2))
@@ -83,6 +85,13 @@ void TrackingProcessor::Begin() {
                                                                              dAnaData->getMagnetFieldAt({0., 0., 0.}).at(1)*10., //T->kGs
                                                                              dAnaData->getMagnetFieldAt({0., 0., 0.}).at(2)*10.));
         }
+    }
+
+    if(Tag_fit_method == tracking::dRiemann || Rec_fit_method == tracking::dRiemann)
+    {
+        //RiemannFitHelper::CreateInstance();
+        //dRFitHelper->SetVerbose(Verbose);
+        RiemannFitHelper::SetVerbose(Verbose);
     }
 
 //................................................................................//
@@ -164,7 +173,7 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("ECal_seed_pz", &ECal_seed_pz);
 }
 
-void TrackingProcessor::CleanEvt() {
+void TrackingProcessor::InitEvt() {
 
     //std::vector<DTrack>().swap(tag_tracks_);
     //std::vector<DTrack>().swap(rec_tracks_);
@@ -371,7 +380,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Initialize vars
-    this->CleanEvt();
+    this->InitEvt();
 
     const auto &step_collection = evt->getStepCollection();
     //const auto &MCCollection = evt->getMcParticleCollection();
@@ -410,7 +419,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Tag tracker
         TrkHitPVecMap clus_tag_trkhit_map;
-        if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
+        //if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
+        if (raw_tagtrk2_hits.size() > 2)
         {
             if_raw_tag_hit_number = true;
 
@@ -425,15 +435,14 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 {
 //Finding, by pre-fitting
                     std::vector<TrkHitPVec> vec_tag_track;
-                    GreedyFinding find_tag(clus_tag_trkhit_map);
+                    GreedyFinder find_tag(clus_tag_trkhit_map);
                     vec_tag_track.assign(find_tag.First(), find_tag.Last());
         
-//Fitting, by Genfit, Kalman filter/by Riemann fitting
+//Fit, by Genfit, Kalman filter/by Riemann fitting
                     TagTrk2_track_No = find_tag.GetTrackNo();
         
                     for (int i = 0; i < find_tag.GetTrackNo(); i++)
                     {
-        
                         TrkHitPVec tag_track_hits((*(vec_tag_track.begin() + i)).begin(), (*(vec_tag_track.begin() + i)).end());
                         auto track = new DTrack(tag_track_hits,
                                                 find_tag.GetR(i),        //used in Kalman filter
@@ -442,7 +451,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                         track->SetVerbose(Verbose);
                         track->ExceptionHandler(magnet_at_origin);
                         //track->Reverse();
-                        track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter
+                        track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
                         //track->Evaluate();
 
                         tag_tracks_.push_back(track);
@@ -454,7 +463,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Recoil tracker
         TrkHitPVecMap clus_rec_trkhit_map;
-        if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
+        //if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
+        if (raw_rectrk2_hits.size() > 2)
         {
             if_raw_rec_hit_number = true;
 
@@ -469,10 +479,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 {
 //Finding, by pre-fitting
                     std::vector<TrkHitPVec> vec_rec_track;
-                    GreedyFinding find_rec(clus_rec_trkhit_map);
+                    GreedyFinder find_rec(clus_rec_trkhit_map);
                     vec_rec_track.assign(find_rec.First(), find_rec.Last());
 
-//Fitting, by Genfit, Kalman filter/by Riemann fitting
+//Fit, by Genfit, Kalman filter/by Riemann fitting
                     RecTrk2_track_No = find_rec.GetTrackNo();
               
                     for (int i = 0; i < find_rec.GetTrackNo(); i++) {
@@ -484,7 +494,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                         track->SetVerbose(Verbose);
                         track->ExceptionHandler(magnet_at_origin);
                         //track->Reverse();
-                        track->Fit(Rec_fit_method);            //choose fitting method: Kalman filter
+                        track->Fit(Rec_fit_method);            //choose fitting method: Kalman filter/Riemann fit
                         //track->Evaluate();
 
                         rec_tracks_.push_back(track);
@@ -525,7 +535,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             ECal_seed_px.push_back(track->GetECalDirctX());
             ECal_seed_py.push_back(track->GetECalDirctY());
             ECal_seed_pz.push_back(track->GetECalQoP());
-         
+
             if (!clean) {
                 RecTrk2_track_quality.push_back(track->GetQuality());
                 RecTrk2_track_x_sigma.push_back(track->GetXSigma());

@@ -158,7 +158,7 @@ void RecECAL::Begin() {
 
 void RecECAL::ProcessEvt(AnaEvent *evt) {
     // Initialization
-    initialization();
+    InitEvt();
     if(verbose>1) std::cout<<"=========="<<std::endl;
 
     // Get Simulated Hits for the current event

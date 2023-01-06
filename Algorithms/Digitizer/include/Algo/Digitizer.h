@@ -21,6 +21,12 @@ public:
 
     void Begin() override;
 
+    void InitEvt() override
+    {
+        digitized_total_No = -1;
+        digitized_total_NoGen = -1;
+    }
+
     void ProcessEvt(AnaEvent* evt) override;
 
     void CheckEvt(AnaEvent* evt) override;

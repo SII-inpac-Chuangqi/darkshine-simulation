@@ -18,7 +18,6 @@
 #include "Algo/TrkHit.h"
 #include "Algo/DTrack.h"
 #include "Algo/Digitization.h"
-#include <TLorentzVector.h>
 
 using namespace std;
 
@@ -32,7 +31,7 @@ public:
     void Begin() override;
 //................................................................................//
 //Initialize all vars to be stored in output files
-    void CleanEvt();
+    void InitEvt() override;
 //................................................................................//
 //Fill truth variables
     void FillTruth(DTruth *truth_info, std::vector<DStep*> *stepIni,

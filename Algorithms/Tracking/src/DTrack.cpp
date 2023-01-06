@@ -13,7 +13,7 @@
 //................................................................................//
 //Tracking
 #include "Algo/DTrack.h"
-//#include "Algo/KalmanFitting.h"
+//#include "Algo/KalmanFilterFitter.h"
 
 //................................................................................//
 //public:
@@ -80,7 +80,7 @@ DTrack::DTrack(DTrack &&oldTrack) : pdg_(std::move(oldTrack.pdg_)),         //ph
 
                                     By_(std::move(oldTrack.By_)),           //detector properties
 
-                                    ndf_(std::move(oldTrack.ndf_)),         //finding properties
+                                    ndf_(std::move(oldTrack.ndf_)),         //fitting properties
                                     chi2_(std::move(oldTrack.chi2_)),
                                     chi2_algo_(std::move(oldTrack.chi2_algo_)),
                                     xSigma_(std::move(oldTrack.xSigma_)),
@@ -89,7 +89,7 @@ DTrack::DTrack(DTrack &&oldTrack) : pdg_(std::move(oldTrack.pdg_)),         //ph
                                     extrapolated_x_(std::move(oldTrack.extrapolated_x_)),
                                     extrapolated_y_(std::move(oldTrack.extrapolated_y_)),
 
-                                    preR_(std::move(oldTrack.preR_)),       //prefitting properties
+                                    preR_(std::move(oldTrack.preR_)),       //finding properties
                                     preXc_(std::move(oldTrack.preXc_)),
                                     preYc_(std::move(oldTrack.preYc_)),
 
@@ -144,7 +144,7 @@ DTrack& DTrack::operator=(const DTrack &old_track)
 
 double DTrack::GetChi2()
 {
-    if(hits_.size() == 0)
+    if(hits_.size() < 4)
     {
         chi2_ = RETURN;
         return chi2_;
@@ -227,29 +227,35 @@ void DTrack::ExceptionHandler(const std::vector<double> &magnet)
 
 void DTrack::Fit(int method)
 {
-//    Fitting *fitter_ = nullptr;
+//    Fitter *fitter_ = nullptr;
 
     switch(method)
     {
-        case tracking::dKalman :
-                                 fitter_ = new KalmanFitting(hits_,
-                                                             {preR_,   //Fix to 2 ordered parameters! --bending radius as fitting seed
-                                                              By_},    //                             --magnet value to manage exception condition
-                                                             verbose_ //Verbose
-                                                            );
-                                 break;
-        case tracking::dNone :
-                                 if(verbose_ > 0)
-                                     std::cout << "[INFO] ==> Fit not required" << std::endl;
-                                 break;
+        case tracking::dKalman  :
+                                  fitter_ = new KalmanFilterFitter(hits_,
+                                                                   {preR_,   //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                                    By_},    //                             --magnet to manage exception condition
+                                                                   verbose_  //Verbose
+                                                                  );
+                                  break;
+        case tracking::dRiemann :
+                                  fitter_ = nullptr;
+                                  if(verbose_ > 0)
+                                      std::cout << "[INFO] ==> Riemann fit coming soon" << std::endl;
+                                  break;
+                                  break;
+        case tracking::dNone  :
+                                  if(verbose_ > 0)
+                                      std::cout << "[INFO] ==> Fit not required" << std::endl;
+                                  break;
         default :
-                                 if(verbose_ > 0)
-                                     std::cerr << "[WARNING] ==> Fit method not found. Use default fitter_ GenFit Kalman fitter_" << std::endl;
-                                 fitter_ = new KalmanFitting(hits_,
-                                                             {preR_,   //Fix to 2 ordered parameters! --bending radius as fitting seed
-                                                              By_},    //                             --magnet value to manage exception condition
-                                                             verbose_ //Verbose
-                                                            );
+                                  if(verbose_ > 0)
+                                      std::cerr << "[WARNING] ==> Fit method not found. Use default GenFit Kalman fitter" << std::endl;
+                                  fitter_ = new KalmanFilterFitter(hits_,
+                                                                   {preR_,   //Fix to 2 ordered parameters! --bending radius as fitting seed
+                                                                    By_},    //                             --magnet to manage exception condition
+                                                                   verbose_  //Verbose
+                                                                  );
     }
 
     if(fitter_)

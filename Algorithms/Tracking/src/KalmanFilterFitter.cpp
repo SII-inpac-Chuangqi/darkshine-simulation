@@ -24,17 +24,17 @@
 //................................................................................//
 //Tracking
 #include "Algo/TrkHit.h"
-#include "Algo/KalmanFitting.h"
+#include "Algo/KalmanFilterFitter.h"
 
 //................................................................................//
 //Constructor
-KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<double> list, int verbose) : hitCov(2)
+KalmanFilterFitter::KalmanFilterFitter(const TrkHitPVec &track, std::initializer_list<double> list, int verbose) : hitCov(2)
 {
     verbose_ = verbose;
 
     try
     {
-        if(track.size() < 3) throw -1;
+        if(track.size() < 4) throw -1;
         
         Init(track, list);
         Fit (track, {});
@@ -43,7 +43,7 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<doub
     catch(int e)
     {
         if(verbose_ > 0)
-            std::cerr << "[WARNING] ==> Fewer than 3 hits in this track" << std::endl;
+            std::cerr << "[WARNING] ==> Fewer than 4 hits in this track" << std::endl;
 
         auto it = list.begin();
         double preR = *it; it++;
@@ -69,8 +69,8 @@ KalmanFitting::KalmanFitting(const TrkHitPVec &track, std::initializer_list<doub
 //Processor
 //................................................................................//
 //Initialize the fitter, set up magnetic, material manager, track representation, fitter and track model
-//void KalmanFitting::Init(const TrkHitPVec &track, double preR, double B)
-void KalmanFitting::Init(const TrkHitPVec &track, std::initializer_list<double> list)
+//void KalmanFilterFitter::Init(const TrkHitPVec &track, double preR, double B)
+void KalmanFilterFitter::Init(const TrkHitPVec &track, std::initializer_list<double> list)
 {
     auto it = list.begin();
     double preR = *it; it++;
@@ -96,7 +96,7 @@ void KalmanFitting::Init(const TrkHitPVec &track, std::initializer_list<double> 
 
 //................................................................................//
 //Do the fit
-void KalmanFitting::Fit(const TrkHitPVec &track, std::initializer_list<double>)
+void KalmanFilterFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
 {
     //Create vitual detector planes and fill the track
     int detId = 0;   //virtual detector
@@ -132,7 +132,7 @@ void KalmanFitting::Fit(const TrkHitPVec &track, std::initializer_list<double>)
 
 //................................................................................//
 //Fill results
-void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
+void KalmanFilterFitter::Fill(const TrkHitPVec &track, std::initializer_list<double>)
 {
     fitTrack->getFittedState().getPosMomCov(pos, mom, hitCov);
     px = std::abs(mom.Px())*1000;                           //GeV->MeV
@@ -194,7 +194,7 @@ void KalmanFitting::Fill(const TrkHitPVec &track, std::initializer_list<double>)
 //Get
 //................................................................................//
 //Calculate sign of charge of input track
-int KalmanFitting::GetSign(const TrkHitPVec &track)
+int KalmanFilterFitter::GetSign(const TrkHitPVec &track)
 {
     double xl  = track.at(track.size() - 1)->GetU();
     double xlr = track.at(track.size() - 2)->GetU();
@@ -220,7 +220,7 @@ int KalmanFitting::GetSign(const TrkHitPVec &track)
     return s;
 }
 
-std::vector<double> KalmanFitting::ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir)
+std::vector<double> KalmanFilterFitter::ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir)
 {
     if(!rep || !fitTrack)
     {
@@ -240,10 +240,25 @@ std::vector<double> KalmanFitting::ExtrapolateTo(const std::vector<double> &plan
                                                                    plane_z*0.1),
                                                           TVector3(1, 0, 0),
                                                           TVector3(0, 1, 0)));
-        rep->extrapolateToPlane(kfsop, plane);
-        const TVectorD& state = kfsop.getState();
-        if     (extrop_dir == tracking::dX) extrapolated.push_back(state[3]*10);
-        else if(extrop_dir == tracking::dY) extrapolated.push_back(state[4]*10);
+
+        try
+        {
+            rep->extrapolateToPlane(kfsop, plane);
+            const TVectorD& state = kfsop.getState();
+            if     (extrop_dir == tracking::dX) extrapolated.push_back(state[3]*10);
+            else if(extrop_dir == tracking::dY) extrapolated.push_back(state[4]*10);
+        }
+        catch(genfit::Exception& e)
+        {
+            if(verbose_ > 1)
+            {
+                std::cerr << "[WARNING] ==> When extrapolating track at z=" << plane_z << "mm:" << std::endl;
+                std::cerr << "              " << e.what();
+            }
+
+            if     (extrop_dir == tracking::dX) extrapolated.push_back(RETURN);
+            else if(extrop_dir == tracking::dY) extrapolated.push_back(RETURN);
+        }
     }
 
     return extrapolated;

@@ -67,9 +67,11 @@ void AlgoManager::ProcessEvtAnaProcessors(AnaEvent *evt, int cur_evt_num) {
         } catch (const std::out_of_range &oor) {
             std::cerr << "[ERROR] Evt: " << cur_evt_num << " -- Out of Range error: " << oor.what() << " in Algo"
                       << itr << endl;
+            AnaProcessors.at(itr)->InitEvt();
         } catch (...) {
             std::cerr << "[ERROR] Evt: " << cur_evt_num << " --  Some unknown errors appear. Please check: "
                       << itr << endl;
+            AnaProcessors.at(itr)->InitEvt();
         }
 
         // record end time for each processor

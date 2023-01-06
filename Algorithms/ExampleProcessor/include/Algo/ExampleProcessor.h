@@ -20,6 +20,12 @@ public:
 
     void Begin() override;
 
+    void InitEvt() override
+    {
+        Output_Var1 = 0;
+        Output_Var2 = 0.;
+    }
+
     void ProcessEvt(AnaEvent* evt) override;
 
     void CheckEvt(AnaEvent* evt) override;

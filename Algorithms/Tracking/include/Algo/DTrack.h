@@ -21,15 +21,16 @@
 //................................................................................//
 //Tracking
 #include "Algo/TypeDef.h"
-#include "Algo/KalmanFitting.h"
+#include "Algo/KalmanFilterFitter.h"
+#include "Algo/RiemannFit/RiemannFitHelper.h"
 
 //................................................................................//
-//Fitting methods implemented in Dark Shine tracking
+//Fit methods implemented in Dark Shine tracking
 //-- dNone: No method specified, return pre-fitting results from track finding
 //-- dKalman: Kalman fitter_ from GenFit
 namespace tracking
 {
-    enum FittingMethods {dNone, dKalman};
+    enum FitMethods {dNone, dKalman, dRiemann};
 }
 
 class DTrack
@@ -127,7 +128,7 @@ private:
     double By_{RETURN}; // manage problematic condition
 
 //................................................................................//
-//Fitting properties
+//Fit properties
     double ndf_{0.};
     double chi2_{RETURN};
     double chi2_algo_{RETURN};
@@ -145,7 +146,7 @@ private:
 
 //................................................................................//
 //Fitter
-    Fitting *fitter_{nullptr};
+    Fitter *fitter_{nullptr};
  
 //................................................................................//
 //Hits collection

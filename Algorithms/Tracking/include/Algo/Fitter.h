@@ -1,5 +1,5 @@
-#ifndef FITTING_H
-#define FITTING_H
+#ifndef FITTER_H
+#define FITTER_H
 
 //................................................................................//
 //CPP STL
@@ -30,16 +30,16 @@ namespace tracking
     enum direction {dX, dY, dZ};
 }
 
-class Fitting
+class Fitter
 {
 public:
 //................................................................................//
 //Constructor
-    Fitting() {}
-    virtual ~Fitting() {}
+    Fitter() {}
+    virtual ~Fitter() {}
 
-    Fitting(const Fitting&) = delete;
-    Fitting& operator =(const Fitting&) = delete;
+    Fitter(const Fitter&) = delete;
+    Fitter& operator =(const Fitter&) = delete;
 
 //................................................................................//
 //Processor

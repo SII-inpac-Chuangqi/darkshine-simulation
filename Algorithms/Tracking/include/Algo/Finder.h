@@ -1,5 +1,5 @@
-#ifndef FINDING_H
-#define FINDING_H
+#ifndef FINDER_H
+#define FINDER_H
 
 //................................................................................//
 //CPP STL
@@ -19,16 +19,16 @@
 #include "Algo/TypeDef.h"
 #include "Algo/TrkHit.h"
 
-class Finding
+class Finder
 {
 public:
 //................................................................................//
 //Constructor
-    Finding() {}
-    virtual ~Finding() {}
+    Finder() {}
+    virtual ~Finder() {}
 
-    Finding(const Finding&) = delete;
-    Finding& operator =(const Finding&) = delete;
+    Finder(const Finder&) = delete;
+    Finder& operator =(const Finder&) = delete;
 
 //................................................................................//
 //Get
