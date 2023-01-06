@@ -58,15 +58,17 @@ public:
     void readGeometryDetails();
     void printGeometryDetails() const;
 
-    std::vector<double> getLayerWidthTag()  const {return layer_width_tag;}
-    std::vector<double> getLayerLengthTag() const {return layer_length_tag;}
-    std::vector<int>    getStripNoTag() const {return strip_no_tag;}
-    std::vector<double> getAnglesTag()  const {return angles_tag;}
+    const std::vector<double> getLayerWidthTag()  const {return layer_width_tag;}
+    const std::vector<double> getLayerLengthTag() const {return layer_length_tag;}
+    const std::vector<double> getLayerThicknessTag() const {return layer_thickness_tag;}
+    const std::vector<int>    getStripNoTag() const {return strip_no_tag;}
+    const std::vector<double> getAnglesTag()  const {return angles_tag;}
 
-    std::vector<double> getLayerWidthRec()  const {return layer_width_rec;}
-    std::vector<double> getLayerLengthRec() const {return layer_length_rec;}
-    std::vector<int>    getStripNoRec() const {return strip_no_rec;}
-    std::vector<double> getAnglesRec()  const {return angles_rec;}
+    const std::vector<double> getLayerWidthRec()  const {return layer_width_rec;}
+    const std::vector<double> getLayerLengthRec() const {return layer_length_rec;}
+    const std::vector<double> getLayerThicknessRec() const {return layer_thickness_rec;}
+    const std::vector<int>    getStripNoRec() const {return strip_no_rec;}
+    const std::vector<double> getAnglesRec()  const {return angles_rec;}
 
     const std::array<TVector3,MAX_ECAL_CELLS>& getECalPosMap() const {return ECAL_posmap;};
     [[maybe_unused]] double getECalCenterX() const {return ECAL_center_x;}
@@ -111,11 +113,13 @@ protected:
 
     std::vector<double> layer_width_tag;
     std::vector<double> layer_length_tag;
+    std::vector<double> layer_thickness_tag;
     std::vector<int> strip_no_tag;
     std::vector<double> angles_tag;
 
     std::vector<double> layer_width_rec;
     std::vector<double> layer_length_rec;
+    std::vector<double> layer_thickness_rec;
     std::vector<int> strip_no_rec;
     std::vector<double> angles_rec;
 

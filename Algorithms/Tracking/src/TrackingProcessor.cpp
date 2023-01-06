@@ -62,7 +62,7 @@ void TrackingProcessor::Begin() {
 //................................................................................//
 //Load geometry
 //................................................................................//
-    digitizer.GetTrackerInfo(if_strip);
+    digitizer.ReadTrackerInfo(if_strip);
     digitizer.SetIfSmear(if_smear);
 
 //................................................................................//

@@ -44,8 +44,8 @@ public:
 
     void SetIfSmear(bool if_smear);
 //................................................................................//
-//Get tracker information
-    void GetTrackerInfo(bool if_strip);
+//Get tracker geo information
+    void ReadTrackerInfo(bool if_strip);
 //................................................................................//
 //Separate tracker hits into vectors by layers
     void Layering(const std::vector<TrkHit> &trk1_hits, const std::vector<TrkHit> &trk2_hits, TrkHitPVecMap &recoTrkHitMap,
