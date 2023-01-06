@@ -19,6 +19,7 @@ private:
     int RunNumber{0};
     int EventNumber{-1};
     int SkipNumber{0};
+    int BeamOnNumber{0};
 
     // Verbose
     int AlgoManager_Verbose{0};
@@ -61,6 +62,10 @@ public:
 
     int getEventNumber() const {
         return EventNumber;
+    }
+
+    int getBeamOnNumber() const{
+        return BeamOnNumber;
     }
 
     int getSkipNumber() const {
@@ -106,6 +111,10 @@ public:
 
     void setEventNumber(int eventNumber) {
         EventNumber = eventNumber;
+    }
+
+    void setBeamOnNumber(int beamonNumber) {
+        BeamOnNumber = beamonNumber;
     }
 
     void setSkipNumber(int skipNumber) {
