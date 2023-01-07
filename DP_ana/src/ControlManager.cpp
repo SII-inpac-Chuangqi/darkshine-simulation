@@ -26,7 +26,6 @@ void ControlManager::run() {
         setOutName(ConfMgr->getOutputfile());
         setRunNumber(ConfMgr->getRunNumber());
         setEventNumber(ConfMgr->getEventNumber());
-        setBeamOnNumber(ConfMgr->getBeamOnNumber());
         setSkipNumber(ConfMgr->getSkipNumber());
     }
     // Define output and data storage
@@ -34,7 +33,6 @@ void ControlManager::run() {
 
     EvtReader->setRunNumber(RunNumber);
     EvtReader->setEventNumber(EventNumber);
-    EvtReader->setBeamOnNumber(BeamOnNumber);
     EvtReader->setSkipNumber(SkipNumber);
     EvtReader->setEvtWrt(EvtWrt);
 
