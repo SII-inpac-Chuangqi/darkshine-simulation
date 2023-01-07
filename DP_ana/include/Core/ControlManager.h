@@ -56,6 +56,14 @@ public:
         EventNumber = eventNumber;
     }
 
+    int getBeamOnNumber() const {
+        return BeamOnNumber;
+    }
+
+    void setBeamOnNumber(int beamonNumber) {
+        BeamOnNumber = beamonNumber;
+    }
+
     int getSkipNumber() const {
         return SkipNumber;
     }
@@ -104,6 +112,7 @@ private:
     int RunNumber{0};
     int EventNumber{-1};
     int SkipNumber{0};
+    int BeamOnNumber{0};
 
     std::string FileName;
     std::string OutName;
