@@ -13,6 +13,8 @@ public:
 
     static void SetVerbose(int verbose) {verbose_ = verbose;}
 
+    static void SetTrackerLayerThickness(double tracker_layer_thickness) {tracker_layer_thickness_ = tracker_layer_thickness;}
+
 //................................................................................//
 //Multiple scattering
 //................................................................................//
@@ -24,7 +26,7 @@ public:
 // x : thickness of the material
 // X0: radiation length of the material, Si: 9.370cm, https://pdg.lbl.gov/2010/AtomicNuclearProperties/HTML_PAGES/014.html
 //................................................................................//
-    static double GetMultipleScatteringError(const double &p /* MeV */, const double &q, const double &x /* mm */);
+    static double GetMultipleScatteringError(const double &p /* MeV */, const double &q);
     //static double GetMeasurementError();
     //static double GetMagnetInducedError();
 
@@ -32,6 +34,8 @@ private:
     RiemannFitHelper();
 
     static int verbose_;
+
+    static double tracker_layer_thickness_;
 };
 
 //extern RiemannFitHelper *dRFitHelper;

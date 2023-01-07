@@ -1,5 +1,7 @@
+#include "Algo/TrackingProcessor.h"
+
 //................................................................................//
-//CPP STL
+//CPP Libraries
 #include <vector>
 #include <map>
 #include <memory>
@@ -19,7 +21,6 @@
 
 //................................................................................//
 //FRAMEWORK
-#include "Algo/TrackingProcessor.h"
 #include "Core/AnaData.h"
 
 //................................................................................//
@@ -92,6 +93,7 @@ void TrackingProcessor::Begin() {
         //RiemannFitHelper::CreateInstance();
         //dRFitHelper->SetVerbose(Verbose);
         RiemannFitHelper::SetVerbose(Verbose);
+        RiemannFitHelper::SetTrackerLayerThickness(dAnaData->getLayerThicknessRec().at(0));
     }
 
 //................................................................................//

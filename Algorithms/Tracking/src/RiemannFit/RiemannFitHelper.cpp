@@ -1,4 +1,8 @@
 #include "Algo/RiemannFit/RiemannFitHelper.h"
+
+int    RiemannFitHelper::verbose_ = 0;
+double RiemannFitHelper::tracker_layer_thickness_ = 0.;
+
 /*
 RiemannFitHelper *dRFitHelper = nullptr;
 
@@ -14,11 +18,9 @@ RiemannFitHelper::RiemannFitHelper()
 {
 }
 
-double RiemannFitHelper::GetMultipleScatteringError(const double &p, const double &q, const double &x)
+double RiemannFitHelper::GetMultipleScatteringError(const double &p, const double &q)
 {
     double m = 0.511; // e+/-, 0.511MeV
     double b = p/std::sqrt(p*p + m*m);
-    return 13.6/b*p*q*std::sqrt(x/9.370*10.)*(1 + 0.038*std::log(x/9.370*10.));
+    return 13.6/b*p*q*std::sqrt(tracker_layer_thickness_/9.370*10.)*(1 + 0.038*std::log(tracker_layer_thickness_/9.370*10.));
 }
-
-int RiemannFitHelper::verbose_ = 0;
