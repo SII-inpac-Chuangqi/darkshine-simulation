@@ -24,8 +24,11 @@
 #ifndef MAX_ECAL_CELLS // defined in AnaData as shared information
     #define MAX_ECAL_CELLS (25*25*15)
 #endif
-#pragma message "The maximum support Ncell now is (increase if you need and pay attention of the stack)" 
-//#pragma message MAX_ECAL_CELLS
+
+#ifdef CLUSTER_DEBUG
+    #pragma message "The maximum support Ncell now is (increase if you need and pay attention of the stack)" 
+    //#pragma message MAX_ECAL_CELLS
+#endif
 
 //HMAP is larger than cell, to allow for the overflwo/underflow bin
 #if MAX_ECAL_CELLS < 1000
