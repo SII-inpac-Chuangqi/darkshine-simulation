@@ -20,7 +20,9 @@
 //energy shift in MeV -- used for log((E+delta)/scale+1)
 #define ENERGY_SHIFT_MeV 0
 #ifdef LOG_WEIGHTED
-    #pragma message "Log weighted enabled for ECAL location. w=log((E+delta)/scale+1)" 
+    #ifdef CLUSTER_DEBUG
+        #pragma message "Log weighted enabled for ECAL location. w=log((E+delta)/scale+1)" 
+    #endif
     //better add zero clip??
     #define WEIGHT(E) (log(((E)+ENERGY_SHIFT_MeV)/EM_ENERGY_SCALE_MeV+1))
 #else
@@ -31,7 +33,7 @@
 // enable debugging (~1k lines/event)
 // #define CLUSTER_DEBUG
 #ifdef CLUSTER_DEBUG
-    #pragma message "Clustering Debug mode... note your printout!!!" 
+    //#pragma message "Clustering Debug mode... note your printout!!!" 
 #endif
 
 // define 1D accesor for 3D XYZ cell structure since C++ has no 3D array. For other structure of ECAL need rewrite this.
