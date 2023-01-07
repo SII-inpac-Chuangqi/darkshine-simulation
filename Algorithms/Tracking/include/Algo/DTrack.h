@@ -58,7 +58,15 @@ public:
     double GetPy() const {return py_;}
     double GetPz() const {return pz_;}
     double GetPp() const {return pp_;}
-    double GetFixedPp() const {return 0.000004517*pp_*pp_ + 0.89787*pp_;}
+    double GetFixedPp() const {return 0.000004517 * pp_ * pp_ + 0.89787 * pp_;}
+    /*
+         This is a direct and statistically fitting function by comparing
+            truth recoil momentum with reconstructed recoil momentum ( p_rcs ) event by event.
+            The amount of event is around 4e9, which events come from Baseline1.5.4 .
+
+            p_fixed = 4.517 * p_rcs^2 + 0.89787 * p_rcs
+     */
+
     double GetPl() const {return py_;}
     double GetPreR()  const {return preR_;}
     double GetPreXc() const {return preXc_;}
