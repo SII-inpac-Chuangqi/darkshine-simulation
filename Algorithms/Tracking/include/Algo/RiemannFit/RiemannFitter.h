@@ -9,7 +9,6 @@
 
 //................................................................................//
 //ROOT
-#include "TMath.h"
 #include "TString.h"
 #include "TMatrixD.h"
 #include "TMatrixDSym.h"
@@ -43,10 +42,29 @@ public:
 
 //................................................................................//
 //Getter
+//................................................................................//
+//Estimate theta(angle between pT and magnet) from track measureements
+    double GetTheta(const TrkHitPVec &track);
+
+//................................................................................//
+//Get hit measurements projected on the paraboloid surface in Cartesian coordinate
+//  _          _
+// | u u ... u  |
+// | v v ... v  |
+// |_s s ... s _|
+//
+// s = u*u + v*v
+//................................................................................//
+    TMatrixD GetCartCoo(const TrkHitPVec &track);
+
     double GetVradmsIJ(const TMatrixD &PolarCoo, int i, int j,
-                       const double &p /* MeV */, const double &q,
-                       double (*MultipleScatteringError)(const double &p, const double &q));
+                       const double &p, // momentum, MeV
+                       double (*MultipleScatteringError)(const double &p));
 private:
+    int dim_{0};
+    double pre_R_{0.};
+    double pre_Xc_{0.};
+    double pre_Yc_{0.};
     double pre_theta_{0.};
 };
 
