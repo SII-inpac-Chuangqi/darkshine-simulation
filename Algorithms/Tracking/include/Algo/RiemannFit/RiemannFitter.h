@@ -47,19 +47,45 @@ public:
     double GetTheta(const TrkHitPVec &track);
 
 //................................................................................//
-//Get hit measurements projected on the paraboloid surface in Cartesian coordinate
-//  _          _
-// | u u ... u  |
-// | v v ... v  |
-// |_s s ... s _|
+//Get hit measurements projected on the paraboloid surface in Cartesian coordinates
+//     1 2 ... dim
+//    _          _
+// 1 | u u ... u  |
+// 2 | v v ... v  |
+// 3 |_s s ... s _|
 //
 // s = u*u + v*v
 //................................................................................//
     TMatrixD GetCartCoo(const TrkHitPVec &track);
 
-    double GetVradmsIJ(const TMatrixD &PolarCoo, int i, int j,
+//................................................................................//
+//Get hit measurements projected on the paraboloid surface in polar coordinates
+//     1 2 ... dim
+//    _          _
+// 1 | r r ... r  |
+// 2 |_φ φ ... φ _|
+//
+// r = sqrt(u*u + v*v)
+// φ = atan(v, u)
+//................................................................................//
+    TMatrixD GetPolarCoo(const TrkHitPVec &track);
+
+//................................................................................//
+//Get multiple scattering covariance matrix element
+//Multiple scattering variance function MultipleScatteringError from fit helper RiemannFitHelper::GetMultipleScatteringError
+    double GetVradmsIJ(const TMatrixD &polar_coo, int i, int j,
                        const double &p, // momentum, MeV
                        double (*MultipleScatteringError)(const double &p));
+
+//................................................................................//
+//Get multiple scattering covariance matrix
+    TMatrixD GetVradms(const TMatrixD &polar_coo);
+
+//................................................................................//
+//Get covariance matrix of measurement in Cartesian coordinates
+//Measurement scattering variance function MultipleScatteringError from fit helper RiemannFitHelper::GetMeasurementError
+    TMatrixD GetVcart0();
+
 private:
     int dim_{0};
     double pre_R_{0.};

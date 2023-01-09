@@ -54,6 +54,8 @@ public:
 //Set strip cluster width
     void SetClusterWidth(double cluster_width) {cluster_width_ = cluster_width;}
 
+    double GetClusterWidth() const {return cluster_width_;}
+
 private:
 //................................................................................//
 //Struct to construct cluster

@@ -2,6 +2,8 @@
 
 int    RiemannFitHelper::verbose_ = 0;
 double RiemannFitHelper::tracker_layer_thickness_ = 0.;
+double RiemannFitHelper::magnet_at_origin_[3];
+double measurement_variance_[3];
 
 /*
 RiemannFitHelper *dRFitHelper = nullptr;
@@ -18,6 +20,13 @@ RiemannFitHelper::RiemannFitHelper()
 {
 }
 
+void RiemannFitHelper::CalculateMeasurementError()
+{
+    
+}
+
+//................................................................................//
+//Multiple scattering variance
 double RiemannFitHelper::GetMultipleScatteringError(const double &p)
 {
     double m = 0.511; // e+/-, 0.511MeV
