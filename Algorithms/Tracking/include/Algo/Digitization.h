@@ -71,7 +71,12 @@ private:
     class Cluster
     {
     public:
-        ~Cluster() {delete center; center = nullptr;}
+        ~Cluster()
+        {
+            delete center; center = nullptr;
+            for(size_t i = 0; i < points.size(); i++)
+            {delete points.at(i); points.at(i) = nullptr;}
+        }
 
         double GetCenterX() const {return center->x;}
 
