@@ -55,7 +55,7 @@ public:
 // 3 |_s s ... s _|
 //
 // s = u*u + v*v
-//................................................................................//
+//
     TMatrixD GetCartCoo(const TrkHitPVec &track);
 
 //................................................................................//
@@ -67,7 +67,7 @@ public:
 //
 // r = sqrt(u*u + v*v)
 // φ = atan(v, u)
-//................................................................................//
+//
     TMatrixD GetPolarCoo(const TrkHitPVec &track);
 
 //................................................................................//
@@ -84,6 +84,24 @@ public:
 //................................................................................//
 //Get covariance matrix of measurement in Cartesian coordinates
 //Measurement scattering variance function MultipleScatteringError from fit helper RiemannFitHelper::GetMeasurementError
+//  _                                      _
+// | σx^2                                   |
+// |      σx^2                              |
+// |           ...                          |
+// |               σx^2                     |
+// |                    σz^2                |
+// |                         ...            |
+// |                             σz^2       |
+// |_                                 σz^2 _|
+//
+//σi = resolution i
+//
+//Covariance matrix of a measurement
+//  _                           _
+// | σx^2     cov(x,y) cov(x,z)  |
+// | cov(x,y) σy^2     cov(y,z)  |
+// |_cov(x,z) cov(y,z) σz^2     _|
+//
     TMatrixD GetVcart0();
 
 private:

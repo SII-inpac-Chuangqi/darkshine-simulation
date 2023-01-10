@@ -28,6 +28,8 @@ void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
     TMatrixD cart_coo(GetCartCoo(track));
     TMatrixD polar_coo(GetPolarCoo(track));
     TMatrixD vradms(GetVradms(polar_coo));
+    TMatrixD vcart0(GetVcart0());
+    vcart0.Print();
 }
 
 void RiemannFitter::Fill(const TrkHitPVec&, std::initializer_list<double>)
@@ -147,17 +149,10 @@ TMatrixD RiemannFitter::GetVcart0()
         {
             if(i == j)
             {
-                data[j + 2*i*dim_] = 6*1e-3;          //resolution x: 6μm->mm
-                data[j + dim_ + 2*i*dim_] = 0;
-                data[j + 2*(i + dim_)*dim_] = 0;
-                data[j + dim_ + 2*(i + dim_)*dim_] = 0; //resolution z: should be 0 ideally
-            }
-            else
-            {
-                data[j + 2*i*dim_] = 0;
-                data[j + dim_ + 2*i*dim_] = 0;
-                data[j + 2*(i + dim_)*dim_] = 0;
-                data[j + dim_ + 2*(i + dim_)*dim_] = 0;
+                data[j + 2*i*dim_] = RiemannFitHelper::GetMeasurementError(tracking::dX)*                 //variance of x, mm*mm
+                                     RiemannFitHelper::GetMeasurementError(tracking::dX);
+                data[j + dim_ + 2*(i + dim_)*dim_] = RiemannFitHelper::GetMeasurementError(tracking::dZ)* //variance of z, mm
+                                                     RiemannFitHelper::GetMeasurementError(tracking::dZ);
             }
         }
     }
