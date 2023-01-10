@@ -11,8 +11,11 @@
 
 //................................................................................//
 //Constructor
-RiemannFitter::RiemannFitter(const TrkHitPVec &/* track */, std::initializer_list<double>)
+RiemannFitter::RiemannFitter(const TrkHitPVec &track, std::initializer_list<double>)
 {
+    this->Init(track, {});
+    this->Fit (track, {});
+    this->Fill(track, {});
 }
 
 //................................................................................//

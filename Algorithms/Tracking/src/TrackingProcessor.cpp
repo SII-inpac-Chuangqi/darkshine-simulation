@@ -94,6 +94,7 @@ void TrackingProcessor::Begin() {
         //dRFitHelper->SetVerbose(Verbose);
         RiemannFitHelper::SetVerbose(Verbose);
         RiemannFitHelper::SetTrackerLayerThickness(dAnaData->getLayerThicknessRec().at(0));
+        RiemannFitHelper::SetMeasurementError(digitizer.GetClusterWidth(), dAnaData->getAnglesRec().at(0));
     }
 
 //................................................................................//
@@ -518,10 +519,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         {
             TagTrk2_pp.push_back(track->GetPp());
             TagTrk2_track_chi2.push_back(track->GetChi2());
-            TagTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
         
             if (!clean)
             {
+                TagTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
                 TagTrk2_track_quality.push_back(track->GetQuality());
                 TagTrk2_track_x_sigma.push_back(track->GetXSigma());
                 TagTrk2_track_y_sigma.push_back(track->GetYSigma());
@@ -532,8 +533,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         {
             RecTrk2_pp.push_back(track->GetPp());
             RecTrk2_fixed_pp.push_back(track->GetFixedPp());
-            RecTrk2_track_chi2.push_back(track->GetChi2());
-            RecTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
+            //RecTrk2_track_chi2.push_back(track->GetChi2());
 
             ECal_seed_x.push_back(track->GetECalSeedX());
             ECal_seed_y.push_back(track->GetECalSeedY());
@@ -542,6 +542,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             ECal_seed_pz.push_back(track->GetECalQoP());
 
             if (!clean) {
+                RecTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
                 RecTrk2_track_quality.push_back(track->GetQuality());
                 RecTrk2_track_x_sigma.push_back(track->GetXSigma());
                 RecTrk2_track_y_sigma.push_back(track->GetYSigma());
@@ -559,12 +560,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 RecTrk2_track_y.push_back(track_y);
                 //RecTrk2_track_z.push_back(track_z);
 
-                //auto extrapolated_x = track->ExtrapolateTo(track_z, tracking::dX);
-                //auto extrapolated_y = track->ExtrapolateTo(track_z, tracking::dY);
-                auto extrapolated_x = track->GetExtrapolated(tracking::dX);
-                auto extrapolated_y = track->GetExtrapolated(tracking::dY);
-                RecTrk2_track_extrapolated_x.push_back(extrapolated_x);
-                RecTrk2_track_extrapolated_y.push_back(extrapolated_y);
+                //auto extrapolated_x = track->GetExtrapolated(tracking::dX);
+                //auto extrapolated_y = track->GetExtrapolated(tracking::dY);
+                //RecTrk2_track_extrapolated_x.push_back(extrapolated_x);
+                //RecTrk2_track_extrapolated_y.push_back(extrapolated_y);
 
                 RecTrk2_track_preA.push_back(track->GetPreXc());
                 RecTrk2_track_preB.push_back(track->GetPreYc());
