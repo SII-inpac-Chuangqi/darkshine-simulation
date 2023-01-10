@@ -3,7 +3,7 @@
 int    RiemannFitHelper::verbose_ = 0;
 double RiemannFitHelper::tracker_layer_thickness_ = 0.;
 double RiemannFitHelper::magnet_at_origin_[3];
-double measurement_variance_[3];
+double RiemannFitHelper::measurement_variance_[3];
 
 /*
 RiemannFitHelper *dRFitHelper = nullptr;
@@ -20,9 +20,11 @@ RiemannFitHelper::RiemannFitHelper()
 {
 }
 
-void RiemannFitHelper::CalculateMeasurementError()
+void RiemannFitHelper::SetMeasurementError(double cluster_width, double angle)
 {
-    
+    measurement_variance_[0] = cluster_width/std::sqrt(12);
+    measurement_variance_[1] = cluster_width/angle/std::sqrt(12);
+    measurement_variance_[2] = 0.;
 }
 
 //................................................................................//

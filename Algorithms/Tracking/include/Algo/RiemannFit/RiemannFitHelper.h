@@ -18,7 +18,26 @@ public:
     static void SetMagnetAtOrigin(double Bx, double By, double Bz)
     {magnet_at_origin_[0] = Bx; magnet_at_origin_[1] = By; magnet_at_origin_[2] = Bz;}
 
-    static void CalculateMeasurementError();
+//................................................................................//
+//Measurement variance induced by tracker strips
+//................................................................................//
+//resolution of x: width of cluster/sqrt(12)
+//              y: width of cluster/sin(angle between strips)/sqrt(12)
+//              z: 0
+//
+//      |\  |   |
+//      | \ |   |
+//      |  \|   |
+//      |   |   |      
+//      |   |\__| —————— angle between strips
+//      |   | \ | 
+//      |   |  \|
+//
+//      \___  ___/
+//          \/
+//   width of cluster    
+//................................................................................//
+    static void SetMeasurementError(double cluster_width, double angle);
 
 //................................................................................//
 //Multiple scattering variance
@@ -28,17 +47,13 @@ public:
 // σθ = ————————*q*  / ——— [1 + 0.038*ln(———)]
 //        βpc      \/   X0                X0
 // 
-// x : thickness of the material
-// X0: radiation length of the material, Si: 9.370cm, https://pdg.lbl.gov/2010/AtomicNuclearProperties/HTML_PAGES/014.html
+//x : thickness of the material
+//X0: radiation length of the material, Si: 9.370cm, https://pdg.lbl.gov/2010/AtomicNuclearProperties/HTML_PAGES/014.html
 //................................................................................//
     static double GetMultipleScatteringError(const double &p /* momentum, MeV */);
 
     static double GetMagnetAtOrigin(unsigned int i) {if(i < 3) return magnet_at_origin_[i]; return 0.;}
 
-//................................................................................//
-//Measurement variance induced by tracker strips
-//................................................................................//
-//
     static double GetMeasurementError(unsigned int i) {if(i < 3) return measurement_variance_[i]; return 0.;}
     //static double GetMagnetInducedError();
 
