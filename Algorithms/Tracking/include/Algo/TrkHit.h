@@ -6,7 +6,7 @@
 #endif
 
 //................................................................................//
-//CPP STL
+//CPP Libraries
 #include <iostream>
 #include <map>
 #include <vector>

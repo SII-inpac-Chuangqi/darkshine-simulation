@@ -2,7 +2,7 @@
 #define FITTER_H
 
 //................................................................................//
-//CPP STL
+//CPP Libraries
 #include <iostream>
 #include <map>
 #include <vector>

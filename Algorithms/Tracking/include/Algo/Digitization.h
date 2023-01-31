@@ -12,7 +12,7 @@
 #endif
 
 //................................................................................//
-//CPP STL
+//CPP Libraries
 #include <map>
 #include <vector>
 
@@ -54,6 +54,8 @@ public:
 //Set strip cluster width
     void SetClusterWidth(double cluster_width) {cluster_width_ = cluster_width;}
 
+    double GetClusterWidth() const {return cluster_width_;}
+
 private:
 //................................................................................//
 //Struct to construct cluster
@@ -69,7 +71,12 @@ private:
     class Cluster
     {
     public:
-        ~Cluster() {delete center; center = nullptr;}
+        ~Cluster()
+        {
+            delete center; center = nullptr;
+            //for(size_t i = 0; i < points.size(); i++)
+            //{delete points.at(i); points.at(i) = nullptr;}
+        }
 
         double GetCenterX() const {return center->x;}
 
