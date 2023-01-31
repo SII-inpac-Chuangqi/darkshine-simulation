@@ -424,8 +424,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Tag tracker
         TrkHitPVecMap clus_tag_trkhit_map;
-        //if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
-        if (raw_tagtrk2_hits.size() > 2)
+        if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
+        //if (raw_tagtrk2_hits.size() > 2)
         {
             if_raw_tag_hit_number = true;
 
@@ -468,8 +468,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Recoil tracker
         TrkHitPVecMap clus_rec_trkhit_map;
-        //if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
-        if (raw_rectrk2_hits.size() > 2)
+        if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
+        //if (raw_rectrk2_hits.size() > 2)
         {
             if_raw_rec_hit_number = true;
 
