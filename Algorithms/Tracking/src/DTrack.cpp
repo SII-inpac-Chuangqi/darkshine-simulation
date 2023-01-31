@@ -1,5 +1,5 @@
 //................................................................................//
-//CPP STL
+//CPP Libraries
 #include <iostream>
 #include <map>
 #include <vector>
@@ -239,7 +239,7 @@ void DTrack::Fit(int method)
                                                                   );
                                   break;
         case tracking::dRiemann :
-                                  fitter_ = nullptr;
+                                  fitter_ = new RiemannFitter(hits_, {});
                                   if(verbose_ > 0)
                                       std::cout << "[INFO] ==> Riemann fit coming soon" << std::endl;
                                   break;

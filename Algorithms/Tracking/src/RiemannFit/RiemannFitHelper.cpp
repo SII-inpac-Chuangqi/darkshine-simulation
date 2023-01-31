@@ -1,4 +1,10 @@
 #include "Algo/RiemannFit/RiemannFitHelper.h"
+
+int    RiemannFitHelper::verbose_ = 0;
+double RiemannFitHelper::tracker_layer_thickness_ = 0.;
+double RiemannFitHelper::magnet_at_origin_[3];
+double RiemannFitHelper::measurement_error_[3];
+
 /*
 RiemannFitHelper *dRFitHelper = nullptr;
 
@@ -14,11 +20,19 @@ RiemannFitHelper::RiemannFitHelper()
 {
 }
 
-double RiemannFitHelper::GetMultipleScatteringError(const double &p, const double &q, const double &x)
+void RiemannFitHelper::SetMeasurementError(double cluster_width, double angle)
 {
-    double m = 0.511; // e+/-, 0.511MeV
-    double b = p/std::sqrt(p*p + m*m);
-    return 13.6/b*p*q*std::sqrt(x/9.370*10.)*(1 + 0.038*std::log(x/9.370*10.));
+    measurement_error_[0] = cluster_width/std::sqrt(12);
+    measurement_error_[1] = cluster_width/angle/std::sqrt(12);
+    measurement_error_[2] = 0.;
 }
 
-int RiemannFitHelper::verbose_ = 0;
+//................................................................................//
+//Multiple scattering variance
+double RiemannFitHelper::GetMultipleScatteringError(const double &p)
+{
+    double m = 0.511; // e+/-, 0.511MeV
+    double q = 1.;    // e+/-
+    double b = p/std::sqrt(p*p + m*m);
+    return 13.6/b*p*q*std::sqrt(tracker_layer_thickness_/9.370*10.)*(1 + 0.038*std::log(tracker_layer_thickness_/9.370*10.));
+}
