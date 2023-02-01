@@ -76,12 +76,10 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
             yStore.clear();
             hitStore.clear();
             hitNoStore.clear();
-
-            circleNo++;
         }
         else break;
 
-        if(circleNo >= MAX_CIRCLE - 1) break;
+        //if(circleNo >= MAX_CIRCLE - 1) break;
 
         if(static_cast<int>(tempClusteredTrkHitsInLayer.size()) < minDepth) break;
     }
@@ -92,6 +90,10 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                                   TrkHitPVecMap::iterator itMap,
                                   int cirNo)
 {
+    circleNo++;
+    //if(circleNo%10000 == 0) std::cout << circleNo << std::endl;
+    if(circleNo >= MAX_CIRCLE) return;
+
     itMap--;
     if(itMap == clusteredTrkHitsInLayer.begin())
     {

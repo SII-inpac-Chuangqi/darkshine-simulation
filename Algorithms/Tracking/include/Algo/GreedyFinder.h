@@ -27,7 +27,7 @@
 //#endif
 
 #ifndef MAX_CIRCLE
-#define MAX_CIRCLE 50
+#define MAX_CIRCLE 1000000 // 10^7, (max n hit)^(n layers)
 #endif
 
 class GreedyFinder : public Finder
