@@ -424,8 +424,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Tag tracker
         TrkHitPVecMap clus_tag_trkhit_map;
-        if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
-        //if (raw_tagtrk2_hits.size() > 2)
+        //if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
+        if (raw_tagtrk2_hits.size() > 2)
         {
             if_raw_tag_hit_number = true;
 
@@ -445,7 +445,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         
 //Fit, by Genfit, Kalman filter/by Riemann fitting
                     TagTrk2_track_No = find_tag.GetTrackNo();
-        
+
                     for (int i = 0; i < find_tag.GetTrackNo(); i++)
                     {
                         TrkHitPVec tag_track_hits((*(vec_tag_track.begin() + i)).begin(), (*(vec_tag_track.begin() + i)).end());
@@ -468,8 +468,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Recoil tracker
         TrkHitPVecMap clus_rec_trkhit_map;
-        if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
-        //if (raw_rectrk2_hits.size() > 2)
+        //if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
+        if (raw_rectrk2_hits.size() > 2)
         {
             if_raw_rec_hit_number = true;
 
