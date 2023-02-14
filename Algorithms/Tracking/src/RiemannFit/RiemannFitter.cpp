@@ -4,6 +4,7 @@
 //ROOT
 #include "TMath.h"
 #include "TArrayD.h"
+#include "TMatrixDSymEigen.h"
 
 //................................................................................//
 //Tracking
@@ -11,32 +12,95 @@
 
 //................................................................................//
 //Constructor
-RiemannFitter::RiemannFitter(const TrkHitPVec &track, std::initializer_list<double>)
+RiemannFitter::RiemannFitter(const TrkHitPVec &track, std::initializer_list<double> list)
 {
-    this->Init(track, {});
+    this->Init(track, list);
     this->Fit (track, {});
     this->Fill(track, {});
 }
 
 //................................................................................//
 //Processor
-void RiemannFitter::Init(const TrkHitPVec &track, std::initializer_list<double>)
+void RiemannFitter::Init(const TrkHitPVec &track, std::initializer_list<double> list)
 {
+    auto it = list.begin();
+    pre_Xc_ = *it; it++;
+    pre_Yc_ = *it; it++;
+    pre_R_  = *it;
+
     dim_ = track.size();
     this->GetTheta(track);
 }
 
 void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
 {
-    TMatrixD cart_coo(GetCartCoo(track));
-    TMatrixD polar_coo(GetPolarCoo(track));
-    TMatrixD vradms(GetVradms(polar_coo));
-    TMatrixD vcart0(GetVcart0());
-    vcart0.Print();
+    c_ = 0.;
+    n1_ = 0.;
+    n2_ = 0.;
+    n3_ = 0.;
+
+    for(int i = 0; i < 100; i++)
+    {
+        //std::cout << pre_Xc_ << std::endl;
+        //std::cout << pre_Yc_ << std::endl;
+        //std::cout << pre_R_ << std::endl;
+
+        TMatrixD cart_coo(GetCartCoo(track));
+        //cart_coo.Print();
+        TMatrixD polar_coo(GetPolarCoo(track));
+        //polar_coo.Print();
+        
+        TMatrixD v_cart0(GetVcart0());
+        //v_cart0.Print();
+        TMatrixD j1(GetJ1(track));
+        //j1.Print();
+        TMatrixD j2(GetJ2(track));
+        //j2.Print();
+        TMatrixD v_rad0(GetVrad0(v_cart0, j1, j2));
+        //v_rad0.Print();
+        TMatrixD v_radms(GetVradms(polar_coo));
+        //v_radms.Print();
+        TMatrixD g(GetG(v_rad0, v_radms));
+        //g.Print();
+        TMatrixD w(GetW(g));
+        //w.Print();
+        TMatrixD x_c(GetXc(cart_coo, w));
+        //x_c.Print();
+        TMatrixD x_g(GetXg(cart_coo, x_c));
+        //x_g.Print();
+        TMatrixD normal_vecs(GetNormalVecs(g, x_g));
+        //normal_vecs.Print();
+
+        const double *get_x_c = x_c.GetMatrixArray();
+        const double *get_normal_vec = normal_vecs.GetMatrixArray();
+        c_ = - *get_x_c**get_normal_vec
+            - *(get_x_c + 1)**(get_normal_vec + 3)
+            - *(get_x_c + 2)**(get_normal_vec + 6);
+        n1_ = *get_normal_vec;
+        n2_ = *(get_normal_vec + 3);
+        n3_ = *(get_normal_vec + 6);
+
+        double curr_R = std::abs(sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
+        double curr_Xc = std::abs(-0.5*n1_/n3_);
+        double curr_Yc = std::abs(-0.5*n2_/n3_);
+        if(std::abs(curr_Xc - pre_Xc_)/pre_Xc_ < 1e-6 &&
+           std::abs(curr_Yc - pre_Yc_)/pre_Yc_ < 1e-6 &&
+           std::abs(curr_R - pre_R_)/pre_R_ < 1e-6)
+            break;
+        else
+        {
+            pre_R_ = curr_R;
+            pre_Xc_ += -0.5*n1_/n3_;
+            pre_Yc_ += -0.5*n2_/n3_;
+        }
+    }
+
+    //std::cout << 0.3*abs(RiemannFitHelper::GetMagnetAtOrigin(tracking::dY)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_) << " MeV" << std::endl;
 }
 
 void RiemannFitter::Fill(const TrkHitPVec&, std::initializer_list<double>)
 {
+    pp = 0.3*abs(RiemannFitHelper::GetMagnetAtOrigin(tracking::dY)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
 }
 
 //................................................................................//
@@ -101,7 +165,7 @@ double RiemannFitter::GetVradmsIJ(const TMatrixD &polar_coo, int i, int j,
 {
     double sigma_ms = MultipleScatteringError(p);
 
-    double vradms_i_j = 0.;
+    double v_radms_i_j = 0.;
     double ii = 0., jj = 0.;
     const double *element = polar_coo.GetMatrixArray();
     ii = *(element + i);
@@ -111,10 +175,10 @@ double RiemannFitter::GetVradmsIJ(const TMatrixD &polar_coo, int i, int j,
     for(int k = 0; k < k_max; k++)
     {
         double kk = *(element + k);
-        vradms_i_j += (ii - kk)*(jj - kk)*sigma_ms*sigma_ms/sin(pre_theta_)/sin(pre_theta_);
+        v_radms_i_j += (ii - kk)*(jj - kk)*sigma_ms*sigma_ms/sin(pre_theta_)/sin(pre_theta_);
     }
 
-    return vradms_i_j;
+    return v_radms_i_j;
 }
 
 //................................................................................//
@@ -135,10 +199,10 @@ TMatrixD RiemannFitter::GetVradms(const TMatrixD &polar_coo)
         }
     }
 
-    TMatrixD vradms(dim_, dim_);
-    vradms.SetMatrixArray(data.GetArray());
+    TMatrixD v_radms(dim_, dim_);
+    v_radms.SetMatrixArray(data.GetArray());
 
-    return vradms;
+    return v_radms;
 }
 
 //................................................................................//
@@ -160,8 +224,160 @@ TMatrixD RiemannFitter::GetVcart0()
         }
     }
 
-    TMatrixD vcart0(2*dim_, 2*dim_);
-    vcart0.SetMatrixArray(data.GetArray());
+    TMatrixD v_cart0(2*dim_, 2*dim_);
+    v_cart0.SetMatrixArray(data.GetArray());
 
-    return vcart0;
+    return v_cart0;
+}
+
+//................................................................................//
+//Get Jacobian matrix from Cartesian to polar coordinate
+TMatrixD RiemannFitter::GetJ1(const TrkHitPVec &track)
+{
+    TArrayD data(4*dim_*dim_);
+    for (int i = 0; i < dim_; i++)
+    {
+        double u = track.at(i)->GetX() - pre_Xc_;
+        double v = track.at(i)->GetZ() - pre_Yc_;
+        double h = sqrt(u*u + v*v);
+
+        for(Int_t j = 0; j < dim_; j++)
+        {
+            if(i == j)
+            {
+                data[j + 2*i*dim_] = u/h;
+                data[j + dim_ + 2*i*dim_] = v/h;
+                data[j + 2*(i + dim_)*dim_] = -v/h/h;
+                data[j + dim_ + 2*(i + dim_)*dim_] = u/h/h;
+            }
+            else
+            {
+                data[j + 2*i*dim_] = 0;
+                data[j + dim_ + 2*i*dim_] = 0;
+                data[j + 2*(i + dim_)*dim_] = 0;
+                data[j + dim_ + 2*(i + dim_)*dim_] = 0;
+            }
+        }
+    }
+
+    TMatrixD j1(2*dim_, 2*dim_);
+    j1.SetMatrixArray(data.GetArray());
+
+    return j1;
+}
+
+//................................................................................//
+//Get Jacobian matrix from R-Φ to RΦ-R
+TMatrixD RiemannFitter::GetJ2(const TrkHitPVec &track)
+{
+    TArrayD data(2*dim_*dim_);
+    for (int i = 0; i < dim_; i++)
+    {
+        double u = track.at(i)->GetX() - pre_Xc_;
+        double v = track.at(i)->GetZ() - pre_Yc_;
+
+        for(Int_t j = 0; j < dim_; j++)
+        {
+            if(i == j)
+            {
+                data[j + 2*i*dim_] = TMath::ATan2(v, u);
+                data[j + dim_ + 2*i*dim_] = sqrt(u*u + v*v);
+            }
+            else
+            {
+                data[j + 2*i*dim_] = 0;
+                data[j + dim_ + 2*i*dim_] = 0;
+            }
+        }
+    }
+
+    TMatrixD j2(dim_, 2*dim_);
+    j2.SetMatrixArray(data.GetArray());
+
+    return j2;
+}
+
+//................................................................................//
+//Get covariance matrix of measurement in RΦ-R coordinate
+TMatrixD RiemannFitter::GetVrad0(const TMatrixD &v_cart0, const TMatrixD &j1, const TMatrixD &j2)
+{
+    TMatrixD v_rad0(j2*j1*v_cart0, TMatrixD::kMultTranspose, j2*j1);
+    return v_rad0;
+}
+
+//................................................................................//
+//Get final covariance matrix
+TMatrixD RiemannFitter::GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms)
+{
+    TMatrixD g(v_rad0, TMatrixD::kPlus, v_radms);
+    g.Invert();
+
+    return g;
+}
+
+//................................................................................//
+//Get weights
+TMatrixD RiemannFitter::GetW(const TMatrixD &G)
+{
+    const double *element = G.GetMatrixArray();
+
+    double sum = G.Sum();
+    TArrayD data(dim_);
+    for(int i = 0; i < dim_; i++)
+    {
+        double sumj = 0.;
+        for(int j = 0; j < dim_; j++)
+        {
+            sumj += *(element + j + i*dim_);
+        }
+        data[i] = sumj/sum;
+    }
+
+    TMatrixD w(1, dim_);
+    w.SetMatrixArray(data.GetArray());
+
+    return w;
+}
+
+//................................................................................//
+//Get weighted center
+TMatrixD RiemannFitter::GetXc(const TMatrixD &cart_coo, const TMatrixD &w)
+{
+    TMatrixD x_c(cart_coo, TMatrixD::kMultTranspose, w);
+    return x_c;
+}
+
+//................................................................................//
+//Get weighted center
+TMatrixD RiemannFitter::GetXg(const TMatrixD &cart_coo, const TMatrixD &x_c)
+{
+    TMatrixD x_g(cart_coo);
+    const double *element = x_c.GetMatrixArray();
+    double xc = *element;
+    double yc = *(element + 1);
+    double hc = *(element + 2);
+
+    TMatrixDRow(x_g, 0) += -xc;
+    TMatrixDRow(x_g, 1) += -yc;
+    TMatrixDRow(x_g, 2) += -hc;
+
+    return x_g;
+}
+
+//................................................................................//
+//Get normal vector of fitteed plane
+TMatrixD RiemannFitter::GetNormalVecs(const TMatrixD &g, const TMatrixD &x_g)
+{
+    TMatrixD xgx(x_g*g, TMatrixD::kMultTranspose, x_g);
+    const double *element = xgx.GetMatrixArray();
+    double data[9] = {0.};
+
+    for(int i = 0; i < 9; i++)
+        data[i] = *(element + i);
+
+    TMatrixDSym sym(3, data);
+    TMatrixDSymEigen sym_eigen_v(sym);
+    TMatrixD eigen_vec = sym_eigen_v.GetEigenVectors();
+
+    return eigen_vec;
 }

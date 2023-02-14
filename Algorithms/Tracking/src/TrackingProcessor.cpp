@@ -93,6 +93,9 @@ void TrackingProcessor::Begin() {
         //RiemannFitHelper::CreateInstance();
         //dRFitHelper->SetVerbose(Verbose);
         RiemannFitHelper::SetVerbose(Verbose);
+        RiemannFitHelper::SetMagnetAtOrigin(dAnaData->getMagnetFieldAt({0., 0., 0.}).at(0),
+                                            dAnaData->getMagnetFieldAt({0., 0., 0.}).at(1),
+                                            dAnaData->getMagnetFieldAt({0., 0., 0.}).at(2));
         RiemannFitHelper::SetTrackerLayerThickness(dAnaData->getLayerThicknessRec().at(0));
         RiemannFitHelper::SetMeasurementError(digitizer.GetClusterWidth(), dAnaData->getAnglesRec().at(0));
     }
@@ -518,7 +521,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         for(auto &track : tag_tracks_)
         {
             TagTrk2_pp.push_back(track->GetPp());
-            TagTrk2_track_chi2.push_back(track->GetChi2());
+            //TagTrk2_track_chi2.push_back(track->GetChi2());
         
             if (!clean)
             {
@@ -533,7 +536,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         {
             RecTrk2_pp.push_back(track->GetPp());
             RecTrk2_fixed_pp.push_back(track->GetFixedPp());
-            RecTrk2_track_chi2.push_back(track->GetChi2());
+            //RecTrk2_track_chi2.push_back(track->GetChi2());
 
             ECal_seed_x.push_back(track->GetECalSeedX());
             ECal_seed_y.push_back(track->GetECalSeedY());

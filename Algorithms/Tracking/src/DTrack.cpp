@@ -239,7 +239,7 @@ void DTrack::Fit(int method)
                                                                   );
                                   break;
         case tracking::dRiemann :
-                                  fitter_ = new RiemannFitter(hits_, {});
+                                  fitter_ = new RiemannFitter(hits_, {preXc_, preYc_, preR_});
                                   if(verbose_ > 0)
                                       std::cout << "[INFO] ==> Riemann fit coming soon" << std::endl;
                                   break;

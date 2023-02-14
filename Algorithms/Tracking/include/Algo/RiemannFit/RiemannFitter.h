@@ -95,6 +95,9 @@ public:
 // |_                                 σz^2 _|
 //
 //σi = resolution i
+// ideally, σx = width of the cluster
+//          σy = width of the cluster/angle between tracker layers
+//          σz = 0
 //
 //Covariance matrix of a measurement
 //  _                           _
@@ -104,12 +107,49 @@ public:
 //
     TMatrixD GetVcart0();
 
+//................................................................................//
+//Get Jacobian matrix from Cartesian to polar coordinate
+    TMatrixD GetJ1(const TrkHitPVec &track);
+
+//................................................................................//
+//Get Jacobian matrix from R-Φ to RΦ-R
+    TMatrixD GetJ2(const TrkHitPVec &track);
+
+//................................................................................//
+//Get covariance matrix of measurement in RΦ-R coordinate
+    TMatrixD GetVrad0(const TMatrixD &v_cart0, const TMatrixD &j1, const TMatrixD &j2);
+
+//................................................................................//
+//Get final covariance matrix
+    TMatrixD GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms);
+
+//................................................................................//
+//Get weights
+    TMatrixD GetW(const TMatrixD &g);
+
+//................................................................................//
+//Get weighted center
+    TMatrixD GetXc(const TMatrixD &cart_coo, const TMatrixD &w);
+
+//................................................................................//
+//Get weighted center
+    TMatrixD GetXg(const TMatrixD &cart_coo, const TMatrixD &x_c);
+
+//................................................................................//
+//Get normal vector of fitteed plane
+    TMatrixD GetNormalVecs(const TMatrixD &g, const TMatrixD &x_g);
+
 private:
     int dim_{0};
     double pre_R_{0.};
     double pre_Xc_{0.};
     double pre_Yc_{0.};
     double pre_theta_{0.};
+
+    double c_{0.};
+    double n1_{0.};
+    double n2_{0.};
+    double n3_{0.};
 };
 
 #endif
