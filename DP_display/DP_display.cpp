@@ -38,8 +38,10 @@ int main(int argc, char **argv) {
             geo_file_in = TString(argv[i+1]);
         else if (std::string(argv[i]) == "-b")
             batch_mode = true;
-        else if (std::string(argv[i]) == "-h")
+        else if (std::string(argv[i]) == "-h") {
             PrintUsage();
+            return 0;
+        }
     }
 
     auto EvtDisplay = new DEventDisplay();
