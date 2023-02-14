@@ -424,8 +424,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Tag tracker
         TrkHitPVecMap clus_tag_trkhit_map;
-        if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
-        //if (raw_tagtrk2_hits.size() > 2)
+        //if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
+        if (raw_tagtrk2_hits.size() > 2)
         {
             if_raw_tag_hit_number = true;
 
@@ -468,8 +468,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Recoil tracker
         TrkHitPVecMap clus_rec_trkhit_map;
-        if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
-        //if (raw_rectrk2_hits.size() > 2)
+        //if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
+        if (raw_rectrk2_hits.size() > 2)
         {
             if_raw_rec_hit_number = true;
 
@@ -533,7 +533,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         {
             RecTrk2_pp.push_back(track->GetPp());
             RecTrk2_fixed_pp.push_back(track->GetFixedPp());
-            //RecTrk2_track_chi2.push_back(track->GetChi2());
+            RecTrk2_track_chi2.push_back(track->GetChi2());
 
             ECal_seed_x.push_back(track->GetECalSeedX());
             ECal_seed_y.push_back(track->GetECalSeedY());
