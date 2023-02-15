@@ -81,8 +81,8 @@ void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
         n3_ = *(get_normal_vec + 6);
 
         double curr_R = std::abs(sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
-        double curr_Xc = std::abs(-0.5*n1_/n3_);
-        double curr_Yc = std::abs(-0.5*n2_/n3_);
+        double curr_Xc = -0.5*n1_/n3_;
+        double curr_Yc = -0.5*n2_/n3_;
         if(std::abs(curr_Xc - pre_Xc_)/pre_Xc_ < 1e-6 &&
            std::abs(curr_Yc - pre_Yc_)/pre_Yc_ < 1e-6 &&
            std::abs(curr_R - pre_R_)/pre_R_ < 1e-6)
@@ -90,8 +90,8 @@ void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
         else
         {
             pre_R_ = curr_R;
-            pre_Xc_ += -0.5*n1_/n3_;
-            pre_Yc_ += -0.5*n2_/n3_;
+            pre_Xc_ = curr_Xc;
+            pre_Yc_ = curr_Yc;
         }
     }
 
