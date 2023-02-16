@@ -90,8 +90,8 @@ void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
         else
         {
             pre_R_ = curr_R;
-            pre_Xc_ = curr_Xc;
-            pre_Yc_ = curr_Yc;
+            pre_Xc_ += curr_Xc;
+            pre_Yc_ += curr_Yc;
         }
     }
 

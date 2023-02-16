@@ -184,8 +184,8 @@ void TrackingProcessor::InitEvt() {
 
     //std::vector<DTrack>().swap(tag_tracks_);
     //std::vector<DTrack>().swap(rec_tracks_);
-    for(size_t i = 0; i < tag_tracks_.size(); i++) {delete tag_tracks_.at(i); tag_tracks_.at(i) = nullptr;}
-    for(size_t i = 0; i < rec_tracks_.size(); i++) {delete rec_tracks_.at(i); rec_tracks_.at(i) = nullptr;}
+    //for(size_t i = 0; i < tag_tracks_.size(); i++) {delete tag_tracks_.at(i); tag_tracks_.at(i) = nullptr;}
+    //for(size_t i = 0; i < rec_tracks_.size(); i++) {delete rec_tracks_.at(i); rec_tracks_.at(i) = nullptr;}
     tag_tracks_.clear();
     rec_tracks_.clear();
 
@@ -274,7 +274,7 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
         
         //then match rec track
         int id_rec_track=-1;
-        for(auto track : rec_tracks_)
+        for(auto &track : rec_tracks_)
         {
             id_rec_track++;
             int min_id(-1);
@@ -452,17 +452,15 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     for (int i = 0; i < find_tag.GetTrackNo(); i++)
                     {
                         TrkHitPVec tag_track_hits((*(vec_tag_track.begin() + i)).begin(), (*(vec_tag_track.begin() + i)).end());
-                        auto track = new DTrack(tag_track_hits,
-                                                find_tag.GetR(i),        //used in Kalman filter
-                                                find_tag.GetCenterX(i),  //not used in Kalman filter, reserved
-                                                find_tag.GetCenterY(i)); //not used in Kalman filter, reserved
-                        track->SetVerbose(Verbose);
-                        track->ExceptionHandler(magnet_at_origin);
-                        //track->Reverse();
-                        track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
-                        //track->Evaluate();
-
-                        tag_tracks_.push_back(track);
+                        tag_tracks_.push_back(std::make_unique<DTrack>(tag_track_hits,
+                                                                       find_tag.GetR(i),         //used in Kalman filter
+                                                                       find_tag.GetCenterX(i),   //not used in Kalman filter, reserved
+                                                                       find_tag.GetCenterY(i))); //not used in Kalman filter, reserved
+                        tag_tracks_.back()->SetVerbose(Verbose);
+                        tag_tracks_.back()->ExceptionHandler(magnet_at_origin);
+                        //tag_tracks_.back()->Reverse();
+                        tag_tracks_.back()->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
+                        //tag_tracks_.back()->Evaluate();
                     }
                 }
             }
@@ -494,18 +492,16 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     RecTrk2_track_No = find_rec.GetTrackNo();
               
                     for (int i = 0; i < find_rec.GetTrackNo(); i++) {
-                        TrkHitPVec rec_track((*(vec_rec_track.begin() + i)).begin(), (*(vec_rec_track.begin() + i)).end());
-                        auto track = new DTrack(rec_track,
-                                                find_rec.GetR(i),        //used in Kalman filter
-                                                find_rec.GetCenterX(i),  //not used in Kalman filter, reserved
-                                                find_rec.GetCenterY(i)); //not used in Kalman filter, reserved
-                        track->SetVerbose(Verbose);
-                        track->ExceptionHandler(magnet_at_origin);
-                        //track->Reverse();
-                        track->Fit(Rec_fit_method);            //choose fitting method: Kalman filter/Riemann fit
-                        //track->Evaluate();
-
-                        rec_tracks_.push_back(track);
+                        TrkHitPVec rec_track_hits((*(vec_rec_track.begin() + i)).begin(), (*(vec_rec_track.begin() + i)).end());
+                        rec_tracks_.push_back(std::make_unique<DTrack>(rec_track_hits,
+                                                                       find_rec.GetR(i),         //used in Kalman filter
+                                                                       find_rec.GetCenterX(i),   //not used in Kalman filter, reserved
+                                                                       find_rec.GetCenterY(i))); //not used in Kalman filter, reserved
+                        rec_tracks_.back()->SetVerbose(Verbose);
+                        rec_tracks_.back()->ExceptionHandler(magnet_at_origin);
+                        //rec_tracks_.back()->Reverse();
+                        rec_tracks_.back()->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
+                        //rec_tracks_.back()->Evaluate();
                     }
                 }
             }
@@ -513,15 +509,15 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Post-processing
-        std::sort(tag_tracks_.begin(), tag_tracks_.end(), [](const DTrack *track1, const DTrack *track2)
-                                                        { return track1->GetPp() > track2->GetPp(); } );
-        std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](const DTrack *track1, const DTrack *track2)
-                                                        { return track1->GetPp() > track2->GetPp(); } );
+        std::sort(tag_tracks_.begin(), tag_tracks_.end(), [](std::unique_ptr<DTrack> &track1, std::unique_ptr<DTrack> &track2)
+                                                          { return track1->GetPp() > track2->GetPp(); } );
+        std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](std::unique_ptr<DTrack> &track1, std::unique_ptr<DTrack> &track2)
+                                                          { return track1->GetPp() > track2->GetPp(); } );
 
         for(auto &track : tag_tracks_)
         {
             TagTrk2_pp.push_back(track->GetPp());
-            //TagTrk2_track_chi2.push_back(track->GetChi2());
+            TagTrk2_track_chi2.push_back(track->GetChi2());
         
             if (!clean)
             {
@@ -536,7 +532,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         {
             RecTrk2_pp.push_back(track->GetPp());
             RecTrk2_fixed_pp.push_back(track->GetFixedPp());
-            //RecTrk2_track_chi2.push_back(track->GetChi2());
+            RecTrk2_track_chi2.push_back(track->GetChi2());
 
             ECal_seed_x.push_back(track->GetECalSeedX());
             ECal_seed_y.push_back(track->GetECalSeedY());
