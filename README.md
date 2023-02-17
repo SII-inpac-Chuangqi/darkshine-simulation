@@ -9,12 +9,12 @@ The second version of dark shine simulation. :v:
 
 # Get Started
 
-There are four parts of the Dark SHINE Software: **DSimu**, **DAna**, **DDis**, **DPlot**.
+The Dark SHINE Software consists of four parts: **DSimu**, **DAna**, **DDis**, **DPlot**.
 
-- **DSimu** is the simulation program based on Geant4 and ROOT, characterized by Dark SHINE detector.
+- **DSimu** is the simulation program based on Geant4 and ROOT, characterized by DarkSHINE detector.
 - **DAna** is a framework for the analysis and reconstruction tools. It requires the output ROOT file from **DSimu**.
 - **DDis** is the event display tool for Dark SHINE specifically.
-- **DPlot** is a basic plotting program for quick plot, which is based on ROOT.
+- **DPlot** is a basic plotting program for quick plot, based on ROOT.
 
 They could be executed separately, with totally different configuration file format.
 
@@ -23,7 +23,7 @@ They could be executed separately, with totally different configuration file for
 Dark SHINE Software can be easily downloaded through GitLab.
 
 ```c++
-    git clone git@gitlab.com:dark_shine/darkshine-simulation.git
+    git clone git@code.ihep.ac.cn:darkshine/darkshine-simulation.git
 ```
 
 **Note:** for users who want to run Baseline 1 samples, please use ``` git checkout tags/baseline1 ``` instead. The config files of DSimu and DAna are not compatible with different versions. See example rare process yaml file on [Wiki page](https://gitlab.com/dark_shine/darkshine-simulation/-/wikis/Sample-Production).
