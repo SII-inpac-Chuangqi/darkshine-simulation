@@ -92,12 +92,13 @@ computer with great graphic card.
 
 There are two commands for **DAna**:
 
-- ```DAna -c config.txt```
-    - **DAna** will run the config.txt.
 - ```DAna -x```
     - **DAna** will print out all the available processors and their corresponding description and parameters (with the
       default value). One can simply generate an example config file by the bash command
       ```DAna -x > config.txt```
+
+- ```DAna -c config.txt```
+    - **DAna** will run the config.txt.
 
 ### DDis
 
