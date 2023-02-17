@@ -177,6 +177,12 @@ double DTrack::GetChi2()
         if_extrapolated_ = true;
     }
 
+    if(extrapolated_x_.size()*extrapolated_y_.size() == 0)
+    {
+        chi2_ = RETURN;
+        return chi2_;
+    }
+
     double std_variance = 0.;
     double deviation = 0.;
     for(size_t i = 0; i < track_x.size(); i++)
@@ -239,7 +245,7 @@ void DTrack::Fit(int method)
                                                                   );
                                   break;
         case tracking::dRiemann :
-                                  fitter_ = new RiemannFitter(hits_, {});
+                                  fitter_ = new RiemannFitter(hits_, {preXc_, preYc_, preR_});
                                   if(verbose_ > 0)
                                       std::cout << "[INFO] ==> Riemann fit coming soon" << std::endl;
                                   break;
