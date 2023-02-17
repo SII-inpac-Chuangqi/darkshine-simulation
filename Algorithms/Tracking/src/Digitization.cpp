@@ -32,32 +32,33 @@ void Digitization::ReadTrackerInfo(bool if_strip)
 {
     if_strip_ = if_strip;
 
-    if(if_strip_)
+    if(!if_strip_)
     {
-        strip_no_tag_.clear();
-        layer_width_tag_.clear();
-        layer_length_tag_.clear();
-        angles_tag_.clear();
-
-        strip_no_rec_.clear();
-        layer_width_rec_.clear();
-        layer_length_rec_.clear();
-        angles_rec_.clear();
-
-        strip_no_tag_     = dAnaData->getStripNoTag();
-        layer_width_tag_  = dAnaData->getLayerWidthTag();
-        layer_length_tag_ = dAnaData->getLayerLengthTag();
-        angles_tag_       = dAnaData->getAnglesTag();
-
-        strip_no_rec_     = dAnaData->getStripNoRec();
-        layer_width_rec_  = dAnaData->getLayerWidthRec();
-        layer_length_rec_ = dAnaData->getLayerLengthRec();
-        angles_rec_       = dAnaData->getAnglesRec();
-
-        std::cout << "[INFO] ==> Strip model loaded in tracking" << std::endl;
-    }
-    else
         std::cout << "[WARNING] ==> Strip model not loaded in tracking" << std::endl;
+        return;
+    }
+
+    strip_no_tag_.clear();
+    layer_width_tag_.clear();
+    layer_length_tag_.clear();
+    angles_tag_.clear();
+
+    strip_no_rec_.clear();
+    layer_width_rec_.clear();
+    layer_length_rec_.clear();
+    angles_rec_.clear();
+
+    strip_no_tag_     = dAnaData->getStripNoTag();
+    layer_width_tag_  = dAnaData->getLayerWidthTag();
+    layer_length_tag_ = dAnaData->getLayerLengthTag();
+    angles_tag_       = dAnaData->getAnglesTag();
+
+    strip_no_rec_     = dAnaData->getStripNoRec();
+    layer_width_rec_  = dAnaData->getLayerWidthRec();
+    layer_length_rec_ = dAnaData->getLayerLengthRec();
+    angles_rec_       = dAnaData->getAnglesRec();
+
+    std::cout << "[INFO] ==> Strip model loaded in tracking" << std::endl;
 }
 
 //Separate tracker hits into vectors by layers
