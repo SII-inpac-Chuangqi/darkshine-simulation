@@ -28,7 +28,7 @@ Dark SHINE Software can be easily downloaded through GitLab.
 
 **Note:** for users who want to run Baseline 1 samples, please use ``` git checkout tags/baseline1 ``` instead. The config files of DSimu and DAna are not compatible with different versions. See example rare process yaml file on [Wiki page](https://gitlab.com/dark_shine/darkshine-simulation/-/wikis/Sample-Production).
 
-Before installing, several dependencies need to be checked.
+Before installing, if you are using your own machine, several dependencies need to be checked.
 
 - C++17
 - Geant4 10.06
@@ -37,15 +37,35 @@ Before installing, several dependencies need to be checked.
 - gsl
 - yaml-cpp
 
+Or, if you are using clusters with CVMFS, you can directly source LCG environment:
+```shell
+source /cvmfs/sft.cern.ch/lcg/views/LCG_97rc4python3/x86_64-centos7-gcc9-opt/setup.sh
+```
+
 With everything needed, it's ready to install :v:
 
-```shell script
+```shell
 cd darkshine-simulation   # <source-directory>
 mkdir build
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=<some-directory> ../
 make -j100  # Just do it!
 make install
+```
+
+Write a file to export environment variables, i.e. setup.sh
+
+```shell
+source /cvmfs/sft.cern.ch/lcg/views/LCG_97rc4python3/x86_64-centos7-gcc9-opt/setup.sh
+DSS_DIR=<some-directory>
+export PATH=${DSS_DIR}/bin:${PATH}
+export LD_LIBRARY_PATH=${DSS_DIR}/lib:${LD_LIBRARY_PATH}
+```
+
+Then, source this file.
+
+```shell
+source setup.sh
 ```
 
 Now in your install directory, everything should be there. Now it's the time to have fun with them. :relaxed:
