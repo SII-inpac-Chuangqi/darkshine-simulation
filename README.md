@@ -1,4 +1,4 @@
-# Dark SHINE Software Package
+# DarkSHINE Software Package
 
 The second version of dark shine simulation. :v:
 
@@ -9,24 +9,24 @@ The second version of dark shine simulation. :v:
 
 # Get Started
 
-The Dark SHINE Software consists of four parts: **DSimu**, **DAna**, **DDis**, **DPlot**.
+The DarkSHINE Software consists of four parts: **DSimu**, **DAna**, **DDis**, **DPlot**.
 
 - **DSimu** is the simulation program based on Geant4 and ROOT, characterized by DarkSHINE detector.
 - **DAna** is a framework for the analysis and reconstruction tools. It requires the output ROOT file from **DSimu**.
-- **DDis** is the event display tool for Dark SHINE specifically.
+- **DDis** is the event display tool for DarkSHINE specifically.
 - **DPlot** is a basic plotting program for quick plot, based on ROOT.
 
 They could be executed separately, with totally different configuration file format.
 
 ## Installation
 
-Dark SHINE Software can be easily downloaded through GitLab.
+DarkSHINE Software can be easily downloaded through GitLab.
 
 ```c++
     git clone git@code.ihep.ac.cn:darkshine/darkshine-simulation.git
 ```
 
-**Note:** for users who want to run Baseline 1 samples, please use ``` git checkout tags/baseline1 ``` instead. The config files of DSimu and DAna are not compatible with different versions. See example rare process yaml file on [Wiki page](https://gitlab.com/dark_shine/darkshine-simulation/-/wikis/Sample-Production).
+**Note:** for users who want to run Baseline 1 samples, please use ``` git checkout tags/baseline1 ``` instead. The current version of config files of DSimu and DAna may not be compatible with previous releases. See example rare process yaml file on [Wiki page](https://gitlab.com/dark_shine/darkshine-simulation/-/wikis/Sample-Production).
 
 Before installing, if you are using your own machine, several dependencies need to be checked.
 
@@ -83,7 +83,7 @@ computer with great graphic card.
 
 **Batch Mode**: ```DSimu [ -y default.yaml]```
 
-- (**IMPORTANT**)The config file after '-y' is the yaml file, which will control the whole configuration of the program.
+- **IMPORTANT** The config file after '-y' is the yaml file, controlling the whole configuration of the program.
   The default yaml file is in ```DP_simu/scripts/```, or it will also be installed to the ```CMAKE_ISNTALL_PREFIX```
   path.
 - The config file after '-m' is the normal configuration, e.g. particle gun, beam on number.
@@ -114,12 +114,12 @@ Event Display is quite straight forward.
 
 ### DPlot
 
-This is a really naive plotting program for newbies and lazy boys.
+This is a really naive plotting program for newbies and lazy boys and girls.
 
 - ```DPlot -c config.yaml```
     - As like other DSS tools, **DPlot** receives yaml file as its configuration. The execution of **DPlot** will
       generate all the plots under
-      ```./<name>/```, where ```name``` is the first block in yaml file, which represents the identifier of the whole
+      ```./<name>/```, where ```name``` is the first block in yaml file representing the identifier of the whole
       job.
 
 ## DSS Wiki of yaml config
@@ -242,23 +242,23 @@ related method: ```In_Range()```
 
 # Data Recoding
 
-- The geometry will be saved in the output root file if set "save_geometry = true"
-- All the information about event will be stored as DEvent class.
-- For all Detector Hit (Trackers and Calorimeters), the output format is the same.
+- The geometry will be saved in the output root file if setting "save_geometry = true"
+- All the information about events will be stored using the class DEvent.
+- Hits in different detectors (trackers and calorimeters) share same output format.
 - **Units: MeV, mm, ns**
 
 ## Detector modules
 
 There are totally 4 detector modules:
 
-1. Tagging tracker ( 2 submodules )
-2. Recoiled tracker ( 2 submodules )
-3. ECAL center (ECAL_Center)
-4. HCAL ( 3*3 = 9 submodules)
+1. Tagging tracker (2 submodules)
+2. Recoil tracker (2 submodules)
+3. ECal (ECAL_Center and ECAL_Outer)
+4. HCal (3*3 = 9 submodules)
 
 ## MC truth particle selection criteria
 
-MC particles satisfied any one of the following conditions will be recorded in truth MC collection:
+MC particles satisfying any of the following conditions will be recorded in truth MC collection:
 
 - Initial particle (Track ID == 1)
 - Momentum > 1 GeV
