@@ -1,4 +1,4 @@
-# Dark SHINE Software Package
+# DarkSHINE Software Package
 
 The second version of dark shine simulation. :v:
 
@@ -9,43 +9,63 @@ The second version of dark shine simulation. :v:
 
 # Get Started
 
-There are four parts of the Dark SHINE Software: **DSimu**, **DAna**, **DDis**, **DPlot**.
+The DarkSHINE Software consists of four parts: **DSimu**, **DAna**, **DDis**, **DPlot**.
 
-- **DSimu** is the simulation program based on Geant4 and ROOT, characterized by Dark SHINE detector.
+- **DSimu** is the simulation program based on Geant4 and ROOT, characterized by DarkSHINE detector.
 - **DAna** is a framework for the analysis and reconstruction tools. It requires the output ROOT file from **DSimu**.
-- **DDis** is the event display tool for Dark SHINE specifically.
-- **DPlot** is a basic plotting program for quick plot, which is based on ROOT.
+- **DDis** is the event display tool for DarkSHINE specifically.
+- **DPlot** is a basic plotting program for quick plot, based on ROOT.
 
 They could be executed separately, with totally different configuration file format.
 
 ## Installation
 
-Dark SHINE Software can be easily downloaded through GitLab.
+DarkSHINE Software can be easily downloaded through GitLab.
 
 ```c++
-    git clone git@gitlab.com:dark_shine/darkshine-simulation.git
+    git clone git@code.ihep.ac.cn:darkshine/darkshine-simulation.git
 ```
 
-**Note:** for users who want to run Baseline 1 samples, please use ``` git checkout tags/baseline1 ``` instead. The config files of DSimu and DAna are not compatible with different versions. See example rare process yaml file on [Wiki page](https://gitlab.com/dark_shine/darkshine-simulation/-/wikis/Sample-Production).
+**Note:** for users who want to run Baseline 1 samples, please use ``` git checkout tags/baseline1 ``` instead. The current version of config files of DSimu and DAna may not be compatible with previous releases. See example rare process yaml file on [Wiki page](https://gitlab.com/dark_shine/darkshine-simulation/-/wikis/Sample-Production).
 
-Before installing, several dependencies need to be checked.
+Before installing, if you are using your own machine, several dependencies need to be checked.
 
 - C++17
 - Geant4 10.06
 - ROOT 6 ( >=6.20 )
-- HepMC
 - gsl
 - yaml-cpp
 
+Or, if you are using clusters with CVMFS installed, you can directly source the LCG environment:
+```shell
+source /cvmfs/sft.cern.ch/lcg/views/LCG_97rc4python3/x86_64-centos7-gcc9-opt/setup.sh
+```
+
 With everything needed, it's ready to install :v:
 
-```shell script
+```shell
 cd darkshine-simulation   # <source-directory>
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=<some-directory> ../
+cmake -DCMAKE_INSTALL_PREFIX=<your-install-directory> ../
 make -j100  # Just do it!
 make install
+cd ..
+```
+
+Write a file to export environment variables, i.e. setup.sh
+
+```shell
+source /cvmfs/sft.cern.ch/lcg/views/LCG_97rc4python3/x86_64-centos7-gcc9-opt/setup.sh
+DSS_DIR=<your-install-directory>
+export PATH=${DSS_DIR}/bin:${PATH}
+export LD_LIBRARY_PATH=${DSS_DIR}/lib:${LD_LIBRARY_PATH}
+```
+
+Then, source this file.
+
+```shell
+source setup.sh
 ```
 
 Now in your install directory, everything should be there. Now it's the time to have fun with them. :relaxed:
@@ -62,7 +82,7 @@ computer with great graphic card.
 
 **Batch Mode**: ```DSimu [ -y default.yaml]```
 
-- (**IMPORTANT**)The config file after '-y' is the yaml file, which will control the whole configuration of the program.
+- **IMPORTANT** The config file after '-y' is the yaml file, controlling the whole configuration of the program.
   The default yaml file is in ```DP_simu/scripts/```, or it will also be installed to the ```CMAKE_ISNTALL_PREFIX```
   path.
 - The config file after '-m' is the normal configuration, e.g. particle gun, beam on number.
@@ -71,12 +91,13 @@ computer with great graphic card.
 
 There are two commands for **DAna**:
 
-- ```DAna -c config.txt```
-    - **DAna** will run the config.txt.
 - ```DAna -x```
     - **DAna** will print out all the available processors and their corresponding description and parameters (with the
       default value). One can simply generate an example config file by the bash command
       ```DAna -x > config.txt```
+
+- ```DAna -c config.txt```
+    - **DAna** will run the config.txt.
 
 ### DDis
 
@@ -92,12 +113,12 @@ Event Display is quite straight forward.
 
 ### DPlot
 
-This is a really naive plotting program for newbies and lazy boys.
+This is a really naive plotting program for newbies and lazy boys and girls.
 
 - ```DPlot -c config.yaml```
     - As like other DSS tools, **DPlot** receives yaml file as its configuration. The execution of **DPlot** will
       generate all the plots under
-      ```./<name>/```, where ```name``` is the first block in yaml file, which represents the identifier of the whole
+      ```./<name>/```, where ```name``` is the first block in yaml file representing the identifier of the whole
       job.
 
 ## DSS Wiki of yaml config
@@ -220,23 +241,23 @@ related method: ```In_Range()```
 
 # Data Recoding
 
-- The geometry will be saved in the output root file if set "save_geometry = true"
-- All the information about event will be stored as DEvent class.
-- For all Detector Hit (Trackers and Calorimeters), the output format is the same.
+- The geometry will be saved in the output root file if setting "save_geometry = true"
+- All the information about events will be stored using the class DEvent.
+- Hits in different detectors (trackers and calorimeters) share same output format.
 - **Units: MeV, mm, ns**
 
 ## Detector modules
 
 There are totally 4 detector modules:
 
-1. Tagging tracker ( 2 submodules )
-2. Recoiled tracker ( 2 submodules )
-3. ECAL center (ECAL_Center)
-4. HCAL ( 3*3 = 9 submodules)
+1. Tagging tracker (2 submodules)
+2. Recoil tracker (2 submodules)
+3. ECal (ECAL_Center and ECAL_Outer)
+4. HCal (3*3 = 9 submodules)
 
 ## MC truth particle selection criteria
 
-MC particles satisfied any one of the following conditions will be recorded in truth MC collection:
+MC particles satisfying any of the following conditions will be recorded in truth MC collection:
 
 - Initial particle (Track ID == 1)
 - Momentum > 1 GeV
