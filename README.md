@@ -51,6 +51,7 @@ cd build
 cmake -DCMAKE_INSTALL_PREFIX=<some-directory> ../
 make -j100  # Just do it!
 make install
+cd ..
 ```
 
 Write a file to export environment variables, i.e. setup.sh
