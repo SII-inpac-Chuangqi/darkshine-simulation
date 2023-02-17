@@ -33,11 +33,10 @@ Before installing, if you are using your own machine, several dependencies need 
 - C++17
 - Geant4 10.06
 - ROOT 6 ( >=6.20 )
-- HepMC
 - gsl
 - yaml-cpp
 
-Or, if you are using clusters with CVMFS, you can directly source LCG environment:
+Or, if you are using clusters with CVMFS installed, you can directly source the LCG environment:
 ```shell
 source /cvmfs/sft.cern.ch/lcg/views/LCG_97rc4python3/x86_64-centos7-gcc9-opt/setup.sh
 ```
@@ -48,7 +47,7 @@ With everything needed, it's ready to install :v:
 cd darkshine-simulation   # <source-directory>
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=<some-directory> ../
+cmake -DCMAKE_INSTALL_PREFIX=<your-install-directory> ../
 make -j100  # Just do it!
 make install
 cd ..
@@ -58,7 +57,7 @@ Write a file to export environment variables, i.e. setup.sh
 
 ```shell
 source /cvmfs/sft.cern.ch/lcg/views/LCG_97rc4python3/x86_64-centos7-gcc9-opt/setup.sh
-DSS_DIR=<some-directory>
+DSS_DIR=<your-install-directory>
 export PATH=${DSS_DIR}/bin:${PATH}
 export LD_LIBRARY_PATH=${DSS_DIR}/lib:${LD_LIBRARY_PATH}
 ```
