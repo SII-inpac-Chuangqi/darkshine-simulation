@@ -84,6 +84,7 @@ public:
     double GetChi2Algo() const {return chi2_algo_;}
     double GetXSigma() const {return xSigma_;}
     double GetYSigma() const {return ySigma_;}
+    double GetDeltaR(const DTrack *another) const;
     std::vector<double> GetExtrapolated(tracking::direction extrop_dir = tracking::dX);
 
 //................................................................................//
@@ -97,6 +98,7 @@ public:
     void SetPy(double newPy)  {py_ = newPy;}
     void SetPz(double newPz)  {pz_ = newPz;}
     void SetChi2(double newChi2) {chi2_ = newChi2;}
+    void Remove(int i);
 
 //................................................................................//
 //Processor

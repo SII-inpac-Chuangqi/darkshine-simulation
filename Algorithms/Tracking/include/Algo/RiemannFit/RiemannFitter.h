@@ -120,11 +120,17 @@ public:
     TMatrixD GetVrad0(const TMatrixD &v_cart0, const TMatrixD &j1, const TMatrixD &j2);
 
 //................................................................................//
-//Get final covariance matrix
+//Get inverse of the final covariance matrix
+// G = V^-1, V = V_rad_ms (multiple scattering) + V_rad_0 (measurement)
     TMatrixD GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms);
 
 //................................................................................//
 //Get weights
+//
+//        Σj G_ij
+// w_i = —————————
+//       ΣjΣk G_jk
+//
     TMatrixD GetW(const TMatrixD &g);
 
 //................................................................................//
