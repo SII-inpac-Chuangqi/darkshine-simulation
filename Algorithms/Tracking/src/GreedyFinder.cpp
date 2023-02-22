@@ -34,7 +34,7 @@ GreedyFinder::GreedyFinder(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDep
     goodnessCut = newGoodnessCut;
 
     GreedyLooping(clusteredTrkHitsInLayer);
-    CutTracks();
+    //CutTracks();
 }
 
 //................................................................................//
@@ -67,10 +67,10 @@ void GreedyFinder::CutTracks()
 
             double abr[3];
             LinearFit(abr, x, y, N - 1);
-            std::cout << std::showpos << "y="<< abr[0] << "x" << abr[1] << std::endl;
-            std::cout << "r^2=" << abr[2] << std::noshowpos << std::endl;
+            //std::cout << std::showpos << "y="<< abr[0] << "x" << abr[1] << std::endl;
+            //std::cout << "r^2=" << abr[2] << std::noshowpos << std::endl;
         }
-        std::cout << std::endl;
+        //std::cout << std::endl;
 
         delete[] x; x = nullptr;
         delete[] y; y = nullptr;
@@ -81,6 +81,27 @@ void GreedyFinder::CutTracks()
 TrkHitPVecMap GreedyFinder::GetTempHitMap(TrkHitPVecMap &clusteredTrkHitsInLayer)
 {
      auto temp_ClusteredTrkHitsInLayer = clusteredTrkHitsInLayer;
+     int *layers = new int[temp_ClusteredTrkHitsInLayer.size() - 2];
+
+     size_t i = 0;
+     for(const auto &layer : temp_ClusteredTrkHitsInLayer)
+     {
+        if(layer.first != temp_ClusteredTrkHitsInLayer.begin()->first &&
+           layer.first != temp_ClusteredTrkHitsInLayer.end()  ->first)
+        {
+            layers[i] = layer.first;
+            i++;
+        }
+     }
+
+     for(i = 0; i < temp_ClusteredTrkHitsInLayer.size() - 2; i++)
+     {
+         auto layer = temp_ClusteredTrkHitsInLayer.extract(layers[i]);
+         layer.key() = -layer.key();
+         temp_ClusteredTrkHitsInLayer.insert(std::move(layer));
+     }
+
+     delete[] layers;
      return temp_ClusteredTrkHitsInLayer;
 }
 
@@ -95,7 +116,7 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
         //if(goodness[circleNo] > goodnessCut && static_cast<int>(hits_chosen_.size()) > minDepth)
         if(goodness_Kasa_ > goodnessCut && static_cast<int>(hits_chosen_.size()) > minDepth)
         {
-            tracks_chosen_.emplace_back(hits_chosen_);
+            tracks_chosen_.push_back(hits_chosen_);
             r_.push_back(r_Kasa_);
             center_x_.push_back(center_x_Kasa_);
             center_y_.push_back(center_y_Kasa_);
@@ -122,6 +143,8 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
             y_store_.clear();
             hits_store_.clear();
             hits_no_store_.clear();
+
+            circleNo = 0;
         }
         else break;
 
