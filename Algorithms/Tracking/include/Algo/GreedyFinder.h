@@ -85,7 +85,7 @@ private:
 //................................................................................//
 //Choice storage
 //................................................................................//
-//Global choice
+//Final choice
     int minDepth = 3;
     double goodnessCut = 0.99;
 
@@ -102,15 +102,15 @@ private:
 
 //................................................................................//
 //Current choice
-    TrkHitPVec hitChosen;
-    std::vector<int> hitNoChosen;
+    TrkHitPVec hits_chosen_;
+    std::vector<int> hits_no_chosen_;
 
 //................................................................................//
 //Temp Choice
-    TrkHitPVec hitStore;
-    std::vector<double> xStore;
-    std::vector<double> yStore;
-    std::vector<int> hitNoStore;
+    TrkHitPVec hits_store_;
+    std::vector<double> x_store_;
+    std::vector<double> y_store_;
+    std::vector<int> hits_no_store_;
 };
 
 #endif
