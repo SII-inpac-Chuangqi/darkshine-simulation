@@ -49,9 +49,9 @@ public:
     virtual double GetCenterX(int i) const override {return center_x_.at(i); } //x direction in detector!
     virtual double GetCenterY(int i) const override {return center_y_.at(i); } //z direction in detector!
     virtual double GetChi2   (int i) const override {return goodness_.at(i);}
-    virtual int    GetTrackNo(     ) const override {return VecHitChosen.size();}
-    virtual std::vector<TrkHitPVec>::iterator First() override {return VecHitChosen.begin();}
-    virtual std::vector<TrkHitPVec>::iterator Last () override {return VecHitChosen.end();  }
+    virtual int    GetTrackNo(     ) const override {return tracks_chosen_.size();}
+    virtual std::vector<TrkHitPVec>::iterator First() override {return tracks_chosen_.begin();}
+    virtual std::vector<TrkHitPVec>::iterator Last () override {return tracks_chosen_.end();  }
 
     int GetCircleNo() const {return circleNo;}
 
@@ -64,6 +64,8 @@ private:
 //Finding method
 //................................................................................//
 //Finding control
+    TrkHitPVecMap GetTempHitMap(TrkHitPVecMap &clusteredTrkHitsInLayer);
+    void CutTracks();
     void GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer);
     void GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                        TrkHitPVecMap::iterator itMap,
@@ -96,7 +98,7 @@ private:
     //double centerX[NUM] = {RETURN};
     //double centerY[NUM] = {RETURN};
     //double goodness[NUM] = {RETURN};
-    std::vector<TrkHitPVec> VecHitChosen;
+    std::vector<TrkHitPVec> tracks_chosen_;
 
 //................................................................................//
 //Current choice

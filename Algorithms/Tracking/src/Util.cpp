@@ -1,8 +1,6 @@
 //................................................................................//
 //CPP Libraries
 #include <iostream>
-#include <map>
-#include <vector>
 
 //................................................................................//
 //ROOT
@@ -31,4 +29,31 @@ bool InRecTrack(double x, double y, double z)
         return true;
 
     return false;
+}
+
+void LinearFit(double abr[], double x[], double y[], int n)
+{
+   double xsum{0.};
+   double ysum{0.};
+   double x2sum{0.};
+   double xysum{0.};
+
+   for (int  i = 0; i < n; i++)
+   {
+       xsum += x[i];
+       ysum += y[i];
+       x2sum += x[i] * x[i];
+       xysum += x[i] * y[i];
+   }
+   abr[0] = (n*xysum - xsum * ysum) / (n*x2sum - xsum * xsum);//a
+   abr[1] = (ysum - abr[0] * xsum) / n;//b
+
+   double yavg = ysum/n;
+   double dy2sum1{0.}, dy2sum2{0.};
+   for (int i = 0; i < n; i++)
+   {
+       dy2sum1 += ((abr[0] * x[i] + abr[1]) - yavg)*((abr[0] * x[i] + abr[1]) - yavg);//r^2的分子
+       dy2sum2 += (y[i] - yavg)*(y[i] - yavg);//r^2的分母
+   }
+   abr[2] = dy2sum1 / dy2sum2;//r^2
 }

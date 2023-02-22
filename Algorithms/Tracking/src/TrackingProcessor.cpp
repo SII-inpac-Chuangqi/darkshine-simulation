@@ -513,7 +513,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                           { return track1->GetPp() > track2->GetPp(); } );
         std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](std::unique_ptr<DTrack> &track1, std::unique_ptr<DTrack> &track2)
                                                           { return track1->GetPp() > track2->GetPp(); } );
-
+/*
         for(size_t i = 0; i < rec_tracks_.size(); i++)
         {
             for(size_t j = i + 1; j < rec_tracks_.size(); j++)
@@ -521,6 +521,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 std::cout << rec_tracks_.at(i)->GetDeltaR(rec_tracks_.at(j).get()) << std::endl;
             }
         }
+*/
 
         for(auto &track : tag_tracks_)
         {

@@ -14,8 +14,13 @@
 //................................................................................//
 //TRACKING
 #include "Algo/TypeDef.h"
+#include "Algo/Util.h"
 #include "Algo/TrkHit.h"
 #include "Algo/GreedyFinder.h"
+
+#ifndef CUT_Y
+#define CUT_Y 1.8
+#endif
 
 //................................................................................//
 //public:
@@ -29,6 +34,7 @@ GreedyFinder::GreedyFinder(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDep
     goodnessCut = newGoodnessCut;
 
     GreedyLooping(clusteredTrkHitsInLayer);
+    CutTracks();
 }
 
 //................................................................................//
@@ -38,34 +44,74 @@ GreedyFinder::GreedyFinder(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDep
 //................................................................................//
 //Finding method
 //................................................................................//
+//
+void GreedyFinder::CutTracks()
+{
+    for(auto &track : tracks_chosen_)
+    {
+        const size_t N = track.size();
+        double *x = new double[N - 1];
+        double *y = new double[N - 1];
+
+        for(size_t i = 0; i < N; i++)
+        {
+            size_t k = 0;
+            for(size_t j = 0; j < N; j++)
+            {
+                if(j == i) continue;
+
+                x[k] = track.at(j)->GetZ();
+                y[k] = track.at(j)->GetY();
+                k++;
+            }
+
+            double abr[3];
+            LinearFit(abr, x, y, N - 1);
+            std::cout << std::showpos << "y="<< abr[0] << "x" << abr[1] << std::endl;
+            std::cout << "r^2=" << abr[2] << std::noshowpos << std::endl;
+        }
+        std::cout << std::endl;
+
+        delete[] x; x = nullptr;
+        delete[] y; y = nullptr;
+    }
+}
+
+//
+TrkHitPVecMap GreedyFinder::GetTempHitMap(TrkHitPVecMap &clusteredTrkHitsInLayer)
+{
+     auto temp_ClusteredTrkHitsInLayer = clusteredTrkHitsInLayer;
+     return temp_ClusteredTrkHitsInLayer;
+}
+
 //Finding control
 void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
 {
-    TrkHitPVecMap tempClusteredTrkHitsInLayer = clusteredTrkHitsInLayer;
+    TrkHitPVecMap temp_ClusteredTrkHitsInLayer = GetTempHitMap(clusteredTrkHitsInLayer);
     for(;;)
     {
-        auto itMap = tempClusteredTrkHitsInLayer.end();
-        GreedyLooping(tempClusteredTrkHitsInLayer, itMap, circleNo);
+        auto itMap = temp_ClusteredTrkHitsInLayer.end();
+        GreedyLooping(temp_ClusteredTrkHitsInLayer, itMap, circleNo);
         //if(goodness[circleNo] > goodnessCut && static_cast<int>(hitChosen.size()) > minDepth)
         if(goodness_Kasa_ > goodnessCut && static_cast<int>(hitChosen.size()) > minDepth)
         {
-            VecHitChosen.emplace_back(hitChosen);
+            tracks_chosen_.emplace_back(hitChosen);
             r_.push_back(r_Kasa_);
             center_x_.push_back(center_x_Kasa_);
             center_y_.push_back(center_y_Kasa_);
             goodness_.push_back(goodness_Kasa_);                                      
  
-            auto it_eraseMap = tempClusteredTrkHitsInLayer.end();
+            auto it_eraseMap = temp_ClusteredTrkHitsInLayer.end();
             for(size_t i = 0; i < hitChosen.size(); i++)
             {
                 it_eraseMap--;
                 it_eraseMap->second.erase(it_eraseMap->second.begin() + hitNoChosen.at(i));
             }
 
-            it_eraseMap = tempClusteredTrkHitsInLayer.begin();
-            while(it_eraseMap != tempClusteredTrkHitsInLayer.end())
+            it_eraseMap = temp_ClusteredTrkHitsInLayer.begin();
+            while(it_eraseMap != temp_ClusteredTrkHitsInLayer.end())
             {
-                if(it_eraseMap->second.size() == 0) tempClusteredTrkHitsInLayer.erase(it_eraseMap++);
+                if(it_eraseMap->second.size() == 0) temp_ClusteredTrkHitsInLayer.erase(it_eraseMap++);
                 else                                ++it_eraseMap;
             }
 
@@ -81,7 +127,7 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
 
         //if(circleNo >= MAX_CIRCLE - 1) break;
 
-        if(static_cast<int>(tempClusteredTrkHitsInLayer.size()) < minDepth) break;
+        if(static_cast<int>(temp_ClusteredTrkHitsInLayer.size()) < minDepth) break;
     }
 
 }
