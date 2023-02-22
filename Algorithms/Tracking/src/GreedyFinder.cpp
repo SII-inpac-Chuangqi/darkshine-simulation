@@ -92,20 +92,20 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
     {
         auto itMap = temp_ClusteredTrkHitsInLayer.end();
         GreedyLooping(temp_ClusteredTrkHitsInLayer, itMap, circleNo);
-        //if(goodness[circleNo] > goodnessCut && static_cast<int>(hitChosen.size()) > minDepth)
-        if(goodness_Kasa_ > goodnessCut && static_cast<int>(hitChosen.size()) > minDepth)
+        //if(goodness[circleNo] > goodnessCut && static_cast<int>(hits_chosen_.size()) > minDepth)
+        if(goodness_Kasa_ > goodnessCut && static_cast<int>(hits_chosen_.size()) > minDepth)
         {
-            tracks_chosen_.emplace_back(hitChosen);
+            tracks_chosen_.emplace_back(hits_chosen_);
             r_.push_back(r_Kasa_);
             center_x_.push_back(center_x_Kasa_);
             center_y_.push_back(center_y_Kasa_);
             goodness_.push_back(goodness_Kasa_);                                      
  
             auto it_eraseMap = temp_ClusteredTrkHitsInLayer.end();
-            for(size_t i = 0; i < hitChosen.size(); i++)
+            for(size_t i = 0; i < hits_chosen_.size(); i++)
             {
                 it_eraseMap--;
-                it_eraseMap->second.erase(it_eraseMap->second.begin() + hitNoChosen.at(i));
+                it_eraseMap->second.erase(it_eraseMap->second.begin() + hits_no_chosen_.at(i));
             }
 
             it_eraseMap = temp_ClusteredTrkHitsInLayer.begin();
@@ -115,13 +115,13 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
                 else                                ++it_eraseMap;
             }
 
-            hitChosen.clear();
-            hitNoChosen.clear();
+            hits_chosen_.clear();
+            hits_no_chosen_.clear();
 
-            xStore.clear();
-            yStore.clear();
-            hitStore.clear();
-            hitNoStore.clear();
+            x_store_.clear();
+            y_store_.clear();
+            hits_store_.clear();
+            hits_no_store_.clear();
         }
         else break;
 
@@ -147,16 +147,16 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
 
         for(size_t hitsNo = 0; hitsNo < itMap->second.size(); hitsNo++)
         {
-            xStore.push_back((*itMap->second.at(hitsNo)).GetU());
-            yStore.push_back((*itMap->second.at(hitsNo)).GetZ());
-            hitStore.emplace_back(itMap->second.at(hitsNo));
-            hitNoStore.push_back(hitsNo);
+            x_store_.push_back((*itMap->second.at(hitsNo)).GetU());
+            y_store_.push_back((*itMap->second.at(hitsNo)).GetZ());
+            hits_store_.emplace_back(itMap->second.at(hitsNo));
+            hits_no_store_.push_back(hitsNo);
 
             double cur_A;
             double cur_B;
             double cur_R;
             double cur_goodness;
-            MethodLooping(xStore, yStore, cur_A, cur_B, cur_R, cur_goodness);
+            MethodLooping(x_store_, y_store_, cur_A, cur_B, cur_R, cur_goodness);
             //if(goodness[cirNo] < goodnessKasa)
             //{
             //    r[cirNo] = rKasa;
@@ -164,8 +164,8 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
             //    centerY[cirNo] = centerYKasa;
             //    goodness[cirNo] = goodnessKasa;
 
-            //    hitChosen.assign(hitStore.begin(), hitStore.end());
-            //    hitNoChosen.assign(hitNoStore.begin(), hitNoStore.end());
+            //    hits_chosen_.assign(hits_store_.begin(), hits_store_.end());
+            //    hits_no_chosen_.assign(hits_no_store_.begin(), hits_no_store_.end());
             //}
             if(cur_goodness > goodness_Kasa_)
             {
@@ -173,14 +173,14 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                 center_x_Kasa_ = cur_A;
                 center_y_Kasa_ = cur_B;
                 r_Kasa_        = cur_R;
-                hitChosen.assign(hitStore.begin(),     hitStore.end());
-                hitNoChosen.assign(hitNoStore.begin(), hitNoStore.end());
+                hits_chosen_.assign(hits_store_.begin(),     hits_store_.end());
+                hits_no_chosen_.assign(hits_no_store_.begin(), hits_no_store_.end());
             }
                                                                     
-            xStore.erase(xStore.end() - 1);
-            yStore.erase(yStore.end() - 1);
-            hitStore.erase(hitStore.end() - 1);
-            hitNoStore.erase(hitNoStore.end() - 1);
+            x_store_.erase(x_store_.end() - 1);
+            y_store_.erase(y_store_.end() - 1);
+            hits_store_.erase(hits_store_.end() - 1);
+            hits_no_store_.erase(hits_no_store_.end() - 1);
         }
 	
         return;
@@ -188,17 +188,17 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
 
     for(size_t hitsNo = 0; hitsNo < itMap->second.size(); ++hitsNo)
     {
-        hitNoStore.push_back(hitsNo);
-        hitStore.emplace_back(itMap->second.at(hitsNo));
-        xStore.push_back((*itMap->second.at(hitsNo)).GetU());
-	yStore.push_back((*itMap->second.at(hitsNo)).GetZ());
+        hits_no_store_.push_back(hitsNo);
+        hits_store_.emplace_back(itMap->second.at(hitsNo));
+        x_store_.push_back((*itMap->second.at(hitsNo)).GetU());
+	y_store_.push_back((*itMap->second.at(hitsNo)).GetZ());
 
         GreedyLooping(clusteredTrkHitsInLayer, itMap--, cirNo);
 
-        hitNoStore.erase(hitNoStore.end() - 1);
-        hitStore.erase(hitStore.end() - 1);
-        xStore.erase(xStore.end() - 1);
-        yStore.erase(yStore.end() - 1);
+        hits_no_store_.erase(hits_no_store_.end() - 1);
+        hits_store_.erase(hits_store_.end() - 1);
+        x_store_.erase(x_store_.end() - 1);
+        y_store_.erase(y_store_.end() - 1);
         itMap++; 
     }
 
