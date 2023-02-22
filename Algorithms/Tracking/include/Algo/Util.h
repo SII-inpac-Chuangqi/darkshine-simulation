@@ -61,4 +61,5 @@ bool InRecTrack(double x, double y, double z);
 
 //
 void LinearFit(double abr[], double x[], double y[], int n);
+double PointToLineDistance(double A, double B, double C, double x, double y);
 #endif

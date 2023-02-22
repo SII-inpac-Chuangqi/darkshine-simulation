@@ -65,11 +65,12 @@ private:
 //................................................................................//
 //Finding control
     TrkHitPVecMap GetTempHitMap(TrkHitPVecMap &clusteredTrkHitsInLayer);
-    void CutTracks();
     void GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer);
     void GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                        TrkHitPVecMap::iterator itMap,
                        int cirNo);
+    void CutTracks();
+    void SortTracks();
 
 //................................................................................//
 //Kasa method
@@ -87,7 +88,7 @@ private:
 //................................................................................//
 //Final choice
     int minDepth = 3;
-    double goodnessCut = 0.99;
+    double goodnessCut = 0.9;
 
     int circleNo{0};
     std::vector<double> r_;
@@ -110,6 +111,7 @@ private:
     TrkHitPVec hits_store_;
     std::vector<double> x_store_;
     std::vector<double> y_store_;
+    std::vector<double> oth_store_;
     std::vector<int> hits_no_store_;
 };
 

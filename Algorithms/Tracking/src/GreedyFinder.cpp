@@ -34,7 +34,8 @@ GreedyFinder::GreedyFinder(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDep
     goodnessCut = newGoodnessCut;
 
     GreedyLooping(clusteredTrkHitsInLayer);
-    //CutTracks();
+    CutTracks();
+    SortTracks();
 }
 
 //................................................................................//
@@ -47,14 +48,18 @@ GreedyFinder::GreedyFinder(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDep
 //
 void GreedyFinder::CutTracks()
 {
+    size_t n = 0;
     for(auto &track : tracks_chosen_)
     {
+/*
         const size_t N = track.size();
         double *x = new double[N - 1];
         double *y = new double[N - 1];
 
         for(size_t i = 0; i < N; i++)
         {
+            std::cout << "rm (" << track.at(i)->GetY() << "," << track.at(i)->GetZ() << ")\t";
+
             size_t k = 0;
             for(size_t j = 0; j < N; j++)
             {
@@ -67,14 +72,52 @@ void GreedyFinder::CutTracks()
 
             double abr[3];
             LinearFit(abr, x, y, N - 1);
-            //std::cout << std::showpos << "y="<< abr[0] << "x" << abr[1] << std::endl;
-            //std::cout << "r^2=" << abr[2] << std::noshowpos << std::endl;
+            std::cout << std::showpos << "y="<< abr[0] << "x" << abr[1] << "\t";
+            std::cout << "r^2=" << abr[2] << std::noshowpos << std::endl;
         }
-        //std::cout << std::endl;
+        std::cout << 0.3*1.5*r_.at(n) << "\n" << std::endl;
 
         delete[] x; x = nullptr;
         delete[] y; y = nullptr;
+        n++;
+*/
+
+        const size_t N = track.size();
+        double *x = new double[N];
+        double *y = new double[N];
+        double *oth = new double[N];
+        for(size_t i = 0; i < N; i++)
+        {
+            x[i] = track.at(i)->GetZ();
+            y[i] = track.at(i)->GetY();
+            oth[i] = track.at(i)->GetX();
+        }
+
+        double abr[3];
+        LinearFit(abr, x, y, 2);
+/*
+        std::cout << std::showpos << "y="<< abr[0] << "z" << abr[1] << "\t";
+        std::cout << "r^2=" << abr[2] << std::noshowpos << std::endl;
+        std::cout << 0.3*1.5*r_.at(n) << std::endl;
+
+        for(size_t i = 0; i < N; i++)
+        {
+            std::cout << "(" << x[i] << "," << y[i] << "," << oth[i] << ")\t";
+            std::cout << PointToLineDistance(abr[0], -1., abr[1], x[i], y[i]) << std::endl;
+        }
+        std::cout << std::endl;
+*/
+        n++;
+        delete[] x; x = nullptr;
+        delete[] y; y = nullptr;
     }
+}
+
+void GreedyFinder::SortTracks()
+{
+    for(auto &track : tracks_chosen_)
+        std::sort(track.begin(), track.end(), [](std::shared_ptr<TrkHit> &hit1, std::shared_ptr<TrkHit> &hit2)
+                                              { return hit1->GetCellIdZ() > hit2->GetCellIdZ(); } );
 }
 
 //
@@ -100,7 +143,16 @@ TrkHitPVecMap GreedyFinder::GetTempHitMap(TrkHitPVecMap &clusteredTrkHitsInLayer
          layer.key() = -layer.key();
          temp_ClusteredTrkHitsInLayer.insert(std::move(layer));
      }
-
+/*
+     for(auto &layer : clusteredTrkHitsInLayer)
+     {
+         std::cout << layer.first << "\t";
+         for(auto &hit : layer.second)
+             std::cout << hit->GetX() << "," << hit->GetY() << "\t";
+         std::cout << std::endl;
+     }
+     std::cout << std::endl;
+*/
      delete[] layers;
      return temp_ClusteredTrkHitsInLayer;
 }
@@ -113,6 +165,8 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
     {
         auto itMap = temp_ClusteredTrkHitsInLayer.end();
         GreedyLooping(temp_ClusteredTrkHitsInLayer, itMap, circleNo);
+        //std::cout << goodness_Kasa_ << ", n hit " << hits_chosen_.size() << std::endl;
+
         //if(goodness[circleNo] > goodnessCut && static_cast<int>(hits_chosen_.size()) > minDepth)
         if(goodness_Kasa_ > goodnessCut && static_cast<int>(hits_chosen_.size()) > minDepth)
         {
@@ -141,10 +195,12 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
 
             x_store_.clear();
             y_store_.clear();
+            oth_store_.clear();
             hits_store_.clear();
             hits_no_store_.clear();
 
             circleNo = 0;
+            goodness_Kasa_ = -INFINITY;
         }
         else break;
 
@@ -166,12 +222,11 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
     itMap--;
     if(itMap == clusteredTrkHitsInLayer.begin())
     {
-        goodness_Kasa_ = -INFINITY;
-
         for(size_t hitsNo = 0; hitsNo < itMap->second.size(); hitsNo++)
         {
-            x_store_.push_back((*itMap->second.at(hitsNo)).GetU());
+            x_store_.push_back((*itMap->second.at(hitsNo)).GetX());
             y_store_.push_back((*itMap->second.at(hitsNo)).GetZ());
+            oth_store_.push_back((*itMap->second.at(hitsNo)).GetY());
             hits_store_.emplace_back(itMap->second.at(hitsNo));
             hits_no_store_.push_back(hitsNo);
 
@@ -190,18 +245,52 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
             //    hits_chosen_.assign(hits_store_.begin(), hits_store_.end());
             //    hits_no_chosen_.assign(hits_no_store_.begin(), hits_no_store_.end());
             //}
-            if(cur_goodness > goodness_Kasa_)
+
+            const size_t N = x_store_.size();
+            bool calibrtion_cut = true;
+            if(N > 2)
             {
+                double *x = &y_store_.at(0);
+                double *y = &oth_store_.at(0);
+                double abr[3];
+                LinearFit(abr, x, y, 2);
+
+                for(size_t ii = 0; ii < N; ii++)
+                {
+                    double dis = PointToLineDistance(abr[0], -1., abr[1], x[ii], y[ii]);
+                    //std::cout << "ii " << ii << " dis " << dis << std::endl;
+                    calibrtion_cut = dis < 6.;
+                    if(!calibrtion_cut) break;
+                }
+/*
+                if(calibrtion_cut)
+                {
+                    std::cout << std::showpos << "y="<< abr[0] << "z" << abr[1] << "\t" << std::noshowpos;
+                    std::cout << "(" << x[N - 1] << "," << y[N - 1] << "," << x_store_.at(N - 1) << ")\t";
+                    std::cout << "goodness " << cur_goodness << std::endl;
+                }
+*/
+            }
+            //std::cout << std::endl;
+            //calibrtion_cut = true;
+
+            if(calibrtion_cut && cur_goodness > goodness_Kasa_)
+            {
+                //std::cout << "before: " << calibrtion_cut << "," << cur_goodness << std::endl;
+
                 goodness_Kasa_ = cur_goodness;
                 center_x_Kasa_ = cur_A;
                 center_y_Kasa_ = cur_B;
                 r_Kasa_        = cur_R;
                 hits_chosen_.assign(hits_store_.begin(),     hits_store_.end());
                 hits_no_chosen_.assign(hits_no_store_.begin(), hits_no_store_.end());
+
+                //std::cout << "after: " << calibrtion_cut << "," << goodness_Kasa_ << std::endl;
             }
                                                                     
             x_store_.erase(x_store_.end() - 1);
             y_store_.erase(y_store_.end() - 1);
+            oth_store_.erase(oth_store_.end() - 1);
             hits_store_.erase(hits_store_.end() - 1);
             hits_no_store_.erase(hits_no_store_.end() - 1);
         }
@@ -213,8 +302,9 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
     {
         hits_no_store_.push_back(hitsNo);
         hits_store_.emplace_back(itMap->second.at(hitsNo));
-        x_store_.push_back((*itMap->second.at(hitsNo)).GetU());
+        x_store_.push_back((*itMap->second.at(hitsNo)).GetX());
 	y_store_.push_back((*itMap->second.at(hitsNo)).GetZ());
+        oth_store_.push_back((*itMap->second.at(hitsNo)).GetY());
 
         GreedyLooping(clusteredTrkHitsInLayer, itMap--, cirNo);
 
@@ -222,6 +312,7 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
         hits_store_.erase(hits_store_.end() - 1);
         x_store_.erase(x_store_.end() - 1);
         y_store_.erase(y_store_.end() - 1);
+        oth_store_.erase(oth_store_.end() - 1);
         itMap++; 
     }
 
