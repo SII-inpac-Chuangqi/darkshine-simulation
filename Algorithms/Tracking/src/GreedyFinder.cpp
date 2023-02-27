@@ -248,6 +248,7 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
 
             const size_t N = x_store_.size();
             bool calibrtion_cut = true;
+/*
             if(N > 2)
             {
                 double *x = &y_store_.at(0);
@@ -262,6 +263,7 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                     calibrtion_cut = dis < 6.;
                     if(!calibrtion_cut) break;
                 }
+*/
 /*
                 if(calibrtion_cut)
                 {
@@ -270,9 +272,8 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                     std::cout << "goodness " << cur_goodness << std::endl;
                 }
 */
-            }
+//            }
             //std::cout << std::endl;
-            //calibrtion_cut = true;
 
             if(calibrtion_cut && cur_goodness > goodness_Kasa_)
             {
