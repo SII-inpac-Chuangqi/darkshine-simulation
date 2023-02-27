@@ -20,18 +20,21 @@
 //Constructor
 //................................................................................//
 TrkHit::TrkHit(const TrkHit &newTrkHit) : SimulatedHit(newTrkHit),
-                                          u(newTrkHit.u),
-                                          v(newTrkHit.v)
+                                          if_in_track_(newTrkHit.if_in_track_),
+                                          u_(newTrkHit.u_),
+                                          v_(newTrkHit.v_)
 {}
 
 TrkHit::TrkHit(TrkHit &&newTrkHit) : SimulatedHit(std::move(newTrkHit)),
-                                     u(std::move(newTrkHit.u)),
-                                     v(std::move(newTrkHit.v))
+                                     if_in_track_(std::move(newTrkHit.if_in_track_)),
+                                     u_(std::move(newTrkHit.u_)),
+                                     v_(std::move(newTrkHit.v_))
 {}
 
 TrkHit::TrkHit(const SimulatedHit &newSimuHit) : SimulatedHit(newSimuHit),
-                                                 u(RETURN),
-                                                 v(RETURN)
+                                                 if_in_track_(RETURN),
+                                                 u_(RETURN),
+                                                 v_(RETURN)
 {}
 
 void TrkHit::operator =(const TrkHit &oldTrkHit)
@@ -42,11 +45,12 @@ void TrkHit::operator =(const TrkHit &oldTrkHit)
         CellID_X = oldTrkHit.CellID_X;
         CellID_Y = oldTrkHit.CellID_Y;
         CellID_Z = oldTrkHit.CellID_Z;
-        X = oldTrkHit.X;       Y = oldTrkHit.Y;        Z = oldTrkHit.Z;
+        X = oldTrkHit.X;         Y = oldTrkHit.Y;         Z = oldTrkHit.Z;
         T = oldTrkHit.T;
         E = oldTrkHit.E;
 
-        u = oldTrkHit.u;       v = oldTrkHit.v;
+        if_in_track_ = oldTrkHit.if_in_track_;
+        u_ = oldTrkHit.u_;       v_ = oldTrkHit.v_;
     }
 }
 

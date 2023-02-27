@@ -3,6 +3,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <algorithm>
 
 //................................................................................//
 //ROOT
@@ -197,6 +198,19 @@ double DTrack::GetChi2()
     return chi2_;
 }
 
+double DTrack::GetDeltaR(const DTrack *another) const
+{
+    int size = this->hits_.size() < another->hits_.size() ? this->hits_.size() : another->hits_.size();
+
+    double delta_R = 0.;
+    for(int i = 0; i < size; i++)
+        delta_R += std::hypot(this->hits_.at(i)->GetX() - another->hits_.at(i)->GetX(),
+                              this->hits_.at(i)->GetY() - another->hits_.at(i)->GetY());
+    delta_R /= size;
+
+    return delta_R;
+}
+
 std::vector<double> DTrack::GetExtrapolated(tracking::direction extrop_dir)
 {
     if(!if_extrapolated_)
@@ -229,6 +243,11 @@ void DTrack::ExceptionHandler(const std::vector<double> &magnet)
     }
 
     By_ = magnet.at(1);
+}
+
+void DTrack::Remove(int i)
+{
+    hits_.erase(std::remove(hits_.begin(), hits_.end(), hits_.at(i)), hits_.end());
 }
 
 void DTrack::Fit(int method)

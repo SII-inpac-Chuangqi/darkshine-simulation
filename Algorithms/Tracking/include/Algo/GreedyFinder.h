@@ -49,9 +49,9 @@ public:
     virtual double GetCenterX(int i) const override {return center_x_.at(i); } //x direction in detector!
     virtual double GetCenterY(int i) const override {return center_y_.at(i); } //z direction in detector!
     virtual double GetChi2   (int i) const override {return goodness_.at(i);}
-    virtual int    GetTrackNo(     ) const override {return VecHitChosen.size();}
-    virtual std::vector<TrkHitPVec>::iterator First() override {return VecHitChosen.begin();}
-    virtual std::vector<TrkHitPVec>::iterator Last () override {return VecHitChosen.end();  }
+    virtual int    GetTrackNo(     ) const override {return tracks_chosen_.size();}
+    virtual std::vector<TrkHitPVec>::iterator First() override {return tracks_chosen_.begin();}
+    virtual std::vector<TrkHitPVec>::iterator Last () override {return tracks_chosen_.end();  }
 
     int GetCircleNo() const {return circleNo;}
 
@@ -64,10 +64,13 @@ private:
 //Finding method
 //................................................................................//
 //Finding control
+    TrkHitPVecMap GetTempHitMap(TrkHitPVecMap &clusteredTrkHitsInLayer);
     void GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer);
     void GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                        TrkHitPVecMap::iterator itMap,
                        int cirNo);
+    void CutTracks();
+    void SortTracks();
 
 //................................................................................//
 //Kasa method
@@ -83,9 +86,9 @@ private:
 //................................................................................//
 //Choice storage
 //................................................................................//
-//Global choice
+//Final choice
     int minDepth = 3;
-    double goodnessCut = 0.99;
+    double goodnessCut = 0.9;
 
     int circleNo{0};
     std::vector<double> r_;
@@ -96,19 +99,20 @@ private:
     //double centerX[NUM] = {RETURN};
     //double centerY[NUM] = {RETURN};
     //double goodness[NUM] = {RETURN};
-    std::vector<TrkHitPVec> VecHitChosen;
+    std::vector<TrkHitPVec> tracks_chosen_;
 
 //................................................................................//
 //Current choice
-    TrkHitPVec hitChosen;
-    std::vector<int> hitNoChosen;
+    TrkHitPVec hits_chosen_;
+    std::vector<int> hits_no_chosen_;
 
 //................................................................................//
 //Temp Choice
-    TrkHitPVec hitStore;
-    std::vector<double> xStore;
-    std::vector<double> yStore;
-    std::vector<int> hitNoStore;
+    TrkHitPVec hits_store_;
+    std::vector<double> x_store_;
+    std::vector<double> y_store_;
+    std::vector<double> oth_store_;
+    std::vector<int> hits_no_store_;
 };
 
 #endif

@@ -4,8 +4,8 @@
 //................................................................................//
 //CPP Libraries
 #include <iostream>
+#include <string>
 #include <map>
-#include <vector>
 
 //................................................................................//
 //ROOT
@@ -59,31 +59,7 @@ const std::map<std::string, int> ProcessTag = {{"",                      0},
 bool InTagTrack(double x, double y, double z);
 bool InRecTrack(double x, double y, double z);
 
-//Get median, stl containers not supported in TMath
-template<class T>
-double GetMedian(const std::vector<T> &vec)
-{
-    if(vec.size() <= 0)
-    {
-        std::cerr << "vec size < 1" << std::endl;
-        abort();
-    }
-
-    std::vector<T> temp(vec);
-    if(temp.size()%2)
-    {
-        std::nth_element(temp.begin(), temp.begin() + temp.size()/2, temp.end());
-        return temp.at(temp.size()/2);
-    }
-    else
-    {
-        double median;
-        std::nth_element(temp.begin(), temp.begin() + temp.size()/2, temp.end());
-        median = temp.at(temp.size()/2);
-        std::nth_element(temp.begin(), temp.begin() + temp.size()/2 - 1, temp.end());
-        median += temp.at(temp.size()/2 - 1);
-        return 0.5*median;        
-    }
-}
-
+//
+void LinearFit(double abr[], double x[], double y[], int n);
+double PointToLineDistance(double A, double B, double C, double x, double y);
 #endif

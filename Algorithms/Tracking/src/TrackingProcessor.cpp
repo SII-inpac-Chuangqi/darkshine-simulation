@@ -184,10 +184,10 @@ void TrackingProcessor::InitEvt() {
 
     //std::vector<DTrack>().swap(tag_tracks_);
     //std::vector<DTrack>().swap(rec_tracks_);
-    //for(size_t i = 0; i < tag_tracks_.size(); i++) {delete tag_tracks_.at(i); tag_tracks_.at(i) = nullptr;}
-    //for(size_t i = 0; i < rec_tracks_.size(); i++) {delete rec_tracks_.at(i); rec_tracks_.at(i) = nullptr;}
-    tag_tracks_.clear();
-    rec_tracks_.clear();
+    for(size_t i = 0; i < tag_tracks_.size(); i++) {tag_tracks_.at(i).reset();}
+    for(size_t i = 0; i < rec_tracks_.size(); i++) {rec_tracks_.at(i).reset();}
+    tag_tracks_.clear(); tag_tracks_.shrink_to_fit();
+    rec_tracks_.clear(); rec_tracks_.shrink_to_fit();
 
     std::vector<double>().swap(TagTrk2_x);
     std::vector<double>().swap(TagTrk2_y);
@@ -513,6 +513,15 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                           { return track1->GetPp() > track2->GetPp(); } );
         std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](std::unique_ptr<DTrack> &track1, std::unique_ptr<DTrack> &track2)
                                                           { return track1->GetPp() > track2->GetPp(); } );
+/*
+        for(size_t i = 0; i < rec_tracks_.size(); i++)
+        {
+            for(size_t j = i + 1; j < rec_tracks_.size(); j++)
+            {
+                std::cout << rec_tracks_.at(i)->GetDeltaR(rec_tracks_.at(j).get()) << std::endl;
+            }
+        }
+*/
 
         for(auto &track : tag_tracks_)
         {
@@ -548,16 +557,16 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
          
                 std::vector<double> track_x;
                 std::vector<double> track_y;
-                //std::vector<double> track_z;
+                std::vector<double> track_z;
                 for(int hit = 0; hit < track->GetSize(); hit++)
                 {
                     track_x.push_back(track->At(hit)->GetX());
                     track_y.push_back(track->At(hit)->GetY());
-                    //track_z.push_back(track->At(hit)->GetZ());
+                    track_z.push_back(track->At(hit)->GetZ());
                 }
                 RecTrk2_track_x.push_back(track_x);
                 RecTrk2_track_y.push_back(track_y);
-                //RecTrk2_track_z.push_back(track_z);
+                RecTrk2_track_z.push_back(track_z);
 
                 //auto extrapolated_x = track->GetExtrapolated(tracking::dX);
                 //auto extrapolated_y = track->GetExtrapolated(tracking::dY);
