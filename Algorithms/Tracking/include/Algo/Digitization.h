@@ -115,6 +115,7 @@ private:
     int GetNextClusterSeed(const vector<Point> &points);
     void MakeClusterPoints(const TrkHitPVec &trk_hits, std::vector<Point> &points);
     void MakeCluster(std::vector<Point> &points, std::vector<Cluster*> &clusters);
+    void MergeCluster(std::vector<Cluster*> &clusters);
 
     bool if_strip_{true};
     bool if_smear_{true};

@@ -47,8 +47,8 @@ public:
     void SetZ(double newZ) {setZ(newZ);}
     void SetE(double newE) {setE(newE);}
 
-    void SetU(double newU) {u = newU;}
-    void SetV(double newV) {v = newV;}
+    void SetU(double newU) {u_ = newU;}
+    void SetV(double newV) {v_ = newV;}
 //................................................................................//
 //Get
 //................................................................................//
@@ -62,13 +62,15 @@ public:
     double GetZ() const {return getZ();}
     double GetE() const {return getE();}
 
-    double GetU() const {return u;}
-    double GetV() const {return v;}
+    double GetU() const {return u_;}
+    double GetV() const {return v_;}
 
 protected:
 
-    double u = RETURN;
-    double v = RETURN;
+    bool if_in_track_{false};
+
+    double u_{RETURN};
+    double v_{RETURN};
 
 private:
 };
