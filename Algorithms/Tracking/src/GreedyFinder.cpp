@@ -34,7 +34,7 @@ GreedyFinder::GreedyFinder(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDep
     goodnessCut = newGoodnessCut;
 
     GreedyLooping(clusteredTrkHitsInLayer);
-    CutTracks();
+    //CutTracks();
     SortTracks();
 }
 
@@ -51,37 +51,6 @@ void GreedyFinder::CutTracks()
     size_t n = 0;
     for(auto &track : tracks_chosen_)
     {
-/*
-        const size_t N = track.size();
-        double *x = new double[N - 1];
-        double *y = new double[N - 1];
-
-        for(size_t i = 0; i < N; i++)
-        {
-            std::cout << "rm (" << track.at(i)->GetY() << "," << track.at(i)->GetZ() << ")\t";
-
-            size_t k = 0;
-            for(size_t j = 0; j < N; j++)
-            {
-                if(j == i) continue;
-
-                x[k] = track.at(j)->GetZ();
-                y[k] = track.at(j)->GetY();
-                k++;
-            }
-
-            double abr[3];
-            LinearFit(abr, x, y, N - 1);
-            std::cout << std::showpos << "y="<< abr[0] << "x" << abr[1] << "\t";
-            std::cout << "r^2=" << abr[2] << std::noshowpos << std::endl;
-        }
-        std::cout << 0.3*1.5*r_.at(n) << "\n" << std::endl;
-
-        delete[] x; x = nullptr;
-        delete[] y; y = nullptr;
-        n++;
-*/
-
         const size_t N = track.size();
         double *x = new double[N];
         double *y = new double[N];
@@ -248,7 +217,7 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
 
             const size_t N = x_store_.size();
             bool calibrtion_cut = true;
-/*
+
             if(N > 2)
             {
                 double *x = &y_store_.at(0);
@@ -263,7 +232,7 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                     calibrtion_cut = dis < 6.;
                     if(!calibrtion_cut) break;
                 }
-*/
+
 /*
                 if(calibrtion_cut)
                 {
@@ -272,7 +241,7 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                     std::cout << "goodness " << cur_goodness << std::endl;
                 }
 */
-//            }
+            }
             //std::cout << std::endl;
 
             if(calibrtion_cut && cur_goodness > goodness_Kasa_)

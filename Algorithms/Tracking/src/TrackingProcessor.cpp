@@ -200,8 +200,8 @@ void TrackingProcessor::InitEvt() {
 
     TagTrk2_track_No_truth = 0;
     RecTrk2_track_No_truth = 0;
-    TagTrk2_track_No = 0;
-    RecTrk2_track_No = 0;
+    TagTrk2_track_No = -1;
+    RecTrk2_track_No = -1;
 
     TagTrk2_pp_truth_ini = RETURN;
     TagTrk2_pp_truth_fin = RETURN;
