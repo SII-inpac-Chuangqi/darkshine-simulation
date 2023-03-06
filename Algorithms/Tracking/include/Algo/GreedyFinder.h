@@ -64,6 +64,7 @@ private:
 //Finding method
 //................................................................................//
 //Finding control
+//................................................................................//
     TrkHitPVecMap GetTempHitMap(TrkHitPVecMap &clusteredTrkHitsInLayer);
     void GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer);
     void GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
