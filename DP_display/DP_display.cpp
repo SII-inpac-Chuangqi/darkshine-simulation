@@ -3,6 +3,7 @@
 //
 
 #include "DEventDisplay.h"
+#include "DisData.h"
 
 #include "TFile.h"
 
@@ -44,9 +45,12 @@ int main(int argc, char **argv) {
         }
     }
 
+    DisData::CreateInstance();
+    dDisData->SetGeoFile(geo_file_in);
+
     auto EvtDisplay = new DEventDisplay();
     EvtDisplay->readFile(file_in);
-    EvtDisplay->readGeo(geo_file_in);
+    EvtDisplay->readGeo(dDisData->GetGeoFile());
 
     EvtDisplay->inspectMainRegion();
     if (batch_mode)

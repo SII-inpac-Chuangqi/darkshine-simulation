@@ -224,7 +224,8 @@ TEveTrack *DEventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned /*i
     EndPoint->fV.Set(endpoint);
 
     auto *track = new TEveTrack(&rt, trkProp);
-    track->SetCharge(mc->getPdg() / abs(mc->getPdg()));
+    double charge = TDatabasePDG::Instance()->GetParticle(mc->getPdg()) ? TDatabasePDG::Instance()->GetParticle(mc->getPdg())->Charge() : 0;
+    track->SetCharge(charge);
     track->SetName(Form("Trk %d: PDG %d", rt.GetUniqueID(), rt.GetPdgCode()));
     track->SetPdg(mc->getPdg());
     track->SetLineColor(PDG_Color[mc->getPdg()]);
