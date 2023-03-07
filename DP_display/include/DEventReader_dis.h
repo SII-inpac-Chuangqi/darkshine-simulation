@@ -31,6 +31,8 @@ public:
     Int_t ReadFile(const std::string &filename);
     Int_t ReadTree(const std::string &treename, TFile* f);
 
+    TFile* getFile() const {return f;}
+
     const shared_ptr<AnaEvent> &getEvt() const {
         return evt;
     }
