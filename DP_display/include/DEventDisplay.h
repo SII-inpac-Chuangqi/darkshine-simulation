@@ -45,6 +45,7 @@
 //#include "DEventReader_dis.h"
 #include "DSMagneticField.h"
 #include "CaloHitsDisplay.h"
+#include "TDatabasePDG.h"
 
 class CaloHitsDisplay;
 
@@ -117,9 +118,12 @@ public:
     // Read Data from root file
     bool readFile(const TString &file_in);
 
-    bool readGeo(const TString &file_in = "");
+    //bool readGeo(const TString &file_in = "");
+    bool readGeo(TFile* geo_file);
 
     bool readEvt(const TString &file_in = "");
+
+    TFile* getGeo() {return EvtReader->getDataFile();}
 
     // Draw Detector Geometry
     bool drawDetector();
