@@ -14,7 +14,7 @@ SET(Display_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/include/DEventReader_dis.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/DSMagneticField.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/CaloHitsDisplay.h
-
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/DisData.h
         ${PROJECT_SOURCE_DIR}/DP_ana/include/Event/EventReader.h
         ${PROJECT_SOURCE_DIR}/DP_ana/include/Event/EventStoreAndWriter.h
         )
@@ -27,7 +27,7 @@ SET(Display_source
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DEventDisplay_DrawEvent.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DEventReader_dis.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/CaloHitsDisplay.cpp
-
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/DisData.cpp
         ${PROJECT_SOURCE_DIR}/DP_ana/src/EventReader.cpp
         ${PROJECT_SOURCE_DIR}/DP_ana/src/EventStoreAndWriter.cpp
         )

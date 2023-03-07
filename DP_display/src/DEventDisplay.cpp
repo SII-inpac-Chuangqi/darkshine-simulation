@@ -29,13 +29,13 @@
 void DEventDisplay::Initialize() {
     // Need to initialize gApplication and gEve first
     if ((!gApplication) || (gApplication && gApplication->TestBit(TApplication::kDefaultApplication))) {
-        std::cout << "In DEventDisplay ctor: gApplication not found, creating..." << std::flush;
+        std::cout << "[Info] ==> In DEventDisplay ctor: gApplication not found, creating..." << std::flush;
         new TApplication("ROOT_application", nullptr, nullptr);
         std::cout << "done!" << std::endl;
 
     }
     if (!gEve) {
-        std::cout << "In DEventDisplay ctor: gEve not found, creating..." << std::flush;
+        std::cout << "[Info] ==> In DEventDisplay ctor: gEve not found, creating..." << std::flush;
         TEveManager::Create();
         std::cout << "done!" << std::endl;
 
@@ -129,23 +129,11 @@ bool DEventDisplay::readFile(const TString &file_in) {
     return true;
 }
 
-bool DEventDisplay::readGeo(const TString &file_in) {
+//bool DEventDisplay::readGeo(const TString &file_in) {
+bool DEventDisplay::readGeo(TFile *geo_file) {
     // Read Geometry from ROOT file
-//    auto file = std::shared_ptr<TFile>(new TFile(file_in));
-//    if (!file) {
-//        std::cerr << "[Display] ==> file: " << file_in << " not existed or broken..." << std::endl;
-//        return false;
-//    }
-//    auto file = f;
-//    if (file_in != "") file = new TFile(file_in);
-//    std::cout << "[Read Geometry] ==> Geometry from file: " << file_in << std::endl;
-//    gGeoManager = (TGeoManager *) file->Get("DetGeoManager");
-//    if (!gGeoManager) {
-//        std::cerr << "[Display] ==> No Geometry in the file..." << std::endl;
-//        return false;
-//    }
-
-    EvtReader->ReadGeometry(file_in.Data());
+    gGeoManager = geo_file->Get<TGeoManager>("DetGeoManager");
+    //EvtReader->ReadGeometry(file_in.Data());
 
     world_node = shared_ptr<TGeoNode>(dynamic_cast<TGeoNode *>(gGeoManager->GetListOfNodes()->At(0)));
 

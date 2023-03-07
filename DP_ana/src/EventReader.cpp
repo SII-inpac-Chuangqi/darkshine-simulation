@@ -138,10 +138,10 @@ void EventReader::ReadGeometry(const std::string &filename) {
         return;
     }
 
-    std::cout << "[ READ Geometry ] ==> reading geometry from file: " << data_file->GetName() << std::endl;
+    std::cout << "[Read Geometry] ==> reading geometry from file: " << data_file->GetName() << std::endl;
     gGeoManager = (TGeoManager *) data_file->Get("DetGeoManager");
     if (!gGeoManager) {
-        std::cerr << "[ READ Geometry ] ==> No Geometry in the file..." << std::endl;
+        std::cerr << "[Read Geometry] ==> No Geometry in the file..." << std::endl;
         return;
     }
 }

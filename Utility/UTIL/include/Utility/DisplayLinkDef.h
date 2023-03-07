@@ -19,6 +19,7 @@
 #pragma link C++ class DSMagneticField+;
 #pragma link C++ class CaloHitsDisplay+;
 #pragma link C++ class DEventDisplay+;
+#pragma link C++ class DisData+;
 
 #endif
 
