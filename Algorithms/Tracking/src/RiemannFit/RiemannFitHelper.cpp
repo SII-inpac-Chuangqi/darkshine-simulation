@@ -20,6 +20,21 @@ RiemannFitHelper::RiemannFitHelper()
 {
 }
 
+double GetMagnetX(double x, double y, double z)
+{
+    return dAnaData->getMagnetFieldAt({x, y, z}).at(0);
+}
+
+double GetMagnetY(double x, double y, double z)
+{
+    return dAnaData->getMagnetFieldAt({x, y, z}).at(1);
+}
+
+double GetMagnetZ(double x, double y, double z)
+{
+    return dAnaData->getMagnetFieldAt({x, y, z}).at(2);
+}
+
 void RiemannFitHelper::SetMeasurementError(double cluster_width, double angle)
 {
     measurement_error_[0] = cluster_width/std::sqrt(12);
