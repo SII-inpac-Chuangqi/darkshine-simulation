@@ -73,14 +73,6 @@ public:
         eventNumber = eventnumber;
     }
 
-    int getBeamOnNumber() const {
-        return beamonNumber;
-    }
-
-    void setBeamOnNumber(int beamonnumber) {
-        beamonNumber = beamonnumber;
-    }
-
     int getSkipNumber() const {
         return skipNumber;
     }
@@ -113,7 +105,6 @@ private:
     int runNumber{0};
     int eventNumber{-1};
     int skipNumber{0};
-    int beamonNumber{0};
     int eventProcessedNumber{0};
 
     double ECAL_Leak{0.};
