@@ -145,6 +145,15 @@ public:
 //Get normal vector of fitteed plane
     TMatrixD GetNormalVecs(const TMatrixD &g, const TMatrixD &x_g);
 
+
+//................................................................................//
+//Get covariance matrix of delta x in Cartesian coordinates
+    TMatrixD GetVcartx(const TrkHitPVec &track);
+
+//..............................................................................//
+//Get covariance matrix of delta x in RΦ-R coordinate
+    TMatrixD GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, const TMatrixD &j2);
+
 private:
     int dim_{0};
     double pre_R_{0.};
