@@ -230,6 +230,69 @@ TMatrixD RiemannFitter::GetVcart0()
     return v_cart0;
 }
 
+//..............................................................................//
+//Get covariance matrix of dx in Cartesian coordinates 
+TMatrixD RiemannFitter::GetVcartx(const TrkHitPVec &track)
+{
+    double pT=0.3 * RiemannFitHelper::GetMagnetAtOrigin(tracking::dY) * pre_R_; // momentum, MeV    
+
+    double Zk[dim_];
+    double Bk[dim_];
+    double Ak[dim_];
+    double deltaSinak[dim_];
+    double deltaXk[dim_];
+
+    for (int i =0; i < dim_; i++)
+    {
+        Zk[i] = track.at(i)->GetZ() - pre_Yc_;
+        Bk[i] = RiemannFitHelper::GetMagnetY(0.0, 0.0, Zk[i]);
+        if(i==0)
+        {
+            Ak[i]=0.0;
+        }
+        else
+        {
+            Ak[i]=(Bk[i-1] - Bk[0])*(Zk[i] - Zk[i-1]) - 0.5 * (Bk[i] - Bk[i-1]) * (Zk[i] + Zk[i-1]);
+        }
+        
+        double temp = 0.0;
+        for (int j =0; j <i+1; j++)
+        {
+            temp = temp + Ak[j];
+        }
+        deltaSinak[i] = 0.3 / pT * temp;
+
+        if(i==0)
+        {
+        deltaXk[i] = 0;
+        }
+        else
+        {
+            deltaXk[i] = (Zk[i] - Zk[i-1]) * (deltaSinak[i] + deltaSinak[i-1]) * 0.5;
+        }
+    }
+
+
+    TArrayD data(4*dim_*dim_);
+    for (int i = 0; i < dim_; i++)
+    {
+        for (int j = 0; j < dim_; j++)
+        {
+            if(i==j)
+            {
+                data[j + 2*i*dim_] = deltaXk[i] * deltaXk[i];
+
+            }
+        }
+    }
+
+    TMatrixD v_cartx(2*dim_, 2*dim_);
+    v_cartx.SetMatrixArray(data.GetArray());
+
+    return v_cartx;
+}
+
+
 //................................................................................//
 //Get Jacobian matrix from Cartesian to polar coordinate
 TMatrixD RiemannFitter::GetJ1(const TrkHitPVec &track)
@@ -303,6 +366,14 @@ TMatrixD RiemannFitter::GetVrad0(const TMatrixD &v_cart0, const TMatrixD &j1, co
 {
     TMatrixD v_rad0(j2*j1*v_cart0, TMatrixD::kMultTranspose, j2*j1);
     return v_rad0;
+}
+
+//................................................................................//
+//Get covariance matrix of dx in RΦ-R coordinate
+TMatrixD RiemannFitter::GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, const TMatrixD &j2)
+{
+    TMatrixD v_radx(j2*j1*v_cartx, TMatrixD::kMultTranspose, j2*j1);
+        return v_radx;
 }
 
 //................................................................................//

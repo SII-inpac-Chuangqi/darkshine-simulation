@@ -20,17 +20,17 @@ RiemannFitHelper::RiemannFitHelper()
 {
 }
 
-double GetMagnetX(double x, double y, double z)
+double RiemannFitHelper::GetMagnetX(double x, double y, double z)
 {
     return dAnaData->getMagnetFieldAt({x, y, z}).at(0);
 }
 
-double GetMagnetY(double x, double y, double z)
+double RiemannFitHelper::GetMagnetY(double x, double y, double z)
 {
     return dAnaData->getMagnetFieldAt({x, y, z}).at(1);
 }
 
-double GetMagnetZ(double x, double y, double z)
+double RiemannFitHelper::GetMagnetZ(double x, double y, double z)
 {
     return dAnaData->getMagnetFieldAt({x, y, z}).at(2);
 }
