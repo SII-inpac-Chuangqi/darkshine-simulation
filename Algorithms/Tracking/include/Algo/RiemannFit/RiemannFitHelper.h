@@ -1,6 +1,8 @@
 #ifndef RIEMANNFIT_RIEMANN_FIT_HELPER_H
 #define RIEMANNFIT_RIEMANN_FIT_HELPER_H
 
+#include "Core/AnaData.h"
+
 #include "Algo/RiemannFit/RiemannFitter.h"
 
 class RiemannFitHelper
@@ -16,6 +18,9 @@ public:
     static void SetMagnetAtOrigin(double Bx, double By, double Bz)
     {magnet_at_origin_[0] = Bx; magnet_at_origin_[1] = By; magnet_at_origin_[2] = Bz;}
     static double GetMagnetAtOrigin(unsigned int i) {if(i < 3) return magnet_at_origin_[i]; return 0.;}
+    static double GetMagnetX(double x, double y, double z);
+    static double GetMagnetY(double x, double y, double z);
+    static double GetMagnetZ(double x, double y, double z);
 
     static void SetTrackerLayerThickness(double tracker_layer_thickness) {tracker_layer_thickness_ = tracker_layer_thickness;}
 //................................................................................//
