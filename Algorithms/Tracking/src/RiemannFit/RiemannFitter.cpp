@@ -250,6 +250,8 @@ TMatrixD RiemannFitter::GetVcartx(const TrkHitPVec &track)
 
     for (int i =0; i < dim_; i++)
     {
+        Xk[i] = track.at(i)->GetX();
+        Yk[i] = track.at(i)->GetY();
         Zk[i] = track.at(i)->GetZ();
         Bk[i] = RiemannFitHelper::GetMagnetY(Xk[i], Yk[i], Zk[i]);
         if(i==0)
