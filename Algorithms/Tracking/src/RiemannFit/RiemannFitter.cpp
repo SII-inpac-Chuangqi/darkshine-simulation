@@ -60,6 +60,8 @@ void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
         //v_rad0.Print();
         TMatrixD v_radms(GetVradms(polar_coo));
         //v_radms.Print();
+        TMatrixD v_cartx(GetVcartx(track));
+        v_cartx.Print();
         TMatrixD g(GetG(v_rad0, v_radms));
         //g.Print();
         TMatrixD w(GetW(g));
@@ -373,7 +375,7 @@ TMatrixD RiemannFitter::GetVrad0(const TMatrixD &v_cart0, const TMatrixD &j1, co
 TMatrixD RiemannFitter::GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, const TMatrixD &j2)
 {
     TMatrixD v_radx(j2*j1*v_cartx, TMatrixD::kMultTranspose, j2*j1);
-        return v_radx;
+    return v_radx;
 }
 
 //................................................................................//
