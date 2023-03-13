@@ -14,9 +14,18 @@
 //Constructor
 RiemannFitter::RiemannFitter(const TrkHitPVec &track, std::initializer_list<double> list)
 {
-    this->Init(track, list);
-    this->Fit (track, {});
-    this->Fill(track, {});
+    try
+    {
+        this->Init(track, list);
+        this->Fit (track, {});
+        this->Fill(track, {});
+    }
+    catch(...)
+    {
+        std::cerr << "Error" << std::endl;
+        pp = RETURN;
+        return;
+    }
 }
 
 //................................................................................//
@@ -102,9 +111,10 @@ void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
     //std::cout << 0.3*abs(RiemannFitHelper::GetMagnetAtOrigin(tracking::dY)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_) << " MeV" << std::endl;
 }
 
-void RiemannFitter::Fill(const TrkHitPVec&, std::initializer_list<double>)
+void RiemannFitter::Fill(const TrkHitPVec& track, std::initializer_list<double>)
 {
-    pp = 0.3*abs(RiemannFitHelper::GetMagnetAtOrigin(tracking::dY)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
+    size_t i = dim_/2;
+    pp = 0.3*abs(RiemannFitHelper::GetMagnetY(track.at(i)->GetX(), track.at(i)->GetY(), track.at(i)->GetZ())*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
 }
 
 //................................................................................//
@@ -389,11 +399,11 @@ TMatrixD RiemannFitter::GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, co
 TMatrixD RiemannFitter::GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms, const TMatrixD &v_radx)
 {
     TMatrixD f(v_rad0, TMatrixD::kPlus, v_radms);
-    f.Invert();
-    //TMatrixD g(f, TMatrixD::kPlus, v_radx);
-    //g.Invert();
+    //f.Invert();
+    TMatrixD g(f, TMatrixD::kPlus, v_radx);
+    g.Invert();
 
-    return f;
+    return g;
 }
 
 //................................................................................//
