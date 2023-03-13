@@ -52,6 +52,8 @@ void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
         
         TMatrixD v_cart0(GetVcart0());
         //v_cart0.Print();
+        TMatrixD v_cartx(GetVcartx(track));
+        //v_cartx.Print();
         TMatrixD j1(GetJ1(track));
         //j1.Print();
         TMatrixD j2(GetJ2(track));
@@ -60,7 +62,9 @@ void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
         //v_rad0.Print();
         TMatrixD v_radms(GetVradms(polar_coo));
         //v_radms.Print();
-        TMatrixD g(GetG(v_rad0, v_radms));
+        TMatrixD v_radx(GetVradx(v_cartx, j1, j2));
+        //v_radx.Print();
+        TMatrixD g(GetG(v_rad0, v_radms, v_radx));
         //g.Print();
         TMatrixD w(GetW(g));
         //w.Print();
@@ -236,16 +240,18 @@ TMatrixD RiemannFitter::GetVcartx(const TrkHitPVec &track)
 {
     double pT=0.3 * RiemannFitHelper::GetMagnetAtOrigin(tracking::dY) * pre_R_; // momentum, MeV    
 
-    double Zk[dim_];
-    double Bk[dim_];
-    double Ak[dim_];
-    double deltaSinak[dim_];
-    double deltaXk[dim_];
+    std::vector<double> Xk(dim_, 0.0);
+    std::vector<double> Yk(dim_, 0.0);
+    std::vector<double> Zk(dim_, 0.0);
+    std::vector<double> Bk(dim_, 0.0);
+    std::vector<double> Ak(dim_, 0.0);
+    std::vector<double> deltaSinak(dim_, 0.0);
+    std::vector<double> deltaXk(dim_, 0.0);
 
     for (int i =0; i < dim_; i++)
     {
-        Zk[i] = track.at(i)->GetZ() - pre_Yc_;
-        Bk[i] = RiemannFitHelper::GetMagnetY(0.0, 0.0, Zk[i]);
+        Zk[i] = track.at(i)->GetZ();
+        Bk[i] = RiemannFitHelper::GetMagnetY(Xk[i], Yk[i], Zk[i]);
         if(i==0)
         {
             Ak[i]=0.0;
@@ -373,14 +379,15 @@ TMatrixD RiemannFitter::GetVrad0(const TMatrixD &v_cart0, const TMatrixD &j1, co
 TMatrixD RiemannFitter::GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, const TMatrixD &j2)
 {
     TMatrixD v_radx(j2*j1*v_cartx, TMatrixD::kMultTranspose, j2*j1);
-        return v_radx;
+    return v_radx;
 }
 
 //................................................................................//
 //Get final covariance matrix
-TMatrixD RiemannFitter::GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms)
+TMatrixD RiemannFitter::GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms, const TMatrixD &v_radx)
 {
-    TMatrixD g(v_rad0, TMatrixD::kPlus, v_radms);
+    TMatrixD f(v_rad0, TMatrixD::kPlus, v_radms);
+    TMatrixD g(f, TMatrixD::kPlus, v_radx);
     g.Invert();
 
     return g;

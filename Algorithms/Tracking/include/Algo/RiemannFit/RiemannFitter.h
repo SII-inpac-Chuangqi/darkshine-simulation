@@ -122,7 +122,7 @@ public:
 //................................................................................//
 //Get inverse of the final covariance matrix
 // G = V^-1, V = V_rad_ms (multiple scattering) + V_rad_0 (measurement)
-    TMatrixD GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms);
+    TMatrixD GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms, const TMatrixD &v_radx);
 
 //................................................................................//
 //Get weights
