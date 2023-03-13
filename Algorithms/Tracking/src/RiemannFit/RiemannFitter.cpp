@@ -270,7 +270,8 @@ TMatrixD RiemannFitter::GetVcartx(const TrkHitPVec &track)
         }
         else
         {
-            Ak[i]=(Bk[i-1] - Bk[0])*(Zk[i] - Zk[i-1]) - 0.5 * (Bk[i] - Bk[i-1]) * (Zk[i] + Zk[i-1]);
+            //Ak[i]=(Bk[i-1] - Bk[0]) * (Zk[i] - Zk[i-1]) + 0.5 * (Bk[i] - Bk[i-1]) * (Zk[i] + Zk[i-1]) - (Bk[i] - Bk[i-1]) * Zk[i-1];
+            Ak[i]=0.5 * (Bk[i] + Bk[i-1] - 2 * B[0]) * (Zk[i] - Zk[i-1])
         }
         
         double temp = 0.0;
