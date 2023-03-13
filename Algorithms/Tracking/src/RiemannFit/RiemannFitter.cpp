@@ -113,8 +113,12 @@ void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
 
 void RiemannFitter::Fill(const TrkHitPVec& track, std::initializer_list<double>)
 {
-    size_t i = dim_/2;
-    pp = 0.3*abs(RiemannFitHelper::GetMagnetY(track.at(i)->GetX(), track.at(i)->GetY(), track.at(i)->GetZ())*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
+    //size_t i = 0;
+    //pp = 0.3*abs(RiemannFitHelper::GetMagnetY(track.at(i)->GetX(), track.at(i)->GetY(), track.at(i)->GetZ())*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
+    double x = 0.;
+    double y = 0.5*(track.at(0)->GetY() + track.at(dim_ - 1)->GetY());
+    double z = 0.5*(track.at(0)->GetZ() + track.at(dim_ - 1)->GetZ());
+    pp = 0.3*abs(RiemannFitHelper::GetMagnetY(x, y, z)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
 }
 
 //................................................................................//
@@ -271,7 +275,7 @@ TMatrixD RiemannFitter::GetVcartx(const TrkHitPVec &track)
         else
         {
             //Ak[i]=(Bk[i-1] - Bk[0]) * (Zk[i] - Zk[i-1]) + 0.5 * (Bk[i] - Bk[i-1]) * (Zk[i] + Zk[i-1]) - (Bk[i] - Bk[i-1]) * Zk[i-1];
-            Ak[i]=0.5 * (Bk[i] + Bk[i-1] - 2 * B[0]) * (Zk[i] - Zk[i-1])
+            Ak[i]=0.5 * (Bk[i] + Bk[i-1] - 2 * Bk[0]) * (Zk[i] - Zk[i-1]);
         }
         
         double temp = 0.0;
