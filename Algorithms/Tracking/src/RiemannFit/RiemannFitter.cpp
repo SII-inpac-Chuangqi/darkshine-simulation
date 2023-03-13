@@ -389,10 +389,11 @@ TMatrixD RiemannFitter::GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, co
 TMatrixD RiemannFitter::GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms, const TMatrixD &v_radx)
 {
     TMatrixD f(v_rad0, TMatrixD::kPlus, v_radms);
-    TMatrixD g(f, TMatrixD::kPlus, v_radx);
-    g.Invert();
+    f.Invert();
+    //TMatrixD g(f, TMatrixD::kPlus, v_radx);
+    //g.Invert();
 
-    return g;
+    return f;
 }
 
 //................................................................................//
