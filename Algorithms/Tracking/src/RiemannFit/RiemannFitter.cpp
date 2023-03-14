@@ -22,7 +22,7 @@ RiemannFitter::RiemannFitter(const TrkHitPVec &track, std::initializer_list<doub
     }
     catch(...)
     {
-        std::cerr << "Error" << std::endl;
+        std::cerr << "[Error]" << std::endl;
         pp = RETURN;
         return;
     }
@@ -116,8 +116,10 @@ void RiemannFitter::Fill(const TrkHitPVec& track, std::initializer_list<double>)
     //size_t i = 0;
     //pp = 0.3*abs(RiemannFitHelper::GetMagnetY(track.at(i)->GetX(), track.at(i)->GetY(), track.at(i)->GetZ())*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
     double x = 0.;
-    double y = 0.5*(track.at(0)->GetY() + track.at(dim_ - 1)->GetY());
-    double z = 0.5*(track.at(0)->GetZ() + track.at(dim_ - 1)->GetZ());
+    //double y = 0.5*(track.at(0)->GetY() + track.at(dim_ - 1)->GetY());
+    //double z = 0.5*(track.at(0)->GetZ() + track.at(dim_ - 1)->GetZ());
+    double y = 0.;
+    double z = 0.;
     pp = 0.3*abs(RiemannFitHelper::GetMagnetY(x, y, z)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
 }
 
