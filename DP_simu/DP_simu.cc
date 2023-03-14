@@ -47,6 +47,8 @@
 #include "G4EmStandardPhysics_option4.hh"
 #include "DarkPhysics/DarkMatterPhysics.hh"
 #include "G4OpticalPhysics.hh"
+#include "Animation/AnimationData.h"
+#include "argparse/argparse.hpp"
 
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
@@ -118,6 +120,9 @@ int main(int argc, char **argv) {
 
     // Initiate Control Class
     Control::CreateInstance();
+
+    // Initiate Animation Data Class
+    AnimationData::CreateInstance();
 
 //-------------------------------------------------------------------------------
 // Evaluate Arguments
