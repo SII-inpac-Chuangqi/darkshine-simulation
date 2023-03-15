@@ -113,13 +113,11 @@ void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
 
 void RiemannFitter::Fill(const TrkHitPVec& track, std::initializer_list<double>)
 {
-    //size_t i = 0;
-    //pp = 0.3*abs(RiemannFitHelper::GetMagnetY(track.at(i)->GetX(), track.at(i)->GetY(), track.at(i)->GetZ())*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
-    double x = 0.;
-    //double y = 0.5*(track.at(0)->GetY() + track.at(dim_ - 1)->GetY());
-    //double z = 0.5*(track.at(0)->GetZ() + track.at(dim_ - 1)->GetZ());
-    double y = 0.;
-    double z = 0.;
+    auto s = GetSign(track);
+    double y = 0.5*(track.at(0)->GetY() + track.at(dim_ - 1)->GetY());
+    double z = 0.5*(track.at(0)->GetZ() + track.at(dim_ - 1)->GetZ());
+    double x = -s*sqrt(pre_R_*pre_R_ - (z - pre_Yc_)*(z - pre_Yc_)) + pre_Xc_;
+    //std::cout << 0.5*(track.at(0)->GetX() + track.at(dim_ - 1)->GetX()) << "\t" << x << std::endl;
     pp = 0.3*abs(RiemannFitHelper::GetMagnetY(x, y, z)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
 }
 
