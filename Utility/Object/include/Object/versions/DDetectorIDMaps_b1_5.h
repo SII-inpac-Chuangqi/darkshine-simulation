@@ -19,20 +19,20 @@ public:
 
     /// Getters
 
-    int GetIDX(int reNumber1, int reNumber2) {
-        return IDXMap.at(std::make_pair(reNumber1, reNumber2));
+    int GetIDX(int reNum1, int reNum2) {
+        return IDXMap.at(std::make_pair(reNum1, reNum2));
     }
 
-    int GetIDY(int reNumber1, int reNumber2) {
-        return IDYMap.at(std::make_pair(reNumber1, reNumber2));
+    int GetIDY(int reNum1, int reNum2) {
+        return IDYMap.at(std::make_pair(reNum1, reNum2));
     }
 
-    int GetIDZ(int reNumber1, int reNumber2) {
-        return IDZMap.at(std::make_pair(reNumber1, reNumber2));
+    int GetIDZ(int reNum1, int reNum2) {
+        return IDZMap.at(std::make_pair(reNum1, reNum2));
     }
 
-    int GetID(int reNumber1, int reNumber2) {
-        return IDMap.at(std::make_pair(reNumber1, reNumber2));
+    int GetID(int reNum1, int reNum2) {
+        return IDMap.at(std::make_pair(reNum1, reNum2));
     }
 
     /// Setters

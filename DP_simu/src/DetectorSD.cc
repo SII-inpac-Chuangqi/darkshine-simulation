@@ -92,7 +92,7 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
 //    else hit = fSimHitVec[reNumber1];
 
     auto xID = (int) fCellID.x();
-    auto yID = (int) fCellID.y();
+//    auto yID = (int) fCellID.y();
     //G4int zID = (int)fCellID.z();
     //G4ThreeVector CellID(0, 0, 0);
     std::array<int, 3> CellID = {0,0,0};
