@@ -452,10 +452,18 @@ void Control::RebuildVariables() {
 
     //----------------------------------------
     // DetectorMap
-    dDetectorIDMaps->SetECALCellNo(ECAL_Cell_No.x(), ECAL_Cell_No.y(), ECAL_Cell_No.z());
-    dDetectorIDMaps->SetECALBlockNo(ECAL_Block_No.x(), ECAL_Block_No.y(), ECAL_Block_No.z());
-    dDetectorIDMaps->SetHCALModuleNo(HCAL_Module_No.x(), HCAL_Module_No.y(), HCAL_Module_No.z());
-    dDetectorIDMaps->BuildMap();
+    dECALIDMaps->SetDetectorType(nECAL);
+    dECALIDMaps->SetBlockShape(ECAL_Block_No.x(), ECAL_Block_No.y(), ECAL_Block_No.z());
+    dECALIDMaps->SetCellShape(ECAL_Cell_No.x(), ECAL_Cell_No.y(), ECAL_Cell_No.z());
+    dECALIDMaps->BuildMap();
+    dHCALIDMaps->SetDetectorType(nHCAL);
+    dHCALIDMaps->SetBlockShape(HCAL_Module_No.x(),HCAL_Module_No.y(),HCAL_Module_No.z());
+    dHCALIDMaps->SetCellShape(HCAL_Cell_XY_N, 1, 2);
+    dHCALIDMaps->BuildMap();
+    dSideHCALIDMaps->SetDetectorType(nSideHCAL);
+    dSideHCALIDMaps->SetBlockShape(4,1,1);
+    dSideHCALIDMaps->SetCellShape(SideHCAL_Layer_N, 1, 1);
+    dSideHCALIDMaps->BuildMap();
 }
 
 
