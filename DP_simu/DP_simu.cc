@@ -102,7 +102,9 @@ namespace {
         G4cerr << " -s --seed 42                    Set seed" << G4endl;
         G4cerr << "    --save_geometry 0            Set save_geometry" << G4endl;
         G4cerr << " -f --outfile_Name dp_out.root   Set output filename" << G4endl;
-        G4cerr << " -n --Run_Number 0               Set the run number for this job (EventID = id + beam_on * Run_Number)" << G4endl;
+        G4cerr
+                << " -n --Run_Number 0               Set the run number for this job (EventID = id + beam_on * Run_Number)"
+                << G4endl;
         G4cerr << " -b --beam_on 1                  Set beam-on number" << G4endl;
         G4cerr << "**************************************************************" << G4endl;
         G4cerr << G4endl;
@@ -123,7 +125,6 @@ int main(int argc, char **argv) {
 
     // Initiate Animation Data Class
     AnimationData::CreateInstance();
-
 //-------------------------------------------------------------------------------
 // Evaluate Arguments
 
@@ -133,45 +134,44 @@ int main(int argc, char **argv) {
 
     bool gui_mode = false;
     for (G4int i = 1; i < argc; i = i + 2) {
-        if (G4String(argv[i]) == "-g" || G4String(argv[i]) == "--gui" ) gui_mode = true;
-        else if (G4String(argv[i]) == "-m" || G4String(argv[i]) == "--macro" ) macro = argv[i + 1];
-        else if (G4String(argv[i]) == "-o" || G4String(argv[i]) == "--opticalMacro" ) OpticalMacro = argv[i + 1];
-        else if (G4String(argv[i]) == "-y" || G4String(argv[i]) == "--yaml" ) yamlFileName = argv[i + 1];
+        if (G4String(argv[i]) == "-g" || G4String(argv[i]) == "--gui") gui_mode = true;
+        else if (G4String(argv[i]) == "-m" || G4String(argv[i]) == "--macro") macro = argv[i + 1];
+        else if (G4String(argv[i]) == "-o" || G4String(argv[i]) == "--opticalMacro") OpticalMacro = argv[i + 1];
+        else if (G4String(argv[i]) == "-y" || G4String(argv[i]) == "--yaml") yamlFileName = argv[i + 1];
         else if (G4String(argv[i]) == "-s" || G4String(argv[i]) == "--seed") {
             dControl->read_yaml_random_seed = false;
             dControl->random_seed = std::stol(argv[i + 1]);
-        }
-        else if (G4String(argv[i]) == "--save_geometry" ) {
+        } else if (G4String(argv[i]) == "--save_geometry") {
             dControl->read_yaml_save_geometry = false;
             dControl->save_geometry = std::stoi(argv[i + 1]);
-        }
-        else if (G4String(argv[i]) == "-f" || G4String(argv[i]) == "--outfile_Name" ) {
+        } else if (G4String(argv[i]) == "-f" || G4String(argv[i]) == "--outfile_Name") {
             dControl->read_yaml_outfile_Name = false;
             dControl->outfile_Name = G4String(argv[i + 1]);
-        }
-        else if ( G4String(argv[i]) == "-n" || G4String(argv[i]) == "--Run_Number" ) {
+        } else if (G4String(argv[i]) == "-n" || G4String(argv[i]) == "--Run_Number") {
             dControl->read_yaml_Run_Number = false;
             //dControl->Run_Number = *argv[i + 1] - '0';
             dControl->Run_Number = std::stoi(argv[i + 1]);
-        }
-        else if (G4String(argv[i]) == "-b" || G4String(argv[i]) == "--beam_on" ) {
+        } else if (G4String(argv[i]) == "-b" || G4String(argv[i]) == "--beam_on") {
             dControl->read_yaml_BeamOnNumber = false;
             //dControl->BeamOnNumber = *argv[i + 1] - '0';
             dControl->BeamOnNumber = std::stoi(argv[i + 1]);
-        }
-        else if (G4String(argv[i]) == "-h" || G4String(argv[i]) == "--help" ) {
+        } else if (G4String(argv[i]) == "-h" || G4String(argv[i]) == "--help") {
             PrintUsage();
             return 1;
         } else if (G4String(argv[i]) == "-v" || G4String(argv[i]) == "--version") {
             PrintVersion();
             return 1;
+        } else if (G4String(argv[i]) == "--animation") {
+            pAniData->setUseAni(true);
+            G4cout << "[ Animation ]: Activated." << G4endl;
+            pAniData->initialization();
         } else {
             PrintUsage();
             //return 1;
         }
     }
 
-    if(if_introduction) PrintIntroduction();
+    if (if_introduction) PrintIntroduction();
     PrintVersion();
 
 //-------------------------------------------------------------------------
