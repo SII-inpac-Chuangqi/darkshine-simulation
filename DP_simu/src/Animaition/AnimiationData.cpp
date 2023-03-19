@@ -216,8 +216,6 @@ void AnimationData::add_hit(
     energy_dep.at(Det_Type).at(cellID).push_back((static_cast<float>(E_dep)));
     energy_dep_time.at(Det_Type).at(cellID).push_back((static_cast<float>(E_t)));
 
-
-    G4cout << Det_Type << ": " << cellID[0] << ", " << cellID[1] << ", " << cellID[2] << ": " << E_t << G4endl;
 }
 
 
