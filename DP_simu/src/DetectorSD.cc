@@ -88,10 +88,6 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
 
     // Get hit accounting data for this cell
     SimulatedHit *hit;
-    if (fType == nTagTracker || fType == nRecTracker) {
-        hit = new SimulatedHit();
-        InitializeHit(step, hit);
-    }
 
     if (fType == nTagTracker || fType == nRecTracker) {
         auto xID = (int) fCellID.x();
@@ -100,6 +96,8 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
         CellID[0] = (reNumber1 * xID + reNumber0 + 1);
         CellID[1] = 1;
         CellID[2] = cellId;
+        hit = new SimulatedHit();
+        InitializeHit(step, hit);
     } else if (fType == nECAL) {
         cellId = dECALIDMaps->GetID(reNumber1, reNumber2);
         CellID[0] = dECALIDMaps->GetIDX(reNumber1, reNumber2);
