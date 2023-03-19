@@ -201,7 +201,7 @@ G4bool DetectorSD::ProcessHits(
 
             // Animation
             pAniData->add_hit(
-                    det_type, CellID, hit->getE(), hit->getT(), hit, touchable, rotation
+                    det_type, CellID, edep, hit->getT(), hit, touchable, rotation
             );
             delete hit;
         } else {
@@ -212,7 +212,7 @@ G4bool DetectorSD::ProcessHits(
 
             // Animation
             pAniData->add_hit(
-                    det_type, CellID, hit->getE(), hit->getT(), hit, touchable, rotation
+                    det_type, CellID, edep, hit->getT(), hit, touchable, rotation
             );
         }
     } else {
@@ -222,7 +222,7 @@ G4bool DetectorSD::ProcessHits(
 
         // Animation
         pAniData->add_hit(
-                det_type, CellID, hit->getE(), hit->getT(), hit, touchable
+                det_type, CellID, edep, hit->getT(), hit, touchable
         );
     }
 
