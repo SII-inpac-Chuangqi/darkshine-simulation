@@ -31,6 +31,7 @@
 #include "DP_simu/RootManager.hh"
 #include "DP_simu/DetectorSD.hh"
 #include "Object/DDetectorIDMaps.h"
+#include "Animation/AnimationData.h"
 #include "G4HCofThisEvent.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
@@ -67,8 +68,10 @@ void DetectorSD::Initialize(G4HCofThisEvent *) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4bool DetectorSD::ProcessHits(G4Step *step,
-                               G4TouchableHistory *) {
+G4bool DetectorSD::ProcessHits(
+        G4Step *step,
+        G4TouchableHistory *
+) {
     // energy deposit
     G4double edep = step->GetTotalEnergyDeposit();
 
@@ -81,6 +84,9 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     if (edep == 0. && stepLength == 0.) return false;
 
     auto *touchable = (G4TouchableHistory *) (step->GetPreStepPoint()->GetTouchable());
+
+//    if (fType == nTagTracker || fType == nRecTracker)
+//        G4cout << touchable->GetRotation(0)->getPhi() << G4endl;
 
     // Get calorimeter cell id
     reNumber1 = touchable->GetReplicaNumber(1); // for calo, depth=1
@@ -95,7 +101,7 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
 //    auto yID = (int) fCellID.y();
     //G4int zID = (int)fCellID.z();
     //G4ThreeVector CellID(0, 0, 0);
-    std::array<int, 3> CellID = {0,0,0};
+    std::array<int, 3> CellID = {0, 0, 0};
     if (fType == nTagTracker || fType == nRecTracker) {
         reNumber0 = touchable->GetReplicaNumber(0);
         cellId = reNumber2 + 1;
@@ -158,6 +164,19 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
     hit->setCellIdY(CellID[1]);
     hit->setCellIdZ(CellID[2]);
 
+    // Animation
+    std::string det_type;
+    if (fType == nTagTracker)
+        det_type = "TagTrk";
+    if (fType == nRecTracker)
+        det_type = "RecTrk";
+    if (fType == nECAL)
+        det_type = "ECAL";
+    if (fType == nHCAL)
+        det_type = "HCAL";
+    if (fType == nSideHCAL)
+        det_type = "SideHCAL";
+
     // Add MC particle contribution
     auto fMC = new McParticle();
     fMC->setPdg(step->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
@@ -173,12 +192,17 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
 
     hit->setCellId(cellId); // replica start from 0 in DetectorConstruction
     if (fType == nTagTracker || fType == nRecTracker) {
+        double rotation = touchable->GetRotation()->phiX();
         if (dControl->build_silicon_micro_strip) {
             hit->setX(CellPosition.x());
             hit->setY(CellPosition.y());
             hit->setZ(CellPosition.z());
             dRootMng->FillSimHit(fname, hit);
 
+            // Animation
+            pAniData->add_hit(
+                    det_type, CellID, hit->getE(), hit->getT(), hit, touchable, rotation
+            );
             delete hit;
         } else {
             hit->setX(HitPoint.x());
@@ -186,15 +210,24 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
             hit->setZ(CellPosition.z());
             dRootMng->FillSimHit(fname, hit);
 
-            delete hit;
+            // Animation
+            pAniData->add_hit(
+                    det_type, CellID, hit->getE(), hit->getT(), hit, touchable, rotation
+            );
         }
     } else {
         hit->setX(CellPosition.x());
         hit->setY(CellPosition.y());
         hit->setZ(CellPosition.z());
+
+        // Animation
+        pAniData->add_hit(
+                det_type, CellID, hit->getE(), hit->getT(), hit, touchable
+        );
     }
 
     //G4cout<<fname<<", "<<reNumber<<", "<<hit->GetEdep()<<", Edep "<<edep<<G4endl;
+
 
     return true;
 }
