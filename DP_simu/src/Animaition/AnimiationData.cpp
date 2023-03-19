@@ -22,25 +22,6 @@ using nlohmann::json;
 // Required by Singleton
 AnimationData *pAniData = nullptr;
 
-float format_number(float number) {
-    return number;
-    
-//    int int_part = static_cast<int>(number);
-//    float decimal_part = std::abs(number - int_part);
-//
-//    std::stringstream ss;
-//    ss.setf(std::ios::fixed);
-//    if (decimal_part == 0) {
-//        ss << std::setprecision(0) << number;
-//    } else {
-//        ss << std::setprecision(2) << number;
-//    }
-//
-//    float formatted_number;
-//    ss >> formatted_number;
-//
-//    return formatted_number;
-}
 
 // Get Instance Class
 AnimationData *AnimationData::CreateInstance() {
@@ -124,7 +105,7 @@ void AnimationData::clean_data() {
 void AnimationData::add_particle(float Ekin, int TrackID, int PDG, int MotherID, float t) {
     if (!use_ani) return;
 
-    particle_data.at("particle_Ekin").push_back(format_number(Ekin));
+    particle_data.at("particle_Ekin").push_back((Ekin));
     particle_data.at("particle_TrackID").push_back(static_cast<float>(TrackID));
     particle_data.at("particle_PDG").push_back(static_cast<float>(PDG));
     particle_data.at("particle_MotherID").push_back(static_cast<float>(MotherID));
@@ -132,20 +113,20 @@ void AnimationData::add_particle(float Ekin, int TrackID, int PDG, int MotherID,
     step_x.insert({TrackID, std::vector<float>()});
     step_y.insert({TrackID, std::vector<float>()});
     step_z.insert({TrackID, std::vector<float>()});
-    step_t.insert({TrackID, {format_number(t)}});
+    step_t.insert({TrackID, {(t)}});
 }
 
 void AnimationData::update_particle_end_time(int TrackID, float t) {
     if (!use_ani) return;
-    step_t.at(TrackID).push_back(format_number(t));
+    step_t.at(TrackID).push_back((t));
 }
 
 void AnimationData::add_particle_step(int TrackID, float x, float y, float z) {
     if (!use_ani) return;
 
-    step_x.at(TrackID).push_back(format_number(x));
-    step_y.at(TrackID).push_back(format_number(y));
-    step_z.at(TrackID).push_back(format_number(z));
+    step_x.at(TrackID).push_back((x));
+    step_y.at(TrackID).push_back((y));
+    step_z.at(TrackID).push_back((z));
 }
 
 bool AnimationData::if_first_step(int TrackID) {
@@ -211,19 +192,19 @@ void AnimationData::add_hit(
     if (energy_dep.find(Det_Type) == energy_dep.end()) return;
 
     if (energy_dep.at(Det_Type).find(cellID) == energy_dep.at(Det_Type).end()) {
-        energy_dep.at(Det_Type).insert({cellID, {format_number(static_cast<float>(E_dep))}});
-        energy_dep_time.at(Det_Type).insert({cellID, {format_number(static_cast<float>(E_t))}});
+        energy_dep.at(Det_Type).insert({cellID, {(static_cast<float>(E_dep))}});
+        energy_dep_time.at(Det_Type).insert({cellID, {(static_cast<float>(E_t))}});
 
         cell_data.at(Det_Type).insert(
                 {
                         cellID,
                         {
-                                format_number(hit->getX()),
-                                format_number(hit->getY()),
-                                format_number(hit->getZ()),
-                                format_number(static_cast<float>(((G4Box *) touchable->GetSolid(0))->GetXHalfLength())),
-                                format_number(static_cast<float>(((G4Box *) touchable->GetSolid(0))->GetYHalfLength())),
-                                format_number(static_cast<float>(((G4Box *) touchable->GetSolid(0))->GetZHalfLength()))
+                                (hit->getX()),
+                                (hit->getY()),
+                                (hit->getZ()),
+                                (static_cast<float>(((G4Box *) touchable->GetSolid(0))->GetXHalfLength())),
+                                (static_cast<float>(((G4Box *) touchable->GetSolid(0))->GetYHalfLength())),
+                                (static_cast<float>(((G4Box *) touchable->GetSolid(0))->GetZHalfLength()))
                         }
                 }
         );
@@ -232,8 +213,11 @@ void AnimationData::add_hit(
             cell_data.at(Det_Type).at(cellID).push_back(static_cast<float>(rotation));
         }
     }
-    energy_dep.at(Det_Type).at(cellID).push_back(static_cast<float>(E_dep));
-    energy_dep_time.at(Det_Type).at(cellID).push_back(static_cast<float>(E_t));
+    energy_dep.at(Det_Type).at(cellID).push_back((static_cast<float>(E_dep)));
+    energy_dep_time.at(Det_Type).at(cellID).push_back((static_cast<float>(E_t)));
+
+
+    G4cout << Det_Type << ": " << cellID[0] << ", " << cellID[1] << ", " << cellID[2] << ": " << E_t << G4endl;
 }
 
 
