@@ -212,9 +212,10 @@ void AnimationData::add_hit(
         if (rotation != 0) {
             cell_data.at(Det_Type).at(cellID).push_back(static_cast<float>(rotation));
         }
+    } else {
+        energy_dep.at(Det_Type).at(cellID).push_back((static_cast<float>(E_dep)));
+        energy_dep_time.at(Det_Type).at(cellID).push_back((static_cast<float>(E_t)));
     }
-    energy_dep.at(Det_Type).at(cellID).push_back((static_cast<float>(E_dep)));
-    energy_dep_time.at(Det_Type).at(cellID).push_back((static_cast<float>(E_t)));
 
 }
 
