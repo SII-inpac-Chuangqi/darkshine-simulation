@@ -11,6 +11,8 @@
 #include <utility>
 #include <TSystem.h>
 #include <G4Box.hh>
+#include <sstream>
+#include <cmath>
 
 #include "TGeoManager.h"
 #include "TFile.h"
@@ -21,18 +23,23 @@ using nlohmann::json;
 AnimationData *pAniData = nullptr;
 
 float format_number(float number) {
-    int int_part = static_cast<int>(number);
-    float decimal_part = std::abs(number - int_part);
-
-    char buffer[32];
-    if (decimal_part == 0) {
-        std::snprintf(buffer, sizeof(buffer), "%.1f", number);
-    } else {
-        std::snprintf(buffer, sizeof(buffer), "%.3f", number);
-    }
-
-    float formatted_number = strtof(buffer, nullptr);
-    return formatted_number;
+    return number;
+    
+//    int int_part = static_cast<int>(number);
+//    float decimal_part = std::abs(number - int_part);
+//
+//    std::stringstream ss;
+//    ss.setf(std::ios::fixed);
+//    if (decimal_part == 0) {
+//        ss << std::setprecision(0) << number;
+//    } else {
+//        ss << std::setprecision(2) << number;
+//    }
+//
+//    float formatted_number;
+//    ss >> formatted_number;
+//
+//    return formatted_number;
 }
 
 // Get Instance Class
