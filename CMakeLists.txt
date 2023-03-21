@@ -63,6 +63,9 @@ IF (BUILD_DANA)
     MESSAGE("-- Eigen Dir: ${EIGEN3_INCLUDE_DIR}")
 ENDIF ()
 
+# json
+find_package(nlohmann_json 3.2.0 REQUIRED)
+
 #----------------------------------------------------------------------------
 # Find ROOT (required package)
 #

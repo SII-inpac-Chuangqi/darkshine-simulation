@@ -30,6 +30,7 @@
 
 #include "DP_simu/TrackingAction.hh"
 #include "Control/Control.h"
+#include "Animation/AnimationData.h"
 
 #include "G4Track.hh"
 #include "G4TrackingManager.hh"
@@ -122,6 +123,15 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
         }
     }
 
+
+    // Animation
+    pAniData->add_particle(
+            kin_energy,
+            aTrack->GetTrackID(),
+            pdg,
+            aTrack->GetParentID(),
+            aTrack->GetGlobalTime()
+    );
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -131,6 +141,10 @@ void TrackingAction::PostUserTrackingAction(const G4Track *aTrack) {
     if (aTrack->GetWeight() != 1) {
         dRootMng->FillWeight(aTrack->GetWeight());
     }
+
+    // Animation
+    pAniData->update_particle_end_time(aTrack->GetTrackID(), aTrack->GetGlobalTime());
+
     // Find MC in collection
     if (dControl->save_MC) {
         auto MCCols = dRootMng->GetEvt()->getMcParticleCollection().at(dControl->RawMCCollection_Name);

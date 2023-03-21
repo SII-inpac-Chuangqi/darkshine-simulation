@@ -35,6 +35,7 @@ Before installing, if you are using your own machine, several dependencies need 
 - ROOT 6 ( >=6.20 )
 - gsl
 - yaml-cpp
+- [nlohmann/json](https://github.com/nlohmann/json)
 
 Or, if you are using clusters with CVMFS installed, you can directly source the LCG environment:
 ```shell
