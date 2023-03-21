@@ -68,7 +68,7 @@ public:
 
     void add_hit(
             const std::string &Det_Type, std::array<int, 3> cellID, double E_dep, double E_t,
-            SimulatedHit *hit, G4TouchableHistory *touchable, double rotation = 0
+            SimulatedHit *hit, G4TouchableHistory *touchable
     );
 
     bool if_first_step(int TrackID);
