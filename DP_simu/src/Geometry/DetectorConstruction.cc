@@ -33,6 +33,7 @@
 #include "Bias_Filter/BOptrChangeCrossSection.hh"
 #include "Bias_Filter/BOptrMultiParticleChangeCrossSection.hh"
 #include "DP_simu/TrkConstruct.hh"
+#include "Animation/AnimationData.h"
 
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
@@ -286,6 +287,9 @@ void DetectorConstruction::SaveGeometry() {
 
     G4GDMLParser parser;
     parser.Write(filename, World_PV);
+
+    // Animation
+    pAniData->save_geometry(filename);
 
     dRootMng->FillGeometry(filename);
 

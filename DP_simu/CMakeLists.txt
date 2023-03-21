@@ -25,7 +25,7 @@ SET(UTIL_LIST
 add_executable(DSimu DP_simu.cc ${Simu_sources} ${Simu_headers} ${UTIL_LIST})
 
 target_link_libraries(DSimu
-        ${Geant4_LIBRARIES} ${PYTHIA6_LIBRARIES})
+        ${Geant4_LIBRARIES} ${PYTHIA6_LIBRARIES} nlohmann_json::nlohmann_json)
 
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
