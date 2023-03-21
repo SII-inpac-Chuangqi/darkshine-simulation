@@ -12,7 +12,6 @@
 #include <TSystem.h>
 #include <G4Box.hh>
 #include <sstream>
-#include <cmath>
 
 #include "TGeoManager.h"
 #include "TFile.h"
@@ -138,6 +137,10 @@ bool AnimationData::if_first_step(int TrackID) {
 void AnimationData::save_geometry(const std::string &filename) {
     if (!use_ani) return;
 
+    fs::path gdml_file = out_dir / std::string("geometry.gdml");
+    std::filesystem::copy(filename, gdml_file, std::filesystem::copy_options::overwrite_existing);
+
+
     fs::path geo_out_file = out_dir / std::string("geometry.root");
 
     TFile geo_file(geo_out_file.c_str(), "RECREATE");
@@ -185,8 +188,7 @@ void AnimationData::add_hit(
         double E_dep,
         double E_t,
         SimulatedHit *hit,
-        G4TouchableHistory *touchable,
-        double rotation) {
+        G4TouchableHistory *touchable) {
 
     if (!use_ani) return;
     if (energy_dep.find(Det_Type) == energy_dep.end()) return;
@@ -195,6 +197,12 @@ void AnimationData::add_hit(
         energy_dep.at(Det_Type).insert({cellID, {(static_cast<float>(E_dep))}});
         energy_dep_time.at(Det_Type).insert({cellID, {(static_cast<float>(E_t))}});
 
+
+        int depth = 0;
+        if (Det_Type == "ECAL") depth = 1;
+        if (Det_Type == "HCAL" || Det_Type == "SideHCAL") depth = 1;
+        if (Det_Type == "TagTrk" || Det_Type == "RecTrk") depth = 0;
+        auto solid_box = dynamic_cast<G4Box *>( touchable->GetSolid(depth));
         cell_data.at(Det_Type).insert(
                 {
                         cellID,
@@ -202,15 +210,23 @@ void AnimationData::add_hit(
                                 (hit->getX()),
                                 (hit->getY()),
                                 (hit->getZ()),
-                                (static_cast<float>(((G4Box *) touchable->GetSolid(0))->GetXHalfLength())),
-                                (static_cast<float>(((G4Box *) touchable->GetSolid(0))->GetYHalfLength())),
-                                (static_cast<float>(((G4Box *) touchable->GetSolid(0))->GetZHalfLength()))
+                                (static_cast<float>(solid_box->GetXHalfLength())),
+                                (static_cast<float>(solid_box->GetYHalfLength())),
+                                (static_cast<float>(solid_box->GetZHalfLength()))
                         }
                 }
         );
 
-        if (rotation != 0) {
+        // Geant4 follows Z-Y-X order
+        auto axis = touchable->GetRotation(depth)->getAxis();
+        double rotation = 0;
+        touchable->GetRotation(depth)->getAngleAxis(rotation, axis);
+
+        if (fabs(rotation) > 1e-5) {
             cell_data.at(Det_Type).at(cellID).push_back(static_cast<float>(rotation));
+            cell_data.at(Det_Type).at(cellID).push_back(static_cast<float>(axis.x()));
+            cell_data.at(Det_Type).at(cellID).push_back(static_cast<float>(axis.y()));
+            cell_data.at(Det_Type).at(cellID).push_back(static_cast<float>(axis.z()));
         }
     } else {
         energy_dep.at(Det_Type).at(cellID).push_back((static_cast<float>(E_dep)));

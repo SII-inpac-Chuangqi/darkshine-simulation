@@ -192,7 +192,6 @@ G4bool DetectorSD::ProcessHits(
 
     hit->setCellId(cellId); // replica start from 0 in DetectorConstruction
     if (fType == nTagTracker || fType == nRecTracker) {
-        double rotation = touchable->GetRotation()->phiX();
         if (dControl->build_silicon_micro_strip) {
             hit->setX(CellPosition.x());
             hit->setY(CellPosition.y());
@@ -201,7 +200,7 @@ G4bool DetectorSD::ProcessHits(
 
             // Animation
             pAniData->add_hit(
-                    det_type, CellID, edep, hit->getT(), hit, touchable, rotation
+                    det_type, CellID, edep, hit->getT(), hit, touchable
             );
             delete hit;
         } else {
@@ -212,7 +211,7 @@ G4bool DetectorSD::ProcessHits(
 
             // Animation
             pAniData->add_hit(
-                    det_type, CellID, edep, hit->getT(), hit, touchable, rotation
+                    det_type, CellID, edep, hit->getT(), hit, touchable
             );
         }
     } else {
