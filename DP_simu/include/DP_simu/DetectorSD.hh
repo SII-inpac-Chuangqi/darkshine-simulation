@@ -79,7 +79,7 @@ private:
     G4int reNumber3{-1};
     G4String particleName;
 
-    std::vector<SimulatedHit *> fSimHitVec;
+    std::map<std::array<int,3>, SimulatedHit*> SimHits;
 
 };
 
