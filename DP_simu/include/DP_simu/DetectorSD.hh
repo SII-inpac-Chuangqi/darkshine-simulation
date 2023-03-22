@@ -69,10 +69,14 @@ public:
     void EndOfEvent(G4HCofThisEvent *hitCollection) override;
 
 private:
-    G4ThreeVector fCellID;
+    void InitializeHit(const G4Step *step, SimulatedHit* hit);
+
+private:
+    G4ThreeVector fCellID; // Detector shape
     G4int fType; // 0: Tracker 1: ECAL_Center 2: ECAL_Outer
     G4String fname;
     G4int cellId{-1};
+    std::array<int, 3> CellID = {0,0,0}; // Cell ID XYZ
     G4int reNumber0{-1};
     G4int reNumber1{-1}; // replical number of PV
     G4int reNumber2{-1};
