@@ -163,31 +163,6 @@ G4bool DetectorSD::ProcessHits(
     hit->addEdep(E_EM, E_Had);
     hit->setT(step->GetPostStepPoint()->GetGlobalTime());
 
-    // Animation
-    std::string det_type;
-    if (fType == nTagTracker)
-        det_type = "TagTrk";
-    if (fType == nRecTracker)
-        det_type = "RecTrk";
-    if (fType == nECAL)
-        det_type = "ECAL";
-    if (fType == nHCAL)
-        det_type = "HCAL";
-    if (fType == nSideHCAL)
-        det_type = "SideHCAL";
-
-    // Add MC particle contribution
-    auto fMC = new McParticle();
-    fMC->setPdg(step->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
-    fMC->setId(step->GetTrack()->GetTrackID());
-    fMC->setEnergy(step->GetTrack()->GetKineticEnergy());
-    fMC->setPx(step->GetTrack()->GetMomentum()[0]);
-    fMC->setPy(step->GetTrack()->GetMomentum()[1]);
-    fMC->setPz(step->GetTrack()->GetMomentum()[2]);
-    if (step->GetTrack()->GetCreatorProcess())
-        fMC->setCreateProcess(step->GetTrack()->GetCreatorProcess()->GetProcessName());
-//    hit->addParticleContribution(*fMC, edep, fType == nTagTracker || fType == nRecTracker);
-    delete fMC;
     if (dControl->save_mcp_helper) {
         // Add MC particle contribution
         auto fMC = new McParticle();
@@ -202,41 +177,35 @@ G4bool DetectorSD::ProcessHits(
         hit->addParticleContribution(*fMC, edep, fType == nTagTracker || fType == nRecTracker);
         delete fMC;
     }
+    
+    // Animation
+    std::string det_type;
+    switch (fType) {
+        case nTagTracker:
+            det_type = "TagTrk";
+            break;
+        case nRecTracker:
+            det_type = "RecTrk";
+            break;
+        case nECAL:
+            det_type = "ECAL";
+            break;
+        case nHCAL:
+            det_type = "HCAL";
+            break;
+        case nSideHCAL:
+            det_type = "SideHCAL";
+            break;
+    }
+
+    pAniData->add_hit(
+            det_type, CellID, edep, hit->getT(), hit, touchable
+    );
+
 
     if (fType == nTagTracker || fType == nRecTracker) {
         dRootMng->FillSimHit(fname, hit);
         delete hit;
-        if (dControl->build_silicon_micro_strip) {
-            hit->setX(CellPosition.x());
-            hit->setY(CellPosition.y());
-            hit->setZ(CellPosition.z());
-            dRootMng->FillSimHit(fname, hit);
-
-            // Animation
-            pAniData->add_hit(
-                    det_type, CellID, edep, hit->getT(), hit, touchable
-            );
-            delete hit;
-        } else {
-            hit->setX(HitPoint.x());
-            hit->setY(HitPoint.y());
-            hit->setZ(CellPosition.z());
-            dRootMng->FillSimHit(fname, hit);
-
-            // Animation
-            pAniData->add_hit(
-                    det_type, CellID, edep, hit->getT(), hit, touchable
-            );
-        }
-    } else {
-        hit->setX(CellPosition.x());
-        hit->setY(CellPosition.y());
-        hit->setZ(CellPosition.z());
-
-        // Animation
-        pAniData->add_hit(
-                det_type, CellID, edep, hit->getT(), hit, touchable
-        );
     }
 
     //G4cout<<fname<<", "<<reNumber<<", "<<hit->GetEdep()<<", Edep "<<edep<<G4endl;
@@ -246,7 +215,7 @@ G4bool DetectorSD::ProcessHits(
 
 
 /// @brief calculate Center positoin of the cell / hit
-void DetectorSD::InitializeHit(const G4Step *step, SimulatedHit* hit) {
+void DetectorSD::InitializeHit(const G4Step *step, SimulatedHit *hit) {
     // Calculate the center position of this cell
     G4ThreeVector origin(0., 0., 0.);
     G4ThreeVector CellPosition = step->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->
@@ -260,18 +229,18 @@ void DetectorSD::InitializeHit(const G4Step *step, SimulatedHit* hit) {
     hit->setCellId(cellId); // replica start from 0 in DetectorConstruction
     if (fType == nTagTracker || fType == nRecTracker) {
         if (dControl->build_silicon_micro_strip) {
-            hit->setX((float)CellPosition.x());
-            hit->setY((float)CellPosition.y());
-            hit->setZ((float)CellPosition.z());
+            hit->setX((float) CellPosition.x());
+            hit->setY((float) CellPosition.y());
+            hit->setZ((float) CellPosition.z());
         } else {
-            hit->setX((float)HitPoint.x());
-            hit->setY((float)HitPoint.y());
-            hit->setZ((float)CellPosition.z());
+            hit->setX((float) HitPoint.x());
+            hit->setY((float) HitPoint.y());
+            hit->setZ((float) CellPosition.z());
         }
     } else {
-        hit->setX((float)CellPosition.x());
-        hit->setY((float)CellPosition.y());
-        hit->setZ((float)CellPosition.z());
+        hit->setX((float) CellPosition.x());
+        hit->setY((float) CellPosition.y());
+        hit->setZ((float) CellPosition.z());
     }
 }
 
