@@ -68,10 +68,8 @@ void DetectorSD::Initialize(G4HCofThisEvent *) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4bool DetectorSD::ProcessHits(
-        G4Step *step,
-        G4TouchableHistory *
-) {
+G4bool DetectorSD::ProcessHits(G4Step *step,
+                               G4TouchableHistory *) {
     // energy deposit
     G4double edep = step->GetTotalEnergyDeposit();
 
@@ -85,51 +83,59 @@ G4bool DetectorSD::ProcessHits(
 
     auto *touchable = (G4TouchableHistory *) (step->GetPreStepPoint()->GetTouchable());
 
-//    if (fType == nTagTracker || fType == nRecTracker)
-//        G4cout << touchable->GetRotation(0)->getPhi() << G4endl;
-
     // Get calorimeter cell id
     reNumber1 = touchable->GetReplicaNumber(1); // for calo, depth=1
     reNumber2 = touchable->GetReplicaNumber(2);
 
     // Get hit accounting data for this cell
     SimulatedHit *hit;
-    if (fType == nTagTracker || fType == nRecTracker) hit = new SimulatedHit();
-//    else hit = fSimHitVec[reNumber1];
 
-    auto xID = (int) fCellID.x();
-//    auto yID = (int) fCellID.y();
-    //G4int zID = (int)fCellID.z();
-    //G4ThreeVector CellID(0, 0, 0);
-    std::array<int, 3> CellID = {0, 0, 0};
     if (fType == nTagTracker || fType == nRecTracker) {
+        auto xID = (int) fCellID.x();
         reNumber0 = touchable->GetReplicaNumber(0);
         cellId = reNumber2 + 1;
         CellID[0] = (reNumber1 * xID + reNumber0 + 1);
         CellID[1] = 1;
         CellID[2] = cellId;
+        hit = new SimulatedHit();
+        InitializeHit(step, hit);
     } else if (fType == nECAL) {
         cellId = dECALIDMaps->GetID(reNumber1, reNumber2);
         CellID[0] = dECALIDMaps->GetIDX(reNumber1, reNumber2);
         CellID[1] = dECALIDMaps->GetIDY(reNumber1, reNumber2);
         CellID[2] = dECALIDMaps->GetIDZ(reNumber1, reNumber2);
-        if (SimHits.find(CellID) == SimHits.end()) SimHits[CellID] = new SimulatedHit();
-        hit = SimHits[CellID];
+        if (SimHits.find(CellID) == SimHits.end()) {
+            hit = new SimulatedHit();
+            InitializeHit(step, hit);
+            SimHits[CellID] = hit;
+        } else {
+            hit = SimHits[CellID];
+        }
     } else if (fType == nHCAL || fType == nHCAL_APD) {
         reNumber3 = touchable->GetReplicaNumber(3);
         cellId = dHCALIDMaps->GetID(reNumber1, reNumber2);
         CellID[0] = dHCALIDMaps->GetIDX(reNumber1, reNumber2);
         CellID[1] = dHCALIDMaps->GetIDY(reNumber1, reNumber2);
         CellID[2] = dHCALIDMaps->GetIDZ(reNumber1, reNumber2) + (2 * reNumber3);
-        if (SimHits.find(CellID) == SimHits.end()) SimHits[CellID] = new SimulatedHit();
-        hit = SimHits[CellID];
+        if (SimHits.find(CellID) == SimHits.end()) {
+            hit = new SimulatedHit();
+            InitializeHit(step, hit);
+            SimHits[CellID] = hit;
+        } else {
+            hit = SimHits[CellID];
+        }
     } else if (fType == nSideHCAL || fType == nSideHCAL_APD) {
         cellId = dSideHCALIDMaps->GetID(reNumber1, reNumber2);
         CellID[0] = dSideHCALIDMaps->GetIDX(reNumber1, reNumber2);
         CellID[1] = dSideHCALIDMaps->GetIDY(reNumber1, reNumber2);
         CellID[2] = dSideHCALIDMaps->GetIDZ(reNumber1, reNumber2);
-        if (SimHits.find(CellID) == SimHits.end()) SimHits[CellID] = new SimulatedHit();
-        hit = SimHits[CellID];
+        if (SimHits.find(CellID) == SimHits.end()) {
+            hit = new SimulatedHit();
+            InitializeHit(step, hit);
+            SimHits[CellID] = hit;
+        } else {
+            hit = SimHits[CellID];
+        }
     } else {
         std::cerr << "[ERROR] DetectorSD ==> Wrong Detecotr Type" << std::endl;
         exit(EXIT_FAILURE);
@@ -143,12 +149,6 @@ G4bool DetectorSD::ProcessHits(
         }
     }
 
-    // Calculate the center position of this cell
-    G4ThreeVector origin(0., 0., 0.);
-    G4ThreeVector CellPosition = step->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->
-            GetTopTransform().Inverse().TransformPoint(origin);
-    G4ThreeVector HitPoint = step->GetPreStepPoint()->GetPosition();
-
     // Calculate Energy Deposition from EM or Hadron
     G4int PDG = step->GetTrack()->GetDefinition()->GetPDGEncoding();
     G4double E_EM = 0;
@@ -160,75 +160,80 @@ G4bool DetectorSD::ProcessHits(
     // Add values
     hit->addEdep(E_EM, E_Had);
     hit->setT(step->GetPostStepPoint()->GetGlobalTime());
-    hit->setCellIdX(CellID[0]);
-    hit->setCellIdY(CellID[1]);
-    hit->setCellIdZ(CellID[2]);
 
+    if (dControl->save_mcp_helper) {
+        // Add MC particle contribution
+        auto fMC = new McParticle();
+        fMC->setPdg(step->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
+        fMC->setId(step->GetTrack()->GetTrackID());
+        fMC->setEnergy(step->GetTrack()->GetKineticEnergy());
+        fMC->setPx(step->GetTrack()->GetMomentum()[0]);
+        fMC->setPy(step->GetTrack()->GetMomentum()[1]);
+        fMC->setPz(step->GetTrack()->GetMomentum()[2]);
+        if (step->GetTrack()->GetCreatorProcess())
+            fMC->setCreateProcess(step->GetTrack()->GetCreatorProcess()->GetProcessName());
+        hit->addParticleContribution(*fMC, edep, fType == nTagTracker || fType == nRecTracker);
+        delete fMC;
+    }
     // Animation
     std::string det_type;
-    if (fType == nTagTracker)
-        det_type = "TagTrk";
-    if (fType == nRecTracker)
-        det_type = "RecTrk";
-    if (fType == nECAL)
-        det_type = "ECAL";
-    if (fType == nHCAL)
-        det_type = "HCAL";
-    if (fType == nSideHCAL)
-        det_type = "SideHCAL";
+    switch(fType){
+        case nTagTracker:
+            det_type = "TagTrk"; break;
+        case nRecTracker:
+            det_type = "RecTrk"; break;
+        case nECAL:
+            det_type = "ECAL"; break;
+        case nHCAL:
+            det_type = "HCAL"; break;
+        case nSideHCAL:
+            det_type = "SideHCAL";break;
+    }
 
-    // Add MC particle contribution
-    auto fMC = new McParticle();
-    fMC->setPdg(step->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
-    fMC->setId(step->GetTrack()->GetTrackID());
-    fMC->setEnergy(step->GetTrack()->GetKineticEnergy());
-    fMC->setPx(step->GetTrack()->GetMomentum()[0]);
-    fMC->setPy(step->GetTrack()->GetMomentum()[1]);
-    fMC->setPz(step->GetTrack()->GetMomentum()[2]);
-    if (step->GetTrack()->GetCreatorProcess())
-        fMC->setCreateProcess(step->GetTrack()->GetCreatorProcess()->GetProcessName());
-//    hit->addParticleContribution(*fMC, edep, fType == nTagTracker || fType == nRecTracker);
-    delete fMC;
+    pAniData->add_hit(
+            det_type, CellID, edep, hit->getT(), hit, touchable
+    );
 
-    hit->setCellId(cellId); // replica start from 0 in DetectorConstruction
+
     if (fType == nTagTracker || fType == nRecTracker) {
-        if (dControl->build_silicon_micro_strip) {
-            hit->setX(CellPosition.x());
-            hit->setY(CellPosition.y());
-            hit->setZ(CellPosition.z());
-            dRootMng->FillSimHit(fname, hit);
-
-            // Animation
-            pAniData->add_hit(
-                    det_type, CellID, edep, hit->getT(), hit, touchable
-            );
-            delete hit;
-        } else {
-            hit->setX(HitPoint.x());
-            hit->setY(HitPoint.y());
-            hit->setZ(CellPosition.z());
-            dRootMng->FillSimHit(fname, hit);
-
-            // Animation
-            pAniData->add_hit(
-                    det_type, CellID, edep, hit->getT(), hit, touchable
-            );
-        }
-    } else {
-        hit->setX(CellPosition.x());
-        hit->setY(CellPosition.y());
-        hit->setZ(CellPosition.z());
-
-        // Animation
-        pAniData->add_hit(
-                det_type, CellID, edep, hit->getT(), hit, touchable
-        );
+        dRootMng->FillSimHit(fname, hit);
+        delete hit;
     }
 
     //G4cout<<fname<<", "<<reNumber<<", "<<hit->GetEdep()<<", Edep "<<edep<<G4endl;
 
-
     return true;
+}
+
+
+/// @brief calculate Center positoin of the cell / hit
+void DetectorSD::InitializeHit(const G4Step *step, SimulatedHit* hit) {
+    // Calculate the center position of this cell
+    G4ThreeVector origin(0., 0., 0.);
+    G4ThreeVector CellPosition = step->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->
+            GetTopTransform().Inverse().TransformPoint(origin);
+    G4ThreeVector HitPoint = step->GetPreStepPoint()->GetPosition();
+
+    hit->setCellIdX(CellID[0]);
+    hit->setCellIdY(CellID[1]);
+    hit->setCellIdZ(CellID[2]);
+
+    hit->setCellId(cellId); // replica start from 0 in DetectorConstruction
+    if (fType == nTagTracker || fType == nRecTracker) {
+        if (dControl->build_silicon_micro_strip) {
+            hit->setX((float)CellPosition.x());
+            hit->setY((float)CellPosition.y());
+            hit->setZ((float)CellPosition.z());
+        } else {
+            hit->setX((float)HitPoint.x());
+            hit->setY((float)HitPoint.y());
+            hit->setZ((float)CellPosition.z());
+        }
+    } else {
+        hit->setX((float)CellPosition.x());
+        hit->setY((float)CellPosition.y());
+        hit->setZ((float)CellPosition.z());
+    }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
