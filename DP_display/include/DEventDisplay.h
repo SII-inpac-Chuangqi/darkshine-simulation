@@ -58,7 +58,7 @@ class DEventDisplay : public TNamed {
 public:
 
     enum Det_Type {
-        DNone, DTarget, DTracker, DECAL, DHCAL
+        DNone, DTarget, DTracker, DECAL, DHCAL, DSideHCAL
     };
 
     static inline std::map<int, Color_t> PDG_Color{
