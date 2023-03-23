@@ -23,6 +23,7 @@ void DataExporter::Begin() {
     for (const auto &col: collections) {
         node.insert({col, std::map<std::string, std::vector<double>>()});
         edge.insert({col, std::map<std::string, std::vector<size_t>>()});
+        weight.insert({col, 1.0});
         for (const auto &p: gnn_node) {
             node.at(col).insert({p, std::vector<double>()});
             t->Branch((col + "_" + p).data(), &node.at(col).at(p));
@@ -31,6 +32,8 @@ void DataExporter::Begin() {
             edge.at(col).insert({p, std::vector<size_t>()});
             t->Branch((col + "_" + p).data(), &edge.at(col).at(p));
         }
+        t->Branch((col + "_weight").data(), &weight.at(col));
+
     }
 }
 
@@ -133,6 +136,7 @@ void DataExporter::ProcessEvt(AnaEvent *evt) {
             }
 
             // --> For each edge, find if it's in the truth_edge
+            unsigned long truth_count = 0;
             for (size_t i = 0; i < edge.at(CollectionName).at("start").size(); ++i) {
                 auto vs = edge.at(CollectionName).at("start").at(i);
                 auto ve = edge.at(CollectionName).at("end").at(i);
@@ -144,11 +148,13 @@ void DataExporter::ProcessEvt(AnaEvent *evt) {
                                 (ve == trk.second.at(j - 1) && vs == trk.second.at(j))
                                 ) {
                             edge.at(CollectionName).at("truth").at(i) = 1;
+                            truth_count++;
                             break;
                         }
                     }
                 }
             }
+            weight.at(CollectionName) = static_cast<double >(truth_count) / static_cast<double >(edge.at(CollectionName).at("start").size());
         } else {
             cerr << CollectionName << " not found" << endl;
         }
