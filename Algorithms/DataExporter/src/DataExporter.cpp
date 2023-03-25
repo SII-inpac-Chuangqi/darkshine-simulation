@@ -17,8 +17,8 @@ void DataExporter::Begin() {
 //    collections = {"TagTrk1", "TagTrk2", "RecTrk1", "RecTrk2"};
     collections = {"TagTrk1", "RecTrk1"};
 
-    gnn_node = {"x", "y", "z"};
-    std::vector<std::string> gnn_edge = {"start", "end", "truth"};
+    std::vector<std::string> gnn_node = {"x", "y", "z"};
+    std::vector<std::string> gnn_edge = {"start", "end", "truth", "p"};
 
     for (const auto &col: collections) {
         node.insert({col, std::map<std::string, std::vector<double>>()});
@@ -115,22 +115,19 @@ void DataExporter::ProcessEvt(AnaEvent *evt) {
                         // forward
                         edge.at(CollectionName).at("start").push_back(j);
                         edge.at(CollectionName).at("end").push_back(k);
-//                        // backward
-//                        edge.at(CollectionName).at("edge_start").push_back(k);
-//                        edge.at(CollectionName).at("edge_end").push_back(j);
                     }
                 }
             }
 
             // Step 3: Record Truth Edge Relation
-            std::map<int, std::vector<size_t>> truth_edge;
+            std::map<int, std::vector<std::tuple<size_t, float>>> truth_edge;
 
             for (size_t i = 0; i < sorted_indices.size(); ++i) {
                 for (const auto &mc: col->at(sorted_indices.at(i))->getPContribution()) {
                     if (truth_edge.find(mc.getId()) != truth_edge.end()) {
-                        truth_edge.at(mc.getId()).push_back(i);
+                        truth_edge.at(mc.getId()).emplace_back(std::make_tuple(i, mc.getEnergy()));
                     } else {
-                        truth_edge.insert({mc.getId(), {i}});
+                        truth_edge.insert({mc.getId(), {std::make_tuple(i, mc.getEnergy())}});
                     }
                 }
             }
@@ -141,20 +138,24 @@ void DataExporter::ProcessEvt(AnaEvent *evt) {
                 auto vs = edge.at(CollectionName).at("start").at(i);
                 auto ve = edge.at(CollectionName).at("end").at(i);
                 edge.at(CollectionName).at("truth").push_back(0);
+                edge.at(CollectionName).at("p").push_back(0);
                 for (const auto &trk: truth_edge) {
                     for (unsigned j = 1; j < trk.second.size(); ++j) {
                         if (
-                                (vs == trk.second.at(j - 1) && ve == trk.second.at(j)) ||
-                                (ve == trk.second.at(j - 1) && vs == trk.second.at(j))
+                                (vs == std::get<0>(trk.second.at(j - 1)) && ve == std::get<0>(trk.second.at(j))) ||
+                                (ve == std::get<0>(trk.second.at(j - 1)) && vs == std::get<0>(trk.second.at(j)))
                                 ) {
                             edge.at(CollectionName).at("truth").at(i) = 1;
+                            edge.at(CollectionName).at("p").at(i) =
+                                    static_cast<size_t>(std::get<1>(trk.second.at(j - 1)));
                             truth_count++;
                             break;
                         }
                     }
                 }
             }
-            weight.at(CollectionName) = static_cast<double >(truth_count) / static_cast<double >(edge.at(CollectionName).at("start").size());
+            weight.at(CollectionName) = static_cast<double >(truth_count) /
+                                        static_cast<double >(edge.at(CollectionName).at("start").size());
         } else {
             cerr << CollectionName << " not found" << endl;
         }

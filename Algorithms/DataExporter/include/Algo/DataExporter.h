@@ -45,7 +45,6 @@ private:
     TTree *t{};
 
     std::vector<std::string> collections;
-    std::vector<std::string> gnn_node;
     std::map<std::string, std::map<std::string, std::vector<double> > > node;
     std::map<std::string, std::map<std::string, std::vector<size_t> > > edge;
     std::map<std::string, double> weight;
