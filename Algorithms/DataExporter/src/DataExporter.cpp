@@ -15,7 +15,7 @@ void DataExporter::Begin() {
     t = new TTree("dp", "dp");
 
 //    collections = {"TagTrk1", "TagTrk2", "RecTrk1", "RecTrk2"};
-    collections = {"TagTrk1", "RecTrk1", "TagTrk1+RecTrk1"};
+    collections = {"TagTrk1", "RecTrk1", "TagTrk1+RecTrk1", "AllTrk"};
 
     std::vector<std::string> gnn_node = {"x", "y", "z"};
     std::vector<std::string> gnn_edge = {"start", "end", "truth", "p"};
@@ -82,6 +82,24 @@ void DataExporter::ProcessEvt(AnaEvent *evt) {
 
         std::copy(std::begin(*tag_col), std::end(*tag_col), std::back_inserter(*TotalTrk));
         std::copy(std::begin(*rec_col), std::end(*rec_col), std::back_inserter(*TotalTrk));
+    }
+    if (
+            TrackerCollection.count("TagTrk1") != 0
+            && TrackerCollection.count("RecTrk1") != 0
+            && TrackerCollection.count("TagTrk2") != 0
+            && TrackerCollection.count("RecTrk2") != 0
+            ) {
+        auto tag1_col = TrackerCollection.at("TagTrk1");
+        auto rec1_col = TrackerCollection.at("RecTrk1");
+        auto tag2_col = TrackerCollection.at("TagTrk2");
+        auto rec2_col = TrackerCollection.at("RecTrk2");
+        SimulatedHitVec *TotalTrk = evt->RegisterSimulatedHitCollection("AllTrk");
+        TotalTrk->reserve(tag1_col->size() + rec1_col->size() + tag2_col->size() + rec2_col->size());
+
+        std::copy(std::begin(*tag1_col), std::end(*tag1_col), std::back_inserter(*TotalTrk));
+        std::copy(std::begin(*rec1_col), std::end(*rec1_col), std::back_inserter(*TotalTrk));
+        std::copy(std::begin(*tag2_col), std::end(*tag2_col), std::back_inserter(*TotalTrk));
+        std::copy(std::begin(*rec2_col), std::end(*rec2_col), std::back_inserter(*TotalTrk));
     }
 
 
@@ -180,6 +198,7 @@ void DataExporter::ProcessEvt(AnaEvent *evt) {
         t->Fill();
 
     evt->DeleteCollection("TagTrk1+RecTrk1");
+    evt->DeleteCollection("AllTrk");
 
     for (auto &i: node) {
         for (auto &j: i.second) {
