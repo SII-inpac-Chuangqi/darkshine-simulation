@@ -35,8 +35,8 @@ void DEvent::Initialization(CleanType ct) {
     }
     if (ct == nALL) MCParticleCollection.clear();
 
-    for (auto itr : MCPHelperCollection) {
-        for (auto itr2 : *itr.second) {
+    for (auto itr: MCPHelperCollection) {
+        for (auto itr2: *itr.second) {
             delete itr2;
         }
         (itr.second)->clear();
@@ -99,7 +99,7 @@ void DEvent::Initialization(CleanType ct) {
 }
 
 void DEvent::PrintDetails() {
-    for (const auto& steps: StepCollection) {
+    for (const auto &steps: StepCollection) {
         std::cout
                 << "***********************************************************************************************************************"
                 << std::endl
@@ -114,7 +114,7 @@ void DEvent::PrintDetails() {
             std::cout << *step << std::endl;
     }
 
-    for (const auto& particles: MCParticleCollection) {
+    for (const auto &particles: MCParticleCollection) {
         std::cout
                 << "*****************************************************************************************************************************************************************************"
                 << std::endl
@@ -130,7 +130,7 @@ void DEvent::PrintDetails() {
     }
 
 
-    for (const auto& particles: MCPHelperCollection) {
+    for (const auto &particles: MCPHelperCollection) {
         std::cout
                 << "*******************************************************************************************************************************"
                 << std::endl
@@ -145,7 +145,7 @@ void DEvent::PrintDetails() {
             std::cout << *particle << std::endl;
     }
 
-    for (const auto& simus: SimulatedHitCollection) {
+    for (const auto &simus: SimulatedHitCollection) {
         std::cout << "**********************************************************************" << std::endl
                   << "* Simulated Hit Collection: " << simus.first << std::endl
                   << "**********************************************************************" << std::endl
@@ -314,28 +314,30 @@ void DEvent::DeleteCollection(const std::string &str) {
     auto itr6 = OpticalCollection.find(str);
     auto itr7 = MCPHelperCollection.find(str);
 
-    if (itr1 != MCParticleCollection.end()) {
-        MCParticleCollection.erase(itr1);
-        std::cout << "[MC DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-    } else if (itr2 != RecParticleCollection.end()) {
-        RecParticleCollection.erase(itr2);
-        std::cout << "[REC DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-    } else if (itr3 != SimulatedHitCollection.end()) {
-        SimulatedHitCollection.erase(itr3);
-        std::cout << "[SIM DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-    } else if (itr4 != CalorimeterHitCollection.end()) {
-        CalorimeterHitCollection.erase(itr4);
-        std::cout << "[CAL DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-    } else if (itr5 != StepCollection.end()) {
-        StepCollection.erase(itr5);
-        std::cout << "[STEP DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-    } else if (itr6 != OpticalCollection.end()) {
-        OpticalCollection.erase(itr6);
-        std::cout << "[Opt DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-    } else if (itr7 != MCPHelperCollection.end()) {
-        std::cout << "[MCPHelper DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-    } else
-        std::cerr << "[WARNING] ==> No Key named " + str + "." << std::endl;
+    if (Verbose > 1) {
+        if (itr1 != MCParticleCollection.end()) {
+            MCParticleCollection.erase(itr1);
+            std::cout << "[MC DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+        } else if (itr2 != RecParticleCollection.end()) {
+            RecParticleCollection.erase(itr2);
+            std::cout << "[REC DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+        } else if (itr3 != SimulatedHitCollection.end()) {
+            SimulatedHitCollection.erase(itr3);
+            std::cout << "[SIM DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+        } else if (itr4 != CalorimeterHitCollection.end()) {
+            CalorimeterHitCollection.erase(itr4);
+            std::cout << "[CAL DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+        } else if (itr5 != StepCollection.end()) {
+            StepCollection.erase(itr5);
+            std::cout << "[STEP DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+        } else if (itr6 != OpticalCollection.end()) {
+            OpticalCollection.erase(itr6);
+            std::cout << "[Opt DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+        } else if (itr7 != MCPHelperCollection.end()) {
+            std::cout << "[MCPHelper DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+        } else
+            std::cerr << "[WARNING] ==> No Key named " + str + "." << std::endl;
+    }
 }
 
 void DEvent::LinkChildren() {
