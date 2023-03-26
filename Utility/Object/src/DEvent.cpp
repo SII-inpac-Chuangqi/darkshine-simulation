@@ -314,28 +314,36 @@ void DEvent::DeleteCollection(const std::string &str) {
     auto itr6 = OpticalCollection.find(str);
     auto itr7 = MCPHelperCollection.find(str);
 
-    if (Verbose > 1) {
-        if (itr1 != MCParticleCollection.end()) {
-            MCParticleCollection.erase(itr1);
+
+    if (itr1 != MCParticleCollection.end()) {
+        MCParticleCollection.erase(itr1);
+        if (Verbose > 1)
             std::cout << "[MC DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-        } else if (itr2 != RecParticleCollection.end()) {
-            RecParticleCollection.erase(itr2);
+    } else if (itr2 != RecParticleCollection.end()) {
+        RecParticleCollection.erase(itr2);
+        if (Verbose > 1)
             std::cout << "[REC DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-        } else if (itr3 != SimulatedHitCollection.end()) {
-            SimulatedHitCollection.erase(itr3);
+    } else if (itr3 != SimulatedHitCollection.end()) {
+        SimulatedHitCollection.erase(itr3);
+        if (Verbose > 1)
             std::cout << "[SIM DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-        } else if (itr4 != CalorimeterHitCollection.end()) {
-            CalorimeterHitCollection.erase(itr4);
+    } else if (itr4 != CalorimeterHitCollection.end()) {
+        CalorimeterHitCollection.erase(itr4);
+        if (Verbose > 1)
             std::cout << "[CAL DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-        } else if (itr5 != StepCollection.end()) {
-            StepCollection.erase(itr5);
+    } else if (itr5 != StepCollection.end()) {
+        StepCollection.erase(itr5);
+        if (Verbose > 1)
             std::cout << "[STEP DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-        } else if (itr6 != OpticalCollection.end()) {
-            OpticalCollection.erase(itr6);
+    } else if (itr6 != OpticalCollection.end()) {
+        OpticalCollection.erase(itr6);
+        if (Verbose > 1)
             std::cout << "[Opt DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-        } else if (itr7 != MCPHelperCollection.end()) {
+    } else if (itr7 != MCPHelperCollection.end()) {
+        if (Verbose > 1)
             std::cout << "[MCPHelper DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-        } else
+    } else {
+        if (Verbose > 1)
             std::cerr << "[WARNING] ==> No Key named " + str + "." << std::endl;
     }
 }
