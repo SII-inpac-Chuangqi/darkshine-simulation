@@ -145,7 +145,9 @@ public:
 //Get normal vector of fitteed plane
     TMatrixD GetNormalVecs(const TMatrixD &g, const TMatrixD &x_g);
 
-
+//................................................................................//
+//Get delta x
+    std::vector<double> GetDeltax(const TrkHitPVec &track);
 //................................................................................//
 //Get covariance matrix of delta x in Cartesian coordinates
     TMatrixD GetVcartx(const TrkHitPVec &track);
