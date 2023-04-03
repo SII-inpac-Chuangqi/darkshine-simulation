@@ -26,3 +26,4 @@ Algorithms/Tracking/src/RiemannFit/*.swp
 Algorithms/Tracking/src/*.swp
 /workspace/
 *cmake*/*
+*cmake*/*/*
