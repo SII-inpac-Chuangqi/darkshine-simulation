@@ -68,8 +68,8 @@ TrkHitPVecMap GreedyFinder::GetTempHitMap(TrkHitPVecMap &clusteredTrkHitsInLayer
      size_t i = 0;
      for(const auto &layer : temp_ClusteredTrkHitsInLayer)
      {
-        if(layer.first != temp_ClusteredTrkHitsInLayer.begin()->first &&
-           layer.first != temp_ClusteredTrkHitsInLayer.end()  ->first)
+        if(layer.first != temp_ClusteredTrkHitsInLayer.begin() ->first &&
+           layer.first != temp_ClusteredTrkHitsInLayer.rbegin()->first)
         {
             layers[i] = layer.first;
             i++;
