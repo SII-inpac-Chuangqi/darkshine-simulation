@@ -38,6 +38,7 @@ void RiemannFitter::Init(const TrkHitPVec &track, std::initializer_list<double> 
     pre_R_  = *it;
 
     dim_ = track.size();
+    corrections_x_ = this->GetDeltax(track);
     this->GetTheta(track);
 }
 
@@ -256,7 +257,7 @@ TMatrixD RiemannFitter::GetVcart0()
 //Get delta x
 std::vector<double> RiemannFitter::GetDeltax(const TrkHitPVec &track)    
 {
-    double pT=0.3 * RiemannFitHelper::GetMagnetAtOrigin(tracking::dY) * pre_R_; // momentum, MeV
+    double pT = 0.3 * RiemannFitHelper::GetMagnetAtOrigin(tracking::dY) * pre_R_; // momentum, MeV
 
     std::vector<double> Xk(dim_, 0.0);
     std::vector<double> Yk(dim_, 0.0);
@@ -266,37 +267,27 @@ std::vector<double> RiemannFitter::GetDeltax(const TrkHitPVec &track)
     std::vector<double> deltaSinak(dim_, 0.0);
     std::vector<double> deltaXk(dim_, 0.0);
 
-    for (int i =0; i < dim_; i++)
+    for (int i = 0; i < dim_; i++)
     {
         Xk[i] = track.at(i)->GetX();
         Yk[i] = track.at(i)->GetY();
         Zk[i] = track.at(i)->GetZ();
         Bk[i] = RiemannFitHelper::GetMagnetY(Xk[i], Yk[i], Zk[i]);
-        if(i==0)
-        {
-            Ak[i]=0.0;
-        }
+        if(i == 0)
+            Ak[i] = 0.0;
         else
-       {
 //            Ak[i]=(Bk[i-1] - Bk[0]) * (Zk[i] - Zk[i-1]) + 0.5 * (Bk[i] - Bk[i-1]) * (Zk[i] + Zk[i-1]) - (Bk[i] - Bk[i-1]) * Zk[i-1];
-            Ak[i]=0.5 * (Bk[i] + Bk[i-1] - 2 * Bk[0]) * (Zk[i] - Zk[i-1]);
-        }
+            Ak[i] = 0.5 * (Bk[i] + Bk[i-1] - 2 * Bk[0]) * (Zk[i] - Zk[i-1]);
 
         double temp = 0.0;
-        for (int j =0; j <i+1; j++)
-        {
+        for(int j = 0; j < i + 1; j++)
             temp = temp + Ak[j];
-        }
-        deltaSinak[i] = 0.3 / pT * temp;
+        deltaSinak[i] = 0.3/pT*temp;
 
-        if(i==0)
-        {
-        deltaXk[i] = 0;
-        }
+        if(i == 0)
+            deltaXk[i] = 0;
         else
-        {
-            deltaXk[i] = (Zk[i] - Zk[i-1]) * (deltaSinak[i] + deltaSinak[i-1]) * 0.5;
-        }
+            deltaXk[i] = (Zk[i] - Zk[i - 1])*(deltaSinak[i] + deltaSinak[i - 1])*0.5;
     }
 
 //    TArrayD data(dim_);
@@ -314,17 +305,14 @@ TMatrixD RiemannFitter::GetVcartx(const TrkHitPVec &track)
 {
     TArrayD data(4*dim_*dim_);
     auto D = GetDeltax(track);
-    for (int i = 0; i < dim_; i++)
+    for(int i = 0; i < dim_; i++)
     {
-        for (int j = 0; j < dim_; j++)
+        for(int j = 0; j < dim_; j++)
         {
-            if(i==j)
-            {
+            if(i == j)
                 data[j + 2*i*dim_] = D.at(i)*D.at(i);
-            }
         }
     }
-   
 
     TMatrixD v_cartx(2*dim_, 2*dim_);
     v_cartx.SetMatrixArray(data.GetArray());

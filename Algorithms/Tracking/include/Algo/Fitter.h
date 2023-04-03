@@ -70,6 +70,7 @@ public:
     virtual std::vector<double> ExtrapolateTo([[maybe_unused]] const std::vector<double> &planes_z,
                                               [[maybe_unused]] tracking::direction extrop_dir = tracking::dX)
                                              {return {};}
+    virtual std::vector<double> GetCorrectionsX() const {return {};}
 
 //................................................................................//
 //Set

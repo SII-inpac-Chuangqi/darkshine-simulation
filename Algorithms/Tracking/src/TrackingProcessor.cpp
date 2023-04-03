@@ -156,6 +156,7 @@ void TrackingProcessor::Begin() {
 
         EvtWrt->RegisterOutVariable("RecTrk2_track_extrapolated_x", &RecTrk2_track_extrapolated_x);
         EvtWrt->RegisterOutVariable("RecTrk2_track_extrapolated_y", &RecTrk2_track_extrapolated_y);
+        EvtWrt->RegisterOutVariable("RecTrk2_track_corrections_x",  &RecTrk2_track_corrections_x);
 
         EvtWrt->RegisterOutVariable("RecTrk2_track_preA", &RecTrk2_track_preA);
         EvtWrt->RegisterOutVariable("RecTrk2_track_preB", &RecTrk2_track_preB);
@@ -229,6 +230,7 @@ void TrackingProcessor::InitEvt() {
 
     std::vector<std::vector<double>>().swap(RecTrk2_track_extrapolated_x);
     std::vector<std::vector<double>>().swap(RecTrk2_track_extrapolated_y);
+    std::vector<std::vector<double>>().swap(RecTrk2_track_corrections_x);
 
     std::vector<double>().swap(RecTrk2_track_preA);
     std::vector<double>().swap(RecTrk2_track_preB);
@@ -586,6 +588,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 //auto extrapolated_y = track->GetExtrapolated(tracking::dY);
                 //RecTrk2_track_extrapolated_x.push_back(extrapolated_x);
                 //RecTrk2_track_extrapolated_y.push_back(extrapolated_y);
+
+                RecTrk2_track_corrections_x.push_back(track->GetCorrectionsX());
 
                 RecTrk2_track_preA.push_back(track->GetPreXc());
                 RecTrk2_track_preB.push_back(track->GetPreYc());
