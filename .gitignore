@@ -1,7 +1,7 @@
 build*/
 install*/
 release*/
-*debug*/
+*debug*/*
 .ycm_extra_conf.py
 .vscode
 .idea
@@ -25,4 +25,4 @@ Algorithms/Tracking/include/Algo/*.swp
 Algorithms/Tracking/src/RiemannFit/*.swp
 Algorithms/Tracking/src/*.swp
 /workspace/
-*cmake*/
+*cmake*/*
