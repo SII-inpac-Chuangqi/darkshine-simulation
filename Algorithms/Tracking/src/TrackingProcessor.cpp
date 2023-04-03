@@ -457,6 +457,13 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                                        find_tag.GetCenterX(i),   //not used in Kalman filter, reserved
                                                                        find_tag.GetCenterY(i))); //not used in Kalman filter, reserved
                         tag_tracks_.back()->SetVerbose(Verbose);
+                        int size = tag_tracks_.back()->GetSize();
+                        double x = 0.;
+                        double y = 0.5*(tag_tracks_.back()->At(0)->GetY() + tag_tracks_.back()->At(size - 1)->GetY());
+                        double z = 0.5*(tag_tracks_.back()->At(0)->GetZ() + tag_tracks_.back()->At(size - 1)->GetZ());
+                        std::vector<double> magnet_at_median = {dAnaData->getMagnetFieldAt({x, y, z}).at(0)*10.,
+                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(1)*10.,
+                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(2)*10.};
                         tag_tracks_.back()->ExceptionHandler(magnet_at_origin);
                         //tag_tracks_.back()->Reverse();
                         tag_tracks_.back()->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
@@ -498,6 +505,13 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                                        find_rec.GetCenterX(i),   //not used in Kalman filter, reserved
                                                                        find_rec.GetCenterY(i))); //not used in Kalman filter, reserved
                         rec_tracks_.back()->SetVerbose(Verbose);
+                        int size = rec_tracks_.back()->GetSize();
+                        double x = 0.;
+                        double y = 0.5*(rec_tracks_.back()->At(0)->GetY() + rec_tracks_.back()->At(size - 1)->GetY());
+                        double z = 0.5*(rec_tracks_.back()->At(0)->GetZ() + rec_tracks_.back()->At(size - 1)->GetZ());
+                        std::vector<double> magnet_at_median = {dAnaData->getMagnetFieldAt({x, y, z}).at(0)*10.,
+                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(1)*10.,
+                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(2)*10.};
                         rec_tracks_.back()->ExceptionHandler(magnet_at_origin);
                         //rec_tracks_.back()->Reverse();
                         rec_tracks_.back()->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit

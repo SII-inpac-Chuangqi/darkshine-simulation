@@ -14,9 +14,18 @@
 //Constructor
 RiemannFitter::RiemannFitter(const TrkHitPVec &track, std::initializer_list<double> list)
 {
-    this->Init(track, list);
-    this->Fit (track, {});
-    this->Fill(track, {});
+    try
+    {
+        this->Init(track, list);
+        this->Fit (track, {});
+        this->Fill(track, {});
+    }
+    catch(...)
+    {
+        std::cerr << "[Error]" << std::endl;
+        pp = RETURN;
+        return;
+    }
 }
 
 //................................................................................//
@@ -52,6 +61,8 @@ void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
         
         TMatrixD v_cart0(GetVcart0());
         //v_cart0.Print();
+        TMatrixD v_cartx(GetVcartx(track));
+        //v_cartx.Print();
         TMatrixD j1(GetJ1(track));
         //j1.Print();
         TMatrixD j2(GetJ2(track));
@@ -60,7 +71,9 @@ void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
         //v_rad0.Print();
         TMatrixD v_radms(GetVradms(polar_coo));
         //v_radms.Print();
-        TMatrixD g(GetG(v_rad0, v_radms));
+        TMatrixD v_radx(GetVradx(v_cartx, j1, j2));
+        //v_radx.Print();
+        TMatrixD g(GetG(v_rad0, v_radms, v_radx));
         //g.Print();
         TMatrixD w(GetW(g));
         //w.Print();
@@ -98,9 +111,17 @@ void RiemannFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
     //std::cout << 0.3*abs(RiemannFitHelper::GetMagnetAtOrigin(tracking::dY)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_) << " MeV" << std::endl;
 }
 
-void RiemannFitter::Fill(const TrkHitPVec&, std::initializer_list<double>)
+void RiemannFitter::Fill(const TrkHitPVec& track, std::initializer_list<double>)
 {
-    pp = 0.3*abs(RiemannFitHelper::GetMagnetAtOrigin(tracking::dY)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
+    auto s = GetSign(track);
+    double y = 0.5*(track.at(0)->GetY() + track.at(dim_ - 1)->GetY());
+    double z = 0.5*(track.at(0)->GetZ() + track.at(dim_ - 1)->GetZ());
+    double x = -s*sqrt(pre_R_*pre_R_ - (z - pre_Yc_)*(z - pre_Yc_)) + pre_Xc_;
+    //double y = track.at(0)->GetY();
+    //double z = track.at(0)->GetZ();
+    //double x = track.at(0)->GetX();
+    //std::cout << 0.5*(track.at(0)->GetX() + track.at(dim_ - 1)->GetX()) << "\t" << x << std::endl;
+    pp = 0.3*abs(RiemannFitHelper::GetMagnetY(x, y, z)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
 }
 
 //................................................................................//
@@ -122,9 +143,11 @@ double RiemannFitter::GetTheta(const TrkHitPVec &track)
 //Get hit measurements projected on the paraboloid surface in Cartesian coordinates
 TMatrixD RiemannFitter::GetCartCoo(const TrkHitPVec &track)
 {
+    int s = GetSign(track);	
     TArrayD data(3*dim_);
     for (int i = 0; i < dim_; i++)
     {
+        //double u = track.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(track)[i])*s;
         double u = track.at(i)->GetX() - pre_Xc_;
         double v = track.at(i)->GetZ() - pre_Yc_;
         data[i] = u;
@@ -229,6 +252,86 @@ TMatrixD RiemannFitter::GetVcart0()
 
     return v_cart0;
 }
+//................................................................................//
+//Get delta x
+std::vector<double> RiemannFitter::GetDeltax(const TrkHitPVec &track)    
+{
+    double pT=0.3 * RiemannFitHelper::GetMagnetAtOrigin(tracking::dY) * pre_R_; // momentum, MeV
+
+    std::vector<double> Xk(dim_, 0.0);
+    std::vector<double> Yk(dim_, 0.0);
+    std::vector<double> Zk(dim_, 0.0);
+    std::vector<double> Bk(dim_, 0.0);
+    std::vector<double> Ak(dim_, 0.0);
+    std::vector<double> deltaSinak(dim_, 0.0);
+    std::vector<double> deltaXk(dim_, 0.0);
+
+    for (int i =0; i < dim_; i++)
+    {
+        Xk[i] = track.at(i)->GetX();
+        Yk[i] = track.at(i)->GetY();
+        Zk[i] = track.at(i)->GetZ();
+        Bk[i] = RiemannFitHelper::GetMagnetY(Xk[i], Yk[i], Zk[i]);
+        if(i==0)
+        {
+            Ak[i]=0.0;
+        }
+        else
+       {
+//            Ak[i]=(Bk[i-1] - Bk[0]) * (Zk[i] - Zk[i-1]) + 0.5 * (Bk[i] - Bk[i-1]) * (Zk[i] + Zk[i-1]) - (Bk[i] - Bk[i-1]) * Zk[i-1];
+            Ak[i]=0.5 * (Bk[i] + Bk[i-1] - 2 * Bk[0]) * (Zk[i] - Zk[i-1]);
+        }
+
+        double temp = 0.0;
+        for (int j =0; j <i+1; j++)
+        {
+            temp = temp + Ak[j];
+        }
+        deltaSinak[i] = 0.3 / pT * temp;
+
+        if(i==0)
+        {
+        deltaXk[i] = 0;
+        }
+        else
+        {
+            deltaXk[i] = (Zk[i] - Zk[i-1]) * (deltaSinak[i] + deltaSinak[i-1]) * 0.5;
+        }
+    }
+
+//    TArrayD data(dim_);
+//    for (int i = 0; i<dim_; i++)
+//    {
+//        data[i]=deltaXk[i];
+//    }
+
+    return deltaXk;
+}
+
+//..............................................................................//
+//Get covariance matrix of dx in Cartesian coordinates 
+TMatrixD RiemannFitter::GetVcartx(const TrkHitPVec &track)
+{
+    TArrayD data(4*dim_*dim_);
+    auto D = GetDeltax(track);
+    for (int i = 0; i < dim_; i++)
+    {
+        for (int j = 0; j < dim_; j++)
+        {
+            if(i==j)
+            {
+                data[j + 2*i*dim_] = D.at(i)*D.at(i);
+            }
+        }
+    }
+   
+
+    TMatrixD v_cartx(2*dim_, 2*dim_);
+    v_cartx.SetMatrixArray(data.GetArray());
+
+    return v_cartx;
+}
+
 
 //................................................................................//
 //Get Jacobian matrix from Cartesian to polar coordinate
@@ -306,10 +409,20 @@ TMatrixD RiemannFitter::GetVrad0(const TMatrixD &v_cart0, const TMatrixD &j1, co
 }
 
 //................................................................................//
+//Get covariance matrix of dx in RΦ-R coordinate
+TMatrixD RiemannFitter::GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, const TMatrixD &j2)
+{
+    TMatrixD v_radx(j2*j1*v_cartx, TMatrixD::kMultTranspose, j2*j1);
+    return v_radx;
+}
+
+//................................................................................//
 //Get final covariance matrix
-TMatrixD RiemannFitter::GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms)
+TMatrixD RiemannFitter::GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms, [[maybe_unused]] const TMatrixD &v_radx)
 {
     TMatrixD g(v_rad0, TMatrixD::kPlus, v_radms);
+    //f.Invert();
+    //TMatrixD g(f, TMatrixD::kPlus, v_radx);
     g.Invert();
 
     return g;

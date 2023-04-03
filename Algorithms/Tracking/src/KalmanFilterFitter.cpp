@@ -194,6 +194,7 @@ void KalmanFilterFitter::Fill(const TrkHitPVec &track, std::initializer_list<dou
 //Get
 //................................................................................//
 //Calculate sign of charge of input track
+/*
 int KalmanFilterFitter::GetSign(const TrkHitPVec &track)
 {
     double xl  = track.at(track.size() - 1)->GetU();
@@ -219,6 +220,7 @@ int KalmanFilterFitter::GetSign(const TrkHitPVec &track)
         (xlr - xl)/sqrt((xl - xlr)*(xl - xlr) + (zl - zlr)*(zl - zlr)) ? 1 : -1;
     return s;
 }
+*/
 
 std::vector<double> KalmanFilterFitter::ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir)
 {
