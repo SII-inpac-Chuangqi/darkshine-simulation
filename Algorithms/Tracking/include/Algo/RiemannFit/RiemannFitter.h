@@ -122,7 +122,7 @@ public:
 //................................................................................//
 //Get inverse of the final covariance matrix
 // G = V^-1, V = V_rad_ms (multiple scattering) + V_rad_0 (measurement)
-    TMatrixD GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms);
+    TMatrixD GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms, const TMatrixD &v_radx);
 
 //................................................................................//
 //Get weights
@@ -144,6 +144,17 @@ public:
 //................................................................................//
 //Get normal vector of fitteed plane
     TMatrixD GetNormalVecs(const TMatrixD &g, const TMatrixD &x_g);
+
+//................................................................................//
+//Get delta x
+    std::vector<double> GetDeltax(const TrkHitPVec &track);
+//................................................................................//
+//Get covariance matrix of delta x in Cartesian coordinates
+    TMatrixD GetVcartx(const TrkHitPVec &track);
+
+//..............................................................................//
+//Get covariance matrix of delta x in RΦ-R coordinate
+    TMatrixD GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, const TMatrixD &j2);
 
 private:
     int dim_{0};
