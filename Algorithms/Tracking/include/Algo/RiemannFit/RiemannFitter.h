@@ -2,7 +2,7 @@
 #define RIEMANNFIT_RIEMANN_FITTER_H
 
 //................................................................................//
-//CPP Libraries
+//C++
 #include <map>
 #include <vector>
 #include <memory>

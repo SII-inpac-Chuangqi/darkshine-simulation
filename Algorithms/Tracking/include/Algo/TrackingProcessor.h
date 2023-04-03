@@ -6,7 +6,7 @@
 #endif
 
 //................................................................................//
-//CPP Libraries
+//C++
 #include <utility>
 
 //................................................................................//
@@ -112,8 +112,8 @@ private:
 //................................................................................//
 //Reconstructed
 //................................................................................//
-    std::vector<std::unique_ptr<DTrack>> tag_tracks_;
-    std::vector<std::unique_ptr<DTrack>> rec_tracks_;
+    std::vector<std::shared_ptr<DTrack>> tag_tracks_;
+    std::vector<std::shared_ptr<DTrack>> rec_tracks_;
 
 //No of reconstructed tracks
     int TagTrk2_track_No{-1};

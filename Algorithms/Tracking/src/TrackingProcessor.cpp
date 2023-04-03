@@ -1,7 +1,7 @@
 #include "Algo/TrackingProcessor.h"
 
 //................................................................................//
-//CPP Libraries
+//C++
 #include <vector>
 #include <map>
 #include <memory>
@@ -452,7 +452,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     for (int i = 0; i < find_tag.GetTrackNo(); i++)
                     {
                         TrkHitPVec tag_track_hits((*(vec_tag_track.begin() + i)).begin(), (*(vec_tag_track.begin() + i)).end());
-                        tag_tracks_.push_back(std::make_unique<DTrack>(tag_track_hits,
+                        tag_tracks_.push_back(std::make_shared<DTrack>(tag_track_hits,
                                                                        find_tag.GetR(i),         //used in Kalman filter
                                                                        find_tag.GetCenterX(i),   //not used in Kalman filter, reserved
                                                                        find_tag.GetCenterY(i))); //not used in Kalman filter, reserved
@@ -500,7 +500,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
               
                     for (int i = 0; i < find_rec.GetTrackNo(); i++) {
                         TrkHitPVec rec_track_hits((*(vec_rec_track.begin() + i)).begin(), (*(vec_rec_track.begin() + i)).end());
-                        rec_tracks_.push_back(std::make_unique<DTrack>(rec_track_hits,
+                        rec_tracks_.push_back(std::make_shared<DTrack>(rec_track_hits,
                                                                        find_rec.GetR(i),         //used in Kalman filter
                                                                        find_rec.GetCenterX(i),   //not used in Kalman filter, reserved
                                                                        find_rec.GetCenterY(i))); //not used in Kalman filter, reserved
@@ -523,9 +523,9 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Post-processing
-        std::sort(tag_tracks_.begin(), tag_tracks_.end(), [](std::unique_ptr<DTrack> &track1, std::unique_ptr<DTrack> &track2)
+        std::sort(tag_tracks_.begin(), tag_tracks_.end(), [](std::shared_ptr<DTrack> &track1, std::shared_ptr<DTrack> &track2)
                                                           { return track1->GetPp() > track2->GetPp(); } );
-        std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](std::unique_ptr<DTrack> &track1, std::unique_ptr<DTrack> &track2)
+        std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](std::shared_ptr<DTrack> &track1, std::shared_ptr<DTrack> &track2)
                                                           { return track1->GetPp() > track2->GetPp(); } );
 /*
         for(size_t i = 0; i < rec_tracks_.size(); i++)

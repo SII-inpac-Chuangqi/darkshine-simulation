@@ -1,7 +1,7 @@
 #ifndef TYPEDEF_H
 #define TYPEDEF_H
 //................................................................................//
-//CPP Libraries
+//C++
 #include <iostream>
 #include <map>
 #include <vector>
