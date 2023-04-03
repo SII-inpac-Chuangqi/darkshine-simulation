@@ -147,7 +147,8 @@ TMatrixD RiemannFitter::GetCartCoo(const TrkHitPVec &track)
     TArrayD data(3*dim_);
     for (int i = 0; i < dim_; i++)
     {
-        double u = track.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(track)[i])*s;
+        //double u = track.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(track)[i])*s;
+        double u = track.at(i)->GetX() - pre_Xc_;
         double v = track.at(i)->GetZ() - pre_Yc_;
         data[i] = u;
         data[i + dim_] = v;
