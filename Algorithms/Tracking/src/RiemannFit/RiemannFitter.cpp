@@ -117,6 +117,9 @@ void RiemannFitter::Fill(const TrkHitPVec& track, std::initializer_list<double>)
     double y = 0.5*(track.at(0)->GetY() + track.at(dim_ - 1)->GetY());
     double z = 0.5*(track.at(0)->GetZ() + track.at(dim_ - 1)->GetZ());
     double x = -s*sqrt(pre_R_*pre_R_ - (z - pre_Yc_)*(z - pre_Yc_)) + pre_Xc_;
+    //double y = track.at(0)->GetY();
+    //double z = track.at(0)->GetZ();
+    //double x = track.at(0)->GetX();
     //std::cout << 0.5*(track.at(0)->GetX() + track.at(dim_ - 1)->GetX()) << "\t" << x << std::endl;
     pp = 0.3*abs(RiemannFitHelper::GetMagnetY(x, y, z)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
 }
@@ -140,10 +143,11 @@ double RiemannFitter::GetTheta(const TrkHitPVec &track)
 //Get hit measurements projected on the paraboloid surface in Cartesian coordinates
 TMatrixD RiemannFitter::GetCartCoo(const TrkHitPVec &track)
 {
+    int s = GetSign(track);	
     TArrayD data(3*dim_);
     for (int i = 0; i < dim_; i++)
     {
-        double u = track.at(i)->GetX() - pre_Xc_;
+        double u = track.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(track)[i])*s;
         double v = track.at(i)->GetZ() - pre_Yc_;
         data[i] = u;
         data[i + dim_] = v;
@@ -247,12 +251,11 @@ TMatrixD RiemannFitter::GetVcart0()
 
     return v_cart0;
 }
-
-//..............................................................................//
-//Get covariance matrix of dx in Cartesian coordinates 
-TMatrixD RiemannFitter::GetVcartx(const TrkHitPVec &track)
+//................................................................................//
+//Get delta x
+std::vector<double> RiemannFitter::GetDeltax(const TrkHitPVec &track)    
 {
-    double pT=0.3 * RiemannFitHelper::GetMagnetAtOrigin(tracking::dY) * pre_R_; // momentum, MeV    
+    double pT=0.3 * RiemannFitHelper::GetMagnetAtOrigin(tracking::dY) * pre_R_; // momentum, MeV
 
     std::vector<double> Xk(dim_, 0.0);
     std::vector<double> Yk(dim_, 0.0);
@@ -273,11 +276,11 @@ TMatrixD RiemannFitter::GetVcartx(const TrkHitPVec &track)
             Ak[i]=0.0;
         }
         else
-        {
-            //Ak[i]=(Bk[i-1] - Bk[0]) * (Zk[i] - Zk[i-1]) + 0.5 * (Bk[i] - Bk[i-1]) * (Zk[i] + Zk[i-1]) - (Bk[i] - Bk[i-1]) * Zk[i-1];
+       {
+//            Ak[i]=(Bk[i-1] - Bk[0]) * (Zk[i] - Zk[i-1]) + 0.5 * (Bk[i] - Bk[i-1]) * (Zk[i] + Zk[i-1]) - (Bk[i] - Bk[i-1]) * Zk[i-1];
             Ak[i]=0.5 * (Bk[i] + Bk[i-1] - 2 * Bk[0]) * (Zk[i] - Zk[i-1]);
         }
-        
+
         double temp = 0.0;
         for (int j =0; j <i+1; j++)
         {
@@ -295,19 +298,32 @@ TMatrixD RiemannFitter::GetVcartx(const TrkHitPVec &track)
         }
     }
 
+//    TArrayD data(dim_);
+//    for (int i = 0; i<dim_; i++)
+//    {
+//        data[i]=deltaXk[i];
+//    }
 
+    return deltaXk;
+}
+
+//..............................................................................//
+//Get covariance matrix of dx in Cartesian coordinates 
+TMatrixD RiemannFitter::GetVcartx(const TrkHitPVec &track)
+{
     TArrayD data(4*dim_*dim_);
+    auto D = GetDeltax(track);
     for (int i = 0; i < dim_; i++)
     {
         for (int j = 0; j < dim_; j++)
         {
             if(i==j)
             {
-                data[j + 2*i*dim_] = deltaXk[i] * deltaXk[i];
-
+                data[j + 2*i*dim_] = D.at(i)*D.at(i);
             }
         }
     }
+   
 
     TMatrixD v_cartx(2*dim_, 2*dim_);
     v_cartx.SetMatrixArray(data.GetArray());
@@ -401,11 +417,11 @@ TMatrixD RiemannFitter::GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, co
 
 //................................................................................//
 //Get final covariance matrix
-TMatrixD RiemannFitter::GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms, const TMatrixD &v_radx)
+TMatrixD RiemannFitter::GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms, [[maybe_unused]] const TMatrixD &v_radx)
 {
-    TMatrixD f(v_rad0, TMatrixD::kPlus, v_radms);
+    TMatrixD g(v_rad0, TMatrixD::kPlus, v_radms);
     //f.Invert();
-    TMatrixD g(f, TMatrixD::kPlus, v_radx);
+    //TMatrixD g(f, TMatrixD::kPlus, v_radx);
     g.Invert();
 
     return g;
