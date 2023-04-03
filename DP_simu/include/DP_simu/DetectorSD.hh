@@ -69,17 +69,36 @@ public:
     void EndOfEvent(G4HCofThisEvent *hitCollection) override;
 
 private:
-    G4ThreeVector fCellID;
+    void InitializeHit(const G4Step *step, SimulatedHit* hit);
+    struct ArrayHasher {
+        std::size_t operator()(const std::array<int, 3>& a) const {
+            std::size_t h = 0;
+
+            for (auto e : a) {
+                h ^= std::hash<int>{}(e)  + 0x9e3779b9 + (h << 6) + (h >> 2);
+            }
+            return h;
+        }
+    };
+    struct ArrayEqual {
+        bool operator()(const std::array<int, 3>& lhs, const std::array<int, 3>& rhs) const {
+            return lhs == rhs;
+        }
+    };
+
+private:
+    G4ThreeVector fCellID; // Detector shape
     G4int fType; // 0: Tracker 1: ECAL_Center 2: ECAL_Outer
     G4String fname;
     G4int cellId{-1};
+    std::array<int, 3> CellID = {0,0,0}; // Cell ID XYZ
     G4int reNumber0{-1};
     G4int reNumber1{-1}; // replical number of PV
     G4int reNumber2{-1};
     G4int reNumber3{-1};
     G4String particleName;
 
-    std::vector<SimulatedHit *> fSimHitVec;
+    std::unordered_map<std::array<int,3>, SimulatedHit*, ArrayHasher, ArrayEqual> SimHits;
 
 };
 

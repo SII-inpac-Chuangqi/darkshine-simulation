@@ -66,8 +66,11 @@ test simu and ana:
     - cat ./Automaton/test.sh | /bin/bash --login
   artifacts:
     when: always
+    name: "Validation"
     paths:
       - "test/*"
+    exclude:
+      - "test/ref.dp_ana.root"
 
 ci write wiki:
   stage: post

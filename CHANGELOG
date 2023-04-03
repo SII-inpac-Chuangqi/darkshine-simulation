@@ -1,3 +1,10 @@
+2023-03-17
+    1. DSimu: Optimize Sensitive Detector
+
+2023-03-15
+    DSimu v1.7
+    1. DSimu: Fix DetectorSD Bug
+
 2022-12-05
     DSimu v1.5, DAna v1.5.5
     1. DAna: Add branch SideHCAL_E_total and SideHCAL_E_Max_Cell
