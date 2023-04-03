@@ -1,0 +1,11 @@
+{ decls }
+namespace genfit {  }
+
+[ libtrackRepsRootDict.so ]
+# List of selected classes
+class genfit::MplTrackRep
+class genfit::RKTrackRep
+header MplTrackRep.h
+header RKTrackRep.h
+# List of selected namespaces
+namespace genfit

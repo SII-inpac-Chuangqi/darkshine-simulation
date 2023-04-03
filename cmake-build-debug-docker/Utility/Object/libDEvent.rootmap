@@ -1,0 +1,74 @@
+{ decls }
+namespace std {  }
+
+[ libDEvent.so ]
+# List of selected classes
+class CalorimeterHit
+class CalorimeterHit_b1
+class DDetectorIDMaps
+class DDetectorIDMaps_b1_5
+class DEvent
+class DEvent_b1_5
+class DHit
+class DHit_b1_4
+class DMagnet
+class DMagnet::MagSlice
+class DMagnet_b1
+class DMagnet_b1::MagSlice
+class DParticle
+class DParticle_b1_5
+class DStep
+class DStep_b1_5
+class DTruth
+class DTruthParticle
+class DTruthProcess
+class DTruthState
+class DigiForm
+class DigiForm_b1
+class McPHelper
+class McPHelper_b1_5
+class McParticle
+class McParticle_b1_5
+class PhysicsDef
+class ReconstructedParticle
+class ReconstructedParticle_b1_5
+class SimulatedHit
+class SimulatedHit_b1_5
+class map<pair<int,int>,vector<DTruthState*> >
+class map<pair<int,int>,vector<DTruthState*>,less<pair<int,int> >,allocator<pair<const pair<int,int>,vector<DTruthState*> > > >
+class map<std::pair<int,int>,std::vector<DTruthState*> >
+class vector<CalorimeterHit*>
+class vector<CalorimeterHit_b1*>
+class vector<DHit*>
+class vector<DHit_b1_4*>
+class vector<DParticle*>
+class vector<DParticle_b1_5*>
+class vector<DStep*>
+class vector<DStep_b1_5*>
+class vector<DTruthParticle*>
+class vector<DigiForm*>
+class vector<DigiForm_b1*>
+class vector<McPHelper*>
+class vector<McPHelper_b1_5*>
+class vector<McParticle*>
+class vector<McParticle_b1_5*>
+class vector<ReconstructedParticle*>
+class vector<ReconstructedParticle_b1_5*>
+class vector<SimulatedHit*>
+class vector<SimulatedHit_b1_5*>
+class vector<TVector3>
+header versions/CalorimeterHit_b1.h
+header versions/DDetectorIDMaps_b1_5.h
+header versions/DEvent_b1_5.h
+header versions/DHit_b1_4.h
+header versions/DMagnet_b1.h
+header versions/DParticle_b1_5.h
+header versions/DStep_b1_5.h
+header DTruth.h
+header versions/DigiForm_b1.hh
+header versions/McPHelper_b1_5.h
+header versions/McParticle_b1_5.h
+header Utility/PhysicsProcessDef.h
+header versions/ReconstructedParticle_b1_5.h
+header versions/SimulatedHit_b1_5.h
+# List of selected typedefs and outer classes

@@ -1,0 +1,33 @@
+{ decls }
+namespace genfit {  }
+
+[ libmeasurementsRootDict.so ]
+# List of selected classes
+class genfit::FullMeasurement
+class genfit::HMatrixPhi
+class genfit::HMatrixU
+class genfit::HMatrixUV
+class genfit::HMatrixUnit
+class genfit::HMatrixV
+class genfit::PlanarMeasurement
+class genfit::ProlateSpacepointMeasurement
+class genfit::SpacepointMeasurement
+class genfit::WireMeasurement
+class genfit::WireMeasurementNew
+class genfit::WirePointMeasurement
+class genfit::WireTrackCandHit
+header FullMeasurement.h
+header HMatrixPhi.h
+header HMatrixU.h
+header HMatrixUV.h
+header HMatrixUnit.h
+header HMatrixV.h
+header PlanarMeasurement.h
+header ProlateSpacepointMeasurement.h
+header SpacepointMeasurement.h
+header WireMeasurement.h
+header WireMeasurementNew.h
+header WirePointMeasurement.h
+header WireTrackCandHit.h
+# List of selected namespaces
+namespace genfit

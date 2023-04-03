@@ -1,0 +1,106 @@
+
+# Consider dependencies only in project.
+set(CMAKE_DEPENDS_IN_PROJECT_ONLY OFF)
+
+# The set of languages for which implicit dependencies are needed:
+set(CMAKE_DEPENDS_LANGUAGES
+  "CXX"
+  )
+# The set of files for implicit dependencies of each language:
+set(CMAKE_DEPENDS_CHECK_CXX
+  "/tmp/source/Utility/Object/include/Object/DEventLinkDef.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/DHit.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/DParticle.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/DStep.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/SimulatedHit.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/CalorimeterHit.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/McParticle.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/ReconstructedParticle.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/DigiForm.hh" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/DEvent.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/DMagnet.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/DDetectorIDMaps.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/McPHelper.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/DTruth.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/versions/DHit_b1_4.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/versions/DParticle_b1_5.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/versions/DStep_b1_5.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/versions/SimulatedHit_b1_5.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/versions/CalorimeterHit_b1.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/versions/McParticle_b1_5.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/versions/ReconstructedParticle_b1_5.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/versions/DigiForm_b1.hh" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/versions/DEvent_b1_5.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/versions/DMagnet_b1.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/versions/DDetectorIDMaps_b1_5.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/Utility/Object/include/Object/versions/McPHelper_b1_5.h" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  )
+set(CMAKE_CXX_COMPILER_ID "GNU")
+
+# Preprocessor definitions for this target.
+set(CMAKE_TARGET_DEFINITIONS_CXX
+  "DEBUG"
+  "DEvent_EXPORTS"
+  "G4INTY_USE_QT"
+  "G4INTY_USE_XT"
+  "G4UI_USE_QT"
+  "G4UI_USE_TCSH"
+  "G4UI_USE_XM"
+  "G4VIS_USE_OPENGL"
+  "G4VIS_USE_OPENGLQT"
+  "G4VIS_USE_OPENGLX"
+  "G4VIS_USE_OPENGLXM"
+  "MEMCK"
+  )
+
+# The include file search paths:
+set(CMAKE_CXX_TARGET_INCLUDE_PATH
+  "../."
+  "../GenFit2/core/include"
+  "../GenFit2/fields/include"
+  "../GenFit2/fitters/include"
+  "../GenFit2/measurements/include"
+  "../GenFit2/trackReps/include"
+  "../Utility/Object/include"
+  "../Utility/Object/include/Object"
+  "../Utility/UTIL/include"
+  "../Algorithms/CutFlowAnalysis/include"
+  "../Algorithms/Digitizer/include"
+  "../Algorithms/ExampleProcessor/include"
+  "../Algorithms/MCTruthAnalysis/include"
+  "../Algorithms/RecECAL/include"
+  "../Algorithms/Tracking/include"
+  "../Algorithms/Tracking/include/Algo"
+  "/opt/geant4/include/Geant4"
+  "/usr/include/eigen3"
+  "/opt/root/include"
+  )
+
+# The set of dependency files which are needed:
+set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx" "Utility/Object/CMakeFiles/DEvent.dir/G__DEvent.cxx.o" "gcc" "Utility/Object/CMakeFiles/DEvent.dir/G__DEvent.cxx.o.d"
+  "/tmp/source/Utility/Object/src/CalorimeterHit.cpp" "Utility/Object/CMakeFiles/DEvent.dir/src/CalorimeterHit.cpp.o" "gcc" "Utility/Object/CMakeFiles/DEvent.dir/src/CalorimeterHit.cpp.o.d"
+  "/tmp/source/Utility/Object/src/DDetectorIDMaps.cpp" "Utility/Object/CMakeFiles/DEvent.dir/src/DDetectorIDMaps.cpp.o" "gcc" "Utility/Object/CMakeFiles/DEvent.dir/src/DDetectorIDMaps.cpp.o.d"
+  "/tmp/source/Utility/Object/src/DEvent.cpp" "Utility/Object/CMakeFiles/DEvent.dir/src/DEvent.cpp.o" "gcc" "Utility/Object/CMakeFiles/DEvent.dir/src/DEvent.cpp.o.d"
+  "/tmp/source/Utility/Object/src/DMagnet.cpp" "Utility/Object/CMakeFiles/DEvent.dir/src/DMagnet.cpp.o" "gcc" "Utility/Object/CMakeFiles/DEvent.dir/src/DMagnet.cpp.o.d"
+  "/tmp/source/Utility/Object/src/DTruth.cpp" "Utility/Object/CMakeFiles/DEvent.dir/src/DTruth.cpp.o" "gcc" "Utility/Object/CMakeFiles/DEvent.dir/src/DTruth.cpp.o.d"
+  "/tmp/source/Utility/Object/src/DigiForm.cpp" "Utility/Object/CMakeFiles/DEvent.dir/src/DigiForm.cpp.o" "gcc" "Utility/Object/CMakeFiles/DEvent.dir/src/DigiForm.cpp.o.d"
+  "/tmp/source/Utility/Object/src/McPHelper.cpp" "Utility/Object/CMakeFiles/DEvent.dir/src/McPHelper.cpp.o" "gcc" "Utility/Object/CMakeFiles/DEvent.dir/src/McPHelper.cpp.o.d"
+  "/tmp/source/Utility/Object/src/McParticle.cpp" "Utility/Object/CMakeFiles/DEvent.dir/src/McParticle.cpp.o" "gcc" "Utility/Object/CMakeFiles/DEvent.dir/src/McParticle.cpp.o.d"
+  "/tmp/source/Utility/Object/src/ReconstructedParticle.cpp" "Utility/Object/CMakeFiles/DEvent.dir/src/ReconstructedParticle.cpp.o" "gcc" "Utility/Object/CMakeFiles/DEvent.dir/src/ReconstructedParticle.cpp.o.d"
+  "/tmp/source/Utility/Object/src/SimulatedHit.cpp" "Utility/Object/CMakeFiles/DEvent.dir/src/SimulatedHit.cpp.o" "gcc" "Utility/Object/CMakeFiles/DEvent.dir/src/SimulatedHit.cpp.o.d"
+  )
+
+# Pairs of files generated by the same build rule.
+set(CMAKE_MULTIPLE_OUTPUT_PAIRS
+  "/tmp/source/cmake-build-debug-docker/Utility/Object/libDEvent.rootmap" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  "/tmp/source/cmake-build-debug-docker/Utility/Object/libDEvent_rdict.pcm" "/tmp/source/cmake-build-debug-docker/Utility/Object/G__DEvent.cxx"
+  )
+
+
+# Targets to which this target links.
+set(CMAKE_TARGET_LINKED_INFO_FILES
+  )
+
+# Fortran module output directory.
+set(CMAKE_Fortran_TARGET_MODULE_DIR "")

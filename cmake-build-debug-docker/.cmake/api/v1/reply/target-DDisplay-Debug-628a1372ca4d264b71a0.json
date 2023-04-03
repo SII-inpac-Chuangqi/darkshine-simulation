@@ -1,0 +1,781 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "DP_display/libDDisplay.so"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"install",
+			"LINK_DIRECTORIES",
+			"add_definitions",
+			"include",
+			"include_directories",
+			"INCLUDE_DIRECTORIES"
+		],
+		"files" : 
+		[
+			"DP_display/CMakeLists.txt",
+			"CMakeLists.txt",
+			"/opt/geant4/lib/Geant4-10.7.4/UseGeant4.cmake"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 36,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 46,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 77,
+				"parent" : 3
+			},
+			{
+				"command" : 3,
+				"file" : 1,
+				"line" : 132,
+				"parent" : 3
+			},
+			{
+				"command" : 3,
+				"file" : 1,
+				"line" : 88,
+				"parent" : 3
+			},
+			{
+				"command" : 4,
+				"file" : 1,
+				"line" : 39,
+				"parent" : 3
+			},
+			{
+				"file" : 2,
+				"parent" : 7
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 39,
+				"parent" : 8
+			},
+			{
+				"command" : 3,
+				"file" : 1,
+				"line" : 97,
+				"parent" : 3
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 107,
+				"parent" : 3
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 1,
+				"parent" : 0
+			},
+			{
+				"command" : 5,
+				"file" : 2,
+				"line" : 40,
+				"parent" : 8
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 62,
+				"parent" : 3
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 74,
+				"parent" : 3
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-W -Wall -pedantic -Wno-non-virtual-dtor -Wno-long-long -Wwrite-strings -Wpointer-arith -Woverloaded-virtual -Wno-variadic-macros -Wshadow -pipe -pthread -ftls-model=initial-exec -std=c++17  -g -g -fPIC"
+				},
+				{
+					"fragment" : "-std=c++17"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 5,
+					"define" : "DANA_VERSION=\"v1.5.5\""
+				},
+				{
+					"define" : "DDisplay_EXPORTS"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "DEBUG"
+				},
+				{
+					"backtrace" : 9,
+					"define" : "G4INTY_USE_QT"
+				},
+				{
+					"backtrace" : 9,
+					"define" : "G4INTY_USE_XT"
+				},
+				{
+					"backtrace" : 9,
+					"define" : "G4UI_USE_QT"
+				},
+				{
+					"backtrace" : 9,
+					"define" : "G4UI_USE_TCSH"
+				},
+				{
+					"backtrace" : 9,
+					"define" : "G4UI_USE_XM"
+				},
+				{
+					"backtrace" : 9,
+					"define" : "G4VIS_USE_OPENGL"
+				},
+				{
+					"backtrace" : 9,
+					"define" : "G4VIS_USE_OPENGLQT"
+				},
+				{
+					"backtrace" : 9,
+					"define" : "G4VIS_USE_OPENGLX"
+				},
+				{
+					"backtrace" : 9,
+					"define" : "G4VIS_USE_OPENGLXM"
+				},
+				{
+					"backtrace" : 10,
+					"define" : "MEMCK"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/."
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/GenFit2/core/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/GenFit2/fields/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/GenFit2/fitters/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/GenFit2/measurements/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/GenFit2/trackReps/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/Utility/Object/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/Utility/Object/include/Object"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/Utility/UTIL/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/Algorithms/CutFlowAnalysis/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/Algorithms/Digitizer/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/Algorithms/ExampleProcessor/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/Algorithms/MCTruthAnalysis/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/Algorithms/RecECAL/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/Algorithms/Tracking/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/tmp/source/Algorithms/Tracking/include/Algo"
+				},
+				{
+					"backtrace" : 12,
+					"path" : "/tmp/source/DP_display/include"
+				},
+				{
+					"backtrace" : 12,
+					"path" : "/tmp/source/DP_ana/include"
+				},
+				{
+					"backtrace" : 13,
+					"isSystem" : true,
+					"path" : "/opt/geant4/include/Geant4"
+				},
+				{
+					"backtrace" : 14,
+					"isSystem" : true,
+					"path" : "/usr/include/eigen3"
+				},
+				{
+					"backtrace" : 15,
+					"isSystem" : true,
+					"path" : "/opt/root/include"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "17"
+			},
+			"sourceIndexes" : 
+			[
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 1,
+			"id" : "DEvent::@d12b43d9ea8afc5f8c8d"
+		}
+	],
+	"id" : "DDisplay::@a06bcc91e255ca34bce9",
+	"install" : 
+	{
+		"destinations" : 
+		[
+			{
+				"backtrace" : 2,
+				"path" : "lib"
+			},
+			{
+				"backtrace" : 2,
+				"path" : "lib"
+			}
+		],
+		"prefix" : 
+		{
+			"path" : "/usr/local"
+		}
+	},
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "-L/opt/root/lib",
+				"role" : "libraryPath"
+			},
+			{
+				"fragment" : "-Wl,-rpath,/opt/root/lib:/tmp/source/cmake-build-debug-docker/Utility/Object:",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lgsl",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lgslcblas",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lxerces-c",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libCore.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libImt.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libRIO.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libNet.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libHist.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libGraf.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libGraf3d.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libGpad.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libROOTDataFrame.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libTree.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libTreePlayer.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libRint.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libPostscript.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libMatrix.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libPhysics.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libMathCore.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libThread.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libMultiProc.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libROOTVecOps.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libGeom.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libTMVA.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libEve.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libGui.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libRGL.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libEG.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "../Utility/Object/libDEvent.so",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lgsl",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lgslcblas",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/usr/lib/x86_64-linux-gnu/libyaml-cpp.so.0.7.0",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lxerces-c",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libCore.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libImt.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libRIO.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libNet.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libHist.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libGraf.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libGraf3d.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libGpad.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libROOTDataFrame.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libTree.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libTreePlayer.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libRint.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libPostscript.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libMatrix.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libPhysics.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libMathCore.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libThread.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libMultiProc.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libROOTVecOps.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libGeom.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libTMVA.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libEve.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libGui.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libRGL.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "/opt/root/lib/libEG.so",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "DDisplay",
+	"nameOnDisk" : "libDDisplay.so",
+	"paths" : 
+	{
+		"build" : "DP_display",
+		"source" : "DP_display"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6
+			]
+		},
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16
+			]
+		},
+		{
+			"name" : "CMake Rules",
+			"sourceIndexes" : 
+			[
+				17
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"path" : "DP_display/include/DEventDisplay.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "DP_display/include/DEventReader_dis.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "DP_display/include/DSMagneticField.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "DP_display/include/CaloHitsDisplay.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "DP_display/include/DisData.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "DP_ana/include/Event/EventReader.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "DP_ana/include/Event/EventStoreAndWriter.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "DP_display/src/DEventDisplay.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "DP_display/src/DEventDisplay_Processor.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "DP_display/src/DEventDisplay_DetInfo.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "DP_display/src/DEventDisplay_DrawEvent.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "DP_display/src/DEventReader_dis.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "DP_display/src/CaloHitsDisplay.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "DP_display/src/DisData.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "DP_ana/src/EventReader.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "DP_ana/src/EventStoreAndWriter.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"isGenerated" : true,
+			"path" : "cmake-build-debug-docker/DP_display/G__Display.cxx",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "cmake-build-debug-docker/DP_display/G__Display.cxx.rule",
+			"sourceGroupIndex" : 2
+		}
+	],
+	"type" : "SHARED_LIBRARY"
+}

@@ -1,0 +1,77 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"Utility/Object/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 52,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 54,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 55,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"Utility/Object/libDEvent.so"
+			],
+			"targetId" : "DEvent::@d12b43d9ea8afc5f8c8d",
+			"targetIndex" : 4,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"cmake-build-debug-docker/Utility/Object/libDEvent_rdict.pcm"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"cmake-build-debug-docker/Utility/Object/libDEvent.rootmap"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "Utility/Object",
+		"source" : "Utility/Object"
+	}
+}

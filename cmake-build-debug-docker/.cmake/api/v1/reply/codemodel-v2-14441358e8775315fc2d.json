@@ -1,0 +1,280 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "Utility/Object",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-Utility.Object-Debug-5fd1865ea64f10f0e9f1.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "Utility/Object",
+					"targetIndexes" : 
+					[
+						4,
+						7
+					]
+				},
+				{
+					"build" : "DP_simu",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-DP_simu-Debug-c23c53931e2ed5b9a21b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "DP_simu",
+					"targetIndexes" : 
+					[
+						6
+					]
+				},
+				{
+					"build" : "GenFit2",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-GenFit2-Debug-1aee2c90393fd030924b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "GenFit2",
+					"targetIndexes" : 
+					[
+						9,
+						10,
+						11,
+						12,
+						13
+					]
+				},
+				{
+					"build" : "DP_ana",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-DP_ana-Debug-57a0ca5acac6047117f3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "DP_ana",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "DP_display",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-DP_display-Debug-0e28ce1ee682bbf72568.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "DP_display",
+					"targetIndexes" : 
+					[
+						1,
+						2,
+						8
+					]
+				},
+				{
+					"build" : "Tools",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-Tools-Debug-868c342ebc52b61e9ecf.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "Tools",
+					"targetIndexes" : 
+					[
+						3,
+						5
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					],
+					"name" : "DSimu",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 4,
+					"id" : "DAna::@7601706e4991aa3fad49",
+					"jsonFile" : "target-DAna-Debug-6f8fb26ec46570561ddf.json",
+					"name" : "DAna",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "DDis::@a06bcc91e255ca34bce9",
+					"jsonFile" : "target-DDis-Debug-f1b1b32f92bba116185d.json",
+					"name" : "DDis",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "DDisplay::@a06bcc91e255ca34bce9",
+					"jsonFile" : "target-DDisplay-Debug-628a1372ca4d264b71a0.json",
+					"name" : "DDisplay",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "DDump::@214e036bcfb94a4c2bfc",
+					"jsonFile" : "target-DDump-Debug-041ec6eb5db60e562b23.json",
+					"name" : "DDump",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "DEvent::@d12b43d9ea8afc5f8c8d",
+					"jsonFile" : "target-DEvent-Debug-cd9ee81958a42dbb76b1.json",
+					"name" : "DEvent",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "DPlot::@214e036bcfb94a4c2bfc",
+					"jsonFile" : "target-DPlot-Debug-c04d613a71054d755c05.json",
+					"name" : "DPlot",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "DSimu::@48f5039533ed1f316b8d",
+					"jsonFile" : "target-DSimu-Debug-281ed0d2ddb9ab06b58d.json",
+					"name" : "DSimu",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "G__DEvent::@d12b43d9ea8afc5f8c8d",
+					"jsonFile" : "target-G__DEvent-Debug-a93851562d3c33cefe22.json",
+					"name" : "G__DEvent",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "G__Display::@a06bcc91e255ca34bce9",
+					"jsonFile" : "target-G__Display-Debug-7232c6dca99ed0755c7b.json",
+					"name" : "G__Display",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "coreRootDict::@524acfa5f413f9d808ab",
+					"jsonFile" : "target-coreRootDict-Debug-b0fad9218270309af747.json",
+					"name" : "coreRootDict",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "fittersRootDict::@524acfa5f413f9d808ab",
+					"jsonFile" : "target-fittersRootDict-Debug-1fc7cbce6cbf1db4c58b.json",
+					"name" : "fittersRootDict",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "genfit2::@524acfa5f413f9d808ab",
+					"jsonFile" : "target-genfit2-Debug-5c460a948fb7259f15e3.json",
+					"name" : "genfit2",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "measurementsRootDict::@524acfa5f413f9d808ab",
+					"jsonFile" : "target-measurementsRootDict-Debug-bd555a07509ef7efbbc6.json",
+					"name" : "measurementsRootDict",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "trackRepsRootDict::@524acfa5f413f9d808ab",
+					"jsonFile" : "target-trackRepsRootDict-Debug-a27a39cbca71fbb8ab85.json",
+					"name" : "trackRepsRootDict",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/tmp/source/cmake-build-debug-docker",
+		"source" : "/tmp/source"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}
