@@ -74,7 +74,7 @@ public:
         return Y;
     }
 
-    [[nodiscard]] double getZ() const {
+    [[nodiscard]] float getZ() const {
         return Z;
     }
 

@@ -31,6 +31,7 @@
 #include "DP_simu/EventAction.hh"
 #include "DP_simu/RootManager.hh"
 #include "Bias_Filter/FilterManager.hh"
+#include "Animation/AnimationData.h"
 
 #include "G4Event.hh"
 #include "G4SDManager.hh"
@@ -78,10 +79,10 @@ void EventAction::BeginOfEventAction(const G4Event *event) {
 
     G4RunManager::GetRunManager()->StoreRandomNumberStatusToG4Event(1);
 
-    if(dControl->if_filter) dFilterManager->Filter_Event_Initialize();
+    if (dControl->if_filter) dFilterManager->Filter_Event_Initialize();
 
 #ifdef MEMCK
-    if(dControl->Memory_Check) DEvent::PrintObjectStatistics("Begin of event");
+    if (dControl->Memory_Check) DEvent::PrintObjectStatistics("Begin of event");
 #endif
 }
 
@@ -124,6 +125,8 @@ void EventAction::EndOfEventAction(const G4Event *event) {
     // print per event (modulo n)
 
     G4int eventID = event->GetEventID();
+    // save animation
+    pAniData->save_event(eventID);
 #ifdef DEBUG
     G4cout << "---> End of event: " << eventID << G4endl;
 #else
@@ -131,11 +134,11 @@ void EventAction::EndOfEventAction(const G4Event *event) {
         G4cout << "---> End of event: " << eventID << G4endl;
     }
 #endif
-    if(dControl->if_optical) dRootMng->FinalizeOptical();
+    if (dControl->if_optical) dRootMng->FinalizeOptical();
 
     dRootMng->FillSim(eventID, rndm); //refresh event level data, so any fill should before this!
 
 #ifdef MEMCK
-    if(dControl->Memory_Check) DEvent::PrintObjectStatistics("End of event");
+    if (dControl->Memory_Check) DEvent::PrintObjectStatistics("End of event");
 #endif
 }

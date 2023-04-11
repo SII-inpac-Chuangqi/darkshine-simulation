@@ -63,19 +63,27 @@ TrkHitPVecMap GreedyFinder::GetTempHitMap(TrkHitPVecMap &clusteredTrkHitsInLayer
      auto temp_ClusteredTrkHitsInLayer = clusteredTrkHitsInLayer;
      if(temp_ClusteredTrkHitsInLayer.size() <= 2) return temp_ClusteredTrkHitsInLayer;
 
-     std::vector<int> layers;
+     int *layers = new int[temp_ClusteredTrkHitsInLayer.size() - 2];
 
+     size_t i = 0;
      for(const auto &layer : temp_ClusteredTrkHitsInLayer)
-        if(layer.first != temp_ClusteredTrkHitsInLayer.begin()->first)
-            layers.emplace_back(layer.first);
+     {
+        if(layer.first != temp_ClusteredTrkHitsInLayer.begin()->first &&
+           layer.first != temp_ClusteredTrkHitsInLayer.end()  ->first)
+        {
+            layers[i] = layer.first;
+            i++;
+        }
+     }
 
-     for(int i = 0; i < temp_ClusteredTrkHitsInLayer.size() - 2; i++)
+     for(i = 0; i < temp_ClusteredTrkHitsInLayer.size() - 2; i++)
      {
          auto layer = temp_ClusteredTrkHitsInLayer.extract(layers[i]);
          layer.key() = -layer.key();
          temp_ClusteredTrkHitsInLayer.insert(std::move(layer));
      }
 
+     delete[] layers;
      return temp_ClusteredTrkHitsInLayer;
 }
 

@@ -30,6 +30,7 @@ void DEventDisplay::inspectMainRegion() {
          * 2: RecTracker
          * 3: ECAL
          * 4: HCAL
+         * 5-8: SideHCAL
          */
         std::cout << "=============================================================================" <<std::endl;
         std::cout << std::left;
@@ -52,6 +53,7 @@ void DEventDisplay::inspectMainRegion() {
             ECAL_Z_Move = current_node->GetMatrix()->GetTranslation()[2];
         }
         if (cur_Name.Contains("HCAL")) dt = DHCAL;
+        if (cur_Name.Contains("SideHCAL")) dt = DSideHCAL;
 
         inspectSubRegion(i, dt);
     }
@@ -77,34 +79,35 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
     for (int i = 0; i < current_node->GetNdaughters(); ++i) {
         auto *cur_node = dynamic_cast<TGeoNode *>(current_node->GetDaughter(i));
         auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
+//        auto cur_Name = TString(cur_node->GetName());
         auto cur_Name = TString(cur_node->GetVolume()->GetName());
         // Tracker
         if (dt == DTracker) {
             auto mother_z = current_node->GetMatrix()->GetTranslation()[2];
             auto daughter_z = CUNIT * (mother_z + cur_node->GetMatrix()->GetTranslation()[2]); // mm
-            if (cur_Name.Contains("1")) {
+            if (TString(cur_node->GetName()).Contains("Trk1")) {
                 std::cout << std::right;
-                std::cout << "    ==> " << std::setw(3) << i << ") ";
+                std::cout << "    ==> " << std::setw(3) << i/2 << ") ";
                 std::cout << std::left;
-                std::cout << std::setw(10) << cur_Name << ": ";
+                std::cout << std::setw(10) << "Tracker 1" << ": ";
                 std::cout << "center z = " << std::setw(8) << daughter_z << " [mm], ";
                 std::cout << std::right;
                 std::cout << "size = (" << std::setw(6) << CUNIT * 2 * cur_shape->GetDX() << ","
                           << std::setw(6) << CUNIT * 2 * cur_shape->GetDY() << ","
                           << std::setw(6) << CUNIT * 2 * cur_shape->GetDZ() << ") [mm]";
-                std::cout << std::endl;
+//                std::cout << std::endl;
             } else {
                 auto rot_mat = cur_node->GetMatrix()->GetRotationMatrix();
 
                 std::cout << std::right;
-                std::cout << "    ==> Rotation of Tracker 2: ";
-                std::cout << std::setw(4) << TMath::ATan2(rot_mat[1], rot_mat[0])
+                std::cout << " ; Rotation of Tracker 2: ";
+                std::cout << std::setw(5) << TMath::ATan2(rot_mat[1], rot_mat[0])
                           << " [rad]" << std::endl;
-                break;
+//                break;
             }
         }
         // ECAL
-        if (dt == DECAL && cur_Name.Contains("LVW")) {
+        if (dt == DECAL && cur_Name.Contains("LV")) {
             auto daughter_pos = cur_node->GetMatrix()->GetTranslation();
             mat_cal = TString(cur_node->GetVolume()->GetMaterial()->GetName());
             // count Z layer
@@ -133,7 +136,7 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
 
         }
         // HCAL
-        if (dt == DHCAL && cur_Name.Contains("_0")) {
+        if (dt == DHCAL && cur_Name.Contains("LV_h2")) {
             auto daughter_pos = cur_node->GetMatrix()->GetTranslation();
             // Concerning Cell First
             if (!cur_Name.Contains("Abs")) {

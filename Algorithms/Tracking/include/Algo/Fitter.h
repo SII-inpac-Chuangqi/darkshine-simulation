@@ -50,6 +50,7 @@ public:
 //................................................................................//
 //Get
     virtual int    GetVerbose() const {return verbose_;}
+    virtual int    GetSign(const TrkHitPVec &track);
     virtual double GetPx() const {return px;}
     virtual double GetPy() const {return py;}
     virtual double GetPz() const {return pz;}

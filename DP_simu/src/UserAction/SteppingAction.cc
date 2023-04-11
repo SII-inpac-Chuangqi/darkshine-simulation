@@ -32,6 +32,7 @@
 #include "DP_simu/RootManager.hh"
 #include "Control/Control.h"
 #include "Bias_Filter/FilterManager.hh"
+#include "Animation/AnimationData.h"
 
 #include "G4Step.hh"
 #include "G4EventManager.hh"
@@ -180,6 +181,25 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     UpdateTruthStatesInCalo(aStep);
     if (auto p = dTMgr->getTruthParticle(); p->E_kin >= dControl->E_kin_min_step)
         UpdateTruthInfo(p, aStep);
+
+
+    // Animation
+    if (pAniData->if_first_step(aStep->GetTrack()->GetTrackID())) {
+        pAniData->add_particle_step(
+                aStep->GetTrack()->GetTrackID(),
+                prev->GetPosition()[0],
+                prev->GetPosition()[1],
+                prev->GetPosition()[2]
+        );
+    }
+
+    pAniData->add_particle_step(
+            aStep->GetTrack()->GetTrackID(),
+            post->GetPosition()[0],
+            post->GetPosition()[1],
+            post->GetPosition()[2]
+    );
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -241,10 +261,10 @@ void SteppingAction::UpdateTruthInfo(DTruthParticle *tp, const G4Step *aStep) {
         auto region_idx = dTMgr->getDetPVIndex(Region_name);
         auto process_idx = dTMgr->getProcessIndex(post->GetProcessDefinedStep()->GetProcessName());
 
-        if (auto change = tp->E_deposit_details.find({region_idx, process_idx}); change != tp->E_deposit_details.end()) {
+        if (auto change = tp->E_deposit_details.find({region_idx, process_idx}); change !=
+                                                                                 tp->E_deposit_details.end()) {
             change->second += e_change;
-        }
-        else
+        } else
             tp->E_deposit_details.insert({{region_idx, process_idx}, e_change});
 
 
@@ -316,7 +336,7 @@ void SteppingAction::UpdateTruthStatesInCalo(const G4Step *aStep) {
             bool ecal_state = Region_name_prev == "World" && Region_name == "ECAL";
             bool hcal_state = Region_name_prev != "HCAL" && Region_name == "HCAL";
 
-            if ( (ecal_state || hcal_state) && post->GetKineticEnergy() > 0.01 * MeV) {
+            if ((ecal_state || hcal_state) && post->GetKineticEnergy() > 0.01 * MeV) {
                 auto dState_prev = new DTruthState();
                 assignV3(dState_prev, prev);
                 auto dState_post = new DTruthState();

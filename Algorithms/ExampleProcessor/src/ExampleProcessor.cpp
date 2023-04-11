@@ -42,8 +42,7 @@ void ExampleProcessor::Begin() {
     RegisterStringParameter("StrVar", "String Variable", &strVar, "test");
 
     // Register Output Variable
-    EvtWrt->RegisterIntVariable("Output_Var1", &Output_Var1, "Output_Var1/I");
-    EvtWrt->RegisterDoubleVariable("Output_Var2", &Output_Var2, "Output_Var2/D");
+    EvtWrt->RegisterOutVariable("Output_Var1", &Output_Var1);
 }
 
 void ExampleProcessor::ProcessEvt(AnaEvent *evt) {
