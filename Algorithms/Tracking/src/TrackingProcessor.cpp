@@ -30,6 +30,8 @@
 #include "Algo/TrkHit.h"
 #include "Algo/GreedyFinder.h"
 #include "Algo/RiemannFit/RiemannFitHelper.h"
+#include "Algo/Vertex/DVertex.h"
+#include "Algo/Vertex/VertexFinder.h"
 
 TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(
         std::move(name), std::move(evtwrt)) {
@@ -467,7 +469,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                                 dAnaData->getMagnetFieldAt({x, y, z}).at(1)*10.,
                                                                 dAnaData->getMagnetFieldAt({x, y, z}).at(2)*10.};
                         tag_tracks_.back()->ExceptionHandler(magnet_at_origin);
-                        //tag_tracks_.back()->Reverse();
+                        tag_tracks_.back()->Reverse();
                         tag_tracks_.back()->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
                         //tag_tracks_.back()->Evaluate();
                     }
@@ -515,7 +517,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                                 dAnaData->getMagnetFieldAt({x, y, z}).at(1)*10.,
                                                                 dAnaData->getMagnetFieldAt({x, y, z}).at(2)*10.};
                         rec_tracks_.back()->ExceptionHandler(magnet_at_origin);
-                        //rec_tracks_.back()->Reverse();
+                        rec_tracks_.back()->Reverse();
                         rec_tracks_.back()->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
                         //rec_tracks_.back()->Evaluate();
                     }
@@ -529,16 +531,11 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                           { return track1->GetPp() > track2->GetPp(); } );
         std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](std::shared_ptr<DTrack> &track1, std::shared_ptr<DTrack> &track2)
                                                           { return track1->GetPp() > track2->GetPp(); } );
-/*
-        for(size_t i = 0; i < rec_tracks_.size(); i++)
-        {
-            for(size_t j = i + 1; j < rec_tracks_.size(); j++)
-            {
-                std::cout << rec_tracks_.at(i)->GetDeltaR(rec_tracks_.at(j).get()) << std::endl;
-            }
-        }
-*/
 
+//Vertex
+        VertexFinder vertex_finder(rec_tracks_);
+
+//Fill
         for(auto &track : tag_tracks_)
         {
             TagTrk2_pp.push_back(track->GetPp());

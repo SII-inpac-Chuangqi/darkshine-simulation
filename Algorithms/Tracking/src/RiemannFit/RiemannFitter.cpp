@@ -121,6 +121,9 @@ void RiemannFitter::Fill(const TrkHitPVec& track, std::initializer_list<double>)
     //double y = track.at(0)->GetY();
     //double z = track.at(0)->GetZ();
     //double x = track.at(0)->GetX();
+    //    int s = GetSign(track);
+    //        int s = GetSign(track);
+    //            int s = GetSign(track);
     //std::cout << 0.5*(track.at(0)->GetX() + track.at(dim_ - 1)->GetX()) << "\t" << x << std::endl;
     pp = 0.3*abs(RiemannFitHelper::GetMagnetY(x, y, z)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
 }
@@ -166,10 +169,11 @@ TMatrixD RiemannFitter::GetCartCoo(const TrkHitPVec &track)
 //Get hit measurements projected on the paraboloid surface in polar coordinates
 TMatrixD RiemannFitter::GetPolarCoo(const TrkHitPVec &track)
 {
+    int s = GetSign(track);
     TArrayD data(2*dim_);
     for (int i = 0; i < dim_; i++)
     {
-        double u = track.at(i)->GetX() - pre_Xc_;
+        double u = track.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(track)[i])*s;
         double v = track.at(i)->GetZ() - pre_Yc_;
         data[i] = sqrt(u*u + v*v);
         data[i + dim_] = TMath::ATan2(v, u);
@@ -325,10 +329,11 @@ TMatrixD RiemannFitter::GetVcartx(const TrkHitPVec &track)
 //Get Jacobian matrix from Cartesian to polar coordinate
 TMatrixD RiemannFitter::GetJ1(const TrkHitPVec &track)
 {
+    int s = GetSign(track);
     TArrayD data(4*dim_*dim_);
     for (int i = 0; i < dim_; i++)
     {
-        double u = track.at(i)->GetX() - pre_Xc_;
+        double u = track.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(track)[i])*s;
         double v = track.at(i)->GetZ() - pre_Yc_;
         double h = sqrt(u*u + v*v);
 
@@ -361,10 +366,11 @@ TMatrixD RiemannFitter::GetJ1(const TrkHitPVec &track)
 //Get Jacobian matrix from R-Φ to RΦ-R
 TMatrixD RiemannFitter::GetJ2(const TrkHitPVec &track)
 {
+    int s = GetSign(track);
     TArrayD data(2*dim_*dim_);
     for (int i = 0; i < dim_; i++)
     {
-        double u = track.at(i)->GetX() - pre_Xc_;
+        double u = track.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(track)[i])*s;
         double v = track.at(i)->GetZ() - pre_Yc_;
 
         for(Int_t j = 0; j < dim_; j++)
@@ -477,6 +483,7 @@ TMatrixD RiemannFitter::GetNormalVecs(const TMatrixD &g, const TMatrixD &x_g)
         data[i] = *(element + i);
 
     TMatrixDSym sym(3, data);
+    sym.SetTol(1e-9);
     TMatrixDSymEigen sym_eigen_v(sym);
     TMatrixD eigen_vec = sym_eigen_v.GetEigenVectors();
 
