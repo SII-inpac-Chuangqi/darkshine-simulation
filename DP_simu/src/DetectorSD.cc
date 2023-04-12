@@ -42,9 +42,9 @@
 
 DetectorSD::DetectorSD(G4int Type,
                        const G4String &name,
-                       const G4ThreeVector &CellID
+                       const G4ThreeVector &totalCellID
 ) : G4VSensitiveDetector(name) {
-    fCellID = CellID;
+    fCellID = totalCellID;
     fType = Type;
     fname = name;
 
