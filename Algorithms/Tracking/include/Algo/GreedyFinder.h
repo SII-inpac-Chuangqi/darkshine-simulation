@@ -2,7 +2,7 @@
 #define GREEDY_FINDER_H
 
 //................................................................................//
-//CPP Libraries
+//C++
 #include <utility>
 #include <limits>
 

@@ -1,5 +1,5 @@
 //................................................................................//
-//CPP Libraries
+//C++
 #include <iostream>
 #include <map>
 #include <vector>
@@ -300,6 +300,8 @@ void DTrack::Fit(int method)
         ECal_seed_pz_ = fitter_->GetECalQoP();
         //std::cout << ECal_seed_pz << std::endl;
         //std::cout << ndf_ << std::endl;
+
+        corrections_x_ = fitter_->GetCorrectionsX();
     }
     else
         pp_ = 0.3*preR_*std::abs(By_);

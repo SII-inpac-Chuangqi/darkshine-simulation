@@ -2,7 +2,7 @@
 #define RIEMANNFIT_RIEMANN_FITTER_H
 
 //................................................................................//
-//CPP Libraries
+//C++
 #include <map>
 #include <vector>
 #include <memory>
@@ -46,6 +46,11 @@ public:
 //Estimate theta(angle between pT and magnet) from track measureements
     double GetTheta(const TrkHitPVec &track);
 
+//................................................................................//
+//Get Corrections from inhomogeneous magnet
+    std::vector<double> GetCorrectionsX() const override {return corrections_x_;}
+
+private:
 //................................................................................//
 //Get hit measurements projected on the paraboloid surface in Cartesian coordinates
 //     1 2 ... dim
@@ -146,27 +151,36 @@ public:
     TMatrixD GetNormalVecs(const TMatrixD &g, const TMatrixD &x_g);
 
 //................................................................................//
-//Get delta x
+//Get Corrections from inhomogeneous magnet 
     std::vector<double> GetDeltax(const TrkHitPVec &track);
-//................................................................................//
 //Get covariance matrix of delta x in Cartesian coordinates
     TMatrixD GetVcartx(const TrkHitPVec &track);
 
-//..............................................................................//
+//................................................................................//
 //Get covariance matrix of delta x in RΦ-R coordinate
     TMatrixD GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, const TMatrixD &j2);
 
 private:
+//................................................................................//
+//Dimesion of the matrices, or, No. of hits in the track
     int dim_{0};
+//................................................................................//
+//Prefit properties
     double pre_R_{0.};
     double pre_Xc_{0.};
     double pre_Yc_{0.};
     double pre_theta_{0.};
 
+//................................................................................//
+//Fit results
     double c_{0.};
     double n1_{0.};
     double n2_{0.};
     double n3_{0.};
+
+//................................................................................//
+//Corrections from inhomogeneous magnet    
+    std::vector<double> corrections_x_;
 };
 
 #endif
