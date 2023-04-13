@@ -1,6 +1,8 @@
 #ifndef CLUSTER_H
 #define CLUSTER_H
 
+//................................................................................//
+//C++
 #include <memory>
 
 template <typename T>
@@ -26,4 +28,4 @@ private:
     };
 };
 
-#endif
+#endif // CLUSTER_H

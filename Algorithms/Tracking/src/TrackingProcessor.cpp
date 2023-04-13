@@ -534,6 +534,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //Vertex
         VertexFinder vertex_finder(rec_tracks_);
+        vertex_finder.FindVertexes();
 
 //Fill
         for(auto &track : tag_tracks_)

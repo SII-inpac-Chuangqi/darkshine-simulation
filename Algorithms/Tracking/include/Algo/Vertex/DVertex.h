@@ -28,4 +28,4 @@ private:
     std::vector<std::shared_ptr<DTrack>> tracks_;
 };
 
-#endif  // DVERTEX_H
+#endif // DVERTEX_H

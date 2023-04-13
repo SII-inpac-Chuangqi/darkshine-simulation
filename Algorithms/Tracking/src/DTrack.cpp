@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <climits>
 
 //................................................................................//
 //ROOT
@@ -196,6 +197,19 @@ double DTrack::GetChi2()
     chi2_ = deviation/std_variance*track_x.size()/ndf_;
 
     return chi2_;
+}
+
+int DTrack::GetInitCellIdZ() const
+{
+    int init_cell_id_z = INT_MIN;
+
+    for(const auto &hit : hits_)
+    {
+        if(-hit->GetCellIdZ() > init_cell_id_z)
+            init_cell_id_z = hit->GetCellIdZ();
+    }
+
+    return init_cell_id_z;
 }
 
 double DTrack::GetDeltaR(const DTrack *another) const
