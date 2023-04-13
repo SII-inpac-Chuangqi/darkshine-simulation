@@ -2,7 +2,7 @@
 #define KALMAN_FILTER_FITTER_H
 
 //................................................................................//
-//CPP Libraries
+//C++
 #include <iostream>
 #include <map>
 #include <vector>
