@@ -121,9 +121,6 @@ void RiemannFitter::Fill(const TrkHitPVec& track, std::initializer_list<double>)
     //double y = track.at(0)->GetY();
     //double z = track.at(0)->GetZ();
     //double x = track.at(0)->GetX();
-    //    int s = GetSign(track);
-    //        int s = GetSign(track);
-    //            int s = GetSign(track);
     //std::cout << 0.5*(track.at(0)->GetX() + track.at(dim_ - 1)->GetX()) << "\t" << x << std::endl;
     pp = 0.3*abs(RiemannFitHelper::GetMagnetY(x, y, z)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
 }
