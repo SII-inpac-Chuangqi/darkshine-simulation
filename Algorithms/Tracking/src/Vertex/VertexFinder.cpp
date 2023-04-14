@@ -14,24 +14,38 @@ void VertexFinder::BuildSpiralStaircase()
 {
     spiral_staircase_.clear();
 
+    auto leading_track = tracks_.at(0);
+
     for(const auto &track : tracks_)
     {
         int stair_no = track->GetInitCellIdZ();
 
-        if(spiral_staircase_.find(stair_no) == spiral_staircase_.end())
+        double leading_x = 0.;
+        double leading_y = 0.;
+        double leading_z = 0.;
+        auto leading_hit = leading_track->AtCellIdZ(stair_no);
+        if(leading_hit)
         {
-            spiral_staircase_.emplace(stair_no, std::make_shared<Stair>(stair_no));
-            spiral_staircase_.at(stair_no)->slabs_.push_back(track);
+            leading_x = leading_track->AtCellIdZ(stair_no)->GetX();
+            leading_y = leading_track->AtCellIdZ(stair_no)->GetY();
+            leading_z = leading_track->AtCellIdZ(stair_no)->GetZ();
         }
-        else
-            spiral_staircase_.at(stair_no)->slabs_.push_back(track);
+
+        if(spiral_staircase_.find(stair_no) == spiral_staircase_.end())
+            spiral_staircase_.emplace(stair_no, std::make_shared<Stair>(stair_no));
+
+        spiral_staircase_.at(stair_no)->slabs_.push_back(track);
+        spiral_staircase_.at(stair_no)->splits_.push_back({track->AtCellIdZ(stair_no)->GetX() - leading_x,
+                                                           track->AtCellIdZ(stair_no)->GetY() - leading_y,
+                                                           track->AtCellIdZ(stair_no)->GetZ() - leading_z,
+                                                          }); 
     }
 /*
     for(const auto &stair : spiral_staircase_)
     {
         std::cout << stair.first << "\t";
-        for(const auto &slab : stair.second->slabs_)
-            std::cout << slab->GetFixedPp() << "\t";
+        for(const auto &split : stair.second->splits_)
+            std::cout << split.at(0) << "\t" << split.at(1) << "\t" << split.at(2) << ",\t";
         std::cout << std::endl;
     }
 */

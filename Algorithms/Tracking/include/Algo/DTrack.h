@@ -78,6 +78,7 @@ public:
 
     int GetSize() const {return hits_.size();}
     TrkHitP At(int i) {return hits_.at(i);}
+    TrkHitP AtCellIdZ(int i);
     double GetQuality() const {return quality_;}
 
     double GetNdf() const {return ndf_;}

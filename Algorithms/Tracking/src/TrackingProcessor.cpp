@@ -526,16 +526,20 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         }
 
 //................................................................................//
-//Post-processing
+//Sort tracks by P
         std::sort(tag_tracks_.begin(), tag_tracks_.end(), [](std::shared_ptr<DTrack> &track1, std::shared_ptr<DTrack> &track2)
                                                           { return track1->GetPp() > track2->GetPp(); } );
         std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](std::shared_ptr<DTrack> &track1, std::shared_ptr<DTrack> &track2)
                                                           { return track1->GetPp() > track2->GetPp(); } );
 
 //Vertex
-        VertexFinder vertex_finder(rec_tracks_);
-        vertex_finder.FindVertexes();
+        if(rec_tracks_.size() > 1)
+        {
+            VertexFinder vertex_finder(rec_tracks_);
+            vertex_finder.FindVertexes();
+        }
 
+//................................................................................//
 //Fill
         for(auto &track : tag_tracks_)
         {

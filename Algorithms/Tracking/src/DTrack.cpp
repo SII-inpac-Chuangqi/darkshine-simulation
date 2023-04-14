@@ -144,6 +144,17 @@ DTrack& DTrack::operator=(const DTrack &old_track)
     return *this;
 }
 
+TrkHitP DTrack::AtCellIdZ(int i)
+{
+    for(const auto hit : hits_)
+    {
+        if(hit->GetCellIdZ() == i)
+            return hit;
+    }
+
+    return nullptr;
+}
+
 double DTrack::GetChi2()
 {
     if(hits_.size() < 4)
