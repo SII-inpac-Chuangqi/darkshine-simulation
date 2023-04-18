@@ -36,7 +36,7 @@ public:
 //................................................................................//
 //Constructor
 //................................................................................//
-    GreedyFinder(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDepth = 3, double newGoodnessCut = 0.99);
+    GreedyFinder(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDepth = 3, double newGoodnessCut = 0.999);
     ~GreedyFinder() {}
 
     GreedyFinder(const GreedyFinder&) = delete;
@@ -45,6 +45,9 @@ public:
 //................................................................................//
 //Get
 //................................................................................//
+    virtual void FillTracks(std::vector<std::shared_ptr<DTrack>> *tracks) override;
+    std::vector<std::shared_ptr<DTrack>>* GetTracks();
+
     virtual double GetR      (int i) const override {return r_.at(i);       }
     virtual double GetCenterX(int i) const override {return center_x_.at(i); } //x direction in detector!
     virtual double GetCenterY(int i) const override {return center_y_.at(i); } //z direction in detector!
@@ -65,13 +68,19 @@ private:
 //................................................................................//
 //Finding control
 //................................................................................//
+    struct BadGuy
+    {
+        size_t id;
+        size_t how_bad;
+    };
+
     TrkHitPVecMap GetTempHitMap(TrkHitPVecMap &clusteredTrkHitsInLayer);
     void GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer);
-    void GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
+    bool GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                        TrkHitPVecMap::iterator itMap,
                        int cirNo);
     void CutTracks();
-    void SortTracks();
+    void SortHits();
 
 //................................................................................//
 //Kasa method
@@ -89,17 +98,13 @@ private:
 //................................................................................//
 //Final choice
     int minDepth = 3;
-    double goodnessCut = 0.9;
+    double goodnessCut = 0.999;
 
     int circleNo{0};
     std::vector<double> r_;
     std::vector<double> center_x_;
     std::vector<double> center_y_;
     std::vector<double> goodness_;
-    //double r[NUM] = {RETURN};
-    //double centerX[NUM] = {RETURN};
-    //double centerY[NUM] = {RETURN};
-    //double goodness[NUM] = {RETURN};
     std::vector<TrkHitPVec> tracks_chosen_;
 
 //................................................................................//
