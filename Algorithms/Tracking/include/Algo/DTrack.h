@@ -74,9 +74,11 @@ public:
     double GetECalDirctX() const {return ECal_seed_px_;}
     double GetECalDirctY() const {return ECal_seed_py_;}
     double GetECalQoP() const {return ECal_seed_pz_;}
+    int GetInitCellIdZ() const;
 
     int GetSize() const {return hits_.size();}
     TrkHitP At(int i) {return hits_.at(i);}
+    TrkHitP AtCellIdZ(int i);
     double GetQuality() const {return quality_;}
 
     double GetNdf() const {return ndf_;}

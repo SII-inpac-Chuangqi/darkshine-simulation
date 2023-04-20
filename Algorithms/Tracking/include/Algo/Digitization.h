@@ -120,7 +120,7 @@ private:
     bool if_strip_{true};
     bool if_smear_{true};
 
-    double cluster_width_ = 0.1;
+    double cluster_width_ = 0.2;
 
     std::vector<double> layer_width_tag_ = {};
     std::vector<double> layer_length_tag_ = {};

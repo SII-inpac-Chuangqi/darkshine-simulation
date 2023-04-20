@@ -446,20 +446,14 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 if(if_raw_tag_hit_number && if_reco_tag_hits)
                 {
 //Finding, by pre-fitting
-                    std::vector<TrkHitPVec> vec_tag_track;
                     GreedyFinder find_tag(clus_tag_trkhit_map);
-                    vec_tag_track.assign(find_tag.First(), find_tag.Last());
+                    find_tag.FillTracks(&tag_tracks_);
         
 //Fit, by Genfit, Kalman filter/by Riemann fitting
                     TagTrk2_track_No = find_tag.GetTrackNo();
 
-                    for (int i = 0; i < find_tag.GetTrackNo(); i++)
+                    for (int i = 0; i < TagTrk2_track_No; i++)
                     {
-                        TrkHitPVec tag_track_hits((*(vec_tag_track.begin() + i)).begin(), (*(vec_tag_track.begin() + i)).end());
-                        tag_tracks_.push_back(std::make_shared<DTrack>(tag_track_hits,
-                                                                       find_tag.GetR(i),         //used in Kalman filter
-                                                                       find_tag.GetCenterX(i),   //not used in Kalman filter, reserved
-                                                                       find_tag.GetCenterY(i))); //not used in Kalman filter, reserved
                         tag_tracks_.back()->SetVerbose(Verbose);
                         int size = tag_tracks_.back()->GetSize();
                         double x = 0.;
@@ -495,19 +489,13 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 if(if_raw_rec_hit_number && if_reco_rec_hits)
                 {
 //Finding, by pre-fitting
-                    std::vector<TrkHitPVec> vec_rec_track;
                     GreedyFinder find_rec(clus_rec_trkhit_map);
-                    vec_rec_track.assign(find_rec.First(), find_rec.Last());
+                    find_rec.FillTracks(&rec_tracks_);
 
 //Fit, by Genfit, Kalman filter/by Riemann fitting
                     RecTrk2_track_No = find_rec.GetTrackNo();
               
-                    for (int i = 0; i < find_rec.GetTrackNo(); i++) {
-                        TrkHitPVec rec_track_hits((*(vec_rec_track.begin() + i)).begin(), (*(vec_rec_track.begin() + i)).end());
-                        rec_tracks_.push_back(std::make_shared<DTrack>(rec_track_hits,
-                                                                       find_rec.GetR(i),         //used in Kalman filter
-                                                                       find_rec.GetCenterX(i),   //not used in Kalman filter, reserved
-                                                                       find_rec.GetCenterY(i))); //not used in Kalman filter, reserved
+                    for (int i = 0; i < RecTrk2_track_No; i++) {
                         rec_tracks_.back()->SetVerbose(Verbose);
                         int size = rec_tracks_.back()->GetSize();
                         double x = 0.;
@@ -526,15 +514,20 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         }
 
 //................................................................................//
-//Post-processing
+//Sort tracks by P
         std::sort(tag_tracks_.begin(), tag_tracks_.end(), [](std::shared_ptr<DTrack> &track1, std::shared_ptr<DTrack> &track2)
                                                           { return track1->GetPp() > track2->GetPp(); } );
         std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](std::shared_ptr<DTrack> &track1, std::shared_ptr<DTrack> &track2)
                                                           { return track1->GetPp() > track2->GetPp(); } );
 
 //Vertex
-        VertexFinder vertex_finder(rec_tracks_);
+        if(rec_tracks_.size() > 1)
+        {
+            VertexFinder vertex_finder(rec_tracks_);
+            vertex_finder.FindVertexes();
+        }
 
+//................................................................................//
 //Fill
         for(auto &track : tag_tracks_)
         {
