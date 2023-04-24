@@ -12,7 +12,7 @@
 //TRACKING
 #include "Algo/DTrack.h"
 #include "Algo/Vertex/DVertex.h"
-#include "Algo/Vertex/Cluster.h"
+#include "Algo/Vertex/Clusterer.h"
 
 class VertexFinder
 {
