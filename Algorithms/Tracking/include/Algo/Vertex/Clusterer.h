@@ -19,7 +19,7 @@ public:
     Clusterer()  {}
     ~Clusterer() {}
 
-    void MakeCluster(const std::vector<std::shared_ptr<T>> &init_objects);
+    void CreatePoint(const std::shared_ptr<T> &init_object, size_t dim, double *splits, double weight);
 
 private:
     class Point
@@ -30,7 +30,7 @@ private:
         Point(const Point &point) : dim_(point.dim_), weight_(point.weight_), t_(point.t_)
         {
             splits_ = new double[dim_];
-            for(int i = 0; i < dim_; i++) splits_[i] = point.splits_[i];
+            for(size_t i = 0; i < dim_; i++) splits_[i] = point.splits_[i];
         }
         ~Point() {delete[] splits_;}
 
@@ -44,6 +44,10 @@ private:
     {
     public:
         Cluster()  {}
+        Cluster(const Cluster &cluster) : points_(cluster.points_)
+        {
+            center_ = std::make_unique<Point>(*(cluster.center_));
+        }
         ~Cluster() {}
 
         double GetCenter(size_t i)
@@ -83,15 +87,26 @@ private:
                     sum_of_splits[i] += point->weight_*point->splits_[i];
             }
 
-            delete center_; center_ = nullptr;
-            center_ = new Point(dim);
+            center_.reset();
+            center_ = std::make_unique<Point>(dim);
             for(size_t i = 0; i < dim; i++)
                 center_->splits_[i] = sum_of_splits[i];
         }
 
-        std::unique_ptr<Point> *center_{nullptr};
+        std::unique_ptr<Point> center_{nullptr};
         std::vector<std::shared_ptr<Point>> points_;
     };
+
+    std::vector<std::shared_ptr<Point>> points_;
 };
+
+template <class T>
+void Clusterer<T>::CreatePoint(const std::shared_ptr<T> &init_object, size_t dim, double *splits, double weight)
+{
+    points_.push_back(std::make_shared<Point>(dim));
+    points_.back()->weight_ = weight;
+    points_.back()->t_ = init_object;
+    for(size_t i = 0; i < dim; i++) points_.back()->splits_[i] = splits[i];
+}
 
 #endif // CLUSTERER_H
