@@ -37,6 +37,7 @@ private:
     };
 
     void BuildSpiralStaircase();
+    void FindClusterInStair(const std::shared_ptr<Stair> &stair);
 
     std::vector<std::shared_ptr<DTrack>> tracks_;
     std::map<int, std::shared_ptr<Stair>> spiral_staircase_;

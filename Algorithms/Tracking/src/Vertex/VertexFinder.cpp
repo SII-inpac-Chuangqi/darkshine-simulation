@@ -8,6 +8,10 @@ VertexFinder::VertexFinder(const std::vector<std::shared_ptr<DTrack>> &tracks)
 void VertexFinder::FindVertexes()
 {
     this->BuildSpiralStaircase();
+    for(const auto &stair : spiral_staircase_)
+    {
+        this->FindClusterInStair(stair.second);
+    }
 }
 
 void VertexFinder::BuildSpiralStaircase()
@@ -49,4 +53,9 @@ void VertexFinder::BuildSpiralStaircase()
         std::cout << std::endl;
     }
 */
+}
+
+void VertexFinder::FindClusterInStair(const std::shared_ptr<Stair> &stair)
+{
+    Clusterer<DTrack> clusterer;
 }

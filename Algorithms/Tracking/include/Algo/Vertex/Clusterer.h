@@ -12,28 +12,31 @@
 #include <vector>
 #include <iostream>
 
-template <typename T>
+template <class T>
 class Clusterer
 {
 public:
     Clusterer()  {}
     ~Clusterer() {}
 
+    void MakeCluster(const std::vector<std::shared_ptr<T>> &init_objects);
+
 private:
-    class Pointer
+    class Point
     {
     public:
-        Pointer() = delete;
-        Pointer(int dim) : dim_(dim) {splits_ = new double[dim_];}
-        Pointer(const Pointer &node) : dim_(node.dim_), t(node.t)
+        Point() = delete;
+        Point(size_t dim) : dim_(dim) {splits_ = new double[dim_];}
+        Point(const Point &point) : dim_(point.dim_), weight_(point.weight_), t_(point.t_)
         {
             splits_ = new double[dim_];
-            for(int i = 0; i < dim_; i++) splits_[i] = node.splits_[i];
+            for(int i = 0; i < dim_; i++) splits_[i] = point.splits_[i];
         }
-        ~Pointer() {delete[] splits_;}
+        ~Point() {delete[] splits_;}
 
-        const int dim_;
-        std::shared_ptr<T> t{nullptr}; 
+        const size_t dim_;
+        double weight_{0.};
+        std::shared_ptr<T> t_{nullptr}; 
         double *splits_{nullptr};
     };
 
@@ -43,7 +46,7 @@ private:
         Cluster()  {}
         ~Cluster() {}
 
-        double GetCenter(int i)
+        double GetCenter(size_t i)
         {
             if(!center_)
             {
@@ -60,8 +63,34 @@ private:
             return center_->splits_[i];
         }
 
-        std::unique_ptr<Pointer> *center_{nullptr};
-        std::vector<std::shared_ptr<Pointer>> points_;
+        void UpdateCenter()
+        {
+            if(points_.size() < 1)
+            {
+                std::cerr << "[WARNING] ==> No points in thiss cluster" << std::endl;
+                return;
+            }
+
+            size_t dim = points_.at(0)->dim_;
+            double sum_of_weights = 0.;
+            double *sum_of_splits = new double[dim];
+
+            for(const auto &point : points_)
+            {
+                sum_of_weights += point->weight_;
+
+                for(size_t i = 0; i < dim; i++)
+                    sum_of_splits[i] += point->weight_*point->splits_[i];
+            }
+
+            delete center_; center_ = nullptr;
+            center_ = new Point(dim);
+            for(size_t i = 0; i < dim; i++)
+                center_->splits_[i] = sum_of_splits[i];
+        }
+
+        std::unique_ptr<Point> *center_{nullptr};
+        std::vector<std::shared_ptr<Point>> points_;
     };
 };
 
