@@ -34,8 +34,26 @@ GreedyFinder::GreedyFinder(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDep
     goodnessCut = newGoodnessCut;
 
     GreedyLooping(clusteredTrkHitsInLayer);
+    SortHits();
     //CutTracks();
-    SortTracks();
+}
+
+void GreedyFinder::FillTracks(std::vector<std::shared_ptr<DTrack>> *tracks)
+{
+    tracks->clear();
+
+    for(int i = 0; i < this->GetTrackNo(); i++)
+        tracks->push_back(std::make_shared<DTrack>(tracks_chosen_.at(i),
+                                                   this->GetR(i),         //used in Kalman filter
+                                                   this->GetCenterX(i),
+                                                   this->GetCenterY(i)));
+
+    tracks_ = tracks;
+}
+
+std::vector<std::shared_ptr<DTrack>>* GreedyFinder::GetTracks()
+{
+    return tracks_;
 }
 
 //................................................................................//
@@ -45,18 +63,6 @@ GreedyFinder::GreedyFinder(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDep
 //................................................................................//
 //Finding method
 //................................................................................//
-//
-void GreedyFinder::CutTracks()
-{
-}
-
-void GreedyFinder::SortTracks()
-{
-    for(auto &track : tracks_chosen_)
-        std::sort(track.begin(), track.end(), [](std::shared_ptr<TrkHit> &hit1, std::shared_ptr<TrkHit> &hit2)
-                                              { return hit1->GetCellIdZ() > hit2->GetCellIdZ(); } );
-}
-
 //
 TrkHitPVecMap GreedyFinder::GetTempHitMap(TrkHitPVecMap &clusteredTrkHitsInLayer)
 {
@@ -68,8 +74,8 @@ TrkHitPVecMap GreedyFinder::GetTempHitMap(TrkHitPVecMap &clusteredTrkHitsInLayer
      size_t i = 0;
      for(const auto &layer : temp_ClusteredTrkHitsInLayer)
      {
-        if(layer.first != temp_ClusteredTrkHitsInLayer.begin()->first &&
-           layer.first != temp_ClusteredTrkHitsInLayer.end()  ->first)
+        if(layer.first != temp_ClusteredTrkHitsInLayer.begin() ->first &&
+           layer.first != temp_ClusteredTrkHitsInLayer.rbegin()->first)
         {
             layers[i] = layer.first;
             i++;
@@ -94,7 +100,7 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
     for(;;)
     {
         auto itMap = temp_ClusteredTrkHitsInLayer.end();
-        GreedyLooping(temp_ClusteredTrkHitsInLayer, itMap, circleNo);
+        if(!GreedyLooping(temp_ClusteredTrkHitsInLayer, itMap, circleNo)) return;
         //std::cout << goodness_Kasa_ << ", n hit " << hits_chosen_.size() << std::endl;
 
         //if(goodness[circleNo] > goodnessCut && static_cast<int>(hits_chosen_.size()) > minDepth)
@@ -132,22 +138,22 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer)
             circleNo = 0;
             goodness_Kasa_ = -INFINITY;
         }
-        else break;
+        else return;
 
         //if(circleNo >= MAX_CIRCLE - 1) break;
 
-        if(static_cast<int>(temp_ClusteredTrkHitsInLayer.size()) < minDepth) break;
+        if(static_cast<int>(temp_ClusteredTrkHitsInLayer.size()) <= minDepth) return;
     }
 
 }
 
-void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
+bool GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                                   TrkHitPVecMap::iterator itMap,
                                   int cirNo)
 {
     circleNo++;
     //if(circleNo%10000 == 0) std::cout << circleNo << std::endl;
-    if(circleNo >= MAX_CIRCLE) return;
+    if(circleNo >= MAX_CIRCLE) return false;
 
     itMap--;
     if(itMap == clusteredTrkHitsInLayer.begin())
@@ -165,16 +171,6 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
             double cur_R;
             double cur_goodness;
             MethodLooping(x_store_, y_store_, cur_A, cur_B, cur_R, cur_goodness);
-            //if(goodness[cirNo] < goodnessKasa)
-            //{
-            //    r[cirNo] = rKasa;
-            //    centerX[cirNo] = centerXKasa;
-            //    centerY[cirNo] = centerYKasa;
-            //    goodness[cirNo] = goodnessKasa;
-
-            //    hits_chosen_.assign(hits_store_.begin(), hits_store_.end());
-            //    hits_no_chosen_.assign(hits_no_store_.begin(), hits_no_store_.end());
-            //}
 
             const size_t N = x_store_.size();
             bool calibrtion_cut = true;
@@ -190,7 +186,7 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                 {
                     double dis = PointToLineDistance(abr[0], -1., abr[1], x[ii], y[ii]);
                     //std::cout << "ii " << ii << " dis " << dis << std::endl;
-                    calibrtion_cut = dis < 6.;
+                    calibrtion_cut = dis < 4.;
                     if(!calibrtion_cut) break;
                 }
             }
@@ -217,7 +213,7 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
             hits_no_store_.erase(hits_no_store_.end() - 1);
         }
 	
-        return;
+        return true;
     }
 
     for(size_t hitsNo = 0; hitsNo < itMap->second.size(); ++hitsNo)
@@ -238,7 +234,25 @@ void GreedyFinder::GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
         itMap++; 
     }
 
-    return;
+    return true;
+}
+
+//
+void GreedyFinder::CutTracks()
+{
+    std::vector<BadGuy> bad_guys;
+
+    std::sort(bad_guys.begin(), bad_guys.end(), [](BadGuy bad_guy1, BadGuy bad_guy2)
+                                                { return bad_guy1.how_bad < bad_guy2.how_bad; });
+    for(const auto bad_guy : bad_guys) std::cout << bad_guy.how_bad << "\t";
+    std::cout << std::endl;
+}
+
+void GreedyFinder::SortHits()
+{
+    for(auto &track : tracks_chosen_)
+        std::sort(track.begin(), track.end(), [](std::shared_ptr<TrkHit> &hit1, std::shared_ptr<TrkHit> &hit2)
+                                              { return hit1->GetCellIdZ() > hit2->GetCellIdZ(); } );
 }
 
 //................................................................................//

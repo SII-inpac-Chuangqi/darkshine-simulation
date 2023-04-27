@@ -1,5 +1,5 @@
 //................................................................................//
-//CPP Libraries
+//C++
 #include <iostream>
 #include <iomanip>
 #include <map>
@@ -260,6 +260,6 @@ void Digitization::MakeCluster(std::vector<Point> &points, std::vector<Cluster*>
     }
 }
 
-void Digitization::MergeCluster(std::vector<Cluster*> &clusters)
+void Digitization::MergeCluster(std::vector<Cluster*> &)
 {
 }

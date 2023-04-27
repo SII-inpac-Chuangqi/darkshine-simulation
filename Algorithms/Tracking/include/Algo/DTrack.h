@@ -6,7 +6,7 @@
 #endif
 
 //................................................................................//
-//CPP Libraries
+//C++
 #include <iostream>
 #include <cmath>
 
@@ -74,9 +74,11 @@ public:
     double GetECalDirctX() const {return ECal_seed_px_;}
     double GetECalDirctY() const {return ECal_seed_py_;}
     double GetECalQoP() const {return ECal_seed_pz_;}
+    int GetInitCellIdZ() const;
 
     int GetSize() const {return hits_.size();}
     TrkHitP At(int i) {return hits_.at(i);}
+    TrkHitP AtCellIdZ(int i);
     double GetQuality() const {return quality_;}
 
     double GetNdf() const {return ndf_;}
@@ -86,6 +88,7 @@ public:
     double GetYSigma() const {return ySigma_;}
     double GetDeltaR(const DTrack *another) const;
     std::vector<double> GetExtrapolated(tracking::direction extrop_dir = tracking::dX);
+    std::vector<double> GetCorrectionsX() const {return corrections_x_;}
 
 //................................................................................//
 //Set
@@ -146,6 +149,7 @@ private:
     bool   if_extrapolated_{false};
     std::vector<double> extrapolated_x_;
     std::vector<double> extrapolated_y_;
+    std::vector<double> corrections_x_;
 
 //................................................................................//
 //Finding properties

@@ -2,7 +2,7 @@
 #define SERENA_UTIL_H
 
 //................................................................................//
-//CPP Libraries
+//C++
 #include <iostream>
 #include <string>
 #include <map>

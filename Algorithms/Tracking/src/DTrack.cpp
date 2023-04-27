@@ -1,9 +1,10 @@
 //................................................................................//
-//CPP Libraries
+//C++
 #include <iostream>
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <climits>
 
 //................................................................................//
 //ROOT
@@ -143,6 +144,17 @@ DTrack& DTrack::operator=(const DTrack &old_track)
     return *this;
 }
 
+TrkHitP DTrack::AtCellIdZ(int i)
+{
+    for(const auto hit : hits_)
+    {
+        if(hit->GetCellIdZ() == i)
+            return hit;
+    }
+
+    return nullptr;
+}
+
 double DTrack::GetChi2()
 {
     if(hits_.size() < 4)
@@ -196,6 +208,19 @@ double DTrack::GetChi2()
     chi2_ = deviation/std_variance*track_x.size()/ndf_;
 
     return chi2_;
+}
+
+int DTrack::GetInitCellIdZ() const
+{
+    int init_cell_id_z = INT_MIN;
+
+    for(const auto &hit : hits_)
+    {
+        if(-hit->GetCellIdZ() > init_cell_id_z)
+            init_cell_id_z = hit->GetCellIdZ();
+    }
+
+    return init_cell_id_z;
 }
 
 double DTrack::GetDeltaR(const DTrack *another) const
@@ -300,6 +325,8 @@ void DTrack::Fit(int method)
         ECal_seed_pz_ = fitter_->GetECalQoP();
         //std::cout << ECal_seed_pz << std::endl;
         //std::cout << ndf_ << std::endl;
+
+        corrections_x_ = fitter_->GetCorrectionsX();
     }
     else
         pp_ = 0.3*preR_*std::abs(By_);
