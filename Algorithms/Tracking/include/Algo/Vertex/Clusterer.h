@@ -12,6 +12,8 @@
 #include <vector>
 #include <iostream>
 
+#include "TString.h"
+
 template <class T>
 class Clusterer
 {
@@ -20,6 +22,7 @@ public:
     ~Clusterer() {}
 
     void CreatePoint(const std::shared_ptr<T> &init_object, size_t dim, double *splits, double weight);
+    void ShowPoints();
 
 private:
     class Point
@@ -33,6 +36,16 @@ private:
             for(size_t i = 0; i < dim_; i++) splits_[i] = point.splits_[i];
         }
         ~Point() {delete[] splits_;}
+
+        friend std::ostream &operator<<(std::ostream &os, const Point &point)
+        {
+            TString splits;
+            for(size_t i = 0; i < point.dim_; i++)
+                splits += TString::Format("%.2f\t", point.splits_[i]);
+            auto str = TString::Format("at %p, dim %ld, weight %.2f splits %s\n", (void *)&point, point.dim_, point.weight_, splits.Data());
+            os << str;
+            return os;
+        }
 
         const size_t dim_;
         double weight_{0.};
@@ -107,6 +120,13 @@ void Clusterer<T>::CreatePoint(const std::shared_ptr<T> &init_object, size_t dim
     points_.back()->weight_ = weight;
     points_.back()->t_ = init_object;
     for(size_t i = 0; i < dim; i++) points_.back()->splits_[i] = splits[i];
+}
+
+template <class T>
+void Clusterer<T>::ShowPoints()
+{
+    int i = 0;
+    for(const auto &point : points_) std::cout << "point " << i++ << "\n" << *point << std::endl;
 }
 
 #endif // CLUSTERER_H

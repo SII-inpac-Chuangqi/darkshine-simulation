@@ -67,4 +67,6 @@ void VertexFinder::FindClusterInStair(const std::shared_ptr<Stair> &stair)
         splits[2] = stair->splits_.at(i).at(2);
         clusterer.CreatePoint(stair->slabs_.at(i), 3, splits, 1.);
     }
+
+    clusterer.ShowPoints();
 }
