@@ -1,4 +1,5 @@
 //................................................................................//
-//Intentionally blank, avoid modification when new object introduced
+//Intentionally blank, avoid modification
 
+//Otherwise we need following lines for each realization:
 //template class Clusterer<DTrack>;

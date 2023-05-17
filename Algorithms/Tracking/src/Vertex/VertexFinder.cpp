@@ -69,4 +69,5 @@ void VertexFinder::FindClusterInStair(const std::shared_ptr<Stair> &stair)
     }
 
     clusterer.ShowPoints();
+    clusterer.FindClusters();
 }
