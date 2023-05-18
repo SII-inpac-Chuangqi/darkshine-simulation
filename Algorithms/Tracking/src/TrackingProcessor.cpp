@@ -521,11 +521,13 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                           { return track1->GetPp() > track2->GetPp(); } );
 
 //Vertex
+/*
         if(rec_tracks_.size() > 1)
         {
             VertexFinder vertex_finder(rec_tracks_);
             vertex_finder.FindVertexes();
         }
+*/
 
 //................................................................................//
 //Fill
