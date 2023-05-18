@@ -22,6 +22,8 @@ void VertexFinder::BuildSpiralStaircase()
 
     for(const auto &track : tracks_)
     {
+        //if(track == leading_track) continue;
+
         int stair_no = track->GetInitCellIdZ();
 
         double leading_x = 0.;
@@ -58,6 +60,7 @@ void VertexFinder::BuildSpiralStaircase()
 void VertexFinder::FindClusterInStair(const std::shared_ptr<Stair> &stair)
 {
     Clusterer<DTrack> clusterer;
+    clusterer.SetClusterWidth(20.);
 
     for(size_t i = 0; i < stair->slabs_.size(); i++)
     {
