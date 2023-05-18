@@ -27,9 +27,12 @@ public:
         //clusters_.clear();
     }
 
+    void SetClusterWidth(double cluster_width) {cluster_width_ = cluster_width;}
+
     void CreatePoint(const std::shared_ptr<T> &init_object, size_t dim, double *splits, double weight);
     void ShowPoints();
     void FindClusters();
+    std::vector<T> GetListOfClusteredObjects() const;
 
 private:
 //................................................................................//
@@ -217,7 +220,7 @@ void Clusterer<T>::FindClusters()
         //std::cout << "seed: " << seed << "\tlonely: " << n_lonely_point << std::endl;
     }
 
-    //std::cout << "cluster size: " << clusters_.size() << std::endl;
+    std::cout << "cluster size: " << clusters_.size() << std::endl;
 }
 
 template <class T>
@@ -229,6 +232,16 @@ int Clusterer<T>::GetNextSeed() const
     }
 
     return -1;
+}
+
+template <class T>
+std::vector<T> GetListOfLClusteredObjects(int i) const
+{
+    std::vector<T> list;
+
+    for(const auto &cluster : clusters)
+    {
+    }
 }
 
 #endif // CLUSTERER_H
