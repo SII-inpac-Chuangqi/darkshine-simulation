@@ -51,7 +51,7 @@ private:
             TString splits;
             for(size_t i = 0; i < point.dim_; i++)
                 splits += TString::Format("%.2f\t", point.splits_[i]);
-            auto str = TString::Format("at %p, dim %ld, weight %.2f splits %s\n", (void *)&point, point.dim_, point.weight_, splits.Data());
+            auto str = TString::Format("object at %p, dim %ld, weight %.2f, splits %s\n", (void *)point.t_.get(), point.dim_, point.weight_, splits.Data());
             os << str;
             return os;
         }
