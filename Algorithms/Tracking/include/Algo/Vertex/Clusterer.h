@@ -23,8 +23,8 @@ public:
     Clusterer()  {}
     ~Clusterer()
     {
-        //for(size_t i = 0; i < clusters_.size(); i++) {delete clusters_.at(i); clusters_.at(i) = nullptr;}
-        //clusters_.clear();
+        for(size_t i = 0; i < clusters_.size(); i++) {delete clusters_.at(i); clusters_.at(i) = nullptr;}
+        clusters_.clear();
     }
 
     void SetClusterWidth(double cluster_width) {cluster_width_ = cluster_width;}
@@ -32,7 +32,7 @@ public:
     void CreatePoint(const std::shared_ptr<T> &init_object, size_t dim, double *splits, double weight);
     void ShowPoints();
     void FindClusters();
-    std::vector<T> GetListOfClusteredObjects() const;
+    std::vector<T> GetListOfClusteredObjects(int i) const;
 
 private:
 //................................................................................//
@@ -235,13 +235,14 @@ int Clusterer<T>::GetNextSeed() const
 }
 
 template <class T>
-std::vector<T> GetListOfLClusteredObjects(int i) const
+std::vector<T> Clusterer<T>::GetListOfClusteredObjects(int i) const
 {
     std::vector<T> list;
 
-    for(const auto &cluster : clusters)
-    {
-    }
+    for(const auto &point : clusters_.at(i)->points_)
+        list.push_back(point);
+
+    return list;
 }
 
 #endif // CLUSTERER_H
