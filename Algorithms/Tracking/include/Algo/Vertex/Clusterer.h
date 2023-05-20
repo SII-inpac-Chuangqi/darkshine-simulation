@@ -20,7 +20,8 @@ template <class T>
 class Clusterer
 {
 public:
-    Clusterer()  {}
+    Clusterer() {}
+    Clusterer(const Clusterer&) = delete;
     ~Clusterer()
     {
         for(size_t i = 0; i < clusters_.size(); i++) {delete clusters_.at(i); clusters_.at(i) = nullptr;}
@@ -29,13 +30,13 @@ public:
 
     void SetClusterWidth(double cluster_width) {cluster_width_ = cluster_width;}
 
-    void CreatePoint(const T &init_object, size_t dim, double *splits, double weight);
+    void CreatePoint(T *init_object, size_t dim, double *splits, double weight);
     void ShowPoints();
     void FindClusters();
 
     size_t GetNClusters() const {return clusters_.size();}
     size_t GetClusterSize(int i) const {return clusters_.at(i)->points_.size();}
-    std::vector<T> GetListOfClusteredObjects(int i) const;
+    std::vector<T*> GetListOfClusteredObjects(int i) const;
 
 private:
 //................................................................................//
@@ -57,7 +58,7 @@ private:
             TString splits;
             for(size_t i = 0; i < point.dim_; i++)
                 splits += TString::Format("%.2f\t", point.splits_[i]);
-            auto str = TString::Format("object at %p, dim %ld, weight %.2f, splits %s\n", (void *)point.t_.get(), point.dim_, point.weight_, splits.Data());
+            auto str = TString::Format("object at %p, dim %ld, weight %.2f, splits %s\n", (void *)point.t_, point.dim_, point.weight_, splits.Data());
             os << str;
             return os;
         }
@@ -77,7 +78,7 @@ private:
 
         const size_t dim_;
         double weight_{0.};
-        std::shared_ptr<T> t_{nullptr}; 
+        T* t_{nullptr}; 
         double *splits_{nullptr};
         bool if_clustered_{false};
     };
@@ -169,11 +170,11 @@ private:
 };
 
 template <class T>
-void Clusterer<T>::CreatePoint(const T &init_object, size_t dim, double *splits, double weight)
+void Clusterer<T>::CreatePoint(T *init_object, size_t dim, double *splits, double weight)
 {
     points_.push_back(std::make_shared<Point>(dim));
     points_.back()->weight_ = weight;
-    points_.back()->t_ = std::make_shared<T>(init_object);
+    points_.back()->t_ = init_object;
     for(size_t i = 0; i < dim; i++) points_.back()->splits_[i] = splits[i];
 }
 
@@ -223,7 +224,7 @@ void Clusterer<T>::FindClusters()
         //std::cout << "seed: " << seed << "\tlonely: " << n_lonely_point << std::endl;
     }
 
-    std::cout << "cluster size: " << clusters_.size() << std::endl;
+    std::cout << "N clusters: " << clusters_.size() << std::endl;
 }
 
 template <class T>
@@ -238,12 +239,12 @@ int Clusterer<T>::GetNextSeed() const
 }
 
 template <class T>
-std::vector<T> Clusterer<T>::GetListOfClusteredObjects(int i) const
+std::vector<T*> Clusterer<T>::GetListOfClusteredObjects(int i) const
 {
-    std::vector<T> list;
+    std::vector<T*> list;
 
     for(const auto &point : clusters_.at(i)->points_)
-        list.push_back(*(point->t_));
+        list.push_back(point->t_);
 
     return list;
 }
