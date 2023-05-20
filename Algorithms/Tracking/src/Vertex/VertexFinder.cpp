@@ -77,10 +77,13 @@ void VertexFinder::FindClusterInStair(const std::shared_ptr<Stair> &stair)
     auto n_cluster = clusterer.GetNClusters();
     for(size_t i = 0; i < n_cluster; i++)
     {
-        if(clusterer.GetClusterSize(i) <= 1) continue;
+        //if(clusterer.GetClusterSize(i) <= 1) continue;
+
+        //auto splits = clusterer.GetClusterCenterSplits(i);
+        //std::cout << splits.size() << std::endl;
 
         auto clustered_tracks = clusterer.GetListOfClusteredObjects(i);
         for(const auto &track : clustered_tracks)
-            std::cout << track << std::endl;
+            std::cout << (*track).get() << std::endl;
     }
 }

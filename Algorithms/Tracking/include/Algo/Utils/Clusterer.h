@@ -36,6 +36,7 @@ public:
 
     size_t GetNClusters() const {return clusters_.size();}
     size_t GetClusterSize(int i) const {return clusters_.at(i)->points_.size();}
+    std::vector<double> GetClusterCenterSplits(int i) const;
     std::vector<T*> GetListOfClusteredObjects(int i) const;
 
 private:
@@ -46,7 +47,7 @@ private:
     public:
         Point() = delete;
         Point(size_t dim) : dim_(dim) {splits_ = new double[dim_];}
-        Point(const Point &point) : dim_(point.dim_), weight_(point.weight_), t_(point.t_), if_clustered_(point.if_clustered_)
+        Point(const Point &point) : dim_(point.dim_), weight_(point.weight_), if_clustered_(point.if_clustered_), t_(point.t_)
         {
             splits_ = new double[dim_];
             for(size_t i = 0; i < dim_; i++) splits_[i] = point.splits_[i];
@@ -58,7 +59,7 @@ private:
             TString splits;
             for(size_t i = 0; i < point.dim_; i++)
                 splits += TString::Format("%.2f\t", point.splits_[i]);
-            auto str = TString::Format("object at %p, dim %ld, weight %.2f, splits %s\n", (void *)point.t_, point.dim_, point.weight_, splits.Data());
+            auto str = TString::Format("object at %p, dim %ld, weight %.2f, splits %s\n", static_cast<void*>(point.t_), point.dim_, point.weight_, splits.Data());
             os << str;
             return os;
         }
@@ -78,9 +79,9 @@ private:
 
         const size_t dim_;
         double weight_{0.};
-        T* t_{nullptr}; 
-        double *splits_{nullptr};
         bool if_clustered_{false};
+        double *splits_{nullptr};
+        T* t_{nullptr}; 
     };
 
 //................................................................................//
@@ -236,6 +237,14 @@ int Clusterer<T>::GetNextSeed() const
     }
 
     return -1;
+}
+
+template <class T>
+std::vector<double> Clusterer<T>::GetClusterCenterSplits(int i) const
+{
+    std::vector<double> splits(clusters_.at(i)->center_->splits_,
+                               clusters_.at(i)->center_->splits_ + clusters_.at(i)->center_->dim_);
+    return splits;
 }
 
 template <class T>

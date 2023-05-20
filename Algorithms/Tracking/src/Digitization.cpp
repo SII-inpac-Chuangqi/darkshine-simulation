@@ -20,6 +20,7 @@
 //Tracking
 #include "Algo/TrkHit.h"
 #include "Algo/Digitization.h"
+#include "Algo/Utils/Clusterer.h"
 
 void Digitization::SetIfSmear(bool if_smear)
 {
