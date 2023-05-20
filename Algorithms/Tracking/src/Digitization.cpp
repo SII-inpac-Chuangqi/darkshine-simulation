@@ -146,7 +146,7 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
             hit->SetU(hit->GetX());
             hit->SetV(hit->GetY());
 
-            //std::cout << hit->GetX() << "," << hit->GetY() << "\t";
+            //std::cout << hit->GetX() << ",\t" << hit->GetY() << ",\t" << hit->GetZ() << "\t";
         }
         //std::cout << std::endl;
     }
@@ -155,13 +155,38 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
 
 void Digitization::InitHitMap(const TrkHitPVec &trk_hits, TrkHitPVecMap &trk_hit_map)
 {
-
     TrkHitPVecMap unclustered_trk_hit_map;
     for(const auto &trk_hit : trk_hits)
         this->InsertHitMap(trk_hit, unclustered_trk_hit_map);
 
-    for(const auto &layer : unclustered_trk_hit_map)
+    for(auto &layer : unclustered_trk_hit_map)
     {
+        Clusterer<TrkHitP> clusterer;
+        clusterer.SetClusterWidth(cluster_width_);
+
+        for(auto &hit : layer.second)
+        {
+            double *splits = new double[1];
+            splits[0] = hit->GetX();
+            clusterer.CreatePoint(&hit, 1, splits, hit->GetE());
+
+            delete[] splits; splits = nullptr;
+        }
+
+        //clusterer.ShowPoints();
+        clusterer.FindClusters();
+
+        TrkHitPVec clustered_layer;
+        auto n_hits = clusterer.GetNClusters();
+        for(size_t i = 0; i < n_hits; i++)
+        {
+            clustered_layer.push_back(std::make_shared<TrkHit>());
+            clustered_layer.back()->SetX(clusterer.GetClusterCenterSplits(i).at(0));
+            clustered_layer.back()->SetZ(layer.second.at(0)->GetZ());
+            clustered_layer.back()->SetCellIdZ(layer.first);
+        }
+        trk_hit_map.insert(std::pair<int, TrkHitPVec>(layer.first, clustered_layer));
+/*
         std::vector<Point> unclustered_trk_points;
         this->MakeClusterPoints(layer.second, unclustered_trk_points);
 
@@ -187,6 +212,7 @@ void Digitization::InitHitMap(const TrkHitPVec &trk_hits, TrkHitPVecMap &trk_hit
             delete trk_clusters.at(i);
             trk_clusters.at(i) = nullptr;
         }
+*/
     }
     //std::cout << std::endl;
 }
@@ -199,7 +225,7 @@ void Digitization::InsertHitMap(const TrkHitP &trk_hit, TrkHitPVecMap &trk_hit_m
     else
         trk_hit_map.insert(std::pair<int, TrkHitPVec>(trk_hit->GetCellIdZ(), {trk_hit}));
 }
-
+/*
 int Digitization::GetNextClusterSeed(const vector<Point> &points)
 {
     for(size_t i = 0; i < points.size(); i++)
@@ -264,3 +290,4 @@ void Digitization::MakeCluster(std::vector<Point> &points, std::vector<Cluster*>
 void Digitization::MergeCluster(std::vector<Cluster*> &)
 {
 }
+*/

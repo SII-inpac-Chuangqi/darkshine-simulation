@@ -144,7 +144,7 @@ private:
             center_.reset();
             center_ = std::make_unique<Point>(dim);
             for(size_t i = 0; i < dim; i++)
-                center_->splits_[i] = sum_of_splits[i];
+                center_->splits_[i] = sum_of_splits[i]/sum_of_weights;
         }
 
         void AddPoint(const std::shared_ptr<Point> &point, bool if_update = true)
@@ -225,7 +225,7 @@ void Clusterer<T>::FindClusters()
         //std::cout << "seed: " << seed << "\tlonely: " << n_lonely_point << std::endl;
     }
 
-    std::cout << "N clusters: " << clusters_.size() << std::endl;
+    //std::cout << "N clusters: " << clusters_.size() << std::endl;
 }
 
 template <class T>
