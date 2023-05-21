@@ -59,7 +59,7 @@ void VertexFinder::BuildSpiralStaircase()
 
 void VertexFinder::FindClusterInStair(const std::shared_ptr<Stair> &stair)
 {
-    Clusterer<DTrack> clusterer;
+    Clusterer<std::shared_ptr<DTrack>> clusterer;
     clusterer.SetClusterWidth(20.);
 
     for(size_t i = 0; i < stair->slabs_.size(); i++)
@@ -68,9 +68,24 @@ void VertexFinder::FindClusterInStair(const std::shared_ptr<Stair> &stair)
         splits[0] = stair->splits_.at(i).at(0);
         splits[1] = stair->splits_.at(i).at(1);
         splits[2] = stair->splits_.at(i).at(2);
-        clusterer.CreatePoint(stair->slabs_.at(i), 3, splits, 1.);
+        clusterer.CreatePoint(&stair->slabs_.at(i), 3, splits, 1.);
+
+        delete[] splits; splits = nullptr;
     }
 
-    clusterer.ShowPoints();
+    //clusterer.ShowPoints();
     clusterer.FindClusters();
+
+    auto n_cluster = clusterer.GetNClusters();
+    for(size_t i = 0; i < n_cluster; i++)
+    {
+        //if(clusterer.GetClusterSize(i) <= 1) continue;
+
+        //auto splits = clusterer.GetClusterCenterSplits(i);
+        //std::cout << splits.size() << std::endl;
+
+        auto clustered_tracks = clusterer.GetListOfClusteredObjects(i);
+        //for(const auto &track : clustered_tracks)
+        //    std::cout << (*track).get() << std::endl;
+    }
 }
