@@ -57,65 +57,9 @@ public:
     double GetClusterWidth() const {return cluster_width_;}
 
 private:
-//................................................................................//
-//Struct to construct cluster
-//    struct Point
-//    {
-//        double x{RETURN};
-//        double w{RETURN};
-//        bool cluster{false};
-//    };
-
-//................................................................................//
-//Cluster
-//    class Cluster
-//    {
-//    public:
-//        ~Cluster()
-//        {
-//            delete center; center = nullptr;
-//            //for(size_t i = 0; i < points.size(); i++)
-//            //{delete points.at(i); points.at(i) = nullptr;}
-//        }
-//
-//        double GetCenterX() const {return center->x;}
-//
-//        double GetNewCenterX()
-//        {
-//            double sum_of_w(0.);
-//            double sum_of_x(0.);
-//
-//            for(const auto &point : points)
-//            {
-//                sum_of_w += point->w;
-//                sum_of_x += point->w*point->x;
-//            }
-//
-//            if(sum_of_w == 0.) return center->x;
-//            return sum_of_x/sum_of_w;
-//        }
-//
-//        void SetCenter(double x, double w)
-//        {
-//            if(center) {center->x = x; center->w = w;}
-//            else
-//            {
-//                center = new Point({x, w});
-//            }
-//        }
-//
-//        Point *center = new Point();
-//        std::vector<Point*> points;
-//    };
 
     void InitHitMap(const TrkHitPVec &trk_hits, TrkHitPVecMap &trk_hit_map);
     void InsertHitMap(const TrkHitP &trk_hit, TrkHitPVecMap &trk_hit_map);
-
-//    double GetClusterDistance(const Point &point1, const Point &point2) {return std::abs(point1.x - point2.x);}
-//    int GetNextClusterSeed(const vector<Point> &points);
-//    void MakeClusterPoints(const TrkHitPVec &trk_hits, std::vector<Point> &points);
-//    void MakeCluster(std::vector<Point> &points, std::vector<Cluster*> &clusters);
-//    void MergeCluster(std::vector<Cluster*> &clusters);
 
     bool if_strip_{true};
     bool if_smear_{true};
