@@ -28,7 +28,7 @@
 //................................................................................//
 //TRACKING
 #include "Algo/TypeDef.h"
-#include "Algo/Util.h"
+#include "Algo/Utils/Util.h"
 #include "Algo/TrkHit.h"
 #include "Algo/GreedyFinder.h"
 #include "Algo/RiemannFit/RiemannFitHelper.h"
@@ -472,20 +472,20 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //Fit, by Genfit, Kalman filter/by Riemann fitting
                     TagTrk2_track_No = find_tag.GetTrackNo();
 
-                    for (int i = 0; i < TagTrk2_track_No; i++)
+                    for (auto &track : tag_tracks_)
                     {
-                        tag_tracks_.back()->SetVerbose(Verbose);
-                        int size = tag_tracks_.back()->GetSize();
+                        track->SetVerbose(Verbose);
+                        int size = track->GetSize();
                         double x = 0.;
-                        double y = 0.5*(tag_tracks_.back()->At(0)->GetY() + tag_tracks_.back()->At(size - 1)->GetY());
-                        double z = 0.5*(tag_tracks_.back()->At(0)->GetZ() + tag_tracks_.back()->At(size - 1)->GetZ());
+                        double y = 0.5*(track->At(0)->GetY() + track->At(size - 1)->GetY());
+                        double z = 0.5*(track->At(0)->GetZ() + track->At(size - 1)->GetZ());
                         std::vector<double> magnet_at_median = {dAnaData->getMagnetFieldAt({x, y, z}).at(0)*10.,
                                                                 dAnaData->getMagnetFieldAt({x, y, z}).at(1)*10.,
                                                                 dAnaData->getMagnetFieldAt({x, y, z}).at(2)*10.};
-                        tag_tracks_.back()->ExceptionHandler(magnet_at_origin);
-                        tag_tracks_.back()->Reverse();
-                        tag_tracks_.back()->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
-                        //tag_tracks_.back()->Evaluate();
+                        track->ExceptionHandler(magnet_at_origin);
+                        track->Reverse();
+                        track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
+                        //track->Evaluate();
                     }
                 }
             }
@@ -515,19 +515,19 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //Fit, by Genfit, Kalman filter/by Riemann fitting
                     RecTrk2_track_No = find_rec.GetTrackNo();
               
-                    for (int i = 0; i < RecTrk2_track_No; i++) {
-                        rec_tracks_.back()->SetVerbose(Verbose);
-                        int size = rec_tracks_.back()->GetSize();
+                    for (auto &track : rec_tracks_) {
+                        track->SetVerbose(Verbose);
+                        int size = track->GetSize();
                         double x = 0.;
-                        double y = 0.5*(rec_tracks_.back()->At(0)->GetY() + rec_tracks_.back()->At(size - 1)->GetY());
-                        double z = 0.5*(rec_tracks_.back()->At(0)->GetZ() + rec_tracks_.back()->At(size - 1)->GetZ());
+                        double y = 0.5*(track->At(0)->GetY() + track->At(size - 1)->GetY());
+                        double z = 0.5*(track->At(0)->GetZ() + track->At(size - 1)->GetZ());
                         std::vector<double> magnet_at_median = {dAnaData->getMagnetFieldAt({x, y, z}).at(0)*10.,
                                                                 dAnaData->getMagnetFieldAt({x, y, z}).at(1)*10.,
                                                                 dAnaData->getMagnetFieldAt({x, y, z}).at(2)*10.};
-                        rec_tracks_.back()->ExceptionHandler(magnet_at_origin);
-                        rec_tracks_.back()->Reverse();
-                        rec_tracks_.back()->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
-                        //rec_tracks_.back()->Evaluate();
+                        track->ExceptionHandler(magnet_at_origin);
+                        track->Reverse();
+                        track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
+                        //track->Evaluate();
                     }
                 }
             }
@@ -541,13 +541,12 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                           { return track1->GetPp() > track2->GetPp(); } );
 
 //Vertex
- /*
         if(rec_tracks_.size() > 1)
         {
             VertexFinder vertex_finder(rec_tracks_);
             vertex_finder.FindVertexes();
         }
-*/
+
 //................................................................................//
 //Fill
         for(auto &track : tag_tracks_)

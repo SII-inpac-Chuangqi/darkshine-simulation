@@ -12,7 +12,7 @@
 //TRACKING
 #include "Algo/DTrack.h"
 #include "Algo/Vertex/DVertex.h"
-#include "Algo/Vertex/Cluster.h"
+#include "Algo/Utils/Clusterer.h"
 
 class VertexFinder
 {
@@ -37,6 +37,7 @@ private:
     };
 
     void BuildSpiralStaircase();
+    void FindClusterInStair(const std::shared_ptr<Stair> &stair);
 
     std::vector<std::shared_ptr<DTrack>> tracks_;
     std::map<int, std::shared_ptr<Stair>> spiral_staircase_;

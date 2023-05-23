@@ -14,7 +14,7 @@
 //................................................................................//
 //TRACKING
 #include "Algo/TypeDef.h"
-#include "Algo/Util.h"
+#include "Algo/Utils/Util.h"
 #include "Algo/TrkHit.h"
 #include "Algo/GreedyFinder.h"
 

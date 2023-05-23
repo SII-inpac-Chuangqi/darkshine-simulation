@@ -8,7 +8,7 @@
 
 //................................................................................//
 //Tracking
-#include "Algo/Util.h"
+#include "Algo/Utils/Util.h"
 
 //If particle pass through trackers
 bool InTagTrack(double x, double y, double z)
@@ -52,8 +52,8 @@ void LinearFit(double abr[], double x[], double y[], int n)
    double dy2sum1{0.}, dy2sum2{0.};
    for (int i = 0; i < n; i++)
    {
-       dy2sum1 += ((abr[0] * x[i] + abr[1]) - yavg)*((abr[0] * x[i] + abr[1]) - yavg);//r^2的分子
-       dy2sum2 += (y[i] - yavg)*(y[i] - yavg);//r^2的分母
+       dy2sum1 += ((abr[0] * x[i] + abr[1]) - yavg)*((abr[0] * x[i] + abr[1]) - yavg);//numerator of r^2
+       dy2sum2 += (y[i] - yavg)*(y[i] - yavg);//denominator of r^2
    }
    abr[2] = dy2sum1 / dy2sum2;//r^2
 }
