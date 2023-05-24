@@ -117,6 +117,26 @@ void AnaData::readGeometryDetails() {
         auto detector_name = TString(detector->GetVolume()->GetName());
 
         if(detector_name.Contains("Trk")) { // TAGTrk or RECTrk
+            auto *detector_shape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
+            if      (detector_name.Contains("TAG") || detector_name.Contains("Tag"))
+            {
+                center_x_tag_ = CUNIT*detector->GetMatrix()->GetTranslation()[0];
+                center_y_tag_ = CUNIT*detector->GetMatrix()->GetTranslation()[1];
+                center_z_tag_ = CUNIT*detector->GetMatrix()->GetTranslation()[2];
+                length_x_tag_ = CUNIT*2*detector_shape->GetDX();
+                length_y_tag_ = CUNIT*2*detector_shape->GetDY();
+                length_z_tag_ = CUNIT*2*detector_shape->GetDZ();
+            }
+            else if (detector_name.Contains("REC") || detector_name.Contains("Rec"))
+            {
+                center_x_rec_ = CUNIT*detector->GetMatrix()->GetTranslation()[0];
+                center_y_rec_ = CUNIT*detector->GetMatrix()->GetTranslation()[1];
+                center_z_rec_ = CUNIT*detector->GetMatrix()->GetTranslation()[2];
+                length_x_rec_ = CUNIT*2*detector_shape->GetDX();
+                length_y_rec_ = CUNIT*2*detector_shape->GetDY();
+                length_z_rec_ = CUNIT*2*detector_shape->GetDZ();
+            }
+
             for(int j = 0; j < detector->GetNdaughters(); j++) {
                 auto *layer = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
                 auto *layer_shape = dynamic_cast<TGeoBBox*>(layer->GetVolume()->GetShape());
@@ -208,9 +228,13 @@ void AnaData::readGeometryDetails() {
 
 void AnaData::printGeometryDetails() const {
     std::cerr << "[INFO] ==> Geometry details:" << std::endl;
-    if(strip_no_tag.size() && layer_width_tag.size() && layer_length_tag.size() &&
-       strip_no_rec.size() && layer_width_rec.size() && layer_length_rec.size()   ) {
-        std::cerr << "           Tag tracker: strip No.       ";
+
+    std::cerr << "           Tag tracker: center at       [" << center_x_tag_ << ", " << center_y_tag_ << ", " << center_z_tag_ << "] mm    " << std::endl
+              << "                        length x        " << length_x_tag_  << " mm" << std::endl
+              << "                        length y        " << length_y_tag_  << " mm" << std::endl
+              << "                        length z        " << length_z_tag_  << " mm" << std::endl;
+    if(strip_no_tag.size() && layer_width_tag.size() && layer_length_tag.size()) {
+        std::cerr << "                        strip No.       ";
         for(size_t i = 0; i < strip_no_tag.size();     i += 2) std::cerr << strip_no_tag.at(i) << ", ";
         std::cerr << std::endl;
         std::cerr << "                        layer width     ";
@@ -222,7 +246,13 @@ void AnaData::printGeometryDetails() const {
         std::cerr << "                        layer thickness ";
         for(size_t i = 0; i < layer_thickness_tag.size(); i += 2) std::cerr << layer_thickness_tag.at(i) << " mm, ";
         std::cerr << std::endl;
+    }
 
+    std::cerr << "           Rec tracker: center at       [" << center_x_rec_ << ", " << center_y_rec_ << ", " << center_z_rec_ << "] mm    " << std::endl
+              << "                        length x        " << length_x_rec_  << " mm" << std::endl
+              << "                        length y        " << length_y_rec_  << " mm" << std::endl
+              << "                        length z        " << length_z_rec_  << " mm" << std::endl;
+    if(strip_no_rec.size() && layer_width_rec.size() && layer_length_rec.size()) {
         std::cerr << "           Rec tracker: strip No.       ";
         for(size_t i = 0; i < strip_no_rec.size();     i += 2) std::cerr << strip_no_rec.at(i) << ", ";
         std::cerr << std::endl;
@@ -236,6 +266,7 @@ void AnaData::printGeometryDetails() const {
         for(size_t i = 0; i < layer_thickness_rec.size(); i += 2) std::cerr << layer_thickness_rec.at(i) << " mm, ";
         std::cerr << std::endl;
     }
+
     if(ECal_cell_length_x.size() && ECal_cell_length_y.size() && ECal_cell_length_z.size())
         std::cerr << "           ECal:        center x at     " << ECAL_center_x            << " mm" << std::endl
                   << "                        center y at     " << ECAL_center_y            << " mm" << std::endl
