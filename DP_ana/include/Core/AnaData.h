@@ -58,18 +58,33 @@ public:
     void readGeometryDetails();
     void printGeometryDetails() const;
 
+//Tag tracker
     const std::vector<double> getLayerWidthTag()  const {return layer_width_tag;}
     const std::vector<double> getLayerLengthTag() const {return layer_length_tag;}
     const std::vector<double> getLayerThicknessTag() const {return layer_thickness_tag;}
     const std::vector<int>    getStripNoTag() const {return strip_no_tag;}
     const std::vector<double> getAnglesTag()  const {return angles_tag;}
-
+    double getCenterXTag() const {return center_x_tag_;}
+    double getCenterYTag() const {return center_y_tag_;}
+    double getCenterZTag() const {return center_z_tag_;}
+    double getLengthXTag() const {return length_x_tag_;}
+    double getLengthYTag() const {return length_y_tag_;}
+    double getLengthZTag() const {return length_z_tag_;}
+    
+//Recoil Tracker
     const std::vector<double> getLayerWidthRec()  const {return layer_width_rec;}
     const std::vector<double> getLayerLengthRec() const {return layer_length_rec;}
     const std::vector<double> getLayerThicknessRec() const {return layer_thickness_rec;}
     const std::vector<int>    getStripNoRec() const {return strip_no_rec;}
     const std::vector<double> getAnglesRec()  const {return angles_rec;}
+    double getCenterXRec() const {return center_x_rec_;}
+    double getCenterYRec() const {return center_y_rec_;}
+    double getCenterZRec() const {return center_z_rec_;}
+    double getLengthXRec() const {return length_x_rec_;}
+    double getLengthYRec() const {return length_y_rec_;}
+    double getLengthZRec() const {return length_z_rec_;}
 
+//ECal
     const std::array<TVector3,MAX_ECAL_CELLS>& getECalPosMap() const {return ECAL_posmap;};
     [[maybe_unused]] double getECalCenterX() const {return ECAL_center_x;}
     [[maybe_unused]] double getECalCenterY() const {return ECAL_center_y;}
@@ -116,12 +131,24 @@ protected:
     std::vector<double> layer_thickness_tag;
     std::vector<int> strip_no_tag;
     std::vector<double> angles_tag;
+    double center_x_tag_{0.};
+    double center_y_tag_{0.};
+    double center_z_tag_{0.};
+    double length_x_tag_{0.};
+    double length_y_tag_{0.};
+    double length_z_tag_{0.};
 
     std::vector<double> layer_width_rec;
     std::vector<double> layer_length_rec;
     std::vector<double> layer_thickness_rec;
     std::vector<int> strip_no_rec;
     std::vector<double> angles_rec;
+    double center_x_rec_{0.};
+    double center_y_rec_{0.};
+    double center_z_rec_{0.};
+    double length_x_rec_{0.};
+    double length_y_rec_{0.};
+    double length_z_rec_{0.};
 
     double ECAL_center_x{-INFINITY};
     double ECAL_center_y{-INFINITY};
