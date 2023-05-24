@@ -361,7 +361,7 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
                 RecTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
                                             step->getPz() * step->getPz());
                 trackerFlag = true;
-            } else if (!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
+            } else if (!InRecTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
                 RecTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
                                             step->getPz() * step->getPz());
                 break;
@@ -521,11 +521,13 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                           { return track1->GetPp() > track2->GetPp(); } );
 
 //Vertex
+/*
         if(rec_tracks_.size() > 1)
         {
             VertexFinder vertex_finder(rec_tracks_);
             vertex_finder.FindVertexes();
         }
+*/
 
 //................................................................................//
 //Fill
