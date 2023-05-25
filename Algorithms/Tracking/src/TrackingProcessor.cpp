@@ -519,6 +519,15 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                           { return track1->GetPp() > track2->GetPp(); } );
         std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](std::shared_ptr<DTrack> &track1, std::shared_ptr<DTrack> &track2)
                                                           { return track1->GetPp() > track2->GetPp(); } );
+/*
+        for(const auto &track : rec_tracks_)
+        {
+            std::cout << "track: " << track.get() << std::endl;
+            for(int i = 0; i < track->GetSize(); i++)
+                std::cout << "hit " << i << ": " << track->At(i)->GetTrack().get() << std::endl;
+        }
+        std::cout << std::endl;
+*/
 
 //Vertex
 /*

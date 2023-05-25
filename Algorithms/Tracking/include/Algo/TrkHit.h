@@ -10,6 +10,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <memory>
 
 //................................................................................//
 //ROOT
@@ -22,6 +23,8 @@
 
 //................................................................................//
 //Tracking
+
+class DTrack;
 
 class TrkHit : public SimulatedHit
 {
@@ -49,6 +52,8 @@ public:
 
     void SetU(double newU) {u_ = newU;}
     void SetV(double newV) {v_ = newV;}
+
+    void SetTrack(const std::shared_ptr<DTrack> &track) {track_ = track;}
 //................................................................................//
 //Get
 //................................................................................//
@@ -65,12 +70,16 @@ public:
     double GetU() const {return u_;}
     double GetV() const {return v_;}
 
+    std::shared_ptr<DTrack> GetTrack() {return track_.lock();}
+
 protected:
 
     bool if_in_track_{false};
 
     double u_{RETURN};
     double v_{RETURN};
+
+    std::weak_ptr<DTrack> track_;
 
 private:
 };
