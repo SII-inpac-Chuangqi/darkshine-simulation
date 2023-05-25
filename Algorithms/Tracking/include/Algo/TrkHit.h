@@ -70,7 +70,7 @@ public:
     double GetU() const {return u_;}
     double GetV() const {return v_;}
 
-    std::shared_ptr<DTrack> GetTrack() {return track_.lock();}
+    std::shared_ptr<DTrack> GetTrack() const {return track_.lock();}
 
 protected:
 

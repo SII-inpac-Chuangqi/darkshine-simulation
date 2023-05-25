@@ -23,7 +23,8 @@
 #include "Algo/TypeDef.h"
 #include "Algo/KalmanFilterFitter.h"
 #include "Algo/RiemannFit/RiemannFitHelper.h"
-#include "Algo/TrkHit.h"
+
+class DVertex;
 
 //................................................................................//
 //Fit methods implemented in Dark Shine tracking
@@ -59,6 +60,7 @@ public:
     double GetPy() const {return py_;}
     double GetPz() const {return pz_;}
     double GetPp() const {return pp_;}
+    std::shared_ptr<DVertex> GetVertex() const {return vertex_.lock();}
 //................................................................................//
 //Correction on reco momentum in recoil tracker ( p_rcs ) by comparing the peak
 //values of reco and truth level momenta with different beam energy
@@ -103,6 +105,7 @@ public:
     void SetPz(double newPz)  {pz_ = newPz;}
     void SetChi2(double newChi2) {chi2_ = newChi2;}
     void Remove(int i);
+    void SetVertex(const std::shared_ptr<DVertex> &vertex) {vertex_ = vertex;}
 
 //................................................................................//
 //Processor
@@ -165,6 +168,10 @@ private:
 //................................................................................//
 //Hits collection
     TrkHitPVec hits_;
+
+//................................................................................//
+//Link to vertex
+    std::weak_ptr<DVertex> vertex_;
 };
 
 #endif
