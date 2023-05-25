@@ -253,7 +253,7 @@ void AnaData::printGeometryDetails() const {
               << "                        length y        " << length_y_rec_  << " mm" << std::endl
               << "                        length z        " << length_z_rec_  << " mm" << std::endl;
     if(strip_no_rec.size() && layer_width_rec.size() && layer_length_rec.size()) {
-        std::cerr << "           Rec tracker: strip No.       ";
+        std::cerr << "                        strip No.       ";
         for(size_t i = 0; i < strip_no_rec.size();     i += 2) std::cerr << strip_no_rec.at(i) << ", ";
         std::cerr << std::endl;
         std::cerr << "                        layer width     ";
