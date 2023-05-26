@@ -286,6 +286,7 @@ Geometry:
 
   HCAL:
     HCAL_Name: "HCAL"
+    HCAL_is_XAbsY: false # true: X-Abs-Y-Abs...-X; false: XY-Abs-XY-Abs..-XY.
 
     # HCAL Absorber Material
     HCAL_Absorber_Mat: "G4_Fe"

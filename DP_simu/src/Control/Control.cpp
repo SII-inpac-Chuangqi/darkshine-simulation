@@ -362,6 +362,7 @@ void Control::RebuildVariables() {
     Size_HCALModule.setX(Size_HCALCell.z());
     Size_HCALModule.setY(Size_HCALCell.z());
     Size_HCALModule.setZ(2 * (Size_HCALCell.x()));
+    if (HCAL_is_XAbsY) Size_HCALModule.setZ(Size_HCALCell.x());
 
     Size_HCALLayer.setX(HCAL_Module_No.x() * (Size_HCALModule.x() + HCAL_Module_Gap.x()));
     Size_HCALLayer.setY(HCAL_Module_No.y() * (Size_HCALModule.y() + HCAL_Module_Gap.y()));
@@ -872,6 +873,8 @@ bool Control::ReadYAML(const G4String &file_in) {
         HCAL_Module_No = readV3(Node["Geometry"]["HCAL"]["HCAL_Module_No"]);
         HCAL_Module_Gap = readV3(Node["Geometry"]["HCAL"]["HCAL_Module_Gap"], true);
         HCAL_Cell_XY_N = Node["Geometry"]["HCAL"]["HCAL_Cell_XY_N"].as<int>();
+        HCAL_is_XAbsY = Node["Geometry"]["HCAL"]["HCAL_is_XAbsY"].IsDefined() &&
+                        Node["Geometry"]["HCAL"]["HCAL_is_XAbsY"].as<bool>();
         //HCAL_Absorber_Thickness = readV2(Node["Geometry"]["HCAL"]["HCAL_Absorber_Thickness"]);
         HCAL_Absorber_Thickness_List.clear();
         for (auto i: Node["Geometry"]["HCAL"]["HCAL_Absorber_Thickness_List"]) {
