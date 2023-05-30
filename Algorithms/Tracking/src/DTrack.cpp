@@ -62,7 +62,9 @@ DTrack::DTrack(const DTrack &oldTrack) : pdg_(oldTrack.pdg_),         //physical
                                          preXc_(oldTrack.preXc_),
                                          preYc_(oldTrack.preYc_),
 
-                                         hits_(oldTrack.hits_)        //hits collection
+                                         hits_(oldTrack.hits_),       //hits collection
+
+                                         vertex_(oldTrack.vertex_)    //vertex
 {}
 
 DTrack::DTrack(DTrack &&oldTrack) : pdg_(std::move(oldTrack.pdg_)),         //physical properties
@@ -95,7 +97,9 @@ DTrack::DTrack(DTrack &&oldTrack) : pdg_(std::move(oldTrack.pdg_)),         //ph
                                     preXc_(std::move(oldTrack.preXc_)),
                                     preYc_(std::move(oldTrack.preYc_)),
 
-                                    hits_(oldTrack.hits_)                   //hits collection
+                                    hits_(oldTrack.hits_),                  //hits collection
+
+                                    vertex_(std::move(oldTrack.vertex_))    //vertex
 {
     oldTrack.hits_.clear();
 }
@@ -140,6 +144,8 @@ DTrack& DTrack::operator=(const DTrack &old_track)
 
     hits_.clear();
     hits_.assign(old_track.hits_.begin(), old_track.hits_.end());
+
+    vertex_ = old_track.vertex_;
 
     return *this;
 }
