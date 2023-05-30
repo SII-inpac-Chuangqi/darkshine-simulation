@@ -267,6 +267,8 @@ public:
     double BiasFactor;
     double BiasEmin;
 
+    std::map<std::string, bool> BiasParticles{}; // key: particle name, value: if bias
+
     //========================================
     /* Filters */
     //----------------------------------------
