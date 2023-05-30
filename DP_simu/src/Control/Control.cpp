@@ -252,6 +252,7 @@ void Control::RebuildVariables() {
         if_bias = true;
         if_bias_target = true;
         BiasProcess = "DMProcessDMBrem";
+        BiasParticles["e-"] = true;
         if_filter = true;
         process_filters_parameters.emplace_back("DMProcessDMBrem", 0 * GeV, -1 * GeV, -7.5 * mm, 7.5 * mm, 1, 1, 0);
     }
@@ -746,6 +747,12 @@ bool Control::ReadYAML(const G4String &file_in) {
         BiasFactor = Node["Biasing"]["BiasFactor"].as<double>();
         BiasEmin = Node["Biasing"]["BiasEmin"][0].as<double>()
                    * G4UnitDefinition::GetValueOf(Node["Biasing"]["BiasEmin"][1].as<std::string>());
+        auto bias_particle_nodes = Node["Biasing"]["BiasParticle"];
+        if (if_bias) {
+            for (auto subnode: bias_particle_nodes) {
+                BiasParticles[subnode.first.as<std::string>()]= subnode.second.as<bool>();
+            }
+        }
         //========================================
         /* Filters */
         //----------------------------------------
@@ -999,9 +1006,8 @@ DigiScheme Control::Optical_GetDigiScheme(const G4String &cIn) {
 
 void Control::ReadAndSetBias(G4VModularPhysicsList* physicsList) {
     auto *biasingPhysics = new G4GenericBiasingPhysics();
-    auto node = Node["Biasing"]["BiasParticle"];
-    for (auto subnode:node) {
-        if (subnode.second.as<bool>()) biasingPhysics->Bias(subnode.first.as<std::string>(), {BiasProcess});
+    for (auto particle_ifbias: BiasParticles) {
+        if (particle_ifbias.second) biasingPhysics->Bias(particle_ifbias.first, {BiasProcess});
     }
     physicsList->RegisterPhysics(biasingPhysics);
 }
