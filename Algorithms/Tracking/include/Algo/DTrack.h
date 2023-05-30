@@ -24,6 +24,8 @@
 #include "Algo/KalmanFilterFitter.h"
 #include "Algo/RiemannFit/RiemannFitHelper.h"
 
+class DVertex;
+
 //................................................................................//
 //Fit methods implemented in Dark Shine tracking
 //-- dNone: No method specified, return pre-fitting results from track finding
@@ -164,6 +166,10 @@ private:
 //................................................................................//
 //Hits collection
     TrkHitPVec hits_;
+
+//................................................................................//
+//Link to vertex
+    std::weak_ptr<DVertex> vertex_;
 };
 
 #endif
