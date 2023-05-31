@@ -125,6 +125,9 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_z", &RecTrk2_truth_hit_z);
         EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_e", &RecTrk2_truth_hit_e);
         EvtWrt->RegisterIntVariable("RecTrk2_track_No_truth", &RecTrk2_track_No_truth, "RecTrk2_track_No_truth/I");
+        EvtWrt->RegisterOutVariable("RecTrk2_truth_state_x", &RecTrk2_truth_state_x);
+        EvtWrt->RegisterOutVariable("RecTrk2_truth_state_y", &RecTrk2_truth_state_y);
+        EvtWrt->RegisterOutVariable("RecTrk2_truth_state_z", &RecTrk2_truth_state_z);
     }
 //................................................................................//
 //Reconstructed
@@ -271,8 +274,9 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
         dAnaData->LoadTruthInfo(truth_info);
         //dAnaData->PrintTruthInfo();
 
-        TagTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::TagTrk, 50., 3);
-        RecTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::RecTrk, 50., 3);
+        TagTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::TagTrk);
+        RecTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::RecTrk);
+
         auto truth_states_at_ECal = dAnaData->getTruthStatesAtECalFront();
         auto n_truth_states_at_ECal = truth_states_at_ECal.size();
 
@@ -382,7 +386,24 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
             RecTrk2_truth_hit_e.push_back(raw_rectrk2_hits.at(i).GetE());
         }
 
-        
+        auto truth_tracks_in_rec = dAnaData->getTruthTracks(DTruth::DTruthDetPV::RecTrk);
+        for(const auto &truth_track : truth_tracks_in_rec)
+        {
+            std::vector<double> truth_state_x;
+            std::vector<double> truth_state_y;
+            std::vector<double> truth_state_z;
+
+            for(const auto &state : truth_track.second)
+            {
+                truth_state_x.push_back(state->vertex[0]);
+                truth_state_y.push_back(state->vertex[1]);
+                truth_state_z.push_back(state->vertex[2]);
+            }
+
+            RecTrk2_truth_state_x.push_back(truth_state_x);
+            RecTrk2_truth_state_y.push_back(truth_state_y);
+            RecTrk2_truth_state_z.push_back(truth_state_z);
+        }
     }
 }
 
