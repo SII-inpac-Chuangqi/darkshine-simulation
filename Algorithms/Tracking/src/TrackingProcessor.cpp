@@ -111,19 +111,19 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterIntVariable("TagTrk2_No", &TagTrk2_No, "TagTrk2_No/I");
         EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_ini", &TagTrk2_pp_truth_ini, "TagTrk2_pp_truth_ini/D");
         EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_fin", &TagTrk2_pp_truth_fin, "TagTrk2_pp_truth_fin/D");
-        EvtWrt->RegisterOutVariable("TagTrk2_x", &TagTrk2_x);
-        EvtWrt->RegisterOutVariable("TagTrk2_y", &TagTrk2_y);
-        EvtWrt->RegisterOutVariable("TagTrk2_z", &TagTrk2_z);
-        EvtWrt->RegisterOutVariable("TagTrk2_e", &TagTrk2_e);
+        EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_x", &TagTrk2_truth_hit_x);
+        EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_y", &TagTrk2_truth_hit_y);
+        EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_z", &TagTrk2_truth_hit_z);
+        EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_e", &TagTrk2_truth_hit_e);
         EvtWrt->RegisterIntVariable("TagTrk2_track_No_truth", &TagTrk2_track_No_truth, "TagTrk2_track_No_truth/I");
 
         EvtWrt->RegisterIntVariable("RecTrk2_No", &RecTrk2_No, "RecTrk2_No/I");
         EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_ini", &RecTrk2_pp_truth_ini, "RecTrk2_pp_truth_ini/D");
         EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_fin", &RecTrk2_pp_truth_fin, "RecTrk2_pp_truth_fin/D");
-        EvtWrt->RegisterOutVariable("RecTrk2_x", &RecTrk2_x);
-        EvtWrt->RegisterOutVariable("RecTrk2_y", &RecTrk2_y);
-        EvtWrt->RegisterOutVariable("RecTrk2_z", &RecTrk2_z);
-        EvtWrt->RegisterOutVariable("RecTrk2_e", &RecTrk2_e);
+        EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_x", &RecTrk2_truth_hit_x);
+        EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_y", &RecTrk2_truth_hit_y);
+        EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_z", &RecTrk2_truth_hit_z);
+        EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_e", &RecTrk2_truth_hit_e);
         EvtWrt->RegisterIntVariable("RecTrk2_track_No_truth", &RecTrk2_track_No_truth, "RecTrk2_track_No_truth/I");
     }
 //................................................................................//
@@ -192,14 +192,21 @@ void TrackingProcessor::InitEvt() {
     tag_tracks_.clear(); tag_tracks_.shrink_to_fit();
     rec_tracks_.clear(); rec_tracks_.shrink_to_fit();
 
-    std::vector<double>().swap(TagTrk2_x);
-    std::vector<double>().swap(TagTrk2_y);
-    std::vector<double>().swap(TagTrk2_z);
-    std::vector<double>().swap(TagTrk2_e);
-    std::vector<double>().swap(RecTrk2_x);
-    std::vector<double>().swap(RecTrk2_y);
-    std::vector<double>().swap(RecTrk2_z);
-    std::vector<double>().swap(RecTrk2_e);
+    std::vector<double>().swap(TagTrk2_truth_hit_x);
+    std::vector<double>().swap(TagTrk2_truth_hit_y);
+    std::vector<double>().swap(TagTrk2_truth_hit_z);
+    std::vector<double>().swap(TagTrk2_truth_hit_e);
+    std::vector<double>().swap(RecTrk2_truth_hit_x);
+    std::vector<double>().swap(RecTrk2_truth_hit_y);
+    std::vector<double>().swap(RecTrk2_truth_hit_z);
+    std::vector<double>().swap(RecTrk2_truth_hit_e);
+
+    std::vector<std::vector<double>>().swap(TagTrk2_truth_state_x);
+    std::vector<std::vector<double>>().swap(TagTrk2_truth_state_y);
+    std::vector<std::vector<double>>().swap(TagTrk2_truth_state_z);
+    std::vector<std::vector<double>>().swap(RecTrk2_truth_state_x);
+    std::vector<std::vector<double>>().swap(RecTrk2_truth_state_y);
+    std::vector<std::vector<double>>().swap(RecTrk2_truth_state_z);
 
     TagTrk2_track_No_truth = 0;
     RecTrk2_track_No_truth = 0;
@@ -347,10 +354,10 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
         }
  
         for (int i = 0; i < TagTrk2_No; ++i) {
-            TagTrk2_x.push_back(raw_tagtrk2_hits.at(i).GetX());
-            TagTrk2_y.push_back(raw_tagtrk2_hits.at(i).GetY());
-            TagTrk2_z.push_back(raw_tagtrk2_hits.at(i).GetZ());
-            TagTrk2_e.push_back(raw_tagtrk2_hits.at(i).GetE());
+            TagTrk2_truth_hit_x.push_back(raw_tagtrk2_hits.at(i).GetX());
+            TagTrk2_truth_hit_y.push_back(raw_tagtrk2_hits.at(i).GetY());
+            TagTrk2_truth_hit_z.push_back(raw_tagtrk2_hits.at(i).GetZ());
+            TagTrk2_truth_hit_e.push_back(raw_tagtrk2_hits.at(i).GetE());
         }
  
         RecTrk2_No = raw_rectrk2_hits.size();
@@ -369,10 +376,10 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
         }
  
         for (int i = 0; i < RecTrk2_No; ++i) {
-            RecTrk2_x.push_back(raw_rectrk2_hits.at(i).GetX());
-            RecTrk2_y.push_back(raw_rectrk2_hits.at(i).GetY());
-            RecTrk2_z.push_back(raw_rectrk2_hits.at(i).GetZ());
-            RecTrk2_e.push_back(raw_rectrk2_hits.at(i).GetE());
+            RecTrk2_truth_hit_x.push_back(raw_rectrk2_hits.at(i).GetX());
+            RecTrk2_truth_hit_y.push_back(raw_rectrk2_hits.at(i).GetY());
+            RecTrk2_truth_hit_z.push_back(raw_rectrk2_hits.at(i).GetZ());
+            RecTrk2_truth_hit_e.push_back(raw_rectrk2_hits.at(i).GetE());
         }
     }
 }
