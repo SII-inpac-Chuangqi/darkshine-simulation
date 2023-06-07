@@ -218,11 +218,11 @@ double DTrack::GetChi2()
 
 int DTrack::GetInitCellIdZ() const
 {
-    int init_cell_id_z = INT_MIN;
+    int init_cell_id_z = INT_MAX;
 
     for(const auto &hit : hits_)
     {
-        if(-hit->GetCellIdZ() > init_cell_id_z)
+        if(hit->GetCellIdZ() < init_cell_id_z)
             init_cell_id_z = hit->GetCellIdZ();
     }
 

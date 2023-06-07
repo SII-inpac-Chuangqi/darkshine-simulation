@@ -67,6 +67,7 @@ void TrackingProcessor::Begin() {
 //................................................................................//
     digitizer.ReadTrackerInfo(if_strip);
     digitizer.SetIfSmear(if_smear);
+    digitizer.SetClusterWidth(0.03);
 
 //................................................................................//
 //Load fitter info
@@ -168,6 +169,8 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_track_preR", &RecTrk2_track_preR);
     }
 
+    EvtWrt->RegisterOutVariable("RecTrk2_vertex_z", &RecTrk2_vertex_z);
+
     EvtWrt->RegisterOutVariable("ECal_seed_x_truth",  &ECal_seed_x_truth);
     EvtWrt->RegisterOutVariable("ECal_seed_y_truth",  &ECal_seed_y_truth);
     EvtWrt->RegisterOutVariable("ECal_seed_px_truth", &ECal_seed_px_truth);
@@ -188,10 +191,6 @@ void TrackingProcessor::Begin() {
 
 void TrackingProcessor::InitEvt() {
 
-    //std::vector<DTrack>().swap(tag_tracks_);
-    //std::vector<DTrack>().swap(rec_tracks_);
-    for(size_t i = 0; i < tag_tracks_.size(); i++) {tag_tracks_.at(i).reset();}
-    for(size_t i = 0; i < rec_tracks_.size(); i++) {rec_tracks_.at(i).reset();}
     tag_tracks_.clear(); tag_tracks_.shrink_to_fit();
     rec_tracks_.clear(); rec_tracks_.shrink_to_fit();
 
@@ -264,6 +263,9 @@ void TrackingProcessor::InitEvt() {
     std::vector<double>().swap(ECal_seed_px);
     std::vector<double>().swap(ECal_seed_py);
     std::vector<double>().swap(ECal_seed_pz);
+
+    rec_vertexes_   .clear(); rec_vertexes_   .shrink_to_fit();
+    RecTrk2_vertex_z.clear(); RecTrk2_vertex_z.shrink_to_fit();
 }
 
 void TrackingProcessor::FillTruth(DTruth *truth_info,
@@ -560,13 +562,15 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 */
 
 //Vertex
-/*
+
         if(rec_tracks_.size() > 1)
         {
-            VertexFinder vertex_finder(rec_tracks_);
-            vertex_finder.FindVertexes();
+            VertexFinder vertex_finder(&rec_tracks_);
+            vertex_finder.FindVertexes(&rec_vertexes_);
+
+            for(const auto &vertex: rec_vertexes_)
+                RecTrk2_vertex_z.push_back(vertex->GetZ());
         }
-*/
 
 //................................................................................//
 //Fill

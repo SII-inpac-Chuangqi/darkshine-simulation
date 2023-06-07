@@ -17,6 +17,7 @@
 //TRACKING
 #include "Algo/TrkHit.h"
 #include "Algo/DTrack.h"
+#include "Algo/Vertex/DVertex.h"
 #include "Algo/Digitization.h"
 
 using namespace std;
@@ -181,6 +182,10 @@ private:
     std::vector<double> ECal_seed_px{};
     std::vector<double> ECal_seed_py{};
     std::vector<double> ECal_seed_pz{};
+
+//................................................................................//
+    std::vector<std::shared_ptr<DVertex>> rec_vertexes_;
+    std::vector<double> RecTrk2_vertex_z{};
 };
 
 #endif
