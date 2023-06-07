@@ -106,6 +106,8 @@ public:
     void SetChi2(double newChi2) {chi2_ = newChi2;}
     void Remove(int i);
     void SetVertex(const std::shared_ptr<DVertex> &vertex) {vertex_ = vertex;}
+    static void SetResolutions(double x_resolution, double y_resolution, double z_resolution)
+    { x_resolution_ = x_resolution; y_resolution_ = y_resolution; z_resolution_ = z_resolution; }
 
 //................................................................................//
 //Processor
@@ -118,6 +120,10 @@ public:
 private:
 //................................................................................//
 //Verbose
+    static double x_resolution_;
+    static double y_resolution_;
+    static double z_resolution_;
+
     int verbose_{0};
 
 //................................................................................//

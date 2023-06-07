@@ -69,6 +69,8 @@ void TrackingProcessor::Begin() {
     digitizer.SetIfSmear(if_smear);
     digitizer.SetClusterWidth(0.03);
 
+    DTrack::SetResolutions(0.03, 0.03/0.05, 0.);
+
 //................................................................................//
 //Load fitter info
 //................................................................................//

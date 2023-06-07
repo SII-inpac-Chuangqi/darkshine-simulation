@@ -21,7 +21,10 @@
 //public:
 //................................................................................//
 //Constructor
-//
+double DTrack::x_resolution_ = 0.;
+double DTrack::y_resolution_ = 0.;
+double DTrack::z_resolution_ = 0.;
+
 DTrack::DTrack(const TrkHitPVec &newHits,
                double newPreR,
                double newPreXc,
@@ -202,16 +205,12 @@ double DTrack::GetChi2()
         return chi2_;
     }
 
-    double std_variance = 0.;
+    double variance  = x_resolution_*x_resolution_ + y_resolution_*y_resolution_;
     double deviation = 0.;
     for(size_t i = 0; i < track_x.size(); i++)
-    {
         deviation += (track_x.at(i) - extrapolated_x_.at(i))*(track_x.at(i) - extrapolated_x_.at(i)) + 
                      (track_y.at(i) - extrapolated_y_.at(i))*(track_y.at(i) - extrapolated_y_.at(i));
-        std_variance += (track_x.at(i) - mean_x)*(track_x.at(i) - mean_x) +
-                        (track_y.at(i) - mean_y)*(track_y.at(i) - mean_y);
-    }
-    chi2_ = deviation/std_variance*track_x.size()/ndf_;
+    chi2_ = deviation/variance*track_x.size()/ndf_;
 
     return chi2_;
 }
