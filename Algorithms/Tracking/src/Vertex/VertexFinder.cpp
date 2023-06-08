@@ -3,6 +3,8 @@
 VertexFinder::VertexFinder(std::vector<std::shared_ptr<DTrack>> *tracks)
 {
     tracks_ = tracks;
+    for(const auto &track : *tracks_)
+        std::cout << track.get() << "\t" << track->GetChi2() << "\t" << track->GetChi2Algo() << "\t" << track->GetPp() << std::endl;
 }
 
 void VertexFinder::FindVertexes(std::vector<std::shared_ptr<DVertex>> *vertexes)
@@ -24,22 +26,15 @@ void VertexFinder::BuildSpiralStaircase()
 
     auto leading_track = tracks_->at(0);
 
+    std::cout << "good tracks: " << std::endl;
     for(const auto &track : *tracks_)
     {
         //if(track == leading_track) continue;
+        if(track->GetChi2Algo() > 3000. && track->GetChi2() > 30.) continue;
+
+        std::cout << track.get() << "\t" << track->GetChi2() << "\t" << track->GetChi2Algo() << "\t" << track->GetPp() << std::endl;
 
         int stair_no = track->GetInitCellIdZ();
-
-        double leading_x = 0.;
-        double leading_y = 0.;
-        double leading_z = 0.;
-        auto leading_hit = leading_track->AtCellIdZ(stair_no);
-        if(leading_hit)
-        {
-            leading_x = leading_track->AtCellIdZ(stair_no)->GetX();
-            leading_y = leading_track->AtCellIdZ(stair_no)->GetY();
-            leading_z = leading_track->AtCellIdZ(stair_no)->GetZ();
-        }
 
         if(spiral_staircase_.find(stair_no) == spiral_staircase_.end())
         {
@@ -48,11 +43,13 @@ void VertexFinder::BuildSpiralStaircase()
         }
 
         spiral_staircase_.at(stair_no)->slabs_.push_back(track);
-        spiral_staircase_.at(stair_no)->splits_.push_back({track->AtCellIdZ(stair_no)->GetX() - leading_x,
-                                                           track->AtCellIdZ(stair_no)->GetY() - leading_y,
-                                                           track->AtCellIdZ(stair_no)->GetZ() - leading_z,
+        spiral_staircase_.at(stair_no)->splits_.push_back({track->AtCellIdZ(stair_no)->GetX(),
+                                                           track->AtCellIdZ(stair_no)->GetY(),
+                                                           track->AtCellIdZ(stair_no)->GetZ(),
                                                           }); 
     }
+
+    std::cout << spiral_staircase_.size() << std::endl;
 /*
     for(const auto &stair : spiral_staircase_)
     {
@@ -67,7 +64,7 @@ void VertexFinder::BuildSpiralStaircase()
 void VertexFinder::FindClusterInStair(const std::shared_ptr<Stair> &stair)
 {
     Clusterer<std::shared_ptr<DTrack>> clusterer;
-    clusterer.SetClusterWidth(20.);
+    clusterer.SetClusterWidth(0.5);
 
     for(size_t i = 0; i < stair->slabs_.size(); i++)
     {
@@ -75,7 +72,7 @@ void VertexFinder::FindClusterInStair(const std::shared_ptr<Stair> &stair)
         splits[0] = stair->splits_.at(i).at(0);
         splits[1] = stair->splits_.at(i).at(1);
         splits[2] = stair->splits_.at(i).at(2);
-        clusterer.CreatePoint(&stair->slabs_.at(i), 2, splits, 1.);
+        clusterer.CreatePoint(&stair->slabs_.at(i), 1, splits, 1.);
 
         delete[] splits; splits = nullptr;
     }
@@ -86,18 +83,18 @@ void VertexFinder::FindClusterInStair(const std::shared_ptr<Stair> &stair)
     auto n_cluster = clusterer.GetNClusters();
     for(size_t i = 0; i < n_cluster; i++)
     {
+        std::cout << "vertex " << i << std::endl;
+/*
         if(clusterer.GetClusterSize(i) == 1)
         {
-            if(*clusterer.GetListOfClusteredObjects(i).at(0) == tracks_->at(0))
+            if(clusterer.GetListOfClusteredObjects(i).at(0)->get() == tracks_->at(0).get())
                 continue;
         }
-
-        //auto splits = clusterer.GetClusterCenterSplits(i);
-        //std::cout << splits.size() << std::endl;
+*/
 
         auto clustered_tracks = clusterer.GetListOfClusteredObjects(i);
-        //for(const auto &track : clustered_tracks)
-        //    std::cout << (*track).get() << std::endl;
+        for(const auto &track : clustered_tracks)
+            std::cout << (*track).get() << "\t" << (*track)->GetChi2() << "\t" << (*track)->GetPp() << std::endl;
 
         vertexes_->push_back(std::make_shared<DVertex>());
         vertexes_->back()->SetZ(stair->stair_height_);
