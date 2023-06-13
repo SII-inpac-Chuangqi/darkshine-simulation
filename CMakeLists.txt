@@ -84,6 +84,8 @@ IF (ROOT_FOUND)
     endif ()
 ENDIF ()
 
+find_package (Acts COMPONENTS Core)
+
 #----------------------------------------------------------------------------
 # For Debug
 #

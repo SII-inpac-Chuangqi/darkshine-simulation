@@ -564,7 +564,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 */
 
 //Vertex
-
+/*
         if(rec_tracks_.size() > 1)
         {
             VertexFinder vertex_finder(&rec_tracks_);
@@ -573,7 +573,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             for(const auto &vertex: rec_vertexes_)
                 RecTrk2_vertex_z.push_back(vertex->GetZ());
         }
-
+*/
 //................................................................................//
 //Fill
         for(auto &track : tag_tracks_)

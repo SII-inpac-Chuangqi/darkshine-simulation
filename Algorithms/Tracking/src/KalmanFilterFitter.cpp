@@ -77,13 +77,13 @@ void KalmanFilterFitter::Init(const TrkHitPVec &track, std::initializer_list<dou
     double B = *it;
 
     int pdg = -GetSign(track)*11;              //pdg id, e- hypothesis
-    pos = TVector3((*track.at(0)).GetU()*0.1,  //pre fitting results --postion,  mm->cm
-                   (*track.at(0)).GetV()*0.1,  //
+    pos = TVector3((*track.at(0)).GetX()*0.1,  //pre fitting results --postion,  mm->cm
+                   (*track.at(0)).GetY()*0.1,  //
                    (*track.at(0)).GetZ()*0.1); //
     mom = TVector3(0, 0, 0.3*B*preR*0.001);    //                    --momentum, MeV->GeV
     hitCov.UnitMatrix();                       //covariance matrix
-    hitCov(0, 0) = 0.0006*0.0006;              //resolution, cm --x 6µm
-    hitCov(1, 1) = 0.006*0.006;                //               --y 60µm
+    hitCov(0, 0) = 0.001*0.001;                //resolution, cm --x 6µm
+    hitCov(1, 1) = 0.02 *0.02;                 //               --y 60µm
 
     //genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
     //genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., B*10., 0.)); //Magnet, T->kGs
