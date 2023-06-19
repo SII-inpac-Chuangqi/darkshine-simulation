@@ -18,10 +18,10 @@ class VertexFinder
 {
 public:
     VertexFinder() {}
-    VertexFinder(const std::vector<std::shared_ptr<DTrack>> &tracks);
-    void FindVertexes();
+    VertexFinder(std::vector<std::shared_ptr<DTrack>> *tracks);
+    void FindVertexes(std::vector<std::shared_ptr<DVertex>> *vertexes);
 
-    ~VertexFinder() {}
+    ~VertexFinder() {vertexes_ = nullptr; tracks_ = nullptr;}
 
 private:
     class Stair
@@ -32,6 +32,7 @@ private:
         ~Stair() {}
 
         const int stair_no_;
+        double stair_height_{0.};
         std::vector<std::array<double, 3>>   splits_;
         std::vector<std::shared_ptr<DTrack>> slabs_;
     };
@@ -39,7 +40,9 @@ private:
     void BuildSpiralStaircase();
     void FindClusterInStair(const std::shared_ptr<Stair> &stair);
 
-    std::vector<std::shared_ptr<DTrack>> tracks_;
+    std::vector<std::shared_ptr<DVertex>> *vertexes_{nullptr};
+
+    std::vector<std::shared_ptr<DTrack>> *tracks_{nullptr};
     std::map<int, std::shared_ptr<Stair>> spiral_staircase_;
 };
 

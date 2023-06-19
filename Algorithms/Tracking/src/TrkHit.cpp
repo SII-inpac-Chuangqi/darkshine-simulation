@@ -22,13 +22,15 @@
 TrkHit::TrkHit(const TrkHit &newTrkHit) : SimulatedHit(newTrkHit),
                                           if_in_track_(newTrkHit.if_in_track_),
                                           u_(newTrkHit.u_),
-                                          v_(newTrkHit.v_)
+                                          v_(newTrkHit.v_),
+                                          track_(newTrkHit.track_)
 {}
 
 TrkHit::TrkHit(TrkHit &&newTrkHit) : SimulatedHit(std::move(newTrkHit)),
                                      if_in_track_(std::move(newTrkHit.if_in_track_)),
                                      u_(std::move(newTrkHit.u_)),
-                                     v_(std::move(newTrkHit.v_))
+                                     v_(std::move(newTrkHit.v_)),
+                                     track_(std::move(newTrkHit.track_))
 {}
 
 TrkHit::TrkHit(const SimulatedHit &newSimuHit) : SimulatedHit(newSimuHit),
@@ -51,6 +53,8 @@ void TrkHit::operator =(const TrkHit &oldTrkHit)
 
         if_in_track_ = oldTrkHit.if_in_track_;
         u_ = oldTrkHit.u_;       v_ = oldTrkHit.v_;
+
+        track_ = oldTrkHit.track_;
     }
 }
 

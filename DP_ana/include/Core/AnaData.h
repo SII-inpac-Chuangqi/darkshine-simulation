@@ -106,16 +106,20 @@ public:
 
 //................................................................................//
 //Truth helper manager
-    //void LoadTruthMcPHelper(const MCPHelperMap &helper_collection);
     void LoadTruthInfo(DTruth *truth);
-    //void PrintTruthMcPHelper() const;
     void PrintTruthInfo() const;
-    //const McPHelper* getInitialElectron() const;
-    std::vector<std::pair<const DTruthState*,int>> getTruthTracksAtECalFront() const;
+
+    std::vector<std::pair<const DTruthState*,int>> getTruthStatesAtECalFront() const;
+    std::vector<std::pair<const DTruthParticle*, const DTruthState*>> getTruthsAtECalFront() const;
+
     unsigned int getNTruthTracks(DTruth::DTruthDetPV DetPV, double min_energy = 50., int min_hits = 4) const;
+    std::map<pair<int, int>, vector<DTruthState *>> getTruthTracks(DTruth::DTruthDetPV DetPV, double min_energy = 50., int min_hits = 4) const;
+
     const DTruth* getInitialElectron() const;
 
-    std::vector<std::pair<const DTruthParticle*, const DTruthState*>> getTruthsAtECalFront() const;
+    //const McPHelper* getInitialElectron() const;
+    //void PrintTruthMcPHelper() const;
+    //void LoadTruthMcPHelper(const MCPHelperMap &helper_collection);
 
 protected:
     TFile* root_file;

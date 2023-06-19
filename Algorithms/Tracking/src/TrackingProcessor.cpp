@@ -67,6 +67,9 @@ void TrackingProcessor::Begin() {
 //................................................................................//
     digitizer.ReadTrackerInfo(if_strip);
     digitizer.SetIfSmear(if_smear);
+    digitizer.SetClusterWidth(0.03);
+
+    DTrack::SetResolutions(0.03, 0.03/0.05, 0.);
 
 //................................................................................//
 //Load fitter info
@@ -111,20 +114,23 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterIntVariable("TagTrk2_No", &TagTrk2_No, "TagTrk2_No/I");
         EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_ini", &TagTrk2_pp_truth_ini, "TagTrk2_pp_truth_ini/D");
         EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_fin", &TagTrk2_pp_truth_fin, "TagTrk2_pp_truth_fin/D");
-        EvtWrt->RegisterOutVariable("TagTrk2_x", &TagTrk2_x);
-        EvtWrt->RegisterOutVariable("TagTrk2_y", &TagTrk2_y);
-        EvtWrt->RegisterOutVariable("TagTrk2_z", &TagTrk2_z);
-        EvtWrt->RegisterOutVariable("TagTrk2_e", &TagTrk2_e);
+        EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_x", &TagTrk2_truth_hit_x);
+        EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_y", &TagTrk2_truth_hit_y);
+        EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_z", &TagTrk2_truth_hit_z);
+        EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_e", &TagTrk2_truth_hit_e);
         EvtWrt->RegisterIntVariable("TagTrk2_track_No_truth", &TagTrk2_track_No_truth, "TagTrk2_track_No_truth/I");
 
         EvtWrt->RegisterIntVariable("RecTrk2_No", &RecTrk2_No, "RecTrk2_No/I");
         EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_ini", &RecTrk2_pp_truth_ini, "RecTrk2_pp_truth_ini/D");
         EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_fin", &RecTrk2_pp_truth_fin, "RecTrk2_pp_truth_fin/D");
-        EvtWrt->RegisterOutVariable("RecTrk2_x", &RecTrk2_x);
-        EvtWrt->RegisterOutVariable("RecTrk2_y", &RecTrk2_y);
-        EvtWrt->RegisterOutVariable("RecTrk2_z", &RecTrk2_z);
-        EvtWrt->RegisterOutVariable("RecTrk2_e", &RecTrk2_e);
+        EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_x", &RecTrk2_truth_hit_x);
+        EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_y", &RecTrk2_truth_hit_y);
+        EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_z", &RecTrk2_truth_hit_z);
+        EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_e", &RecTrk2_truth_hit_e);
         EvtWrt->RegisterIntVariable("RecTrk2_track_No_truth", &RecTrk2_track_No_truth, "RecTrk2_track_No_truth/I");
+        EvtWrt->RegisterOutVariable("RecTrk2_truth_state_x", &RecTrk2_truth_state_x);
+        EvtWrt->RegisterOutVariable("RecTrk2_truth_state_y", &RecTrk2_truth_state_y);
+        EvtWrt->RegisterOutVariable("RecTrk2_truth_state_z", &RecTrk2_truth_state_z);
     }
 //................................................................................//
 //Reconstructed
@@ -165,6 +171,8 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_track_preR", &RecTrk2_track_preR);
     }
 
+    EvtWrt->RegisterOutVariable("RecTrk2_vertex_z", &RecTrk2_vertex_z);
+
     EvtWrt->RegisterOutVariable("ECal_seed_x_truth",  &ECal_seed_x_truth);
     EvtWrt->RegisterOutVariable("ECal_seed_y_truth",  &ECal_seed_y_truth);
     EvtWrt->RegisterOutVariable("ECal_seed_px_truth", &ECal_seed_px_truth);
@@ -185,21 +193,24 @@ void TrackingProcessor::Begin() {
 
 void TrackingProcessor::InitEvt() {
 
-    //std::vector<DTrack>().swap(tag_tracks_);
-    //std::vector<DTrack>().swap(rec_tracks_);
-    for(size_t i = 0; i < tag_tracks_.size(); i++) {tag_tracks_.at(i).reset();}
-    for(size_t i = 0; i < rec_tracks_.size(); i++) {rec_tracks_.at(i).reset();}
     tag_tracks_.clear(); tag_tracks_.shrink_to_fit();
     rec_tracks_.clear(); rec_tracks_.shrink_to_fit();
 
-    std::vector<double>().swap(TagTrk2_x);
-    std::vector<double>().swap(TagTrk2_y);
-    std::vector<double>().swap(TagTrk2_z);
-    std::vector<double>().swap(TagTrk2_e);
-    std::vector<double>().swap(RecTrk2_x);
-    std::vector<double>().swap(RecTrk2_y);
-    std::vector<double>().swap(RecTrk2_z);
-    std::vector<double>().swap(RecTrk2_e);
+    std::vector<double>().swap(TagTrk2_truth_hit_x);
+    std::vector<double>().swap(TagTrk2_truth_hit_y);
+    std::vector<double>().swap(TagTrk2_truth_hit_z);
+    std::vector<double>().swap(TagTrk2_truth_hit_e);
+    std::vector<double>().swap(RecTrk2_truth_hit_x);
+    std::vector<double>().swap(RecTrk2_truth_hit_y);
+    std::vector<double>().swap(RecTrk2_truth_hit_z);
+    std::vector<double>().swap(RecTrk2_truth_hit_e);
+
+    std::vector<std::vector<double>>().swap(TagTrk2_truth_state_x);
+    std::vector<std::vector<double>>().swap(TagTrk2_truth_state_y);
+    std::vector<std::vector<double>>().swap(TagTrk2_truth_state_z);
+    std::vector<std::vector<double>>().swap(RecTrk2_truth_state_x);
+    std::vector<std::vector<double>>().swap(RecTrk2_truth_state_y);
+    std::vector<std::vector<double>>().swap(RecTrk2_truth_state_z);
 
     TagTrk2_track_No_truth = 0;
     RecTrk2_track_No_truth = 0;
@@ -254,6 +265,9 @@ void TrackingProcessor::InitEvt() {
     std::vector<double>().swap(ECal_seed_px);
     std::vector<double>().swap(ECal_seed_py);
     std::vector<double>().swap(ECal_seed_pz);
+
+    rec_vertexes_   .clear(); rec_vertexes_   .shrink_to_fit();
+    RecTrk2_vertex_z.clear(); RecTrk2_vertex_z.shrink_to_fit();
 }
 
 void TrackingProcessor::FillTruth(DTruth *truth_info,
@@ -266,12 +280,13 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
 
         TagTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::TagTrk);
         RecTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::RecTrk);
-        auto truth_tracks = dAnaData->getTruthTracksAtECalFront();
-        auto n_truth_tracks = truth_tracks.size();
 
-        std::vector<std::pair<int, std::pair<const DTruthState*, int>>> truth_tracks_sorted; // If not match std::get<0>=-1
+        auto truth_states_at_ECal = dAnaData->getTruthStatesAtECalFront();
+        auto n_truth_states_at_ECal = truth_states_at_ECal.size();
+
+        std::vector<std::pair<int, std::pair<const DTruthState*, int>>> truth_states_at_ECal_sorted; // If not match std::get<0>=-1
         // //first sort by truth E
-        // std::sort(truth_tracks.begin(), truth_tracks.end(),
+        // std::sort(truth_states_at_ECal.begin(), truth_states_at_ECal.end(),
         //             [&](std::pair<const DTruthState*, int> A, std::pair<const DTruthState*, int> B) -> bool {
         //                     return A.second->E > B.second->E;
         //         });
@@ -284,37 +299,37 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
             int min_id(-1);
             double min_dis(INFINITY);
 
-            for(size_t i = 0; i < truth_tracks.size(); i++)
+            for(size_t i = 0; i < truth_states_at_ECal.size(); i++)
             {
-                double dis = (std::hypot(truth_tracks.at(i).first->vertex[0] - track->GetECalSeedX(),
-                                         truth_tracks.at(i).first->vertex[1] - track->GetECalSeedY())
+                double dis = (std::hypot(truth_states_at_ECal.at(i).first->vertex[0] - track->GetECalSeedX(),
+                                         truth_states_at_ECal.at(i).first->vertex[1] - track->GetECalSeedY())
                              );
                 if(dis < min_dis) {min_dis = dis; min_id = i;}
             }
 
-            if(min_id >= 0 && min_id < static_cast<int>(truth_tracks.size()))
+            if(min_id >= 0 && min_id < static_cast<int>(truth_states_at_ECal.size()))
             {
-                truth_tracks_sorted.push_back(std::make_pair(id_rec_track, truth_tracks.at(min_id)));
-                truth_tracks.at(min_id).first = nullptr;
-                truth_tracks.erase(truth_tracks.begin() + min_id);
+                truth_states_at_ECal_sorted.push_back(std::make_pair(id_rec_track, truth_states_at_ECal.at(min_id)));
+                truth_states_at_ECal.at(min_id).first = nullptr;
+                truth_states_at_ECal.erase(truth_states_at_ECal.begin() + min_id);
             }
         }
 
-        for(auto track : truth_tracks){ // appending other truth tracks (unmatched)
-            truth_tracks_sorted.push_back(std::make_pair(-1, track));
+        for(auto track : truth_states_at_ECal){ // appending other truth tracks (unmatched)
+            truth_states_at_ECal_sorted.push_back(std::make_pair(-1, track));
         }
 
         //sanity check
-        if(Verbose > 0 && n_truth_tracks != truth_tracks_sorted.size()) {
+        if(Verbose > 0 && n_truth_states_at_ECal != truth_states_at_ECal_sorted.size()) {
             std::cerr << "[WARNING] ==> Number of sorted truth tracks changed" << std::endl;
             return;
         }
 
         auto temp_v = new ROOT::Math::PxPyPzEVector();
-        for(auto truth_track_sorted : truth_tracks_sorted)
+        for(auto truth_state_sorted : truth_states_at_ECal_sorted)
         {
-            auto track = truth_track_sorted.second.first;
-            auto pdg = truth_track_sorted.second.second;
+            auto track = truth_state_sorted.second.first;
+            auto pdg = truth_state_sorted.second.second;
             temp_v->SetPxPyPzE(track->momentum[0], track->momentum[1], track->momentum[2], track->E);
 
             ECal_seed_x_truth.push_back(track->vertex[0]);
@@ -326,7 +341,7 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
             ECal_seed_theta_truth.push_back(temp_v->Theta());
             ECal_seed_phi_truth.push_back(temp_v->Phi());
             ECal_seed_pdg.push_back(pdg);
-            ECal_seed_id_rec_track.push_back(truth_track_sorted.first);
+            ECal_seed_id_rec_track.push_back(truth_state_sorted.first);
         }
         delete temp_v;
 
@@ -347,10 +362,10 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
         }
  
         for (int i = 0; i < TagTrk2_No; ++i) {
-            TagTrk2_x.push_back(raw_tagtrk2_hits.at(i).GetX());
-            TagTrk2_y.push_back(raw_tagtrk2_hits.at(i).GetY());
-            TagTrk2_z.push_back(raw_tagtrk2_hits.at(i).GetZ());
-            TagTrk2_e.push_back(raw_tagtrk2_hits.at(i).GetE());
+            TagTrk2_truth_hit_x.push_back(raw_tagtrk2_hits.at(i).GetX());
+            TagTrk2_truth_hit_y.push_back(raw_tagtrk2_hits.at(i).GetY());
+            TagTrk2_truth_hit_z.push_back(raw_tagtrk2_hits.at(i).GetZ());
+            TagTrk2_truth_hit_e.push_back(raw_tagtrk2_hits.at(i).GetE());
         }
  
         RecTrk2_No = raw_rectrk2_hits.size();
@@ -369,10 +384,29 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
         }
  
         for (int i = 0; i < RecTrk2_No; ++i) {
-            RecTrk2_x.push_back(raw_rectrk2_hits.at(i).GetX());
-            RecTrk2_y.push_back(raw_rectrk2_hits.at(i).GetY());
-            RecTrk2_z.push_back(raw_rectrk2_hits.at(i).GetZ());
-            RecTrk2_e.push_back(raw_rectrk2_hits.at(i).GetE());
+            RecTrk2_truth_hit_x.push_back(raw_rectrk2_hits.at(i).GetX());
+            RecTrk2_truth_hit_y.push_back(raw_rectrk2_hits.at(i).GetY());
+            RecTrk2_truth_hit_z.push_back(raw_rectrk2_hits.at(i).GetZ());
+            RecTrk2_truth_hit_e.push_back(raw_rectrk2_hits.at(i).GetE());
+        }
+
+        auto truth_tracks_in_rec = dAnaData->getTruthTracks(DTruth::DTruthDetPV::RecTrk);
+        for(const auto &truth_track : truth_tracks_in_rec)
+        {
+            std::vector<double> truth_state_x;
+            std::vector<double> truth_state_y;
+            std::vector<double> truth_state_z;
+
+            for(const auto &state : truth_track.second)
+            {
+                truth_state_x.push_back(state->vertex[0]);
+                truth_state_y.push_back(state->vertex[1]);
+                truth_state_z.push_back(state->vertex[2]);
+            }
+
+            RecTrk2_truth_state_x.push_back(truth_state_x);
+            RecTrk2_truth_state_y.push_back(truth_state_y);
+            RecTrk2_truth_state_z.push_back(truth_state_z);
         }
     }
 }
@@ -519,16 +553,27 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                           { return track1->GetPp() > track2->GetPp(); } );
         std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](std::shared_ptr<DTrack> &track1, std::shared_ptr<DTrack> &track2)
                                                           { return track1->GetPp() > track2->GetPp(); } );
+/*
+        for(const auto &track : rec_tracks_)
+        {
+            std::cout << "track: " << track.get() << std::endl;
+            for(int i = 0; i < track->GetSize(); i++)
+                std::cout << "hit " << i << ": " << track->At(i)->GetTrack().get() << std::endl;
+        }
+        std::cout << std::endl;
+*/
 
 //Vertex
 /*
         if(rec_tracks_.size() > 1)
         {
-            VertexFinder vertex_finder(rec_tracks_);
-            vertex_finder.FindVertexes();
+            VertexFinder vertex_finder(&rec_tracks_);
+            vertex_finder.FindVertexes(&rec_vertexes_);
+
+            for(const auto &vertex: rec_vertexes_)
+                RecTrk2_vertex_z.push_back(vertex->GetZ());
         }
 */
-
 //................................................................................//
 //Fill
         for(auto &track : tag_tracks_)
