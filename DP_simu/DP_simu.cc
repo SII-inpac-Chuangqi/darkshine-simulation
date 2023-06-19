@@ -83,7 +83,11 @@ namespace {
     }
 
     void PrintVersion() {
-        G4cerr << "DSimu " << dControl->DSimu_version << G4endl; // date: 2021-07-28
+#ifdef DSIMU_VERSION
+        cerr << "DSimu " << (std::string)DSIMU_VERSION << std::endl;
+#else
+        cerr << "DSIMU " << "v1.5.5" << endl;
+#endif
     }
 
     void PrintUsage() {
