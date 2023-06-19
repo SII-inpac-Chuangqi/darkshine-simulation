@@ -49,7 +49,9 @@ struct DetPVDef {
             "SideHCAL_AbsPV",                      // 29
             "SideHCAL_LayerPV",                    // 30
             "SideHCAL_APDWorld_PV",                // 31
-            "SideHCAL_PV"                          // 32
+            "SideHCAL_PV",                         // 32
+            "SideHCAL_FiberClad_PV",               // 33
+            "SideHCAL_Fiber_PV",                   // 34
     };
     /** the map of process types */
     unordered_map<string, int> dDetPVMap;

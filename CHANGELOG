@@ -1,8 +1,14 @@
+2023-06-19:
+    1. DSimu v1.5.9: Fix several minor bugs
+
+2023-05-26
+    1. DSimu v1.5.8: Add HCAL Geometry option: X-Abs-Y
+
 2023-03-17
-    1. DSimu: Optimize Sensitive Detector
+    1. DSimu v1.5.7: Optimize Sensitive Detector
 
 2023-03-15
-    DSimu v1.7
+    DSimu v1.5.6
     1. DSimu: Fix DetectorSD Bug
 
 2022-12-05
