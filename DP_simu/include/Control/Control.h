@@ -239,6 +239,7 @@ public:
     G4ThreeVector HCAL_Module_Gap;
     G4double HCAL_Absorber_Thickness;
     G4bool HCAL_Show_Cell{false};
+    G4bool HCAL_is_XAbsY{false};
 
 
     //----------------------------------------
@@ -265,6 +266,8 @@ public:
     G4String BiasProcess;
     double BiasFactor;
     double BiasEmin;
+
+    std::map<std::string, bool> BiasParticles{}; // key: particle name, value: if bias
 
     //========================================
     /* Filters */

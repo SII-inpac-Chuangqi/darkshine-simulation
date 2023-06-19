@@ -61,14 +61,27 @@ void EventDump::Dump(long long skip_number, long long event_number) {
     long long start = 0;
     long long end = tree_->GetEntries();
 
-    if (skip_number >= 0) {
+    if (skip_number >= 0)
         start = skip_number;
-        if (event_number >= 0)
-            end = skip_number + event_number;
-    }
+    if (event_number >= 0)
+        end = start + event_number;
     if (end > tree_->GetEntries()) {
-        std::cout << "Warning Request events exceed the total number of entries" << std::endl;
+        std::cout << "[Warning] ==> Requested events exceed the total number of entries" << std::endl;
         end = tree_->GetEntries();
+    }
+
+    if (end < start) {
+        std::cout << "[Warning] ==> Requested events from " << start << " to " << end << std::endl;
+        return;
+    }
+
+    if (end - start >= 100) {
+        TString confirm;
+        std::cout << "[Warning] ==> Requested more than 100 events, are you sure? [Y/y] ";
+        std::cin  >> confirm;
+        std::cout << " " << std::endl;
+        confirm.ToLower();
+        if (confirm != "y" && confirm != "yes") return;
     }
 
     DEvent *event = nullptr;
@@ -82,7 +95,7 @@ void EventDump::Dump(long long skip_number, long long event_number) {
             << "* Tree: " << tree_name_ << std::endl
             << "***********************************************************************************************************************"
             << std::endl
-            << "* Dump from event " << start << " to " << end - 1 << std::endl
+            << (event_number == 1 ? TString::Format("* Dump event %lld", start) : TString::Format("* Dump from event %lld to %lld", start, end - 1)) << std::endl
             << "***********************************************************************************************************************"
             << std::endl;
 
@@ -102,7 +115,7 @@ void EventDump::Dump(long long skip_number, long long event_number) {
 void EventDump::Help() {
     std::cout << "Dark Shine event dump:" << std::endl
               << "DDump -h: help" << std::endl
-              << "DDump [file name] [tree name] [skip number(optional)] [event number(optional)]" << std::endl
+              << "DDump -f [file name] -t [tree name] -j [skip number(optional)] -e [event number(optional)]" << std::endl
               << "    file name: file to dump" << std::endl
               << "    tree name: tree in file which contains a branch of DEvent" << std::endl
               << "    skip number(optional): not set or < 0, dump all events; >= 0, skip events from 0 to skip number"

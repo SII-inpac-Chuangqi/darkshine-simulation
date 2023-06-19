@@ -381,7 +381,7 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
                 RecTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
                                             step->getPz() * step->getPz());
                 trackerFlag = true;
-            } else if (!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
+            } else if (!InRecTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
                 RecTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
                                             step->getPz() * step->getPz());
                 break;

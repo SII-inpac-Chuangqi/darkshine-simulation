@@ -252,6 +252,7 @@ void Control::RebuildVariables() {
         if_bias = true;
         if_bias_target = true;
         BiasProcess = "DMProcessDMBrem";
+        BiasParticles["e-"] = true;
         if_filter = true;
         process_filters_parameters.emplace_back("DMProcessDMBrem", 0 * GeV, -1 * GeV, -7.5 * mm, 7.5 * mm, 1, 1, 0);
     }
@@ -362,6 +363,7 @@ void Control::RebuildVariables() {
     Size_HCALModule.setX(Size_HCALCell.z());
     Size_HCALModule.setY(Size_HCALCell.z());
     Size_HCALModule.setZ(2 * (Size_HCALCell.x()));
+    if (HCAL_is_XAbsY) Size_HCALModule.setZ(Size_HCALCell.x());
 
     Size_HCALLayer.setX(HCAL_Module_No.x() * (Size_HCALModule.x() + HCAL_Module_Gap.x()));
     Size_HCALLayer.setY(HCAL_Module_No.y() * (Size_HCALModule.y() + HCAL_Module_Gap.y()));
@@ -745,6 +747,12 @@ bool Control::ReadYAML(const G4String &file_in) {
         BiasFactor = Node["Biasing"]["BiasFactor"].as<double>();
         BiasEmin = Node["Biasing"]["BiasEmin"][0].as<double>()
                    * G4UnitDefinition::GetValueOf(Node["Biasing"]["BiasEmin"][1].as<std::string>());
+        auto bias_particle_nodes = Node["Biasing"]["BiasParticle"];
+        if (if_bias) {
+            for (auto subnode: bias_particle_nodes) {
+                BiasParticles[subnode.first.as<std::string>()]= subnode.second.as<bool>();
+            }
+        }
         //========================================
         /* Filters */
         //----------------------------------------
@@ -872,6 +880,8 @@ bool Control::ReadYAML(const G4String &file_in) {
         HCAL_Module_No = readV3(Node["Geometry"]["HCAL"]["HCAL_Module_No"]);
         HCAL_Module_Gap = readV3(Node["Geometry"]["HCAL"]["HCAL_Module_Gap"], true);
         HCAL_Cell_XY_N = Node["Geometry"]["HCAL"]["HCAL_Cell_XY_N"].as<int>();
+        HCAL_is_XAbsY = Node["Geometry"]["HCAL"]["HCAL_is_XAbsY"].IsDefined() &&
+                        Node["Geometry"]["HCAL"]["HCAL_is_XAbsY"].as<bool>();
         //HCAL_Absorber_Thickness = readV2(Node["Geometry"]["HCAL"]["HCAL_Absorber_Thickness"]);
         HCAL_Absorber_Thickness_List.clear();
         for (auto i: Node["Geometry"]["HCAL"]["HCAL_Absorber_Thickness_List"]) {
@@ -996,9 +1006,8 @@ DigiScheme Control::Optical_GetDigiScheme(const G4String &cIn) {
 
 void Control::ReadAndSetBias(G4VModularPhysicsList* physicsList) {
     auto *biasingPhysics = new G4GenericBiasingPhysics();
-    auto node = Node["Biasing"]["BiasParticle"];
-    for (auto subnode:node) {
-        if (subnode.second.as<bool>()) biasingPhysics->Bias(subnode.first.as<std::string>(), {BiasProcess});
+    for (auto particle_ifbias: BiasParticles) {
+        if (particle_ifbias.second) biasingPhysics->Bias(particle_ifbias.first, {BiasProcess});
     }
     physicsList->RegisterPhysics(biasingPhysics);
 }

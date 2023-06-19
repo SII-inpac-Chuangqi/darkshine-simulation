@@ -550,7 +550,8 @@ G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo,
 
 G4LogicalVolume* CALConstruct::XYCrossingConstruct(G4int xNo, G4int yNo,
                                                    G4LogicalVolume *elementLV,
-                                                   G4Material *regionMat, G4int tree_height, G4double gap) {
+                                                   G4Material *regionMat, G4int tree_height, G4double gap,
+                                                   G4bool onlyX) {
     /// check consistency
     if (!xNo || !yNo ) {
         G4cout << fCALName << " Construction Error: at least one of the matrix element is zero." << G4endl;
@@ -565,6 +566,7 @@ G4LogicalVolume* CALConstruct::XYCrossingConstruct(G4int xNo, G4int yNo,
 
     /// construct Group LV
     int zNo = 2;
+    if (onlyX) zNo = 1;
     auto GroupHalfSize = G4ThreeVector(UnitZHalfLength + 0.25 * gap,
                                        UnitZHalfLength + 0.25 * gap,
                                        zNo * UnitXHalfLength + (zNo - 0.5) * 0.5 * gap);
@@ -588,27 +590,30 @@ G4LogicalVolume* CALConstruct::XYCrossingConstruct(G4int xNo, G4int yNo,
     G4PVPlacement* UnitPV = nullptr;
 
     /// along Y
-    for (int i = 0; i < yNo; i++) {
-        UnitPosX = 0;
-        UnitPosY = -1. * GroupHalfSize.y() + (2 * i + 1) * UnitYHalfLength + (i + 0.25) * gap;
-        UnitPosZ = -1. * GroupHalfSize.z() + UnitXHalfLength + 0.25 * gap;
+    if (! onlyX) {
+        for (int i = 0; i < yNo; i++) {
+            UnitPosX = 0;
+            UnitPosY = -1. * GroupHalfSize.y() + (2 * i + 1) * UnitYHalfLength + (i + 0.25) * gap;
+            UnitPosZ = -1. * GroupHalfSize.z() + UnitXHalfLength + 0.25 * gap;
 
-        UnitPV = new G4PVPlacement(fRotY90,
-                                   G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
-                                   elementLV,
-                                   UnitName,
-                                   GroupLV,
-                                   false,
-                                   fCopyNo,
-                                   fCheckOverlap);
-        PVVector.emplace_back(UnitPV);
-        fCopyNo++;
+            UnitPV = new G4PVPlacement(fRotY90,
+                                       G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
+                                       elementLV,
+                                       UnitName,
+                                       GroupLV,
+                                       false,
+                                       fCopyNo,
+                                       fCheckOverlap);
+            PVVector.emplace_back(UnitPV);
+            fCopyNo++;
+        }
     }
     /// along X
     for (int i = 0; i < xNo; i++ ) {
         UnitPosX = -1. * GroupHalfSize.x() + (2 * i + 1) * UnitYHalfLength + (i + 0.25) * gap;
         UnitPosY = 0;
         UnitPosZ = -1. * GroupHalfSize.z() + 3 * UnitXHalfLength + 1.25 * gap;
+        if(onlyX) UnitPosZ = 0;
 
         UnitPV = new G4PVPlacement(fRotY90X90,
                                    G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
@@ -628,7 +633,8 @@ G4LogicalVolume* CALConstruct::XYCrossingConstruct(G4int xNo, G4int yNo,
 
 G4ThreeVector CALConstruct::LinearPlacementWithAbsorber(G4int zNo, const std::vector<std::tuple<int, int, double>> abs_thickness_list,
                                                G4LogicalVolume *calLayerLV, G4Material *AbsMat,
-                                               G4double gap) {
+                                               G4double gap,
+                                               G4bool AlternateRotationZ) {
     auto TotalHalfSize = G4ThreeVector(0, 0, 0);
     // check consistency
     if (!zNo) {
@@ -685,13 +691,16 @@ G4ThreeVector CALConstruct::LinearPlacementWithAbsorber(G4int zNo, const std::ve
     UnitPosY = 0;
     UnitPosZ = -TotalHalfSize.z() - gap;
 
+    auto fRotZ90 = new G4RotationMatrix(); // only used by AlternateRotatinoZ
+    fRotZ90->rotateZ(90 * degree);
+
     for (int i = 0; i < zNo; i++) {
         /// place Calo Layer
         UnitPosX = 0;
         UnitPosY = 0;
         UnitPosZ += gap + UnitZHalfLength;
 
-        UnitPV = new G4PVPlacement(HepRot,
+        UnitPV = new G4PVPlacement((AlternateRotationZ && i % 2 == 1) ? fRotZ90 : HepRot,
                                    G4ThreeVector(UnitPosX, UnitPosY, UnitPosZ),
                                    calLayerLV,
                                    fCALName + "_LayerPV",

@@ -71,7 +71,8 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, bool fCheckOverlaps) {
     HCAL_Module_LV = HCAL->XYCrossingConstruct(dControl->HCAL_Cell_XY_N, dControl->HCAL_Cell_XY_N,
                                                HCAL->GetOutlineLV(),
                                                dControl->World_Mat,
-                                               1, eps);
+                                               1, eps, dControl->HCAL_is_XAbsY);
+
     if(!dControl->HCAL_Show_Cell)
         HCAL_Module_LV->SetVisAttributes(new G4VisAttributes(true,G4Colour(0, 0.5, 0.5)));
     HCAL_Layer_LV = HCAL->MatrixConstruct(dControl->HCAL_Module_No.x(), dControl->HCAL_Module_No.y(), dControl->HCAL_Module_No.z(),
@@ -84,7 +85,8 @@ bool HCAL_Construct::Build(G4LogicalVolume *World_LV, bool fCheckOverlaps) {
                                       dControl->HCAL_Absorber_Thickness_List,
                                       HCAL_Layer_LV,
                                       HCAL_Absorber_Mat,
-                                      eps);
+                                      eps,
+                                      dControl->HCAL_is_XAbsY);
 
     HCAL_SD_LV.emplace_back(HCAL->GetCaloLVVector());
     HCAL_APD_SD_LV.emplace_back(HCAL->GetAPDLVVector());

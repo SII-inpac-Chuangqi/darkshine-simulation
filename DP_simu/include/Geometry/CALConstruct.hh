@@ -76,13 +76,21 @@ public:
                              G4LogicalVolume* elementLV,
                              G4Material* regionMat,
                              G4int tree_height,
-                             G4double gap);
+                             G4double gap,
+                             G4bool onlyX = false);
 
     G4ThreeVector LinearPlacementWithAbsorber(G4int zNo,
                                      const std::vector< std::tuple<int, int, double> > abs_thickness_list,
                                      G4LogicalVolume* calLayerLV,
                                      G4Material *AbsMat,
-                                     G4double gap);
+                                     G4double gap,
+                                     G4bool AlternateRotationZ = false);
+
+    G4ThreeVector XAbsYPlacement(G4int zNo,
+                                 const std::vector< std::tuple<int, int, double> > abs_thickness_list,
+                                 G4LogicalVolume* calLayerLV,
+                                 G4Material *AbsMat,
+                                 G4double gap);
 
 
     // deprecated!!
