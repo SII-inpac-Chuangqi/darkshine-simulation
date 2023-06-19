@@ -195,6 +195,12 @@ public:
 
     void inspectSubRegion(int id, Det_Type dt);
 
+    void setNoStripMode(bool no_strip = true) {
+        if (no_strip) {
+            _scale_factor_SimuTrkHits = 0.01;
+        }
+    }
+
 
 private:
     // Common GUI
