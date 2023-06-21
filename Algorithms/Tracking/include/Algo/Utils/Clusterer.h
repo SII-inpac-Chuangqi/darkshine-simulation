@@ -145,6 +145,8 @@ private:
             center_ = std::make_unique<Point>(dim);
             for(size_t i = 0; i < dim; i++)
                 center_->splits_[i] = sum_of_splits[i]/sum_of_weights;
+
+            delete[] sum_of_splits;
         }
 
         void AddPoint(const std::shared_ptr<Point> &point, bool if_update = true)
