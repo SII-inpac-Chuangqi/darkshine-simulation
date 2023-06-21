@@ -5,6 +5,7 @@
 //C++
 #include <vector>
 #include <memory>
+#include <algorithm>
 
 //................................................................................//
 //Framework
@@ -19,6 +20,16 @@ class DVertex : public TObject
 public:
     DVertex()  {};
     ~DVertex() {};
+
+    void AddTrack(const std::shared_ptr<DTrack> &track)
+    {
+        if(std::find(tracks_.begin(), tracks_.end(), track) == tracks_.end())
+            tracks_.push_back(track);
+    }
+
+    void SetZ(double z) {z_ = z;}
+
+    double GetZ() const {return z_;}
 
 private:
     double x_;

@@ -60,6 +60,7 @@ public:
     double GetPy() const {return py_;}
     double GetPz() const {return pz_;}
     double GetPp() const {return pp_;}
+    std::shared_ptr<DVertex> GetVertex() const {return vertex_.lock();}
 //................................................................................//
 //Correction on reco momentum in recoil tracker ( p_rcs ) by comparing the peak
 //values of reco and truth level momenta with different beam energy
@@ -104,6 +105,9 @@ public:
     void SetPz(double newPz)  {pz_ = newPz;}
     void SetChi2(double newChi2) {chi2_ = newChi2;}
     void Remove(int i);
+    void SetVertex(const std::shared_ptr<DVertex> &vertex) {vertex_ = vertex;}
+    static void SetResolutions(double x_resolution, double y_resolution, double z_resolution)
+    { x_resolution_ = x_resolution; y_resolution_ = y_resolution; z_resolution_ = z_resolution; }
 
 //................................................................................//
 //Processor
@@ -116,6 +120,10 @@ public:
 private:
 //................................................................................//
 //Verbose
+    static double x_resolution_;
+    static double y_resolution_;
+    static double z_resolution_;
+
     int verbose_{0};
 
 //................................................................................//

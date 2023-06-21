@@ -43,10 +43,14 @@ void GreedyFinder::FillTracks(std::vector<std::shared_ptr<DTrack>> *tracks)
     tracks->clear();
 
     for(int i = 0; i < this->GetTrackNo(); i++)
+    {
         tracks->push_back(std::make_shared<DTrack>(tracks_chosen_.at(i),
                                                    this->GetR(i),         //used in Kalman filter
                                                    this->GetCenterX(i),
                                                    this->GetCenterY(i)));
+        for(int j = 0; j < tracks->at(i)->GetSize(); j++)
+            tracks->at(i)->At(j)->SetTrack(tracks->at(i));
+    }
 
     tracks_ = tracks;
 }

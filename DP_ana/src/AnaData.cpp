@@ -289,8 +289,8 @@ TString AnaData::getRegionName(const float *vertex) {
     if (vertex[2] < getECalSurfaceZ()) {
         return "Target";
     } else if (vertex[2] < getECalCenterZ() + 0.5 * getECalLengthZ()) {
-        if (vertex[0] < getECalCenterX() + 0.5 * getECalLengthX() &&
-            vertex[1] < getECalCenterY() + 0.5 * getECalLengthY())
+        if (fabs(vertex[0]) < getECalCenterX() + 0.5 * getECalLengthX() &&
+            fabs(vertex[1]) < getECalCenterY() + 0.5 * getECalLengthY())
             return "ECAL";
         else
             return "SideHCAL";
@@ -330,7 +330,7 @@ void AnaData::PrintTruthInfo() const
     //else        truth_->printTruthTracks();
 }
 
-std::vector<std::pair<const DTruthState*, int>> AnaData::getTruthTracksAtECalFront() const
+std::vector<std::pair<const DTruthState*, int>> AnaData::getTruthStatesAtECalFront() const
 {
     auto tracker_keys = truth_->getTracksKey(DTruth::DTruthDetPV::All);
     auto ECal_states  = truth_->getStatesInECAL();
@@ -364,10 +364,27 @@ std::vector<std::pair<const DTruthParticle*, const DTruthState*>> AnaData::getTr
 
 unsigned int AnaData::getNTruthTracks(DTruth::DTruthDetPV DetPV, double min_energy, int min_hits) const
 {
+    if(!truth_)
+    {
+        std::cout << "[Warning] ==> No truth loaded" << std::endl;
+        return 0;
+    }
+
     unsigned int n_track(0);
 
     if(truth_) n_track = truth_->getTracksInRegion(DetPV, min_energy, min_hits).size();
     return n_track;
+}
+
+std::map<pair<int, int>, vector<DTruthState *>> AnaData::getTruthTracks(DTruth::DTruthDetPV DetPV, double min_energy, int min_hits) const
+{
+    if(!truth_)
+    {
+        std::cout << "[Warning] ==> No truth loaded" << std::endl;
+        return {};
+    }
+
+    return truth_->getTracksInRegion(DetPV, min_energy, min_hits);
 }
 
 const DTruth* AnaData::getInitialElectron() const

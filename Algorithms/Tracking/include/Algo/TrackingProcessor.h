@@ -17,6 +17,7 @@
 //TRACKING
 #include "Algo/TrkHit.h"
 #include "Algo/DTrack.h"
+#include "Algo/Vertex/DVertex.h"
 #include "Algo/Digitization.h"
 
 using namespace std;
@@ -93,21 +94,29 @@ private:
 //Momentum exiting Tag Tracker from Initial Particle Step
     double TagTrk2_pp_truth_fin{RETURN};
 //x, y, z & energy deposition of truth hits
-    std::vector<double> TagTrk2_x{};
-    std::vector<double> TagTrk2_y{};
-    std::vector<double> TagTrk2_z{};
-    std::vector<double> TagTrk2_e{};
+    std::vector<double> TagTrk2_truth_hit_x{};
+    std::vector<double> TagTrk2_truth_hit_y{};
+    std::vector<double> TagTrk2_truth_hit_z{};
+    std::vector<double> TagTrk2_truth_hit_e{};
+//States from DTruth
+    std::vector<std::vector<double>> TagTrk2_truth_state_x{};
+    std::vector<std::vector<double>> TagTrk2_truth_state_y{};
+    std::vector<std::vector<double>> TagTrk2_truth_state_z{};
 //No of truth tracks from DTruth
     int TagTrk2_track_No_truth{0};
     
     int RecTrk2_No{-1};
     double RecTrk2_pp_truth_ini{RETURN};
     double RecTrk2_pp_truth_fin{RETURN};
-    std::vector<double> RecTrk2_x{};
-    std::vector<double> RecTrk2_y{};
-    std::vector<double> RecTrk2_z{};
-    std::vector<double> RecTrk2_e{};
+    std::vector<double> RecTrk2_truth_hit_x{};
+    std::vector<double> RecTrk2_truth_hit_y{};
+    std::vector<double> RecTrk2_truth_hit_z{};
+    std::vector<double> RecTrk2_truth_hit_e{};
     int RecTrk2_track_No_truth{0};
+
+    std::vector<std::vector<double>> RecTrk2_truth_state_x{};
+    std::vector<std::vector<double>> RecTrk2_truth_state_y{};
+    std::vector<std::vector<double>> RecTrk2_truth_state_z{};
 
 //................................................................................//
 //Reconstructed
@@ -129,6 +138,7 @@ private:
 //x/y resolution of reconstructed tracks from helix fitting
     std::vector<double> TagTrk2_track_x_sigma{};
     std::vector<double> TagTrk2_track_y_sigma{};
+
 
 //................................................................................//
     int RecTrk2_track_No{-1};
@@ -183,6 +193,10 @@ private:
     std::vector<double> ECal_seed_px{};
     std::vector<double> ECal_seed_py{};
     std::vector<double> ECal_seed_pz{};
+
+//................................................................................//
+    std::vector<std::shared_ptr<DVertex>> rec_vertexes_;
+    std::vector<double> RecTrk2_vertex_z{};
 };
 
 #endif
