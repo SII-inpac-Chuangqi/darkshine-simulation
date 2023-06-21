@@ -252,7 +252,13 @@ void Control::RebuildVariables() {
         if_bias = true;
         if_bias_target = true;
         BiasProcess = "DMProcessDMBrem";
+        BiasEmin = 0;
         BiasParticles["e-"] = true;
+        if (!if_filter) { // reset the filter parameter when if_filter: false
+            if_HardBrem = false;
+            process_filters_parameters.clear();
+            particle_filters_parameters.clear();
+        }
         if_filter = true;
         process_filters_parameters.emplace_back("DMProcessDMBrem", 0 * GeV, -1 * GeV, -7.5 * mm, 7.5 * mm, 1, 1, 0);
     }

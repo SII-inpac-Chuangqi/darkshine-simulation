@@ -289,8 +289,8 @@ TString AnaData::getRegionName(const float *vertex) {
     if (vertex[2] < getECalSurfaceZ()) {
         return "Target";
     } else if (vertex[2] < getECalCenterZ() + 0.5 * getECalLengthZ()) {
-        if (vertex[0] < getECalCenterX() + 0.5 * getECalLengthX() &&
-            vertex[1] < getECalCenterY() + 0.5 * getECalLengthY())
+        if (fabs(vertex[0]) < getECalCenterX() + 0.5 * getECalLengthX() &&
+            fabs(vertex[1]) < getECalCenterY() + 0.5 * getECalLengthY())
             return "ECAL";
         else
             return "SideHCAL";
