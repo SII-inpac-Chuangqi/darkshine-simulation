@@ -127,6 +127,7 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_z", &RecTrk2_z);
         EvtWrt->RegisterOutVariable("RecTrk2_e", &RecTrk2_e);
         EvtWrt->RegisterIntVariable("RecTrk2_track_No_truth", &RecTrk2_track_No_truth, "RecTrk2_track_No_truth/I");
+        EvtWrt->RegisterOutVariable("RecTrk2_x_truth_fin", &RecTrk2_x_truth_fin);
     }
 //................................................................................//
 //Reconstructed
@@ -216,6 +217,7 @@ void TrackingProcessor::InitEvt() {
     RecTrk2_track_No_truth = 0;
     TagTrk2_track_No = -1;
     RecTrk2_track_No = -1;
+    RecTrk2_x_truth_fin = RETURN;
 
     TagTrk2_pp_truth_ini = RETURN;
     TagTrk2_pp_truth_fin = RETURN;
@@ -384,6 +386,7 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
             } else if (!InRecTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
                 RecTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
                                             step->getPz() * step->getPz());
+                RecTrk2_x_truth_fin = step->getX();
                 break;
             }
         }

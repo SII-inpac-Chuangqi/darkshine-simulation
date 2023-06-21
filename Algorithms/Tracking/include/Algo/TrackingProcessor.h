@@ -160,6 +160,7 @@ private:
     std::vector<std::vector<double>> RecTrk2_track_extrapolated_x{};
     std::vector<std::vector<double>> RecTrk2_track_extrapolated_y{};
     std::vector<std::vector<double>> RecTrk2_track_corrections_x{};
+    double RecTrk2_x_truth_fin{};
 
     std::vector<double> RecTrk2_track_preA{};
     std::vector<double> RecTrk2_track_preB{};
