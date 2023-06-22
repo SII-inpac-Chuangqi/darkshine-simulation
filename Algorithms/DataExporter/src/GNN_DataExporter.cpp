@@ -221,7 +221,7 @@ void GNN_DataExporter::ProcessEvt(AnaEvent *evt) {
             std::copy(std::begin(*rec2_col), std::end(*rec2_col), std::back_inserter(*TotalRecTrk));
         }
 
-        if (contains("DigitizedTagTrk")) {
+        if (contains("DigitizedTagTrk") || contains("AllDigitizedTrk")) {
             // Add digitized tracker hits collections
             SimulatedHitVec *DigiTagTrk = evt->RegisterSimulatedHitCollection("DigitizedTagTrk");
             SimulatedHitVec tmp_digi_tag = GNN_Digitization::Run(tag1_col, tag2_col, true);
@@ -229,12 +229,23 @@ void GNN_DataExporter::ProcessEvt(AnaEvent *evt) {
             tmp_digi_tag.clear();
         }
 
-        if (contains("DigitizedRecTrk")) {
+        if (contains("DigitizedRecTrk") || contains("AllDigitizedTrk")) {
             SimulatedHitVec *DigiRecTrk = evt->RegisterSimulatedHitCollection("DigitizedRecTrk");
             SimulatedHitVec tmp_digi_rec = GNN_Digitization::Run(rec1_col, rec2_col, false);
             std::move(tmp_digi_rec.begin(), tmp_digi_rec.end(), std::back_inserter(*DigiRecTrk));
             tmp_digi_rec.clear();
         }
+
+        if (contains("AllDigitizedTrk")) {
+            SimulatedHitVec *AllDigiTrk = evt->RegisterSimulatedHitCollection("AllDigitizedTrk");
+            auto tag_digi = TrackerCollection.at("DigitizedTagTrk");
+            auto rec_digi = TrackerCollection.at("DigitizedRecTrk");
+
+            AllDigiTrk->reserve(tag_digi->size() + rec_digi->size());
+            std::copy(std::begin(*tag_digi), std::end(*tag_digi), std::back_inserter(*AllDigiTrk));
+            std::copy(std::begin(*rec_digi), std::end(*rec_digi), std::back_inserter(*AllDigiTrk));
+        }
+
     }
 
     for (const auto &c: collections) {
@@ -258,6 +269,9 @@ void GNN_DataExporter::ProcessEvt(AnaEvent *evt) {
     }
     if (contains("DigitizedRecTrk")) {
         evt->DeleteCollection("DigitizedRecTrk");
+    }
+    if (contains("AllDigitizedTrk")) {
+        evt->DeleteCollection("AllDigitizedTrk");
     }
 
     for (auto &i: node) {
@@ -298,7 +312,7 @@ GNN_DataExporter::GNN_DataExporter(string name, shared_ptr<EventStoreAndWriter> 
     RegisterIntParameter("Verbose", "Verbosity Variable", &verbose, 0);
     RegisterStringParameter(
             "Collections",
-            "Select from [DigitizedTagTrk, DigitizedRecTrk, TagTrk, RecTrk, AllTrk], split with comma and no space",
+            "Select from [DigitizedTagTrk, DigitizedRecTrk, TagTrk, RecTrk, AllTrk, AllDigitizedTrk], split with comma and no space",
             &arg_collections,
             "DigitizedTagTrk,DigitizedRecTrk");
 }
