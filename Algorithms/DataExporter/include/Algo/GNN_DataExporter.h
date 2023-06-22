@@ -13,13 +13,13 @@
 
 using namespace std;
 
-class DataExporter : public AnaProcessor {
+class GNN_DataExporter : public AnaProcessor {
 public:
     // No need to change anything here
-    // Must initialized with Name
-    explicit DataExporter(string name, shared_ptr<EventStoreAndWriter> evtwrt);
+    // Must initialize with Name
+    explicit GNN_DataExporter(string name, shared_ptr<EventStoreAndWriter> evtwrt);
 
-    ~DataExporter() override = default;
+    ~GNN_DataExporter() override = default;
 
     void Begin() override;
 
@@ -34,6 +34,8 @@ public:
     // Define some functions here if necessary
     static std::vector<size_t> sort_by_key(std::map<std::string, std::vector<double>> &hits, const std::string &key);
 
+    void export_track(const std::string &CollectionName, const SimulatedHitMap& TrackerCollection);
+
 private:
 
     // Define some variables if necessary
@@ -41,6 +43,7 @@ private:
     // Currently supported: int, double, string
     int verbose{};
     double eps{};
+    std::string arg_collections;
     TFile *f{};
     TTree *t{};
 

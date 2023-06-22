@@ -14,7 +14,7 @@
 #include "Algo/Digitizer.h"
 #include "Algo/TrackingProcessor.h"
 #include "Algo/CutFlowAnalysis.h"
-#include "Algo/DataExporter.h"
+#include "Algo/GNN_DataExporter.h"
 
 void ControlManager::run() {
 
@@ -68,7 +68,7 @@ void ControlManager::run() {
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<TrackingProcessor>(new TrackingProcessor("Tracking", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<CutFlowAnalysis>(new CutFlowAnalysis("CutFlowAnalysis", EvtWrt)));
-    algo->RegisterAnaProcessor(shared_ptr<DataExporter>(new DataExporter("DataExporter", EvtWrt)));
+    algo->RegisterAnaProcessor(shared_ptr<GNN_DataExporter>(new GNN_DataExporter("GNN_DataExporter", EvtWrt)));
 
     if (ConfMgr) {
         ConfMgr->ReadAlgoList();
