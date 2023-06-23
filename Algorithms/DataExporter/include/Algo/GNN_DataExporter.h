@@ -34,7 +34,8 @@ public:
     // Define some functions here if necessary
     static std::vector<size_t> sort_by_key(std::map<std::string, std::vector<double>> &hits, const std::string &key);
 
-    void export_track(const std::string &CollectionName, const SimulatedHitMap& TrackerCollection);
+    void export_track(const std::string &CollectionName, const SimulatedHitMap &TrackerCollection,
+                      long long evtNum);
 
 private:
 

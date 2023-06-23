@@ -86,7 +86,8 @@ GNN_DataExporter::sort_by_key(std::map<std::string, std::vector<double>> &hits, 
     return indices;
 }
 
-void GNN_DataExporter::export_track(const std::string &CollectionName, const SimulatedHitMap &TrackerCollection) {
+void GNN_DataExporter::export_track(const std::string &CollectionName, const SimulatedHitMap &TrackerCollection,
+                                    long long evtNum) {
     if (TrackerCollection.count(CollectionName) != 0) {
         auto col = TrackerCollection.at(CollectionName);
 
@@ -176,8 +177,8 @@ void GNN_DataExporter::export_track(const std::string &CollectionName, const Sim
         weight.at(CollectionName) = static_cast<double >(truth_count) /
                                     static_cast<double >(edge.at(CollectionName).at("start").size());
 
-        if(verbose > 2) {
-            cout << "Collection: " << CollectionName << endl;
+        if (verbose > 2) {
+            cout << "[ " << evtNum << " ]Collection: " << CollectionName << endl;
             cout << "  -- Truth Edge Count: " << truth_count << endl;
             cout << "  -- Total Edge Count: " << edge.at(CollectionName).at("start").size() << endl;
             cout << "  -- Weight: " << weight.at(CollectionName) << endl;
@@ -256,7 +257,7 @@ void GNN_DataExporter::ProcessEvt(AnaEvent *evt) {
     }
 
     for (const auto &c: collections) {
-        export_track(c, TrackerCollection);
+        export_track(c, TrackerCollection, evt->getEventId());
     }
 
     if (t)
