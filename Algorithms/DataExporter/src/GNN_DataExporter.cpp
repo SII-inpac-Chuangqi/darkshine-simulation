@@ -91,6 +91,12 @@ void GNN_DataExporter::export_track(const std::string &CollectionName, const Sim
     if (TrackerCollection.count(CollectionName) != 0) {
         auto col = TrackerCollection.at(CollectionName);
 
+        if (col->empty()) {
+            if (verbose > 1)
+                cerr << "Collection " << CollectionName << " is empty" << endl;
+            return;
+        }
+
         // Step 1: Record hits information (x,y,z)
         // Create index of hits
         std::vector<size_t> indices(col->size());
@@ -177,11 +183,16 @@ void GNN_DataExporter::export_track(const std::string &CollectionName, const Sim
         weight.at(CollectionName) = static_cast<double >(truth_count) /
                                     static_cast<double >(edge.at(CollectionName).at("start").size());
 
-        if (verbose > 2) {
+        if (verbose > 3) {
             cout << "[ " << evtNum << " ]Collection: " << CollectionName << endl;
             cout << "  -- Truth Edge Count: " << truth_count << endl;
             cout << "  -- Total Edge Count: " << edge.at(CollectionName).at("start").size() << endl;
             cout << "  -- Weight: " << weight.at(CollectionName) << endl;
+
+            if (std::isnan(weight.at(CollectionName))) {
+                cerr << "Weight is nan" << endl;
+                exit(1);
+            }
         }
 
     } else {

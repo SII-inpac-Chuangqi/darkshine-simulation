@@ -19,7 +19,7 @@ struct Point3D {
     SimulatedHit *hit{};
 
     // Constructors
-    explicit Point3D(float x = 0.0, float y = 0.0, float z = 0.0) : x(x), y(y), z(z) {}
+    explicit Point3D(float vx = 0.0, float vy = 0.0, float vz = 0.0) : x(vx), y(vy), z(vz) {}
 
     // Overloaded operators for point-wise arithmetic
     Point3D &operator+=(const Point3D &other) {
