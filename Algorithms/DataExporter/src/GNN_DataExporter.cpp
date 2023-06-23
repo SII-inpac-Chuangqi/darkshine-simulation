@@ -176,6 +176,13 @@ void GNN_DataExporter::export_track(const std::string &CollectionName, const Sim
         weight.at(CollectionName) = static_cast<double >(truth_count) /
                                     static_cast<double >(edge.at(CollectionName).at("start").size());
 
+        if(verbose > 2) {
+            cout << "Collection: " << CollectionName << endl;
+            cout << "  -- Truth Edge Count: " << truth_count << endl;
+            cout << "  -- Total Edge Count: " << edge.at(CollectionName).at("start").size() << endl;
+            cout << "  -- Weight: " << weight.at(CollectionName) << endl;
+        }
+
     } else {
         cerr << CollectionName << " not found" << endl;
     }
