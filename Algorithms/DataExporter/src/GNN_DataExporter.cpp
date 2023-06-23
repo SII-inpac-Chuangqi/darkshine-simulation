@@ -40,7 +40,7 @@ void GNN_DataExporter::Begin() {
     for (const auto &col: collections) {
         node.insert({col, std::map<std::string, std::vector<double>>()});
         edge.insert({col, std::map<std::string, std::vector<size_t>>()});
-        weight.insert({col, 1.0});
+        weight.insert({col, 0.0});
         for (const auto &p: gnn_node) {
             node.at(col).insert({p, std::vector<double>()});
             t->Branch((col + "_" + p).data(), &node.at(col).at(p));
@@ -52,6 +52,9 @@ void GNN_DataExporter::Begin() {
         t->Branch((col + "_weight").data(), &weight.at(col));
 
     }
+
+    t->Branch("run_num", &run_num, "run_num/L");
+    t->Branch("evt_num", &evt_num, "evt_num/L");
 }
 
 std::vector<size_t>
@@ -92,8 +95,11 @@ void GNN_DataExporter::export_track(const std::string &CollectionName, const Sim
         auto col = TrackerCollection.at(CollectionName);
 
         if (col->empty()) {
-            if (verbose > 1)
-                cerr << "Collection " << CollectionName << " is empty" << endl;
+            if (verbose > 1) {
+                cerr << "[ " << evtNum << " ]Collection: " << CollectionName << " is empty" << endl;
+
+                weight.at(CollectionName) = 0.0;
+            }
             return;
         }
 
@@ -201,6 +207,9 @@ void GNN_DataExporter::export_track(const std::string &CollectionName, const Sim
 }
 
 void GNN_DataExporter::ProcessEvt(AnaEvent *evt) {
+
+    run_num = evt->getRunId();
+    evt_num = evt->getEventId();
 
     const auto &TrackerCollection = evt->getSimulatedHitCollection();
 

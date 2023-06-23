@@ -48,6 +48,9 @@ private:
     TFile *f{};
     TTree *t{};
 
+
+    long long run_num{};
+    long long evt_num{};
     std::vector<std::string> collections;
     std::map<std::string, std::map<std::string, std::vector<double> > > node;
     std::map<std::string, std::map<std::string, std::vector<size_t> > > edge;
