@@ -14,6 +14,16 @@ file(GLOB_RECURSE Util_headers ${PROJECT_SOURCE_DIR}/Utility/*/include/*)
 FILE(GLOB_RECURSE Algo_sources ${PROJECT_SOURCE_DIR}/Algorithms/*/src/*.cpp)
 FILE(GLOB_RECURSE Algo_headers ${PROJECT_SOURCE_DIR}/Algorithms/*/include/*)
 
+IF (NOT BUILD_HDF5)
+    # Get a list of all .cpp files in the excluded directory
+    file(GLOB_RECURSE Excluded_sources ${PROJECT_SOURCE_DIR}/Algorithms/ECAL_ML_IO/src/*.cpp)
+    file(GLOB_RECURSE Excluded_headers ${PROJECT_SOURCE_DIR}/Algorithms/ECAL_ML_IO/include/*)
+
+    # Remove all .cpp files in the excluded directory from Algo_sources
+    list(REMOVE_ITEM Algo_sources ${Excluded_sources})
+    list(REMOVE_ITEM Algo_headers ${Excluded_headers})
+ENDIF ()
+
 #----------------------------------------------------------------------------
 # Generate ROOT library for DEvent
 #
@@ -49,9 +59,11 @@ add_library(DDisplay SHARED ${Display_header_shared} ${Display_source} G__Displa
                 ${Algo_sources} ${Algo_headers}
         )
 
+target_link_libraries(DDisplay PUBLIC genfit2)
+
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
 
-target_link_libraries(DDis PUBLIC DDisplay genfit2)
+target_link_libraries(DDis PUBLIC DDisplay)
 
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
