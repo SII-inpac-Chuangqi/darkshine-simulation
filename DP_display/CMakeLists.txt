@@ -5,6 +5,15 @@ include_directories(include
 file(GLOB Display_sources src/*)
 file(GLOB Display_headers include/*)
 
+file(GLOB Ana_sources ${PROJECT_SOURCE_DIR}/DP_ana/src/*.cpp)
+file(GLOB Ana_headers ${PROJECT_SOURCE_DIR}/DP_ana/include/*)
+
+file(GLOB_RECURSE Util_sources ${PROJECT_SOURCE_DIR}/Utility/*/src/*.cpp)
+file(GLOB_RECURSE Util_headers ${PROJECT_SOURCE_DIR}/Utility/*/include/*)
+
+FILE(GLOB_RECURSE Algo_sources ${PROJECT_SOURCE_DIR}/Algorithms/*/src/*.cpp)
+FILE(GLOB_RECURSE Algo_headers ${PROJECT_SOURCE_DIR}/Algorithms/*/include/*)
+
 #----------------------------------------------------------------------------
 # Generate ROOT library for DEvent
 #
@@ -33,11 +42,16 @@ SET(Display_source
         )
 root_generate_dictionary(G__Display ${Display_header_shared} LINKDEF ${PROJECT_SOURCE_DIR}/Utility/UTIL/include/Utility/DisplayLinkDef.h)
 
-add_library(DDisplay SHARED ${Display_header_shared} ${Display_source} G__Display.cxx)
+add_library(DDisplay SHARED ${Display_header_shared} ${Display_source} G__Display.cxx
+                ${Ana_sources} ${Ana_headers}
+                ${PROJECT_SOURCE_DIR}/Utility/UTIL/include/Utility/Config.h
+                ${PROJECT_SOURCE_DIR}/Utility/UTIL/src/Config.cpp
+                ${Algo_sources} ${Algo_headers}
+        )
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
 
-target_link_libraries(DDis PUBLIC DDisplay)
+target_link_libraries(DDis PUBLIC DDisplay genfit2)
 
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX

@@ -61,6 +61,8 @@ public:
     /*  Define all the variables needed  */
     /*************************************/
 
+    G4String DSimu_version = "v" + (G4String)DSIMU_VERSION; // DSimu version
+
     //========================================
     /* Geant4 settings */
     //----------------------------------------
@@ -194,6 +196,8 @@ public:
     //----------------------------------------
     // Electromagnetic Calorimeter
     G4String ECAL_Name;
+    G4bool ECAL_Staggered_x;
+    G4bool ECAL_Staggered_y;
 
     G4Material *ECALRegion_Mat{};
     G4Material *ECAL_Center_Mat{};

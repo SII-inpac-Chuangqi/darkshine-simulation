@@ -80,7 +80,10 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, bool fCheckOverlaps) 
                                      ECALRegion_Mat,
                                      2,
                                      G4ThreeVector(0, 0, 0),
-                                     true);
+                                     true,
+                                     G4ThreeVector( dControl->ECAL_Staggered_x ? 0.25 * (dControl->Size_ECALCell.x() + dControl->ECAL_Cell_Gap.x()) : 0,
+                                                    dControl->ECAL_Staggered_y ? 0.25 * (dControl->Size_ECALCell.y() + dControl->ECAL_Cell_Gap.y()) : 0,
+                                                    0));
 
         ECAL_Center_LV = ECAL_Center->GetCaloLVVector();
     }

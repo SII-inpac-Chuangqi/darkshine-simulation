@@ -70,7 +70,7 @@ test simu and ana:
     paths:
       - "test/*"
     exclude:
-      - "test/ref.dp_ana.root"
+      - "test/*.root"
 
 ci write wiki:
   stage: post

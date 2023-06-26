@@ -305,6 +305,8 @@ void Control::RebuildVariables() {
     Size_ECALRegion.setX(ECAL_Block_No.x() * Size_ECALBlock.x() + eps);
     Size_ECALRegion.setY(ECAL_Block_No.y() * Size_ECALBlock.y() + eps);
     Size_ECALRegion.setZ(ECAL_Block_No.z() * Size_ECALBlock.z() + eps);
+    if (ECAL_Staggered_x) Size_ECALRegion.setX(ECAL_Block_No.x() * Size_ECALBlock.x() + 0.5 * (Size_ECALCell.x() + ECAL_Cell_Gap.x()) + eps);
+    if (ECAL_Staggered_y) Size_ECALRegion.setY(ECAL_Block_No.y() * Size_ECALBlock.y() + 0.5 * (Size_ECALCell.y() + ECAL_Cell_Gap.y()) + eps);
 
     //----------------------------------------
     // Recoil Tracker
@@ -411,8 +413,9 @@ void Control::RebuildVariables() {
     Size_SideHCALRegion.setY(Size_SideHCALCell.z() + eps);
     Size_SideHCALRegion.setZ(Size_SideHCALCell.y() + eps);
 
-    Pos_SideHCALRegion_0 = G4ThreeVector(0.5 * Size_ECALRegion.x() + 0.5 * Size_SideHCALRegion.x() + 1 * mm,
-                                         -0.5 * Size_ECALRegion.y() + 0.5 * Size_SideHCALRegion.y(),
+    G4double Size_max_temp = std::max(Size_ECALRegion.x(), Size_ECALRegion.y());
+    Pos_SideHCALRegion_0 = G4ThreeVector(0.5 * Size_max_temp + 0.5 * Size_SideHCALRegion.x() + 1 * mm,
+                                         -0.5 * Size_max_temp + 0.5 * Size_SideHCALRegion.y(),
                                          Pos_HCALRegion.z() - 0.5 * Size_HCALRegion.z() - 0.5 * Size_SideHCALRegion.z() - 1 * mm);
     Pos_SideHCALRegion.emplace_back(Pos_SideHCALRegion_0);
     Pos_SideHCALRegion.emplace_back(G4ThreeVector(- Pos_SideHCALRegion_0.y(),
@@ -858,6 +861,8 @@ bool Control::ReadYAML(const G4String &file_in) {
         //----------------------------------------
         // Electromagnetic Calorimeter
         ECAL_Name = Node["Geometry"]["ECAL"]["ECAL_Name"].as<std::string>();
+        ECAL_Staggered_x = Node["Geometry"]["ECAL"]["ECAL_Staggered_x"].as<bool>();
+        ECAL_Staggered_y = Node["Geometry"]["ECAL"]["ECAL_Staggered_y"].as<bool>();
         MaterialStr["ECALRegion_Mat"] = Node["Geometry"]["ECAL"]["ECALRegion_Mat"].as<std::string>();
         MaterialStr["ECAL_Center_Mat"] = Node["Geometry"]["ECAL"]["ECAL_Center_Mat"].as<std::string>();
         MaterialStr["ECAL_Wrap_Mat"] = Node["Geometry"]["ECAL"]["ECAL_Wrap_Mat"].as<std::string>();

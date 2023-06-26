@@ -20,7 +20,8 @@
 
 using AnaVar = std::variant<bool*, short*, int*, float*, double*, std::string*, TString*,
                             std::vector<bool>*, std::vector<short>*, std::vector<int>*, std::vector<float>*, std::vector<double>*, std::vector<std::string>*, std::vector<TString>*, std::vector<TVector3>*,
-                            std::vector<std::vector<bool>>*, std::vector<std::vector<short>>*, std::vector<std::vector<int>>*, std::vector<std::vector<float>>*, std::vector<std::vector<double>>*, std::vector<std::vector<std::string>>*, std::vector<std::vector<TString>>*>;
+                            std::vector<std::vector<bool>>*, std::vector<std::vector<short>>*, std::vector<std::vector<int>>*, std::vector<std::vector<float>>*, std::vector<std::vector<double>>*, std::vector<std::vector<std::string>>*, std::vector<std::vector<TString>>*,
+                            std::map<int,double>*, std::map<int,std::vector<double>>*>;
 
 class EventStoreAndWriter {
     /*
@@ -100,7 +101,7 @@ public:
     template<class T>
     void RegisterOutVariable(const std::string &var_name, T *address, const std::string &leaf_type = "", bool active = true) {
         //std::cerr << "[RegisterOutVariable] ==> The variable will not registered in CutFlow. " << std::endl;
-        std::cerr << "[RegisterOutVariable] ==> Register variable " << var_name << (leaf_type.empty() ? "" : " as " + leaf_type) << std::endl;
+        if(!is_display) std::cerr << "[RegisterOutVariable] ==> Register variable " << var_name << (leaf_type.empty() ? "" : " as " + leaf_type) << std::endl;
 
         if (std::find(registered_branch_.begin(), registered_branch_.end(), var_name) != registered_branch_.end()) {
             std::cerr << "[WARNING] ==> Variable " << var_name << " has already been registered." << std::endl;
@@ -160,11 +161,15 @@ public:
         return std::get<T*>(ana_var_col_.at(var_name).second);
     }
 
+    void setIsDisplay(bool v=true){is_display=v;};
+    bool getIsDisplay(){return is_display;};
+
 
 private:
 
     // Verbosity
     int Verbose{0};
+    bool is_display{false};
 
     // File Name and Tree Name
     std::string OutputFileName;

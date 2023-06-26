@@ -104,6 +104,9 @@ public:
     // Operators
     friend ostream &operator<<(ostream &os, const AnaProcessor &processor);
 
+    void setIsDisplay(bool v=true){is_display=v;};
+    bool getIsDisplay(){return is_display;};
+
 protected:
     // Algo Name
     string Name;
@@ -122,6 +125,7 @@ protected:
     // Event Writer and Data Storage
     shared_ptr<EventStoreAndWriter> EvtWrt;
 
+    bool is_display; 
 };
 
 #endif //DSIMU_ANAPROCESSOR_H

@@ -15,7 +15,7 @@ bool compE(CaloHit h1, CaloHit h2) {
 
 CaloHitsDisplay::CaloHitsDisplay() {
     CaloHitsDisplayList = new TEveElementList("Calo Hits Plot");
-    LegoListTree = gEve->AddToListTree(CaloHitsDisplayList, kFALSE);
+    // LegoListTree = gEve->AddToListTree(CaloHitsDisplayList, kFALSE);
 }
 
 CaloHitsDisplay::~CaloHitsDisplay() {
@@ -27,7 +27,7 @@ CaloHitsDisplay::~CaloHitsDisplay() {
     delete CaloHitsList;
 }
 
-
+//note for staggered ECAL there is no well-defined projection!
 void CaloHitsDisplay::makeLego(TEveViewer *v, TEveScene *s, ProjectionPlane plane) {
 
     s->DestroyElements();

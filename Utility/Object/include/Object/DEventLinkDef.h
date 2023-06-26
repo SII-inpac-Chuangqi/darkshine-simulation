@@ -66,6 +66,8 @@
 #pragma link C++ class DDetectorIDMaps+;
 
 #pragma link C++ class std::vector<TVector3>+;
+#pragma link C++ class std::map<int,double>+;
+#pragma link C++ class std::map<int,std::vector<double>>+;
 
 #endif
 

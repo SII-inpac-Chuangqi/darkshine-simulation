@@ -106,7 +106,7 @@ void DEvent::PrintDetails() {
                 << "* Step Collection: " << steps.first << std::endl
                 << "***********************************************************************************************************************"
                 << std::endl
-                << "| ID    |    x[mm]     y[mm]    z[mm]  |  Px[MeV]   Py[MeV]   Pz[MeV]    E[MeV] | PVName              Process Name    |"
+                << "| trkID |    x[mm]     y[mm]    z[mm]  |  Px[MeV]   Py[MeV]   Pz[MeV]    E[MeV] | PVName              Process Name    |"
                 << std::endl
                 << "***********************************************************************************************************************"
                 << std::endl;

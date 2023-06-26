@@ -69,7 +69,8 @@ public:
                          G4Material* regionMat,
                          G4int tree_height,
                          G4ThreeVector gap,
-                         G4bool if_place_to_mother);
+                         G4bool if_place_to_mother,
+                         G4ThreeVector stagger_size = G4ThreeVector(0,0,0));
 
     /// @param [in] tree_height Volume tree height, usually start from 1
     G4LogicalVolume* XYCrossingConstruct(G4int xNo, G4int yNo,

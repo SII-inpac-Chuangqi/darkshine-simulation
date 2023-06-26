@@ -17,6 +17,7 @@ namespace {
         std::cerr << " -- [-g] : read the geometry from input root file" << std::endl;
         std::cerr << " -- [-t] : use this option when reading truth tracker hit" << std::endl;
         std::cerr << " -- [-f] : read the event information from input root file" << std::endl;
+        std::cerr << " -- [-c] : read the DAna config (optional)" << std::endl;
         std::cerr << " -- [-h] : show this help usage" << std::endl;
         std::cerr << std::endl;
     }
@@ -31,12 +32,15 @@ int main(int argc, char **argv) {
 
     bool batch_mode = false;
     auto file_in = TString("dp_out.root");
+    auto conf_in = TString("");
     auto geo_file_in = TString("dp_out.root");
     bool no_strip_mode = false;
 
     for (int i = 1; i < argc; ++i) {
         if (std::string(argv[i]) == "-f")
             file_in = TString(argv[i+1]);
+        else if (std::string(argv[i]) == "-c")
+            conf_in = TString(argv[i+1]);
         else if (std::string(argv[i]) == "-g")
             geo_file_in = TString(argv[i+1]);
         else if (std::string(argv[i]) == "-t")
@@ -50,6 +54,11 @@ int main(int argc, char **argv) {
     }
 
     DisData::CreateInstance();
+    if(geo_file_in==""){
+        geo_file_in=file_in;
+        std::cout<<"No geometry file provided: read from input"<<std::endl;
+    }
+        
     dDisData->SetGeoFile(geo_file_in);
 
     auto EvtDisplay = new DEventDisplay();
@@ -64,6 +73,7 @@ int main(int argc, char **argv) {
     else{
         EvtDisplay->Initialize();
         //EvtDisplay->bookSlot();
+        EvtDisplay->loadAnaConfig(conf_in);
         EvtDisplay->readEvt();
 
         // default Draw 0-th event
