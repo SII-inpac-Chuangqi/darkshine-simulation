@@ -159,7 +159,7 @@ void DEvent::PrintDetails() {
 
 DStepVec *DEvent::RegisterStepCollection(const std::string &str) {
     if (StepCollection.count(str) != 0) {
-        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return null. " << str << std::endl;
         return nullptr;
     }
     auto tmpVec = new DStepVec();
@@ -176,7 +176,7 @@ DStepVec *DEvent::RegisterStepCollection(const std::string &str) {
 
 DigiFormVec *DEvent::RegisterOpticalCollection(const std::string &str) {
     if (OpticalCollection.count(str) != 0) {
-        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return null. " << str << std::endl;
         return nullptr;
     }
     auto tmpVec = new DigiFormVec();
@@ -193,7 +193,7 @@ DigiFormVec *DEvent::RegisterOpticalCollection(const std::string &str) {
 
 MCParticleVec *DEvent::RegisterMCParticleCollection(const std::string &str) {
     if (MCParticleCollection.count(str) != 0) {
-        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return null. " << str << std::endl;
         return nullptr;
     }
     auto tmpVec = new MCParticleVec();
@@ -209,7 +209,7 @@ MCParticleVec *DEvent::RegisterMCParticleCollection(const std::string &str) {
 
 MCPHelperVec *DEvent::RegisterMCPHelperCollection(const std::string &str) {
     if (MCPHelperCollection.count(str) != 0) {
-        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return null. " << str << std::endl;
         return nullptr;
     }
     auto tmpVec = new MCPHelperVec();
@@ -225,7 +225,7 @@ MCPHelperVec *DEvent::RegisterMCPHelperCollection(const std::string &str) {
 
 RecParticleVec *DEvent::RegisterRecParticleCollection(const std::string &str) {
     if (RecParticleCollection.count(str) != 0) {
-        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return null. " << str << std::endl;
         return nullptr;
     }
     auto tmpVec = new RecParticleVec();
@@ -241,7 +241,7 @@ RecParticleVec *DEvent::RegisterRecParticleCollection(const std::string &str) {
 
 SimulatedHitVec *DEvent::RegisterSimulatedHitCollection(const std::string &str) {
     if (SimulatedHitCollection.count(str) != 0) {
-        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return null." << str << std::endl;
         return nullptr;
     }
     auto tmpVec = new SimulatedHitVec();
@@ -257,8 +257,7 @@ SimulatedHitVec *DEvent::RegisterSimulatedHitCollection(const std::string &str) 
 
 CalorimeterHitVec *DEvent::RegisterCalorimeterHitCollection(const std::string &str) {
     if (CalorimeterHitCollection.count(str) != 0) {
-        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
-        return nullptr;
+        std::cerr << "[WARNING] ==> Key already exists. Return null. " << str << std::endl;
     }
     auto tmpVec = new CalorimeterHitVec();
     CalorimeterHitCollection.emplace(std::pair<std::string, CalorimeterHitVec *>(str, tmpVec));

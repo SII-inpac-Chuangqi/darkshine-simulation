@@ -11,6 +11,7 @@
 #include "Algo/ExampleProcessor.h"
 #include "Algo/MCTruthAnalysis.h"
 #include "Algo/RecECAL.h"
+#include "Algo/ECAL_ML_IO.h"
 #include "Algo/Digitizer.h"
 #include "Algo/TrackingProcessor.h"
 #include "Algo/CutFlowAnalysis.h"
@@ -64,6 +65,7 @@ void ControlManager::run() {
     /* Explicitly declare processors with name */
     /* DEFINE ALGO PROCESSOR HERE */
     algo->RegisterAnaProcessor(shared_ptr<Digitizer>(new Digitizer("Digitizer", EvtWrt)));
+    algo->RegisterAnaProcessor(shared_ptr<ECAL_ML_IO>(new ECAL_ML_IO("ECAL_ML_IO", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<TrackingProcessor>(new TrackingProcessor("Tracking", EvtWrt)));

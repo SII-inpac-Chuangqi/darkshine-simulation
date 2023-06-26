@@ -61,10 +61,9 @@ void Digitizer::ProcessEvt(AnaEvent *evt) {
 
     std::string CollectionName = "ECAL";
 
-    // IMPORTANT: check if the collection exists
+    // IMPORTANT: check if the optical collection empty (now it is not used and FS on simu hit instead)
     if (OpticalCollection.count(CollectionName) != 0) {
         const auto &optical = OpticalCollection.at(CollectionName);
-
         auto DigitizedCollection = evt->RegisterCalorimeterHitCollection(CollectionName);
 
         digitized_total_energy = 0.;

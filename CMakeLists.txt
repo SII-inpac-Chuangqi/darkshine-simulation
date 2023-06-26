@@ -63,6 +63,8 @@ IF (BUILD_DANA)
     MESSAGE("-- Eigen Dir: ${EIGEN3_INCLUDE_DIR}")
 ENDIF ()
 
+# HDF5
+find_package(HDF5 REQUIRED COMPONENTS C CXX)
 # json
 find_package(nlohmann_json 3.2.0 REQUIRED)
 
@@ -113,7 +115,8 @@ include_directories(
         ${Util_List}
         ${Algo_List}
         ${Geant4_INCLUDE_DIR}
-        ${HEPMC_INCLUDE_DIR})
+        ${HEPMC_INCLUDE_DIR}
+        ${HDF5_INCLUDE_DIR})
 
 #----------------------------------------------------------------------------
 # DEvent
