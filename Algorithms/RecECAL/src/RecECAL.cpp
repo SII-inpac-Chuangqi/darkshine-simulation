@@ -32,6 +32,18 @@ RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProce
     RegisterIntParameter("Advance", "Advanced analysis level", &enAda, 2);
     RegisterIntParameter("SaveTrackInfo", "SaveTrackInfo", &SaveTrackInfo, 0);
     RegisterIntParameter("SaveTruthInfo", "SaveTruthInfo(from MCparticle)", &SaveTruthInfo, 0);
+    RegisterIntParameter("StaggeredECAL", "use StaggeredECAL Algo", &StaggeredECAL, 1);
+    // detailed parameters
+    RegisterDoubleParameter("Enoise", "Enoise/MeV or Digit", &_Enoise, 1); 
+    RegisterDoubleParameter("EThres_S", "EThres_S/noise", &_EThres_S, 4); 
+    RegisterDoubleParameter("EThres_N", "EThres_N/noise", &_EThres_N, 2); 
+    RegisterDoubleParameter("EThres_P", "EThres_P/noise", &_EThres_P, 0); 
+    RegisterDoubleParameter("Critical_E", "Splitting Critical_E/MeV or Digit", &_Critical_E, 500); 
+    RegisterDoubleParameter("Critical_N", "Splitting Critical_N", &_Critical_N, 4); 
+    RegisterDoubleParameter("EM_ENERGY_SCALE_MeV", "EM_ENERGY_SCALE_MeV", &_EM_ENERGY_SCALE_MeV, 1); 
+    RegisterDoubleParameter("ENERGY_SHIFT_MeV", "ENERGY_SHIFT_MeV", &_ENERGY_SHIFT_MeV, 0); 
+    RegisterIntParameter("weight_type", "weight type 0-linear 1-log1p", &_weight_type, 0); 
+    RegisterDoubleParameter("EM_SCALE_LENGTH_mm", "EM_SCALE_LENGTH_mm", &_EM_SCALE_LENGTH_mm, 50); 
 
     //extracted the parameter
     setNX(dAnaData->getNECalCellX());
@@ -40,31 +52,97 @@ RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProce
     setSurfaceZ(dAnaData->getECalSurfaceZ());
 }
 
-void RecECAL::Begin() {
 
+        double RecECAL::Cali_Fuc(int cali_pdg, double E_before_cali){//calibration function
+             auto tmp_res_1 = E_before_cali;
+        switch(cali_pdg){
+            case 2112: {//neutron
+                tmp_res_1 = 3.537*pow(E_before_cali, 1.02) - 20.63;
+                break;
+            }
+            case 2212:{//proton{}
+                if(E_before_cali <= 120)
+                    tmp_res_1 = 2.012*E_before_cali-169;
+                else
+                    tmp_res_1 = 1.331*pow(E_before_cali, 1.15)+4.938;
+                break;
+            }
+            case 111:{//pi0
+                if(E_before_cali <= 100)
+                    tmp_res_1 = E_before_cali*3.818+2.95234;
+                else
+                    tmp_res_1 =  1.265*pow(E_before_cali, 1.11)+83.4566;
+                break;
+            }
+            case 211:{//pi+
+                tmp_res_1 =  1.045*pow(E_before_cali, 1.18)-21.70;
+                break;
+            }
+            case -211:{//pi-
+                tmp_res_1 = 1.298*pow(E_before_cali, 1.15)-58.12;
+                break;
+            }
+            case 311:{//kaon0
+                tmp_res_1 = 2.138*pow(E_before_cali, 1.07)-136.7;
+                break;
+            }
+            case 321:{//kaon+
+                tmp_res_1 = 0.3139*pow(E_before_cali, 1.35)-24.51;
+                break;
+            }
+            case -321:{//kaon-
+                if(E_before_cali <= 100)
+                    tmp_res_1 = 1.083*E_before_cali-31.09;
+                else
+                    tmp_res_1 = 0.5562*pow(E_before_cali, 1.26)-133.37;
+                break;
+            }
+            case 13:{//mu-
+                if(E_before_cali <= 180)
+                    tmp_res_1 =  2.572*E_before_cali-24.67;
+                else
+                    tmp_res_1 =  (1.713e-23)*pow(E_before_cali, 10)-(4.272e-10)*pow(E_before_cali, 5)+0.0384*pow(E_before_cali, 2)-971.1;
+                break;
+            }
+            case -13:{//mu+
+                if(E_before_cali <= 180)
+                    tmp_res_1 =  2.572*E_before_cali-24.67;
+                else
+                    tmp_res_1 =  (1.699e-23)*pow(E_before_cali, 10)-(4.291e-10)*pow(E_before_cali, 5)+0.0388*pow(E_before_cali, 2)-998.8;
+                break;
+            }
+        }
+//        return tmp_res_1 <= 0 ? E_before_cali : tmp_res_1;
+            // return tmp_res_1;
+            return (tmp_res_1 == E_before_cali ? E_before_cali*2.8 : tmp_res_1);
+        
+        }
+
+void RecECAL::Begin() {
+    if(StaggeredECAL<=0)
+        std::cerr<<"WARNING!! Use legacy ECAL (non staggered), is it what you want??!"<<std::endl;
+    
     ReadCollections();
     ecal_col_size = static_cast<int>(ecal_cols.size());
     hcal_col_size = static_cast<int>(hcal_cols.size());
     sidehcal_col_size = static_cast<int>(sidehcal_cols.size());
 
+    //printout all parameter
+    std::cout<<"ECAL Topocluster Parameters: "<<std::endl
+                <<"\t Enoise "<<_Enoise<<std::endl
+                <<"\t EThres_S "<<_EThres_S<<std::endl
+                <<"\t EThres_N "<<_EThres_N<<std::endl
+                <<"\t EThres_P "<<_EThres_P<<std::endl
+                <<"\t Critical_E "<<_Critical_E<<std::endl
+                <<"\t Critical_N "<<_Critical_N<<std::endl
+                <<"\t EM_SCALE_LENGTH_mm "<<_EM_SCALE_LENGTH_mm<<std::endl
+                <<"\t EM_ENERGY_SCALE_MeV "<<_EM_ENERGY_SCALE_MeV<<std::endl
+                <<"\t ENERGY_SHIFT_MeV "<<_ENERGY_SHIFT_MeV<<std::endl
+                <<"\t weight_type "<<_weight_type<<std::endl;
+
     // Register Output Variable
     if (EvtWrt) {
         EvtWrt->RegisterIntVariable("ECAL_COL_SIZE", &ecal_col_size, "ECAL_COL_SIZE/I");
-
-//        EvtWrt->RegisterDoubleVariable("ECAL_E_total", &E_total, "ECAL_E_total/D");
-//        EvtWrt->RegisterDoubleVariable("ECAL_E_max", &E_max, "ECAL_E_max/D");
-//        EvtWrt->RegisterDoubleVariable("ECAL_E_frac", &E_frac, "ECAL_E_frac/D");
-//        EvtWrt->RegisterDoubleVariable("ECAL_Moment_Lat", &Moments_Lat, "ECAL_Moment_Lat/D");
-//        EvtWrt->RegisterDoubleVariable("ECAL_E_frac_vec", E_frac_vec, "ECAL_E_frac_vec[8]/D");
-//        EvtWrt->RegisterDoubleVariable("ECAL_Moment_R", Moments_R, "ECAL_Moment_R[4]/D");
-//        EvtWrt->RegisterDoubleVariable("ECAL_Moment_X", Moments_X, "ECAL_Moment_X[4]/D");
-//        EvtWrt->RegisterDoubleVariable("ECAL_Moment_Y", Moments_Y, "ECAL_Moment_Y[4]/D");
-//        EvtWrt->RegisterDoubleVariable("ECAL_Moment_Z", Moments_Z, "ECAL_Moment_Z[4]/D");
-//
-//        EvtWrt->RegisterDoubleVariable("HCAL_E_total", &HCAL_total, "HCAL_E_total/D");
-//        EvtWrt->RegisterDoubleVariable("HCAL_E_Max_Cell", &HCAL_E_Max_Cell, "HCAL_E_Max_Cell/D");
-
-
         EvtWrt->RegisterOutVariable("ECAL_E_total", &E_total);
         EvtWrt->RegisterOutVariable("ECAL_E_max", &E_max);
         EvtWrt->RegisterOutVariable("ECAL_E_frac", &E_frac);
@@ -81,6 +159,7 @@ void RecECAL::Begin() {
         EvtWrt->RegisterOutVariable("SideHCAL_COL_SIZE", &sidehcal_col_size);
         EvtWrt->RegisterOutVariable("SideHCAL_E_total", &SideHCAL_total);
         EvtWrt->RegisterOutVariable("SideHCAL_E_Max_Cell", &SideHCAL_E_Max_Cell);
+        EvtWrt->RegisterOutVariable("HCAL_E_Cali", &HCAL_E_Cali);
 
         if(enAda>3){
             EvtWrt->RegisterOutVariable("ECAL_ECell_XY", &ECAL_ECell_XY);
@@ -104,7 +183,7 @@ void RecECAL::Begin() {
             EvtWrt->RegisterOutVariable("ECAL_ClusterSub_phi",&ECAL_ClusterSub_phi);
             EvtWrt->RegisterOutVariable("ECAL_ClusterSub_X_cast",&ECAL_ClusterSub_X_cast);
             EvtWrt->RegisterOutVariable("ECAL_ClusterSub_Y_cast",&ECAL_ClusterSub_Y_cast);
-            // -_-
+            // -_-'
             EvtWrt->RegisterIntVariable("ECAL_ClusterSub_NCell_total", &ECAL_ClusterSub_NCell_total, "ECAL_ClusterSub_NCell_total/I");
             EvtWrt->RegisterIntVariable("ECAL_ClusterSub_N", &ECAL_ClusterSub_N, "ECAL_ClusterSub_N/I");
             EvtWrt->RegisterDoubleVariable("ECAL_ClusterSub_E_total", &ECAL_ClusterSub_E_total, "ECAL_ClusterSub_E_total/D");
@@ -162,8 +241,8 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
     if(verbose>1) std::cout<<"=========="<<std::endl;
 
     // Get Simulated Hits for the current event
-    //const auto &HitCollection = evt->getSimulatedHitCollection();
-    const auto &HitCollection = evt->getCalorimeterHitCollection();
+    //const auto &HitCollection = evt->getSimulatedHitCollection(); //  truth hit
+    const auto &HitCollection = evt->getCalorimeterHitCollection(); //  digitized/smeared hit
     int smearing_id=0;
     for (const auto &HitCollectionName: ecal_cols) {
         // define the collection name (RawMCParticle) to find.
@@ -186,7 +265,8 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                 continue;
             }
             // Calculate some cluster parameters ( moments...)
-            auto cluster_ana = std::shared_ptr<Cluster_Analysis>(new Cluster_Analysis(hits));
+            auto cluster_ana = std::shared_ptr<TopoCluster_Analysis>(new TopoCluster_Analysis(hits, StaggeredECAL>0));
+            setup_TopoCluster_Analysis(cluster_ana);
             if(verbose>1) std::cout<<"T_total "<<smearing_id<<" "<<cluster_ana->FindETotal()<<std::endl;
             E_total.push_back(cluster_ana->FindETotal());
             E_max.push_back(cluster_ana->FindMaxEHit()->getE());
@@ -290,6 +370,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                 }
                 if (SaveTruthInfo)
                 {
+                    // FIXME: figure out difference with getTruthsAtECalFront()
                     const auto &MCCollection = evt->getMcParticleCollection();
                     const auto &MPHCollection = evt->getMcPHelperCollection();
 
@@ -410,9 +491,15 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                     ret2.reserve(100);
                     bool status=false;
                     if(enAda>2){
-                        status=cluster_ana->Do(&ret1,&ret2);
+                        if(!is_display)
+                            status=cluster_ana->Do(&ret1,&ret2);
+                        else
+                            status=cluster_ana->Do(&ret1,&ret2,&clustered_hits);
                     }else{
-                        status=cluster_ana->Do(&ret1);
+                        if(!is_display)
+                            status=cluster_ana->Do(&ret1,nullptr);
+                        else
+                            status=cluster_ana->Do(&ret1,nullptr,&clustered_hits);
                     }
                     if(status){
                         std::sort(ret1.begin(), ret1.end(), Esorter_descendingCluster()); //we must sprt the clusters!
@@ -524,13 +611,64 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
             auto Collection_String = Form("HCAL_%s", HCAL_Collection_Name.c_str());
             if (HitCollection.count(Collection_String) != 0) {
                 const auto &hits = HitCollection.at(Collection_String);
-
+                
                 for (auto hit : *hits) {
                     HCAL_E += hit->getE();
                     HCAL_E_Max_cell = (HCAL_E_Max_cell >= hit->getE()) ? HCAL_E_Max_cell : hit->getE();
                 }
             }
-//        }
+//        } 
+        // calibration part and record particle information
+        double HCAL_E_Front_total = 0;
+        double HCAL_E_cali = 0;
+        std::map<int, double> mp_Front_HCAL;
+        std::map<int, double> E_HCAL_Cali;
+        for(auto& p_state : evt->getTruthInfo()->getStatesInHCAL()){
+            int Pdg_Front_HCAL = p_state.first.second;
+            auto prev_E_Front_HCAL = p_state.second.first->E;
+            HCAL_E_Front_total += prev_E_Front_HCAL;
+            mp_Front_HCAL[Pdg_Front_HCAL] += prev_E_Front_HCAL;
+        }
+            /*
+            if(cali_pdg == 2112){//incident partcile neutron
+                return 3.537*pow(E_before_cali, 1.02) - 20.63;
+            }
+            else if(cali_pdg == 2212){//proton
+                if(E_before_cali <= 120){
+                    auto tmp_res_1 = 2.012*E_before_cali-169;
+                    return tmp_res_1 < 0 ? 0 : tmp_res_1;
+                }
+                else
+                    return 1.331*pow(E_before_cali, 1.15)+4.938;
+            }
+            else if(cali_pdg == 111){//pi0
+
+            }
+            else if(cali_pdg == 211){//pi+
+
+            }
+            else if(cali_pdg == -211){//pi-
+            }
+            else if(cali)
+            else if(cali_pdg == 13){//mu-
+                if(E_before_cali <= 180)
+                    return 2.572*E_before_cali-24.67;
+                else if(E_before_cali >= 230)
+                    return 1.713e-23*pow(E_before_cali, 10)-4.272e-10*pow(E_before_cali, 5)+0.0384*pow(E_before_cali, 2)-971.1;
+            }
+            else if(cali_pdg == -13){//mu+
+                if(E_before_cali <= 180)
+                    return 2.572*E_before_cali-24.67;
+                else if(E_before_cali >= 230)
+                    return 1.699e-23*pow(E_before_cali, 10)-4.291e-10*pow(E_before_cali, 5)+0.0388*pow(E_before_cali, 2)-998.8;
+            }*/            
+        for(auto& item_mp_Front_HCAL : mp_Front_HCAL){
+            // mp[item_mp_Front_HCAL.first]
+            //item_mp_Front_HCAL.second
+            auto E_before_cali= (item_mp_Front_HCAL.second/HCAL_E_Front_total)*HCAL_E;
+            HCAL_E_cali += Cali_Fuc(item_mp_Front_HCAL.first, E_before_cali);
+        }
+        HCAL_E_Cali.push_back(HCAL_E_cali);
         HCAL_total.push_back(HCAL_E);
         HCAL_E_Max_Cell.push_back(HCAL_E_Max_cell);
     }

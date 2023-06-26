@@ -126,8 +126,8 @@ Biasing:
   if_bias_ECAL: false
 
   BiasParticle:
-    e-: false # for electron*, DMProcess, etc.
-    gamma: true # for Gamma*, photon*, conv, etc.
+    e-: true # for electron*, DMProcess, etc.
+    gamma: false # for Gamma*, photon*, conv, etc.
   BiasProcess: "photonNuclear"
   # BiasProcess: "DMProcessDMBrem"
   BiasFactor: 1e21
@@ -265,6 +265,8 @@ Geometry:
     rec_Tracker_Strip_Block_N: 50 # Strip number per Block. This number must be a common divisor of rec_Tracker_Strip_N !
   ECAL:
     ECAL_Name: "ECAL"
+    ECAL_Staggered_x: true
+    ECAL_Staggered_y: true
 
     # ECAL Main Region Material
     ECALRegion_Mat: "CarbonFiber"

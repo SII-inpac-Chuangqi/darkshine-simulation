@@ -1,4 +1,5 @@
 #include "DisData.h"
+// DSium is length/mm. so is it.
 
 DisData *dDisData = nullptr;
 
@@ -26,7 +27,7 @@ void DisData::SetMagnets()
        !geo_file_->Get<DMagnet>("magnet1") ||
        !geo_file_->Get<DMagnet>("magnet2"))
     {
-        std::cerr << "[WARNING] ==> Geometry not loaded" << std::endl;
+        std::cerr << "[WARNING] ==> Magnets not loaded" << std::endl;
         if_uniform_mag_ = true;
         return;
     }
@@ -34,6 +35,11 @@ void DisData::SetMagnets()
     magnets_.at(0) = geo_file_->Get<DMagnet>("magnet0");
     magnets_.at(1) = geo_file_->Get<DMagnet>("magnet1");
     magnets_.at(2) = geo_file_->Get<DMagnet>("magnet2");
+    
+    std::cout<<"[INFO] Magnets info:"<<std::endl;
+    geo_file_->Get<DMagnet>("magnet0")->Print();
+    geo_file_->Get<DMagnet>("magnet1")->Print();
+    geo_file_->Get<DMagnet>("magnet2")->Print();
 }
 
 double DisData::GetMagnetXAt(double x, double y, double z)

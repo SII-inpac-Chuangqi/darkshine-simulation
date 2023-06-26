@@ -11,6 +11,10 @@
     DSimu v1.5.6
     1. DSimu: Fix DetectorSD Bug
 
+2022-12-10
+    DSimu v1.6: Staggered ECAL
+    DAna v1.5.6: Add HCAL MC Calibration
+
 2022-12-05
     DSimu v1.5, DAna v1.5.5
     1. DAna: Add branch SideHCAL_E_total and SideHCAL_E_Max_Cell

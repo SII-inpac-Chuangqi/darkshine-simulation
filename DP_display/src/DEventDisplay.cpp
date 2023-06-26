@@ -166,7 +166,7 @@ bool DEventDisplay::readEntry(int i) {
 
 void DEventDisplay::Open(DEventDisplay *evtDis) {
     makeGUIRaw(evtDis);
-    //makeGUIProcessor(evtDis);
+    makeGUIProcessor(evtDis);
 
     gEve->Redraw3D(kTRUE);
     gApplication->Run(kFALSE);
@@ -245,14 +245,14 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
             guidrawSimuCaloHits->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptions()");
         }
         frmMain1->AddFrame(hf);
-        hf = new TGHorizontalFrame(frmMain1);
-        {
-            guidrawCaloHitsLego = new TGCheckButton(hf, "Draw Simulated CaloHits Lego");
-            if (guidrawCaloHitsLego) guidrawCaloHitsLego->Toggle();
-            hf->AddFrame(guidrawCaloHitsLego);
-            guidrawCaloHitsLego->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptions()");
-        }
-        frmMain1->AddFrame(hf);
+        // hf = new TGHorizontalFrame(frmMain1);
+        // {
+        //     guidrawCaloHitsLego = new TGCheckButton(hf, "Draw Simulated CaloHits Lego");
+        //     if (guidrawCaloHitsLego) guidrawCaloHitsLego->Toggle();
+        //     hf->AddFrame(guidrawCaloHitsLego);
+        //     guidrawCaloHitsLego->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptions()");
+        // }
+        // frmMain1->AddFrame(hf);
     }// Draw Options
 
     // MC Tracks Options
@@ -370,37 +370,37 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
         frmMain1->AddFrame(hf);
     }// Calo Options
 
-    // CaloHit Display Options
-    {
-        hf = new TGHorizontalFrame(frmMain1);
-        {
-            lbl = new TGLabel(hf, "\n CaloHit Lego Options");
-            hf->AddFrame(lbl);
-        }
-        frmMain1->AddFrame(hf);
+    // CaloHit Lego Display Options
+    // {
+    //     hf = new TGHorizontalFrame(frmMain1);
+    //     {
+    //         lbl = new TGLabel(hf, "\n CaloHit Lego Options");
+    //         hf->AddFrame(lbl);
+    //     }
+    //     frmMain1->AddFrame(hf);
 
-        hf = new TGHorizontalFrame(frmMain1);
-        {
-            guiLogCaloHitsLego = new TGCheckButton(hf, "Log Scale");
-            if (guiLogCaloHitsLego) guiLogCaloHitsLego->Toggle();
-            hf->AddFrame(guiLogCaloHitsLego);
-            guiLogCaloHitsLego->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptions()");
-        }
-        frmMain1->AddFrame(hf);
+    //     hf = new TGHorizontalFrame(frmMain1);
+    //     {
+    //         guiLogCaloHitsLego = new TGCheckButton(hf, "Log Scale");
+    //         if (guiLogCaloHitsLego) guiLogCaloHitsLego->Toggle();
+    //         hf->AddFrame(guiLogCaloHitsLego);
+    //         guiLogCaloHitsLego->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptions()");
+    //     }
+    //     frmMain1->AddFrame(hf);
 
-        hf = new TGHorizontalFrame(frmMain1);
-        {
-            guiScaleFactorLego = new TGNumberEntry(hf, _scale_factor_Lego, 6, 999, TGNumberFormat::kNESReal,
-                                                   TGNumberFormat::kNEANonNegative,
-                                                   TGNumberFormat::kNELLimitMinMax,
-                                                   0.01, 10.);
-            hf->AddFrame(guiScaleFactorLego);
-            guiScaleFactorLego->Connect("ValueSet(Long_t)", "DEventDisplay", fh, "guiOptions()");
-            lbl = new TGLabel(hf, " Scale Factor of Height");
-            hf->AddFrame(lbl);
-        }
-        frmMain1->AddFrame(hf);
-    }// CaloHit Display Options
+    //     hf = new TGHorizontalFrame(frmMain1);
+    //     {
+    //         guiScaleFactorLego = new TGNumberEntry(hf, _scale_factor_Lego, 6, 999, TGNumberFormat::kNESReal,
+    //                                                TGNumberFormat::kNEANonNegative,
+    //                                                TGNumberFormat::kNELLimitMinMax,
+    //                                                0.01, 10.);
+    //         hf->AddFrame(guiScaleFactorLego);
+    //         guiScaleFactorLego->Connect("ValueSet(Long_t)", "DEventDisplay", fh, "guiOptions()");
+    //         lbl = new TGLabel(hf, " Scale Factor of Height");
+    //         hf->AddFrame(lbl);
+    //     }
+    //     frmMain1->AddFrame(hf);
+    // }// CaloHit Display Options
 
 
     frmMain1->MapSubwindows();
@@ -445,6 +445,11 @@ void DEventDisplay::gotoEvent(unsigned int id) {
 
     // Redraw Event
     drawEvent(_eventID);
+    // plot debug reference point
+    // double ref_point[]={0.731222,0,18.02};
+    // gEve->GetDefaultViewer()
+    //     ->GetGLViewer()
+    //     ->SetGuideState(TGLUtil::kAxesOrigin, kTRUE, kTRUE, ref_point);
 
 }
 
@@ -454,7 +459,7 @@ void DEventDisplay::gotoEvent(unsigned int id) {
     _drawSimuCaloHits = guidrawSimuCaloHits->IsOn();
     _drawMCTracks = guidrawMCTracks->IsOn();
     _drawSimuTrkHits = guidrawSimuTrkHits->IsOn();
-    _drawSimuCaloLego = guidrawCaloHitsLego->IsOn();
+    // _drawSimuCaloLego = guidrawCaloHitsLego->IsOn();
 
     // MC Track Options
     MC_Emin = guiMC_Emin->GetNumberEntry()->GetNumber();
@@ -469,8 +474,8 @@ void DEventDisplay::gotoEvent(unsigned int id) {
     _scale_factor_SimuCaloHits = guiScaleFactorSimuCaloBox->GetNumberEntry()->GetNumber();
 
     // CaloHits Lego Options
-    _drawLogSacle = guiLogCaloHitsLego->IsOn();
-    _scale_factor_Lego = guiScaleFactorLego->GetNumberEntry()->GetNumber();
+    // _drawLogSacle = guiLogCaloHitsLego->IsOn();
+    // _scale_factor_Lego = guiScaleFactorLego->GetNumberEntry()->GetNumber();
 
     gotoEvent(_eventID);
 }

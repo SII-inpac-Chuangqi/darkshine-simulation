@@ -5,6 +5,18 @@
 #ifndef DSIMU_ANADATA_H
 #define DSIMU_ANADATA_H
 
+#ifdef RM_UNIT
+#define CUNIT 1
+#else
+#define CUNIT 10
+#endif
+//logic of length unit
+// GEANT4 aleays use mm
+// TGeo and TEve depends on version, and defined using CUNIT
+// When read from TGeo/yaml/TEve x=f() : x*CUNIT = x_mm
+// When send to TGeo/TEve f(x) : x_mm/CUNIT = x
+// Plain number in DSimu/DAna/DDis always using mm
+
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
 #endif
@@ -77,6 +89,7 @@ public:
     const std::vector<double> getLayerThicknessRec() const {return layer_thickness_rec;}
     const std::vector<int>    getStripNoRec() const {return strip_no_rec;}
     const std::vector<double> getAnglesRec()  const {return angles_rec;}
+
     double getCenterXRec() const {return center_x_rec_;}
     double getCenterYRec() const {return center_y_rec_;}
     double getCenterZRec() const {return center_z_rec_;}
@@ -85,6 +98,7 @@ public:
     double getLengthZRec() const {return length_z_rec_;}
 
 //ECal
+    int getECAL_globalID(int block, int unit);
     const std::array<TVector3,MAX_ECAL_CELLS>& getECalPosMap() const {return ECAL_posmap;};
     [[maybe_unused]] double getECalCenterX() const {return ECAL_center_x;}
     [[maybe_unused]] double getECalCenterY() const {return ECAL_center_y;}

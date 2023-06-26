@@ -21,7 +21,7 @@ global_selection_title: "Inclusive Validation"
 variables:
   - name: "ECAL_E_total[0]"
     # range: [ 10,6000,8000 ] # [bin size, min, max], or set 0 for variables bin
-    vbins: [ 6000,6400,6800,7200,7300,7400,7500,7600,7700,7800,7900,8000,8100 ]
+    vbins: [ 6000,6400,6800,7000,7100,7200,7300,7400,7500,7600,7700,7800,7900,8000,8100 ]
     label: [ "Truth E_{total}", "MeV" ]
     # Optional
     # selection_title: "Inclusive Validation"
@@ -34,7 +34,7 @@ variables:
     # ratio_range: [ 0.5 , 1.5]
 
   - name: "ECAL_Cluster_E_total"
-    vbins: [ 6000,6400,6800,7200,7300,7400,7500,7600,7700,7800,7900,8000,8100 ]
+    vbins: [ 6000,6400,6800,7000,7100,7200,7300,7400,7500,7600,7700,7800,7900,8000,8100 ]
     label: [ "Clustered E_{total}", "MeV" ]
 
   - name: "ECAL_Cluster_E[0]"

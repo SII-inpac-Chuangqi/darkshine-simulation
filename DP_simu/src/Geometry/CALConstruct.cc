@@ -487,7 +487,8 @@ G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo,
                                                G4Material * regionMat,
                                                G4int tree_height,
                                                G4ThreeVector gap,
-                                               G4bool if_place_to_mother) {
+                                               G4bool if_place_to_mother,
+                                               G4ThreeVector stagger_size) {
     /// check consistency
     if (!xNo || !yNo || !zNo) {
         G4cout << fCALName << " Construction Error: at least one of the matrix element is zero." << G4endl;
@@ -520,12 +521,13 @@ G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo,
     /// Unit LV Placement
     G4String UnitName = (tree_height == 1 ? fCALName + "_UnitPV" : fCALName + "_PV_h" + std::to_string(tree_height - 1) );
     fCopyNo = 0;
+    int stagger_sign = 1;
     G4PVPlacement* UnitPV = nullptr;
     for (int k = 0; k < zNo; k++) {
         for (int j = 0; j < yNo; j++) {
             for (int i = 0; i < xNo; i++) {
-                UnitPosX = -1. * GroupHalfSize.x() + (2 * i + 1) * UnitXHalfLength + (i + 0.5) * gap.x();
-                UnitPosY = -1. * GroupHalfSize.y() + (2 * j + 1) * UnitYHalfLength + (j + 0.5) * gap.y();
+                UnitPosX = -1. * GroupHalfSize.x() + (2 * i + 1) * UnitXHalfLength + (i + 0.5) * gap.x() + stagger_sign * stagger_size.x();
+                UnitPosY = -1. * GroupHalfSize.y() + (2 * j + 1) * UnitYHalfLength + (j + 0.5) * gap.y() + stagger_sign * stagger_size.y();
                 UnitPosZ = -1. * GroupHalfSize.z() + (2 * k + 1) * UnitZHalfLength + (k + 0.5) * gap.z();
 
                 UnitPV = new G4PVPlacement(nullptr,
@@ -541,6 +543,7 @@ G4LogicalVolume* CALConstruct::MatrixConstruct(G4int xNo, G4int yNo, G4int zNo,
                 fCopyNo++;
             }
         }
+        stagger_sign *= -1;
     }
 
     return motherLV;

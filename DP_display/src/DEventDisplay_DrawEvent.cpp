@@ -71,7 +71,8 @@ bool DEventDisplay::drawEvent(int id, bool resCam) {
     /************************************/
     /*   Reconstruction Visualization   */
     /************************************/
-    //RunAnaProcessors();
+    std::cout << "[Info] ==> Starting Ana processor(s)..." << std::flush;
+    RunAnaProcessors();
 
     /*********************/
     /*   Finalization   */
@@ -83,7 +84,7 @@ bool DEventDisplay::drawEvent(int id, bool resCam) {
     return true;
 }
 
-void DEventDisplay::drawInitialParticleStep() {
+void DEventDisplay::drawInitialParticleStep() { // initial particle will loos energy during passing the tracker... so recorded their steps
     // Step Collection
     auto StepCols = evt->getStepCollection();
     for (const auto &StepCol : StepCols) {
@@ -91,19 +92,121 @@ void DEventDisplay::drawInitialParticleStep() {
         std::cout << "[Event Display] ==> Draw Collection: " << StepCol.first;
         std::cout << ", with total steps: " << Steps->size() << std::endl;
         if (Steps->size() < 2) continue;
-        auto lineSet = new TEveStraightLineSet(StepCol.first.data());
-        for (unsigned i = 0; i < Steps->size() - 1; ++i) {
-            // loop from 0 to n-1 to draw n-1 lines
-            auto step = Steps->at(i);
-            auto next_step = Steps->at(i + 1);
+        
+        std::vector<int> trkIDs{};
+        for(auto s:*Steps)
+            trkIDs.push_back(s->getId());
+        auto unique_trk = std::unique(trkIDs.begin(),trkIDs.end());
+        trkIDs.erase(unique_trk, trkIDs.end()); 
+        std::cout<<"[INFO] detected incident MC particles "<<trkIDs.size()<<std::endl;
+        if(std::find(trkIDs.begin(), trkIDs.end(), 0) != trkIDs.end()){
+            // old style 1.5 DStep: ID=0,1,2,... only support same initial trk
+            auto lineSet = new TEveStraightLineSet(StepCol.first.data());
+            for (unsigned i = 0; i < Steps->size() - 1; ++i) {
+                // loop from 0 to n-1 to draw n-1 lines
+                auto step = Steps->at(i);
+                auto next_step = Steps->at(i + 1);
 
-            TVector3 start(step->getX() / CUNIT, step->getY() / CUNIT, step->getZ() / CUNIT);
-            TVector3 end(next_step->getX() / CUNIT, next_step->getY() / CUNIT, next_step->getZ() / CUNIT);
+                TVector3 start(step->getX() / CUNIT, step->getY() / CUNIT, step->getZ() / CUNIT);
+                TVector3 end(next_step->getX() / CUNIT, next_step->getY() / CUNIT, next_step->getZ() / CUNIT);
 
-            makeLines(lineSet, start, end, kRed, 1, false, 3, 0);
+                makeLines(lineSet, start, end, kRed, 1, false, 3, 0);
+            }
+            gEve->AddElement(lineSet);
+            // always copy the vec...
+            auto steps = std::make_shared<DStepVec>(*Steps);
+            MCSteps.insert({1,std::move(steps)});
+        }else{
+            // new style 1.5 DStep: ID=trkID:1,2,...support multiple intial trks
+            for(auto trkID:trkIDs){
+                auto lineSet = new TEveStraightLineSet(Form("%s trk %d",StepCol.first.c_str(),trkID));
+                // re-org the steps and keep
+                auto steps = std::make_shared<DStepVec>();
+                double initialE=-1;
+                std::copy_if (Steps->begin(), Steps->end(), std::back_inserter(*steps), [trkID](DStep* s){return s->getId()==trkID;});
+                for (unsigned i = 0; i < steps->size() - 1; ++i) {
+                    // loop from 0 to n-1 to draw n-1 lines
+                    auto step = steps->at(i);
+                    auto next_step = steps->at(i + 1);
+
+                    if(i==0)
+                        initialE=step->getE();
+
+                    TVector3 start(step->getX() / CUNIT, step->getY() / CUNIT, step->getZ() / CUNIT);
+                    TVector3 end(next_step->getX() / CUNIT, next_step->getY() / CUNIT, next_step->getZ() / CUNIT);
+
+                    makeLines(lineSet, start, end, kRed, 1, false, 3, 0);
+                }
+                lineSet->SetName(Form("%s E %.0fMeV",lineSet->GetName(),initialE));
+                gEve->AddElement(lineSet);
+                MCSteps.insert({trkID,std::move(steps)});
+            }
         }
-        gEve->AddElement(lineSet);
     }
+}
+
+std::string DEventDisplay::easyPDG(int pdg){
+    switch(pdg){
+        case 11:
+            return "e";
+        case -11:
+            return "ep";
+        case 22:
+            return "y";
+        case 2112:
+            return "n";
+        case 2212:
+            return "p";
+        default:
+            if(pdg>1000000)
+                return "NUC"; // this is Nuclear... then what is DM pdg?
+            else
+                return "PDG"+std::to_string(pdg)+"E";
+    }
+}
+
+// TODO: move this to McParticl defination (maybe v1.7?), or add one direct flag for initial particle
+// FIXME: potential problem, all MC without valid parent will be identified as initial!! what if?
+bool DEventDisplay::isInitialMC(McParticle* mc){
+    return !mc->getParents() || mc->getParents()->getId()==mc->getId() || mc->getParents()->getId()==0;
+}
+
+// TODO: please ensure no loop (DAG)!! or it is NP hard.
+int DEventDisplay::recursiveFindTracks(int mother, MCParticleVec* MCs, int* count, std::string path, std::shared_ptr<std::map<int,std::string>> sto){
+    // std::cout<<"[DEBUG] scan mother "<<mother<<std::endl;
+    if(path=="") path=std::to_string(mother);
+    int traced=0;
+    for (unsigned i = 0; i < MCs->size(); ++i) {
+        auto mc=MCs->at(i);
+        if(sto && sto->at(mc->getId())!=""){ // the particle has definate path, no ned to consider again
+            continue;
+        }
+        if(isInitialMC(mc)) continue; //skipinitial particle
+        if(mc->getParents()->getId()!=mother) continue; // mother not match (or initial)
+            
+        if(!sto){
+            //scan mode
+            // count all the particle in case some mothers are hide due to PDG.
+            traced+=1;
+            continue;
+        }
+        
+        // first add this particle
+        // std::cout<<"[DEBUG] NOOOO secondary trk of mother "<<mc->getId()<<std::endl;
+        (*count)++;
+        sto->at(mc->getId())=path;
+        // std::cout<<"[DEBUG] Set "<<mc->getId()<<" : "<<path<<std::endl;
+        traced+=1;
+        // then consider its child
+        // std::cout<<"[DEBUG] grand mom "<<mother<<" scan secondary trk of mother "<<mc->getId()<<std::endl;
+        int child = recursiveFindTracks(mc->getId(),MCs,count, ""); // scan only
+        if(child){
+            // std::cout<<"[DEBUG] PROBED (new) secondary trk of mother "<<mc->getId()<<" n="<<child<<std::endl;
+            std::string p = std::string(Form("%s->%d(%s%.0f)",path.c_str(),mc->getId(),easyPDG(mc->getPdg()).c_str(),mc->getP()));
+            traced+=recursiveFindTracks(mc->getId(),MCs,count, p, sto); //really add; share same propagator
+        }
+    }
+    return traced;
 }
 
 void DEventDisplay::drawMCParticles() {
@@ -112,22 +215,97 @@ void DEventDisplay::drawMCParticles() {
     auto *gMCTrackList = new TEveTrackList("MC Tracks");
     gEve->AddElement(gMCTrackList);
     auto *trkProp = gMCTrackList->GetPropagator();
-    if (_build_Tracker_BField) trkProp->SetMagFieldObj(new DSMagneticField());
-    else trkProp->SetMagField(0,0,0);
+    if (_build_Tracker_BField){
+        trkProp->SetMagFieldObj(new DSMagneticField());
+        std::cout<<"[INFO] MC track prop: B field enabled"<<std::endl;
+        if(dDisData->isMagnets()) std::cout<<"[INFO] B filed: using magnets(high defination B map)..."<<std::endl;
+        else std::cout<<"[INFO] B field: no valid magents found. using uniform B..."<<std::endl;
+        // trkProp->PrintMagField (0,0,0);
+        // trkProp->PrintMagField (0,0,+180 / CUNIT);
+        // trkProp->PrintMagField (0,0,+200 / CUNIT);
+    } else {
+        trkProp->SetMagField(0,0,0);
+        std::cout<<"[INFO] MC track prop: NO B field!!"<<std::endl;
+    }
 
     auto MCCols = evt->getMcParticleCollection();
     for (const auto &MCCol : MCCols) {
         auto MCs = MCCol.second;
         std::cout << "[Event Display] ==> Draw Collection: " << MCCol.first;
         std::cout << ", with total particles: " << MCs->size() << std::endl;
-        if (MCs->size() < 2) continue;
+        // if (MCs->size() < 2) continue; // ??
+        // --------------------------- MC tracking algo (find the MC chain) ---------------
+        // modify with CAUTION
+        auto trkmap=std::make_shared<std::map<int,std::string>>();
+        //determine initial
+        std::vector<int> motherIDs;
         for (unsigned i = 0; i < MCs->size(); ++i) {
-            if (MCs->at(i)->getId() == 1) continue;
-            if (MCs->at(i)->getEnergy() < MC_Emin) continue;
-            if ( (MC_PDG) && (abs(MCs->at(i)->getPdg()) != MC_PDG)) continue;
-            TEveTrack *track = makeMCTrack(trkProp, i, MCs->at(i));
-            gMCTrackList->AddElement(track);
+            auto mc=MCs->at(i);
+            if(isInitialMC(mc)){
+                motherIDs.push_back(mc->getId());
+                trkmap->insert({mc->getId(),"INC"});
+            }else{
+                trkmap->insert({mc->getId(),""});
+            }
         }
+        if(motherIDs.size()==0){
+            std::cerr<<"[INTERNAL] ERROR: missing MC particle mother info. contact experts"<<std::endl;
+            continue;
+        }
+        // start from initials
+        int count=0; // aprticle looped
+        int added=0;
+        int traced=0;
+        for(auto m:motherIDs){
+            std::cout<<"MC chain recursively add... initial mother="<<m<<std::endl<<std::flush;
+            // use hierarchy structure
+            traced += recursiveFindTracks(m, MCs, &count, "", trkmap);
+        }
+        // format the results
+        for (unsigned i = 0; i < MCs->size(); ++i) {
+            auto mc=MCs->at(i);
+            if(trkmap->at(mc->getId())==""){
+                std::cout<<"[DEBUG] Broken MC chain found "<<mc->getId()<<std::endl;
+                traced+=recursiveFindTracks(mc->getId(), MCs, &count, "", trkmap);
+            }
+            else if(trkmap->at(mc->getId())!="INC"){
+                trkmap->at(mc->getId())+="->"; // add suffix (better format)
+            }
+        }
+        // then consider those still broken path
+        for (unsigned i = 0; i < MCs->size(); ++i) {
+            auto mc=MCs->at(i);
+            if(trkmap->at(mc->getId())==""){
+                trkmap->at(mc->getId())=="???";
+            }
+        }
+        // ok now add the track based on the path
+        for (unsigned i = 0; i < MCs->size(); ++i) {
+            auto mc=MCs->at(i);
+            // if(trkmap->at(mc->getId())=="INC") continue; // skip initial particle since they generated in the tracker and not able to trace
+            if (mc->getP() < MC_Emin) continue; // we use momentum since somtime the Nuclear with huge E will spoil it!
+            if ( (MC_PDG) && (abs(mc->getPdg()) != MC_PDG)) continue;
+
+            std::string particle=Form("%d(%s%.0f)",mc->getId(),easyPDG(mc->getPdg()).c_str(),mc->getP());
+            std::string path=trkmap->at(mc->getId());
+            if(path==""){
+                std::cerr<<"[INTERNAL] ERROR: missing MC particle path info. contact experts"<<std::endl;
+                continue;
+            }
+            if(path=="INC"){
+                //recal steps to make better track
+                auto *track = makeMCTrack(trkProp, i, mc, MCSteps.at(mc->getId()));
+                track->SetName(Form("[INC] %s",particle.c_str()));
+                gMCTrackList->AddElement(track);
+            }else{
+                auto *track = makeMCTrack(trkProp, i, mc);
+                track->SetName(Form("[%s] %s",path.c_str(),particle.c_str()));
+                gMCTrackList->AddElement(track);
+            }
+            added++;
+        }
+        std::cout<<"Looped MC  "<<count<<" traced "<<traced<<" added(after cut) "<<added<<std::endl<<std::flush;
+        // --------------------------- END MC tracking algo (find the MC chain) ---------------
     }
     gMCTrackList->MakeTracks();
 }
@@ -207,7 +385,8 @@ void DEventDisplay::makeLines(TEveStraightLineSet *lineSet, const TVector3 &star
     }
 }
 
-TEveTrack *DEventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned /*id*/, McParticle *mc) {
+TEveTrack *DEventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned /*id*/, McParticle *mc, std::shared_ptr<DStepVec> steps) {
+    // refer to https://root.cern.ch/doc/master/classTEvePathMarkT.html
     // get mother id
     int m_id = -999;
     auto p = mc->getParents();
@@ -218,14 +397,8 @@ TEveTrack *DEventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned /*i
     rt.SetUniqueID(mc->getId());
     rt.SetMomentum(mc->getPx() * 1e-3, mc->getPy() * 1e-3, mc->getPz() * 1e-3, mc->getEnergy() * 1e-3);
     rt.SetProductionVertex(mc->getVertexX() / CUNIT, mc->getVertexY() / CUNIT, mc->getVertexZ() / CUNIT, 0.);
-    TVector3 endpoint(mc->getEndPointX() / CUNIT, mc->getEndPointY() / CUNIT, mc->getEndPointZ() / CUNIT);
-
-    auto EndPoint = new TEvePathMark(TEvePathMark::kDecay);
-    EndPoint->fV.Set(endpoint);
 
     auto *track = new TEveTrack(&rt, trkProp);
-    double charge = TDatabasePDG::Instance()->GetParticle(mc->getPdg()) ? TDatabasePDG::Instance()->GetParticle(mc->getPdg())->Charge() : 0;
-    track->SetCharge(charge);
     track->SetName(Form("Trk %d: PDG %d", rt.GetUniqueID(), rt.GetPdgCode()));
     track->SetPdg(mc->getPdg());
     track->SetLineColor(PDG_Color[mc->getPdg()]);
@@ -249,22 +422,45 @@ TEveTrack *DEventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned /*i
             track->SetLineWidth(track->GetLineWidth() * 1.5);
         }
     }
-    track->AddPathMark(*EndPoint);
+
+    // add other step points if avalible
+    if(steps)
+        for(auto s:*steps){
+            // std::cout<<"Step added/cm "<<s->getX() / CUNIT << " " <<s->getY() / CUNIT << " " <<s->getZ() / CUNIT<<std::endl;
+            // std::cout<<"Step added/GEV "<<s->getPz() / 1e3 << " " <<s->getPy() / 1e3 << " " <<s->getPx() / 1e3<<std::endl;
+            track->AddPathMark(TEvePathMarkD(TEvePathMarkD::kReference,
+                  TEveVectorD(s->getX() / CUNIT, s->getY() / CUNIT, s->getZ() / CUNIT),
+                  TEveVectorD(s->getPx()* 1e-3, s->getPy()* 1e-3, s->getPz()* 1e-3)));
+        }
+
+    track->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDecay,
+                  TEveVectorD(mc->getEndPointX() / CUNIT, mc->getEndPointY() / CUNIT, mc->getEndPointZ() / CUNIT)));
+
     track->SetTitle((Form("Index=%d, Pdg=%d\n"
                           "MotherID=%d\n"
                           "E=%.3f, Eremain=%.3f [MeV]\n"
-                          "P=(%.3f, %.3f, %.3f) [MeV]\n"
+                          "Ek(P)=%.3f (%.3f, %.3f, %.3f) [MeV]\n"
                           "Vertex=(%.3f, %.3f, %.3f) [mm]\n"
                           "End=(%.3f, %.3f, %.3f) [mm]\n"
                           "CreateProcess: %s\n",
                           rt.GetUniqueID(), rt.GetPdgCode(),
                           m_id,
                           mc->getEnergy(), mc->getERemain(),
-                          mc->getPx(), mc->getPy(), mc->getPz(),
+                          mc->getP(), mc->getPx(), mc->getPy(), mc->getPz(),
                           mc->getVertexX(), mc->getVertexY(), mc->getVertexZ(),
                           mc->getEndPointX(), mc->getEndPointY(), mc->getEndPointZ(),
                           mc->getCreateProcess().data()
     )));
+
+    // debug initial particle
+    // if(rt.GetUniqueID()==1){
+    //     std::cout<<"PDG ptr "<<rt.GetPDG() << std::endl;
+    //     std::cout<<"Px/GeV "<<track->GetEndMomentum()[0] << std::endl;
+    //     std::cout<<"Py/GeV "<<track->GetEndMomentum()[1] << std::endl;
+    //     std::cout<<"Pz/GeV "<<track->GetEndMomentum()[2] << std::endl;
+    //     std::cout<<"chg  "<<track->GetCharge() << std::endl;
+    //     std::cout<<"status  "<<track->GetStatus() << std::endl;
+    // }
 
     return track;
 }
@@ -403,6 +599,7 @@ TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) const {
     auto color = FindColor(hit->getE(), EMax);
     box->SetLineColor(color);
     box->SetFillColor(color);
+    box->SetLineWidth(0.0001);
     if (!_drawScaleSimuCaloBox)
         box->SetMainAlpha(log(log(hit->getE() + 1) / log(EMax + 1) + 1));
     else
@@ -418,20 +615,34 @@ TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) const {
     return box;
 }
 
-TEveBox *DEventDisplay::makeRecCaloBox(CalorimeterHit *hit, double /*EMax*/) {
-    auto cur_node = gGeoManager->FindNode(hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT);
-    auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
+TEveBox *DEventDisplay::makeRecCaloBox(CalorimeterHit *hit, double EMax, int copyNo) {
+    gGeoManager->FindNode(hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT);
+    auto *mother_node = gGeoManager->GetMother();
+    auto *cur_shape = dynamic_cast<TGeoBBox *>(mother_node->GetVolume()->GetShape());
+    auto RotationMatrix = mother_node->GetMatrix()->GetRotationMatrix();
+    auto *mother2_node = gGeoManager->GetMother(2);
+    auto RotationMatrix2 = mother2_node->GetMatrix()->GetRotationMatrix();
+
+    double hx0 = fabs(cur_shape->GetDX() * RotationMatrix[0] + cur_shape->GetDY() * RotationMatrix[1] + cur_shape->GetDZ() * RotationMatrix[2]);
+    double hy0 = fabs(cur_shape->GetDX() * RotationMatrix[3] + cur_shape->GetDY() * RotationMatrix[4] + cur_shape->GetDZ() * RotationMatrix[5]);
+    double hz0 = fabs(cur_shape->GetDX() * RotationMatrix[6] + cur_shape->GetDY() * RotationMatrix[7] + cur_shape->GetDZ() * RotationMatrix[8]);
+
+    double hx = fabs(hx0 * RotationMatrix2[0] + hy0 * RotationMatrix2[1] + hz0 * RotationMatrix2[2]);
+    double hy = fabs(hx0 * RotationMatrix2[3] + hy0 * RotationMatrix2[4] + hz0 * RotationMatrix2[5]);
+    double hz = fabs(hx0 * RotationMatrix2[6] + hy0 * RotationMatrix2[7] + hz0 * RotationMatrix2[8]);
+
     double abs_pos[3] = {hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT};
-    double half_size[3] = {cur_shape->GetDX(), cur_shape->GetDY(), cur_shape->GetDZ()};
+    double half_size[3] = {hx, hy, hz};
 
     auto *box = makeBox(abs_pos, half_size);
-    box->SetName((Form("Cell %d", hit->getCellId())));
+    if(copyNo==-1)
+        box->SetName((Form("Cell %d", hit->getCellId())));
+    else    
+        box->SetName((Form("Cell %d(%d)", hit->getCellId(),copyNo)));
 
-    //auto color = FindColor(hit->getE(), EMax);
-    auto color = kYellow;
+    auto color = FindColor(hit->getE(), EMax);
     box->SetLineColor(color);
     box->SetFillColor(color);
-    //box->SetMainAlpha(log(log(hit->getE() + 1) / log(EMax + 1) + 1));
 
     box->SetTitle(Form("CellID=%d, ID=(%d, %d, %d)\n"
                        "E = %.3f [MeV]\n"
@@ -477,8 +688,10 @@ TEveBox *DEventDisplay::makeTrackerBox(Hit *hit, double scale) {
 
 template<class CaloCol>
 void DEventDisplay::makeCaloLego(CaloCol col, CaloHitsDisplay *calo_dis, bool if_draw_lego) {
+    /*
     // Convert Calo Hits to Eve Calo Data
     // ECAL is split into several slices with respect to Z layer
+    //TODO: staggered ECAL is more complex and nontrivial to project
     // HCAL merges together
 
     int ECAL_slice_number = ECALslice_calo ? (int) ECAL_Cell_Arr[2] : 1;
@@ -575,6 +788,7 @@ void DEventDisplay::makeCaloLego(CaloCol col, CaloHitsDisplay *calo_dis, bool if
     win_v.at(3)->GetGLViewer()->GetAutoRotator()->SetDt(0.001);
     win_v.at(3)->GetGLViewer()->GetAutoRotator()->SetWPhi(0.75);
     win_v.at(3)->GetGLViewer()->GetAutoRotator()->Start();
+    */
 }
 
 
