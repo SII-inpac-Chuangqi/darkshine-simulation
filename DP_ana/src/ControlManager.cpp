@@ -11,11 +11,15 @@
 #include "Algo/ExampleProcessor.h"
 #include "Algo/MCTruthAnalysis.h"
 #include "Algo/RecECAL.h"
-#include "Algo/ECAL_ML_IO.h"
 #include "Algo/Digitizer.h"
 #include "Algo/TrackingProcessor.h"
 #include "Algo/CutFlowAnalysis.h"
 #include "Algo/GNN_DataExporter.h"
+
+#ifdef BUILD_HDF5
+#include "Algo/ECAL_ML_IO.h"
+#endif
+
 
 void ControlManager::run() {
 
@@ -64,13 +68,15 @@ void ControlManager::run() {
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
     /* DEFINE ALGO PROCESSOR HERE */
+    algo->RegisterAnaProcessor(shared_ptr<GNN_DataExporter>(new GNN_DataExporter("GNN_DataExporter", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<Digitizer>(new Digitizer("Digitizer", EvtWrt)));
+#ifdef BUILD_HDF5
     algo->RegisterAnaProcessor(shared_ptr<ECAL_ML_IO>(new ECAL_ML_IO("ECAL_ML_IO", EvtWrt)));
+#endif
     algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<TrackingProcessor>(new TrackingProcessor("Tracking", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<CutFlowAnalysis>(new CutFlowAnalysis("CutFlowAnalysis", EvtWrt)));
-    algo->RegisterAnaProcessor(shared_ptr<GNN_DataExporter>(new GNN_DataExporter("GNN_DataExporter", EvtWrt)));
 
     if (ConfMgr) {
         ConfMgr->ReadAlgoList();

@@ -64,7 +64,12 @@ IF (BUILD_DANA)
 ENDIF ()
 
 # HDF5
-find_package(HDF5 REQUIRED COMPONENTS C CXX)
+option(BUILD_HDF5 "BUILD_HDF5" OFF)
+IF (BUILD_HDF5)
+    ADD_DEFINITIONS(-DBUILD_HDF5)
+    FIND_PACKAGE(HDF5 REQUIRED COMPONENTS C CXX)
+    INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
+ENDIF ()
 # json
 find_package(nlohmann_json 3.2.0 REQUIRED)
 
@@ -116,7 +121,8 @@ include_directories(
         ${Algo_List}
         ${Geant4_INCLUDE_DIR}
         ${HEPMC_INCLUDE_DIR}
-        ${HDF5_INCLUDE_DIR})
+)
+
 
 #----------------------------------------------------------------------------
 # DEvent
