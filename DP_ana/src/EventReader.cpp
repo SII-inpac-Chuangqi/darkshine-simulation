@@ -25,7 +25,7 @@ void EventReader::RegisterOutput() {
      * Register some variables in output
      */
     EvtWrt->RegisterIntVariable("RunNumber", &RunNumber, "RunNumber/I");
-    EvtWrt->RegisterIntVariable("EventNumber", &eventProcessedNumber, "EventNumber/I");
+    EvtWrt->RegisterIntVariable("EventNumber", &EventNumber, "EventNumber/I");
     EvtWrt->RegisterDoubleVariable("Rndm", Rndm, "Rndm[4]/D");
     EvtWrt->RegisterDoubleVariable("weight", &weight, "weight/D");
     EvtWrt->RegisterDoubleVariable("ECAL_Leak", &ECAL_Leak, "ECAL_Leak/D");
