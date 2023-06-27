@@ -66,8 +66,6 @@ void GNN_DataExporter::Begin() {
 
     t->Branch("run_num", &run_num, "run_num/L");
     t->Branch("evt_num", &evt_num, "evt_num/L");
-
-    cout<<"[GNN_DataExporter]: Begin --> MinEnergy = " << MinEnergy <<endl;
 }
 
 std::vector<size_t>

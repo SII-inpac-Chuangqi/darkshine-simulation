@@ -150,7 +150,8 @@ public:
         for (const auto &itr_int : IntPara) {
             auto parameter_name = itr_int.first;
             auto parameter_value = *(itr_int.second.second);
-            auto read_str = algo_name.append(".").append(parameter_name);
+//            auto read_str = algo_name.append(".").append(parameter_name);
+            auto read_str = algo_name + "." + parameter_name;
             auto readin_value = config->Read(read_str, parameter_value);
             algo_proccessor->setIntValue(parameter_name, readin_value);
         }
@@ -159,7 +160,8 @@ public:
         for (const auto &itr_double : DoublePara) {
             auto parameter_name = itr_double.first;
             auto parameter_value = *(itr_double.second.second);
-            auto read_str = algo_name.append(".").append(parameter_name);
+//            auto read_str = algo_name.append(".").append(parameter_name);
+            auto read_str = algo_name + "." + parameter_name;
             auto readin_value = config->Read(read_str, parameter_value);
             algo_proccessor->setDoubleValue(parameter_name, readin_value);
         }
@@ -168,7 +170,8 @@ public:
         for (const auto &itr_str : StrPara) {
             auto parameter_name = itr_str.first;
             auto parameter_value = *(itr_str.second.second);
-            auto read_str = algo_name.append(".").append(parameter_name);
+//            auto read_str = algo_name.append(".").append(parameter_name);
+            auto read_str = algo_name + "." + parameter_name;
             auto readin_value = config->Read(read_str, parameter_value);
             algo_proccessor->setStringValue(parameter_name, readin_value);
         }
