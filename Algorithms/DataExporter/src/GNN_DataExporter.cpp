@@ -9,6 +9,7 @@
 #include <sstream>
 #include <algorithm>
 
+#include "Core/AnaData.h"
 #include "Algo/GNN_DataExporter.h"
 #include "Algo/GNN_Digitization.h"
 
@@ -28,13 +29,23 @@ std::vector<std::string> split(std::string_view strv, char delimiter) {
 
 void GNN_DataExporter::Begin() {
 
+    // initialize the magnetic field
+    magnets = dAnaData->getMagFieldVec();
+    if (magnets.size() != 3 || !magnets.at(0) || !magnets.at(1) || !magnets.at(2)) {
+        dAnaData->setConstMagnetField({0, BField, 0});
+        std::cout << "[GNN_DataExporter]: No magnetic field found, set to default value: " << BField << std::endl;
+    } else {
+        std::cout << "[GNN_DataExporter]: Magnetic field found in Geometry" << std::endl;
+    }
+
+
     f = new TFile("Tracker_GNN.root", "RECREATE");
     t = new TTree("dp", "dp");
 
     collections = split(arg_collections, ',');
 //    collections = {"DigitizedTagTrk", "DigitizedRecTrk","TagTrk"};
 
-    std::vector<std::string> gnn_node = {"x", "y", "z"};
+    std::vector<std::string> gnn_node = {"x", "y", "z", "Bx", "By", "Bz"};
     std::vector<std::string> gnn_edge = {"start", "end", "truth", "p"};
 
     for (const auto &col: collections) {
@@ -55,6 +66,7 @@ void GNN_DataExporter::Begin() {
 
     t->Branch("run_num", &run_num, "run_num/L");
     t->Branch("evt_num", &evt_num, "evt_num/L");
+
 }
 
 std::vector<size_t>
@@ -111,6 +123,12 @@ void GNN_DataExporter::export_track(const std::string &CollectionName, const Sim
             node[CollectionName]["x"].push_back(itr->getX());
             node[CollectionName]["y"].push_back(itr->getY());
             node[CollectionName]["z"].push_back(itr->getZ());
+
+            auto BFieldAtPoint = dAnaData->getMagnetFieldAt({itr->getX(), itr->getY(), itr->getZ()});
+
+            node[CollectionName]["Bx"].push_back(BFieldAtPoint[0]);
+            node[CollectionName]["By"].push_back(BFieldAtPoint[1]);
+            node[CollectionName]["Bz"].push_back(BFieldAtPoint[2]);
         }
         auto sorted_indices = sort_by_key(node[CollectionName], "z");
 
@@ -328,21 +346,23 @@ void GNN_DataExporter::End() {
     }
 }
 
-GNN_DataExporter::GNN_DataExporter(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name),
-                                                                                                       std::move(
-                                                                                                               evtwrt)) {
+GNN_DataExporter::GNN_DataExporter(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(
+        std::move(name), std::move(evtwrt)
+) {
     // Add description for this AnaProcessor
     Description = "Export wanted data.";
 
     eps = 0.1;
 
-    // Register Int parameter
     RegisterIntParameter("Verbose", "Verbosity Variable", &verbose, 0);
     RegisterStringParameter(
             "Collections",
             "Select from [DigitizedTagTrk, DigitizedRecTrk, TagTrk, RecTrk, AllTrk, AllDigitizedTrk], split with comma and no space",
             &arg_collections,
             "DigitizedTagTrk,DigitizedRecTrk");
+
+    // Register the magnetic filed value (+y direction)
+    RegisterDoubleParameter("BField", "Magnetic field value (+y)", &BField, -1.5);
 }
 
 void GNN_DataExporter::InitEvt() {}

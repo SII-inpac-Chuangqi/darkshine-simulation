@@ -9,6 +9,7 @@
 #include <TFile.h>
 #include <TTree.h>
 
+#include "Object/DMagnet.h"
 #include "Core/AnaProcessor.h"
 
 using namespace std;
@@ -39,15 +40,14 @@ public:
 
 private:
 
-    // Define some variables if necessary
-    // IMPORTANT: variables need to be registered by their types:
-    // Currently supported: int, double, string
     int verbose{};
     double eps{};
     std::string arg_collections;
     TFile *f{};
     TTree *t{};
 
+    double BField{};
+    std::vector<DMagnet *> magnets;
 
     long long run_num{};
     long long evt_num{};
