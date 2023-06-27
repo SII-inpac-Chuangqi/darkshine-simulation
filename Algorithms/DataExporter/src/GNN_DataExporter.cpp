@@ -371,7 +371,7 @@ GNN_DataExporter::GNN_DataExporter(string name, shared_ptr<EventStoreAndWriter> 
     RegisterDoubleParameter("BField", "Magnetic field value (+y)", &BField, -1.5);
     // Register the minimum energy for truth mc particles to be considered
     RegisterDoubleParameter("MinEnergy", "Minimum energy [MeV] for truth mc particles to be considered",
-                            &MinEnergy, 1.0);
+                            &MinEnergy, 50.0);
     RegisterStringParameter(
             "Collections",
             "Select from [DigitizedTagTrk, DigitizedRecTrk, TagTrk, RecTrk, AllTrk, AllDigitizedTrk], split with comma and no space",
