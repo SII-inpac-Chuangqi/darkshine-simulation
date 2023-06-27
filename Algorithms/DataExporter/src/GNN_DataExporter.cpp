@@ -67,6 +67,7 @@ void GNN_DataExporter::Begin() {
     t->Branch("run_num", &run_num, "run_num/L");
     t->Branch("evt_num", &evt_num, "evt_num/L");
 
+    cout<<"[GNN_DataExporter]: Begin --> MinEnergy = " << MinEnergy <<endl;
 }
 
 std::vector<size_t>
@@ -180,6 +181,8 @@ void GNN_DataExporter::export_track(const std::string &CollectionName, const Sim
         }
 
         // --> For each edge, find if it's in the truth_edge
+        // map<mc_id, vector<node_id>>
+        std::map<int, std::vector<size_t> > edge_remove_mc;
         size_t edge_start_size = edge[CollectionName]["start"].size();
         unsigned long truth_count = 0;
         for (size_t i = 0; i < edge_start_size; ++i) {
@@ -198,9 +201,20 @@ void GNN_DataExporter::export_track(const std::string &CollectionName, const Sim
                         edge[CollectionName]["p"][i] =
                                 static_cast<size_t>(std::get<1>(trk.second[j - 1]));
                         truth_count++;
+
+                        edge_remove_mc[trk.first].push_back(i);
                         break;
                     }
                 }
+            }
+        }
+        // Remove MC particles if they only contributes to less than three hits (< 2 edges)
+        for (const auto &trk: edge_remove_mc) {
+            if (trk.second.size() == 1) {
+                if (verbose > 1)
+                    cout << "MC " << trk.first << " only contributes to one edge, remove it." << endl;
+                edge[CollectionName]["truth"][trk.second.front()] = 0;
+                truth_count--;
             }
         }
 
@@ -270,14 +284,14 @@ void GNN_DataExporter::ProcessEvt(AnaEvent *evt) {
         if (contains("DigitizedTagTrk") || contains("AllDigitizedTrk")) {
             // Add digitized tracker hits collections
             SimulatedHitVec *DigiTagTrk = evt->RegisterSimulatedHitCollection("DigitizedTagTrk");
-            SimulatedHitVec tmp_digi_tag = GNN_Digitization::Run(tag1_col, tag2_col, true);
+            SimulatedHitVec tmp_digi_tag = GNN_Digitization::Run(tag1_col, tag2_col, true, MinEnergy);
             std::move(tmp_digi_tag.begin(), tmp_digi_tag.end(), std::back_inserter(*DigiTagTrk));
             tmp_digi_tag.clear();
         }
 
         if (contains("DigitizedRecTrk") || contains("AllDigitizedTrk")) {
             SimulatedHitVec *DigiRecTrk = evt->RegisterSimulatedHitCollection("DigitizedRecTrk");
-            SimulatedHitVec tmp_digi_rec = GNN_Digitization::Run(rec1_col, rec2_col, false);
+            SimulatedHitVec tmp_digi_rec = GNN_Digitization::Run(rec1_col, rec2_col, false, MinEnergy);
             std::move(tmp_digi_rec.begin(), tmp_digi_rec.end(), std::back_inserter(*DigiRecTrk));
             tmp_digi_rec.clear();
         }
@@ -355,14 +369,17 @@ GNN_DataExporter::GNN_DataExporter(string name, shared_ptr<EventStoreAndWriter> 
     eps = 0.1;
 
     RegisterIntParameter("Verbose", "Verbosity Variable", &verbose, 0);
+    // Register the magnetic filed value (+y direction)
+    RegisterDoubleParameter("BField", "Magnetic field value (+y)", &BField, -1.5);
+    // Register the minimum energy for truth mc particles to be considered
+    RegisterDoubleParameter("MinEnergy", "Minimum energy [MeV] for truth mc particles to be considered",
+                            &MinEnergy, 1.0);
     RegisterStringParameter(
             "Collections",
             "Select from [DigitizedTagTrk, DigitizedRecTrk, TagTrk, RecTrk, AllTrk, AllDigitizedTrk], split with comma and no space",
             &arg_collections,
             "DigitizedTagTrk,DigitizedRecTrk");
 
-    // Register the magnetic filed value (+y direction)
-    RegisterDoubleParameter("BField", "Magnetic field value (+y)", &BField, -1.5);
 }
 
 void GNN_DataExporter::InitEvt() {}

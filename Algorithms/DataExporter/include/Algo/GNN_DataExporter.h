@@ -47,6 +47,7 @@ private:
     TTree *t{};
 
     double BField{};
+    double MinEnergy{};
     std::vector<DMagnet *> magnets;
 
     long long run_num{};
