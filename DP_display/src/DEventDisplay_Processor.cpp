@@ -84,6 +84,7 @@ void DEventDisplay::RunAnaProcessors() {
     recECAL->setDoubleValue("ENERGY_SHIFT_MeV",ENERGY_SHIFT_MeV);
     recECAL->setIntValue("weight_type",weight_type);
     recECAL->setDoubleValue("EM_SCALE_LENGTH_mm",EM_SCALE_LENGTH_mm);
+    bool isMatchAlgo=*(recECAL->getIntParameters().at("TrackMatch").second)>0;
     std::cout << "[AnaProcessor] ==> Start Processors..." << std::endl;
     //*((recECAL->getDoubleParameters()).at("r_cut").second) = RecECAL_r_cut;
     digitizer->Begin();
@@ -114,6 +115,21 @@ void DEventDisplay::RunAnaProcessors() {
     auto ECAL_ClusterSub_P0 = EvtWrt->FindOutVariable<vector<int>>("ECAL_ClusterSub_P0");
     auto ECAL_ClusterSub_P1 = EvtWrt->FindOutVariable<vector<int>>("ECAL_ClusterSub_P1");
 
+    auto ECAL_Cluster_NSub_orig = EvtWrt->FindOutVariable<vector<int>>("ECAL_Cluster_NSub_orig");
+    auto ECAL_Cluster_NMatch_orig = EvtWrt->FindOutVariable<vector<int>>("ECAL_Cluster_NMatch_orig");
+
+    std::cout<<"[DEBUG] NMatch : ";
+    for(auto i:*ECAL_Cluster_NSub)
+        std::cout<<i<<" ";
+    std::cout<<std::endl;
+    std::cout<<"[DEBUG] NSub : ";
+    for(auto i:*ECAL_Cluster_NSub_orig)
+        std::cout<<i<<" ";
+    std::cout<<std::endl;
+    std::cout<<"[DEBUG] NMatch(orig) : ";
+    for(auto i:*ECAL_Cluster_NMatch_orig)
+        std::cout<<i<<" "; 
+    std::cout<<std::endl;
     /************************************/
     /*    Visualization Out Collection  */
     /************************************/
@@ -143,11 +159,17 @@ void DEventDisplay::RunAnaProcessors() {
                 // P1/P2=-1 means non splitting
                 Primary->AddElement(Sub);
                 for (auto const &h : clustered_hits) {
+                    // if(h->P0()==P0) {
+                    //     std::cout<<"~"<<h->hit->getE()<<","<<h->isValid()<<std::endl; 
+                    //     std::cout<<":"<<h->P1()<<","<<h->P2()<<std::endl; 
+                    //     std::cout<<":"<<h->isLocalMax()<<","<<h->E()<<std::endl; 
+                    //     std::cout<<":"<<h->E_sub1()<<","<<h->E_sub2()<<std::endl; 
+                    // }
                     if(h->P0()!=P0 || !h->isValid()) continue;
                     if (h->hit->getE() < r_min * subE) continue; // reuse the fractional filter
                     if (h->hit->getE() < ECAL_Emin) continue; // apply universal filter
                     auto *box = makeRecCaloBox(h->hit, -1);
-                    auto color=FindColor(priE,*ECAL_Cluster_E_total); //same primary cluster share one color
+                    auto color=FindColor(isMatchAlgo?subE:priE,*ECAL_Cluster_E_total); //same primary cluster share one color
                     box->SetLineColor(color);
                     // box->SetFillColor(color);
                     // assert P1==P2==-1
@@ -159,7 +181,7 @@ void DEventDisplay::RunAnaProcessors() {
                 }
                 break;
             }else if(Psub>=0){ // splitting
-                for(int k=0;k<ECAL_ClusterSub_P0->size();k++)
+                for(size_t k=0;k<ECAL_ClusterSub_P0->size();k++)
                     if(ECAL_ClusterSub_P0->at(k)==P0 && ECAL_ClusterSub_P1->at(k)==Psub){
                         subE=ECAL_ClusterSub_E->at(k); // find correct subE
                         break;
@@ -173,11 +195,11 @@ void DEventDisplay::RunAnaProcessors() {
                     if (h->hit->getE() < r_min * subE) continue; // reuse the fractional filter
                     if (h->hit->getE() < ECAL_Emin) continue; // apply universal filter
                     auto *box = makeRecCaloBox(h->hit, -1);
-                    auto color=FindColor(priE,*ECAL_Cluster_E_total); //same primary cluster share one color
+                    auto color=FindColor(isMatchAlgo?subE:priE,*ECAL_Cluster_E_total); //same primary cluster share one color
                     box->SetLineColor(color);
                     // box->SetFillColor(color);
                     box->SetMainAlpha(0);
-                    box->SetLineWidth(1);
+                    box->SetLineWidth(1.5);
 
                     if (AnaDisCellMax && h->P1()==h->P2() && h->P2()==Psub && Psub>=0){ //local  maximum -- line width+1
                         box->SetLineWidth(5);
@@ -186,11 +208,13 @@ void DEventDisplay::RunAnaProcessors() {
                     else if(AnaDisCellSub && h->P1()==Psub && h->P2()==-1){ //non splitted cell
                         box->SetName(Form("P%02d S%02d(%.0fMeV) %s",P0,Psub,h->E(),box->GetName()));
                     }else if(AnaDisCellSp1 && h->P1()==Psub && h->P2()>=0){ //splitted cell line width-1, belong to P1 but split to P2
-                        box->SetLineWidth(0.5);
+                        box->SetLineWidth(1);
                         box->SetName(Form("P%02d sp1 S%02d(%.0fMeV) S%02d(%.0fMeV) %s",P0,Psub,h->E_sub1(),h->P2(),h->E_sub2(),box->GetName()));
                     }else if(AnaDisCellSp2 && h->P2()==Psub && h->P2()>=0 && h->P1()>=0){ //splitted cell line width-1, belong to P1 but split to P2
                         box=makeRecCaloBox(h->hit, -1, 1);
-                        box->SetLineWidth(0.5);
+                        box->SetLineColor(color);
+                        box->SetLineWidth(1);
+                        box->SetMainAlpha(0);
                         box->SetName(Form("P%02d sp2 S%02d(%.0fMeV) S%02d(%.0fMeV) %s",P0,Psub,h->E_sub2(),h->P1(),h->E_sub1(),box->GetName()));
                     }
                     else{
@@ -234,7 +258,7 @@ void DEventDisplay::makeGUIProcessor(DEventDisplay *fh) {
        hf = new TGHorizontalFrame(frmMain1);
        {
            guiRunAna = new TGCheckButton(hf, "Run Ana");
-           if (guiRunAna) guiRunAna->Toggle(); // default on
+           if (RunAna_) guiRunAna->Toggle(); // default on
            hf->AddFrame(guiRunAna);
            guiRunAna->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptionsAna()");
        }
@@ -388,7 +412,7 @@ void DEventDisplay::makeGUIProcessor(DEventDisplay *fh) {
        hf = new TGHorizontalFrame(frmMain1);
        {
            gui_AnaDisCellMax = new TGCheckButton(hf, "Show localMax");
-           if (gui_AnaDisCellMax) gui_AnaDisCellMax->Toggle(); // default on
+           if (AnaDisCellMax) gui_AnaDisCellMax->Toggle(); // default on
            hf->AddFrame(gui_AnaDisCellMax);
            gui_AnaDisCellMax->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptionsAna()");
        }
@@ -397,7 +421,7 @@ void DEventDisplay::makeGUIProcessor(DEventDisplay *fh) {
        hf = new TGHorizontalFrame(frmMain1);
        {
            gui_AnaDisCellSp1 = new TGCheckButton(hf, "Show split cell(main)");
-           if (gui_AnaDisCellSp1) gui_AnaDisCellSp1->Toggle(); // default on
+           if (AnaDisCellSp1) gui_AnaDisCellSp1->Toggle(); // default on
            hf->AddFrame(gui_AnaDisCellSp1);
            gui_AnaDisCellSp1->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptionsAna()");
        }
@@ -406,7 +430,7 @@ void DEventDisplay::makeGUIProcessor(DEventDisplay *fh) {
        hf = new TGHorizontalFrame(frmMain1);
        {
            gui_AnaDisCellSp2 = new TGCheckButton(hf, "Show split cell(share)");
-           if (gui_AnaDisCellSp2) gui_AnaDisCellSp2->Toggle(); // default on
+           if (AnaDisCellSp2) gui_AnaDisCellSp2->Toggle(); // default on
            hf->AddFrame(gui_AnaDisCellSp2);
            gui_AnaDisCellSp2->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptionsAna()");
        }
@@ -415,7 +439,7 @@ void DEventDisplay::makeGUIProcessor(DEventDisplay *fh) {
        hf = new TGHorizontalFrame(frmMain1);
        {
            gui_AnaDisCellPri = new TGCheckButton(hf, "Show PriClus Cell");
-           if (gui_AnaDisCellPri) gui_AnaDisCellPri->Toggle(); // default on
+           if (AnaDisCellPri) gui_AnaDisCellPri->Toggle(); // default on
            hf->AddFrame(gui_AnaDisCellPri);
            gui_AnaDisCellPri->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptionsAna()");
        }
@@ -424,7 +448,7 @@ void DEventDisplay::makeGUIProcessor(DEventDisplay *fh) {
        hf = new TGHorizontalFrame(frmMain1);
        {
            gui_AnaDisCellSub = new TGCheckButton(hf, "Show SubClus Cell");
-           if (gui_AnaDisCellSub) gui_AnaDisCellSub->Toggle(); // default on
+           if (AnaDisCellSub) gui_AnaDisCellSub->Toggle(); // default on
            hf->AddFrame(gui_AnaDisCellSub);
            gui_AnaDisCellSub->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptionsAna()");
        }

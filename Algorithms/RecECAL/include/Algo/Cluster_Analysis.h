@@ -2,8 +2,8 @@
 // Created by Zhang Yulei on 12/27/20.
 //
 
-#ifndef DSIMU_CLUSTER_ANALYSIS_H
-#define DSIMU_CLUSTER_ANALYSIS_H
+#ifndef DANA_CLUSTER_ANALYSIS_H
+#define DANA_CLUSTER_ANALYSIS_H
 
 #include "Core/AnaProcessor.h"
 #include "Core/AnaData.h"
@@ -101,4 +101,4 @@ protected:
 };
 
 
-#endif //DSIMU_CLUSTER_ANALYSIS_H
+#endif //DANA_CLUSTER_ANALYSIS_H

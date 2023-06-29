@@ -51,7 +51,7 @@ public:
         std::cout<<"[DisData] B field region Z right(mm) "<<z<<std::endl;
         _B_field_region[1]=z;
     };
-    bool isInBfieldRegion(double x,double y,double z){
+    bool isInBfieldRegion([[maybe_unused]] double x,[[maybe_unused]] double y,double z){
         return z>=_B_field_region[0] && z<_B_field_region[1];
     };
 

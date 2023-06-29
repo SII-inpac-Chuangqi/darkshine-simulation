@@ -59,7 +59,11 @@ add_library(DDisplay SHARED ${Display_header_shared} ${Display_source} G__Displa
                 ${Algo_sources} ${Algo_headers}
         )
 
-target_link_libraries(DDisplay PUBLIC genfit2)
+IF (BUILD_HDF5)
+    target_link_libraries(DDisplay PUBLIC genfit2 ${HDF5_CXX_LIBRARIES} ${HDF5_LINK_LIBS})
+ELSE()
+    target_link_libraries(DDisplay PUBLIC genfit2)
+ENDIF()
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
 
