@@ -458,6 +458,8 @@ void Control::RebuildVariables() {
     G4double lzoom = 2;
     Size_World = G4ThreeVector(lzoom * lx, lzoom * ly, lzoom * lz);
 
+    std::cout<<"World size: "<<Size_World.x()<<" "<<Size_World.y()<<" "<<Size_World.z()<<std::endl;
+
     //----------------------------------------
     // Optical
 
