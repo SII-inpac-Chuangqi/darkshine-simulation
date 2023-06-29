@@ -455,7 +455,7 @@ void Control::RebuildVariables() {
     G4double lx = *std::max_element(borderX, borderX + 7);
     G4double ly = *std::max_element(borderY, borderY + 7);
     G4double lz = *std::max_element(borderZ, borderZ + 7);
-    G4double lzoom = 2;
+    G4double lzoom = 10;
     Size_World = G4ThreeVector(lzoom * lx, lzoom * ly, lzoom * lz);
 
     std::cout<<"World size: "<<Size_World.x()<<" "<<Size_World.y()<<" "<<Size_World.z()<<std::endl;
