@@ -122,9 +122,10 @@ public:
 //Truth helper manager
     void LoadTruthInfo(DTruth *truth);
     void PrintTruthInfo() const;
+    bool hasDTruth(){return truth_!=nullptr;};
 
-    std::vector<std::pair<const DTruthState*,int>> getTruthStatesAtECalFront() const;
-    std::vector<std::pair<const DTruthParticle*, const DTruthState*>> getTruthsAtECalFront() const;
+    std::vector<std::pair<const DTruthState*,int>> getTruthStatesAtECalFront() const; // for tracker
+    std::vector<std::pair<const DTruthParticle*, const DTruthState*>> getTruthsAtECalFront() const; // for ECAL
 
     unsigned int getNTruthTracks(DTruth::DTruthDetPV DetPV, double min_energy = 50., int min_hits = 4) const;
     std::map<pair<int, int>, vector<DTruthState *>> getTruthTracks(DTruth::DTruthDetPV DetPV, double min_energy = 50., int min_hits = 4) const;

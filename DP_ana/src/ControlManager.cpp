@@ -71,11 +71,11 @@ void ControlManager::run() {
     algo->RegisterAnaProcessor(shared_ptr<GNN_DataExporter>(new GNN_DataExporter("GNN_DataExporter", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<Digitizer>(new Digitizer("Digitizer", EvtWrt)));
 #ifdef BUILD_HDF5
-    algo->RegisterAnaProcessor(shared_ptr<ECAL_ML_IO>(new ECAL_ML_IO("ECAL_ML_IO", EvtWrt)));
+    algo->RegisterAnaProcessor(shared_ptr<ECAL_ML_IO>(new ECAL_ML_IO("ECAL_ML_IO", EvtWrt)), false); // not add to default
 #endif
     algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)));
-    algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<TrackingProcessor>(new TrackingProcessor("Tracking", EvtWrt)));
+    algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<CutFlowAnalysis>(new CutFlowAnalysis("CutFlowAnalysis", EvtWrt)));
 
     if (ConfMgr) {
@@ -200,9 +200,8 @@ void ControlManager::PrintConfig() {
     // Print Algorithm List
     cout << endl << "### Algorithm List" << endl << left;
     cout << "###" << endl;
-    for (const auto &pl : algo->getAnaProcessorListDefault()) {
-        auto p = algo->getAnaProcessors().at(pl);
-        cout << "# " << pl << ": " << p->getDescription() << endl;
+    for (const auto &p : algo->getAnaProcessors()) {
+        cout << "# " << p.first << ": " << p.second->getDescription() << endl;
     }
     cout << "###" << endl;
     cout << "Algorithm.List" << " = ";
