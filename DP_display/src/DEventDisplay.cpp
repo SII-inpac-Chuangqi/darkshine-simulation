@@ -216,7 +216,7 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
         hf = new TGHorizontalFrame(frmMain1);
         {
             guidrawDetector = new TGCheckButton(hf, "Draw Detectors");
-            if (guidrawDetector) guidrawDetector->Toggle();
+            if (_drawDetector) guidrawDetector->Toggle();
             hf->AddFrame(guidrawDetector);
             guidrawDetector->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptions()");
         }
@@ -224,7 +224,7 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
         hf = new TGHorizontalFrame(frmMain1);
         {
             guidrawMCTracks = new TGCheckButton(hf, "Draw MC Tracks");
-            if (guidrawMCTracks) guidrawMCTracks->Toggle();
+            if (_drawMCTracks) guidrawMCTracks->Toggle();
             hf->AddFrame(guidrawMCTracks);
             guidrawMCTracks->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptions()");
         }
@@ -232,7 +232,7 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
         hf = new TGHorizontalFrame(frmMain1);
         {
             guidrawSimuTrkHits = new TGCheckButton(hf, "Draw Simulated Tracker Hits");
-            if (guidrawSimuTrkHits) guidrawSimuTrkHits->Toggle();
+            if (_drawSimuTrkHits) guidrawSimuTrkHits->Toggle();
             hf->AddFrame(guidrawSimuTrkHits);
             guidrawSimuTrkHits->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptions()");
         }
@@ -240,7 +240,7 @@ void DEventDisplay::makeGUIRaw(DEventDisplay *fh) {
         hf = new TGHorizontalFrame(frmMain1);
         {
             guidrawSimuCaloHits = new TGCheckButton(hf, "Draw Simulated Calo Hits");
-            if (guidrawSimuCaloHits) guidrawSimuCaloHits->Toggle();
+            if (_drawSimuCaloHits) guidrawSimuCaloHits->Toggle();
             hf->AddFrame(guidrawSimuCaloHits);
             guidrawSimuCaloHits->Connect("Toggled(Bool_t)", "DEventDisplay", fh, "guiOptions()");
         }
@@ -446,7 +446,7 @@ void DEventDisplay::gotoEvent(unsigned int id) {
     // Redraw Event
     drawEvent(_eventID);
     // plot debug reference point
-    // double ref_point[]={0.731222,0,18.02};
+    // double ref_point[]={-0.0686,0.0283,18.14};
     // gEve->GetDefaultViewer()
     //     ->GetGLViewer()
     //     ->SetGuideState(TGLUtil::kAxesOrigin, kTRUE, kTRUE, ref_point);

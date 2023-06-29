@@ -4,6 +4,7 @@
 
 #include <utility>
 #include <numeric>
+#include <deque>
 #include <functional>
 #include "TMatrixD.h"
 #include "TVectorD.h"
@@ -46,19 +47,35 @@ TopoCluster_Analysis::TopoCluster_Analysis(CalorimeterHitVec *clusterVec, bool i
     
     setPOS(dAnaData->getECalPosMap());
     setSurfaceZ(dAnaData->getECalSurfaceZ());    
+
+    allhits.reserve(100000);
 }
 
-std::vector<std::shared_ptr<CHit>> TopoCluster_Analysis::findNeighbors(std::shared_ptr<CHit> center, const std::array<std::shared_ptr<CHit>,HMAP_LENGTH>& HMAP){
+std::string TopoCluster_Analysis::printCell(std::shared_ptr<CHit> cell){
+    return std::string(Form("%d(%d,%d,%d):%.0fMeV [%d|%d/%d] %s",
+                            cell->hit->getCellId(),
+                            cell->X(),cell->Y(),cell->Z(),
+                            cell->E(),cell->P0(),cell->P1(),cell->P2(),cell->isLocalMax()?"*":""));
+}
+
+CHitVec TopoCluster_Analysis::findNeighbors(std::shared_ptr<CHit> center) {
+    CHitVec ret;
     if(m_isStaggered)
-        return findNeighbors_staggered(center, HMAP);
+        ret = findNeighbors_staggered(center);
     else
-        return findNeighbors_legacy(center, HMAP);
+        ret = findNeighbors_legacy(center);
+    std::sort(ret.begin(), ret.end(), Esorter_descendingC<CHit>);
+    #ifdef CLUSTER_DEBUG
+        std::cout<<"-- - -- FOUND "<<ret.size()<<" neighbors around "
+                    << printCell(center)<<std::endl;
+    #endif
+    return ret;
 }
 
 // Legacy ECAL
-std::vector<std::shared_ptr<CHit>> TopoCluster_Analysis::findNeighbors_legacy(std::shared_ptr<CHit> center, const std::array<std::shared_ptr<CHit>,HMAP_LENGTH>& HMAP){ //emmmm we need return 8 cells if possible
+CHitVec TopoCluster_Analysis::findNeighbors_legacy(std::shared_ptr<CHit> center) { //emmmm we need return 8 cells if possible
     //Use together with HACC(), this is designed for XYZ stucture ECAL. Others need rewriting.
-    std::vector<std::shared_ptr<CHit>> ret;
+    CHitVec ret;
     for(int i=-1;i<=+1;i++)
         for(int j=-1;j<=+1;j++)
             for(int k=-1;k<=+1;k++){
@@ -70,9 +87,9 @@ std::vector<std::shared_ptr<CHit>> TopoCluster_Analysis::findNeighbors_legacy(st
 }
 
 // staggered ECAL
-std::vector<std::shared_ptr<CHit>> TopoCluster_Analysis::findNeighbors_staggered(std::shared_ptr<CHit> center, const std::array<std::shared_ptr<CHit>,HMAP_LENGTH>& HMAP){ //emmmm we need return 8 cells if possible
+CHitVec TopoCluster_Analysis::findNeighbors_staggered(std::shared_ptr<CHit> center) { //emmmm we need return 8 cells if possible
     //Use together with HACC(), this is designed for XYZ stucture ECAL. Others need rewriting.
-    std::vector<std::shared_ptr<CHit>> ret;
+    CHitVec ret;
     // first add 8 in same Z
     for(int i=-1;i<=+1;i++)
         for(int j=-1;j<=+1;j++){
@@ -120,359 +137,62 @@ double TopoCluster_Analysis::calWeight(double E1,  double E2, double d1, double 
     return E1 / ( E1 + E2 * exp (d1-d2) ) ;
 }
 
-bool TopoCluster_Analysis::Do(std::vector<std::map<std::string, double>> *ret1,std::vector<std::map<std::string, double>> *ret2, 
-                std::vector<std::shared_ptr<CHit>> *dump) { 
+bool TopoCluster_Analysis::ConvHits() { 
     //First build CHits 
-    // auto sto=new std::vector<CHit>;
-    std::vector<std::shared_ptr<CHit>> alls; // TODO: make it shared_ptr
-    alls.reserve(100000);
-    // CHit**** HMAP = new CHit* [21+2][21+2][21+2]();
-    // CHit* HMAP[dNX()+2][dNY()+2][dNZ()+2]={{{nullptr}}}; // cost space for time, can only be used in findNeighbors!!!
-    // CHit* HMAP[ (dNX()+2) * (dNY()+2) * (dNZ()+2) ]={nullptr}; // cost space for time, can only be used in findNeighbors!!!
-    std::array<std::shared_ptr<CHit> , HMAP_LENGTH> HMAP; //well zero can be used as nullptr....
-    //we may use directly std::array[]  instead of .at() because of performance.... 
-    //so please do not exceed the limit 
-    //also look at here https://stackoverflow.com/questions/1887097/why-arent-variable-length-arrays-part-of-the-c-standard
+    allhits.clear();
     for (auto hit: *ClusterVec) {
-        // CHit h(hit);
         auto h=std::make_shared<CHit>(hit);
-        // sto->push_back(h);
-        // alls.push_back(&(sto->back()));
-        alls.push_back(h);
-        HMAP.at(HACC(h->X(),h->Y(),h->Z()))=h; //
+        allhits.push_back(h);
     }
-
+    // std::sort(allhits.begin(), allhits.end(), Esorter_descendingC<CHit>); // actually not necessary...
+    // Do the test
     #ifdef CLUSTER_DEBUG
-        std::cout<<"Check HMAP"<<std::endl
+        std::cout<<"Check ALLHITS and POSMAP"<<std::endl
                 <<" First hit: cell id(from 1) = "<<ClusterVec->at(0)->getCellIdX()
                 <<","<<ClusterVec->at(0)->getCellIdY()
                 <<","<<ClusterVec->at(0)->getCellIdZ()
                 <<":"<<ClusterVec->at(0)->getE()<<std::endl
-                <<" :CHit (id from 1) = "<<alls.at(0)->X()
-                <<","<<alls.at(0)->Y()
-                <<","<<alls.at(0)->Z()
-                <<":"<<alls.at(0)->E()<<std::endl
-                <<"-->HMAP ACC"<<HACC(alls.at(0)->X(),alls.at(0)->Y(),alls.at(0)->Z())<<std::endl
-                <<" :HMAP = "<<HMAP.at(HACC(alls.at(0)->X(),alls.at(0)->Y(),alls.at(0)->Z()))->X()
-                <<","<<HMAP.at(HACC(alls.at(0)->X(),alls.at(0)->Y(),alls.at(0)->Z()))->Y()
-                <<","<<HMAP.at(HACC(alls.at(0)->X(),alls.at(0)->Y(),alls.at(0)->Z()))->Z()
-                <<":"<<HMAP.at(HACC(alls.at(0)->X(),alls.at(0)->Y(),alls.at(0)->Z()))->E()<<std::endl
-                <<"-->POS ACC"<<ACC(alls.at(0)->X(),alls.at(0)->Y(),alls.at(0)->Z())<<std::endl
-                <<" :POS/mm = "<<POS().at(ACC(alls.at(0)->X(),alls.at(0)->Y(),alls.at(0)->Z())).X()
-                <<","<<POS().at(ACC(alls.at(0)->X(),alls.at(0)->Y(),alls.at(0)->Z())).Y()
-                <<","<<POS().at(ACC(alls.at(0)->X(),alls.at(0)->Y(),alls.at(0)->Z())).Z()<<std::endl;
+                <<" :CHit (id from 1) = "<<printCell(allhits.at(0))
+                <<"-->POS ACC"<<ACC(allhits.at(0)->X(),allhits.at(0)->Y(),allhits.at(0)->Z())<<std::endl
+                <<" :POS/mm = "<<POS().at(ACC(allhits.at(0)->X(),allhits.at(0)->Y(),allhits.at(0)->Z())).X()
+                <<","<<POS().at(ACC(allhits.at(0)->X(),allhits.at(0)->Y(),allhits.at(0)->Z())).Y()
+                <<","<<POS().at(ACC(allhits.at(0)->X(),allhits.at(0)->Y(),allhits.at(0)->Z())).Z()<<std::endl;
     #endif
-    //Formation
-    auto frees=alls; //copy, not clustered
-    std::sort(frees.begin(), frees.end(), Esorter_ascendingC<CHit>); // ascending since we wnat use pop_back...
+    return true;
+}
 
-    std::vector<std::shared_ptr<CHit>> clustereds{}; //clustered 
-    clustereds.reserve(1000);  
-
-    // std::vector<std::shared_ptr<CHit>> seeds_temp; //seeds at current iteration
-    // neighbors_temp.reserve(100); 
-
-    int SEED=0;
-    #ifdef CLUSTER_DEBUG
-        std::cout<<"Emax "<<frees.back()->E()<<std::endl;
-        std::cout<<"Emin "<<frees.front()->E()<<std::endl;
-    #endif
-    while (frees.size() > 0) //loop all the frees until finished
-    {
-        auto init_seed = frees.back(); // from maximim cell
-        if(init_seed->E()/Enoise <= EThres_S) break; // check S, stop if can not be a seed (thus the last seed since asending)
-        init_seed->setP0(SEED); //make asosciation
-        SEED++;
-        frees.pop_back(); //move from frees + 
-        clustereds.push_back(init_seed); // + add to clustered
-        #ifdef CLUSTER_DEBUG
-            std::cout<<"-- Seed E: "<<init_seed->E()<<std::endl;
-        #endif
-
-        std::vector<std::shared_ptr<CHit>> seeds_temp{}; //seeds at current iteration. We do not use set as we must be confident there is no double counting
-        // seeds_temp.clear(); //no need?
-        seeds_temp.push_back(init_seed); // initial seed
-
-        while(seeds_temp.size()>0){
-            #ifdef CLUSTER_DEBUG
-                std::cout<<"-- - Seed size: "<<seeds_temp.size()<<std::endl;
-            #endif
-            auto seed=seeds_temp.back();
-            #ifdef CLUSTER_DEBUG
-                std::cout<<"-- - SEED got: "<<
-                    seed->X() << "," << seed->Y() << "," << seed->Z()
-                    <<std::endl;
-                #endif
-            seeds_temp.pop_back();
-            for(auto  neighbor : findNeighbors(seed,HMAP)){
-                #ifdef CLUSTER_DEBUG
-                    std::cout<<"-- - -- neighbor got: "<<
-                        neighbor->X() << "," << neighbor->Y() << "," << neighbor->Z()
-                        <<std::endl;
-                #endif
-                if(neighbor->E()/Enoise <= EThres_P) continue; 
-                if( neighbor->P0()< 0){ //not associate //prevent duplacate 
-                    neighbor->setP0(seed->P0()); //make association 
-                    clustereds.push_back(neighbor); // + add to clustered --> this is intend to do here not in an atom operation add+remove: to check the delplicate!
-                    if( neighbor->E()/Enoise > EThres_N ){
-                        seeds_temp.push_back(neighbor); 
-                    }
-                }
-            }
-        }
-        //clean frees --> exclusivly clustering!
-        for (auto it = frees.begin(); it != frees.end();) //scan all the free cells 
-        {
-            auto h=*it;
-            if(h->P0()>=0){
-                it=frees.erase(it); // + move from frees // can be atom operation as clustereds.push_back(neighbor);
-            }
-            else{
-                it++;
-            }
-        }
+bool TopoCluster_Analysis::MakeHMAP() { 
+    HMAP.fill(nullptr);
+    for (auto h: allhits) {
+        HMAP.at(HACC(h->X(),h->Y(),h->Z()))=h;
     }
-    if(clustereds.size() > alls.size() || clustereds.size() + frees.size() != alls.size()){
-        std::cerr<<"FATAL: clustering failed 1. Check your codes."<<std::endl;
-        std::cerr<<"Check: clustereds.size, alls.size, frees.size: "
-                    <<clustereds.size()<<" "
-                    <<alls.size()<<" "
-                    <<frees.size()<<" "<<std::endl;
+    // std::sort(allhits.begin(), allhits.end(), Esorter_descendingC<CHit>); // actually not necessary...
+    // Do the test
+    #ifdef CLUSTER_DEBUG
+        std::cout<<"Check HMAP"<<std::endl
+                <<"-->HMAP ACC"<<HACC(allhits.at(0)->X(),allhits.at(0)->Y(),allhits.at(0)->Z())<<std::endl
+                <<" :HMAP = "<<printCell(HMAP.at(HACC(allhits.at(0)->X(),allhits.at(0)->Y(),allhits.at(0)->Z())))<<std::endl
+    #endif
+    return true;
+}
+
+bool TopoCluster_Analysis::Do(std::vector<std::map<std::string, double>> *ret1,std::vector<std::map<std::string, double>> *ret2, 
+                CHitVec *dump) { 
+    // First make Chits from calorimeter hits
+    if(!ConvHits()){
+        std::cerr<<"Fail to conv hits!"<<std::endl;
         return false;
     }
-    #ifdef CLUSTER_DEBUG
-        std::cout<<"SEED="<<SEED<<std::endl;
-    #endif
-
-    //form proto-clusters
-    std::vector<std::vector<std::shared_ptr<CHit>>> clusters{};
-    // std::vector<std::shared_ptr<CHit>> cluster;
-    // cluster.reserve(100);
-    int valid_count=clustereds.size();
-    for (int i = 0; i < SEED; i++)
-    {
-        // cluster.clear();
-        std::vector<std::shared_ptr<CHit>> cluster{};
-        for(auto it = clustereds.begin(); it != clustereds.end();){ 
-            auto h = *it;
-            if (h->P0() == i)
-            {
-                cluster.push_back(h);
-                it=clustereds.erase(it);
-                valid_count--;
-            }
-            else {
-                it++;
-            }
-        }
-        if (cluster.size() > 0){
-            std::sort(cluster.begin(), cluster.end(), Esorter_descendingC<CHit>); // descending
-            clusters.push_back(cluster);
-        }
-        else{
-            std::cerr<<"FATAL: clustering failed 3. Check your codes."<<std::endl;
-            std::cerr<<"Check: we have empty cluster i="<<i<<std::endl;
-            return false;
-        }
-    }
-    if(valid_count!=0){
-        std::cerr<<"FATAL: clustering failed 4. Check your codes."<<std::endl;
-        std::cerr<<"Check: parent cluster form failed formed:"<<valid_count<<" clustered: "<<clustereds.size()<<std::endl;
+    if(!MakeHMAP()){
+        std::cerr<<"Fail to build hmap!"<<std::endl;
         return false;
     }
-
-    //lets do splittion
-    //...
-    std::vector<int> N_subcluster{};
-    for(auto cluster:clusters){
-        if(cluster.size()==0) return false; // should not happen
-        int id=cluster.at(0)->P0(); 
-        int sub_id = 0 ;
-        // find local maxima (Critical E, N , maxima)
-        std::vector<std::shared_ptr<CHit>> localMaxs{};
-        for(auto h:cluster){
-            #ifdef CLUSTER_DEBUG
-                std::cout<<"-- -- Scan P0= "<<h->P0()
-                            <<" E="<<h->E()<<std::endl;
-            #endif
-            if(h->E() > Critical_E){
-                int N=0;
-                for(auto neighbor:findNeighbors(h,HMAP)){
-                    if(neighbor->isLocalMax() || neighbor->E()>h->E()) break; //if E==E, add first if satisfy local max
-                    if(neighbor->P0()==h->P0()) //we have to be in the same larent cluster -- of course?? except the P cut...
-                        N++; 
-                }
-                #ifdef CLUSTER_DEBUG
-                    std::cout<<"-- -- N="<<N
-                                <<std::endl;
-                #endif
-                if(sub_id>MAX_SUB_CLUSTER){
-                    std::cout<<"[WARNING] More than 100 sub_cluster found! only keep 100"<<std::endl;
-                    continue;
-                }
-                if(N>=Critical_N){
-                    #ifdef CLUSTER_DEBUG
-                        std::cout<<"-- -- LocalMax P0= "<<h->P0()<<" P1= "<<sub_id
-                                    <<" E="<<h->E()
-                                    <<" N="<<N
-                                    <<std::endl;
-                    #endif
-                    h->setLocalMax();
-                    h->setP1(sub_id);
-                    h->setP2(sub_id);
-                    localMaxs.push_back(h);
-                    sub_id++;
-                }
-            }
-        }
-        #ifdef CLUSTER_DEBUG
-            std::cout<<"-- N_sub="<<sub_id<<std::endl;
-        #endif
-        N_subcluster.push_back(sub_id);
-        #ifdef CLUSTER_DEBUG
-                std::cout<<" N_subcluster.size="<<N_subcluster.size()
-                            <<std::endl;
-        #endif
-        //determine sub cluster and shared cells
-        if(sub_id==0){
-            //no local Max, all the P1==P2==-1, P0!=-1, fine
-            for(auto h:cluster){
-                h->calE_sub();
-            }
-            continue;
-        }
-
-        for(auto h:localMaxs){ //inclusively clustering so that the doubley (shared) clustering could be found
-            #ifdef CLUSTER_DEBUG
-                std::cout<<"-- -- -- Expand LocalMax P0="<<h->P0()<<" P1="<<h->P1()<<" P2="<<h->P2()
-                            <<" ,"<<h->X()
-                            <<","<<h->Y()
-                            <<","<<h->Z()
-                            <<":"<<h->E()<<std::endl;
-            #endif
-            std::set<std::shared_ptr<CHit>> seed_cells; //We cannot prevent dulplicate(we have to allow inclusive clustering in this stage) -- use std::set
-            seed_cells.insert(h);
-            while(seed_cells.size()>0){
-                #ifdef CLUSTER_DEBUG
-                    std::cout<<"-- -- -- - Seed1 size: "<<seed_cells.size()<<std::endl;
-                #endif
-                auto seed=*std::prev(seed_cells.end());
-                seed->setSeeded(); //must use this prevent loop when inclusively
-                seed_cells.erase(std::prev(seed_cells.end()));
-                for(auto neighbor:findNeighbors(seed,HMAP)){
-                    if(neighbor->isSeeded() || neighbor->P0()!=id || neighbor->isLocalMax()) continue; // not in same parent cluster and not add back the localMax
-                    neighbor->addNeighbor(seed); //here we keep leading two neighbors to this cell
-                    seed_cells.insert(neighbor);
-                }
-            } 
-        }
-        //ok finally do the splitting by the P1 and P2: first calculate E
-
-        std::array<double,MAX_SUB_CLUSTER> E_sub={0.};
-        std::array<double,MAX_SUB_CLUSTER> W={0.};
-        std::array<TVector3,MAX_SUB_CLUSTER> LOC{};
-
-        std::vector<std::shared_ptr<CHit>> shared_cells{};
-        for(auto h:cluster){ // first adding the energy for splittiong base
-            if(h->P1()>=0 && !h->isShared()){ // associate to one localMax
-                double E=h->E();
-                E_sub.at(h->P1())+=E;
-                double w=WEIGHT(E);
-                W.at(h->P1())+=w; // use log average.
-                LOC.at(h->P1())+=w*toPos(h);
-                h->calE_sub(); // finish energy splitting -> all splited to first subclusters
-                #ifdef CLUSTER_DEBUG
-                    std::cout<<"-- -- +noShared Cell P0="<<h->P0()<<" P1="<<h->P1()<<" P2="<<h->P2()
-                            <<" ,"<<h->X()
-                            <<","<<h->Y()
-                            <<","<<h->Z()
-                            <<":"<<h->E()
-                            <<"~"<<w<<std::endl;
-                #endif
-            }else if(h->isShared()){
-                shared_cells.push_back(h);
-                #ifdef CLUSTER_DEBUG
-                    std::cout<<"-- -- +Shared Cell P0="<<h->P0()<<" P1="<<h->P1()<<" P2="<<h->P2()
-                            <<" ,"<<h->X()
-                            <<","<<h->Y()
-                            <<","<<h->Z()
-                            <<":"<<h->E()<<std::endl;
-                #endif
-            }
-        }
-        for(int i=0;i<sub_id;i++){
-            LOC.at(i)*=(1./W.at(i));
-        }
-        //then expand and use splittion formula: and note: we do this exclusively! the cell and only be considered onece when they neighbor shared cell
-        std::sort(shared_cells.begin(), shared_cells.end(), Esorter_descendingC<CHit>);
-        for(auto h:shared_cells){
-            double d1=calDistance(h,LOC.at(h->P1()));
-            double d2=calDistance(h,LOC.at(h->P2()));
-            double w1 = calWeight(E_sub.at(h->P1()),E_sub.at(h->P2()),d1,d2);
-            #ifdef CLUSTER_DEBUG
-                std::cout<<"-- -- -- Expand shared P0="<<h->P0()<<" P1="<<h->P1()<<" P2="<<h->P2()
-                            <<" ,"<<h->X()
-                            <<","<<h->Y()
-                            <<","<<h->Z()
-                            <<":"<<h->E()
-                            <<"->"<<d1<<"~"<<d2<<"="<<w1
-                            <<std::endl;
-            #endif
-            h->calE_sub(w1);
-            std::vector<std::shared_ptr<CHit>> seed_cells; //here we can ensure no double counting: since we cluster exclusively
-            seed_cells.push_back(h); //initial
-            while(seed_cells.size()>0){
-                #ifdef CLUSTER_DEBUG
-                    std::cout<<"-- -- -- - Seed2 size: "<<seed_cells.size()<<std::endl;
-                #endif
-                auto seed=seed_cells.back();
-                seed_cells.pop_back();
-                for(auto neighbor:findNeighbors(seed,HMAP)){
-                    if(neighbor->P0()!=id || neighbor->P1()>=0 || neighbor->isLocalMax()) continue; // not in same parent cluster or already sub clustered, or localMax(directlt adjount)
-                    neighbor->setP1(seed->P1());
-                    neighbor->setP2(seed->P2());
-                    double _d1=calDistance(neighbor,LOC.at(neighbor->P1()));
-                    double _d2=calDistance(neighbor,LOC.at(neighbor->P2()));
-                    double _w1 = calWeight(E_sub.at(neighbor->P1()),E_sub.at(neighbor->P2()),_d1,_d2);
-                    #ifdef CLUSTER_DEBUG
-                        std::cout<<"-- -- -- -- Detected new hit from shared cell"
-                            <<" ,"<<neighbor->X()
-                            <<","<<neighbor->Y()
-                            <<","<<neighbor->Z()
-                            <<":"<<neighbor->E()
-                            <<"->"<<_d1<<"~"<<_d2<<"="<<_w1
-                            <<std::endl;
-                    #endif
-                    neighbor->calE_sub(_w1);
-                    seed_cells.push_back(seed);
-                }
-            }
-        }
-        //loop all the CHit to check...
-        for(auto h:cluster){
-            if(!h->isValid()){
-                std::cerr<<"FATAL: clustering failed 9. Check your codes."<<std::endl;
-                std::cerr<<"Debug: locked="<<h->isLocked()<<" error="<<h->isError()
-                            <<" E="<<h->E()<<" E_sub1"<<h->E_sub1()<<" E_sub2"<<h->E_sub2()
-                            <<" P0="<<h->P0()<<" P1="<<h->P1()<<" P2="<<h->P2()
-                            <<" X="<<h->X()<<" Y="<<h->Y()<<" Z="<<h->Z()
-                            <<std::endl;
-                return false;
-            }
-        }//done cluster...
-        #ifdef CLUSTER_DEBUG
-                std::cout<<"Done cluster!"
-                            <<std::endl;
-        #endif
-    }//done all clusters...
-    #ifdef CLUSTER_DEBUG
-                std::cout<<"Done all clusters!" << "NCluster="<<clusters.size()<<" N_subcluster.size="<<N_subcluster.size()
-                            <<std::endl;
-    #endif
-
-    //retrun all the staffs...
-    // std::cout<<"here "<<clusters.size()<<std::endl;
-
+    //Then run clustering kernel
+    if(!Clustering()){
+        std::cerr<<"Fail to cluster hits!"<<std::endl;
+        return false;
+    }
+    //Finally collect results
     int _i=0;
     //remember to sort all the clusters! -- here we store based on its clustering process.
     for(auto cluster:clusters){ //currently we save two clusters for debug... parent cluster of sub clsuter with parent id
@@ -575,21 +295,326 @@ bool TopoCluster_Analysis::Do(std::vector<std::map<std::string, double>> *ret1,s
     }
     if(dump){
         dump->clear();
-        for(auto h:alls){
+        for(auto h:allhits){
             dump->push_back(std::move(h));
         }
         return true;
     }
-    // sto->clear();
-    // it is shared and no need to release
-    // for(auto h:alls){
-    //     delete h;
-    // }
-    // alls.clear();
+    
+    // it is shared_ptr and no need to release
     return true;
 }
 
-void TopoCluster_Analysis::calXYZCellWidth(int P0, int P1, const std::vector<std::shared_ptr<CHit>> cluster, double ret[]){ //this is in id unit...
+bool TopoCluster_Analysis::Clustering() { 
+    //Formation
+    auto frees=std::deque(allhits.begin(),allhits.end()); // the hits which are not clustered
+    std::sort(frees.begin(), frees.end(), Esorter_descendingC<CHit>); // always decending
+
+    CHitVec clustereds{}; //clustered 
+    clustereds.reserve(1000);  
+
+    // CHitVec seeds_temp; //seeds at current iteration
+    // neighbors_temp.reserve(100); 
+
+    int SEED=0;
+    #ifdef CLUSTER_DEBUG
+        std::cout<<"Emax "<<frees.front()->E()<<std::endl;
+        std::cout<<"Emin "<<frees.back()->E()<<std::endl;
+    #endif
+    while (frees.size() > 0) //loop all the frees until finished
+    {
+        // auto init_seed = frees.back(); // from maximim cell
+        auto init_seed = frees.front(); // from maximim cell
+        if(init_seed->E()/Enoise <= EThres_S) break; // check S, stop if the further hits can not be a seed (decending)
+        init_seed->setP0(SEED); //make asosciation
+        SEED++;
+        // frees.pop_back(); //move from frees + 
+        frees.pop_front(); //move from frees + 
+        clustereds.push_back(init_seed); // + add to clustered --> also decending
+        #ifdef CLUSTER_DEBUG
+            std::cout<<"-- Seed E: "<<init_seed->E()<<std::endl;
+        #endif
+
+        std::deque<std::shared_ptr<CHit>> seeds_temp{}; //seeds at current iteration. We do not use set as we must be confident there is no double counting
+        // seeds_temp.clear(); //no need?
+        seeds_temp.push_back(init_seed); // initial seed
+
+        while(seeds_temp.size()>0){
+            #ifdef CLUSTER_DEBUG
+                std::cout<<"-- - Seed size: "<<seeds_temp.size()<<std::endl;
+            #endif
+            // auto seed=seeds_temp.back();
+            auto seed=seeds_temp.front();
+            #ifdef CLUSTER_DEBUG
+                std::cout<<"-- - SEED got: "<<printCell(seed)
+                    <<std::endl;
+                #endif
+            // seeds_temp.pop_back();
+            seeds_temp.pop_front();
+            for(auto  neighbor : findNeighbors(seed)){
+                #ifdef CLUSTER_DEBUG
+                    std::cout<<"-- - -- neighbor got: "<<
+                        printCell(neighbor)
+                        <<std::endl;
+                #endif
+                if(neighbor->E()/Enoise <= EThres_P) continue; 
+                if( neighbor->P0()< 0){ //not associate //prevent duplacate 
+                    neighbor->setP0(seed->P0()); //make association 
+                    clustereds.push_back(neighbor); // + add to clustered --> this is intend to do here not in an atom operation add+remove: to check the delplicate!
+                    if( neighbor->E()/Enoise > EThres_N ){
+                        seeds_temp.push_back(neighbor); 
+                    }
+                }
+            }
+        }
+        //clean frees --> exclusivly clustering!
+        for (auto it = frees.begin(); it != frees.end();) //scan all the free cells 
+        {
+            auto h=*it;
+            if(h->P0()>=0){
+                it=frees.erase(it); // + move from frees // can be atom operation as clustereds.push_back(neighbor);
+            }
+            else{
+                it++;
+            }
+        }
+    }
+    if(clustereds.size() > allhits.size() || clustereds.size() + frees.size() != allhits.size()){
+        std::cerr<<"FATAL: clustering failed 1. Check your codes."<<std::endl;
+        std::cerr<<"Check: clustereds.size, allhits.size, frees.size: "
+                    <<clustereds.size()<<" "
+                    <<allhits.size()<<" "
+                    <<frees.size()<<" "<<std::endl;
+        return false;
+    }
+    #ifdef CLUSTER_DEBUG
+        std::cout<<"SEED="<<SEED<<std::endl;
+    #endif
+
+    //form proto-clusters --> clusters
+    clusters.clear();
+    int valid_count=clustereds.size();
+    for (int i = 0; i < SEED; i++)
+    {
+        CHitVec cluster{};
+        for(auto it = clustereds.begin(); it != clustereds.end();){ 
+            auto h = *it;
+            if (h->P0() == i)
+            {
+                cluster.push_back(h);
+                it=clustereds.erase(it);
+                valid_count--;
+            }
+            else {
+                it++;
+            }
+        }
+        if (cluster.size() > 0){
+            std::sort(cluster.begin(), cluster.end(), Esorter_descendingC<CHit>); // descending
+            clusters.push_back(cluster);
+        }
+        else{
+            std::cerr<<"FATAL: clustering failed 3. Check your codes."<<std::endl;
+            std::cerr<<"Check: we have empty cluster i="<<i<<std::endl;
+            return false;
+        }
+    }
+    if(valid_count!=0){
+        std::cerr<<"FATAL: clustering failed 4. Check your codes."<<std::endl;
+        std::cerr<<"Check: parent cluster form failed formed:"<<valid_count<<" clustered: "<<clustereds.size()<<std::endl;
+        return false;
+    }
+
+    //lets do splittion
+    N_subcluster.clear();
+    for(auto cluster:clusters){
+        if(cluster.size()==0) return false; // should not happen
+        int id=cluster.at(0)->P0(); 
+        int sub_id = 0 ;
+        // find local maxima (Critical E, N , maxima)
+        CHitVec localMaxs{};
+        for(auto h:cluster){
+            #ifdef CLUSTER_DEBUG
+                std::cout<<"-- -- Scan localMax from "<<printCell(h)<<std::endl;
+            #endif
+            if(h->E() > Critical_E){
+                int N=0;
+                for(auto neighbor:findNeighbors(h)){
+                    #ifdef CLUSTER_DEBUG
+                        std::cout<<"-- -- -- Find neighbor "<<printCell(neighbor)
+                                    <<std::endl;
+                    #endif
+                    // if(neighbor->isLocalMax() || neighbor->E()>h->E()) break; //if E==E, add first if satisfy local max
+                    if(neighbor->isLocalMax() || neighbor->E()>h->E()) continue; // why break??
+                    if(neighbor->P0()==h->P0()) //we have to be in the same larent cluster -- of course?? except the P cut...
+                        N++; 
+                }
+                #ifdef CLUSTER_DEBUG
+                    std::cout<<"-- -- N="<<N
+                                <<std::endl;
+                #endif
+                if(sub_id>MAX_SUB_CLUSTER){
+                    std::cout<<"[WARNING] More than 100 sub_cluster found! only keep 100"<<std::endl;
+                    continue;
+                }
+                if(N>=Critical_N){
+                    #ifdef CLUSTER_DEBUG
+                        std::cout<<"-- -- GOT LocalMax P0= "<<printCell(h)
+                                    <<std::endl;
+                    #endif
+                    h->setLocalMax();
+                    h->setP1(sub_id);
+                    h->setP2(sub_id);
+                    localMaxs.push_back(h);
+                    sub_id++;
+                }
+            }
+        }
+        #ifdef CLUSTER_DEBUG
+            std::cout<<"-- N_sub="<<sub_id<<std::endl;
+        #endif
+        N_subcluster.push_back(sub_id);
+        #ifdef CLUSTER_DEBUG
+                std::cout<<" N_subcluster.size="<<N_subcluster.size()
+                            <<std::endl;
+        #endif
+        //determine sub cluster and shared cells
+        if(sub_id==0){
+            //no local Max, all the P1==P2==-1, P0!=-1, fine
+            for(auto h:cluster){
+                h->calE_sub();
+            }
+            continue;
+        }
+
+        for(auto h:localMaxs){ //inclusively clustering so that the doubley (shared) clustering could be found
+            //clean seeded flag
+            for(auto _h:allhits)
+                _h->setSeeded(false);
+            #ifdef CLUSTER_DEBUG
+                std::cout<<"-- -- -- Expand LocalMax "<<printCell(h)<<std::endl;
+            #endif
+            // std::set<std::shared_ptr<CHit>> seed_cells; 
+            std::deque<std::shared_ptr<CHit>> seed_cells; 
+            //We cannot prevent dulplicate(we have to allow inclusive clustering in this stage) -- use std::set
+            // BUT THE ORDER MATTERS!!!
+            seed_cells.push_back(h);
+            // seed_cells.insert(h);
+            while(seed_cells.size()>0){
+                #ifdef CLUSTER_DEBUG
+                    std::cout<<"-- -- -- - SP "<<h->hit->getCellId()<<" Seed1 size: "<<seed_cells.size()<<std::endl;
+                #endif
+                // auto seed=*std::prev(seed_cells.end());
+                auto seed=seed_cells.front();
+                seed->setSeeded(); // use seeded to prevent loop when start from one localMax
+                seed_cells.pop_front();
+                // seed_cells.erase(std::prev(seed_cells.end()));
+                #ifdef CLUSTER_DEBUG
+                    std::cout<<"-- -- -- - -- Seed: "<<seed->hit->getCellId()<<std::endl;
+                #endif
+                for(auto neighbor:findNeighbors(seed)){
+                    #ifdef CLUSTER_DEBUG
+                        std::cout<<"-- -- -- Find neighbor "<<printCell(neighbor)
+                                    <<" seeded:"<<neighbor->isSeeded()
+                                    <<std::endl;
+                    #endif
+                    if(neighbor->isSeeded() || neighbor->P0()!=id || neighbor->isLocalMax()) continue; // not in same parent cluster and not add back the localMax
+                    neighbor->addNeighbor(seed); //here we keep leading two neighbors to this cell
+                    // seed_cells.insert(neighbor);
+                    seed_cells.push_back(neighbor);
+                }
+            } 
+        }
+        //ok finally do the splitting by the P1 and P2: first calculate E
+
+        std::array<double,MAX_SUB_CLUSTER> E_sub={0.};
+        std::array<double,MAX_SUB_CLUSTER> W={0.};
+        std::array<TVector3,MAX_SUB_CLUSTER> LOC{};
+
+        CHitVec shared_cells{};
+        for(auto h:cluster){ // first adding the energy for splittiong base
+            if(h->P1()>=0 && !h->isShared()){ // associate to one localMax
+                double E=h->E();
+                E_sub.at(h->P1())+=E;
+                double w=WEIGHT(E);
+                W.at(h->P1())+=w; // use log average.
+                LOC.at(h->P1())+=w*toPos(h);
+                h->calE_sub(); // finish energy splitting -> all splited to first subclusters
+                #ifdef CLUSTER_DEBUG
+                    std::cout<<"-- -- +noShared Cell "<<printCell(h)
+                            <<"~"<<w<<std::endl;
+                #endif
+            }else if(h->isShared()){
+                shared_cells.push_back(h);
+                #ifdef CLUSTER_DEBUG
+                    std::cout<<"-- -- +Shared Cell "<<printCell(h)<<std::endl;
+                #endif
+            }
+        }
+        for(int i=0;i<sub_id;i++){
+            LOC.at(i)*=(1./W.at(i));
+        }
+        //then expand and use splittion formula: and note: we do this exclusively! the cell and only be considered onece when they neighbor shared cell
+        std::sort(shared_cells.begin(), shared_cells.end(), Esorter_descendingC<CHit>);
+        for(auto h:shared_cells){
+            double d1=calDistance(h,LOC.at(h->P1()));
+            double d2=calDistance(h,LOC.at(h->P2()));
+            double w1 = calWeight(E_sub.at(h->P1()),E_sub.at(h->P2()),d1,d2);
+            #ifdef CLUSTER_DEBUG
+                std::cout<<"-- -- -- Expand shared Cell "<<printCell(h)
+                            <<"->"<<d1<<"~"<<d2<<"="<<w1
+                            <<std::endl;
+            #endif
+            h->calE_sub(w1);
+            CHitVec seed_cells; //here we can ensure no double counting: since we cluster exclusively
+            seed_cells.push_back(h); //initial
+            while(seed_cells.size()>0){
+                #ifdef CLUSTER_DEBUG
+                    std::cout<<"-- -- -- - Seed2 size: "<<seed_cells.size()<<std::endl;
+                #endif
+                auto seed=seed_cells.back();
+                seed_cells.pop_back();
+                for(auto neighbor:findNeighbors(seed)){
+                    if(neighbor->P0()!=id || neighbor->P1()>=0 || neighbor->isLocalMax()) continue; // not in same parent cluster or already sub clustered, or localMax(directlt adjount)
+                    neighbor->setP1(seed->P1());
+                    neighbor->setP2(seed->P2());
+                    double _d1=calDistance(neighbor,LOC.at(neighbor->P1()));
+                    double _d2=calDistance(neighbor,LOC.at(neighbor->P2()));
+                    double _w1 = calWeight(E_sub.at(neighbor->P1()),E_sub.at(neighbor->P2()),_d1,_d2);
+                    #ifdef CLUSTER_DEBUG
+                        std::cout<<"-- -- -- -- Detected new hit from shared cell: "
+                            <<printCell(neighbor)
+                            <<"->"<<_d1<<"~"<<_d2<<"="<<_w1
+                            <<std::endl;
+                    #endif
+                    neighbor->calE_sub(_w1);
+                    seed_cells.push_back(seed);
+                }
+            }
+        }
+        //loop all the CHit to check...
+        for(auto h:cluster){
+            if(!h->isValid()){
+                std::cerr<<"FATAL: clustering failed 9. Check your codes."<<std::endl;
+                std::cerr<<"Debug: locked="<<h->isLocked()<<" error="<<h->isError()
+                            <<" E="<<h->E()<<" E_sub1="<<h->E_sub1()<<" E_sub2="<<h->E_sub2()<<" "<<
+                            printCell(h)<<std::endl;
+                return false;
+            }
+        }//done cluster...
+        #ifdef CLUSTER_DEBUG
+                std::cout<<"Done cluster!"
+                            <<std::endl;
+        #endif
+    }//done all clusters...
+    #ifdef CLUSTER_DEBUG
+                std::cout<<"Done all clusters!" << "NCluster="<<clusters.size()<<" N_subcluster.size="<<N_subcluster.size()
+                            <<std::endl;
+    #endif
+    return true;
+}
+
+void TopoCluster_Analysis::calXYZCellWidth(int P0, int P1, const CHitVec cluster, double ret[]){ //this is in id unit...
     assert(P0 >= 0 || P0 == _DUMMY);
     ret[0]=_DNAN;
     ret[1]=_DNAN;
@@ -625,7 +650,7 @@ void TopoCluster_Analysis::calXYZCellWidth(int P0, int P1, const std::vector<std
     ret[2]=Zmax-Zmin;           
 }
 
-void TopoCluster_Analysis::calXYZ(int P0, int P1, const std::vector<std::shared_ptr<CHit>> cluster, double ret[]) { //prevent return the XYZVector...
+void TopoCluster_Analysis::calXYZ(int P0, int P1, const CHitVec cluster, double ret[]) { //prevent return the XYZVector...
     assert(P0 >= 0 || P0 == _DUMMY);
     ret[0]=_DNAN;
     ret[1]=_DNAN;
@@ -644,7 +669,7 @@ void TopoCluster_Analysis::calXYZ(int P0, int P1, const std::vector<std::shared_
     ret[2]=LOC.Z();
 }
 
-bool TopoCluster_Analysis::calXYEW(int P0, int P1, const std::vector<std::shared_ptr<CHit>> cluster,int Z, double ret[]){
+bool TopoCluster_Analysis::calXYEW(int P0, int P1, const CHitVec cluster,int Z, double ret[]){
     assert(P0 >= 0 || P0 == _DUMMY);
     ret[0]=_DNAN;
     ret[1]=_DNAN;
@@ -676,7 +701,7 @@ bool TopoCluster_Analysis::calXYEW(int P0, int P1, const std::vector<std::shared
 }
 
 // eigen version
-// bool TopoCluster_Analysis::calEtaPhiXY(int P0, int P1, const std::vector<std::shared_ptr<CHit>> cluster, double ret[])
+// bool TopoCluster_Analysis::calEtaPhiXY(int P0, int P1, const CHitVec cluster, double ret[])
 // {
 //     assert(P0 >= 0 || P0 == _DUMMY);
 //     ret[0]=_DNAN;
@@ -765,7 +790,7 @@ bool TopoCluster_Analysis::calXYEW(int P0, int P1, const std::vector<std::shared
 // }
 
 // move to TMatrix -- V2
-bool TopoCluster_Analysis::calEtaPhiXY(int P0, int P1, const std::vector<std::shared_ptr<CHit>> cluster, double ret[])
+bool TopoCluster_Analysis::calEtaPhiXY(int P0, int P1, const CHitVec cluster, double ret[])
 {
     assert(P0 >= 0 || P0 == _DUMMY);
     ret[0]=_DNAN;
@@ -870,10 +895,11 @@ bool TopoCluster_Analysis::calEtaPhiXY(int P0, int P1, const std::vector<std::sh
         pos.Print();    
     #endif
 
+    ret[5]=N;
     return true;
 }
 
-double TopoCluster_Analysis::calE(int P0, int P1, const std::vector<std::shared_ptr<CHit>> cluster) {
+double TopoCluster_Analysis::calE(int P0, int P1, const CHitVec cluster) {
     assert(P0 >= 0 || P0 == _DUMMY);
     double E=0;
     for(auto h:cluster){
@@ -882,7 +908,7 @@ double TopoCluster_Analysis::calE(int P0, int P1, const std::vector<std::shared_
     return E;
 }
 
-int TopoCluster_Analysis::calNCell(int P0, int P1, const std::vector<std::shared_ptr<CHit>> cluster) {
+int TopoCluster_Analysis::calNCell(int P0, int P1, const CHitVec cluster) {
     assert(P0 >= 0 || P0 == _DUMMY);
     if(P0 == _DUMMY) return cluster.size();
     int NCell=0;

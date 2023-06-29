@@ -284,7 +284,8 @@ void ECAL_ML_IO::flush()
         return;
     // if(index!=nbuffer) index=nbuffer;
     hsize_t i, j, k, l;
-    hsize_t ext_dims_E[] = {index, chunk_E[1], chunk_E[2], chunk_E[3]};
+    hsize_t _index(index);
+    hsize_t ext_dims_E[] = {_index, chunk_E[1], chunk_E[2], chunk_E[3]};
     hsize_t new_dims_E[] = {dims_E[0] + index, dims_E[1], dims_E[2], dims_E[3]};
 
     // extend
@@ -302,7 +303,7 @@ void ECAL_ML_IO::flush()
     h5d_E->write(***wdata, PredType::NATIVE_DOUBLE, mspace_E, fspace_E);
 
     // same for condition
-    hsize_t ext_dims_cond[] = {index, chunk_cond[1]};
+    hsize_t ext_dims_cond[] = {_index, chunk_cond[1]};
     hsize_t new_dims_cond[] = {dims_cond[0] + index, dims_cond[1]};
 
     // extend
@@ -346,7 +347,7 @@ void ECAL_ML_IO::load()
         to_read = -1;
         return;
     }
-    else if (max_read - dims_E[0] >= nbuffer)
+    else if (max_read - dims_E[0] >= (hsize_t)nbuffer)
     {
         // cout << "Read hdf5 one chunk" << endl;
         to_read = nbuffer;
@@ -358,20 +359,21 @@ void ECAL_ML_IO::load()
     }
 
     // E
-    hsize_t in_chunk_E[] = {to_read, chunk_E[1], chunk_E[2], chunk_E[3]};
+    hsize_t _to_read(to_read);
+    hsize_t in_chunk_E[] = {_to_read, chunk_E[1], chunk_E[2], chunk_E[3]};
     DataSpace mspace_E(4, in_chunk_E);
     hsize_t offset_E[] = {dims_E[0], 0, 0, 0};
-    hsize_t count_E[4] = {to_read, chunk_E[1], chunk_E[2], chunk_E[3]};
+    hsize_t count_E[4] = {_to_read, chunk_E[1], chunk_E[2], chunk_E[3]};
     DataSpace fspace_E = h5d_E->getSpace();
     fspace_E.selectHyperslab(H5S_SELECT_SET, count_E, offset_E);
     h5d_E->read(***wdata, PredType::NATIVE_DOUBLE, mspace_E, fspace_E);
     dims_E[0] += to_read;
 
     // cond
-    hsize_t in_chunk_cond[] = {to_read, chunk_cond[1]};
+    hsize_t in_chunk_cond[] = {_to_read, chunk_cond[1]};
     DataSpace mspace_cond(2, in_chunk_cond);
     hsize_t offset_cond[] = {dims_cond[0], 0};
-    hsize_t count_cond[] = {to_read, chunk_cond[1]};
+    hsize_t count_cond[] = {_to_read, chunk_cond[1]};
     DataSpace fspace_cond = h5d_cond->getSpace();
     fspace_cond.selectHyperslab(H5S_SELECT_SET, count_cond, offset_cond);
     h5d_cond->read(*cdata, PredType::NATIVE_DOUBLE, mspace_cond, fspace_cond);
@@ -383,7 +385,7 @@ void ECAL_ML_IO::load()
 
 void ECAL_ML_IO::ProcessEvt(AnaEvent *evt)
 {
-    hsize_t i, j, k, l;
+    hsize_t j, k, l;
     // W mode
     if (mode_rw == 1)
     {
@@ -471,7 +473,7 @@ void ECAL_ML_IO::CheckEvt(AnaEvent * /*evt*/)
 
 void ECAL_ML_IO::End()
 {
-    hsize_t i, j, k, l;
+    hsize_t i, j;
     if (mode_rw == 1 || mode_rw == 0)
     {
         if (mode_rw == 1)

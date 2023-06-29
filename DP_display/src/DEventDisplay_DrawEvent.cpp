@@ -99,6 +99,7 @@ void DEventDisplay::drawInitialParticleStep() { // initial particle will loos en
         auto unique_trk = std::unique(trkIDs.begin(),trkIDs.end());
         trkIDs.erase(unique_trk, trkIDs.end()); 
         std::cout<<"[INFO] detected incident MC particles "<<trkIDs.size()<<std::endl;
+        MCSteps.clear();
         if(std::find(trkIDs.begin(), trkIDs.end(), 0) != trkIDs.end()){
             // old style 1.5 DStep: ID=0,1,2,... only support same initial trk
             auto lineSet = new TEveStraightLineSet(StepCol.first.data());
@@ -308,6 +309,7 @@ void DEventDisplay::drawMCParticles() {
         // --------------------------- END MC tracking algo (find the MC chain) ---------------
     }
     gMCTrackList->MakeTracks();
+    MCSteps.clear();
 }
 
 void DEventDisplay::drawSimuTrkHits(TEveElementList *SimHitsList) {

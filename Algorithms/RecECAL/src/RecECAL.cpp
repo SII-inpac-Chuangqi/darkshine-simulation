@@ -32,18 +32,23 @@ RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProce
     RegisterIntParameter("Advance", "Advanced analysis level", &enAda, 2);
     RegisterIntParameter("SaveTrackInfo", "SaveTrackInfo", &SaveTrackInfo, 0);
     RegisterIntParameter("SaveTruthInfo", "SaveTruthInfo(from MCparticle)", &SaveTruthInfo, 0);
+    RegisterIntParameter("useDTruth", "useDTruth(new truth class), instead of MCPhelper(via virtual SD between tracker and ECAL) to get the truth seed", &useDTruth, 1);
     RegisterIntParameter("StaggeredECAL", "use StaggeredECAL Algo", &StaggeredECAL, 1);
     // detailed parameters
     RegisterDoubleParameter("Enoise", "Enoise/MeV or Digit", &_Enoise, 1); 
     RegisterDoubleParameter("EThres_S", "EThres_S/noise", &_EThres_S, 4); 
     RegisterDoubleParameter("EThres_N", "EThres_N/noise", &_EThres_N, 2); 
     RegisterDoubleParameter("EThres_P", "EThres_P/noise", &_EThres_P, 0); 
-    RegisterDoubleParameter("Critical_E", "Splitting Critical_E/MeV or Digit", &_Critical_E, 500); 
+    RegisterDoubleParameter("Critical_E", "Splitting Critical_E/MeV or Digit", &_Critical_E, 100); 
     RegisterDoubleParameter("Critical_N", "Splitting Critical_N", &_Critical_N, 4); 
     RegisterDoubleParameter("EM_ENERGY_SCALE_MeV", "EM_ENERGY_SCALE_MeV", &_EM_ENERGY_SCALE_MeV, 1); 
     RegisterDoubleParameter("ENERGY_SHIFT_MeV", "ENERGY_SHIFT_MeV", &_ENERGY_SHIFT_MeV, 0); 
     RegisterIntParameter("weight_type", "weight type 0-linear 1-log1p", &_weight_type, 0); 
     RegisterDoubleParameter("EM_SCALE_LENGTH_mm", "EM_SCALE_LENGTH_mm", &_EM_SCALE_LENGTH_mm, 50); 
+    // switch algo
+    RegisterIntParameter("TrackMatch", "activate track match-assiant algo(PFLOW)", &TrackMatch, 1);
+    RegisterIntParameter("MatchTruth", "match truth instead of rec trk", &MatchTruth, 0);
+
 
     //extracted the parameter
     setNX(dAnaData->getNECalCellX());
@@ -120,7 +125,7 @@ RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProce
 
 void RecECAL::Begin() {
     if(StaggeredECAL<=0)
-        std::cerr<<"WARNING!! Use legacy ECAL (non staggered), is it what you want??!"<<std::endl;
+        std::cerr<<"WARNING!! Use legacy ECAL (non staggered), is it what you want?!"<<std::endl;
     
     ReadCollections();
     ecal_col_size = static_cast<int>(ecal_cols.size());
@@ -183,6 +188,8 @@ void RecECAL::Begin() {
             EvtWrt->RegisterOutVariable("ECAL_ClusterSub_phi",&ECAL_ClusterSub_phi);
             EvtWrt->RegisterOutVariable("ECAL_ClusterSub_X_cast",&ECAL_ClusterSub_X_cast);
             EvtWrt->RegisterOutVariable("ECAL_ClusterSub_Y_cast",&ECAL_ClusterSub_Y_cast);
+            if(TrackMatch)
+                EvtWrt->RegisterOutVariable("ECAL_ClusterSub_matchRecTrk",&ECAL_ClusterSub_matchRecTrk);
             // -_-'
             EvtWrt->RegisterIntVariable("ECAL_ClusterSub_NCell_total", &ECAL_ClusterSub_NCell_total, "ECAL_ClusterSub_NCell_total/I");
             EvtWrt->RegisterIntVariable("ECAL_ClusterSub_N", &ECAL_ClusterSub_N, "ECAL_ClusterSub_N/I");
@@ -198,6 +205,10 @@ void RecECAL::Begin() {
             EvtWrt->RegisterOutVariable("ECAL_Cluster_Width_Z",&ECAL_Cluster_Width_Z);
             EvtWrt->RegisterOutVariable("ECAL_Cluster_NCell",&ECAL_Cluster_NCell);
             EvtWrt->RegisterOutVariable("ECAL_Cluster_NSub",&ECAL_Cluster_NSub);
+            if(TrackMatch){
+                EvtWrt->RegisterOutVariable("ECAL_Cluster_NSub_orig",&ECAL_Cluster_NSub_orig);
+                EvtWrt->RegisterOutVariable("ECAL_Cluster_NMatch_orig",&ECAL_Cluster_NMatch_orig);
+            }
             EvtWrt->RegisterOutVariable("ECAL_Cluster_P0",&ECAL_Cluster_P0);
             EvtWrt->RegisterOutVariable("ECAL_Cluster_cosTheta",&ECAL_Cluster_cosTheta);
             EvtWrt->RegisterOutVariable("ECAL_Cluster_phi",&ECAL_Cluster_phi);
@@ -211,14 +222,15 @@ void RecECAL::Begin() {
         if(enAda>0){
             EvtWrt->RegisterOutVariable("ECAL_NCell_max_XY", &ECAL_NCell_max_XY);
             EvtWrt->RegisterOutVariable("ECAL_NCell_XY", &ECAL_NCell_XY);
-            if(SaveTrackInfo){
+            if(SaveTrackInfo>0){
                 EvtWrt->RegisterOutVariable("ECAL_trkSeed_X",&ECAL_trkSeed_X);
                 EvtWrt->RegisterOutVariable("ECAL_trkSeed_Y",&ECAL_trkSeed_Y);
                 EvtWrt->RegisterOutVariable("ECAL_trkSeed_POQ",&ECAL_trkSeed_POQ);
                 EvtWrt->RegisterOutVariable("ECAL_trkSeed_cosTheta",&ECAL_trkSeed_cosTheta);
                 EvtWrt->RegisterOutVariable("ECAL_trkSeed_phi",&ECAL_trkSeed_phi);
+                EvtWrt->RegisterOutVariable("ECAL_trkSeed_ID",&ECAL_trkSeed_ID); // ths ID used by tracker algo (index)
             }
-            if(SaveTruthInfo){
+            if(SaveTruthInfo>0){
                 EvtWrt->RegisterOutVariable("ECAL_truthSeed_X",&ECAL_truthSeed_X);
                 EvtWrt->RegisterOutVariable("ECAL_truthSeed_Y",&ECAL_truthSeed_Y);
                 EvtWrt->RegisterOutVariable("ECAL_truthSeed_E",&ECAL_truthSeed_E);
@@ -265,7 +277,12 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                 continue;
             }
             // Calculate some cluster parameters ( moments...)
-            auto cluster_ana = std::shared_ptr<TopoCluster_Analysis>(new TopoCluster_Analysis(hits, StaggeredECAL>0));
+            TopoCluster_Analysis* cluster_ana=nullptr;
+            if(TrackMatch)
+                cluster_ana = new PFTopoCluster_Analysis(hits, StaggeredECAL>0);
+            else
+                cluster_ana = new TopoCluster_Analysis(hits, StaggeredECAL>0);
+
             setup_TopoCluster_Analysis(cluster_ana);
             if(verbose>1) std::cout<<"T_total "<<smearing_id<<" "<<cluster_ana->FindETotal()<<std::endl;
             E_total.push_back(cluster_ana->FindETotal());
@@ -321,7 +338,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                 }
 
                 //dump track informations
-                if(SaveTrackInfo){ 
+                if(SaveTrackInfo>0 || (TrackMatch>0 && MatchTruth==0)){ 
                     auto _ECal_seed_x = EvtWrt->FindOutVariable<std::vector<double>>("ECal_seed_x");
                     auto _ECal_seed_y = EvtWrt->FindOutVariable<std::vector<double>>("ECal_seed_y");
                     auto _ECal_seed_px = EvtWrt->FindOutVariable<std::vector<double>>("ECal_seed_px");
@@ -334,8 +351,14 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                     std::vector<double> _ECAL_trkSeed_POQ{};
                     std::vector<double> _ECAL_trkSeed_cosTheta{};
                     std::vector<double> _ECAL_trkSeed_phi{};
+                    std::vector<double> _ECAL_trkSeed_PX{};
+                    std::vector<double> _ECAL_trkSeed_PY{};
+                    std::vector<double> _ECAL_trkSeed_PZ{};
 
                     assert(_ECal_seed_x->size()==_RecTrk2_track_chi2->size());
+                    #ifdef PFCLUSTER_DEBUG
+                        std::cout<<"[DEBUG] N_trkSeed "<<_ECal_seed_x->size()<<std::endl;
+                    #endif
                     for(size_t i=0;i<_ECal_seed_x->size();i++){
                         TVector3 P(_ECal_seed_px->at(i),_ECal_seed_py->at(i),_ECal_seed_pz->at(i));
                         double seed_x=_ECal_seed_x->at(i);
@@ -352,32 +375,40 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                         _ECAL_trkSeed_POQ.push_back(P.Mag()); 
                         _ECAL_trkSeed_cosTheta.push_back(P.CosTheta());
                         _ECAL_trkSeed_phi.push_back(P.Phi());
+                        _ECAL_trkSeed_PX.push_back(_ECal_seed_px->at(i));
+                        _ECAL_trkSeed_PY.push_back(_ECal_seed_py->at(i));
+                        _ECAL_trkSeed_PZ.push_back(_ECal_seed_pz->at(i));
                     }
+                    #ifdef PFCLUSTER_DEBUG
+                        std::cout<<"[DEBUG] N_trkSeed(quality) "<<_ECAL_trkSeed_X.size()<<std::endl;
+                    #endif
                     //sort the track, desending.
                      std::vector<int> indices(_ECAL_trkSeed_POQ.size());
                      std::iota(indices.begin(), indices.end(), 0);
                      std::sort(indices.begin(), indices.end(),
                             [&](int A, int B) -> bool {
-                                    return _ECAL_trkSeed_POQ[A] > _ECAL_trkSeed_POQ[B];
+                                    return _ECAL_trkSeed_POQ.at(A) > _ECAL_trkSeed_POQ.at(B);
                             });
+                     
                      for(auto i:indices){
+                        if(TrackMatch>0 && MatchTruth==0){
+                            auto ana = dynamic_cast<PFTopoCluster_Analysis*>(cluster_ana);
+                            ana->AddReferencePoints(i,
+                                    _ECAL_trkSeed_X.at(i),_ECAL_trkSeed_Y.at(i),
+                                    _ECAL_trkSeed_PX.at(i),_ECAL_trkSeed_PY.at(i),_ECAL_trkSeed_PZ.at(i),
+                                    _ECAL_trkSeed_POQ.at(i));
+                        }
+
                         ECAL_trkSeed_X.push_back(_ECAL_trkSeed_X.at(i));
                         ECAL_trkSeed_Y.push_back(_ECAL_trkSeed_Y.at(i));
                         ECAL_trkSeed_POQ.push_back(_ECAL_trkSeed_POQ.at(i));
                         ECAL_trkSeed_cosTheta.push_back(_ECAL_trkSeed_cosTheta.at(i));
                         ECAL_trkSeed_phi.push_back(_ECAL_trkSeed_phi.at(i));
+                        ECAL_trkSeed_ID.push_back(i); // save the original ID from tracker algo output array
                      }
                 }
-                if (SaveTruthInfo)
+                if (SaveTruthInfo>0 || (TrackMatch>0 && MatchTruth>0))
                 {
-                    // FIXME: figure out difference with getTruthsAtECalFront()
-                    const auto &MCCollection = evt->getMcParticleCollection();
-                    const auto &MPHCollection = evt->getMcPHelperCollection();
-
-                    // define the collection name (RawMCParticle) to find.
-                    std::string MCCollectionName = "RawMCParticle";
-                    std::string MPHCollectionName = "MCPHelper";
-
                     vector<double> _ECAL_truthSeed_X{};
                     vector<double> _ECAL_truthSeed_Y{};
                     vector<double> _ECAL_truthSeed_E{};
@@ -389,12 +420,23 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                     vector<int> _ECAL_truthSeed_genProcess{};
                     vector<double> _ECAL_truthSeed_cosTheta{};
                     vector<double> _ECAL_truthSeed_phi{};
+                    vector<double> _ECAL_truthSeed_PX{};
+                    vector<double> _ECAL_truthSeed_PY{};
+                    vector<double> _ECAL_truthSeed_PZ{};
 
                     // IMPORTANT: check if the collection exists
-                    if (MCCollection.count(MCCollectionName) != 0 && MPHCollection.count(MPHCollectionName) != 0)
+                    const auto &MCCollection = evt->getMcParticleCollection();
+                    std::string MCCollectionName = "RawMCParticle";
+                    if(MCCollection.count(MCCollectionName) == 0){
+                        // std::cerr<<"Warning: no MC particle saved, the truth information is not complete!!";
+                        ;
+                    }
+                    // [[maybe_unused]] const auto &raws = MCCollection.at(MCCollectionName);
+                    
+                    const auto &MPHCollection = evt->getMcPHelperCollection();
+                    std::string MPHCollectionName = "MCPHelper";
+                    if (useDTruth==0 && MPHCollection.count(MPHCollectionName) != 0)
                     {
-
-                        [[maybe_unused]] const auto &raws = MCCollection.at(MCCollectionName);
                         const auto &particles = MPHCollection.at(MPHCollectionName);
                         std::unordered_map<int, double> uniqueParticle{}; // for same id only same the largest E one.
 
@@ -459,29 +501,110 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                             _ECAL_truthSeed_genProcess.push_back(genProcess);
                             _ECAL_truthSeed_cosTheta.push_back(p3.CosTheta());
                             _ECAL_truthSeed_phi.push_back(p3.Phi());
+                            _ECAL_truthSeed_PX.push_back(p->getPx());
+                            _ECAL_truthSeed_PY.push_back(p->getPy());
+                            _ECAL_truthSeed_PZ.push_back(p->getPz());
                         }
-                        std::vector<int> indices(_ECAL_truthSeed_X.size());
-                        std::iota(indices.begin(), indices.end(), 0);
-                        std::sort(indices.begin(), indices.end(),
-                                [&](int A, int B) -> bool {
-                                        return _ECAL_truthSeed_E[A] > _ECAL_truthSeed_E[B];
-                                });
-                        for(auto i:indices){
-                            ECAL_truthSeed_X.push_back(_ECAL_truthSeed_X.at(i));
-                            ECAL_truthSeed_Y.push_back(_ECAL_truthSeed_Y.at(i));
-                            ECAL_truthSeed_E.push_back(_ECAL_truthSeed_E.at(i));
-                            ECAL_truthSeed_P.push_back(_ECAL_truthSeed_P.at(i));
-                            ECAL_truthSeed_PDG.push_back(_ECAL_truthSeed_PDG.at(i));
-                            ECAL_truthSeed_ID.push_back(_ECAL_truthSeed_ID.at(i));
-                            ECAL_truthSeed_parentPDG.push_back(_ECAL_truthSeed_parentPDG.at(i));
-                            ECAL_truthSeed_parentID.push_back(_ECAL_truthSeed_parentID.at(i));
-                            ECAL_truthSeed_genProcess.push_back(_ECAL_truthSeed_genProcess.at(i));
-                            ECAL_truthSeed_cosTheta.push_back(_ECAL_truthSeed_cosTheta.at(i));
-                            ECAL_truthSeed_phi.push_back(_ECAL_truthSeed_phi.at(i));
+                        
+                    }
+                    else if(dAnaData->hasDTruth()){
+                        // fallback to new truth class method (experimental be careful!)
+
+                        /* // truth state method: no parent information! -- see tracker algo
+                        auto truth_states_at_ECal = dAnaData->getTruthStatesAtECalFront(); // std::vector<std::pair<const DTruthState*,int>>
+                        for(auto truth_state:truth_states_at_ECal){
+                            auto track = truth_state.second.first;
+                            auto pdg = truth_state.second.second;
+                            temp_v->SetPxPyPzE(track->momentum[0], track->momentum[1], track->momentum[2], track->E);
+                            ECal_seed_x_truth.push_back(track->vertex[0]);
+                            ECal_seed_y_truth.push_back(track->vertex[1]);
+                            ECal_seed_px_truth.push_back(track->momentum[0]);
+                            ECal_seed_py_truth.push_back(track->momentum[1]);
+                            ECal_seed_pz_truth.push_back(track->momentum[2]);
+                            ECal_seed_e_truth.push_back(track->E);
+                            ECal_seed_theta_truth.push_back(temp_v->Theta());
+                            ECal_seed_phi_truth.push_back(temp_v->Phi());
+                            ECal_seed_pdg.push_back(pdg);
+                            ECal_seed_id_rec_track.push_back(truth_state_sorted.first);
                         }
+                        */ 
+
+                        //truth particle method : has parents information!
+                        auto truths = dAnaData->getTruthsAtECalFront(); // std::vector<std::pair<const DTruthParticle*, const DTruthState*>>
+                        for(auto truth : truths){    // std::pair<const DTruthParticle*, const DTruthState*>
+                            auto particle=truth.first;
+                            auto state=truth.second;
+                            _ECAL_truthSeed_X.push_back(state->vertex[0]);
+                            _ECAL_truthSeed_Y.push_back(state->vertex[1]);
+
+                            TLorentzVector p4;
+                            p4.SetPxPyPzE(state->momentum[0], state->momentum[1], state->momentum[2], state->E);
+                            _ECAL_truthSeed_E.push_back(p4.E());
+                            _ECAL_truthSeed_P.push_back(p4.P());
+                            auto p3 = p4.Vect();
+                            _ECAL_truthSeed_cosTheta.push_back(p3.CosTheta());
+                            _ECAL_truthSeed_phi.push_back(p3.Phi());
+                            _ECAL_truthSeed_PX.push_back(state->momentum[0]);
+                            _ECAL_truthSeed_PY.push_back(state->momentum[1]);
+                            _ECAL_truthSeed_PZ.push_back(state->momentum[2]);
+
+                            _ECAL_truthSeed_PDG.push_back(particle->pdg);
+                            _ECAL_truthSeed_ID.push_back(particle->id);
+                            _ECAL_truthSeed_genProcess.push_back(particle->prod_process);
+                            //
+                            int parentPDG;
+                            int parentID;
+                            if(particle->prod_process_link && particle->prod_process_link->in_p){
+                                auto parent = particle->prod_process_link->in_p; //DTruthParticle
+                                parentPDG=parent->pdg;
+                                parentID=parent->id;
+                            }else if(particle->mc_link){
+                                auto mc = particle->mc_link; //McParticle
+                                parentPDG=mc->getPdg();
+                                parentID=mc->getId();
+                            }else{
+                                parentPDG=0;
+                                parentID=-1;
+                            }
+                            _ECAL_truthSeed_parentPDG.push_back(parentPDG);
+                            _ECAL_truthSeed_parentID.push_back(parentID);
+                        }
+                    }else{
+                        std::cerr<<"No any truth information in the file, please set RecECAL.SaveTruthInfo to 0!"<<std::endl;
+                        return;
+                    }
+                    #ifdef PFCLUSTER_DEBUG
+                        std::cout<<"[DEBU#endifG] N_truthSeed "<<_ECAL_truthSeed_X.size()<<std::endl;
+                    #endif
+                    std::vector<int> indices(_ECAL_truthSeed_X.size());
+                    std::iota(indices.begin(), indices.end(), 0);
+                    std::sort(indices.begin(), indices.end(),
+                            [&](int A, int B) -> bool {
+                                    return _ECAL_truthSeed_E[A] > _ECAL_truthSeed_E[B];
+                            });
+                    for(auto i:indices){
+                        if(TrackMatch>0 && MatchTruth>0){
+                            auto ana = dynamic_cast<PFTopoCluster_Analysis*>(cluster_ana);
+                            ana->AddReferencePoints(_ECAL_truthSeed_ID.at(i),
+                                    _ECAL_truthSeed_X.at(i),_ECAL_truthSeed_Y.at(i),
+                                    _ECAL_truthSeed_PX.at(i),_ECAL_truthSeed_PY.at(i),_ECAL_truthSeed_PZ.at(i),
+                                    _ECAL_truthSeed_E.at(i));
+
+                        }
+
+                        ECAL_truthSeed_X.push_back(_ECAL_truthSeed_X.at(i));
+                        ECAL_truthSeed_Y.push_back(_ECAL_truthSeed_Y.at(i));
+                        ECAL_truthSeed_E.push_back(_ECAL_truthSeed_E.at(i));
+                        ECAL_truthSeed_P.push_back(_ECAL_truthSeed_P.at(i));
+                        ECAL_truthSeed_PDG.push_back(_ECAL_truthSeed_PDG.at(i));
+                        ECAL_truthSeed_ID.push_back(_ECAL_truthSeed_ID.at(i));
+                        ECAL_truthSeed_parentPDG.push_back(_ECAL_truthSeed_parentPDG.at(i));
+                        ECAL_truthSeed_parentID.push_back(_ECAL_truthSeed_parentID.at(i));
+                        ECAL_truthSeed_genProcess.push_back(_ECAL_truthSeed_genProcess.at(i));
+                        ECAL_truthSeed_cosTheta.push_back(_ECAL_truthSeed_cosTheta.at(i));
+                        ECAL_truthSeed_phi.push_back(_ECAL_truthSeed_phi.at(i));
                     }
                 }
-
                 //level 2: dump parent cluster
                 if (enAda > 1)
                 {                  
@@ -516,6 +639,10 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                             ECAL_Cluster_Width_Z.push_back(m.at("Width_Z"));
                             ECAL_Cluster_NCell.push_back(m.at("NCell"));
                             ECAL_Cluster_NSub.push_back(m.at("NSub"));
+                            if(TrackMatch>0){
+                                ECAL_Cluster_NSub_orig.push_back(m.at("NSub_orig"));
+                                ECAL_Cluster_NMatch_orig.push_back(m.at("NMatch_orig"));
+                            }
                             ECAL_Cluster_P0.push_back(m.at("P0"));
                             ECAL_Cluster_cosTheta.push_back(abs(m.at("cosTheta"))); //since th fitting do no consider the direction +-
                             ECAL_Cluster_phi.push_back(m.at("phi"));
@@ -544,6 +671,8 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                                 ECAL_ClusterSub_phi.push_back(m.at("phi"));
                                 ECAL_ClusterSub_X_cast.push_back(m.at("X_cast"));
                                 ECAL_ClusterSub_Y_cast.push_back(m.at("Y_cast"));
+                                if(TrackMatch>0)
+                                    ECAL_ClusterSub_matchRecTrk.push_back(m.at("matchRecTrk"));
                                 ECAL_ClusterSub_E_total+=m.at("E");
                                 ECAL_ClusterSub_NCell_total+=m.at("NCell");
                             }
@@ -596,6 +725,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                     }
                 }
             }
+            delete cluster_ana;
         } else {
             // if not exists, print out error
             cerr << HitCollectionName << " not found" << endl;
