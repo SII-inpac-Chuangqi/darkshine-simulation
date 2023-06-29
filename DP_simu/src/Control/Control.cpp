@@ -458,7 +458,10 @@ void Control::RebuildVariables() {
     G4double lzoom = 10;
     Size_World = G4ThreeVector(lzoom * lx, lzoom * ly, lzoom * lz);
 
-    if (build_SideHCAL) std::cout<<"SideHCAL size: "<<Size_SideHCALRegion.x()<<" "<<Size_SideHCALRegion.y()<<" "<<Size_SideHCALRegion.z()<<std::endl;
+    if (build_SideHCAL) {
+        std::cout<<"SideHCAL size: "<<Size_SideHCALRegion.x()<<" "<<Size_SideHCALRegion.y()<<" "<<Size_SideHCALRegion.z()<<std::endl;
+        std::cout<<"SideHCAL position: "<<Pos_SideHCALRegion_0.x()<<" "<<Pos_SideHCALRegion_0.y()<<" "<<Pos_SideHCALRegion_0.z()<<std::endl;
+    }
     std::cout<<"World size: "<<Size_World.x()<<" "<<Size_World.y()<<" "<<Size_World.z()<<std::endl;
 
     //----------------------------------------
