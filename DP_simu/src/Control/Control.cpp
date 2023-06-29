@@ -410,6 +410,7 @@ void Control::RebuildVariables() {
     // │═ 3 ════│  2  │   y
     // └────────┴──╨──┘ x─┘⊗z
     Size_SideHCALRegion.setX(SideHCAL_Layer_N * Size_SideHCALCell.x() + SideHCAL_Absorber_Thickness_Total + eps);
+    std::cout<<"SideHCAL_Layer_N: "<<SideHCAL_Layer_N<<", Size_SideHCALCell.x(): "<<Size_SideHCALCell.x()<<", SideHCAL_Absorber_Thickness_Total: "<<SideHCAL_Absorber_Thickness_Total<<std::endl;
     Size_SideHCALRegion.setY(Size_SideHCALCell.z() + eps);
     Size_SideHCALRegion.setZ(Size_SideHCALCell.y() + eps);
 
