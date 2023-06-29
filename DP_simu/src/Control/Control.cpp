@@ -398,6 +398,7 @@ void Control::RebuildVariables() {
         SideHCAL_Absorber_Thickness_Total += thickness * (endn - startn + 1);
         prev_endn = endn;
         SideHCAL_Layer_N = endn + 1;
+
     }
     Size_SideHCALCell.setX(SideHCAL_Size_Dir.x() + HCAL_Wrap_Size.x());
     Size_SideHCALCell.setY(SideHCAL_Size_Dir.y() + HCAL_Wrap_Size.y());

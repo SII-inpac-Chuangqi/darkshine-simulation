@@ -252,7 +252,7 @@ public:
     G4ThreeVector Size_SideHCALRegion;
     G4ThreeVector SideHCAL_Size_Dir;
     std::vector<std::tuple<int, int, double> > SideHCAL_Absorber_Thickness_List;
-    G4double SideHCAL_Absorber_Thickness_Total;
+    G4double SideHCAL_Absorber_Thickness_Total{0.0};
     G4int SideHCAL_Layer_N; // dependent
     G4ThreeVector Size_SideHCALCell; // dependent
 
