@@ -5,12 +5,6 @@
 #include <iostream>
 #include "Core/AnaData.h"
 
-#ifdef RM_UNIT
-#define CUNIT 1
-#else
-#define CUNIT 10
-#endif
-
 // Required by Singleton
 AnaData *dAnaData = nullptr;
 
@@ -82,6 +76,21 @@ const vector<double> AnaData::getMagnetFieldAt(const vector<double> &pos) const
     field.at(2) = mag_field_vec.at(2)->GetField(pos.at(0), pos.at(1), pos.at(2));
 
     return field;
+}
+
+// geometry specific transformation!
+int AnaData::getECAL_globalID(int block, int unit){ // globalID start from 0 and runs from x,y,z. e.g. 000 100 200 ... 010 ...
+    int ret=-1;
+    int local_x=unit % 7;
+    int local_y=unit / 7;
+    int z=block / 9;
+    int x=local_x + ( (block % 9) % 3 ) * 7;
+    int y=local_y + ( (block % 9) / 3 ) * 7;
+    ret=x + y*21 + z*21*21;
+    if(ret<4851) 
+        return ret;
+    else 
+        return -1;
 }
 
 void AnaData::readGeometryDetails() {
@@ -164,23 +173,25 @@ void AnaData::readGeometryDetails() {
 
         if(detector_name.Contains("ECAL")) {
             auto *detector_shape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
-            ECAL_center_x = CUNIT*detector->GetMatrix()->GetTranslation()[0];
-            ECAL_center_y = CUNIT*detector->GetMatrix()->GetTranslation()[1];
-            ECAL_center_z = CUNIT*detector->GetMatrix()->GetTranslation()[2];
+            auto *detector_matrix = detector->GetMatrix();
+            ECAL_center_x = CUNIT*detector_matrix->GetTranslation()[0];
+            ECAL_center_y = CUNIT*detector_matrix->GetTranslation()[1];
+            ECAL_center_z = CUNIT*detector_matrix->GetTranslation()[2];
             ECAL_length_x = CUNIT*2*detector_shape->GetDX();
             ECAL_length_y = CUNIT*2*detector_shape->GetDY();
             ECAL_length_z = CUNIT*2*detector_shape->GetDZ();
             double subdetector_pos[3];
 
             // Setting EECal_cell_xyz
-            for (int j = 0; j < detector->GetNdaughters(); ++j) {
+            for (int j = 0; j < detector->GetNdaughters(); ++j) { // each block;  7*7 for each block, 9 blocks/layer, 99 blocks in total
                 auto *block = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
                 auto block_name = TString(block->GetVolume()->GetName());
-                for (int k = 0; k < block->GetNdaughters(); ++k ) {
+                auto *block_matrix = block->GetMatrix();
+                for (int k = 0; k < block->GetNdaughters(); ++k ) { // each cell
                     auto *subdetector = dynamic_cast<TGeoNode*>(block->GetDaughter(k));
                     auto subdetector_name = TString(subdetector->GetVolume()->GetName());
-
-                    if (subdetector_name.Contains("LVW")) {
+                    auto *subdetector_matrix = subdetector->GetMatrix();
+                    if (subdetector_name.Contains("LVW")) { 
                         auto *crystal = dynamic_cast<TGeoNode*>(subdetector->GetDaughter(0));
                         auto *crystal_shape = dynamic_cast<TGeoBBox*>(crystal->GetVolume()->GetShape());
                         ECal_cell_length_x.push_back(CUNIT*2*crystal_shape->GetDX());
@@ -188,9 +199,10 @@ void AnaData::readGeometryDetails() {
                         ECal_cell_length_z.push_back(CUNIT*2*crystal_shape->GetDZ());
 
                         for (int l = 0; l < 3; l++)
-                            subdetector_pos[l] = subdetector->GetMatrix()->GetTranslation()[l] + block->GetMatrix()->GetTranslation()[l];
+                            subdetector_pos[l] = subdetector_matrix->GetTranslation()[l] + block_matrix->GetTranslation()[l] + detector_matrix->GetTranslation()[l];
                         if ( !ECAL_pos0 ) ECAL_pos0 = new TVector3(CUNIT * subdetector_pos[0],CUNIT * subdetector_pos[1],CUNIT * subdetector_pos[2]);
-
+                        ECAL_posmap[getECAL_globalID(j,k)] = TVector3(subdetector_pos) * CUNIT;
+  
                         if (subdetector_pos[2] > last_pos[2]) {
                             if (ECAL_cell_dz == 0 && N_ECal_cell_z == 1) ECAL_cell_dz = CUNIT * fabs(subdetector_pos[2] - last_pos[2]);
                             last_pos[2] = subdetector_pos[2];
@@ -209,19 +221,21 @@ void AnaData::readGeometryDetails() {
                     }
                 }
             }
+            // std::cout<<"ECAL cells found: "<<ecal_n<<std::endl;
 
-            int ecal_n = 0;
-            // Calculate ECAL_posmap
-            for (int zi = 0; zi < N_ECal_cell_z; zi++) {
-                for (int yi = 0; yi < N_ECal_cell_y; yi++) {
-                    for (int xi = 0; xi < N_ECal_cell_x; xi++) {
-                        ECAL_posmap[ecal_n] = TVector3( ECAL_pos0->x() + xi * ECAL_cell_dx,
-                                                    ECAL_pos0->y() + yi * ECAL_cell_dy,
-                                                    ECAL_pos0->z() + zi * ECAL_cell_dz);
-                        ecal_n++;
-                    }
-                }
-            }
+            // int ecal_n = 0;
+            // // Calculate ECAL_posmap -- move to on the fly method
+            // for (int zi = 0; zi < N_ECal_cell_z; zi++) {
+            //     for (int yi = 0; yi < N_ECal_cell_y; yi++) {
+            //         for (int xi = 0; xi < N_ECal_cell_x; xi++) {
+            //             // order: 000 100 200 ... 010 ...
+            //             ECAL_posmap[ecal_n] = TVector3( ECAL_pos0->x() + xi * ECAL_cell_dx - ((zi%2)?12.5:0),
+            //                                         ECAL_pos0->y() + yi * ECAL_cell_dy - ((zi%2)?12.5:0),
+            //                                         ECAL_pos0->z() + zi * ECAL_cell_dz);
+            //             ecal_n++;
+            //         }
+            //     }
+            // }
         }
     }
 }
@@ -268,21 +282,35 @@ void AnaData::printGeometryDetails() const {
     }
 
     if(ECal_cell_length_x.size() && ECal_cell_length_y.size() && ECal_cell_length_z.size())
-        std::cerr << "           ECal:        center x at     " << ECAL_center_x            << " mm" << std::endl
-                  << "                        center y at     " << ECAL_center_y            << " mm" << std::endl
-                  << "                        center z at     " << ECAL_center_z            << " mm" << std::endl
-                  << "                        length x        " << ECAL_length_x            << " mm" << std::endl
-                  << "                        length y        " << ECAL_length_y            << " mm" << std::endl
-                  << "                        length z        " << ECAL_length_z            << " mm" << std::endl
-                  << "                        cell size x     " << ECal_cell_length_x.at(0) << " mm" << std::endl
-                  << "                        cell size y     " << ECal_cell_length_y.at(0) << " mm" << std::endl
-                  << "                        cell size z     " << ECal_cell_length_z.at(0) << " mm" << std::endl
-                  << "                        cell[0] pos x   "  << ECAL_posmap.at(0).X()    << " mm" << std::endl
-                  << "                        cell[0] pos y   "  << ECAL_posmap.at(0).Y()    << " mm" << std::endl
-                  << "                        cell[0] pos z   "  << ECAL_posmap.at(0).Z()    << " mm" << std::endl
-                  << "                        cell No. x      " << N_ECal_cell_x            << std::endl
-                  << "                        cell No. y      " << N_ECal_cell_y            << std::endl
-                  << "                        cell No. z      " << N_ECal_cell_z            << std::endl;
+        std::cerr << "           ECal:        center x at     "      << ECAL_center_x                                      << " mm" << std::endl
+                  << "                        center y at     "      << ECAL_center_y                                      << " mm" << std::endl
+                  << "                        center z at     "      << ECAL_center_z                                      << " mm" << std::endl
+                  << "                        length x        "      << ECAL_length_x                                      << " mm" << std::endl
+                  << "                        length y        "      << ECAL_length_y                                      << " mm" << std::endl
+                  << "                        length z        "      << ECAL_length_z                                      << " mm" << std::endl
+                  << "                        cell size x     "      << ECal_cell_length_x.at(0)                           << " mm" << std::endl
+                  << "                        cell size y     "      << ECal_cell_length_y.at(0)                           << " mm" << std::endl
+                  << "                        cell size z     "      << ECal_cell_length_z.at(0)                           << " mm" << std::endl
+                  << "                        POS0 pos x   "         << ECAL_pos0->x()                              << " mm" << std::endl
+                  << "                        POS0 pos y   "         << ECAL_pos0->y()                              << " mm" << std::endl
+                  << "                        POS0 pos z   "         << ECAL_pos0->z()                              << " mm" << std::endl
+                  << "                        --> cell[0,0,0] pos x   "  << ECAL_posmap.at(0).X()                              << " mm" << std::endl
+                  << "                        --> cell[0,0,0] pos y   "  << ECAL_posmap.at(0).Y()                              << " mm" << std::endl
+                  << "                        --> cell[0,0,0] pos z   "  << ECAL_posmap.at(0).Z()                              << " mm" << std::endl
+                  << "                        cell No. x      "      << N_ECal_cell_x                                               << std::endl
+                  << "                        cell No. y      "      << N_ECal_cell_y                                               << std::endl
+                  << "                        cell No. z      "      << N_ECal_cell_z                                               << std::endl
+                  << "                        --> cell[10,10,0] pos x   "  << ECAL_posmap.at(10 + N_ECal_cell_x*10).X()        << " mm" << std::endl
+                  << "                        --> cell[10,10,0] pos y   "  << ECAL_posmap.at(10 + N_ECal_cell_x*10).Y()        << " mm" << std::endl
+                  << "                        --> cell[10,10,0] pos z   "  << ECAL_posmap.at(10 + N_ECal_cell_x*10).Z()        << " mm" << std::endl
+                  << "                        --> cell[10,10,1] pos x   "  << ECAL_posmap.at(10 + N_ECal_cell_x*10 + N_ECal_cell_x*N_ECal_cell_y).X()        << " mm" << std::endl
+                  << "                        --> cell[10,10,1] pos y   "  << ECAL_posmap.at(10 + N_ECal_cell_x*10 + N_ECal_cell_x*N_ECal_cell_y).Y()        << " mm" << std::endl
+                  << "                        --> cell[10,10,1] pos z   "  << ECAL_posmap.at(10 + N_ECal_cell_x*10 + N_ECal_cell_x*N_ECal_cell_y).Z()        << " mm" << std::endl
+                  << "                        --> cell[10,10,2] pos x   "  << ECAL_posmap.at(10 + N_ECal_cell_x*10 + 2*N_ECal_cell_x*N_ECal_cell_y).X()        << " mm" << std::endl
+                  << "                        --> cell[10,10,2] pos y   "  << ECAL_posmap.at(10 + N_ECal_cell_x*10 + 2*N_ECal_cell_x*N_ECal_cell_y).Y()        << " mm" << std::endl
+                  << "                        --> cell[10,10,2] pos z   "  << ECAL_posmap.at(10 + N_ECal_cell_x*10 + 2*N_ECal_cell_x*N_ECal_cell_y).Z()        << " mm" << std::endl
+                  << "                        --> SurfaceZ    "      << getECalSurfaceZ()                                  << " mm" << std::endl;
+                  
 }
 
 TString AnaData::getRegionName(const float *vertex) {

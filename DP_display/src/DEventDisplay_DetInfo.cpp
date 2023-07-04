@@ -64,6 +64,7 @@ void DEventDisplay::inspectMainRegion() {
 void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
     // Print daughter region of mother volume id
     auto *current_node = dynamic_cast<TGeoNode *>(world_node->GetDaughter(id));
+    auto region_Name = TString(current_node->GetVolume()->GetName()); // TAGTrk or RECTrk
 
     // Calorimeter
     // For ECAL, only the first Z layers is counted
@@ -80,7 +81,7 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
         auto *cur_node = dynamic_cast<TGeoNode *>(current_node->GetDaughter(i));
         auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
 //        auto cur_Name = TString(cur_node->GetName());
-        auto cur_Name = TString(cur_node->GetVolume()->GetName());
+        auto cur_Name = TString(cur_node->GetVolume()->GetName()); // TagTrk1/2_PV or RecTrk1/2_PV
         // Tracker
         if (dt == DTracker) {
             auto mother_z = current_node->GetMatrix()->GetTranslation()[2];
@@ -96,6 +97,9 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
                           << std::setw(6) << CUNIT * 2 * cur_shape->GetDY() << ","
                           << std::setw(6) << CUNIT * 2 * cur_shape->GetDZ() << ") [mm]";
 //                std::cout << std::endl;
+                // set B field region
+                if(TString(cur_node->GetName()).Contains("Tag") && i==0) dDisData->setBfieldRegionZleft(daughter_z+cur_shape->GetDZ()*CUNIT); // TODO: extend the B field region?
+                else if(TString(cur_node->GetName()).Contains("Rec") && i==(current_node->GetNdaughters()-2)) dDisData->setBfieldRegionZright(daughter_z-cur_shape->GetDZ()*CUNIT);
             } else {
                 auto rot_mat = cur_node->GetMatrix()->GetRotationMatrix();
 
@@ -189,7 +193,7 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
 
     if (dt == DECAL) {
         std::cout << std::right;
-        std::cout << "    ==> Arrangement: ";
+        std::cout << "    ==> Arrangement(block): ";
         std::cout << std::setw(3) << n_cell[0] << ", "
                   << std::setw(3) << n_cell[1] << ", "
                   << std::setw(3) << n_cell[2] << " ";

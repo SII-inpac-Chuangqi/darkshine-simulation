@@ -88,7 +88,7 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
 
     // For McParticle Collection
     if (dControl->save_MC) {
-        if (dControl->save_all_mcp || (aTrack->GetTrackID() == 1
+        if (dControl->save_all_mcp || (aTrack->GetParentID()==0
                                        || pm >= 1. * GeV
                                        || (kin_energy >= 1. * GeV && kin_energy <= 10. * GeV)
                                        || abs(pdg) == 13   // Muon
@@ -168,7 +168,7 @@ void TrackingAction::PostUserTrackingAction(const G4Track *aTrack) {
     // fill into DTruth
     if (
             (truth_particle->E_remain >= dControl->E_remain_min || truth_particle->E_leak >= dControl->E_leak_min) ||
-            aTrack->GetTrackID() == 1 ||
+            aTrack->GetParentID()==0 ||
             truth_particle->E_kin >= dControl->E_kin_min_record
             )
         dRootMng->GetEvt()->getTruthInfo()->UpdateTruthParticle(truth_particle);

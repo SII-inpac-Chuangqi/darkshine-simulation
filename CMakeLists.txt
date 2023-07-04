@@ -63,6 +63,18 @@ IF (BUILD_DANA)
     MESSAGE("-- Eigen Dir: ${EIGEN3_INCLUDE_DIR}")
 ENDIF ()
 
+# HDF5
+option(BUILD_HDF5 "BUILD_HDF5" ON)
+IF (BUILD_HDF5)
+    FIND_PACKAGE(HDF5 COMPONENTS C CXX)
+    IF (HDF5_FOUND)
+        ADD_DEFINITIONS(-DBUILD_HDF5)
+        INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
+        MESSAGE("-- HDF5 Dir: ${HDF5_INCLUDE_DIRS}")
+    ELSEIF ()
+        SET(BUILD_HDF5 OFF)
+    ENDIF ()
+ENDIF ()
 # json
 find_package(nlohmann_json 3.2.0 REQUIRED)
 
@@ -113,7 +125,9 @@ include_directories(
         ${Util_List}
         ${Algo_List}
         ${Geant4_INCLUDE_DIR}
-        ${HEPMC_INCLUDE_DIR})
+        ${HEPMC_INCLUDE_DIR}
+)
+
 
 #----------------------------------------------------------------------------
 # DEvent
@@ -124,7 +138,7 @@ link_libraries(DEvent)
 # DSimu
 option(BUILD_DSIMU "BUILD_DSIMU" ON)
 if (BUILD_DSIMU)
-    add_definitions(-DDSIMU_VERSION=\"v1.5.9\")
+    add_definitions(-DDSIMU_VERSION=\"1.6\")
     add_subdirectory(DP_simu)
 endif ()
 

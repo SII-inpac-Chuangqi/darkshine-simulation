@@ -382,7 +382,8 @@ void RootManager::FillParticleStep(const G4Step *aStep) {
 
     auto Steps = Evt->getStepCollection().at(dControl->InitialParticleStepCollection_Name);
     auto step = new DStep();
-    step->setId(static_cast<int>(Steps->size()));
+    // step->setId(static_cast<int>(Steps->size())); // the collection is Vector so this ID has no much sense
+    step->setId(aStep->GetTrack()->GetTrackID());
     if (Steps->empty()) {
         step->setX(prev->GetPosition()[0]);
         step->setY(prev->GetPosition()[1]);

@@ -35,8 +35,8 @@ void DEvent::Initialization(CleanType ct) {
     }
     if (ct == nALL) MCParticleCollection.clear();
 
-    for (auto itr : MCPHelperCollection) {
-        for (auto itr2 : *itr.second) {
+    for (auto itr: MCPHelperCollection) {
+        for (auto itr2: *itr.second) {
             delete itr2;
         }
         (itr.second)->clear();
@@ -99,14 +99,14 @@ void DEvent::Initialization(CleanType ct) {
 }
 
 void DEvent::PrintDetails() {
-    for (const auto& steps: StepCollection) {
+    for (const auto &steps: StepCollection) {
         std::cout
                 << "***********************************************************************************************************************"
                 << std::endl
                 << "* Step Collection: " << steps.first << std::endl
                 << "***********************************************************************************************************************"
                 << std::endl
-                << "| ID    |    x[mm]     y[mm]    z[mm]  |  Px[MeV]   Py[MeV]   Pz[MeV]    E[MeV] | PVName              Process Name    |"
+                << "| trkID |    x[mm]     y[mm]    z[mm]  |  Px[MeV]   Py[MeV]   Pz[MeV]    E[MeV] | PVName              Process Name    |"
                 << std::endl
                 << "***********************************************************************************************************************"
                 << std::endl;
@@ -114,7 +114,7 @@ void DEvent::PrintDetails() {
             std::cout << *step << std::endl;
     }
 
-    for (const auto& particles: MCParticleCollection) {
+    for (const auto &particles: MCParticleCollection) {
         std::cout
                 << "*****************************************************************************************************************************************************************************"
                 << std::endl
@@ -130,7 +130,7 @@ void DEvent::PrintDetails() {
     }
 
 
-    for (const auto& particles: MCPHelperCollection) {
+    for (const auto &particles: MCPHelperCollection) {
         std::cout
                 << "*******************************************************************************************************************************"
                 << std::endl
@@ -145,7 +145,7 @@ void DEvent::PrintDetails() {
             std::cout << *particle << std::endl;
     }
 
-    for (const auto& simus: SimulatedHitCollection) {
+    for (const auto &simus: SimulatedHitCollection) {
         std::cout << "**********************************************************************" << std::endl
                   << "* Simulated Hit Collection: " << simus.first << std::endl
                   << "**********************************************************************" << std::endl
@@ -159,7 +159,7 @@ void DEvent::PrintDetails() {
 
 DStepVec *DEvent::RegisterStepCollection(const std::string &str) {
     if (StepCollection.count(str) != 0) {
-        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return null. " << str << std::endl;
         return nullptr;
     }
     auto tmpVec = new DStepVec();
@@ -176,7 +176,7 @@ DStepVec *DEvent::RegisterStepCollection(const std::string &str) {
 
 DigiFormVec *DEvent::RegisterOpticalCollection(const std::string &str) {
     if (OpticalCollection.count(str) != 0) {
-        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return null. " << str << std::endl;
         return nullptr;
     }
     auto tmpVec = new DigiFormVec();
@@ -193,7 +193,7 @@ DigiFormVec *DEvent::RegisterOpticalCollection(const std::string &str) {
 
 MCParticleVec *DEvent::RegisterMCParticleCollection(const std::string &str) {
     if (MCParticleCollection.count(str) != 0) {
-        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return null. " << str << std::endl;
         return nullptr;
     }
     auto tmpVec = new MCParticleVec();
@@ -209,7 +209,7 @@ MCParticleVec *DEvent::RegisterMCParticleCollection(const std::string &str) {
 
 MCPHelperVec *DEvent::RegisterMCPHelperCollection(const std::string &str) {
     if (MCPHelperCollection.count(str) != 0) {
-        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return null. " << str << std::endl;
         return nullptr;
     }
     auto tmpVec = new MCPHelperVec();
@@ -225,7 +225,7 @@ MCPHelperVec *DEvent::RegisterMCPHelperCollection(const std::string &str) {
 
 RecParticleVec *DEvent::RegisterRecParticleCollection(const std::string &str) {
     if (RecParticleCollection.count(str) != 0) {
-        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return null. " << str << std::endl;
         return nullptr;
     }
     auto tmpVec = new RecParticleVec();
@@ -241,7 +241,7 @@ RecParticleVec *DEvent::RegisterRecParticleCollection(const std::string &str) {
 
 SimulatedHitVec *DEvent::RegisterSimulatedHitCollection(const std::string &str) {
     if (SimulatedHitCollection.count(str) != 0) {
-        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
+        std::cerr << "[WARNING] ==> Key already exists. Return null." << str << std::endl;
         return nullptr;
     }
     auto tmpVec = new SimulatedHitVec();
@@ -257,8 +257,7 @@ SimulatedHitVec *DEvent::RegisterSimulatedHitCollection(const std::string &str) 
 
 CalorimeterHitVec *DEvent::RegisterCalorimeterHitCollection(const std::string &str) {
     if (CalorimeterHitCollection.count(str) != 0) {
-        std::cerr << "[WARNING] ==> Key already exists. Return the existing Key: " << str << std::endl;
-        return nullptr;
+        std::cerr << "[WARNING] ==> Key already exists. Return null. " << str << std::endl;
     }
     auto tmpVec = new CalorimeterHitVec();
     CalorimeterHitCollection.emplace(std::pair<std::string, CalorimeterHitVec *>(str, tmpVec));
@@ -314,28 +313,38 @@ void DEvent::DeleteCollection(const std::string &str) {
     auto itr6 = OpticalCollection.find(str);
     auto itr7 = MCPHelperCollection.find(str);
 
+
     if (itr1 != MCParticleCollection.end()) {
         MCParticleCollection.erase(itr1);
-        std::cout << "[MC DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+        if (Verbose > 1)
+            std::cout << "[MC DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
     } else if (itr2 != RecParticleCollection.end()) {
         RecParticleCollection.erase(itr2);
-        std::cout << "[REC DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+        if (Verbose > 1)
+            std::cout << "[REC DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
     } else if (itr3 != SimulatedHitCollection.end()) {
         SimulatedHitCollection.erase(itr3);
-        std::cout << "[SIM DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+        if (Verbose > 1)
+            std::cout << "[SIM DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
     } else if (itr4 != CalorimeterHitCollection.end()) {
         CalorimeterHitCollection.erase(itr4);
-        std::cout << "[CAL DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+        if (Verbose > 1)
+            std::cout << "[CAL DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
     } else if (itr5 != StepCollection.end()) {
         StepCollection.erase(itr5);
-        std::cout << "[STEP DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+        if (Verbose > 1)
+            std::cout << "[STEP DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
     } else if (itr6 != OpticalCollection.end()) {
         OpticalCollection.erase(itr6);
-        std::cout << "[Opt DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+        if (Verbose > 1)
+            std::cout << "[Opt DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
     } else if (itr7 != MCPHelperCollection.end()) {
-        std::cout << "[MCPHelper DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
-    } else
-        std::cerr << "[WARNING] ==> No Key named " + str + "." << std::endl;
+        if (Verbose > 1)
+            std::cout << "[MCPHelper DELETE] ==> Collection " + str + " has been successfully removed." << std::endl;
+    } else {
+        if (Verbose > 1)
+            std::cerr << "[WARNING] ==> No Key named " + str + "." << std::endl;
+    }
 }
 
 void DEvent::LinkChildren() {

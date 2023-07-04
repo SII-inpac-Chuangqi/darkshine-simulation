@@ -9,12 +9,12 @@
 #include <ctime>
 #include <algorithm>
 
-void AlgoManager::RegisterAnaProcessor(const std::shared_ptr<AnaProcessor> &AnaP) {
+void AlgoManager::RegisterAnaProcessor(const std::shared_ptr<AnaProcessor> &AnaP, bool addDefault) {
     if (AnaProcessors.count(AnaP->getName()) != 0)
         std::cerr << "[WARNING] ==> Algo Processor Name already exists." << std::endl;
     else {
         AnaProcessors.insert(std::pair<std::string, std::shared_ptr<AnaProcessor> >(AnaP->getName(), AnaP));
-        AnaProcessorList_default.emplace_back(AnaP->getName());
+        if(addDefault) AnaProcessorList_default.emplace_back(AnaP->getName());
     }
 }
 
