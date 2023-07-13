@@ -149,6 +149,16 @@ GNN_Digitization::Run(
 
             }
         }
+
+        // Clean memory
+        for (auto hit: hit_track1) {
+            delete hit;
+        }
+        for (auto hit: hit_track2) {
+            delete hit;
+        }
+        hit_track1.clear();
+        hit_track2.clear();
     }
 
     return final_hits;
