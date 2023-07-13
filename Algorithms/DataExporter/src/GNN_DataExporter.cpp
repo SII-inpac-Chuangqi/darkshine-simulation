@@ -313,24 +313,23 @@ void GNN_DataExporter::ProcessEvt(AnaEvent *evt) {
     if (t)
         t->Fill();
 
-    if (contains("AllTrk")) {
-        evt->DeleteCollection("AllTrk");
-    }
-    if (contains("TagTrk")) {
-        evt->DeleteCollection("TagTrk");
-    }
-    if (contains("RecTrk")) {
-        evt->DeleteCollection("RecTrk");
-    }
-    if (contains("DigitizedTagTrk")) {
-        evt->DeleteCollection("DigitizedTagTrk");
-    }
-    if (contains("DigitizedRecTrk")) {
-        evt->DeleteCollection("DigitizedRecTrk");
-    }
-    if (contains("AllDigitizedTrk")) {
-        evt->DeleteCollection("AllDigitizedTrk");
-    }
+    auto clean_collection = [contains, evt, TrackerCollection](const std::string &str) {
+        if (contains(str)) {
+            for (auto hit: *TrackerCollection.at(str)) {
+                delete hit;
+            }
+            TrackerCollection.at(str)->clear();
+            TrackerCollection.at(str)->shrink_to_fit();
+            evt->DeleteCollection(str);
+        }
+    };
+
+    clean_collection("AllTrk");
+    clean_collection("TagTrk");
+    clean_collection("RecTrk");
+    clean_collection("DigitizedTagTrk");
+    clean_collection("DigitizedRecTrk");
+    clean_collection("AllDigitizedTrk");
 
     for (auto &i: node) {
         for (auto &j: i.second) {
