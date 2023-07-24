@@ -14,6 +14,7 @@
 
 #include <stdexcept>
 #include <sstream>
+#include <string_view>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -218,11 +219,11 @@ McParticle *RootManager::FillMC(McParticle *fMC, int ParentID) {
     mc->setParents(McParticle::SearchID(mcps, ParentID));
 
     auto tmp1 = G4String(mc->getCreateProcess());
-    const char *tmp2;
+    std::string_view tmp2;
     if (tmp1.contains("biasWrapper"))
-        tmp2 = tmp1(tmp1.index("(") + 1, tmp1.index(")") - tmp1.index("(") - 1).data();
+        tmp2 = std::string_view(tmp1.c_str() + tmp1.find("(") + 1, tmp1.find(")") - tmp1.find("(") - 1);
     else
-        tmp2 = tmp1.data();
+        tmp2 = std::string_view(tmp1);
     mc->setCreateProcess(std::string(tmp2));
 
     mcps->emplace_back(mc);
@@ -410,11 +411,11 @@ void RootManager::FillParticleStep(const G4Step *aStep) {
     } else {
         step->setPVName(post->GetPhysicalVolume()->GetName().data());
         auto tmp2 = post->GetProcessDefinedStep()->GetProcessName();
-        const char *tmp3;
+        std::string_view tmp3;
         if (tmp2.contains("biasWrapper"))
-            tmp3 = tmp2(tmp2.index("(") + 1, tmp2.index(")") - tmp2.index("(") - 1).data();
+            tmp3 = std::string_view(tmp2.c_str() + tmp2.find("(") + 1, tmp2.find(")") - tmp2.find("(") - 1);
         else
-            tmp3 = tmp2.data();
+            tmp3 = std::string_view(tmp2);
         step->setProcessName(std::string(tmp3));
     }
 
