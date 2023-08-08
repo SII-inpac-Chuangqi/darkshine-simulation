@@ -183,33 +183,11 @@ TMatrixD RiemannFitter::GetPolarCoo(const TrkHitPVec &track)
 }
 
 //................................................................................//
-//Get multiple scattering covariance matrix element
-double RiemannFitter::GetVradmsIJ(const TMatrixD &polar_coo, int i, int j,
-                                  const double &p, // Momentum, MeV
-                                  double (*MultipleScatteringError)(const double &p))
-{
-    double sigma_ms = MultipleScatteringError(p);
-
-    double v_radms_i_j = 0.;
-    double ii = 0., jj = 0.;
-    const double *element = polar_coo.GetMatrixArray();
-    ii = *(element + i);
-    jj = *(element + j);
-
-    int k_max = (i < j) ? i : j;
-    for(int k = 0; k < k_max; k++)
-    {
-        double kk = *(element + k);
-        v_radms_i_j += (ii - kk)*(jj - kk)*sigma_ms*sigma_ms/sin(pre_theta_)/sin(pre_theta_);
-    }
-
-    return v_radms_i_j;
-}
-
-//................................................................................//
 //Get multiple scattering covariance matrix
 TMatrixD RiemannFitter::GetVradms(const TMatrixD &polar_coo)
 {
+    std::function<double(double)> ms_error_func = RiemannFitHelper::GetMultipleScatteringError;
+
     TArrayD data(dim_*dim_);
     for (int i = 0; i < dim_; i++)
     {
@@ -219,8 +197,9 @@ TMatrixD RiemannFitter::GetVradms(const TMatrixD &polar_coo)
                                            i, // i
                                            j, // j
 
-                                           0.3*RiemannFitHelper::GetMagnetAtOrigin(tracking::dY)*pre_R_, // momentum, MeV
-                                           RiemannFitHelper::GetMultipleScatteringError);
+                                           ms_error_func,
+                                           0.3*RiemannFitHelper::GetMagnetAtOrigin(tracking::dY)*pre_R_ // momentum, MeV
+                                          );
         }
     }
 

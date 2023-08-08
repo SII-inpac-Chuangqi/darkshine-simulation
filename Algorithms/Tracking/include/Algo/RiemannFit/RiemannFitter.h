@@ -6,6 +6,8 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <functional>
+#include <utility>
 
 //................................................................................//
 //ROOT
@@ -78,9 +80,28 @@ private:
 //................................................................................//
 //Get multiple scattering covariance matrix element
 //Multiple scattering variance function MultipleScatteringError from fit helper RiemannFitHelper::GetMultipleScatteringError
+    template <typename ... FArgs, typename ... Args>
     double GetVradmsIJ(const TMatrixD &polar_coo, int i, int j,
-                       const double &p, // momentum, MeV
-                       double (*MultipleScatteringError)(const double &p));
+                       std::function<double(FArgs...)> error_func,
+                       Args && ... error_para)
+    {
+        double sigma_ms = error_func(std::forward<Args>(error_para)...);
+    
+        double v_radms_i_j = 0.;
+        double ii = 0., jj = 0.;
+        const double *element = polar_coo.GetMatrixArray();
+        ii = *(element + i);
+        jj = *(element + j);
+    
+        int k_max = (i < j) ? i : j;
+        for(int k = 0; k < k_max; k++)
+        {
+            double kk = *(element + k);
+            v_radms_i_j += (ii - kk)*(jj - kk)*sigma_ms*sigma_ms/sin(pre_theta_)/sin(pre_theta_);
+        }
+    
+        return v_radms_i_j;
+    }
 
 //................................................................................//
 //Get multiple scattering covariance matrix
