@@ -62,7 +62,7 @@ public:
     // Register Processors
     void SetAnaProcessorsList(const std::string &ProcessorList);
 
-    void RegisterAnaProcessor(const std::shared_ptr<AnaProcessor>& AnaP);
+    void RegisterAnaProcessor(const std::shared_ptr<AnaProcessor>& AnaP, bool addDefault=true);
 
     // Run AnaProcessor
     void BeginAnaProcessors();

@@ -218,6 +218,7 @@ void AnimationData::add_hit(
         );
 
         // Geant4 follows Z-Y-X order
+        if (Det_Type == "TagTrk" || Det_Type == "RecTrk") depth = 1;
         auto axis = touchable->GetRotation(depth)->getAxis();
         double rotation = 0;
         touchable->GetRotation(depth)->getAngleAxis(rotation, axis);

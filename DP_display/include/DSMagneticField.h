@@ -14,22 +14,31 @@
 class DSMagneticField : public TEveMagField{
 
 public:
-    DSMagneticField():TEveMagField(){};
+    DSMagneticField():TEveMagField(){}; //wrapper of dDisData Magnetes
     ~DSMagneticField() override= default;
-    using   TEveMagField::GetField;
 
-    TEveVectorD GetFieldD(Double_t x, Double_t y, Double_t z) const override
-    {
-        if (z >= -60.7825 && z <= 18.0225)
-        {
-            //return TEveVectorD(0, -1.5, 0.);
-            return TEveVectorD(dDisData->GetMagnetXAt(x, y, z),
-                               dDisData->GetMagnetYAt(x, y, z),
-                               dDisData->GetMagnetZAt(x, y, z));
-        }
-        return TEveVectorD(0., 0., 0.);
+    Double_t GetMaxFieldMagD() const override { 
+        return -1.5; // FIXME: read from dmagnets
     }
 
+    TEveVectorD GetFieldD(Double_t x_cm, Double_t y_cm, Double_t z_cm) const override //cm since it is based on TEve
+    {
+        // all the length inside DSimu/DAna/DDis will be mm
+        auto x = x_cm * CUNIT;
+        auto y = y_cm * CUNIT;
+        auto z = z_cm * CUNIT;
+        // std::cout<<"Checking By... "<<z<<std::endl;
+        if (dDisData->isInBfieldRegion(x,y,z)) // TODO: move into dDisData
+        {
+            // std::cout<<"Got region By... "<<dDisData->GetMagnetYAt(x, y, z)<<std::endl;
+            // note! it is inverted
+            return TEveVectorD(-1 * dDisData->GetMagnetXAt(x, y, z),
+                               -1 * dDisData->GetMagnetYAt(x, y, z),
+                               -1 * dDisData->GetMagnetZAt(x, y, z));
+        }
+        // std::cout<<"Got By... "<<0<<std::endl;
+        return TEveVectorD(0., 0., 0.);
+    }
 };
 
 #endif //DSIMU_DSMAGNETICFIELD_H

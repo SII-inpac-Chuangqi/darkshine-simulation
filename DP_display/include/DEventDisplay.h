@@ -5,11 +5,7 @@
 #ifndef DSIMU_DEVENTDISPLAY_H
 #define DSIMU_DEVENTDISPLAY_H
 
-#ifdef RM_UNIT
-#define CUNIT 1
-#else
-#define CUNIT 10
-#endif
+#include "DisData.h"
 
 #include "TEveManager.h"
 #include "TGeoManager.h"
@@ -147,7 +143,10 @@ public:
                           const Color_t &color, const Style_t &style, bool drawMarkers, double lineWidth,
                           int markerPos);
 
-    static TEveTrack *makeMCTrack(TEveTrackPropagator *trkProp, unsigned id, McParticle *mc);
+    static TEveTrack *makeMCTrack(TEveTrackPropagator *trkProp, unsigned id, McParticle *mc, std::shared_ptr<DStepVec> steps=nullptr);
+    int recursiveFindTracks(int mother, MCParticleVec* MCs, int* count, std::string path, std::shared_ptr<std::map<int,std::string>> sto=nullptr);
+    std::string easyPDG(int pdg);
+    bool isInitialMC(McParticle* mc);
 
     template<class Hit>
     static TEveBox *makeTrackerBox(Hit *hit, double scale);
@@ -156,7 +155,7 @@ public:
     // get Error if not
     TEveBox *makeSimuCaloBox(SimulatedHit *hit, double EMax) const;
 
-    static TEveBox *makeRecCaloBox(CalorimeterHit *hit, double EMax);
+    static TEveBox *makeRecCaloBox(CalorimeterHit *hit, double EMax, int copyNo=-1);
 
     static TEveBox *makeBox(const double *abs_pos, const double *half_size);
 
@@ -168,7 +167,7 @@ public:
     static void MakeViewerScene(TEveWindowSlot *slot, TEveViewer *&v, TEveScene *&s);
 
     // Ana Processors
-    //void RunAnaProcessors();
+    void RunAnaProcessors();
 
     // Open Application
     void makeGUIRaw(DEventDisplay *fh);
@@ -195,6 +194,10 @@ public:
 
     void inspectSubRegion(int id, Det_Type dt);
 
+    bool loadAnaConfig(TString &in){
+        anaConfig=in;
+        return anaConfig=="";
+    };
     void setNoStripMode(bool no_strip = true) {
         if (no_strip) {
             _scale_factor_SimuTrkHits = 0.01;
@@ -252,17 +255,19 @@ private:
     bool _drawSimuTrkHits = true;
     bool _drawMCTracks = true;
     bool _drawScaleSimuCaloBox = false;
-    bool _drawSimuCaloLego = true;
+    bool _drawSimuCaloLego = false;
 
     // MC Tracks Option
-    double MC_Emin = 0.0;
+    double MC_Emin = 1; // MeV
     int MC_PDG = 0;
+    // steps saved for plotting
+    std::map<int,std::shared_ptr<DStepVec>> MCSteps;
 
     // Calo Options
-    double r_min = 0.;
-    double ECAL_Emin = 0.;
+    double r_min = 0.01;
+    double ECAL_Emin = 1; // MeV
     double HCAL_Emin = 0.;
-    double Trk_Emin = 0.;
+    double Trk_Emin = 0.; // track hit (e.g. strip)
     double _scale_factor_SimuTrkHits = 1.0;
     double _scale_factor_SimuCaloHits = 1.0;
     bool _build_Tracker_BField = false;
@@ -285,10 +290,46 @@ private:
     /***************************/
     // Format:
     //   ProcessorName_Variable
+    TString anaConfig;
+    bool RunAna_{true};
+    TGCheckButton* guiRunAna{nullptr};
 
+    double Enoise{1};
+    double EThres_S{4};
+    double EThres_N{2};
+    double EThres_P{0};
+    double Critical_E{500};
+    double Critical_N{4};
+    double EM_ENERGY_SCALE_MeV{1};
+    double ENERGY_SHIFT_MeV{0};
+    int weight_type{0};
+    double EM_SCALE_LENGTH_mm{50};
 
+    TGNumberEntry* gui_Enoise{nullptr};
+    TGNumberEntry* gui_EThres_S{nullptr};
+    TGNumberEntry* gui_EThres_N{nullptr};
+    TGNumberEntry* gui_EThres_P{nullptr};
+    TGNumberEntry* gui_Critical_E{nullptr};
+    TGNumberEntry* gui_Critical_N{nullptr};
+    TGNumberEntry* gui_EM_ENERGY_SCALE_MeV{nullptr};
+    TGNumberEntry* gui_ENERGY_SHIFT_MeV{nullptr};
+    TGNumberEntry* gui_weight_type{nullptr};
+    TGNumberEntry* gui_EM_SCALE_LENGTH_mm{nullptr};
 
-ClassDefOverride(DEventDisplay, 0);
+    bool AnaDisClusLeadingOnly{false};
+    bool AnaDisCellMax{true};
+    bool AnaDisCellSp1{true};
+    bool AnaDisCellSp2{true};
+    bool AnaDisCellPri{true};
+    bool AnaDisCellSub{true};
+    TGCheckButton* gui_AnaDisClusLeadingOnly{nullptr};
+    TGCheckButton* gui_AnaDisCellMax{nullptr};
+    TGCheckButton* gui_AnaDisCellSp1{nullptr};
+    TGCheckButton* gui_AnaDisCellSp2{nullptr};
+    TGCheckButton* gui_AnaDisCellPri{nullptr};
+    TGCheckButton* gui_AnaDisCellSub{nullptr};
+
+    ClassDefOverride(DEventDisplay, 0);
 };
 
 

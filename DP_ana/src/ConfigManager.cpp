@@ -51,37 +51,9 @@ void ConfigManager::ReadAnaParameters() {
     for (const auto &itr : AnaPro) {
         //auto algo_name = itr.first;
         auto algo_proccessor = itr.second;
+        auto algo_name = itr.first;
 
-        // Read Int Parameter
-        auto IntPara = algo_proccessor->getIntParameters();
-        for (const auto &itr_int : IntPara) {
-            auto algo_name = itr.first;
-            auto parameter_name = itr_int.first;
-            auto parameter_value = *(itr_int.second.second);
-            auto read_str = algo_name.append(".").append(parameter_name);
-            auto readin_value = config->Read(read_str, parameter_value);
-            algo_proccessor->setIntValue(parameter_name, readin_value);
-        }
-        // Read Double Parameter
-        auto DoublePara = algo_proccessor->getDoubleParameters();
-        for (const auto &itr_double : DoublePara) {
-            auto algo_name = itr.first;
-            auto parameter_name = itr_double.first;
-            auto parameter_value = *(itr_double.second.second);
-            auto read_str = algo_name.append(".").append(parameter_name);
-            auto readin_value = config->Read(read_str, parameter_value);
-            algo_proccessor->setDoubleValue(parameter_name, readin_value);
-        }
-        // Read String Parameter
-        auto StrPara = algo_proccessor->getStringParameters();
-        for (const auto &itr_str : StrPara) {
-            auto algo_name = itr.first;
-            auto parameter_name = itr_str.first;
-            auto parameter_value = *(itr_str.second.second);
-            auto read_str = algo_name.append(".").append(parameter_name);
-            auto readin_value = config->Read(read_str, parameter_value);
-            algo_proccessor->setStringValue(parameter_name, readin_value);
-        }
+        SetupAnaParameters(config,algo_name,algo_proccessor.get());
     }
 }
 

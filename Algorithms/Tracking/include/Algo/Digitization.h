@@ -1,12 +1,6 @@
 #ifndef DIGITIZATION_H
 #define DIGITIZATION_H
 
-#ifdef RM_UNIT
-#define CUNIT 1
-#else
-#define CUNIT 10
-#endif
-
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
 #endif

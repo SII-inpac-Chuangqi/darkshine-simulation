@@ -68,10 +68,11 @@ SteppingAction::~SteppingAction() {
 void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     prev = aStep->GetPreStepPoint();
     post = aStep->GetPostStepPoint();
-
+    
     // For default hardbrem filter
     // Requirement: gamma from initial electron with energy larger than 4 GeV in tracker region
-    if (aStep->GetTrack()->GetTrackID() == 1 && dControl->if_HardBrem && dControl->if_filter) {
+    // N.B. initial particle starts from 1 and parent==0
+    if (aStep->GetTrack()->GetParentID()==0 && dControl->if_HardBrem && dControl->if_filter) {
         // If out of selection region, check event status
         if (prev->GetTotalEnergy() < 4 * GeV || prev->GetPosition()[2] >= 180 * mm) {
             if (!dFilterManager->GetHardbremFound()) {
@@ -115,12 +116,12 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     }
     if (!post) return;
     if (dControl->save_initial_particle_step
-        && aStep->GetTrack()->GetTrackID() == 1
+        && aStep->GetTrack()->GetParentID()==0 
         && aStep->GetPreStepPoint()->GetPosition().z() <= record_step_z) {
         /* Record all steps for certain particle */
         dRootMng->FillParticleStep(aStep);
     }
-    if (aStep->GetTrack()->GetTrackID() == 1) {
+    if (aStep->GetTrack()->GetParentID()==0) { // initial particle
         if (post->GetProcessDefinedStep()->GetProcessName().contains("electronNuclear")) {
 //            || post->GetProcessDefinedStep()->GetProcessName() == "biasWrapper(electronNuclear)" ) {
             G4double deltaE = fabs(prev->GetKineticEnergy() - post->GetKineticEnergy());
