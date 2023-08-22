@@ -17,9 +17,6 @@
 //If particle pass through trackers
 bool InTagTrack(double x, double y, double z)
 {
-    if(z > -607.5 && z < -5   &&
-       y > -100   && y <  100 &&
-       x > -50    && x <  50    )
     double x_max = dAnaData->getCenterXTag() + 0.5*dAnaData->getLengthXTag();
     double x_min = dAnaData->getCenterXTag() - 0.5*dAnaData->getLengthXTag();
     double y_max = dAnaData->getCenterYTag() + 0.5*dAnaData->getLengthYTag();
@@ -37,9 +34,6 @@ bool InTagTrack(double x, double y, double z)
 
 bool InRecTrack(double x, double y, double z)
 {
-    if(z >  5   && z < 235.5 &&
-       y > -100 && y < 100   &&
-       x > -50  && x < 50      )
     double x_max = dAnaData->getCenterXRec() + 0.5*dAnaData->getLengthXRec();
     double x_min = dAnaData->getCenterXRec() - 0.5*dAnaData->getLengthXRec();
     double y_max = dAnaData->getCenterYRec() + 0.5*dAnaData->getLengthYRec();
