@@ -444,7 +444,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     [[maybe_unused]] bool if_reco_rec_hits(false);
 
     std::vector<double> magnet_at_origin = {magnets.size() && magnets.at(0) ? magnets.at(0)->GetField(0., 0., 0.) : 0.,
-                                            magnets.size() && magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.) : con_field,
+                                            magnets.size() && magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.)
+                                                                            : con_field,
                                             magnets.size() && magnets.at(2) ? magnets.at(2)->GetField(0., 0., 0.) : 0.};
 
 //................................................................................//
@@ -464,8 +465,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         it_find_tag1 != simuhit_collection.end() &&
         it_find_tag2 != simuhit_collection.end() &&
         it_find_rec1 != simuhit_collection.end() &&
-        it_find_rec2 != simuhit_collection.end())
-    {
+        it_find_rec2 != simuhit_collection.end()) {
         if_initial_steps = true;
         if_raw_tag_hits = true;
         if_raw_rec_hits = true;
@@ -488,8 +488,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Tag tracker
         TrkHitPVecMap clus_tag_trkhit_map;
-        if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
-        //if (raw_tagtrk2_hits.size() > 2)
+        //if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
+        if (raw_tagtrk2_hits.size() > 2)
         {
             if_raw_tag_hit_number = true;
 
@@ -514,11 +514,11 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                         track->SetVerbose(Verbose);
                         int size = track->GetSize();
                         double x = 0.;
-                        double y = 0.5*(track->At(0)->GetY() + track->At(size - 1)->GetY());
-                        double z = 0.5*(track->At(0)->GetZ() + track->At(size - 1)->GetZ());
-                        std::vector<double> magnet_at_median = {dAnaData->getMagnetFieldAt({x, y, z}).at(0)*10.,
-                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(1)*10.,
-                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(2)*10.};
+                        double y = 0.5 * (track->At(0)->GetY() + track->At(size - 1)->GetY());
+                        double z = 0.5 * (track->At(0)->GetZ() + track->At(size - 1)->GetZ());
+                        std::vector<double> magnet_at_median = {dAnaData->getMagnetFieldAt({x, y, z}).at(0) * 10.,
+                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(1) * 10.,
+                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(2) * 10.};
                         track->ExceptionHandler(magnet_at_origin);
                         track->Reverse();
                         track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
@@ -531,8 +531,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Recoil tracker
         TrkHitPVecMap clus_rec_trkhit_map;
-        if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
-        //if (raw_rectrk2_hits.size() > 2)
+        //if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
+        if (raw_rectrk2_hits.size() > 2)
         {
             if_raw_rec_hit_number = true;
 
@@ -551,16 +551,16 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //Fit, by Genfit, Kalman filter/by Riemann fitting
                     RecTrk2_track_No = find_rec.GetTrackNo();
-              
-                    for (auto &track : rec_tracks_) {
+
+                    for (auto &track: rec_tracks_) {
                         track->SetVerbose(Verbose);
                         int size = track->GetSize();
                         double x = 0.;
-                        double y = 0.5*(track->At(0)->GetY() + track->At(size - 1)->GetY());
-                        double z = 0.5*(track->At(0)->GetZ() + track->At(size - 1)->GetZ());
-                        std::vector<double> magnet_at_median = {dAnaData->getMagnetFieldAt({x, y, z}).at(0)*10.,
-                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(1)*10.,
-                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(2)*10.};
+                        double y = 0.5 * (track->At(0)->GetY() + track->At(size - 1)->GetY());
+                        double z = 0.5 * (track->At(0)->GetZ() + track->At(size - 1)->GetZ());
+                        std::vector<double> magnet_at_median = {dAnaData->getMagnetFieldAt({x, y, z}).at(0) * 10.,
+                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(1) * 10.,
+                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(2) * 10.};
                         track->ExceptionHandler(magnet_at_origin);
                         track->Reverse();
                         track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
@@ -662,81 +662,77 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //Write truth
         this->FillTruth(evt->getTruthInfo(), initial_steps, raw_tagtrk2_hits, raw_rectrk2_hits);
 
-    // Use number of trackers hit by particle for calculating angles of some track
-
-        if (RecTrk2_track_z.size() > 0 && RecTrk2_pp_truth_fin) {
-            for(int i = 0; i < RecTrk2_track_z.size(); ++i ){
-                //number of trackers hit by particles
-                int iRec_zNo = 0;
-                iRec_zNo = RecTrk2_track_z[i].size();
-                Rec_zNo.push_back( iRec_zNo );
-                /*
-                 *  Meaning of "RecTrk2_track_theta_21" (unit in rad):
-                 *  Use the first and second hit-coordinates (x and z), called (z[1], x[1]) and (z[2], x[2]), then
-                 *                                                     x[2] - x[1]
-                 *  get the tangent:  Tan(RecTrk2_track_theta_21) == ————————————————
-                 *                                                     z[2] - z[1]
-                 *  Similar for other angles:
-                 *                                                        x[i] - x[j]
-                 *  Tan(RecTrk2_track_theta_ij) == Tan(Rec_ThetaEnd) == ————————————————
-                 *                                                        z[i] - z[j]
-                 *  i is the last piece of recoil tracker hit by some particle.
-                 */
-                RecTrk2_track_theta_21.push_back(
-                        TMath::ATan(
-                        (RecTrk2_track_x[i][iRec_zNo - 2] - RecTrk2_track_x[i][iRec_zNo - 1]) /
-                        (RecTrk2_track_z[i][iRec_zNo - 2] - RecTrk2_track_z[i][iRec_zNo - 1])     )
-                    );
-                Rec_ThetaEnd.push_back(
-                        TMath::ATan(
-                        (RecTrk2_track_x[i][0] - RecTrk2_track_x[i][1]) /
-                        (RecTrk2_track_z[i][0] - RecTrk2_track_z[i][1])   )
-                    );
-
-                //Select the last piece of recoil tracker
-//            if( RecTrk2_pp_truth_fin ){
-                if (iRec_zNo == 6) {
-                    RecTrk2_track_theta_65 = Rec_ThetaEnd;
-                    if (RecTrk2_pp_truth_fin < 800.0) {
-                        //This is the momentum reconstructed by theta-momentum maps, when reconstructing some lower momentum events.
-                        //Delta theta is useful for lower momentum reconstruction, which seems like:
-                        // RecTrk2_track_theta_65 - RecTrk2_track_theta_21
-                        //The following is an empirical formula：
-                        RecTrk2_pp_fixed_by_theta.push_back(
-                            std::fabs( 11.52 - 47.0838 / (RecTrk2_track_theta_65[i] - RecTrk2_track_theta_21[i]) )
-                        );
-                    }else{  //for events with momentum more than 800 MeV, the scaled momentum is the same as Junhua fixed before.
-                        RecTrk2_pp_fixed_by_theta = RecTrk2_fixed_pp;
-                    }
-                }
-                if (iRec_zNo == 5) {
-                    RecTrk2_track_theta_54 = Rec_ThetaEnd;
-                    if (RecTrk2_pp_truth_fin < 800.0) {
-                        RecTrk2_pp_fixed_by_theta.push_back(
-                                std::fabs( 3812.42 - 0.0000720903 * TMath::Exp(
-                            17.7819 + 0.00632341 / (RecTrk2_track_theta_54[i] - RecTrk2_track_theta_21[i])  )  )
-                        );
-                    }else{  //for events with momentum more than 800 MeV, the scaled momentum is the same as Junhua fixed before.
-                        RecTrk2_pp_fixed_by_theta = RecTrk2_fixed_pp;
-                    }
-                }
-                if (iRec_zNo == 4) {
-                    RecTrk2_track_theta_43 = Rec_ThetaEnd;
-                    if (RecTrk2_pp_truth_fin < 800.0) {
-                        RecTrk2_pp_fixed_by_theta.push_back(
-                                std::fabs( -11.6262 + TMath::Exp(
-                                    3.11256 - 0.290107 / (RecTrk2_track_theta_43[i] - RecTrk2_track_theta_21[i])
-                                    )   )
-                        );
-                    }else{  //for events with momentum more than 800 MeV, the scaled momentum is the same as Junhua fixed before.
-                        RecTrk2_pp_fixed_by_theta = RecTrk2_fixed_pp;
-                    }
-                }
-//          }
-            }
-        }
-
-
+        // Use number of trackers hit by particle for calculating angles of some track
+/*
+//    if (RecTrk2_track_z.size() > 0 && RecTrk2_pp_truth_fin) {
+//        for(int i = 0; i < RecTrk2_track_z.size(); ++i ){
+//            //number of trackers hit by particles
+//            int iRec_zNo = 0;
+//            iRec_zNo = RecTrk2_track_z[i].size();
+//            Rec_zNo.push_back( iRec_zNo );
+//            //
+//            //  Meaning of "RecTrk2_track_theta_21" (unit in rad):
+//            //  Use the first and second hit-coordinates (x and z), called (z[1], x[1]) and (z[2], x[2]), then
+//            //                                                     x[2] - x[1]
+//            //  get the tangent:  Tan(RecTrk2_track_theta_21) == ————————————————
+//            //                                                     z[2] - z[1]
+//            //  Similar for other angles:
+//            //                                                        x[i] - x[j]
+//            //  Tan(RecTrk2_track_theta_ij) == Tan(Rec_ThetaEnd) == ————————————————
+//            //                                                        z[i] - z[j]
+//            //  i is the last piece of recoil tracker hit by some particle.
+//            //
+//            RecTrk2_track_theta_21.push_back(
+//                    TMath::ATan(
+//                    (RecTrk2_track_x[i][iRec_zNo - 2] - RecTrk2_track_x[i][iRec_zNo - 1]) /
+//                    (RecTrk2_track_z[i][iRec_zNo - 2] - RecTrk2_track_z[i][iRec_zNo - 1])     )
+//                );
+//            Rec_ThetaEnd.push_back(
+//                    TMath::ATan(
+//                    (RecTrk2_track_x[i][0] - RecTrk2_track_x[i][1]) /
+//                    (RecTrk2_track_z[i][0] - RecTrk2_track_z[i][1])   )
+//                );
+//
+//            //Select the last piece of recoil tracker
+//          if( RecTrk2_pp_truth_fin ){
+//            if (iRec_zNo == 6) {
+//                RecTrk2_track_theta_65 = Rec_ThetaEnd;
+//                if (RecTrk2_pp_truth_fin < 800.0) {
+//                    //This is the momentum reconstructed by theta-momentum maps, when reconstructing some lower momentum events.
+//                    //Delta theta is useful for lower momentum reconstruction, which seems like:
+//                    // RecTrk2_track_theta_65 - RecTrk2_track_theta_21
+//                    //The following is an empirical formula：
+//                    RecTrk2_pp_fixed_by_theta.push_back(
+//                        std::fabs( 11.52 - 47.0838 / (RecTrk2_track_theta_65[i] - RecTrk2_track_theta_21[i]) )
+//                    );
+//                }else{  //for events with momentum more than 800 MeV, the scaled momentum is the same as Junhua fixed before.
+//                    RecTrk2_pp_fixed_by_theta = RecTrk2_fixed_pp;
+//                }
+//            }
+//            if (iRec_zNo == 5) {
+//                RecTrk2_track_theta_54 = Rec_ThetaEnd;
+//                if (RecTrk2_pp_truth_fin < 800.0) {
+//                    RecTrk2_pp_fixed_by_theta.push_back(
+//                            std::fabs( 3812.42 - 0.0000720903 * TMath::Exp(
+//                        17.7819 + 0.00632341 / (RecTrk2_track_theta_54[i] - RecTrk2_track_theta_21[i])  )  )
+//                    );
+//                }else{  //for events with momentum more than 800 MeV, the scaled momentum is the same as Junhua fixed before.
+//                    RecTrk2_pp_fixed_by_theta = RecTrk2_fixed_pp;
+//                }
+//            }
+//            if (iRec_zNo == 4) {
+//                RecTrk2_track_theta_43 = Rec_ThetaEnd;
+//                if (RecTrk2_pp_truth_fin < 800.0) {
+//                    RecTrk2_pp_fixed_by_theta.push_back(
+//                            std::fabs( -11.6262 + TMath::Exp(
+//                                3.11256 - 0.290107 / (RecTrk2_track_theta_43[i] - RecTrk2_track_theta_21[i])
+//                                )   )
+//                    );
+//                }else{  //for events with momentum more than 800 MeV, the scaled momentum is the same as Junhua fixed before.
+//                    RecTrk2_pp_fixed_by_theta = RecTrk2_fixed_pp;
+//                }
+//            }
+*/
     }
 }
 
