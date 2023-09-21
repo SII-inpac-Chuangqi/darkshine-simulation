@@ -214,13 +214,13 @@ Geometry:
     Tracker2_Color: [ 0. , 0.5, 0.5 ] # RGB
     # Tagging Tracker
     tag_Size_Tracker:
-      - [ 10.05 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 1
-      - [ 10.05 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 2
-      - [ 10.05 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 3
-      - [ 10.05 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 4
-      - [ 10.05 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 5
-      - [ 10.05 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 6
-      - [ 10.05 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 7
+      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 1
+      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 2
+      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 3
+      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 4
+      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 5
+      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 6
+      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 7
     tag_Pos_Tracker:
       - [ 0 , "cm", 0 , "cm", -30 , "cm" ] # Layer 1
       - [ 0 , "cm", 0 , "cm", -20 , "cm" ] # Layer 2
@@ -241,12 +241,12 @@ Geometry:
     tag_Tracker_Strip_Block_N: 50 # Strip number per block. This number must be a common divisor of tag_Tracker_Strip_N !
     # Recoil Tracker
     rec_Size_Tracker:
-      - [ 10.05 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 1
-      - [ 10.05 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 2
-      - [ 10.05 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 3
-      - [ 12 , "cm", 23 , "cm", 0.1 , "mm" ] # Layer 4
-      - [ 18 , "cm", 28 , "cm", 0.1 , "mm" ] # Layer 5
-      - [ 25.05 , "cm", 40 , "cm", 0.1 , "mm" ] # Layer 6
+      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 1
+      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 2
+      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 3
+      - [ 12    , "cm", 23 , "cm", 0.3 , "mm" ] # Layer 4
+      - [ 18    , "cm", 28 , "cm", 0.3 , "mm" ] # Layer 5
+      - [ 25.05 , "cm", 40 , "cm", 0.3 , "mm" ] # Layer 6
     rec_Pos_Tracker:
       - [ 0 , "cm", 0 , "cm", -86.25 , "mm" ] # Layer 1
       - [ 0 , "cm", 0 , "cm", -71.25 , "mm" ] # Layer 2
@@ -288,7 +288,7 @@ Geometry:
 
   HCAL:
     HCAL_Name: "HCAL"
-    HCAL_is_XAbsY: false # true: X-Abs-Y-Abs...-X; false: XY-Abs-XY-Abs..-XY.
+    HCAL_is_XAbsY: true # true: X-Abs-Y-Abs...-X; false: XY-Abs-XY-Abs..-XY.
 
     # HCAL Absorber Material
     HCAL_Absorber_Mat: "G4_Fe"
@@ -303,25 +303,21 @@ Geometry:
     # HCAL APD Size
     HCAL_APD_Size: [3, "mm", 3, "mm", 1, "mm"]
     # HCAL Scintillator cell size along x, the odd layer place along x, even along y
-    HCAL_Size_Dir: [ 1, "cm", 5 , "cm", 100.57 , "cm"] # z = HCAL_Cell_XY_N * y + (HCAL_Cell_XY_N - 1) * (HCAL_Wrap_Size.y)
+    HCAL_Size_Dir: [ 1, "cm", 5 , "cm", 75.42 , "cm"] # z = HCAL_Cell_XY_N * y + (HCAL_Cell_XY_N - 1) * (HCAL_Wrap_Size.y)
 
-    HCAL_Module_No: [4, 4, 1]
-    HCAL_Cell_XY_N: 20
+    HCAL_Module_No: [2, 2, 1]
+    HCAL_Cell_XY_N: 15
     HCAL_Absorber_Thickness_List:
-      - [  1,  40,   5, "mm"] # [start, end, thickness, unit]. Start from 1. Set thickness value to zero will skip this Absorber layer.
-      - [ 41,  65,  20, "mm"]
-      - [ 66,  85,  30, "mm"]
-      - [ 86, 100,  50, "mm"]
+      - [  1,  70,   10, "mm"] # [start, end, thickness, unit]. Start from 1. Set thickness value to zero will skip this Absorber layer.
+      - [ 71,  88,  50, "mm"]
     HCAL_Module_Gap: [0.5 , "mm", 0.5, "mm", 0, "um"]
-    HCAL_Show_Cell: false
+    HCAL_Show_Cell: true
 
     # Side HCAL
     SideHCAL_Name: "SideHCAL"
-    SideHCAL_Size_Dir: [1, "cm", 45.511, "cm", 228.041, "cm"]
+    SideHCAL_Size_Dir: [1, "cm", 45.511, "cm", 105., "cm"]
     SideHCAL_Absorber_Thickness_List:
-      - [  1,  40,   5, "mm"] # [start, end, thickness, unit]. Start from 1. Set thickness value to zero will skip this Absorber layer.
-      - [ 41,  65,  20, "mm"]
-      - [ 66,  74,  30, "mm"]
+      - [  1,  25,   10, "mm"] # [start, end, thickness, unit]. Start from 1. Set thickness value to zero will skip this Absorber layer.
 # End of File
 ---
 

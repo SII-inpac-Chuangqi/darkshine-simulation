@@ -170,7 +170,6 @@ endif()
 set(RUN_SCRIPTS
         DP_simu/scripts/default.yaml
         DP_simu/scripts/init_vis.mac
-        DP_simu/scripts/vis.mac
         DP_simu/scripts/gui.mac
         )
 
