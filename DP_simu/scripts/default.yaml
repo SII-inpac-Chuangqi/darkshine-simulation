@@ -214,13 +214,13 @@ Geometry:
     Tracker2_Color: [ 0. , 0.5, 0.5 ] # RGB
     # Tagging Tracker
     tag_Size_Tracker:
-      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 1
-      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 2
-      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 3
-      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 4
-      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 5
-      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 6
-      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 7
+      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 1
+      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 2
+      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 3
+      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 4
+      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 5
+      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 6
+      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 7
     tag_Pos_Tracker:
       - [ 0 , "cm", 0 , "cm", -30 , "cm" ] # Layer 1
       - [ 0 , "cm", 0 , "cm", -20 , "cm" ] # Layer 2
@@ -241,12 +241,12 @@ Geometry:
     tag_Tracker_Strip_Block_N: 50 # Strip number per block. This number must be a common divisor of tag_Tracker_Strip_N !
     # Recoil Tracker
     rec_Size_Tracker:
-      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 1
-      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 2
-      - [ 10.05 , "cm", 20 , "cm", 0.3 , "mm" ] # Layer 3
-      - [ 12    , "cm", 23 , "cm", 0.3 , "mm" ] # Layer 4
-      - [ 18    , "cm", 28 , "cm", 0.3 , "mm" ] # Layer 5
-      - [ 25.05 , "cm", 40 , "cm", 0.3 , "mm" ] # Layer 6
+      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 1
+      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 2
+      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 3
+      - [ 12    , "cm", 23 , "cm", 0.15 , "mm" ] # Layer 4
+      - [ 18    , "cm", 28 , "cm", 0.15 , "mm" ] # Layer 5
+      - [ 25.05 , "cm", 40 , "cm", 0.15 , "mm" ] # Layer 6
     rec_Pos_Tracker:
       - [ 0 , "cm", 0 , "cm", -86.25 , "mm" ] # Layer 1
       - [ 0 , "cm", 0 , "cm", -71.25 , "mm" ] # Layer 2
