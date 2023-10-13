@@ -201,7 +201,7 @@ Geometry:
   # Size is the total length, not the half
   Target:
     Target_Mat: "G4_W"
-    Target_Size: [ 10 , "cm", 20 , "cm", 350 , "um" ]
+    Target_Size: [ 20 , "cm", 10 , "cm", 350 , "um" ]
     Target_Pos: [ 0 , "cm", 0 , "cm", 0 , "cm" ]
   MagnetShield:
     MagnetShield_Thickness: [ 50, "cm" ]
@@ -214,13 +214,13 @@ Geometry:
     Tracker2_Color: [ 0. , 0.5, 0.5 ] # RGB
     # Tagging Tracker
     tag_Size_Tracker:
-      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 1
-      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 2
-      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 3
-      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 4
-      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 5
-      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 6
-      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 7
+      - [ 20.1 , "cm", 10 , "cm", 0.15 , "mm" ] # Layer 1
+      - [ 20.1 , "cm", 10 , "cm", 0.15 , "mm" ] # Layer 2
+      - [ 20.1 , "cm", 10 , "cm", 0.15 , "mm" ] # Layer 3
+      - [ 20.1 , "cm", 10 , "cm", 0.15 , "mm" ] # Layer 4
+      - [ 20.1 , "cm", 10 , "cm", 0.15 , "mm" ] # Layer 5
+      - [ 20.1 , "cm", 10 , "cm", 0.15 , "mm" ] # Layer 6
+      - [ 20.1 , "cm", 10 , "cm", 0.15 , "mm" ] # Layer 7
     tag_Pos_Tracker:
       - [ 0 , "cm", 0 , "cm", -30 , "cm" ] # Layer 1
       - [ 0 , "cm", 0 , "cm", -20 , "cm" ] # Layer 2
@@ -237,16 +237,16 @@ Geometry:
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 5
       - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 6
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 7
-    tag_Tracker_Strip_N: [ 3350 , 3350 , 3350 , 3350 , 3350 , 3350 , 3350 ]
-    tag_Tracker_Strip_Block_N: 50 # Strip number per block. This number must be a common divisor of tag_Tracker_Strip_N !
+    tag_Tracker_Strip_N: [ 6700 , 6700 , 6700 , 6700 , 6700 , 6700 , 6700 ]
+    tag_Tracker_Strip_Block_N: 100 # Strip number per block. This number must be a common divisor of tag_Tracker_Strip_N !
     # Recoil Tracker
     rec_Size_Tracker:
-      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 1
-      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 2
-      - [ 10.05 , "cm", 20 , "cm", 0.15 , "mm" ] # Layer 3
-      - [ 12    , "cm", 23 , "cm", 0.15 , "mm" ] # Layer 4
-      - [ 18    , "cm", 28 , "cm", 0.15 , "mm" ] # Layer 5
-      - [ 25.05 , "cm", 40 , "cm", 0.15 , "mm" ] # Layer 6
+      - [ 20.1 , "cm", 10  , "cm", 0.15 , "mm" ] # Layer 1
+      - [ 20.1 , "cm", 10  , "cm", 0.15 , "mm" ] # Layer 2
+      - [ 20.1 , "cm", 10  , "cm", 0.15 , "mm" ] # Layer 3
+      - [ 24   , "cm", 11.5, "cm", 0.15 , "mm" ] # Layer 4
+      - [ 36   , "cm", 14  , "cm", 0.15 , "mm" ] # Layer 5
+      - [ 50.1 , "cm", 20  , "cm", 0.15 , "mm" ] # Layer 6
     rec_Pos_Tracker:
       - [ 0 , "cm", 0 , "cm", -86.25 , "mm" ] # Layer 1
       - [ 0 , "cm", 0 , "cm", -71.25 , "mm" ] # Layer 2
@@ -261,8 +261,8 @@ Geometry:
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 4
       - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 5
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 6
-    rec_Tracker_Strip_N: [ 3350, 3350 , 3350 , 4000 , 6000 , 8350 ]
-    rec_Tracker_Strip_Block_N: 50 # Strip number per Block. This number must be a common divisor of rec_Tracker_Strip_N !
+    rec_Tracker_Strip_N: [ 6700, 6700, 6700, 8000 , 12000 , 16700 ]
+    rec_Tracker_Strip_Block_N: 100 # Strip number per Block. This number must be a common divisor of rec_Tracker_Strip_N !
   ECAL:
     ECAL_Name: "ECAL"
     ECAL_Staggered_x: true
