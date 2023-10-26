@@ -1,4 +1,8 @@
-#include "Algo/TruthHitProcessor.h"
+//
+// Created by Joseph Zhang on 10/26/23.
+//
+
+#include "TruthHitProcessor.h"
 
 //................................................................................//
 //C++
@@ -7,13 +11,17 @@
 #include <memory>
 #include <string>
 #include <algorithm>
-#include <cmath>
 
 //................................................................................//
 //ROOT
 #include "TString.h"
 #include "TGeoManager.h"
 #include <Math/Vector4D.h>
+//#include <TLorentzVector.h>
+
+//................................................................................//
+//GENFIT
+#include "Algo/GenFitInclude.h"
 
 //................................................................................//
 //FRAMEWORK
@@ -24,23 +32,20 @@
 #include "Algo/TypeDef.h"
 #include "Algo/Utils/Util.h"
 #include "Algo/TrkHit.h"
-#include "Algo/TrackingProcessor.h"
+#include "Algo/GreedyFinder.h"
+#include "Algo/RiemannFit/RiemannFitHelper.h"
+#include "Algo/Vertex/DVertex.h"
+#include "Algo/Vertex/VertexFinder.h"
 
 TruthHitProcessor::TruthHitProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(
-        std::move(name), std::move(evtwrt)) {
-    /*
-     *
-     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
-     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
-     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
-     *
-     */
+        std::move(name), std::move(evtwrt)){
     // Add description for this AnaProcessor
-    Description = "Truth hit taker by Joseph Junhua Zhang";
+    Description = "****";
 
     RegisterIntParameter("verbose", "Verbose", &Verbose, 0);
     RegisterIntParameter("if_strip", "If use strip structures in trackers", &if_strip, 1);
     RegisterIntParameter("if_smear", "If smear hits in strip structure", &if_smear, 1);
+    RegisterDoubleParameter("con_field", "Const magnet field", &con_field, -1.5);
 
 }
 
@@ -51,86 +56,102 @@ void TruthHitProcessor::Begin() {
     digitizer.ReadTrackerInfo(if_strip);
     digitizer.SetIfSmear(if_smear);
     digitizer.SetClusterWidth(0.03);
-
     DTrack::SetResolutions(0.03, 0.03 / 0.05, 0.);
 
-    EvtWrt->RegisterOutVariable("TagTrk2_simu_hit_x", &TagTrk2_simu_hit_x);
-    EvtWrt->RegisterOutVariable("TagTrk2_simu_hit_y", &TagTrk2_simu_hit_y);
-    EvtWrt->RegisterOutVariable("TagTrk2_simu_hit_z", &TagTrk2_simu_hit_z);
-    EvtWrt->RegisterOutVariable("RecTrk2_simu_hit_x", &RecTrk2_simu_hit_x);
-    EvtWrt->RegisterOutVariable("RecTrk2_simu_hit_y", &RecTrk2_simu_hit_y);
-    EvtWrt->RegisterOutVariable("RecTrk2_simu_hit_z", &RecTrk2_simu_hit_z);
+//................................................................................//
+//Load fitter info
+//................................................................................//
+    magnets = dAnaData->getMagFieldVec();
+    if (magnets.size() != 3 || !magnets.at(0) || !magnets.at(1) || !magnets.at(2))
+        dAnaData->setConstMagnetField({0., con_field, 0.});
 
-    EvtWrt->RegisterOutVariable("TagTrk2_smeared_hit_x", &TagTrk2_smeared_hit_x);
-    EvtWrt->RegisterOutVariable("TagTrk2_smeared_hit_y", &TagTrk2_smeared_hit_y);
-    EvtWrt->RegisterOutVariable("TagTrk2_smeared_hit_z", &TagTrk2_smeared_hit_z);
-    EvtWrt->RegisterOutVariable("RecTrk2_smeared_hit_x", &RecTrk2_smeared_hit_x);
-    EvtWrt->RegisterOutVariable("RecTrk2_smeared_hit_y", &RecTrk2_smeared_hit_y);
-    EvtWrt->RegisterOutVariable("RecTrk2_smeared_hit_z", &RecTrk2_smeared_hit_z);
+//................................................................................//
+//Register dp_ana.root
+//................................................................................//
+//Truth
+//................................................................................//
 
+    EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_ini", &TagTrk2_pp_truth_ini, "TagTrk2_pp_truth_ini/D");
+    EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_fin", &TagTrk2_pp_truth_fin, "TagTrk2_pp_truth_fin/D");
+    EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_x", &TagTrk2_truth_hit_x);
+    EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_y", &TagTrk2_truth_hit_y);
+    EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_z", &TagTrk2_truth_hit_z);
+    EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_e", &TagTrk2_truth_hit_e);
+
+    EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_ini", &RecTrk2_pp_truth_ini, "RecTrk2_pp_truth_ini/D");
+    EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_fin", &RecTrk2_pp_truth_fin, "RecTrk2_pp_truth_fin/D");
+    EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_x", &RecTrk2_truth_hit_x);
+    EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_y", &RecTrk2_truth_hit_y);
+    EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_z", &RecTrk2_truth_hit_z);
+    EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_e", &RecTrk2_truth_hit_e);
 }
 
 void TruthHitProcessor::InitEvt() {
 
-    std::vector<double>().swap(TagTrk2_simu_hit_x);
-    std::vector<double>().swap(TagTrk2_simu_hit_y);
-    std::vector<double>().swap(TagTrk2_simu_hit_z);
-    std::vector<double>().swap(RecTrk2_simu_hit_x);
-    std::vector<double>().swap(RecTrk2_simu_hit_y);
-    std::vector<double>().swap(RecTrk2_simu_hit_z);
 
-    std::vector<double>().swap(TagTrk2_smeared_hit_x);
-    std::vector<double>().swap(TagTrk2_smeared_hit_y);
-    std::vector<double>().swap(TagTrk2_smeared_hit_z);
-    std::vector<double>().swap(RecTrk2_smeared_hit_x);
-    std::vector<double>().swap(RecTrk2_smeared_hit_y);
-    std::vector<double>().swap(RecTrk2_smeared_hit_z);
+    std::vector<double>().swap(TagTrk2_truth_hit_x);
+    std::vector<double>().swap(TagTrk2_truth_hit_y);
+    std::vector<double>().swap(TagTrk2_truth_hit_z);
+    std::vector<double>().swap(TagTrk2_truth_hit_e);
+    std::vector<double>().swap(RecTrk2_truth_hit_x);
+    std::vector<double>().swap(RecTrk2_truth_hit_y);
+    std::vector<double>().swap(RecTrk2_truth_hit_z);
+    std::vector<double>().swap(RecTrk2_truth_hit_e);
+
+    TagTrk2_pp_truth_ini = RETURN;
+    TagTrk2_pp_truth_fin = RETURN;
+    RecTrk2_pp_truth_ini = RETURN;
+    RecTrk2_pp_truth_fin = RETURN;
 
 }
 
 void TruthHitProcessor::FillTruth(DTruth *truth_info,
+                                  std::vector<DStep*> *initial_steps,
                                   std::vector<TrkHit> raw_tagtrk2_hits,
-                                  std::vector<TrkHit> raw_rectrk2_hits) {
-    dAnaData->LoadTruthInfo(truth_info);
-
-    int TagTrk2_No = raw_tagtrk2_hits.size();
-    for (int i = 0; i < TagTrk2_No; ++i) {
-        TagTrk2_simu_hit_x.push_back(raw_tagtrk2_hits.at(i).GetX());
-        TagTrk2_simu_hit_y.push_back(raw_tagtrk2_hits.at(i).GetY());
-        TagTrk2_simu_hit_z.push_back(raw_tagtrk2_hits.at(i).GetZ());
-    }
-
-    int RecTrk2_No = raw_rectrk2_hits.size();
-    for (int i = 0; i < RecTrk2_No; ++i) {
-        RecTrk2_simu_hit_x.push_back(raw_rectrk2_hits.at(i).GetX());
-        RecTrk2_simu_hit_y.push_back(raw_rectrk2_hits.at(i).GetY());
-        RecTrk2_simu_hit_z.push_back(raw_rectrk2_hits.at(i).GetZ());
-    }
+                                  std::vector<TrkHit> raw_rectrk2_hits) {}
 }
 
 void TruthHitProcessor::ProcessEvt(AnaEvent *evt) {
+    [[maybe_unused]] bool if_initial_steps(false);
     [[maybe_unused]] bool if_raw_tag_hits(false);
     [[maybe_unused]] bool if_raw_rec_hits(false);
+    [[maybe_unused]] bool if_raw_tag_hit_number(false);
+    [[maybe_unused]] bool if_raw_rec_hit_number(false);
+    [[maybe_unused]] bool if_reco_tag_hits(false);
+    [[maybe_unused]] bool if_reco_rec_hits(false);
+
+    std::vector<double> magnet_at_origin = {magnets.size() && magnets.at(0) ? magnets.at(0)->GetField(0., 0., 0.) : 0.,
+                                            magnets.size() && magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.) : con_field,
+                                            magnets.size() && magnets.at(2) ? magnets.at(2)->GetField(0., 0., 0.) : 0.};
+
 //................................................................................//
 //Initialize vars
     this->InitEvt();
 
+    const auto &step_collection = evt->getStepCollection();
+    //const auto &MCCollection = evt->getMcParticleCollection();
     const auto &simuhit_collection = evt->getSimulatedHitCollection();
 
+    auto it_find_step = step_collection.find("Initial_Particle_Step");
     auto it_find_tag1 = simuhit_collection.find("TagTrk1");
     auto it_find_tag2 = simuhit_collection.find("TagTrk2");
     auto it_find_rec1 = simuhit_collection.find("RecTrk1");
     auto it_find_rec2 = simuhit_collection.find("RecTrk2");
-
-    if (it_find_tag1 != simuhit_collection.end() &&
+    if (it_find_step != step_collection.end() &&
+        it_find_tag1 != simuhit_collection.end() &&
         it_find_tag2 != simuhit_collection.end() &&
         it_find_rec1 != simuhit_collection.end() &&
         it_find_rec2 != simuhit_collection.end())
     {
-        if_raw_tag_hits = true; if_raw_rec_hits = true;
+        if_initial_steps = true;
+        if_raw_tag_hits = true;
+        if_raw_rec_hits = true;
 
 //................................................................................//
 //Read
+        //const auto &mc = MCCollection.at("RawMCParticle");
+        const auto &initial_steps = step_collection.at("Initial_Particle_Step");
+
         std::vector<TrkHit> raw_tagtrk1_hits;
         std::vector<TrkHit> raw_tagtrk2_hits;
         for (auto hit : *simuhit_collection.at("TagTrk1")) raw_tagtrk1_hits.emplace_back(*hit);
@@ -144,40 +165,22 @@ void TruthHitProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Tag tracker
         TrkHitPVecMap clus_tag_trkhit_map;
+        //if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
         if (raw_tagtrk2_hits.size() > 2)
         {
-        //Digitization
+            if_raw_tag_hit_number = true;
+
+//Digitization
             digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, clus_tag_trkhit_map, tracking::tag);
 
-            for (auto &tag_hm : clus_tag_trkhit_map) {
-                for (auto &tag_sm_hits: tag_hm.second) {
-                    TagTrk2_smeared_hit_x.push_back( tag_sm_hits->GetX() );
-                    TagTrk2_smeared_hit_y.push_back( tag_sm_hits->GetY() );
-                    TagTrk2_smeared_hit_z.push_back( tag_sm_hits->GetZ() );
-                }
-            }
+        }
+
 
         }
 
 //................................................................................//
-//Recoil tracker
-        TrkHitPVecMap clus_rec_trkhit_map;
-        if (raw_rectrk2_hits.size() > 2)
-        {
-            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, clus_rec_trkhit_map, tracking::rec);
-
-            for (auto &rec_hm : clus_rec_trkhit_map) {
-                for (auto &rec_sm_hits: rec_hm.second) {
-                    RecTrk2_smeared_hit_x.push_back( rec_sm_hits->GetX() );
-                    RecTrk2_smeared_hit_y.push_back( rec_sm_hits->GetY() );
-                    RecTrk2_smeared_hit_z.push_back( rec_sm_hits->GetZ() );
-                }
-            }
-        }
-
-//................................................................................//
-//Filltruth
-        this->FillTruth(evt->getTruthInfo(), raw_tagtrk2_hits, raw_rectrk2_hits);
+//Write truth
+        this->FillTruth();
     }
 }
 
@@ -189,3 +192,5 @@ void TruthHitProcessor::CheckEvt(AnaEvent *evt) {
 void TruthHitProcessor::End() {
     //cout<<"End!"<<endl;
 }
+
+TruthHitProcessor::~TruthHitProcessor() {}
