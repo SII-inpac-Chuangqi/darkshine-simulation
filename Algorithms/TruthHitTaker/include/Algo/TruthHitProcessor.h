@@ -43,7 +43,7 @@ public:
 //................................................................................//
 //Fill truth variables
     void FillTruth(DTruth *truth_info,
-                   //std::vector<TrkHit> rawTagTrk2Hits,
+                   std::vector<TrkHit> rawRecTrk1Hits,
                    std::vector<TrkHit> rawRecTrk2Hits);
 
     void ProcessEvt(AnaEvent* evt) override;
@@ -65,40 +65,17 @@ private:
 //-- 1: True, automatically load strip structures from geometry
     int if_strip{1};
 //................................................................................//
-//Smear
-//-- 0: False
-//-- 1: True, add smear in hit reconstruction
-    int if_smear{1};
-//................................................................................//
-//Magnet
-//Const magnet field value to be used in const magnet condition or handle exceptions
-    double con_field{-1.5};
-
-//................................................................................//
 //Geometry
 //................................................................................//
     Digitization digitizer;
-
 //................................................................................//
-//Magnet
-//................................................................................//
-    std::vector<DMagnet *> magnets;
-
 //................................................................................//
 //Truth
 //................................................................................//
-//Momentum entering Tracker from Initial Particle Step
-//Momentum exiting  Tracker from Initial Particle Step
 //    double TagTrk2_pp_truth_x{RETURN};
 //    double TagTrk2_pp_truth_y{RETURN};
 //    double TagTrk2_pp_truth_z{RETURN};
 //    double TagTrk2_pp_truth_e{RETURN};
-
-    double RecTrk2_pp_truth_x{RETURN};
-    double RecTrk2_pp_truth_y{RETURN};
-    double RecTrk2_pp_truth_z{RETURN};
-    double RecTrk2_pp_truth_e{RETURN};
-
 
 //x, y, z & energy deposition of truth hits
 //    double TagTrk2_truth_hit_x{RETURN};
@@ -110,6 +87,21 @@ private:
     double RecTrk2_truth_hit_y{RETURN};
     double RecTrk2_truth_hit_z{RETURN};
     double RecTrk2_truth_hit_t{RETURN};
+
+    double RecTrk2_pp_truth_x{RETURN};
+    double RecTrk2_pp_truth_y{RETURN};
+    double RecTrk2_pp_truth_z{RETURN};
+    double RecTrk2_pp_truth_e{RETURN};
+
+    double deltapx{RETURN};
+    double deltapy{RETURN};
+    double deltapz{RETURN};
+    double deltae {RETURN};
+
+    int geometry_id{-1};
+    int particle_id{-1};
+    int event_id{-1};
+
 
 };
 
