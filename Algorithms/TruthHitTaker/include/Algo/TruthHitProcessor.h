@@ -43,17 +43,12 @@ public:
 //................................................................................//
 //Fill truth variables
     void FillTruth(DTruth *truth_info,
+                   std::vector<DStep*> *initial_steps,
                    std::vector<TrkHit> rawRecTrk1Hits,
                    std::vector<TrkHit> rawRecTrk2Hits);
-
     void ProcessEvt(AnaEvent* evt) override;
-
     void CheckEvt(AnaEvent* evt) override;
-
     void End() override;
-
-    TFile* outputFile;
-    TTree* outputTree;
 
 private:
 
@@ -69,15 +64,12 @@ private:
 //................................................................................//
     Digitization digitizer;
 //................................................................................//
-//................................................................................//
 //Truth
 //................................................................................//
 //    double TagTrk2_pp_truth_x{RETURN};
 //    double TagTrk2_pp_truth_y{RETURN};
 //    double TagTrk2_pp_truth_z{RETURN};
 //    double TagTrk2_pp_truth_e{RETURN};
-
-//x, y, z & energy deposition of truth hits
 //    double TagTrk2_truth_hit_x{RETURN};
 //    double TagTrk2_truth_hit_y{RETURN};
 //    double TagTrk2_truth_hit_z{RETURN};
@@ -101,9 +93,13 @@ private:
     int geometry_id{-1};
     int particle_id{-1};
     int event_id{-1};
-
+    int index{-1};
+//................................................................................//
+//New root file
+//................................................................................//
+    TFile* outputFile;
+    TTree* outputTree;
 
 };
-
 
 #endif //DSIMU_TRUTHHITPROCESSOR_H
