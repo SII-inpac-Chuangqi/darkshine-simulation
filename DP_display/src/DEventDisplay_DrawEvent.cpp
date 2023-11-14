@@ -181,8 +181,7 @@ int DEventDisplay::recursiveFindTracks(int mother, MCParticleVec* MCs, int* coun
             continue;
         }
         if(isInitialMC(mc)) continue; //skipinitial particle
-        if(!mc->getParents()) continue; // skip particle without parent info
-        if(mc->getParents()->getId()!=mother) continue; // mother not match (or initial)
+        if(mc->getParents() && mc->getParents()->getId()!=mother) continue; // mother not match (or initial)
             
         if(!sto){
             //scan mode
