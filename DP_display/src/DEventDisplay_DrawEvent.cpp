@@ -166,10 +166,8 @@ std::string DEventDisplay::easyPDG(int pdg){
     }
 }
 
-// TODO: move this to McParticl defination (maybe v1.7?), or add one direct flag for initial particle
-// FIXME: potential problem, all MC without valid parent will be identified as initial!! what if?
 bool DEventDisplay::isInitialMC(McParticle* mc){
-    return !mc->getParents() || mc->getParents()->getId()==mc->getId() || mc->getParents()->getId()==0;
+    return mc->getCreateProcess()=="";
 }
 
 // TODO: please ensure no loop (DAG)!! or it is NP hard.
@@ -183,6 +181,7 @@ int DEventDisplay::recursiveFindTracks(int mother, MCParticleVec* MCs, int* coun
             continue;
         }
         if(isInitialMC(mc)) continue; //skipinitial particle
+        if(!mc->getParents()) continue; // skip particle without parent info
         if(mc->getParents()->getId()!=mother) continue; // mother not match (or initial)
             
         if(!sto){
