@@ -76,7 +76,7 @@ MagField:
 # Root Manager Settings
 ###########################################
 RootManager:
-  outfile_Name: "dp_out.root"
+  outfile_Name: "dp_simu.root"
   tree_Name: "Dark_Photon"
 
   # job run number
@@ -139,6 +139,8 @@ Biasing:
 Filters:
   # if to apply filters
   if_filter: false
+  veto_ECAL_geq: 4 # GeV
+  veto_missP_leq: 2 # GeV
   # if to apply filter on hard-brem event
   if_HardBrem: false
   # Filter Parameters description:
@@ -147,7 +149,7 @@ Filters:
     # fStage0 - true: apply filter on primary track; false: not apply on primary track
     # fStage1 - true: apply filter on secondaries track; false: not apply on secondary track
   particle_filters_parameters: # PDG, min Energy [Unit], max Energy [Unit] , min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
-  # - [ 22, 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, true, false ] # help GMM / PN / EN ECAL
+  # - [ 22, 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, true, false ] # help GMM / PN ECAL
   process_filters_parameters: # Process Name, min Energy [Unit], max Energy [Unit], min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
   # - [ "GammaToMuPair", 4, "GeV", -1, "GeV", -607.5, "mm", 180, "mm", true, false, true] # GMM Target
   # - [ "GammaToMuPair", 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, false, true] # GMM ECAL

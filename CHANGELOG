@@ -1,3 +1,8 @@
+2023-11-14:
+    1. DSimu v1.6: veto ECAL & veto missP
+    2. Rename all “dp_out.root” to “dp_simu.root”
+    3. DDis bug fixes
+
 2023-06-19:
     1. DSimu v1.5.9: Fix several minor bugs
 

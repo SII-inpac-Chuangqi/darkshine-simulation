@@ -15,7 +15,7 @@ void ConfigManager::ReadConst() {
     /*
      * Read Const Running Configuration
      */
-    inputfile = config->Read("InputFile", std::string("dp_out.root"));
+    inputfile = config->Read("InputFile", std::string("dp_simu.root"));
     inputGeofile = config->Read("InputGeoFile", inputfile);
     outputfile = config->Read("OutputFile", std::string("dp_ana.root"));
     RunNumber = config->Read("RunNumber", 0);

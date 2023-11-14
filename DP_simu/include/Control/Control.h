@@ -212,6 +212,7 @@ public:
     G4ThreeVector ECAL_Cell_No;
     G4ThreeVector ECAL_Center_Module_No; // dependent
     G4ThreeVector ECAL_Cell_Gap;
+    G4double ECAL_Front_Z;
 
     //----------------------------------------
     // Hadronic Calorimeter
@@ -276,6 +277,10 @@ public:
     //----------------------------------------
     bool if_filter;
     bool if_HardBrem;
+    bool veto_ECAL;
+    double veto_ECAL_geq_E = 0;
+    bool veto_missP;
+    double veto_missP_leq_E = 0;
 
     std::vector<std::tuple<int, double, double, double, double, bool, bool, bool> > particle_filters_parameters;
     std::vector<std::tuple<G4String, double, double, double, double, bool, bool, bool> > process_filters_parameters;

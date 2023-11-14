@@ -12,7 +12,7 @@
 namespace {
     void PrintUsage() {
         std::cerr << "Usage: " << std::endl;
-        std::cerr << "  DDis [ -b ] [ -f dp_out.root] [ -g geometry.root] [ -t ] [ -h ]" << std::endl;
+        std::cerr << "  DDis [ -b ] [ -f dp_simu.root] [ -g geometry.root] [ -t ] [ -h ]" << std::endl;
         std::cerr << " -- [-b] : only print out detector geometry information" << std::endl;
         std::cerr << " -- [-g] : read the geometry from input root file" << std::endl;
         std::cerr << " -- [-t] : use this option when reading truth tracker hit" << std::endl;
@@ -31,9 +31,9 @@ int main(int argc, char **argv) {
     }
 
     bool batch_mode = false;
-    auto file_in = TString("dp_out.root");
+    auto file_in = TString("dp_simu.root");
     auto conf_in = TString("");
-    auto geo_file_in = TString("dp_out.root");
+    auto geo_file_in = TString("dp_simu.root");
     bool no_strip_mode = false;
 
     for (int i = 1; i < argc; ++i) {

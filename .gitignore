@@ -9,7 +9,7 @@ release*/
 compile_commands.json
 DP_simu/scripts/currentEvent.rndm
 DP_simu/scripts/currentRun.rndm
-DP_simu/scripts/dp_out.root
+DP_simu/scripts/dp_simu.root
 binana/dp*.root
 binana/output.txt
 binana/err.txt

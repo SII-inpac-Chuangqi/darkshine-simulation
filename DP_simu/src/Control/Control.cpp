@@ -53,7 +53,7 @@ Control::Control() {
 
     //----------------------------------------
     // Root Manager Options
-    outfile_Name = "dp_out.root";
+    outfile_Name = "dp_simu.root";
     tree_Name = "Dark_Photon";
 
     Run_Number = 0;
@@ -335,6 +335,7 @@ void Control::RebuildVariables() {
     ECAL_Center_Module_No.setX(ECAL_Cell_No.x() * ECAL_Block_No.x());
     ECAL_Center_Module_No.setY(ECAL_Cell_No.y() * ECAL_Block_No.y());
     ECAL_Center_Module_No.setZ(ECAL_Cell_No.z() * ECAL_Block_No.z());
+    ECAL_Front_Z = Pos_ECALRegion.z() - 0.5 * Size_ECALRegion.z();
 
     //----------------------------------------
     // Hadronic Calorimeter
@@ -775,6 +776,10 @@ bool Control::ReadYAML(const G4String &file_in) {
         //----------------------------------------
         if_filter = Node["Filters"]["if_filter"].as<bool>();
         if_HardBrem = Node["Filters"]["if_HardBrem"].as<bool>();
+        veto_ECAL_geq_E = Node["Filters"]["veto_ECAL_geq"].IsDefined() ? Node["Filters"]["veto_ECAL_geq"].as<double>() * GeV : 0;
+        veto_ECAL = veto_ECAL_geq_E > 0;
+        veto_missP_leq_E = Node["Filters"]["veto_missP_leq"].IsDefined() ? Node["Filters"]["veto_missP_leq"].as<double>() * GeV : 0;
+        veto_missP = veto_missP_leq_E > 0;
         particle_filters_parameters.clear();
         for (auto i: Node["Filters"]["particle_filters_parameters"]) {
             particle_filters_parameters.emplace_back(

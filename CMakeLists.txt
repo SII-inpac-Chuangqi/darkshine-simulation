@@ -138,7 +138,7 @@ link_libraries(DEvent)
 # DSimu
 option(BUILD_DSIMU "BUILD_DSIMU" ON)
 if (BUILD_DSIMU)
-    add_definitions(-DDSIMU_VERSION=\"1.6\")
+    add_definitions(-DDSIMU_VERSION=\"1.6.0\")
     add_subdirectory(DP_simu)
 endif ()
 

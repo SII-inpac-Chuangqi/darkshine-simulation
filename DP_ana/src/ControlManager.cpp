@@ -184,8 +184,8 @@ void ControlManager::PrintConfig() {
     cout << "############################" << endl << endl;
 
     cout << "### Basic Settings" << endl << left;
-    cout << setw(15) << "InputFile" << "= dp_out.root" << endl;
-    cout << setw(15) << "InputGeoFile" << "= dp_out.root" << endl;
+    cout << setw(15) << "InputFile" << "= dp_simu.root" << endl;
+    cout << setw(15) << "InputGeoFile" << "= dp_simu.root" << endl;
     cout << setw(15) << "OutputFile" << "= dp_ana.root" << endl;
     cout << setw(15) << "RunNumber" << "= 0" << endl;
     cout << setw(15) << "EventNumber" << "= -1" << endl;
