@@ -99,7 +99,7 @@ public:
 //    }
 
     template<class T>
-    void RegisterOutVariable(const std::string &var_name, T *address, const std::string &leaf_type = "", bool active = true) {
+    void RegisterOutVariable(const std::string &var_name, T *address, const std::string &var_help = "", const std::string &leaf_type = "", bool active = true) {
         //std::cerr << "[RegisterOutVariable] ==> The variable will not registered in CutFlow. " << std::endl;
         if(!is_display) std::cerr << "[RegisterOutVariable] ==> Register variable " << var_name << (leaf_type.empty() ? "" : " as " + leaf_type) << std::endl;
 
@@ -110,10 +110,12 @@ public:
             std::pair<std::string, AnaVar> ana_var_pair(leaf_type, ana_var_address);
             ana_var_col_.insert(std::pair<std::string, std::pair<std::string, AnaVar>>(var_name, ana_var_pair));
 
+            TBranch* t_branch = nullptr;
             if (leaf_type.empty())
-                tout->Branch(var_name.c_str(), address);
+                t_branch = tout->Branch(var_name.c_str(), address);
             else
-                tout->Branch(var_name.c_str(), address, leaf_type.c_str());
+                t_branch = tout->Branch(var_name.c_str(), address, leaf_type.c_str());
+            t_branch->SetTitle(var_help.c_str());
 
             registered_branch_.push_back(var_name);
             if(!active) inactive_branch_.push_back(var_name);

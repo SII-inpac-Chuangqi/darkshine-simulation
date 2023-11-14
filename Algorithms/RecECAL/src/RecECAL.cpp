@@ -148,7 +148,7 @@ void RecECAL::Begin() {
     // Register Output Variable
     if (EvtWrt) {
         EvtWrt->RegisterIntVariable("ECAL_COL_SIZE", &ecal_col_size, "ECAL_COL_SIZE/I");
-        EvtWrt->RegisterOutVariable("ECAL_E_total", &E_total);
+        EvtWrt->RegisterOutVariable("ECAL_E_total", &E_total, "[0]: true total ECAL energy; [1-4]: 4 sets of resolution smearing.");
         EvtWrt->RegisterOutVariable("ECAL_E_max", &E_max);
         EvtWrt->RegisterOutVariable("ECAL_E_frac", &E_frac);
         EvtWrt->RegisterOutVariable("ECAL_Moment_Lat", &Moments_Lat);
