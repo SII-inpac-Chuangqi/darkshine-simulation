@@ -45,6 +45,11 @@ public:
     void End() override;
 
 private:
+    bool IsValidHitSize(const std::vector<TrkHit>& trkhits) {
+        return (trkhits.size() > 2 && (skip_hits_geq <= 0 || trkhits.size() < (unsigned long)skip_hits_geq));
+    }
+
+private:
 
 //................................................................................//
 //Parameters from config file
@@ -69,6 +74,7 @@ private:
 //-- 1/dKalman: Kalman filter fitter from GenFit
     int Tag_fit_method{-1};
     int Rec_fit_method{-1};
+    int skip_hits_geq{-1};
 //................................................................................//
 //Magnet
 //Const magnet field value to be used in const magnet condition or handle exceptions

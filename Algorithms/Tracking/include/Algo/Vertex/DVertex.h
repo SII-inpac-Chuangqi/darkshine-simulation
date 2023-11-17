@@ -32,8 +32,8 @@ public:
     double GetZ() const {return z_;}
 
 private:
-    double x_;
-    double y_;
+    [[maybe_unused]] double x_;
+    [[maybe_unused]] double y_;
     double z_;
 
     std::vector<std::shared_ptr<DTrack>> tracks_;

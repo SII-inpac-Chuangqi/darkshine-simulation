@@ -1,3 +1,10 @@
+2023-11-17:
+    1. DAna v1.5.10
+        1. Split HCAL Reconstruction into new processor: RecHCAL
+        2. Add Tracking config racking.skip_hits_geq = 20
+        3. Add Verbosity
+        4. Add ECAL help message
+
 2023-11-14:
     1. DSimu v1.6: veto ECAL & veto missP
     2. Rename all “dp_out.root” to “dp_simu.root”

@@ -104,6 +104,7 @@ private:
     int RunNumber{0};
     int EventNumber{-1};
     int SkipNumber{0};
+    int fPrintModulo{0};
 
     std::string FileName;
     std::string OutName;
