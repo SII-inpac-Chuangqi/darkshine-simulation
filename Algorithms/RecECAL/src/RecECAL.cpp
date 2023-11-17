@@ -27,7 +27,6 @@ RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProce
     RegisterIntParameter("Verbose", "Verbosity Variable", &verbose, 0);
     RegisterIntParameter("SkipEmpty", "Skip Empty Hits", &SkipEmpty, 0);
     RegisterStringParameter("ECollectionToUse", "Calorimeter (ECAL) Collection to Use", &ecal_col_use, "ECAL_FS0,ECAL_FS1,ECAL_FS2,ECAL_FS3,ECAL_FS4");
-    RegisterStringParameter("HCollectionToUse", "Calorimeter (HCAL) Collection to Use", &hcal_col_use, "FS0");
     RegisterIntParameter("E_n_fraction", "the n-th large E fraction", &n_fraction, 20);
     RegisterIntParameter("Advance", "Advanced analysis level", &enAda, 3);
     RegisterIntParameter("SaveTrackInfo", "SaveTrackInfo", &SaveTrackInfo, 0);
@@ -58,79 +57,12 @@ RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProce
 }
 
 
-        double RecECAL::Cali_Fuc(int cali_pdg, double E_before_cali){//calibration function
-             auto tmp_res_1 = E_before_cali;
-        switch(cali_pdg){
-            case 2112: {//neutron
-                tmp_res_1 = 3.537*pow(E_before_cali, 1.02) - 20.63;
-                break;
-            }
-            case 2212:{//proton{}
-                if(E_before_cali <= 120)
-                    tmp_res_1 = 2.012*E_before_cali-169;
-                else
-                    tmp_res_1 = 1.331*pow(E_before_cali, 1.15)+4.938;
-                break;
-            }
-            case 111:{//pi0
-                if(E_before_cali <= 100)
-                    tmp_res_1 = E_before_cali*3.818+2.95234;
-                else
-                    tmp_res_1 =  1.265*pow(E_before_cali, 1.11)+83.4566;
-                break;
-            }
-            case 211:{//pi+
-                tmp_res_1 =  1.045*pow(E_before_cali, 1.18)-21.70;
-                break;
-            }
-            case -211:{//pi-
-                tmp_res_1 = 1.298*pow(E_before_cali, 1.15)-58.12;
-                break;
-            }
-            case 311:{//kaon0
-                tmp_res_1 = 2.138*pow(E_before_cali, 1.07)-136.7;
-                break;
-            }
-            case 321:{//kaon+
-                tmp_res_1 = 0.3139*pow(E_before_cali, 1.35)-24.51;
-                break;
-            }
-            case -321:{//kaon-
-                if(E_before_cali <= 100)
-                    tmp_res_1 = 1.083*E_before_cali-31.09;
-                else
-                    tmp_res_1 = 0.5562*pow(E_before_cali, 1.26)-133.37;
-                break;
-            }
-            case 13:{//mu-
-                if(E_before_cali <= 180)
-                    tmp_res_1 =  2.572*E_before_cali-24.67;
-                else
-                    tmp_res_1 =  (1.713e-23)*pow(E_before_cali, 10)-(4.272e-10)*pow(E_before_cali, 5)+0.0384*pow(E_before_cali, 2)-971.1;
-                break;
-            }
-            case -13:{//mu+
-                if(E_before_cali <= 180)
-                    tmp_res_1 =  2.572*E_before_cali-24.67;
-                else
-                    tmp_res_1 =  (1.699e-23)*pow(E_before_cali, 10)-(4.291e-10)*pow(E_before_cali, 5)+0.0388*pow(E_before_cali, 2)-998.8;
-                break;
-            }
-        }
-//        return tmp_res_1 <= 0 ? E_before_cali : tmp_res_1;
-            // return tmp_res_1;
-            return (tmp_res_1 == E_before_cali ? E_before_cali*2.8 : tmp_res_1);
-        
-        }
-
 void RecECAL::Begin() {
     if(StaggeredECAL<=0)
         std::cerr<<"WARNING!! Use legacy ECAL (non staggered), is it what you want?!"<<std::endl;
     
     ReadCollections();
     ecal_col_size = static_cast<int>(ecal_cols.size());
-    hcal_col_size = static_cast<int>(hcal_cols.size());
-    sidehcal_col_size = static_cast<int>(sidehcal_cols.size());
 
     //printout all parameter
     std::cout<<"ECAL Topocluster Parameters: "<<std::endl
@@ -148,7 +80,7 @@ void RecECAL::Begin() {
     // Register Output Variable
     if (EvtWrt) {
         EvtWrt->RegisterIntVariable("ECAL_COL_SIZE", &ecal_col_size, "ECAL_COL_SIZE/I");
-        EvtWrt->RegisterOutVariable("ECAL_E_total", &E_total, "[0]: true total ECAL energy; [1-4]: 4 sets of resolution smearing.");
+        EvtWrt->RegisterOutVariable("ECAL_E_total", &E_total, "[0] Truth total ECAL energy; [1-4] 4 sets of resolution smearing.");
         EvtWrt->RegisterOutVariable("ECAL_E_max", &E_max);
         EvtWrt->RegisterOutVariable("ECAL_E_frac", &E_frac);
         EvtWrt->RegisterOutVariable("ECAL_Moment_Lat", &Moments_Lat);
@@ -158,14 +90,6 @@ void RecECAL::Begin() {
         EvtWrt->RegisterOutVariable("ECAL_Moment_Y", &Moments_Y);
         EvtWrt->RegisterOutVariable("ECAL_Moment_Z", &Moments_Z);
 
-        EvtWrt->RegisterIntVariable("HCAL_COL_SIZE", &hcal_col_size, "HCAL_COL_SIZE/I");
-        EvtWrt->RegisterOutVariable("HCAL_E_total", &HCAL_total);
-        EvtWrt->RegisterOutVariable("HCAL_E_Max_Cell", &HCAL_E_Max_Cell);
-        EvtWrt->RegisterOutVariable("SideHCAL_COL_SIZE", &sidehcal_col_size);
-        EvtWrt->RegisterOutVariable("SideHCAL_E_total", &SideHCAL_total);
-        EvtWrt->RegisterOutVariable("SideHCAL_E_Max_Cell", &SideHCAL_E_Max_Cell);
-        EvtWrt->RegisterOutVariable("HCAL_E_Cali", &HCAL_E_Cali);
-
         if(enAda>3){
             EvtWrt->RegisterOutVariable("ECAL_ECell_XY", &ECAL_ECell_XY);
             EvtWrt->RegisterOutVariable("ECAL_ECell_XZ", &ECAL_ECell_XZ);
@@ -174,50 +98,50 @@ void RecECAL::Begin() {
             EvtWrt->RegisterOutVariable("ECAL_ECell_XYZ", &ECAL_ECell_XYZ);
         }
         if(enAda>2){
-            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_E",&ECAL_ClusterSub_E);
-            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_X",&ECAL_ClusterSub_X);
-            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_Y",&ECAL_ClusterSub_Y);
-            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_Z",&ECAL_ClusterSub_Z);
-            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_Width_X",&ECAL_ClusterSub_Width_X);
-            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_Width_Y",&ECAL_ClusterSub_Width_Y);
-            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_Width_Z",&ECAL_ClusterSub_Width_Z);
-            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_NCell",&ECAL_ClusterSub_NCell);
-            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_P0",&ECAL_ClusterSub_P0);
-            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_P1",&ECAL_ClusterSub_P1);
-            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_cosTheta",&ECAL_ClusterSub_cosTheta);
-            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_phi",&ECAL_ClusterSub_phi);
-            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_X_cast",&ECAL_ClusterSub_X_cast);
-            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_Y_cast",&ECAL_ClusterSub_Y_cast);
-            if(TrackMatch)
-                EvtWrt->RegisterOutVariable("ECAL_ClusterSub_matchRecTrk",&ECAL_ClusterSub_matchRecTrk);
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_E"          ,&ECAL_ClusterSub_E          ,"Sub-Cluster Energy/MeV (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_X"          ,&ECAL_ClusterSub_X          ,"Sub-Cluster Center X/cm (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_Y"          ,&ECAL_ClusterSub_Y          ,"Sub-Cluster Center Y/cm (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_Z"          ,&ECAL_ClusterSub_Z          ,"Sub-Cluster Center Z/cm (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_Width_X"    ,&ECAL_ClusterSub_Width_X    ,"Sub-Cluster Width in X direction/cm (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_Width_Y"    ,&ECAL_ClusterSub_Width_Y    ,"Sub-Cluster Width in Y direction/cm (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_Width_Z"    ,&ECAL_ClusterSub_Width_Z    ,"Sub-Cluster Width in Z direction/cm (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_NCell"      ,&ECAL_ClusterSub_NCell      ,"Sub-Cluster No. cells clustered (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_P0"         ,&ECAL_ClusterSub_P0         ,"Sub-Cluster Id(Pri) (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_P1"         ,&ECAL_ClusterSub_P1         ,"Sub-Cluster Id(Sub) (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_cosTheta"   ,&ECAL_ClusterSub_cosTheta   ,"Sub-Cluster cos theta angle to Z-axis (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_phi"        ,&ECAL_ClusterSub_phi        ,"Sub-Cluster phi angle to X-axis (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_X_cast"     ,&ECAL_ClusterSub_X_cast     ,"Sub-Cluster projected X at ECAL surface/cm (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_Y_cast"     ,&ECAL_ClusterSub_Y_cast     ,"Sub-Cluster projected Y at ECAL surface/cm (used when tracker-match enabled)");
             // -_-'
-            EvtWrt->RegisterIntVariable("ECAL_ClusterSub_NCell_total", &ECAL_ClusterSub_NCell_total, "ECAL_ClusterSub_NCell_total/I");
-            EvtWrt->RegisterIntVariable("ECAL_ClusterSub_N", &ECAL_ClusterSub_N, "ECAL_ClusterSub_N/I");
-            EvtWrt->RegisterDoubleVariable("ECAL_ClusterSub_E_total", &ECAL_ClusterSub_E_total, "ECAL_ClusterSub_E_total/D");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_NCell_total",&ECAL_ClusterSub_NCell_total,"Amount of cells clustered in Sub-Cluster (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_N"          ,&ECAL_ClusterSub_N          ,"Amount of Sub-Cluster (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_ClusterSub_E_total"    ,&ECAL_ClusterSub_E_total    ,"Total energy of all Sub-Cluster (used when tracker-match enabled)");
+            if(TrackMatch)
+                EvtWrt->RegisterOutVariable("ECAL_ClusterSub_matchRecTrk", &ECAL_ClusterSub_matchRecTrk, "Sub-Cluster (used when tracker-match enabled) matched track Id");
         }
         if(enAda>1){
-            EvtWrt->RegisterOutVariable("ECAL_Cluster_E",&ECAL_Cluster_E);
-            EvtWrt->RegisterOutVariable("ECAL_Cluster_X",&ECAL_Cluster_X);
-            EvtWrt->RegisterOutVariable("ECAL_Cluster_Y",&ECAL_Cluster_Y);
-            EvtWrt->RegisterOutVariable("ECAL_Cluster_Z",&ECAL_Cluster_Z);
-            EvtWrt->RegisterOutVariable("ECAL_Cluster_Width_X",&ECAL_Cluster_Width_X);
-            EvtWrt->RegisterOutVariable("ECAL_Cluster_Width_Y",&ECAL_Cluster_Width_Y);
-            EvtWrt->RegisterOutVariable("ECAL_Cluster_Width_Z",&ECAL_Cluster_Width_Z);
-            EvtWrt->RegisterOutVariable("ECAL_Cluster_NCell",&ECAL_Cluster_NCell);
-            EvtWrt->RegisterOutVariable("ECAL_Cluster_NSub",&ECAL_Cluster_NSub);
-            if(TrackMatch){
-                EvtWrt->RegisterOutVariable("ECAL_Cluster_NSub_orig",&ECAL_Cluster_NSub_orig);
-                EvtWrt->RegisterOutVariable("ECAL_Cluster_NMatch_orig",&ECAL_Cluster_NMatch_orig);
-            }
-            EvtWrt->RegisterOutVariable("ECAL_Cluster_P0",&ECAL_Cluster_P0);
-            EvtWrt->RegisterOutVariable("ECAL_Cluster_cosTheta",&ECAL_Cluster_cosTheta);
-            EvtWrt->RegisterOutVariable("ECAL_Cluster_phi",&ECAL_Cluster_phi);
-            EvtWrt->RegisterOutVariable("ECAL_Cluster_X_cast",&ECAL_Cluster_X_cast);
-            EvtWrt->RegisterOutVariable("ECAL_Cluster_Y_cast",&ECAL_Cluster_Y_cast);
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_E"          ,&ECAL_Cluster_E          ,"Pri-Cluster Energy/MeV (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_X"          ,&ECAL_Cluster_X          ,"Pri-Cluster Center in X direction/cm (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_Y"          ,&ECAL_Cluster_Y          ,"Pri-Cluster Center in Y direction/cm (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_Z"          ,&ECAL_Cluster_Z          ,"Pri-Cluster Center in Z direction/cm (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_Width_X"    ,&ECAL_Cluster_Width_X    ,"Pri-Cluster Width in X direction/cm (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_Width_Y"    ,&ECAL_Cluster_Width_Y    ,"Pri-Cluster Width in Y direction/cm (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_Width_Z"    ,&ECAL_Cluster_Width_Z    ,"Pri-Cluster Width in Z direction/cm (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_NCell"      ,&ECAL_Cluster_NCell      ,"Pri-Cluster No. cells clustered (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_NSub"       ,&ECAL_Cluster_NSub       ,"Pri-Cluster (ECAL-only) No. Sub-Cluster (matched) inside");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_P0"         ,&ECAL_Cluster_P0         ,"Pri-Cluster (ECAL-only) Id(Pri)");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_cosTheta"   ,&ECAL_Cluster_cosTheta   ,"Pri-Cluster cos theta angle to Z-axis (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_phi"        ,&ECAL_Cluster_phi        ,"Pri-Cluster phi angle to X-axis (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_X_cast"     ,&ECAL_Cluster_X_cast     ,"Pri-Cluster projected X at ECAL surface/cm (used when tracker-match enabled)");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_Y_cast"     ,&ECAL_Cluster_Y_cast     ,"Pri-Cluster projected Y at ECAL surface/cm (used when tracker-match enabled)");
             // -_-
-            EvtWrt->RegisterIntVariable("ECAL_Cluster_NCell_total", &ECAL_Cluster_NCell_total, "ECAL_Cluster_NCell_total/I");
-            EvtWrt->RegisterIntVariable("ECAL_Cluster_N", &ECAL_Cluster_N, "ECAL_Cluster_N/I");
-            EvtWrt->RegisterDoubleVariable("ECAL_Cluster_E_total", &ECAL_Cluster_E_total, "ECAL_Cluster_E_total/D");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_NCell_total",&ECAL_Cluster_NCell_total,"Amount of cells in Pri-Cluster");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_N"          ,&ECAL_Cluster_N          ,"Amount of Pri-Cluster");
+            EvtWrt->RegisterOutVariable("ECAL_Cluster_E_total"    ,&ECAL_Cluster_E_total    ,"Total energy of Pri-Cluster");
+            if(TrackMatch){
+                EvtWrt->RegisterOutVariable("ECAL_Cluster_NSub_orig"  ,&ECAL_Cluster_NSub_orig  ,"Pri-Cluster(used when tracker-match enabled) projected X at ECAL surface/cm");
+                EvtWrt->RegisterOutVariable("ECAL_Cluster_NMatch_orig",&ECAL_Cluster_NMatch_orig,"Pri-Cluster(used when tracker-match enabled) projected Y at ECAL surface/cm");
+            }
         }
         if(enAda>0){
             EvtWrt->RegisterOutVariable("ECAL_NCell_max_XY", &ECAL_NCell_max_XY);
@@ -732,91 +656,6 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
         }
         smearing_id++;
     }
-
-    for (const auto &HCAL_Collection_Name: hcal_cols) {
-        // temporary HCAL Analyzer
-        double HCAL_E = 0;
-        double HCAL_E_Max_cell = 0;
-//        for (int i = 0; i < 1; i++) {
-            auto Collection_String = Form("HCAL_%s", HCAL_Collection_Name.c_str());
-            if (HitCollection.count(Collection_String) != 0) {
-                const auto &hits = HitCollection.at(Collection_String);
-                
-                for (auto hit : *hits) {
-                    HCAL_E += hit->getE();
-                    HCAL_E_Max_cell = (HCAL_E_Max_cell >= hit->getE()) ? HCAL_E_Max_cell : hit->getE();
-                }
-            }
-//        } 
-        // calibration part and record particle information
-        double HCAL_E_Front_total = 0;
-        double HCAL_E_cali = 0;
-        std::map<int, double> mp_Front_HCAL;
-        std::map<int, double> E_HCAL_Cali;
-        for(auto& p_state : evt->getTruthInfo()->getStatesInHCAL()){
-            int Pdg_Front_HCAL = p_state.first.second;
-            auto prev_E_Front_HCAL = p_state.second.first->E;
-            HCAL_E_Front_total += prev_E_Front_HCAL;
-            mp_Front_HCAL[Pdg_Front_HCAL] += prev_E_Front_HCAL;
-        }
-            /*
-            if(cali_pdg == 2112){//incident partcile neutron
-                return 3.537*pow(E_before_cali, 1.02) - 20.63;
-            }
-            else if(cali_pdg == 2212){//proton
-                if(E_before_cali <= 120){
-                    auto tmp_res_1 = 2.012*E_before_cali-169;
-                    return tmp_res_1 < 0 ? 0 : tmp_res_1;
-                }
-                else
-                    return 1.331*pow(E_before_cali, 1.15)+4.938;
-            }
-            else if(cali_pdg == 111){//pi0
-
-            }
-            else if(cali_pdg == 211){//pi+
-
-            }
-            else if(cali_pdg == -211){//pi-
-            }
-            else if(cali)
-            else if(cali_pdg == 13){//mu-
-                if(E_before_cali <= 180)
-                    return 2.572*E_before_cali-24.67;
-                else if(E_before_cali >= 230)
-                    return 1.713e-23*pow(E_before_cali, 10)-4.272e-10*pow(E_before_cali, 5)+0.0384*pow(E_before_cali, 2)-971.1;
-            }
-            else if(cali_pdg == -13){//mu+
-                if(E_before_cali <= 180)
-                    return 2.572*E_before_cali-24.67;
-                else if(E_before_cali >= 230)
-                    return 1.699e-23*pow(E_before_cali, 10)-4.291e-10*pow(E_before_cali, 5)+0.0388*pow(E_before_cali, 2)-998.8;
-            }*/            
-        for(auto& item_mp_Front_HCAL : mp_Front_HCAL){
-            // mp[item_mp_Front_HCAL.first]
-            //item_mp_Front_HCAL.second
-            auto E_before_cali= (item_mp_Front_HCAL.second/HCAL_E_Front_total)*HCAL_E;
-            HCAL_E_cali += Cali_Fuc(item_mp_Front_HCAL.first, E_before_cali);
-        }
-        HCAL_E_Cali.push_back(HCAL_E_cali);
-        HCAL_total.push_back(HCAL_E);
-        HCAL_E_Max_Cell.push_back(HCAL_E_Max_cell);
-    }
-    for (const auto &SideHCAL_Collection_Name: sidehcal_cols) {
-        // temporary Side HCAL Analyzer
-        double sideHCAL_E = 0;
-        double sideHCAL_E_Max_Cell = 0;
-        auto Collection_String = Form("SideHCAL_%s", SideHCAL_Collection_Name.c_str());
-        if (HitCollection.count(Collection_String) != 0) {
-            const auto &hits = HitCollection.at(Collection_String);
-            for (auto hit: *hits) {
-                sideHCAL_E += hit->getE();
-                if (sideHCAL_E_Max_Cell < hit->getE()) sideHCAL_E_Max_Cell = hit->getE();
-            }
-        }
-        SideHCAL_total.emplace_back(sideHCAL_E);
-        SideHCAL_E_Max_Cell.emplace_back(sideHCAL_E_Max_Cell);
-    }
 }
 
 void RecECAL::CheckEvt(AnaEvent* /*evt*/) {
@@ -843,9 +682,6 @@ void RecECAL::ReadCollections() {
     };
 
     format_str(ecal_col_use, ecal_cols);
-    format_str(hcal_col_use, hcal_cols);
-    sidehcal_col_use = hcal_col_use;
-    format_str(sidehcal_col_use, sidehcal_cols);
 }
 
 
