@@ -361,9 +361,9 @@ void Track::insertPoint(TrackPoint* point, int id) {
 
   point->setTrack(this);
 
-  #ifdef DEBUG
-  debugOut << "Track::insertPoint at position " << id  << "\n";
-  #endif
+//  #ifdef DEBUG
+//  debugOut << "Track::insertPoint at position " << id  << "\n";
+//  #endif
   assert(point!=nullptr);
   trackHasChanged();
 
@@ -469,9 +469,9 @@ void Track::insertPoints(std::vector<TrackPoint*> points, int id) {
 
 void Track::deletePoint(int id) {
 
-  #ifdef DEBUG
-  debugOut << "Track::deletePoint at position " << id  << "\n";
-  #endif
+//  #ifdef DEBUG
+//  debugOut << "Track::deletePoint at position " << id  << "\n";
+//  #endif
 
   trackHasChanged();
 
@@ -523,9 +523,9 @@ void Track::deleteFittedState(const genfit::AbsTrackRep* rep) {
 
 void Track::mergeTrack(const Track* other, int id) {
 
-  #ifdef DEBUG
-  debugOut << "Track::mergeTrack\n";
-  #endif
+//  #ifdef DEBUG
+//  debugOut << "Track::mergeTrack\n";
+//  #endif
 
   if (other->getNumPoints() == 0)
     return;
@@ -538,9 +538,9 @@ void Track::mergeTrack(const Track* other, int id) {
     for (std::vector<AbsTrackRep*>::const_iterator thisRep=trackReps_.begin(); thisRep!=trackReps_.end(); ++thisRep) {
       if ((*thisRep)->isSame(*otherRep)) {
         otherRepThisRep[*otherRep] = *thisRep;
-        #ifdef DEBUG
-        debugOut << " map other rep " << *otherRep << " to " << (*thisRep) << "\n";
-        #endif
+//        #ifdef DEBUG
+//        debugOut << " map other rep " << *otherRep << " to " << (*thisRep) << "\n";
+//        #endif
         if (found) {
           Exception exc("Track::mergeTrack ==> more than one matching rep.",__LINE__,__FILE__);
           exc.setFatal();
@@ -552,9 +552,9 @@ void Track::mergeTrack(const Track* other, int id) {
     }
     if (!found) {
       otherRepsToRemove.push_back(*otherRep);
-      #ifdef DEBUG
-      debugOut << " remove other rep " << *otherRep << "\n";
-      #endif
+//      #ifdef DEBUG
+//      debugOut << " remove other rep " << *otherRep << "\n";
+//      #endif
     }
   }
 
@@ -643,9 +643,9 @@ void Track::determineCardinalRep() {
 
 
 bool Track::sort() {
-  #ifdef DEBUG
-  debugOut << "Track::sort \n";
-  #endif
+//  #ifdef DEBUG
+//  debugOut << "Track::sort \n";
+//  #endif
 
   int nPoints(trackPoints_.size());
   // original order
@@ -676,9 +676,9 @@ bool Track::sort() {
       break;
   }
 
-  #ifdef DEBUG
-  debugOut << "Track::sort. Equal up to (including) hit " << equalUntil << " and from (including) hit " << equalFrom << " \n";
-  #endif
+//  #ifdef DEBUG
+//  debugOut << "Track::sort. Equal up to (including) hit " << equalUntil << " and from (including) hit " << equalFrom << " \n";
+//  #endif
 
   deleteForwardInfo(equalUntil+1, -1);
   deleteBackwardInfo(0, equalFrom-1);
@@ -747,9 +747,9 @@ void Track::reverseTrack() {
 
 
 void Track::deleteForwardInfo(int startId, int endId, const AbsTrackRep* rep) {
-  #ifdef DEBUG
-  debugOut << "Track::deleteForwardInfo from position " << startId  << " to " << endId << "\n";
-  #endif
+//  #ifdef DEBUG
+//  debugOut << "Track::deleteForwardInfo from position " << startId  << " to " << endId << "\n";
+//  #endif
 
   trackHasChanged();
 
@@ -777,9 +777,9 @@ void Track::deleteForwardInfo(int startId, int endId, const AbsTrackRep* rep) {
 
 void Track::deleteBackwardInfo(int startId, int endId, const AbsTrackRep* rep) {
 
-  #ifdef DEBUG
-  debugOut << "Track::deleteBackwardInfo from position " << startId  << " to " << endId << "\n";
-  #endif
+//  #ifdef DEBUG
+//  debugOut << "Track::deleteBackwardInfo from position " << startId  << " to " << endId << "\n";
+//  #endif
 
   trackHasChanged();
 
@@ -808,9 +808,9 @@ void Track::deleteBackwardInfo(int startId, int endId, const AbsTrackRep* rep) {
 
 void Track::deleteReferenceInfo(int startId, int endId, const AbsTrackRep* rep) {
 
-  #ifdef DEBUG
-  debugOut << "Track::deleteReferenceInfo from position " << startId  << " to " << endId << "\n";
-  #endif
+//  #ifdef DEBUG
+//  debugOut << "Track::deleteReferenceInfo from position " << startId  << " to " << endId << "\n";
+//  #endif
 
   trackHasChanged();
 
@@ -838,9 +838,9 @@ void Track::deleteReferenceInfo(int startId, int endId, const AbsTrackRep* rep) 
 
 void Track::deleteMeasurementInfo(int startId, int endId, const AbsTrackRep* rep) {
 
-  #ifdef DEBUG
-  debugOut << "Track::deleteMeasurementInfo from position " << startId  << " to " << endId << "\n";
-  #endif
+//  #ifdef DEBUG
+//  debugOut << "Track::deleteMeasurementInfo from position " << startId  << " to " << endId << "\n";
+//  #endif
 
   trackHasChanged();
 
@@ -868,9 +868,9 @@ void Track::deleteMeasurementInfo(int startId, int endId, const AbsTrackRep* rep
 
 void Track::deleteFitterInfo(int startId, int endId, const AbsTrackRep* rep) {
 
-  #ifdef DEBUG
-  debugOut << "Track::deleteFitterInfo from position " << startId  << " to " << endId << "\n";
-  #endif
+//  #ifdef DEBUG
+//  debugOut << "Track::deleteFitterInfo from position " << startId  << " to " << endId << "\n";
+//  #endif
 
   trackHasChanged();
 
@@ -1110,9 +1110,9 @@ void Track::prune(const Option_t* option) {
 
   fillPointsWithMeasurement();
 
-  #ifdef DEBUG
-  debugOut << "pruned Track: "; Print();
-  #endif
+//  #ifdef DEBUG
+//  debugOut << "pruned Track: "; Print();
+//  #endif
 
 }
 
@@ -1467,9 +1467,9 @@ void Track::checkConsistency() const {
 
 void Track::trackHasChanged() {
 
-  #ifdef DEBUG
-  debugOut << "Track::trackHasChanged \n";
-  #endif
+//  #ifdef DEBUG
+//  debugOut << "Track::trackHasChanged \n";
+//  #endif
 
   if (fitStatuses_.empty())
     return;

@@ -111,7 +111,7 @@ void ControlManager::run() {
         nentries = (nentries >= SkipNumber) ? nentries : SkipNumber;
     else
         nentries = (nentries >= EventNumber + SkipNumber) ? EventNumber + SkipNumber : nentries;
-    fPrintModulo = nentries / 100;
+    fPrintModulo = pow(10, round(log10(nentries)) - 2);
     for (int i = 0; i < nentries; ++i) {
         // read the i-th event
         // Skip events

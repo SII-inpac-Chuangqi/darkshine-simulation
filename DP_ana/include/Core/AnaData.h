@@ -39,6 +39,8 @@
 using std::vector, std::tuple;
 
 #define MAX_ECAL_CELLS (25*25*15)
+#define ACC(x,y,z) (((x)-1)+N_ECal_cell_x*((y)-1)+N_ECal_cell_x*N_ECal_cell_y*((z)-1)) // posmap start from 0 0 0
+
 
 class AnaData {
 public:
@@ -113,10 +115,14 @@ public:
     int getNECalCellY() const {return N_ECal_cell_y;}
     int getNECalCellZ() const {return N_ECal_cell_z;}
     double getECalSurfaceZ() const {return ECAL_center_z - 0.5*ECAL_length_z;}
+    const std::array<std::vector<int>, MAX_ECAL_CELLS+1> &getCenterIdNeighborIds_staggered() {return centerIdNeighborIds_staggered;}
     TString getRegionName(const float vertex[3]);
 
     int getProcessId(const std::string& n);
     void printProcessMap();
+
+    bool makeCenterIdNeighborIdsMap_legacy();
+    bool makeCenterIdNeighborIdsMap_staggered();
 
 //................................................................................//
 //Truth helper manager
@@ -186,6 +192,8 @@ protected:
     double ECAL_cell_dz{0};
     TVector3* ECAL_pos0{nullptr};
     std::array<TVector3,MAX_ECAL_CELLS> ECAL_posmap{};
+    std::array<std::vector<int>, MAX_ECAL_CELLS+1> centerIdNeighborIds_staggered;
+    std::array<std::vector<int>, MAX_ECAL_CELLS+1> centerIdNeighborIds_legacy;
 
     //MCPHelperVec* helper{nullptr};
     DTruth *truth_{nullptr};

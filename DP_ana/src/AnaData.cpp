@@ -221,6 +221,9 @@ void AnaData::readGeometryDetails() {
                     }
                 }
             }
+
+            makeCenterIdNeighborIdsMap_staggered();
+            makeCenterIdNeighborIdsMap_legacy();
             // std::cout<<"ECAL cells found: "<<ecal_n<<std::endl;
 
             // int ecal_n = 0;
@@ -419,6 +422,56 @@ const DTruth* AnaData::getInitialElectron() const
 {
     return nullptr;
 }
+
+
+bool AnaData::makeCenterIdNeighborIdsMap_staggered() {
+    std::vector<int> neighbors;
+    int center_x, center_y, center_z, neighbor_id, ecal_cell_n;
+    for (int center_id = 1; center_id < MAX_ECAL_CELLS; center_id++ ) {
+        neighbors.clear();
+        // calculate center xyz
+        center_x = center_id % N_ECal_cell_x;
+        center_y = ((center_id - 1) / N_ECal_cell_x) % N_ECal_cell_y + 1;
+        center_z = (center_id - 1) / (N_ECal_cell_x * N_ECal_cell_y) + 1;
+        ecal_cell_n = N_ECal_cell_x * N_ECal_cell_y * N_ECal_cell_z;
+        // first add 8 in same Z
+        for(int i=-1;i<=+1;i++)
+            for(int j=-1;j<=+1;j++){
+                if (i==0 && j==0) continue;
+                neighbor_id = 1 + ACC(center_x + i, center_y + j, center_z);
+                if (neighbor_id < 1 || neighbor_id > ecal_cell_n) continue;
+                neighbors.emplace_back(neighbor_id);
+            }
+        //then consider 8 in different Z
+        if(center_z%2==1) // left top shifted
+            for(int i=0;i<=+1;i++)
+                for(int j=0;j<=+1;j++)
+                    for(int k=-1;k<=+1;k++) {
+                        if (k==0) continue;
+                        neighbor_id = 1 + ACC(center_x + i, center_y + j, center_z + k);
+                        if (neighbor_id < 1 || neighbor_id > ecal_cell_n) continue;
+                        neighbors.emplace_back(neighbor_id);
+                    }
+        else // right bottom shifted
+            for(int i=-1;i<=0;i++)
+                for(int j=-1;j<=0;j++)
+                    for(int k=-1;k<=+1;k++) {
+                        if (k==0) continue;
+                        neighbor_id = 1 + ACC(center_x + i,center_y + j,center_z + k);
+                        if (neighbor_id < 1 || neighbor_id > ecal_cell_n) continue;
+                        neighbors.emplace_back(neighbor_id);
+                    }
+        // Finally add to the map
+        centerIdNeighborIds_staggered[center_id] = neighbors;
+    }
+    return true;
+}
+
+bool AnaData::makeCenterIdNeighborIdsMap_legacy() {
+    std::cout<< "WIP" << std::endl;
+    return true;
+}
+
 
 /*
 void AnaData::LoadTruthMcPHelper(const MCPHelperMap &helper_collection)

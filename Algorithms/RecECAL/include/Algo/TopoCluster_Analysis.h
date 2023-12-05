@@ -70,14 +70,15 @@ public:
     double get_ENERGY_SHIFT_MeV(){return ENERGY_SHIFT_MeV;};
     int get_weight_type(){return static_cast<int>(weight_type);};
 
-    std::string printCell(std::shared_ptr<CHit> cell);
+    std::string printCell(CHit* cell);
 
 protected:
-    CHitVec findNeighbors(std::shared_ptr<CHit> center);
-    CHitVec findNeighbors_legacy(std::shared_ptr<CHit> center);
-    CHitVec findNeighbors_staggered(std::shared_ptr<CHit> center);
+    CHitVec findNeighbors(CHit* center);
+    CHitVec findNeighbors_legacy(CHit* center);
+    CHitVec findNeighbors_staggered(CHit* center);
+    bool makeSortedCenterIdNeighborsCHitMap();
 
-    [[nodiscard]] double calDistance(std::shared_ptr<CHit> h, const TVector3& loc); //input unit: cm; ouput unit: EM scale (5cm)
+    [[nodiscard]] double calDistance(CHit* h, const TVector3& loc); //input unit: cm; ouput unit: EM scale (5cm)
     [[nodiscard]] double calWeight(double E1,  double E2, double d1, double d2); //calculate the weight for splitting
 
     void calXYZ(const CHitVec cluster,double ret[]){return calXYZ(_DUMMY, _DUMMY, cluster, ret);}; //P0==-1 means fail CHit. P0==_DUMMY mean dummay value used for main cluster
@@ -103,7 +104,7 @@ protected:
     double SurfaceZ(){return _SurfaceZ;};
     void setSurfaceZ(double v){_SurfaceZ=v;};
 
-    const TVector3& toPos(std::shared_ptr<CHit> h); //make it const????
+    const TVector3& toPos(CHit* h); //make it const????
 
     // configs
     double Enoise{1}; // MeV or Digit
@@ -142,13 +143,16 @@ protected:
 
     //storage
     CHitVec allhits; // all CHits used to handle clustering info, converted from calorimeter
-    std::array<std::shared_ptr<CHit> , HMAP_LENGTH> HMAP; // position-map of CHits
+    std::array<CHit* , HMAP_LENGTH> HMAP; // position-map of CHits
+    std::array<CHit* , MAX_ECAL_CELLS> POSMAP;
     std::vector<CHitVec> clusters; // clusteded information
     std::vector<int> N_subcluster{}; // sub cluster information
+    std::array<CHitVec, MAX_ECAL_CELLS+1> centerIdNeighborsCHit;
 
     bool Clustering();
     bool ConvHits();
     bool MakeHMAP();
+    bool MakePOSMAP();
 };
 
 
