@@ -5,8 +5,8 @@
 ############################
 
 ### Basic Settings
-InputFile      = dp_simu_hardbrem.root
-InputGeoFile   = dp_simu_hardbrem.root
+InputFile      = dp_simu.root
+InputGeoFile   = dp_simu.root
 OutputFile     = dp_ana.root
 RunNumber      = 0
 EventNumber    = -1
