@@ -94,7 +94,7 @@ class CHit {
                 error = true;
         };
 
-        void addNeighbor(std::shared_ptr<CHit> h){
+        void addNeighbor(CHit* h){
             //assert h->isLocalMax()
             //assert h->P1()==h->P2()
             if(_P1<0){
@@ -214,8 +214,8 @@ class CHit {
 // template<class CHit>
 // bool Esorter_ascendingC( std::shared_ptr<CHit> a,  std::shared_ptr<CHit> b) { return (a->E() < b->E()); } // ascending
 template<class CHit>
-bool Esorter_descendingC( std::shared_ptr<CHit> a,  std::shared_ptr<CHit> b) { return (a->E() > b->E()); } // descending
+bool Esorter_descendingC( CHit* a,  CHit* b) { return (a->E() > b->E()); } // descending
 
-typedef std::vector<std::shared_ptr<CHit>> CHitVec;
+typedef std::vector<CHit*> CHitVec;
 
 #endif //DANA_CHIT_H

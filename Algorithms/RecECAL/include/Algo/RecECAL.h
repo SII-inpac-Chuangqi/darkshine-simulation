@@ -111,7 +111,7 @@ public:
     void ReadCollections();
 
     //only used for DDis
-    std::vector<std::shared_ptr<CHit>> clustered_hits{};//TODO: make it private and use interface
+    std::vector<CHit*> clustered_hits{};//TODO: make it private and use interface
 
 private:
     // output variables

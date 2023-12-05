@@ -37,11 +37,11 @@ double MeanExcEnergy_get(TGeoMaterial*);
 bool
 TGeoMaterialInterface::initTrack(double posX, double posY, double posZ,
                                    double dirX, double dirY, double dirZ){
-  #ifdef DEBUG
-  debugOut << "TGeoMaterialInterface::initTrack. \n";
-  debugOut << "Pos    "; TVector3(posX, posY, posZ).Print();
-  debugOut << "Dir    "; TVector3(dirX, dirY, dirZ).Print();
-  #endif
+//  #ifdef DEBUG
+//  debugOut << "TGeoMaterialInterface::initTrack. \n";
+//  debugOut << "Pos    "; TVector3(posX, posY, posZ).Print();
+//  debugOut << "Dir    "; TVector3(dirX, dirY, dirZ).Print();
+//  #endif
 
   // Move to the new point.
   bool result = !gGeoManager->IsSameLocation(posX, posY, posZ, kTRUE);

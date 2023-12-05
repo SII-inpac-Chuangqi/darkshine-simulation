@@ -48,17 +48,31 @@ TopoCluster_Analysis::TopoCluster_Analysis(CalorimeterHitVec *clusterVec, bool i
     setPOS(dAnaData->getECalPosMap());
     setSurfaceZ(dAnaData->getECalSurfaceZ());    
 
-    allhits.reserve(100000);
+    allhits.reserve(MAX_ECAL_CELLS);
 }
 
-std::string TopoCluster_Analysis::printCell(std::shared_ptr<CHit> cell){
+std::string TopoCluster_Analysis::printCell(CHit* cell){
     return std::string(Form("%d(%d,%d,%d):%.0fMeV [%d|%d/%d] %s",
                             cell->hit->getCellId(),
                             cell->X(),cell->Y(),cell->Z(),
                             cell->E(),cell->P0(),cell->P1(),cell->P2(),cell->isLocalMax()?"*":""));
 }
 
-CHitVec TopoCluster_Analysis::findNeighbors(std::shared_ptr<CHit> center) {
+bool TopoCluster_Analysis::makeSortedCenterIdNeighborsCHitMap() {
+    CHitVec empty_hits;
+    centerIdNeighborsCHit.fill(empty_hits);
+    if (m_isStaggered) {
+        for(auto center : allhits) {
+            for (int neighbor_id: dAnaData->getCenterIdNeighborIds_staggered().at(center->hit->getCellId())) {
+                centerIdNeighborsCHit[neighbor_id].emplace_back(center);
+            }
+        }
+    }
+
+    return true;
+}
+
+CHitVec TopoCluster_Analysis::findNeighbors(CHit* center) {
     CHitVec ret;
     if(m_isStaggered)
         ret = findNeighbors_staggered(center);
@@ -73,7 +87,7 @@ CHitVec TopoCluster_Analysis::findNeighbors(std::shared_ptr<CHit> center) {
 }
 
 // Legacy ECAL
-CHitVec TopoCluster_Analysis::findNeighbors_legacy(std::shared_ptr<CHit> center) { //emmmm we need return 8 cells if possible
+CHitVec TopoCluster_Analysis::findNeighbors_legacy(CHit* center) { //emmmm we need return 8 cells if possible
     //Use together with HACC(), this is designed for XYZ stucture ECAL. Others need rewriting.
     CHitVec ret;
     for(int i=-1;i<=+1;i++)
@@ -87,7 +101,7 @@ CHitVec TopoCluster_Analysis::findNeighbors_legacy(std::shared_ptr<CHit> center)
 }
 
 // staggered ECAL
-CHitVec TopoCluster_Analysis::findNeighbors_staggered(std::shared_ptr<CHit> center) { //emmmm we need return 8 cells if possible
+CHitVec TopoCluster_Analysis::findNeighbors_staggered(CHit* center) { //emmmm we need return 8 cells if possible
     //Use together with HACC(), this is designed for XYZ stucture ECAL. Others need rewriting.
     CHitVec ret;
     // first add 8 in same Z
@@ -117,12 +131,12 @@ CHitVec TopoCluster_Analysis::findNeighbors_staggered(std::shared_ptr<CHit> cent
     return ret;
 }
 
-const TVector3& TopoCluster_Analysis::toPos(std::shared_ptr<CHit> h){ // Pos from AnaData always be mm //note CHit never need to bo const -- it designs to be const
+const TVector3& TopoCluster_Analysis::toPos(CHit* h){ // Pos from AnaData always be mm //note CHit never need to bo const -- it designs to be const
     //first access the geometry information
     return POS().at(ACC(h->X(),h->Y(),h->Z()));
 }
 
-double TopoCluster_Analysis::calDistance(std::shared_ptr<CHit> h, const TVector3& loc){
+double TopoCluster_Analysis::calDistance(CHit* h, const TVector3& loc){
     auto pos=toPos(h);
 
     #ifdef CLUSTER_DEBUG
@@ -139,12 +153,13 @@ double TopoCluster_Analysis::calWeight(double E1,  double E2, double d1, double 
 
 bool TopoCluster_Analysis::ConvHits() { 
     //First build CHits 
+    for (auto hit : allhits) delete hit;
     allhits.clear();
     for (auto hit: *ClusterVec) {
-        auto h=std::make_shared<CHit>(hit);
+        auto h=new CHit(hit);
         allhits.push_back(h);
     }
-    // std::sort(allhits.begin(), allhits.end(), Esorter_descendingC<CHit>); // actually not necessary...
+    std::sort(allhits.begin(), allhits.end(), Esorter_descendingC<CHit>);
     // Do the test
     #ifdef CLUSTER_DEBUG
         std::cout<<"Check ALLHITS and POSMAP"<<std::endl
@@ -176,6 +191,14 @@ bool TopoCluster_Analysis::MakeHMAP() {
     return true;
 }
 
+bool TopoCluster_Analysis::MakePOSMAP() {
+    POSMAP.fill(nullptr);
+    for (auto h: allhits) {
+        POSMAP.at(ACC(h->X(), h->Y(), h->Z())) = h;
+    }
+    return true;
+}
+
 bool TopoCluster_Analysis::Do(std::vector<std::map<std::string, double>> *ret1,std::vector<std::map<std::string, double>> *ret2, 
                 CHitVec *dump) { 
     // First make Chits from calorimeter hits
@@ -183,9 +206,11 @@ bool TopoCluster_Analysis::Do(std::vector<std::map<std::string, double>> *ret1,s
         std::cerr<<"Fail to conv hits!"<<std::endl;
         return false;
     }
-    if(!MakeHMAP()){
-        std::cerr<<"Fail to build hmap!"<<std::endl;
-        return false;
+    if(!MakeHMAP() || !MakePOSMAP()){
+        std::cerr<<"Fail to initialize HMAP!"<<std::endl;
+    }
+    if(!makeSortedCenterIdNeighborsCHitMap()) {
+        std::cerr<<"Fail to build CenterIdNeighborsCHitMap!" << std::endl;
     }
     //Then run clustering kernel
     if(!Clustering()){
@@ -335,7 +360,7 @@ bool TopoCluster_Analysis::Clustering() {
             std::cout<<"-- Seed E: "<<init_seed->E()<<std::endl;
         #endif
 
-        std::deque<std::shared_ptr<CHit>> seeds_temp{}; //seeds at current iteration. We do not use set as we must be confident there is no double counting
+        std::deque<CHit*> seeds_temp{}; //seeds at current iteration. We do not use set as we must be confident there is no double counting
         // seeds_temp.clear(); //no need?
         seeds_temp.push_back(init_seed); // initial seed
 
@@ -351,7 +376,7 @@ bool TopoCluster_Analysis::Clustering() {
                 #endif
             // seeds_temp.pop_back();
             seeds_temp.pop_front();
-            for(auto  neighbor : findNeighbors(seed)){
+            for (auto neighbor: centerIdNeighborsCHit.at(seed->hit->getCellId())) {
                 #ifdef CLUSTER_DEBUG
                     std::cout<<"-- - -- neighbor got: "<<
                         printCell(neighbor)
@@ -439,7 +464,7 @@ bool TopoCluster_Analysis::Clustering() {
             #endif
             if(h->E() > Critical_E){
                 int N=0;
-                for(auto neighbor:findNeighbors(h)){
+                for (auto neighbor: centerIdNeighborsCHit.at(h->hit->getCellId())) {
                     #ifdef CLUSTER_DEBUG
                         std::cout<<"-- -- -- Find neighbor "<<printCell(neighbor)
                                     <<std::endl;
@@ -495,7 +520,7 @@ bool TopoCluster_Analysis::Clustering() {
                 std::cout<<"-- -- -- Expand LocalMax "<<printCell(h)<<std::endl;
             #endif
             // std::set<std::shared_ptr<CHit>> seed_cells; 
-            std::deque<std::shared_ptr<CHit>> seed_cells; 
+            std::deque<CHit*> seed_cells;
             //We cannot prevent dulplicate(we have to allow inclusive clustering in this stage) -- use std::set
             // BUT THE ORDER MATTERS!!!
             seed_cells.push_back(h);
@@ -512,7 +537,7 @@ bool TopoCluster_Analysis::Clustering() {
                 #ifdef CLUSTER_DEBUG
                     std::cout<<"-- -- -- - -- Seed: "<<seed->hit->getCellId()<<std::endl;
                 #endif
-                for(auto neighbor:findNeighbors(seed)){
+                for (auto neighbor: centerIdNeighborsCHit.at(seed->hit->getCellId())) {
                     #ifdef CLUSTER_DEBUG
                         std::cout<<"-- -- -- Find neighbor "<<printCell(neighbor)
                                     <<" seeded:"<<neighbor->isSeeded()
@@ -574,7 +599,7 @@ bool TopoCluster_Analysis::Clustering() {
                 #endif
                 auto seed=seed_cells.back();
                 seed_cells.pop_back();
-                for(auto neighbor:findNeighbors(seed)){
+                for (auto neighbor: centerIdNeighborsCHit.at(seed->hit->getCellId())) {
                     if(neighbor->P0()!=id || neighbor->P1()>=0 || neighbor->isLocalMax()) continue; // not in same parent cluster or already sub clustered, or localMax(directlt adjount)
                     neighbor->setP1(seed->P1());
                     neighbor->setP2(seed->P2());
