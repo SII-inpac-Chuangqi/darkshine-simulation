@@ -51,13 +51,13 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
     RegisterIntParameter("if_strip", "If use strip structures in trackers", &if_strip, 1);
     RegisterIntParameter("if_smear", "If smear hits in strip structure", &if_smear, 1);
     RegisterIntParameter("Tag_fit_method",
-                         "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
+                         "Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting",
                          &Tag_fit_method,
-                         1);
+                         2);
     RegisterIntParameter("Rec_fit_method",
-                         "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
+                         "Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting",
                          &Rec_fit_method,
-                         1);
+                         2);
     RegisterDoubleParameter("con_field", "Const magnet field", &con_field, -1.5);
     RegisterIntParameter("skip_hits_geq", "Skip tagging/recoil tracker reconstruction if total hits number >= N in this tracker region (N<=0: infinite)", &skip_hits_geq, 20);
 }

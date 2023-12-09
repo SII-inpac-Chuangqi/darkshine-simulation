@@ -414,7 +414,8 @@ TMatrixD RiemannFitter::GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms, [[
     TMatrixD g(v_rad0, TMatrixD::kPlus, v_radms);
     //f.Invert();
     //TMatrixD g(f, TMatrixD::kPlus, v_radx);
-    g.Invert();
+    if (g.Determinant() != 0)
+        g.Invert();
 
     return g;
 }

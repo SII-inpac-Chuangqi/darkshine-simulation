@@ -409,7 +409,7 @@ bool PFTopoCluster_Analysis::Do(
     */
     
     // first run the clustering
-    if(!ConvHits() || !MakeHMAP() || !MakePOSMAP() || !makeSortedCenterIdNeighborsCHitMap() || !Clustering()){
+    if(!ConvHits() || !MakePOSMAP() || !makeSortedCenterIdNeighborsCHitMap() || !Clustering()){
         std::cerr<<"Fail to build initial cluster!"<<std::endl;
         return false;
     }

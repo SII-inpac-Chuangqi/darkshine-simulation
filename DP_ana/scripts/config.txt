@@ -91,8 +91,8 @@ RecECAL.ECollectionToUse = ECAL_FS0,ECAL_FS1,ECAL_FS2,ECAL_FS3,ECAL_FS4  # Calor
 RecHCAL.Verbose = 0  # Verbosity Variable
 RecHCAL.HCollectionToUse = FS0  # Calorimeter (HCAL) Collection to Use
 
-Tracking.Rec_fit_method = 1  # Specify fitting method: 0, no fine fitting; 1, Kalman fitting
-Tracking.Tag_fit_method = 1  # Specify fitting method: 0, no fine fitting; 1, Kalman fitting
+Tracking.Rec_fit_method = 2  # Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting
+Tracking.Tag_fit_method = 2  # Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting
 Tracking.clean = 1  # Clean mode: no truth information
 Tracking.if_smear = 1  # If smear hits in strip structure
 Tracking.if_strip = 1  # If use strip structures in trackers

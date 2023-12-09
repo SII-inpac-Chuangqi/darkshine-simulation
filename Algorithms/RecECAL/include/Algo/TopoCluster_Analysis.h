@@ -16,22 +16,6 @@
     #define _DNAN (nan(""))
 #endif
 
-#ifndef MAX_ECAL_CELLS // defined in AnaData as shared information
-    #define MAX_ECAL_CELLS (25*25*15)
-#endif
-
-#ifdef CLUSTER_DEBUG
-    #pragma message "The maximum support Ncell now is (increase if you need and pay attention of the stack)" 
-    //#pragma message MAX_ECAL_CELLS
-#endif
-
-//HMAP is larger than cell, to allow for the overflwo/underflow bin
-#if MAX_ECAL_CELLS < 1000
-    #define HMAP_LENGTH 10000
-#else
-    #define HMAP_LENGTH (MAX_ECAL_CELLS*2)
-#endif
-
 #include "Algo/CHit.h"
 
 /// \brief Base Analysis Class for Cluster
@@ -73,9 +57,6 @@ public:
     std::string printCell(CHit* cell);
 
 protected:
-    CHitVec findNeighbors(CHit* center);
-    CHitVec findNeighbors_legacy(CHit* center);
-    CHitVec findNeighbors_staggered(CHit* center);
     bool makeSortedCenterIdNeighborsCHitMap();
 
     [[nodiscard]] double calDistance(CHit* h, const TVector3& loc); //input unit: cm; ouput unit: EM scale (5cm)
@@ -96,11 +77,11 @@ protected:
     void calXYZCellWidth(const CHitVec cluster, double ret[]){calXYZCellWidth(_DUMMY,_DUMMY,cluster,ret);}; 
     void calXYZCellWidth(int P0, int P1, const CHitVec cluster, double ret[]); 
 
-    std::array<TVector3,MAX_ECAL_CELLS> _POS{};
+    std::vector<TVector3> _POS{};
     double _SurfaceZ{-999};
 
-    const std::array<TVector3,MAX_ECAL_CELLS>& POS(){return _POS;}; //const??
-    void setPOS(const std::array<TVector3,MAX_ECAL_CELLS>& v){_POS=v;};
+    const std::vector<TVector3>& POS(){return _POS;}; //const??
+    void setPOS(const std::vector<TVector3>& v){_POS=v;};
     double SurfaceZ(){return _SurfaceZ;};
     void setSurfaceZ(double v){_SurfaceZ=v;};
 
@@ -143,11 +124,10 @@ protected:
 
     //storage
     CHitVec allhits; // all CHits used to handle clustering info, converted from calorimeter
-    std::array<CHit* , HMAP_LENGTH> HMAP; // position-map of CHits
-    std::array<CHit* , MAX_ECAL_CELLS> POSMAP;
+    std::vector<CHit*> POSMAP;
     std::vector<CHitVec> clusters; // clusteded information
     std::vector<int> N_subcluster{}; // sub cluster information
-    std::array<CHitVec, MAX_ECAL_CELLS+1> centerIdNeighborsCHit;
+    std::vector<CHitVec> centerIdNeighborsCHit;
 
     bool Clustering();
     bool ConvHits();

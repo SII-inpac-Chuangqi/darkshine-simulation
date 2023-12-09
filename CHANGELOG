@@ -1,3 +1,10 @@
+2023-12-09:
+    1. DAna v1.5.11
+        1. fixed hard-coded getECAL_globalID
+        2. remove MAX_ECAL_CELLS and static arrays
+        3. Tracking default config: use Riemann fitting
+        4. Suppress error message in Riemann fitting
+
 2023-11-17:
     1. DAna v1.5.10
         1. Split HCAL Reconstruction into new processor: RecHCAL

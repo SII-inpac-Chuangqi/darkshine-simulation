@@ -144,87 +144,99 @@ double Cluster_Analysis::FindLatMoment() {
     return lat;
 }
 
-bool Cluster_Analysis::FineECellXY(double ECell[]) { //sumZ
-    if (ECell == NULL) return false;
-    double temp[MAX_ECAL_CELLS]={0};
+bool Cluster_Analysis::FineECellXY(std::vector<double>* ECell) { //sumZ
+    if (ECell->empty()) return false;
+    std::vector<double> temp;
+    temp.resize(dNX()*dNY());
     for (auto hit: *ClusterVec) {
         int Xid = hit->getCellIdX() - 1;
         int Yid = hit->getCellIdY() - 1;
-        temp[Xid + dNX() * Yid] += hit->getE(); // Y-X
+        temp.at(Xid + dNX() * Yid) += hit->getE(); // Y-X
     }
-    for (int i = 0; i < dNX()*dNY(); ++i) ECell[i] = temp[i];
+    std::copy(temp.begin(), temp.end(), ECell->begin());
     return true;
 }
 
-bool Cluster_Analysis::FineECellXZ(double ECell[]) { //sumY
-    if (ECell == NULL) return false;
-    double temp[MAX_ECAL_CELLS]={0};
+bool Cluster_Analysis::FineECellXZ(std::vector<double> *ECell) { //sumY
+    if (ECell->empty()) return false;
+    std::vector<double> temp;
+    temp.resize(dNX()*dNZ());
     for (auto hit: *ClusterVec) {
         int Xid = hit->getCellIdX() - 1;
         int Zid = hit->getCellIdZ() - 1;
-        temp[Xid + dNX() * Zid] += hit->getE(); //Z-X
+        temp.at(Xid + dNX() * Zid) += hit->getE(); //Z-X
     }
-    for (int i = 0; i < dNX()*dNZ(); ++i) ECell[i] = temp[i];
+    std::copy(temp.begin(), temp.end(), ECell->begin());
     return true;
 }
 
-bool Cluster_Analysis::FineECellYZ(double ECell[]) { //sumX
-    if (ECell == NULL) return false;
-    double temp[MAX_ECAL_CELLS]={0};
+
+bool Cluster_Analysis::FineECellYZ(std::vector<double> *ECell) { //sumX
+    if (ECell->empty()) return false;
+    std::vector<double> temp;
+    temp.resize(dNY()*dNZ());
     for (auto hit: *ClusterVec) {
         int Yid = hit->getCellIdX() - 1;
         int Zid = hit->getCellIdZ() - 1;
-        temp[Yid + dNY() * Zid] += hit->getE(); //Z-Y
+        temp.at(Yid + dNY() * Zid) += hit->getE(); //Z-Y
     }
-    for (int i = 0; i < dNY()*dNZ(); ++i) ECell[i] = temp[i];
+    std::copy(temp.begin(), temp.end(), ECell->begin());
     return true;
 }
 
-bool Cluster_Analysis::FineECellZ(double ECell[]) { //sumXY
-    if (ECell == NULL) return false;
-    double temp[MAX_ECAL_CELLS]={0};
+
+bool Cluster_Analysis::FineECellZ(std::vector<double>* ECell) { //sumXY
+    if (ECell->empty()) return false;
+    std::vector<double> temp;
+    temp.resize(dNZ());
     for (auto hit: *ClusterVec) {
         int Zid = hit->getCellIdZ() - 1;
-        temp[Zid] += hit->getE(); //Z-Y
+        temp.at(Zid) += hit->getE(); //Z-Y
     }
-    for (int i = 0; i <dNZ(); ++i) ECell[i] = temp[i];
+    std::copy(temp.begin(), temp.end(), ECell->begin());
     return true;
 }
 
-bool Cluster_Analysis::maxXY(int ECell[]) { //sumZ
-    if (ECell == NULL) return false;
-    int temp[MAX_ECAL_CELLS] = {0};
+
+bool Cluster_Analysis::maxXY(std::vector<int>* ECell) { //sumZ
+    if (ECell->empty()) return false;
+    std::vector<int> temp;
+    temp.resize(dNX()*dNY());
     for (auto hit: *ClusterVec) {
         int Xid = hit->getCellIdX() - 1;
         int Yid = hit->getCellIdY() - 1;
         int Zid = hit->getCellIdZ();
-        temp[Xid + dNX() * Yid] =max(temp[Xid + dNX() * Yid], Zid); // Y-X
+        temp.at(Xid + dNX() * Yid) =max(temp.at(Xid + dNX() * Yid), Zid); // Y-X
     }
-    for (int i = 0; i < dNX()*dNY(); ++i) ECell[i] = temp[i];
+    std::copy(temp.begin(), temp.end(), ECell->begin());
     return true;
 }
 
-bool Cluster_Analysis::FineECellXYZ(double ECell[]) { //all hits
-    if (ECell == NULL) return false;
-    double temp[MAX_ECAL_CELLS]={0};
+
+bool Cluster_Analysis::FineECellXYZ(std::vector<double> *ECell) { //all hits
+    if (ECell->empty()) return false;
+    std::vector<double> temp;
+    temp.resize(dNX()*dNY()*dNZ());
     for (auto hit: *ClusterVec) {
         int Xid = hit->getCellIdX() - 1;
         int Yid = hit->getCellIdY() - 1;
         int Zid = hit->getCellIdZ() - 1;
-        temp[Xid + dNX()*Yid + dNX()*dNY()*Zid] = hit->getE(); //X-Y-Z
+        temp.at(Xid + dNX()*Yid + dNX()*dNY()*Zid) = hit->getE(); //X-Y-Z
     }
-    for (int i = 0; i <dNX()*dNY()*dNZ(); ++i) ECell[i] = temp[i];
+    std::copy(temp.begin(), temp.end(), ECell->begin());
     return true;
 }
 
-bool Cluster_Analysis::NXY(int ECell[]) { //sumZ
-    if (ECell == NULL) return false;
-    int temp[MAX_ECAL_CELLS]={0};
+
+bool Cluster_Analysis::NXY(std::vector<int>* ECell) { //sumZ
+    if (ECell->empty()) return false;
+    std::vector<double> temp;
+    temp.resize(dNX()*dNY());
     for (auto hit: *ClusterVec) {
         int Xid = hit->getCellIdX() - 1;
         int Yid = hit->getCellIdY() - 1;
-        temp[Xid + dNX() * Yid] += 1; // Y-X
+        temp.at(Xid + dNX() * Yid) += 1; // Y-X
     }
-    for (int i = 0; i < dNX()*dNY(); ++i) ECell[i] = temp[i];
+    std::copy(temp.begin(), temp.end(), ECell->begin());
     return true;
 }

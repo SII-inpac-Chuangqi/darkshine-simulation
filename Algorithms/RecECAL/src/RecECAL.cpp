@@ -243,22 +243,23 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
             if ((enAda > 0) && (smearing_id==0))
             {
                 //level 1: basic advance variable, the N_cells
-                int ti[MAX_ECAL_CELLS]={0};
-                if (cluster_ana->maxXY(ti))
+                std::vector<int> ti;
+                ti.resize(dAnaData->getNECalCells());
+                if (cluster_ana->maxXY(&ti))
                 {
                     ECAL_NCell_max_XY.clear();
                     for (int i = 0; i < dNX() * dNY(); ++i)
-                        ECAL_NCell_max_XY.push_back(ti[i]);
+                        ECAL_NCell_max_XY.emplace_back(ti.at(i));
                     for (int i = 0; i < dNX() * dNY(); ++i)
-                        ti[i] = 0;
+                        ti.at(i) = 0;
                 }
-                if (cluster_ana->NXY(ti))
+                if (cluster_ana->NXY(&ti))
                 {
                     ECAL_NCell_XY.clear();
                     for (int i = 0; i < dNX() * dNY(); ++i)
-                        ECAL_NCell_XY.push_back(ti[i]);
+                        ECAL_NCell_XY.emplace_back(ti.at(i));
                     for (int i = 0; i < dNX() * dNY(); ++i)
-                        ti[i] = 0;
+                        ti.at(i) = 0;
                 }
 
                 //dump track informations
@@ -606,46 +607,47 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                 //level 4: dump all original hits
                 if (enAda > 3)
                 {
-                    double t[MAX_ECAL_CELLS]={0};
-                    if (cluster_ana->FineECellXY(t))
+                    std::vector<double> t;
+                    t.resize(dAnaData->getNECalCells());
+                    if (cluster_ana->FineECellXY(&t))
                     {
                         ECAL_ECell_XY.clear();
                         for (int i = 0; i < dNX() * dNY(); ++i)
-                            ECAL_ECell_XY.push_back(t[i]);
+                            ECAL_ECell_XY.emplace_back(t.at(i));
                         for (int i = 0; i < dNX() * dNY() * dNZ(); ++i)
-                            t[i] = 0;
+                            t.at(i) = 0;
                     }
-                    if (cluster_ana->FineECellXZ(t))
+                    if (cluster_ana->FineECellXZ(&t))
                     {
                         ECAL_ECell_XZ.clear();
                         for (int i = 0; i < dNX() * dNZ(); ++i)
-                            ECAL_ECell_XZ.push_back(t[i]);
+                            ECAL_ECell_XZ.emplace_back(t.at(i));
                         for (int i = 0; i < dNX() * dNY() * dNZ(); ++i)
-                            t[i] = 0;
+                            t.at(i) = 0;
                     }
-                    if (cluster_ana->FineECellYZ(t))
+                    if (cluster_ana->FineECellYZ(&t))
                     {
                         ECAL_ECell_YZ.clear();
                         for (int i = 0; i < dNY() * dNZ(); ++i)
-                            ECAL_ECell_YZ.push_back(t[i]);
+                            ECAL_ECell_YZ.emplace_back(t.at(i));
                         for (int i = 0; i < dNX() * dNY() * dNZ(); ++i)
-                            t[i] = 0;
+                            t.at(i) = 0;
                     }
-                    if (cluster_ana->FineECellXYZ(t))
+                    if (cluster_ana->FineECellXYZ(&t))
                     {
                         ECAL_ECell_XYZ.clear();
                         for (int i = 0; i < dNX() * dNY() * dNZ(); ++i)
-                            ECAL_ECell_XYZ.push_back(t[i]);
+                            ECAL_ECell_XYZ.emplace_back(t.at(i));
                         for (int i = 0; i < dNX() * dNY() * dNZ(); ++i)
-                            t[i] = 0;
+                            t.at(i) = 0;
                     }
-                    if (cluster_ana->FineECellZ(t))
+                    if (cluster_ana->FineECellZ(&t))
                     {
                         ECAL_ECell_Z.clear();
                         for (int i = 0; i < dNZ(); ++i)
                             ECAL_ECell_Z.push_back(t[i]);
                         for (int i = 0; i < dNX() * dNY() * dNZ(); ++i)
-                            t[i] = 0;
+                            t.at(i) = 0;
                     }
                 }
             }
