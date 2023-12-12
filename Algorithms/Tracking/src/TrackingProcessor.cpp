@@ -133,7 +133,7 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_truth_state_x", &RecTrk2_truth_state_x);
         EvtWrt->RegisterOutVariable("RecTrk2_truth_state_y", &RecTrk2_truth_state_y);
         EvtWrt->RegisterOutVariable("RecTrk2_truth_state_z", &RecTrk2_truth_state_z);
-        EvtWrt->RegisterOutVariable("RecTrk2_x_truth_fin", &RecTrk2_x_truth_fin);
+
     }
 //................................................................................//
 //Reconstructed
@@ -156,14 +156,16 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("RecTrk2_track_chi2",      &RecTrk2_track_chi2);
     EvtWrt->RegisterOutVariable("RecTrk2_track_chi2_algo", &RecTrk2_track_chi2_algo);
 
+    EvtWrt->RegisterOutVariable("RecTrk2_qop", &RecTrk2_qop);
+
     //regist some recoil angles, which got by reconstructed recoil x and z.
-    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_21", &RecTrk2_track_theta_21);
-    EvtWrt->RegisterOutVariable("Rec_ThetaEnd", &Rec_ThetaEnd);
-    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_43", &RecTrk2_track_theta_43);
-    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_54", &RecTrk2_track_theta_54);
-    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_65", &RecTrk2_track_theta_65);
-    EvtWrt->RegisterOutVariable("Rec_zNo", &Rec_zNo);
-    EvtWrt->RegisterOutVariable("RecTrk2_pp_fixed_by_theta", &RecTrk2_pp_fixed_by_theta);
+//    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_21", &RecTrk2_track_theta_21);
+//    EvtWrt->RegisterOutVariable("Rec_ThetaEnd", &Rec_ThetaEnd);
+//    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_43", &RecTrk2_track_theta_43);
+//    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_54", &RecTrk2_track_theta_54);
+//    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_65", &RecTrk2_track_theta_65);
+//    EvtWrt->RegisterOutVariable("Rec_zNo", &Rec_zNo);
+//    EvtWrt->RegisterOutVariable("RecTrk2_pp_fixed_by_theta", &RecTrk2_pp_fixed_by_theta);
 
     if (!clean) {
         EvtWrt->RegisterOutVariable("RecTrk2_track_quality", &RecTrk2_track_quality);
@@ -228,7 +230,7 @@ void TrackingProcessor::InitEvt() {
     RecTrk2_track_No_truth = 0;
     TagTrk2_track_No = -1;
     RecTrk2_track_No = -1;
-    RecTrk2_x_truth_fin = RETURN;
+//    RecTrk2_x_truth_fin = RETURN;
 
     TagTrk2_pp_truth_ini = RETURN;
     TagTrk2_pp_truth_fin = RETURN;
@@ -236,13 +238,15 @@ void TrackingProcessor::InitEvt() {
     RecTrk2_pp_truth_fin = RETURN;
 
     //Initialize some variables, which using for theta-momentum maps
-    std::vector<double>().swap(RecTrk2_track_theta_21);
-    std::vector<double>().swap(RecTrk2_track_theta_43);
-    std::vector<double>().swap(RecTrk2_track_theta_54);
-    std::vector<double>().swap(RecTrk2_track_theta_65);
-    std::vector<double>().swap(RecTrk2_pp_fixed_by_theta);
+//    std::vector<double>().swap(RecTrk2_track_theta_21);
+//    std::vector<double>().swap(RecTrk2_track_theta_43);
+//    std::vector<double>().swap(RecTrk2_track_theta_54);
+//    std::vector<double>().swap(RecTrk2_track_theta_65);
+//    std::vector<double>().swap(RecTrk2_pp_fixed_by_theta);
     std::vector<int>().swap(Rec_zNo);
-    std::vector<double>().swap(Rec_ThetaEnd);
+//    std::vector<double>().swap(Rec_ThetaEnd);
+
+    std::vector<double>().swap(RecTrk2_qop);
 
     std::vector<double>().swap(TagTrk2_pp);
     std::vector<double>().swap(TagTrk2_track_chi2);
@@ -396,12 +400,12 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
         for (auto step : *initial_steps) {
             if (InRecTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
                 RecTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
+                                            step->getPy() * step->getPy() +
                                             step->getPz() * step->getPz());
                 trackerFlag = true;
             } else if (!InRecTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
                 RecTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
                                             step->getPz() * step->getPz());
-                RecTrk2_x_truth_fin = step->getX();
                 break;
             }
         }
@@ -616,6 +620,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
         for(auto &track : rec_tracks_)
         {
+            TParticlePDG* particlePDG = TDatabasePDG::Instance()->GetParticle(track->GetPDG());
+            RecTrk2_qop.push_back( (particlePDG->Charge()/3.) / (track->GetPp()) );
             RecTrk2_pp.push_back(track->GetPp());
             RecTrk2_fixed_pp.push_back(track->GetFixedPp());
             RecTrk2_track_chi2.push_back(track->GetChi2());

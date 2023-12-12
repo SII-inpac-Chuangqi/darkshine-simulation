@@ -75,25 +75,32 @@ private:
 //    double TagTrk2_truth_hit_z{RETURN};
 //    double TagTrk2_truth_hit_t{RETURN};
 
-    double RecTrk2_truth_hit_x{RETURN};
-    double RecTrk2_truth_hit_y{RETURN};
-    double RecTrk2_truth_hit_z{RETURN};
-    double RecTrk2_truth_hit_t{RETURN};
+    float RecTrk2_truth_hit_x = 0;
+    float RecTrk2_truth_hit_y = 0;
+    float RecTrk2_truth_hit_z = 0;
+    float RecTrk2_truth_hit_t = 0;
 
-    double RecTrk2_pp_truth_x{RETURN};
-    double RecTrk2_pp_truth_y{RETURN};
-    double RecTrk2_pp_truth_z{RETURN};
-    double RecTrk2_pp_truth_e{RETURN};
+    float RecTrk2_pp_truth_x = 0;
+    float RecTrk2_pp_truth_y = 0;
+    float RecTrk2_pp_truth_z = 0;
+    float RecTrk2_pp_truth_e = 0;
 
-    double deltapx{RETURN};
-    double deltapy{RETURN};
-    double deltapz{RETURN};
-    double deltae {RETURN};
+    float deltapx = 0;
+    float deltapy = 0;
+    float deltapz = 0;
+    float deltae  = 0;
 
-    int geometry_id{-1};
-    int particle_id{-1};
-    int event_id{-1};
-    int index{-1};
+    uint64_t geometry_id = 0;
+    uint64_t particle_id = 0;
+    uint32_t event_id = 0;
+    int32_t index = 0;
+
+    // Decoded hit surface identifier components.
+    uint32_t volumeId = 0;
+    uint32_t boundaryId = 0;
+    uint32_t layerId = 0;
+    uint32_t approachId = 0;
+    uint32_t sensitiveId = 0;
 //................................................................................//
 //New root file
 //................................................................................//

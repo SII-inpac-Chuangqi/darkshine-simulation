@@ -288,12 +288,9 @@ const MeasuredStateOnPlane& Track::getFittedState(int id, const AbsTrackRep* rep
 
   TrackPoint* point = getPointWithFitterInfo(id, rep);
   if (point == nullptr) {
-    ////Exception exc("Track::getFittedState ==> no trackPoint with fitterInfo for rep",__LINE__,__FILE__);
-    //exc.setFatal();
-    //throw exc;
-    std::cout << "Warning: TrackPoint with fitterInfo not found for rep" << std::endl;
-    static MeasuredStateOnPlane emptyState; // Assuming MeasuredStateOnPlane has a default constructor
-    return emptyState;
+    Exception exc("Track::getFittedState ==> no trackPoint with fitterInfo for rep",__LINE__,__FILE__);
+    exc.setFatal();
+    throw exc;
   }
   return point->getFitterInfo(rep)->getFittedState(biased);
 }

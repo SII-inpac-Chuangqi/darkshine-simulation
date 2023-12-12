@@ -12,11 +12,15 @@
 //................................................................................//
 //C++
 #include <utility>
-#include <ostream>
+#include <iostream>
+#include <unordered_map>
+#include <vector>
+#include <string>
 
 //................................................................................//
 //FRAMEWORK
 #include "Core/AnaProcessor.h"
+#include "Utility/PhysicsProcessDef.h"
 
 //................................................................................//
 //ROOT
@@ -43,15 +47,18 @@ public:
 //Initialize all vars to be stored in output files
     void InitEvt() override;
 //................................................................................//
+//Map process string name to number. Utility/UTIL/include/Utility/PhysicsProcessDef.h
+    unsigned int mapStringToUint(const std::string& str) const;
+
+
 //Fill truth variables
     void FillTruth(DTruth *truth_info,
                    std::vector<DStep *> *initial_steps,
                    std::vector<McParticle *> *raw_mc_ptl);
+
     void ProcessEvt(AnaEvent* evt) override;
     void CheckEvt(AnaEvent* evt) override;
     void End() override;
-
-
 
 private:
 //................................................................................//
@@ -63,7 +70,7 @@ private:
 //Truth
 //................................................................................//
 //particle identifiers
-    int event_id{-1};
+    uint32_t event_id;
     std::vector<unsigned long> particle_id{};
     std::vector<int> particle_type{};   //PDG id
     vector<unsigned int> process{};
@@ -76,13 +83,24 @@ private:
     std::vector<float> px{};
     std::vector<float> py{};
     std::vector<float> pz{};
-    std::vector<float> m{};
 //tracking parameters
+    std::vector<float> m{};
+
     std::vector<float> q{};
     std::vector<float> p{};
     std::vector<float> pt{};
-//    std::vector<float> eta{};
-//    std::vector<float> phy{};
+    std::vector<float> eta{};
+    std::vector<float> phi{};
+//others
+    vector<unsigned int> vertex_primary{};
+    vector<unsigned int> vertex_secondary{};
+    vector<unsigned int> particle{};
+    vector<unsigned int> generation{};
+    vector<unsigned int> sub_particle{};
+
+//process object
+    PhysicsDef physicsDef;
+    std::unordered_map<std::string, unsigned int> stringToUintMap;
 
 };
 

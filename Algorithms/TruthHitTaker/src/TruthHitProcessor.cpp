@@ -61,25 +61,31 @@ void TruthHitProcessor::Begin() {
 //    outputTree->Branch("TagTrk2_pp_truth_z", &TagTrk2_pp_truth_z, "TagTrk2_pp_truth_z/D");
 //    outputTree->Branch("TagTrk2_pp_truth_e", &TagTrk2_pp_truth_e, "TagTrk2_pp_truth_e/D");
 */
-    outputTree->Branch("tx", &RecTrk2_truth_hit_x, "RecTrk2_truth_hit_x/D");
-    outputTree->Branch("ty", &RecTrk2_truth_hit_y, "RecTrk2_truth_hit_y/D");
-    outputTree->Branch("tz", &RecTrk2_truth_hit_z, "RecTrk2_truth_hit_z/D");
-    outputTree->Branch("tt", &RecTrk2_truth_hit_t, "RecTrk2_truth_hit_t/D");
+    outputTree->Branch("event_id", &event_id);
+    outputTree->Branch("geometry_id", &geometry_id, "geometry_id/l");
+    outputTree->Branch("particle_id", &particle_id, "particle_id/l");
 
-    outputTree->Branch("tpx", &RecTrk2_pp_truth_x, "RecTrk2_pp_truth_x/D");
-    outputTree->Branch("tpy", &RecTrk2_pp_truth_y, "RecTrk2_pp_truth_y/D");
-    outputTree->Branch("tpz", &RecTrk2_pp_truth_z, "RecTrk2_pp_truth_z/D");
-    outputTree->Branch("te", &RecTrk2_pp_truth_e, "RecTrk2_pp_truth_e/D");
+    outputTree->Branch("tx", &RecTrk2_truth_hit_x);
+    outputTree->Branch("ty", &RecTrk2_truth_hit_y);
+    outputTree->Branch("tz", &RecTrk2_truth_hit_z);
+    outputTree->Branch("tt", &RecTrk2_truth_hit_t);
 
-    outputTree->Branch("deltapx", &deltapx, "deltapx/D");
-    outputTree->Branch("deltapy", &deltapy, "deltapy/D");
-    outputTree->Branch("deltapz", &deltapz, "deltapz/D");
-    outputTree->Branch("deltae", &deltae, "deltae/D");
+    outputTree->Branch("tpx", &RecTrk2_pp_truth_x);
+    outputTree->Branch("tpy", &RecTrk2_pp_truth_y);
+    outputTree->Branch("tpz", &RecTrk2_pp_truth_z);
+    outputTree->Branch("te", &RecTrk2_pp_truth_e );
 
-    outputTree->Branch("geometry_id", &geometry_id, "geometry_id/I");
-    outputTree->Branch("particle_id", &particle_id, "particle_id/I");
-    outputTree->Branch("event_id", &event_id, "event_id/I");
-    outputTree->Branch("index", &index, "index/I");
+    outputTree->Branch("deltapx", &deltapx);
+    outputTree->Branch("deltapy", &deltapy);
+    outputTree->Branch("deltapz", &deltapz);
+    outputTree->Branch("deltae",  &deltae) ;
+
+    outputTree->Branch("index", &index);
+    outputTree->Branch("volume_id", &volumeId);
+    outputTree->Branch("boundary_id", &boundaryId);
+    outputTree->Branch("layer_id", &layerId);
+    outputTree->Branch("approach_id", &approachId);
+    outputTree->Branch("sensitive_id", &sensitiveId);
 }
 
 void TruthHitProcessor::InitEvt() {
@@ -109,10 +115,16 @@ void TruthHitProcessor::InitEvt() {
     deltapz=RETURN;
     deltae =RETURN;
 
-    geometry_id  = RETURN;
-    particle_id  = RETURN;
-    event_id     = RETURN;
+    geometry_id  = 0;
+    particle_id  = 0;
+    event_id     = 0;
     index        = -1;
+
+    volumeId = 0;
+    boundaryId = 0;
+    layerId = 0;
+    approachId = 0;
+    sensitiveId = 0;
 
 }
 
@@ -142,29 +154,36 @@ void TruthHitProcessor::FillTruth(DTruth *truth_info,
 //    }
 */
     for (const auto& hit2 : raw_rectrk2_hits) {
-        RecTrk2_truth_hit_x = hit2.GetX();
-        RecTrk2_truth_hit_y = hit2.GetY();
-        RecTrk2_truth_hit_z = hit2.GetZ();
-        RecTrk2_truth_hit_t = hit2.getT();
-        geometry_id         = hit2.getCellId();
+        RecTrk2_truth_hit_x = static_cast<float>(hit2.GetX());
+        RecTrk2_truth_hit_y = static_cast<float>(hit2.GetY());
+        RecTrk2_truth_hit_z = static_cast<float>(hit2.GetZ());
+        RecTrk2_truth_hit_t = static_cast<float>(hit2.getT());
+        geometry_id         = static_cast<uint64_t>( 72057731476881664 + 137438953472 * (hit2.getCellId() - 1) );//编号内含物理过程信息, 暂时这么写
+        volumeId = 1;
+        boundaryId = 0;
+        layerId = static_cast<uint64_t>(hit2.getCellId()) * 2;
+        approachId = 0;
+        sensitiveId = 1;
 
         auto hit_pcontribs = hit2.getPContribution();
         for (auto pcon2 : hit_pcontribs) {
+            //if()
             //std::cout << "[EVT]" << "\t" << pcon2 <<std::endl;
-            RecTrk2_pp_truth_x = pcon2.getPx();
-            RecTrk2_pp_truth_y = pcon2.getPy();
-            RecTrk2_pp_truth_z = pcon2.getPz();
-            RecTrk2_pp_truth_e = pcon2.getEnergy();
-            particle_id        = pcon2.getId();
+            RecTrk2_pp_truth_x = static_cast<float>(pcon2.getPx() / 1000.); //unit in GeV
+            RecTrk2_pp_truth_y = static_cast<float>(pcon2.getPy() / 1000.);
+            RecTrk2_pp_truth_z = static_cast<float>(pcon2.getPz() / 1000.);
+            RecTrk2_pp_truth_e = static_cast<float>(pcon2.getEnergy() / 1000.);
+            particle_id         = static_cast<uint64_t>(pcon2.getId());
+
 
             for (const auto& hit1 : raw_rectrk1_hits) {
-                if (hit1.getCellId() == geometry_id) {
+                if (hit1.getCellId() == hit2.getCellId()) {
                     auto hit1_pcontribs = hit1.getPContribution();
                     for (auto pcon1 : hit1_pcontribs) {
-                        deltapx = RecTrk2_pp_truth_x - pcon1.getPx();
-                        deltapy = RecTrk2_pp_truth_y - pcon1.getPy();     
-                        deltapz = RecTrk2_pp_truth_z - pcon1.getPz();     
-                        deltae  = RecTrk2_pp_truth_e - pcon1.getEnergy();
+                        deltapx = RecTrk2_pp_truth_x - static_cast<float>(pcon1.getPx() / 1000.);
+                        deltapy = RecTrk2_pp_truth_y - static_cast<float>(pcon1.getPy() / 1000.);
+                        deltapz = RecTrk2_pp_truth_z - static_cast<float>(pcon1.getPz() / 1000.);
+                        deltae  = RecTrk2_pp_truth_e - static_cast<float>(pcon1.getEnergy() / 1000.);
                         index++;
                         // 将deltapx填充到outputTree
                         outputTree->Fill();

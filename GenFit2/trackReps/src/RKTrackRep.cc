@@ -1842,16 +1842,11 @@ bool RKTrackRep::RKutta(const M1x4& SU,
 
   // check momentum
   if(momentum < Pmin){
-      try {
-          std::ostringstream sstream;
-          sstream << "RKTrackRep::RKutta ==> momentum too low: " << momentum * 1000. << " MeV";
-          Exception exc(sstream.str(), __LINE__, __FILE__);
-          exc.setFatal();
-          throw exc;
-      } catch (const Exception& e) {
-          // Handle the exception, you can print a message or perform other actions.
-          std::cerr << "Caught exception: " << e.what() << std::endl;
-      }
+    std::ostringstream sstream;
+    sstream << "RKTrackRep::RKutta ==> momentum too low: " << momentum*1000. << " MeV";
+    Exception exc(sstream.str(),__LINE__,__FILE__);
+    exc.setFatal();
+    throw exc;
   }
 
   unsigned int counter(0);
@@ -1942,36 +1937,22 @@ bool RKTrackRep::RKutta(const M1x4& SU,
     arg = arg > 1 ? 1 : arg;
     arg = arg < -1 ? -1 : arg;
     deltaAngle += acos(arg);
-    try {
-        if (fabs(deltaAngle) > AngleMax) {
-            std::ostringstream sstream;
-            sstream << "RKTrackRep::RKutta ==> Do not get to an active plane! Already extrapolated "
-                    << deltaAngle * 180 / TMath::Pi() << "°.";
-            Exception exc(sstream.str(), __LINE__, __FILE__);
-            exc.setFatal();
-            throw exc;
-        }
-    } catch (const Exception& e) {
-        // Handle the exception, you can print a message or perform other actions.
-        // For example:
-        std::cerr << "Caught exception: " << e.what() << std::endl;
-        // You can continue with the rest of your code here.
+    if (fabs(deltaAngle) > AngleMax){
+      std::ostringstream sstream;
+      sstream << "RKTrackRep::RKutta ==> Do not get to an active plane! Already extrapolated " << deltaAngle * 180 / TMath::Pi() << "°.";
+      Exception exc(sstream.str(),__LINE__,__FILE__);
+      exc.setFatal();
+      throw exc;
     }
 
     // check if we went back and forth multiple times -> we don't come closer to the plane!
     if (counter > 3){
-        try {
-        if (S                            *RKSteps_.at(counter-1).matStep_.stepSize_ < 0 &&
+      if (S                            *RKSteps_.at(counter-1).matStep_.stepSize_ < 0 &&
           RKSteps_.at(counter-1).matStep_.stepSize_*RKSteps_.at(counter-2).matStep_.stepSize_ < 0 &&
           RKSteps_.at(counter-2).matStep_.stepSize_*RKSteps_.at(counter-3).matStep_.stepSize_ < 0){
         Exception exc("RKTrackRep::RKutta ==> Do not get closer to plane!",__LINE__,__FILE__);
         exc.setFatal();
         throw exc;
-      }
-    } catch (const Exception& e) {
-          // Handle the exception, you can print a message or perform other actions.
-          // For example:
-          std::cerr << "Caught exception: " << e.what() << std::endl;
       }
     }
 

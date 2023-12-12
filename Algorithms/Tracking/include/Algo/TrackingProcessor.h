@@ -145,7 +145,8 @@ private:
     std::vector<double> RecTrk2_pp{};
     std::vector<double> RecTrk2_fixed_pp{};
     std::vector<double> RecTrk2_pl{};
-    std::vector<double> RecTrk2_pp_fixed_by_theta{RETURN};
+//    std::vector<double> RecTrk2_pp_fixed_by_theta{RETURN};
+    std::vector<double> RecTrk2_qop{};
 
     std::vector<double> RecTrk2_track_quality{};
     std::vector<double> RecTrk2_track_chi2{};
@@ -155,11 +156,11 @@ private:
 
 
     //Define some thetas and number
-    std::vector<double> Rec_ThetaEnd{};
-    std::vector<double> RecTrk2_track_theta_21{};
-    std::vector<double> RecTrk2_track_theta_43{};
-    std::vector<double> RecTrk2_track_theta_54{};
-    std::vector<double> RecTrk2_track_theta_65{};
+//    std::vector<double> Rec_ThetaEnd{};
+//    std::vector<double> RecTrk2_track_theta_21{};
+//    std::vector<double> RecTrk2_track_theta_43{};
+//    std::vector<double> RecTrk2_track_theta_54{};
+//    std::vector<double> RecTrk2_track_theta_65{};
     std::vector<int> Rec_zNo{};
 
 //x, y & z of reconstucted hits that in tracks
@@ -170,7 +171,6 @@ private:
     std::vector<std::vector<double>> RecTrk2_track_extrapolated_x{};
     std::vector<std::vector<double>> RecTrk2_track_extrapolated_y{};
     std::vector<std::vector<double>> RecTrk2_track_corrections_x{};
-    double RecTrk2_x_truth_fin{};
 
     std::vector<double> RecTrk2_track_preA{};
     std::vector<double> RecTrk2_track_preB{};
