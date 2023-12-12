@@ -62,13 +62,13 @@ public:
     /// Find the lateral moment of the cluster
     double FindLatMoment();
 
-    bool FineECellXY(double ECell[]); //ECell must be the address of the first element in array double[400]
-    bool FineECellXZ(double ECell[]);
-    bool FineECellYZ(double ECell[]);
-    bool FineECellZ(double ECell[]);
-    bool FineECellXYZ(double ECell[]);
-    bool maxXY(int ECell[]);
-    bool NXY(int ECell[]);
+    bool FineECellXY(std::vector<double>* ECell);
+    bool FineECellXZ(std::vector<double>* ECell);
+    bool FineECellYZ(std::vector<double>* ECell);
+    bool FineECellZ(std::vector<double>* ECell);
+    bool FineECellXYZ(std::vector<double>* ECell);
+    bool maxXY(std::vector<int>* ECell);
+    bool NXY(std::vector<int>* ECell);
     
 protected:
     // data

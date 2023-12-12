@@ -81,16 +81,14 @@ const vector<double> AnaData::getMagnetFieldAt(const vector<double> &pos) const
 // geometry specific transformation!
 int AnaData::getECAL_globalID(int block, int unit){ // globalID start from 0 and runs from x,y,z. e.g. 000 100 200 ... 010 ...
     int ret=-1;
-    int local_x=unit % 7;
-    int local_y=unit / 7;
-    int z=block / 9;
-    int x=local_x + ( (block % 9) % 3 ) * 7;
-    int y=local_y + ( (block % 9) / 3 ) * 7;
-    ret=x + y*21 + z*21*21;
-    if(ret<4851) 
-        return ret;
-    else 
-        return -1;
+    int n_ecal_block_per_layer=(N_ECal_block_per_region.at(0) * N_ECal_block_per_region.at(1));
+    int local_x=unit % N_ECal_cell_per_block.at(0);
+    int local_y=unit / N_ECal_cell_per_block.at(1);
+    int z=block / n_ecal_block_per_layer;
+    int x=local_x + ( (block % n_ecal_block_per_layer) % N_ECal_block_per_region.at(0) ) * N_ECal_cell_per_block.at(0);
+    int y=local_y + ( (block % n_ecal_block_per_layer) / N_ECal_block_per_region.at(1) ) * N_ECal_cell_per_block.at(1);
+    ret=x + y*N_ECal_cell_x + z*N_ECal_cell_x*N_ECal_cell_y;
+    return ret;
 }
 
 void AnaData::readGeometryDetails() {
@@ -120,6 +118,7 @@ void AnaData::readGeometryDetails() {
     N_ECal_cell_y = 0;
     N_ECal_cell_z = 0;
     double last_pos[3] = {-INFINITY, -INFINITY, -INFINITY};
+    double last_block_pos[3] = {-INFINITY, -INFINITY, -INFINITY};
 
     for (int i = 0; i < world_->GetNdaughters(); ++i) {
         auto *detector = dynamic_cast<TGeoNode*>(world_->GetDaughter(i));
@@ -181,12 +180,21 @@ void AnaData::readGeometryDetails() {
             ECAL_length_y = CUNIT*2*detector_shape->GetDY();
             ECAL_length_z = CUNIT*2*detector_shape->GetDZ();
             double subdetector_pos[3];
+            double block_pos[3];
 
             // Setting EECal_cell_xyz
             for (int j = 0; j < detector->GetNdaughters(); ++j) { // each block;  7*7 for each block, 9 blocks/layer, 99 blocks in total
                 auto *block = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
                 auto block_name = TString(block->GetVolume()->GetName());
                 auto *block_matrix = block->GetMatrix();
+                for (int l = 0; l < 3; l++)
+                    block_pos[l] = block_matrix->GetTranslation()[l] + detector_matrix->GetTranslation()[l];
+                for (int l = 0; l < 3; l++) {
+                    if (block_pos[l] > last_block_pos[l]) {
+                        N_ECal_block_per_region.at(l)++;
+                        last_block_pos[l] = block_pos[l];
+                    }
+                }
                 for (int k = 0; k < block->GetNdaughters(); ++k ) { // each cell
                     auto *subdetector = dynamic_cast<TGeoNode*>(block->GetDaughter(k));
                     auto subdetector_name = TString(subdetector->GetVolume()->GetName());
@@ -201,41 +209,46 @@ void AnaData::readGeometryDetails() {
                         for (int l = 0; l < 3; l++)
                             subdetector_pos[l] = subdetector_matrix->GetTranslation()[l] + block_matrix->GetTranslation()[l] + detector_matrix->GetTranslation()[l];
                         if ( !ECAL_pos0 ) ECAL_pos0 = new TVector3(CUNIT * subdetector_pos[0],CUNIT * subdetector_pos[1],CUNIT * subdetector_pos[2]);
-                        ECAL_posmap[getECAL_globalID(j,k)] = TVector3(subdetector_pos) * CUNIT;
-  
+
                         if (subdetector_pos[2] > last_pos[2]) {
                             if (ECAL_cell_dz == 0 && N_ECal_cell_z == 1) ECAL_cell_dz = CUNIT * fabs(subdetector_pos[2] - last_pos[2]);
+                            if ( j==0 ) N_ECal_cell_per_block.at(2)++;
                             last_pos[2] = subdetector_pos[2];
                             N_ECal_cell_z++;
                         }
                         if (subdetector_pos[1] > last_pos[1]) {
                             if (ECAL_cell_dy == 0 && N_ECal_cell_y == 1) ECAL_cell_dy = CUNIT * fabs(subdetector_pos[1] - last_pos[1]);
+                            if ( j==0 ) N_ECal_cell_per_block.at(1)++;
                             last_pos[1] = subdetector_pos[1];
                             N_ECal_cell_y++;
                         }
                         if (subdetector_pos[0] > last_pos[0]) {
                             if (ECAL_cell_dx == 0 && N_ECal_cell_x == 1) ECAL_cell_dx = CUNIT * fabs(subdetector_pos[0] - last_pos[0]);
+                            if ( j==0 ) N_ECal_cell_per_block.at(0)++;
                             last_pos[0] = subdetector_pos[0];
                             N_ECal_cell_x++;
                         }
                     }
                 }
             }
-            // std::cout<<"ECAL cells found: "<<ecal_n<<std::endl;
-
-            // int ecal_n = 0;
-            // // Calculate ECAL_posmap -- move to on the fly method
-            // for (int zi = 0; zi < N_ECal_cell_z; zi++) {
-            //     for (int yi = 0; yi < N_ECal_cell_y; yi++) {
-            //         for (int xi = 0; xi < N_ECal_cell_x; xi++) {
-            //             // order: 000 100 200 ... 010 ...
-            //             ECAL_posmap[ecal_n] = TVector3( ECAL_pos0->x() + xi * ECAL_cell_dx - ((zi%2)?12.5:0),
-            //                                         ECAL_pos0->y() + yi * ECAL_cell_dy - ((zi%2)?12.5:0),
-            //                                         ECAL_pos0->z() + zi * ECAL_cell_dz);
-            //             ecal_n++;
-            //         }
-            //     }
-            // }
+            N_ECal_cells = N_ECal_cell_x * N_ECal_cell_y * N_ECal_cell_z;
+            ECAL_posmap.resize(N_ECal_cells);
+            // Make ECAL_posmap
+            for (int j = 0; j < detector->GetNdaughters(); ++j) {
+                auto *block = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
+                auto *block_matrix = block->GetMatrix();
+                for (int k = 0; k < block->GetNdaughters(); ++k ) {
+                    auto *subdetector = dynamic_cast<TGeoNode*>(block->GetDaughter(k));
+                    auto subdetector_name = TString(subdetector->GetVolume()->GetName());
+                    auto *subdetector_matrix = subdetector->GetMatrix();
+                    if (!subdetector_name.Contains("LVW")) continue;
+                    for (int l = 0; l < 3; l++)
+                        subdetector_pos[l] = subdetector_matrix->GetTranslation()[l] + block_matrix->GetTranslation()[l] + detector_matrix->GetTranslation()[l];
+                    ECAL_posmap.at(getECAL_globalID(j,k)) = TVector3(subdetector_pos) * CUNIT;
+                }
+            }
+            makeCenterIdNeighborIdsMap_staggered();
+            makeCenterIdNeighborIdsMap_legacy();
         }
     }
 }
@@ -419,6 +432,59 @@ const DTruth* AnaData::getInitialElectron() const
 {
     return nullptr;
 }
+
+
+bool AnaData::makeCenterIdNeighborIdsMap_staggered() {
+    std::vector<int> neighbors;
+    int center_x, center_y, center_z, neighbor_id, ecal_cell_n;
+    assert(centerIdNeighborIds_staggered.empty());
+    centerIdNeighborIds_staggered.reserve(N_ECal_cells);
+    centerIdNeighborIds_staggered.emplace_back(); // place_holder at 0. center_id start from 1
+    for (int center_id = 1; center_id <= N_ECal_cells; center_id++ ) {
+        neighbors.clear();
+        // calculate center xyz
+        center_x = center_id % N_ECal_cell_x;
+        center_y = ((center_id - 1) / N_ECal_cell_x) % N_ECal_cell_y + 1;
+        center_z = (center_id - 1) / (N_ECal_cell_x * N_ECal_cell_y) + 1;
+        ecal_cell_n = N_ECal_cell_x * N_ECal_cell_y * N_ECal_cell_z;
+        // first add 8 in same Z
+        for(int i=-1;i<=+1;i++)
+            for(int j=-1;j<=+1;j++){
+                if (i==0 && j==0) continue;
+                neighbor_id = 1 + ACC(center_x + i, center_y + j, center_z);
+                if (neighbor_id < 1 || neighbor_id > ecal_cell_n) continue;
+                neighbors.emplace_back(neighbor_id);
+            }
+        //then consider 8 in different Z
+        if(center_z%2==1) // left top shifted
+            for(int i=0;i<=+1;i++)
+                for(int j=0;j<=+1;j++)
+                    for(int k=-1;k<=+1;k++) {
+                        if (k==0) continue;
+                        neighbor_id = 1 + ACC(center_x + i, center_y + j, center_z + k);
+                        if (neighbor_id < 1 || neighbor_id > ecal_cell_n) continue;
+                        neighbors.emplace_back(neighbor_id);
+                    }
+        else // right bottom shifted
+            for(int i=-1;i<=0;i++)
+                for(int j=-1;j<=0;j++)
+                    for(int k=-1;k<=+1;k++) {
+                        if (k==0) continue;
+                        neighbor_id = 1 + ACC(center_x + i,center_y + j,center_z + k);
+                        if (neighbor_id < 1 || neighbor_id > ecal_cell_n) continue;
+                        neighbors.emplace_back(neighbor_id);
+                    }
+        // Finally add to the map
+        centerIdNeighborIds_staggered.emplace_back(neighbors);
+    }
+    return true;
+}
+
+bool AnaData::makeCenterIdNeighborIdsMap_legacy() {
+    std::cout<< "WIP" << std::endl;
+    return true;
+}
+
 
 /*
 void AnaData::LoadTruthMcPHelper(const MCPHelperMap &helper_collection)

@@ -73,6 +73,11 @@ FilterManager::FilterManager() {
         region_of_interest.emplace_back(minDist, maxDist);
         if (fInclude && fStage1) check_include_stage = 2;
     }
+    if (dControl->veto_missP) {
+        exist_region_of_interest = true;
+        region_of_interest.emplace_back(dControl->tag_Pos_TrackerRegion.z() - 0.5 * dControl->tag_Size_TrackerRegion.z(),
+                                        dControl->Pos_ECALRegion.z() - 0.5 * dControl->Size_ECALRegion.z());
+    }
 }
 
 /// \brief Filter Particle method. Scan every FilterParticle->Filter().
@@ -145,6 +150,7 @@ void FilterManager::Filter_Event_Initialize() {
     }
 
     hardbrem_found = false;
+    ecal_estimate_E = 0;
 }
 
 G4bool FilterManager::InsideRoI(const G4Track *aTrack) {

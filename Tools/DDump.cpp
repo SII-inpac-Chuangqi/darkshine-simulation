@@ -8,7 +8,7 @@
 #include "Object/DEvent.h"
 
 int main(int argc, char **argv) {
-    std::string file_name = "dp_out.root";
+    std::string file_name = "dp_simu.root";
     std::string tree_name = "Dark_Photon";
     long long skip_number = -1;
     long long event_number = -1;

@@ -36,11 +36,7 @@ public:
         E_max.clear();
         E_frac.clear();
         Moments_Lat.clear();
-        HCAL_total.clear();
-        HCAL_E_Max_Cell.clear();
-        SideHCAL_total.clear();
-        SideHCAL_E_Max_Cell.clear();
-        HCAL_E_Cali.clear();
+
         E_frac_vec.clear();
         Moments_R.clear();
         Moments_X.clear();
@@ -115,16 +111,9 @@ public:
     void ReadCollections();
 
     //only used for DDis
-    std::vector<std::shared_ptr<CHit>> clustered_hits{};//TODO: make it private and use interface
+    std::vector<CHit*> clustered_hits{};//TODO: make it private and use interface
 
 private:
-
-    vector<double> HCAL_total;
-    vector<double> HCAL_E_Max_Cell;
-    vector<double> SideHCAL_total;
-    vector<double> SideHCAL_E_Max_Cell;
-    vector<double> HCAL_E_Cali;
-
     // output variables
     vector<double> E_total{};
     vector<double> E_max{};
@@ -221,16 +210,9 @@ private:
     int MatchTruth{0};
     int StaggeredECAL{1};
     string ecal_col_use;
-    string hcal_col_use;
-    string sidehcal_col_use;
 
     vector<string> ecal_cols;
     int ecal_col_size;
-
-    vector<string> hcal_cols;
-    vector<string> sidehcal_cols;
-    int hcal_col_size;
-    int sidehcal_col_size;
 
     // detailed ECAL recons parameter -- copy from ClusterAnalysis
     double _Enoise{1}; // MeV or Digit
@@ -263,7 +245,6 @@ private:
     int dNY(){return _dNY;};
     int dNZ(){return _dNZ;};
     double SurfaceZ(){return _SurfaceZ;}
-    double Cali_Fuc(int cali_pdg, double E_before_cali);
 
     void setNX(int v){_dNX=v;};
     void setNY(int v){_dNY=v;};

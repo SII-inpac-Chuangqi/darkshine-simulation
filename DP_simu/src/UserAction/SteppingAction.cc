@@ -68,29 +68,42 @@ SteppingAction::~SteppingAction() {
 void SteppingAction::UserSteppingAction(const G4Step *aStep) {
     prev = aStep->GetPreStepPoint();
     post = aStep->GetPostStepPoint();
-    
-    // For default hardbrem filter
-    // Requirement: gamma from initial electron with energy larger than 4 GeV in tracker region
-    // N.B. initial particle starts from 1 and parent==0
-    if (aStep->GetTrack()->GetParentID()==0 && dControl->if_HardBrem && dControl->if_filter) {
-        // If out of selection region, check event status
-        if (prev->GetTotalEnergy() < 4 * GeV || prev->GetPosition()[2] >= 180 * mm) {
-            if (!dFilterManager->GetHardbremFound()) {
+
+    if (dControl->if_filter) {
+        if (prev->GetPhysicalVolume()->GetName()[0] == 'E') {
+            if (dControl->veto_missP && dControl->fStage == 0
+                && prev->GetPosition().z() <= dControl->ECAL_Front_Z
+                && (dRootMng->GetEvt()->getStepCollection().at(dControl->InitialParticleStepCollection_Name)->at(0)->getE() - prev->GetTotalEnergy()) < dControl->veto_missP_leq_E) {
                 G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
                 G4EventManager::GetEventManager()->AbortCurrentEvent();
             }
-        } else if (fabs(prev->GetKineticEnergy() - post->GetKineticEnergy()) >= 4 * GeV) {
-            // Search for all secondaries in current step
-            for (auto sec: *(aStep->GetSecondaryInCurrentStep())) {
-                if (sec->GetParticleDefinition()->GetPDGEncoding() == 22
-                    && sec->GetTotalEnergy() >= 4 * GeV) {
-                    dFilterManager->SetHardbremFound(true);
+            dFilterManager->AddEstimateInECALEnergy(aStep->GetTotalEnergyDeposit());
+            if (dControl->veto_ECAL && dFilterManager->GetEstimateInECALEnergy() > dControl->veto_ECAL_geq_E) {
+                G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
+                G4EventManager::GetEventManager()->AbortCurrentEvent();
+            }
+        }
+        // For default hardbrem filter
+        // Requirement: gamma from initial electron with energy larger than 4 GeV in tracker region
+        // N.B. initial particle starts from 1 and parent==0
+        if (aStep->GetTrack()->GetParentID()==0 && dControl->if_HardBrem) {
+            // If out of selection region, check event status
+            if (prev->GetTotalEnergy() < 4 * GeV || prev->GetPosition()[2] >= 180 * mm) {
+                if (!dFilterManager->GetHardbremFound()) {
+                    G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
+                    G4EventManager::GetEventManager()->AbortCurrentEvent();
+                }
+            } else if (fabs(prev->GetKineticEnergy() - post->GetKineticEnergy()) >= 4 * GeV) {
+                // Search for all secondaries in current step
+                for (auto sec: *(aStep->GetSecondaryInCurrentStep())) {
+                    if (sec->GetParticleDefinition()->GetPDGEncoding() == 22
+                        && sec->GetTotalEnergy() >= 4 * GeV) {
+                        dFilterManager->SetHardbremFound(true);
+                    }
                 }
             }
         }
-    }
 
-    if (dControl->if_filter) {
         if (dControl->fStage < dFilterManager->GetCheckIncludeStage()) { // check excluding filters
             if ((dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process(aStep)) // Process filters
                 || (dFilterManager->GetifFilter_Particle() &&

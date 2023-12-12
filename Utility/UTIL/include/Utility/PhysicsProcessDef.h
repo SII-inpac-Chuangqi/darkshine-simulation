@@ -57,9 +57,11 @@ struct PhysicsDef {
             "Rayl",                             // 37
             "muIoni",                           // 38
             "muPairProd",                       // 39
-            "GammaToMuPair",                    // 40
-            "muonNuclear",                      // 41
-            "nKiller",                          // 42
+            "muBrems",                          // 40
+            "GammaToMuPair",                    // 41
+            "muonNuclear",                      // 42
+            "hPairProd",                        // 43
+            "nKiller",                          // 44
     };
     /** the map of process types */
     unordered_map<string, int> dPhyTypeMap;

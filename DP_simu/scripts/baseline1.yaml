@@ -71,7 +71,7 @@ MagField:
 # Root Manager Settings
 ###########################################
 RootManager:
-  outfile_Name: "dp_out.root"
+  outfile_Name: "dp_simu.root"
   tree_Name: "Dark_Photon"
 
   # job run number

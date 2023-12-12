@@ -110,7 +110,7 @@ Event Display is quite straight forward.
     - batch mode, which only print out the detector information
 - ```DDis [-g geometry.root] [-f event.root]```
     - the command is not necessary to run the graphic mode. if no specific root file, **DDis**
-      will automatically run "dp_out.root".
+      will automatically run "dp_simu.root".
 
 ### DPlot
 
@@ -130,12 +130,12 @@ This is a really naive plotting program for newbies and lazy boys and girls.
 
 | Name                               | Description                                                                                                                                                                                                              | Example                 |
 |------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
-| **Global Variables**               ||                                                                                                                                                                                                                          |
+| **Global Variables**               ||                         |
 | save_geometry                      | save geometry as ```TGeoManager``` in root file                                                                                                                                                                          | false                   |
 | check_overlaps                     | check the overlaps in Geant4, very time-consuming                                                                                                                                                                        | false                   |
 | signal_production                  | quick option for generate Dark Physics process. If signal production is activated, program will automatically bias for DMProcessDMBrem and record all the MC particles A process filter on target region will be applied | false                   |
 | **RootManager**                    |                                                                                                                                                                                                                          |                         |
-| outfile_Name                       | the output root file name                                                                                                                                                                                                | "dp_out.root"           |
+| outfile_Name                       | the output root file name                                                                                                                                                                                                | "dp_simu.root"          |
 | tree_Name                          | the tree name in the output file                                                                                                                                                                                         | "Dark_Photon"           |
 | Run_Number                         | the start number for event ID                                                                                                                                                                                            | 0                       |
 | Total_Event_Number                 | total event number in this run                                                                                                                                                                                           | 10000                   |
@@ -152,10 +152,10 @@ This is a really naive plotting program for newbies and lazy boys and girls.
 | BiasProcess                        | the process name to be biased                                                                                                                                                                                            | "GammaToMuPair"         |
 | BiasFactor                         | the biased factor, simply defined as the scale factor on cross section                                                                                                                                                   | 1e20                    |
 | BiasEmin                           | [Energy, "Unit"]:  the minimal energy for the process                                                                                                                                                                    | [4, "GeV"]              |
-| **Filters**                        |||
+| **Filters**                        ||                         |
 | if_filter                          | Control of event filters                                                                                                                                                                                                 | false                   |
 | particle_filters_parameters        | a list controlling all particle filters, add filters by appending: - [ 22, 6, "GeV", 8, "GeV", -1, "m", 0.2, "m", true ]                                                                                                 |                         |
-| process_filters_parameters         | a list controlling all process filters,  add filters by appending: - [ "msc", 6, "GeV", 8, "GeV", -1, "m", 0.2, "m", true ]                                                                                              ||
+| process_filters_parameters         | a list controlling all process filters,  add filters by appending: - [ "msc", 6, "GeV", 8, "GeV", -1, "m", 0.2, "m", true ]                                                                                              |                         |
 
 </details>
 
