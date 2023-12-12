@@ -51,6 +51,11 @@ public:
 
     void SetHardbremFound(G4bool hardbremFound) { hardbrem_found = hardbremFound; };
 
+    // avoid add gamma energy, to prevent overestimate energy in gamma -> e+ e- -> ...+gamma event
+    void AddEstimateInECALEnergy(G4double p_energy) {
+        ecal_estimate_E += p_energy;
+    };
+
     /// Getter
     [[nodiscard]] G4bool GetifFilter_Particle() const { return ifFilter_Particle; };
 
@@ -62,9 +67,13 @@ public:
 
     [[nodiscard]] G4bool GetHardbremFound() const { return hardbrem_found; };
 
+    [[nodiscard]] G4double GetEstimateInECALEnergy() const {return ecal_estimate_E; };
+
 private:
     // for hardbrem filter
     G4bool hardbrem_found = false;
+
+    G4double ecal_estimate_E = 0;
 
     G4bool ifFilter_Particle = false;
     G4bool ifFilter_Process = false;

@@ -138,7 +138,7 @@ link_libraries(DEvent)
 # DSimu
 option(BUILD_DSIMU "BUILD_DSIMU" ON)
 if (BUILD_DSIMU)
-    add_definitions(-DDSIMU_VERSION=\"1.6\")
+    add_definitions(-DDSIMU_VERSION=\"1.6.0\")
     add_subdirectory(DP_simu)
 endif ()
 
@@ -147,7 +147,7 @@ endif ()
 #
 option(BUILD_DDIS "BUILD_DDIS" ON)
 if (BUILD_DANA)
-    add_definitions(-DDANA_VERSION=\"v1.5.9\")
+    add_definitions(-DDANA_VERSION=\"v1.5.11\")
 
     add_subdirectory(GenFit2)
     add_subdirectory(DP_ana)
@@ -170,7 +170,6 @@ endif()
 set(RUN_SCRIPTS
         DP_simu/scripts/default.yaml
         DP_simu/scripts/init_vis.mac
-        DP_simu/scripts/vis.mac
         DP_simu/scripts/gui.mac
         )
 
