@@ -437,7 +437,8 @@ const DTruth* AnaData::getInitialElectron() const
 bool AnaData::makeCenterIdNeighborIdsMap_staggered() {
     std::vector<int> neighbors;
     int center_x, center_y, center_z, neighbor_id, ecal_cell_n;
-    assert(centerIdNeighborIds_staggered.empty());
+    if (!centerIdNeighborIds_staggered.empty())
+        return true;
     centerIdNeighborIds_staggered.reserve(N_ECal_cells);
     centerIdNeighborIds_staggered.emplace_back(); // place_holder at 0. center_id start from 1
     for (int center_id = 1; center_id <= N_ECal_cells; center_id++ ) {
