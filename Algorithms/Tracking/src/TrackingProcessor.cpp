@@ -59,7 +59,8 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
                          &Rec_fit_method,
                          2);
     RegisterDoubleParameter("con_field", "Const magnet field", &con_field, -1.5);
-    RegisterIntParameter("skip_hits_geq", "Skip tagging/recoil tracker reconstruction if total hits number >= N in this tracker region (N<=0: infinite)", &skip_hits_geq, 20);
+    RegisterIntParameter("skip_hits_geq", "Skip tagging/recoil tracker reconstruction if total hits number >= N in this tracker region (N<=0: infinite)", &skip_hits_geq, 40);
+    RegisterDoubleParameter("remove_hit_less_E", "[MeV] Remove small energy deposition that should not counted s a hit. Apply on raw hits.", &remove_hit_less_E, 0.02);
 }
 
 void TrackingProcessor::Begin() {
@@ -132,6 +133,17 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_truth_state_x", &RecTrk2_truth_state_x);
         EvtWrt->RegisterOutVariable("RecTrk2_truth_state_y", &RecTrk2_truth_state_y);
         EvtWrt->RegisterOutVariable("RecTrk2_truth_state_z", &RecTrk2_truth_state_z);
+        EvtWrt->RegisterOutVariable("Trk_contrib_pdg", &Trk_contrib_pdg, "PDG Id of the hit particle (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_create_process", &Trk_contrib_create_process, "Creation process of the hit particle (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_z", &Trk_contrib_z, "Position of the raw tracker hit in Z direction [cm] (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_deposit_E", &Trk_deposit_E, "Deposit energy of the raw tracker hit [MeV] (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_E", &Trk_contrib_E, "Energy of the raw tracker hit particle [MeV] (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_Initial_count",&Trk_contrib_Initial_count, "Hit count from the Initial particle(s) (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_conv_count"   ,&Trk_contrib_conv_count, "Hit count from the G4GammaConversion final states (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_eIoni_count"  ,&Trk_contrib_eIoni_count, "Hit count from the G4eIonisation final states (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_compt_count"  ,&Trk_contrib_compt_count, "Hit count from the G4ComptonScattering final states (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_eBrem_count"  ,&Trk_contrib_eBrem_count, "Hit count from the G4eBremsstrahlung final states (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_phot_count"   ,&Trk_contrib_phot_count, "Hit count from the G4PhotoElectricEffect final states (requires save_mcp_helper)");
     }
 //................................................................................//
 //Reconstructed
@@ -212,6 +224,17 @@ void TrackingProcessor::InitEvt() {
     std::vector<std::vector<double>>().swap(RecTrk2_truth_state_x);
     std::vector<std::vector<double>>().swap(RecTrk2_truth_state_y);
     std::vector<std::vector<double>>().swap(RecTrk2_truth_state_z);
+    std::vector<int>().swap(Trk_contrib_pdg);
+    std::vector<TString>().swap(Trk_contrib_create_process);
+    std::vector<double>().swap(Trk_contrib_z);
+    std::vector<double>().swap(Trk_contrib_E);
+    std::vector<double>().swap(Trk_deposit_E);
+    Trk_contrib_Initial_count = 0;
+    Trk_contrib_conv_count = 0;
+    Trk_contrib_eIoni_count = 0;
+    Trk_contrib_compt_count = 0;
+    Trk_contrib_eBrem_count = 0;
+    Trk_contrib_phot_count = 0;
 
     TagTrk2_track_No_truth = 0;
     RecTrk2_track_No_truth = 0;
@@ -455,13 +478,48 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
         std::vector<TrkHit> raw_tagtrk1_hits;
         std::vector<TrkHit> raw_tagtrk2_hits;
-        for (auto hit : *simuhit_collection.at("TagTrk1")) raw_tagtrk1_hits.emplace_back(*hit);
-        for (auto hit : *simuhit_collection.at("TagTrk2")) raw_tagtrk2_hits.emplace_back(*hit);
+        for (auto hit : *simuhit_collection.at("TagTrk1")) {
+            if (hit->getE() < remove_hit_less_E) continue;
+            raw_tagtrk1_hits.emplace_back(*hit);
+        }
+        for (auto hit : *simuhit_collection.at("TagTrk2")){
+            if (hit->getE() < remove_hit_less_E) continue;
+            raw_tagtrk2_hits.emplace_back(*hit);
+        }
 
         std::vector<TrkHit> raw_rectrk1_hits;
         std::vector<TrkHit> raw_rectrk2_hits;
-        for (auto hit : *simuhit_collection.at("RecTrk1")) raw_rectrk1_hits.emplace_back(*hit);
-        for (auto hit : *simuhit_collection.at("RecTrk2")) raw_rectrk2_hits.emplace_back(*hit);
+        for (auto hit : *simuhit_collection.at("RecTrk1")) {
+            if (hit->getE() < remove_hit_less_E) continue;
+            raw_rectrk1_hits.emplace_back(*hit);
+        }
+        for (auto hit : *simuhit_collection.at("RecTrk2")) {
+            if (hit->getE() < remove_hit_less_E) continue;
+            raw_rectrk2_hits.emplace_back(*hit);
+        }
+        // Fill pcontrib
+        if (!clean) {
+            for (auto const& [collection_name, hit_collection]: simuhit_collection) {
+                if(collection_name.substr(3,3) != "Trk") continue;
+                for (auto const &hit: *hit_collection) {
+                    if (hit->getPContribution().empty()) continue;
+                    if (hit->getE() < remove_hit_less_E) continue;
+                    Trk_contrib_pdg.emplace_back(hit->getPContribution().at(0).getPdg());
+                    std::string proc_name = hit->getPContribution().at(0).getCreateProcess().empty() ? "Initial" : hit->getPContribution().at(0).getCreateProcess();
+                    Trk_contrib_create_process.emplace_back(proc_name);
+                    Trk_contrib_z.emplace_back(hit->getZ());
+                    Trk_contrib_E.emplace_back(hit->getPContribution().at(0).getEnergy());
+                    Trk_deposit_E.emplace_back(hit->getE());
+                    if (proc_name == "Initial") Trk_contrib_Initial_count++;
+                    else if (proc_name == "conv") Trk_contrib_conv_count++;
+                    else if (proc_name == "eIoni") Trk_contrib_eIoni_count++;
+                    else if (proc_name == "compt") Trk_contrib_compt_count++;
+                    else if (proc_name == "eBrem") Trk_contrib_eBrem_count++;
+                    else if (proc_name == "phot") Trk_contrib_phot_count++;
+                }
+            }
+        }
+
 
 //................................................................................//
 //Tag tracker

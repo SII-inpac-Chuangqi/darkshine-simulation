@@ -1,3 +1,7 @@
+2023-12-17:
+    1. DAna v1.5.12
+        1. Add config: Tracking.remove_hit_less_E
+
 2023-12-09:
     1. DAna v1.5.11
         1. fixed hard-coded getECAL_globalID

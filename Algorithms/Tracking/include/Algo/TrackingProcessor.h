@@ -68,6 +68,7 @@ private:
 //-- 0: False
 //-- 1: True, add smear in hit reconstruction
     int if_smear{1};
+    double remove_hit_less_E{0.02};
 //................................................................................//
 //Fit method
 //-- 0/dNone: No method specified, return pre-fitting results from track finding
@@ -123,6 +124,18 @@ private:
     std::vector<std::vector<double>> RecTrk2_truth_state_x{};
     std::vector<std::vector<double>> RecTrk2_truth_state_y{};
     std::vector<std::vector<double>> RecTrk2_truth_state_z{};
+    std::vector<int> Trk_contrib_pdg{};
+    std::vector<TString> Trk_contrib_create_process{};
+    std::vector<double> Trk_contrib_z{};
+    std::vector<double> Trk_contrib_E{};
+    std::vector<double> Trk_deposit_E{};
+    int Trk_contrib_Initial_count{};
+    int Trk_contrib_conv_count{};
+    int Trk_contrib_eIoni_count{};
+    int Trk_contrib_compt_count{};
+    int Trk_contrib_eBrem_count{};
+    int Trk_contrib_phot_count{};
+
 
 //................................................................................//
 //Reconstructed

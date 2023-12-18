@@ -147,7 +147,7 @@ endif ()
 #
 option(BUILD_DDIS "BUILD_DDIS" ON)
 if (BUILD_DANA)
-    add_definitions(-DDANA_VERSION=\"v1.5.11\")
+    add_definitions(-DDANA_VERSION=\"v1.5.12\")
 
     add_subdirectory(GenFit2)
     add_subdirectory(DP_ana)
