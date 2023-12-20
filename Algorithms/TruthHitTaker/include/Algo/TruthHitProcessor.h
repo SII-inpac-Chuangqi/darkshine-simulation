@@ -43,7 +43,8 @@ public:
 //................................................................................//
 //Fill truth variables
     void FillTruth(DTruth *truth_info,
-                   std::vector<DStep*> *initial_steps,
+                   //std::vector<DStep*> *initial_steps,
+                   //std::vector<McParticle *> *raw_mc_ptl,
                    std::vector<TrkHit> rawRecTrk1Hits,
                    std::vector<TrkHit> rawRecTrk2Hits);
     void ProcessEvt(AnaEvent* evt) override;

@@ -98,6 +98,8 @@ private:
     vector<unsigned int> generation{};
     vector<unsigned int> sub_particle{};
 
+//    std::vector<float> pfin{};
+
 //process object
     PhysicsDef physicsDef;
     std::unordered_map<std::string, unsigned int> stringToUintMap;

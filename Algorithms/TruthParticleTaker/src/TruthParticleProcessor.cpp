@@ -67,6 +67,8 @@ void TruthParticleProcessor::Begin() {
     outputTree->Branch("particle",      &particle    );
     outputTree->Branch("generation",    &generation  );
     outputTree->Branch("sub_particle",  &sub_particle);
+
+//    outputTree->Branch("pfin",  &pfin);
 }
 
 void TruthParticleProcessor::InitEvt() {
@@ -95,6 +97,8 @@ void TruthParticleProcessor::InitEvt() {
     vector<unsigned int>().swap(particle);
     vector<unsigned int>().swap(generation);
     vector<unsigned int>().swap(sub_particle);
+
+//    std::vector<float>().swap(pfin);
 }
 
 unsigned int TruthParticleProcessor::mapStringToUint(const std::string& str) const {
@@ -152,7 +156,9 @@ void TruthParticleProcessor::FillTruth(DTruth *truth_info, std::vector<DStep *> 
     for (auto iptl : *raw_mc_ptl) {
         TParticlePDG* particlePDG = TDatabasePDG::Instance()->GetParticle(iptl->getPdg());
         if (particlePDG) {
-            if( ( iptl->getParents() == 0 && particlePDG->Charge() != 0 ) || ( iptl->getVertexZ() > -0.0 && iptl->getVertexZ() < 0.18 && particlePDG->Charge() != 0 ) ) {
+            if( ( iptl->getParents() == 0 && particlePDG->Charge() != 0 ) ||
+                ( iptl->getVertexZ() > -0.0 /* && iptl->getVertexZ() < 0.2 */ && particlePDG->Charge() != 0 ) )
+            {
                 particle_id.push_back(iptl->getId());
                 particle_type.push_back(iptl->getPdg());
                 // Get the electric charge of the particle
@@ -176,7 +182,7 @@ void TruthParticleProcessor::FillTruth(DTruth *truth_info, std::vector<DStep *> 
                 //从靶子开始发射的粒子分两类:
                 // 第一类是-61cm入射的粒子, 我们记录它的id即可, 因为顶点信息已经写在上面了
                 // 第二类是靶子上面核反应之后产生的新粒子, 如果带电, 我们就重新记录他们的顶点, 以免错漏
-                if( iptl->getVertexZ() > -0.0 && iptl->getVertexZ() < 0.18 && particlePDG->Charge() != 0 ) {
+                if( iptl->getVertexZ() > -0.0 /* && iptl->getVertexZ() < 0.2*/ && particlePDG->Charge() != 0 ) {
                     px.push_back(static_cast<float>(iptl->getPx()/1000.));
                     py.push_back(static_cast<float>(iptl->getPy()/1000.));
                     pz.push_back(static_cast<float>(iptl->getPz()/1000.));
@@ -197,6 +203,19 @@ void TruthParticleProcessor::FillTruth(DTruth *truth_info, std::vector<DStep *> 
             }
         }
     }
+
+//    bool trackerFlag = false;
+//    for (auto step : *initial_steps) {
+//        if (InRecTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
+//            trackerFlag = true;
+//        } else if (!InRecTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
+//            pfin.push_back(
+//                    sqrt(step->getPx() * step->getPx() + step->getPy() * step->getPy() + step->getPz() * step->getPz())
+//            );
+//            break;
+//        }
+//    }
+
     outputTree->Fill();
 }
 

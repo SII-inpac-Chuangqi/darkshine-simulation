@@ -14,6 +14,7 @@
 //ROOT
 #include "TGeoManager.h"
 #include <Math/Vector4D.h>
+#include <TParticlePDG.h>
 
 //................................................................................//
 //FRAMEWORK
@@ -129,7 +130,8 @@ void TruthHitProcessor::InitEvt() {
 }
 
 void TruthHitProcessor::FillTruth(DTruth *truth_info,
-                                  std::vector<DStep*> *initial_steps,
+                                  //std::vector<DStep*> *initial_steps,
+                                 // std::vector<McParticle *> *raw_mc_ptl,
                                   std::vector<TrkHit> raw_rectrk1_hits,
                                   std::vector<TrkHit> raw_rectrk2_hits) {
     dAnaData->LoadTruthInfo(truth_info);
@@ -153,45 +155,58 @@ void TruthHitProcessor::FillTruth(DTruth *truth_info,
 //        }
 //    }
 */
-    for (const auto& hit2 : raw_rectrk2_hits) {
-        RecTrk2_truth_hit_x = static_cast<float>(hit2.GetX());
-        RecTrk2_truth_hit_y = static_cast<float>(hit2.GetY());
-        RecTrk2_truth_hit_z = static_cast<float>(hit2.GetZ());
-        RecTrk2_truth_hit_t = static_cast<float>(hit2.getT());
-        geometry_id         = static_cast<uint64_t>( 72057731476881664 + 137438953472 * (hit2.getCellId() - 1) );//编号内含物理过程信息, 暂时这么写
-        volumeId = 1;
-        boundaryId = 0;
-        layerId = static_cast<uint64_t>(hit2.getCellId()) * 2;
-        approachId = 0;
-        sensitiveId = 1;
+        for (const auto &hit2: raw_rectrk2_hits) {
+            auto hit_pcontribs = hit2.getPContribution();
+            for (auto pcon2: hit_pcontribs) {
+                TParticlePDG* particlePDG = TDatabasePDG::Instance()->GetParticle(pcon2.getPdg());
+                if (particlePDG && particlePDG->Charge() != 0 )
+                {
+                    RecTrk2_truth_hit_x = static_cast<float>(hit2.GetX());
+                    RecTrk2_truth_hit_y = static_cast<float>(hit2.GetY());
+                    RecTrk2_truth_hit_z = static_cast<float>(hit2.GetZ());
+                    RecTrk2_truth_hit_t = static_cast<float>(hit2.getT());
+                    geometry_id = static_cast<uint64_t>( 72057731476881664 +
+                                                         137438953472 * (hit2.getCellId() - 1));//编号内含物理过程信息, 暂时这么写
+                    volumeId = 1;
+                    boundaryId = 0;
+                    layerId = static_cast<uint64_t>(hit2.getCellId()) * 2;
+                    approachId = 0;
+                    sensitiveId = 1;
 
-        auto hit_pcontribs = hit2.getPContribution();
-        for (auto pcon2 : hit_pcontribs) {
-            //if()
-            //std::cout << "[EVT]" << "\t" << pcon2 <<std::endl;
-            RecTrk2_pp_truth_x = static_cast<float>(pcon2.getPx() / 1000.); //unit in GeV
-            RecTrk2_pp_truth_y = static_cast<float>(pcon2.getPy() / 1000.);
-            RecTrk2_pp_truth_z = static_cast<float>(pcon2.getPz() / 1000.);
-            RecTrk2_pp_truth_e = static_cast<float>(pcon2.getEnergy() / 1000.);
-            particle_id         = static_cast<uint64_t>(pcon2.getId());
+                    //std::cout << "[TRK2]" << "\t" << pcon2 << std::endl;
+                    RecTrk2_pp_truth_x = static_cast<float>(pcon2.getPx() / 1000.); //unit in GeV
+                    RecTrk2_pp_truth_y = static_cast<float>(pcon2.getPy() / 1000.);
+                    RecTrk2_pp_truth_z = static_cast<float>(pcon2.getPz() / 1000.);
+                    RecTrk2_pp_truth_e = static_cast<float>(pcon2.getEnergy() / 1000.);
+                    particle_id = static_cast<uint64_t>(pcon2.getId());
 
+                    bool foundMatchingCellId = false;
+                    for (const auto &hit1: raw_rectrk1_hits) {
+                        if (hit1.getCellId() == hit2.getCellId()) {
+                            auto hit1_pcontribs = hit1.getPContribution();
+                            for (auto pcon1: hit1_pcontribs) {
+                                if (pcon2.getId() == pcon1.getId()) {
+                                    //std::cout << "[TRK1]" << "\t" << pcon1 << std::endl;
+                                    deltapx = RecTrk2_pp_truth_x - static_cast<float>(pcon1.getPx() / 1000.);
+                                    deltapy = RecTrk2_pp_truth_y - static_cast<float>(pcon1.getPy() / 1000.);
+                                    deltapz = RecTrk2_pp_truth_z - static_cast<float>(pcon1.getPz() / 1000.);
+                                    deltae = RecTrk2_pp_truth_e - static_cast<float>(pcon1.getEnergy() / 1000.);
+                                    index++;
+                                    // Add a break here to exit the loop once the first matching cellId is found
+                                    foundMatchingCellId = true;
+                                    break;
+                                }
+                            }
+                        }
+                        // Break the outer loop if a matching cellId is found
+                        if (foundMatchingCellId) { break; }
+                    }//End loop for hit1
 
-            for (const auto& hit1 : raw_rectrk1_hits) {
-                if (hit1.getCellId() == hit2.getCellId()) {
-                    auto hit1_pcontribs = hit1.getPContribution();
-                    for (auto pcon1 : hit1_pcontribs) {
-                        deltapx = RecTrk2_pp_truth_x - static_cast<float>(pcon1.getPx() / 1000.);
-                        deltapy = RecTrk2_pp_truth_y - static_cast<float>(pcon1.getPy() / 1000.);
-                        deltapz = RecTrk2_pp_truth_z - static_cast<float>(pcon1.getPz() / 1000.);
-                        deltae  = RecTrk2_pp_truth_e - static_cast<float>(pcon1.getEnergy() / 1000.);
-                        index++;
-                        // 将deltapx填充到outputTree
-                        outputTree->Fill();
-                    }
-                }
-            }//End loop for hit1
+                    outputTree->Fill();
+                } ////end if:
+            }
         }
-    }
+    //}// end for: raw mc particle
 
 //    bool trackerFlag = false;
 //    for (auto step : *initial_steps) {
@@ -205,7 +220,7 @@ void TruthHitProcessor::FillTruth(DTruth *truth_info,
 void TruthHitProcessor::ProcessEvt(AnaEvent *evt) {
 //Initialize vars
     this->InitEvt();
-    const auto &step_collection = evt->getStepCollection();
+    //const auto &step_collection = evt->getStepCollection();
     //const auto &MCCollection = evt->getMcParticleCollection();
     const auto &simuhit_collection = evt->getSimulatedHitCollection();
 
@@ -221,10 +236,12 @@ void TruthHitProcessor::ProcessEvt(AnaEvent *evt) {
     for (auto hit : *simuhit_collection.at("RecTrk2")) raw_rectrk2_hits.emplace_back(*hit);
 
     event_id = evt->getEventId();
-    const auto &initial_steps = step_collection.at("Initial_Particle_Step");
+    //const auto &initial_steps = step_collection.at("Initial_Particle_Step");
+    //const auto &raw_mc_ptl = MCCollection.at("RawMCParticle");
 
 //Write truth
-    this->FillTruth(evt->getTruthInfo(), initial_steps, raw_rectrk1_hits, raw_rectrk2_hits);
+    this->FillTruth(evt->getTruthInfo(),
+                    raw_rectrk1_hits, raw_rectrk2_hits);
 }
 
 void TruthHitProcessor::CheckEvt(AnaEvent *evt) {
