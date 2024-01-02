@@ -28,6 +28,14 @@
 
 TruthHitProcessor::TruthHitProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(
         std::move(name), std::move(evtwrt)){
+    /*
+     *
+     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
+     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
+     *  DEFINE Processor explicitly with NAME in ControlManager.cpp L.37
+     *
+     */
+
     // Add description for this AnaProcessor
     Description = "Tracking truth hits and particles taken by Joseph ZHANG";
     RegisterIntParameter("verbose", "Verbose", &Verbose, 0);
@@ -173,7 +181,7 @@ void TruthHitProcessor::FillTruth(DTruth *truth_info,
                     approachId = 0;
                     sensitiveId = 1;
 
-                    //std::cout << "[TRK2]" << "\t" << pcon2 << std::endl;
+                    //std::cout << "[TRK2]" << "\t" << index << "\t" << pcon2 << std::endl;
                     RecTrk2_pp_truth_x = static_cast<float>(pcon2.getPx() / 1000.); //unit in GeV
                     RecTrk2_pp_truth_y = static_cast<float>(pcon2.getPy() / 1000.);
                     RecTrk2_pp_truth_z = static_cast<float>(pcon2.getPz() / 1000.);
@@ -186,7 +194,7 @@ void TruthHitProcessor::FillTruth(DTruth *truth_info,
                             auto hit1_pcontribs = hit1.getPContribution();
                             for (auto pcon1: hit1_pcontribs) {
                                 if (pcon2.getId() == pcon1.getId()) {
-                                    //std::cout << "[TRK1]" << "\t" << pcon1 << std::endl;
+                                    //std::cout << "[TRK1]" << "\t" << index << "\t" << pcon1 << std::endl;
                                     deltapx = RecTrk2_pp_truth_x - static_cast<float>(pcon1.getPx() / 1000.);
                                     deltapy = RecTrk2_pp_truth_y - static_cast<float>(pcon1.getPy() / 1000.);
                                     deltapz = RecTrk2_pp_truth_z - static_cast<float>(pcon1.getPz() / 1000.);
@@ -232,8 +240,14 @@ void TruthHitProcessor::ProcessEvt(AnaEvent *evt) {
 
     std::vector<TrkHit> raw_rectrk1_hits;
     std::vector<TrkHit> raw_rectrk2_hits;
-    for (auto hit : *simuhit_collection.at("RecTrk1")) raw_rectrk1_hits.emplace_back(*hit);
-    for (auto hit : *simuhit_collection.at("RecTrk2")) raw_rectrk2_hits.emplace_back(*hit);
+    for (auto hit : *simuhit_collection.at("RecTrk1")) {
+        if (hit->getE() < 0.02) continue;
+        raw_rectrk1_hits.emplace_back(*hit);
+    }
+    for (auto hit : *simuhit_collection.at("RecTrk2")) {
+        if (hit->getE() < 0.02) continue;
+        raw_rectrk2_hits.emplace_back(*hit);
+    }
 
     event_id = evt->getEventId();
     //const auto &initial_steps = step_collection.at("Initial_Particle_Step");
