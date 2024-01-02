@@ -105,7 +105,7 @@ namespace {
         G4cerr << "\n The following arguments overwrite the YAML settings." << G4endl;
         G4cerr << " -s --seed 42                    Set seed" << G4endl;
         G4cerr << "    --save_geometry 0            Set save_geometry" << G4endl;
-        G4cerr << " -f --outfile_Name dp_out.root   Set output filename" << G4endl;
+        G4cerr << " -f --outfile_Name dp_simu.root   Set output filename" << G4endl;
         G4cerr
                 << " -n --Run_Number 0               Set the run number for this job (EventID = id + beam_on * Run_Number)"
                 << G4endl;

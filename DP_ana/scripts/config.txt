@@ -5,8 +5,8 @@
 ############################
 
 ### Basic Settings
-InputFile      = dp_out.root
-InputGeoFile   = dp_out.root
+InputFile      = dp_simu.root
+InputGeoFile   = dp_simu.root
 OutputFile     = dp_ana.root
 RunNumber      = 0
 EventNumber    = -1
@@ -14,19 +14,22 @@ SkipNumber     = 0
 
 ### Verbosity Settings
 AlgoManager.Verbose           = 0
-EventReader.Verbose           = 2
+EventReader.Verbose           = 1
 EventStoreAndWriter.Verbose   = 0
 MemoryCheck.Verbose           = 0
 
 ### Algorithm List
 ###
+# CutFlowAnalysis: None
 # Digitizer: Digitizer for Calorimeter(ECAL) with optical process
+# ECAL_ML_IO: ECAL ML I/O for Calorimeter(ECAL)
+# GNN_DataExporter: Export wanted data.
 # MCTruthAnalysis: MC Truth Analysis
 # RecECAL: ECAL Reconstruction Processor
+# RecHCAL: Hadronic Calorimeter Reconstruction Processor
 # Tracking: Tracking by Yi-Fan Zhu
-# CutFlowAnalysis: None
 ###
-Algorithm.List = Digitizer MCTruthAnalysis RecECAL Tracking 
+Algorithm.List = GNN_DataExporter Digitizer MCTruthAnalysis Tracking RecECAL RecHCAL CutFlowAnalysis 
 
 ### Algorithm Configuration
 
@@ -42,22 +45,58 @@ Digitizer.Nominal_Yield = 20000  # Nominal Yield of material, like 20000/MeV for
 Digitizer.voltageToADC = 1.2207  # voltageToADC: fullRangeMV/ADCbits
 Digitizer.CalibrationFile =   # YAML file for reference
 
+ECAL_ML_IO.RW = 1  # 0(Read) in or 1(Write) out
+ECAL_ML_IO.chunk = 1000  # how many event in the buffer
+ECAL_ML_IO.ConditionValueExport = 8e+06  # The condition value which will be saved to the hdf5 in the conditionDS
+ECAL_ML_IO.ThresoldExport = 0  # The thresold value used for export to hdf5
+ECAL_ML_IO.ThresoldImport = 0  # The thresold value used for import to hit
+ECAL_ML_IO.CollectionExport = ECAL_FS0  # Calorimeter (ECAL) Collection to Use for export
+ECAL_ML_IO.CollectionImport = mECAL  # Calorimeter (ECAL) Collection to Import to
+ECAL_ML_IO.ConditionBranch = cond_E  # The branch name of condition which will be saved to root
+ECAL_ML_IO.ConditionDS = condition  # The dataset name of condition which will be read from/write to hdf5
+ECAL_ML_IO.EnergyDS = energy  # The dataset name of Energy which will be write/read of hdf5
+ECAL_ML_IO.Hdf5FileExport = export.h5  # Hdf5File to write out
+ECAL_ML_IO.Hdf5FileImport = import.h5  # Hdf5File to read in
+
+GNN_DataExporter.Verbose = 0  # Verbosity Variable
+GNN_DataExporter.BField = -1.5  # Magnetic field value (+y)
+GNN_DataExporter.MinEnergy = 50  # Minimum energy [MeV] for truth mc particles to be considered
+GNN_DataExporter.Collections = DigitizedTagTrk,DigitizedRecTrk  # Select from [DigitizedTagTrk, DigitizedRecTrk, TagTrk, RecTrk, AllTrk, AllDigitizedTrk], split with comma and no space
+
 MCTruthAnalysis.Sec_PDG = 0  # PDG of secondary
 MCTruthAnalysis.Verbose = 0  # Verbosity
 
-RecECAL.Advance = 2  # Advanced analysis level
+RecECAL.Advance = 3  # Advanced analysis level
 RecECAL.E_n_fraction = 20  # the n-th large E fraction
+RecECAL.MatchTruth = 0  # match truth instead of rec trk
 RecECAL.SaveTrackInfo = 0  # SaveTrackInfo
 RecECAL.SaveTruthInfo = 0  # SaveTruthInfo(from MCparticle)
 RecECAL.SkipEmpty = 0  # Skip Empty Hits
+RecECAL.StaggeredECAL = 1  # use StaggeredECAL Algo
+RecECAL.TrackMatch = 1  # activate track match-assiant algo(PFLOW)
 RecECAL.Verbose = 0  # Verbosity Variable
+RecECAL.useDTruth = 1  # useDTruth(new truth class), instead of MCPhelper(via virtual SD between tracker and ECAL) to get the truth seed
+RecECAL.weight_type = 0  # weight type 0-linear 1-log1p
+RecECAL.Critical_E = 100  # Splitting Critical_E/MeV or Digit
+RecECAL.Critical_N = 4  # Splitting Critical_N
+RecECAL.EM_ENERGY_SCALE_MeV = 1  # EM_ENERGY_SCALE_MeV
+RecECAL.EM_SCALE_LENGTH_mm = 50  # EM_SCALE_LENGTH_mm
+RecECAL.ENERGY_SHIFT_MeV = 0  # ENERGY_SHIFT_MeV
+RecECAL.EThres_N = 2  # EThres_N/noise
+RecECAL.EThres_P = 0  # EThres_P/noise
+RecECAL.EThres_S = 4  # EThres_S/noise
+RecECAL.Enoise = 1  # Enoise/MeV or Digit
 RecECAL.ECollectionToUse = ECAL_FS0,ECAL_FS1,ECAL_FS2,ECAL_FS3,ECAL_FS4  # Calorimeter (ECAL) Collection to Use
-RecECAL.HCollectionToUse = FS0  # Calorimeter (HCAL) Collection to Use
 
-Tracking.Rec_fit_method = 1  # Specify fit method: 0, no fine fit; 1, Kalman filter; 2, Riemann fit
-Tracking.Tag_fit_method = 1  # Specify fit method: 0, no fine fit; 1, Kalman filter; 2, Riemann fit
+RecHCAL.Verbose = 0  # Verbosity Variable
+RecHCAL.HCollectionToUse = FS0  # Calorimeter (HCAL) Collection to Use
+
+Tracking.Rec_fit_method = 2  # Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting
+Tracking.Tag_fit_method = 2  # Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting
 Tracking.clean = 0  # Clean mode: no truth information
 Tracking.if_smear = 1  # If smear hits in strip structure
 Tracking.if_strip = 1  # If use strip structures in trackers
+Tracking.skip_hits_geq = 40  # Skip tagging/recoil tracker reconstruction if total hits number >= N in this tracker region (N<=0: infinite)
 Tracking.verbose = 0  # Verbose
 Tracking.con_field = -1.5  # Const magnet field
+Tracking.remove_hit_less_E = 0.02  # [MeV] Remove small energy deposition that should not counted as a hit. Apply on raw hits.

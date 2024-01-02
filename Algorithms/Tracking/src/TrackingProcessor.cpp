@@ -53,14 +53,16 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
     RegisterIntParameter("if_strip", "If use strip structures in trackers", &if_strip, 1);
     RegisterIntParameter("if_smear", "If smear hits in strip structure", &if_smear, 1);
     RegisterIntParameter("Tag_fit_method",
-                         "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
+                         "Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting",
                          &Tag_fit_method,
-                         1);
+                         2);
     RegisterIntParameter("Rec_fit_method",
-                         "Specify fitting method: 0, no fine fitting; 1, Kalman fitting",
+                         "Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting",
                          &Rec_fit_method,
-                         1);
+                         2);
     RegisterDoubleParameter("con_field", "Const magnet field", &con_field, -1.5);
+    RegisterIntParameter("skip_hits_geq", "Skip tagging/recoil tracker reconstruction if total hits number >= N in this tracker region (N<=0: infinite)", &skip_hits_geq, 40);
+    RegisterDoubleParameter("remove_hit_less_E", "[MeV] Remove small energy deposition that should not counted s a hit. Apply on raw hits.", &remove_hit_less_E, 0.02);
 }
 
 void TrackingProcessor::Begin() {
@@ -133,6 +135,17 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_truth_state_x", &RecTrk2_truth_state_x);
         EvtWrt->RegisterOutVariable("RecTrk2_truth_state_y", &RecTrk2_truth_state_y);
         EvtWrt->RegisterOutVariable("RecTrk2_truth_state_z", &RecTrk2_truth_state_z);
+        EvtWrt->RegisterOutVariable("Trk_contrib_pdg", &Trk_contrib_pdg, "PDG Id of the hit particle (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_create_process", &Trk_contrib_create_process, "Creation process of the hit particle (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_z", &Trk_contrib_z, "Position of the raw tracker hit in Z direction [cm] (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_deposit_E", &Trk_deposit_E, "Deposit energy of the raw tracker hit [MeV] (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_E", &Trk_contrib_E, "Energy of the raw tracker hit particle [MeV] (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_Initial_count",&Trk_contrib_Initial_count, "Hit count from the Initial particle(s) (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_conv_count"   ,&Trk_contrib_conv_count, "Hit count from the G4GammaConversion final states (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_eIoni_count"  ,&Trk_contrib_eIoni_count, "Hit count from the G4eIonisation final states (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_compt_count"  ,&Trk_contrib_compt_count, "Hit count from the G4ComptonScattering final states (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_eBrem_count"  ,&Trk_contrib_eBrem_count, "Hit count from the G4eBremsstrahlung final states (requires save_mcp_helper)");
+        EvtWrt->RegisterOutVariable("Trk_contrib_phot_count"   ,&Trk_contrib_phot_count, "Hit count from the G4PhotoElectricEffect final states (requires save_mcp_helper)");
 
     }
 //................................................................................//
@@ -155,17 +168,6 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("RecTrk2_fixed_pp", &RecTrk2_fixed_pp);
     EvtWrt->RegisterOutVariable("RecTrk2_track_chi2",      &RecTrk2_track_chi2);
     EvtWrt->RegisterOutVariable("RecTrk2_track_chi2_algo", &RecTrk2_track_chi2_algo);
-
-    EvtWrt->RegisterOutVariable("RecTrk2_qop", &RecTrk2_qop);
-
-    //regist some recoil angles, which got by reconstructed recoil x and z.
-//    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_21", &RecTrk2_track_theta_21);
-//    EvtWrt->RegisterOutVariable("Rec_ThetaEnd", &Rec_ThetaEnd);
-//    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_43", &RecTrk2_track_theta_43);
-//    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_54", &RecTrk2_track_theta_54);
-//    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_65", &RecTrk2_track_theta_65);
-//    EvtWrt->RegisterOutVariable("Rec_zNo", &Rec_zNo);
-//    EvtWrt->RegisterOutVariable("RecTrk2_pp_fixed_by_theta", &RecTrk2_pp_fixed_by_theta);
 
     if (!clean) {
         EvtWrt->RegisterOutVariable("RecTrk2_track_quality", &RecTrk2_track_quality);
@@ -225,6 +227,17 @@ void TrackingProcessor::InitEvt() {
     std::vector<std::vector<double>>().swap(RecTrk2_truth_state_x);
     std::vector<std::vector<double>>().swap(RecTrk2_truth_state_y);
     std::vector<std::vector<double>>().swap(RecTrk2_truth_state_z);
+    std::vector<int>().swap(Trk_contrib_pdg);
+    std::vector<TString>().swap(Trk_contrib_create_process);
+    std::vector<double>().swap(Trk_contrib_z);
+    std::vector<double>().swap(Trk_contrib_E);
+    std::vector<double>().swap(Trk_deposit_E);
+    Trk_contrib_Initial_count = 0;
+    Trk_contrib_conv_count = 0;
+    Trk_contrib_eIoni_count = 0;
+    Trk_contrib_compt_count = 0;
+    Trk_contrib_eBrem_count = 0;
+    Trk_contrib_phot_count = 0;
 
     TagTrk2_track_No_truth = 0;
     RecTrk2_track_No_truth = 0;
@@ -236,17 +249,6 @@ void TrackingProcessor::InitEvt() {
     TagTrk2_pp_truth_fin = RETURN;
     RecTrk2_pp_truth_ini = RETURN;
     RecTrk2_pp_truth_fin = RETURN;
-
-    //Initialize some variables, which using for theta-momentum maps
-//    std::vector<double>().swap(RecTrk2_track_theta_21);
-//    std::vector<double>().swap(RecTrk2_track_theta_43);
-//    std::vector<double>().swap(RecTrk2_track_theta_54);
-//    std::vector<double>().swap(RecTrk2_track_theta_65);
-//    std::vector<double>().swap(RecTrk2_pp_fixed_by_theta);
-    std::vector<int>().swap(Rec_zNo);
-//    std::vector<double>().swap(Rec_ThetaEnd);
-
-    std::vector<double>().swap(RecTrk2_qop);
 
     std::vector<double>().swap(TagTrk2_pp);
     std::vector<double>().swap(TagTrk2_track_chi2);
@@ -448,8 +450,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     [[maybe_unused]] bool if_reco_rec_hits(false);
 
     std::vector<double> magnet_at_origin = {magnets.size() && magnets.at(0) ? magnets.at(0)->GetField(0., 0., 0.) : 0.,
-                                            magnets.size() && magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.)
-                                                                            : con_field,
+                                            magnets.size() && magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.) : con_field,
                                             magnets.size() && magnets.at(2) ? magnets.at(2)->GetField(0., 0., 0.) : 0.};
 
 //................................................................................//
@@ -481,19 +482,53 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
         std::vector<TrkHit> raw_tagtrk1_hits;
         std::vector<TrkHit> raw_tagtrk2_hits;
-        for (auto hit : *simuhit_collection.at("TagTrk1")) raw_tagtrk1_hits.emplace_back(*hit);
-        for (auto hit : *simuhit_collection.at("TagTrk2")) raw_tagtrk2_hits.emplace_back(*hit);
+        for (auto hit : *simuhit_collection.at("TagTrk1")) {
+            if (hit->getE() < remove_hit_less_E) continue;
+            raw_tagtrk1_hits.emplace_back(*hit);
+        }
+        for (auto hit : *simuhit_collection.at("TagTrk2")){
+            if (hit->getE() < remove_hit_less_E) continue;
+            raw_tagtrk2_hits.emplace_back(*hit);
+        }
 
         std::vector<TrkHit> raw_rectrk1_hits;
         std::vector<TrkHit> raw_rectrk2_hits;
-        for (auto hit : *simuhit_collection.at("RecTrk1")) raw_rectrk1_hits.emplace_back(*hit);
-        for (auto hit : *simuhit_collection.at("RecTrk2")) raw_rectrk2_hits.emplace_back(*hit);
+        for (auto hit : *simuhit_collection.at("RecTrk1")) {
+            if (hit->getE() < remove_hit_less_E) continue;
+            raw_rectrk1_hits.emplace_back(*hit);
+        }
+        for (auto hit : *simuhit_collection.at("RecTrk2")) {
+            if (hit->getE() < remove_hit_less_E) continue;
+            raw_rectrk2_hits.emplace_back(*hit);
+        }
+        // Fill pcontrib
+        if (!clean) {
+            for (auto const& [collection_name, hit_collection]: simuhit_collection) {
+                if(collection_name.substr(3,3) != "Trk") continue;
+                for (auto const &hit: *hit_collection) {
+                    if (hit->getPContribution().empty()) continue;
+                    if (hit->getE() < remove_hit_less_E) continue;
+                    Trk_contrib_pdg.emplace_back(hit->getPContribution().at(0).getPdg());
+                    std::string proc_name = hit->getPContribution().at(0).getCreateProcess().empty() ? "Initial" : hit->getPContribution().at(0).getCreateProcess();
+                    Trk_contrib_create_process.emplace_back(proc_name);
+                    Trk_contrib_z.emplace_back(hit->getZ());
+                    Trk_contrib_E.emplace_back(hit->getPContribution().at(0).getEnergy());
+                    Trk_deposit_E.emplace_back(hit->getE());
+                    if (proc_name == "Initial") Trk_contrib_Initial_count++;
+                    else if (proc_name == "conv") Trk_contrib_conv_count++;
+                    else if (proc_name == "eIoni") Trk_contrib_eIoni_count++;
+                    else if (proc_name == "compt") Trk_contrib_compt_count++;
+                    else if (proc_name == "eBrem") Trk_contrib_eBrem_count++;
+                    else if (proc_name == "phot") Trk_contrib_phot_count++;
+                }
+            }
+        }
+
 
 //................................................................................//
 //Tag tracker
         TrkHitPVecMap clus_tag_trkhit_map;
-        //if (raw_tagtrk2_hits.size() < 20 && raw_tagtrk2_hits.size() > 2)
-        if (raw_tagtrk2_hits.size() > 2)
+        if (IsValidHitSize(raw_tagtrk2_hits))
         {
             if_raw_tag_hit_number = true;
 
@@ -535,8 +570,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Recoil tracker
         TrkHitPVecMap clus_rec_trkhit_map;
-        //if (raw_rectrk2_hits.size() < 20 && raw_rectrk2_hits.size() > 2)
-        if (raw_rectrk2_hits.size() > 2)
+        if (IsValidHitSize(raw_rectrk2_hits))
         {
             if_raw_rec_hit_number = true;
 
@@ -600,7 +634,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             for(const auto &vertex: rec_vertexes_)
                 RecTrk2_vertex_z.push_back(vertex->GetZ());
         }
-
 */
 //................................................................................//
 //Fill
@@ -620,8 +653,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
         for(auto &track : rec_tracks_)
         {
-            TParticlePDG* particlePDG = TDatabasePDG::Instance()->GetParticle(track->GetPDG());
-            RecTrk2_qop.push_back( (particlePDG->Charge()/3.) / (track->GetPp()) );
             RecTrk2_pp.push_back(track->GetPp());
             RecTrk2_fixed_pp.push_back(track->GetFixedPp());
             RecTrk2_track_chi2.push_back(track->GetChi2());
@@ -667,78 +698,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Write truth
         this->FillTruth(evt->getTruthInfo(), initial_steps, raw_tagtrk2_hits, raw_rectrk2_hits);
-
-        // Use number of trackers hit by particle for calculating angles of some track
-/*
-//    if (RecTrk2_track_z.size() > 0 && RecTrk2_pp_truth_fin) {
-//        for(int i = 0; i < RecTrk2_track_z.size(); ++i ){
-//            //number of trackers hit by particles
-//            int iRec_zNo = 0;
-//            iRec_zNo = RecTrk2_track_z[i].size();
-//            Rec_zNo.push_back( iRec_zNo );
-//            //
-//            //  Meaning of "RecTrk2_track_theta_21" (unit in rad):
-//            //  Use the first and second hit-coordinates (x and z), called (z[1], x[1]) and (z[2], x[2]), then
-//            //                                                     x[2] - x[1]
-//            //  get the tangent:  Tan(RecTrk2_track_theta_21) == ————————————————
-//            //                                                     z[2] - z[1]
-//            //  Similar for other angles:
-//            //                                                        x[i] - x[j]
-//            //  Tan(RecTrk2_track_theta_ij) == Tan(Rec_ThetaEnd) == ————————————————
-//            //                                                        z[i] - z[j]
-//            //  i is the last piece of recoil tracker hit by some particle.
-//            //
-//            RecTrk2_track_theta_21.push_back(
-//                    TMath::ATan(
-//                    (RecTrk2_track_x[i][iRec_zNo - 2] - RecTrk2_track_x[i][iRec_zNo - 1]) /
-//                    (RecTrk2_track_z[i][iRec_zNo - 2] - RecTrk2_track_z[i][iRec_zNo - 1])     )
-//                );
-//            Rec_ThetaEnd.push_back(
-//                    TMath::ATan(
-//                    (RecTrk2_track_x[i][0] - RecTrk2_track_x[i][1]) /
-//                    (RecTrk2_track_z[i][0] - RecTrk2_track_z[i][1])   )
-//                );
-//
-//            //Select the last piece of recoil tracker
-//          if( RecTrk2_pp_truth_fin ){
-//            if (iRec_zNo == 6) {
-//                RecTrk2_track_theta_65 = Rec_ThetaEnd;
-//                if (RecTrk2_pp_truth_fin < 800.0) {
-//                    //This is the momentum reconstructed by theta-momentum maps, when reconstructing some lower momentum events.
-//                    //Delta theta is useful for lower momentum reconstruction, which seems like:
-//                    // RecTrk2_track_theta_65 - RecTrk2_track_theta_21
-//                    //The following is an empirical formula：
-//                    RecTrk2_pp_fixed_by_theta.push_back(
-//                        std::fabs( 11.52 - 47.0838 / (RecTrk2_track_theta_65[i] - RecTrk2_track_theta_21[i]) )
-//                    );
-//                }else{  //for events with momentum more than 800 MeV, the scaled momentum is the same as Junhua fixed before.
-//                    RecTrk2_pp_fixed_by_theta = RecTrk2_fixed_pp;
-//                }
-//            }
-//            if (iRec_zNo == 5) {
-//                RecTrk2_track_theta_54 = Rec_ThetaEnd;
-//                if (RecTrk2_pp_truth_fin < 800.0) {
-//                    RecTrk2_pp_fixed_by_theta.push_back(
-//                            std::fabs( 3812.42 - 0.0000720903 * TMath::Exp(
-//                        17.7819 + 0.00632341 / (RecTrk2_track_theta_54[i] - RecTrk2_track_theta_21[i])  )  )
-//                    );
-//                }else{  //for events with momentum more than 800 MeV, the scaled momentum is the same as Junhua fixed before.
-//                    RecTrk2_pp_fixed_by_theta = RecTrk2_fixed_pp;
-//                }
-//            }
-//            if (iRec_zNo == 4) {
-//                RecTrk2_track_theta_43 = Rec_ThetaEnd;
-//                if (RecTrk2_pp_truth_fin < 800.0) {
-//                    RecTrk2_pp_fixed_by_theta.push_back(
-//                            std::fabs( -11.6262 + TMath::Exp(
-//                                3.11256 - 0.290107 / (RecTrk2_track_theta_43[i] - RecTrk2_track_theta_21[i])
-//                                )   )
-//                    );
-//                }else{  //for events with momentum more than 800 MeV, the scaled momentum is the same as Junhua fixed before.
-//                    RecTrk2_pp_fixed_by_theta = RecTrk2_fixed_pp;
-//                }
-//            }
-*/
     }
 }
 

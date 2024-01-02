@@ -6,11 +6,13 @@
 
 // System
 #include "Event/AnaEvent.h"
+#include <iomanip>
 
 // Processors
 #include "Algo/ExampleProcessor.h"
 #include "Algo/MCTruthAnalysis.h"
 #include "Algo/RecECAL.h"
+#include "Algo/RecHCAL.h"
 #include "Algo/Digitizer.h"
 #include "Algo/TrackingProcessor.h"
 #include "Algo/CutFlowAnalysis.h"
@@ -78,6 +80,7 @@ void ControlManager::run() {
     algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<TrackingProcessor>(new TrackingProcessor("Tracking", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)));
+    algo->RegisterAnaProcessor(shared_ptr<RecHCAL>(new RecHCAL("RecHCAL", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<CutFlowAnalysis>(new CutFlowAnalysis("CutFlowAnalysis", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<TruthHitProcessor>(new TruthHitProcessor("TruthHitTaker", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<TruthParticleProcessor>(new TruthParticleProcessor("TruthParticleTaker", EvtWrt)));
@@ -113,6 +116,7 @@ void ControlManager::run() {
         nentries = (nentries >= SkipNumber) ? nentries : SkipNumber;
     else
         nentries = (nentries >= EventNumber + SkipNumber) ? EventNumber + SkipNumber : nentries;
+    fPrintModulo = pow(10, round(log10(nentries)) - 2);
     for (int i = 0; i < nentries; ++i) {
         // read the i-th event
         // Skip events
@@ -122,6 +126,10 @@ void ControlManager::run() {
             cout << "--------------------------";
             cout << " Process Event: " << i;
             cout << " --------------------------" << endl;
+        } else if (ConfMgr->getEventReaderVerbose() == 1) {
+            if (i < 100 || i % fPrintModulo == 0) {
+                cout << " Process Event:  " << i << " ...";
+            }
         }
 
         //evt->Initialization(nALL);
@@ -155,6 +163,10 @@ void ControlManager::run() {
             cout << "--------------------------";
             cout << " End of Event:  " << i;
             cout << " --------------------------" << endl;
+        } else if (ConfMgr->getEventReaderVerbose() == 1) {
+            if (i < 100 || i % fPrintModulo == 0) {
+                cout << "[OK]" << endl;
+            }
         }
 
         evt->Initialization(nALL);
@@ -188,8 +200,8 @@ void ControlManager::PrintConfig() {
     cout << "############################" << endl << endl;
 
     cout << "### Basic Settings" << endl << left;
-    cout << setw(15) << "InputFile" << "= dp_out.root" << endl;
-    cout << setw(15) << "InputGeoFile" << "= dp_out.root" << endl;
+    cout << setw(15) << "InputFile" << "= dp_simu.root" << endl;
+    cout << setw(15) << "InputGeoFile" << "= dp_simu.root" << endl;
     cout << setw(15) << "OutputFile" << "= dp_ana.root" << endl;
     cout << setw(15) << "RunNumber" << "= 0" << endl;
     cout << setw(15) << "EventNumber" << "= -1" << endl;
@@ -197,7 +209,7 @@ void ControlManager::PrintConfig() {
 
     cout << endl << "### Verbosity Settings" << endl << left;
     cout << setw(30) << "AlgoManager.Verbose" << "= 0" << endl;
-    cout << setw(30) << "EventReader.Verbose" << "= 0" << endl;
+    cout << setw(30) << "EventReader.Verbose" << "= 1" << endl;
     cout << setw(30) << "EventStoreAndWriter.Verbose" << "= 0" << endl;
     cout << setw(30) << "MemoryCheck.Verbose" << "= 0" << endl;
 
