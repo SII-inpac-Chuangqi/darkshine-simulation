@@ -1,5 +1,5 @@
 #!/bin/bash
-#apt-get update && apt-get install -y gettext jq
+apt-get update && apt-get install -y gettext jq
 # this script will build wiki and put it into the correct folder in test
 # then it will be uploaded automatically
 # note: this could only add something and upload the plots, never delete nor edit
@@ -42,7 +42,7 @@ do
     fi
 done
 
-${_DSS_TEST_PREFIX}/Automaton/update_wiki wiki.md ${CI_COMMIT_SHORT_SHA} "${CI_COMMIT_TIMESTAMP} ${CI_COMMIT_SHORT_SHA} : ${CI_COMMIT_TITLE}" Validation-History Validation-History  |& tee -a ${_DSS_TEST_PREFIX}/test/DSS.wiki.log
+${_DSS_TEST_PREFIX}/Automaton/update_wiki.sh wiki.md ${CI_COMMIT_SHORT_SHA} "${CI_COMMIT_TIMESTAMP} ${CI_COMMIT_SHORT_SHA} : ${CI_COMMIT_TITLE}" Validation-History Validation-History  |& tee -a ${_DSS_TEST_PREFIX}/test/DSS.wiki.log
 _DSS_TEST_STATUS=${PIPESTATUS[0]}
 if [ ${_DSS_TEST_STATUS} -ne 0 ]; then
     diagnostic
