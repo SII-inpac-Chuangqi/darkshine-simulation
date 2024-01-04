@@ -36,7 +36,7 @@ variables:
   # set to local to run at local server
   BUILD_RUNNER: remote
 
-image: qibin2020/dss-base
+image: ykrsama/darkshine-simulation
 
 stages:
   - build
