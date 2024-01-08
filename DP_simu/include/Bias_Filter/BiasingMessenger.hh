@@ -24,7 +24,7 @@ class BiasingMessenger: public G4UImessenger
   private:
 
       BOptrChangeCrossSection*      fBiasingOptr;
-	  [[maybe_unused]] G4UIdirectory*                fBiasingDirectory;
+      //[[maybe_unused]] G4UIdirectory*                fBiasingDirectory;
       G4UIcmdWithADouble*           fBiasFactorCmd;
       G4UIcmdWithADoubleAndUnit*    fEminCmd;
       G4UIcmdWithAString*           fBiasProcessCmd;

@@ -67,7 +67,7 @@ DMParticleAPrime *DMParticleAPrime::Definition() {
 
             G4DecayTable* table = new G4DecayTable();
         
-            G4VDecayChannel *mode; // assume onle one channel
+            G4VDecayChannel *mode = nullptr; // assume onle one channel
             if (dControl->dp_decay_channel == "mumu" && mA>2*105.66) mode = new G4PhaseSpaceDecayChannel("DMParticle", 1, 2, "mu-", "mu+");
             if (dControl->dp_decay_channel == "ee" && mA>2*0.511) mode = new G4PhaseSpaceDecayChannel("DMParticle", 1, 2, "e-", "e+");
             //mode1 = new G4PhaseSpaceDecayChannel("DMParticle", widthToEe/totalWidth, 2, "e-", "e+");

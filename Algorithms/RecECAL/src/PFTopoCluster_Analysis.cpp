@@ -120,8 +120,7 @@ int PFTopoCluster_Analysis::getP0(int i) {
     auto cluster = clusters.at(i);
     if(cluster.size()==0) return -1;
     auto ret=cluster.at(0)->P0();
-    for(auto h:cluster)
-        assert(h->P0()==ret);
+    for([[maybe_unused]] auto h:cluster) assert(h->P0()==ret);
     return ret;
 }
 
@@ -313,7 +312,7 @@ bool PFTopoCluster_Analysis::MatchClusters(){
             return false;
         }
         int P0=cluster.at(0)->P0();
-        int NSub=N_subcluster.at(_i);
+        [[maybe_unused]] int NSub=N_subcluster.at(_i);
         int NMatch = N_matchTrk.at(_i);
         _i+=1;
         if(NMatch==0){

@@ -135,7 +135,7 @@ void PlotYAML::ReadHists(const TCut &region_cut, const TString &region_name) {
         auto file = new TFile(sample["file_name"].as<std::string>().data());
         file->cd();
 
-        TTree *tree;
+        TTree *tree = nullptr;
         if (!inject_hist)
             tree = dynamic_cast<TTree *>(
                     file->Get(sample["tree_name"].as<std::string>().data()));
@@ -170,7 +170,7 @@ void PlotYAML::ReadHists(const TCut &region_cut, const TString &region_name) {
                               ? TCut(sample["weight"].as<std::string>().c_str())
                               : "1";
 
-                TH1D *h;
+                TH1D *h = nullptr;
                 if (!inject_hist) {
                     auto vbins = var["vbins"].IsDefined()?var["vbins"].as<std::vector<double>>():std::vector<double>{};
                     if(vbins.size()>0){

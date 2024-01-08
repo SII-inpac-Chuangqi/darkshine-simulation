@@ -169,7 +169,7 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
         auto mcDP = SecFinder->FindSecondary(500012);
         if (mcDP) {
             auto mcDecayLepton = SecFinder->FindSecondary(0, 0.0, mcDP);
-            auto n = SecFinder->FindDPDecay(mcDP);
+            //auto n = SecFinder->FindDPDecay(mcDP);
             if (mcDecayLepton) {
                 Decay_X = mcDecayLepton->getVertexX();
                 Decay_Y = mcDecayLepton->getVertexY();
