@@ -117,6 +117,9 @@ void AnaData::readGeometryDetails() {
     N_ECal_cell_x = 0;
     N_ECal_cell_y = 0;
     N_ECal_cell_z = 0;
+    N_ECal_block_per_region = {0,0,0};
+    N_ECal_cell_per_block = {0,0,0};
+
     double last_pos[3] = {-INFINITY, -INFINITY, -INFINITY};
     double last_block_pos[3] = {-INFINITY, -INFINITY, -INFINITY};
 
@@ -232,19 +235,21 @@ void AnaData::readGeometryDetails() {
                 }
             }
             N_ECal_cells = N_ECal_cell_x * N_ECal_cell_y * N_ECal_cell_z;
-            ECAL_posmap.resize(N_ECal_cells);
-            // Make ECAL_posmap
-            for (int j = 0; j < detector->GetNdaughters(); ++j) {
-                auto *block = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
-                auto *block_matrix = block->GetMatrix();
-                for (int k = 0; k < block->GetNdaughters(); ++k ) {
-                    auto *subdetector = dynamic_cast<TGeoNode*>(block->GetDaughter(k));
-                    auto subdetector_name = TString(subdetector->GetVolume()->GetName());
-                    auto *subdetector_matrix = subdetector->GetMatrix();
-                    if (!subdetector_name.Contains("LVW")) continue;
-                    for (int l = 0; l < 3; l++)
-                        subdetector_pos[l] = subdetector_matrix->GetTranslation()[l] + block_matrix->GetTranslation()[l] + detector_matrix->GetTranslation()[l];
-                    ECAL_posmap.at(getECAL_globalID(j,k)) = TVector3(subdetector_pos) * CUNIT;
+            if (ECAL_posmap.empty()) {
+                ECAL_posmap.resize(N_ECal_cells);
+                // Make ECAL_posmap
+                for (int j = 0; j < detector->GetNdaughters(); ++j) {
+                    auto *block = dynamic_cast<TGeoNode*>(detector->GetDaughter(j));
+                    auto *block_matrix = block->GetMatrix();
+                    for (int k = 0; k < block->GetNdaughters(); ++k ) {
+                        auto *subdetector = dynamic_cast<TGeoNode*>(block->GetDaughter(k));
+                        auto subdetector_name = TString(subdetector->GetVolume()->GetName());
+                        auto *subdetector_matrix = subdetector->GetMatrix();
+                        if (!subdetector_name.Contains("LVW")) continue;
+                        for (int l = 0; l < 3; l++)
+                            subdetector_pos[l] = subdetector_matrix->GetTranslation()[l] + block_matrix->GetTranslation()[l] + detector_matrix->GetTranslation()[l];
+                        ECAL_posmap.at(getECAL_globalID(j,k)) = TVector3(subdetector_pos) * CUNIT;
+                    }
                 }
             }
             makeCenterIdNeighborIdsMap_staggered();
@@ -437,7 +442,8 @@ const DTruth* AnaData::getInitialElectron() const
 bool AnaData::makeCenterIdNeighborIdsMap_staggered() {
     std::vector<int> neighbors;
     int center_x, center_y, center_z, neighbor_id, ecal_cell_n;
-    assert(centerIdNeighborIds_staggered.empty());
+    if (!centerIdNeighborIds_staggered.empty())
+        return true;
     centerIdNeighborIds_staggered.reserve(N_ECal_cells);
     centerIdNeighborIds_staggered.emplace_back(); // place_holder at 0. center_id start from 1
     for (int center_id = 1; center_id <= N_ECal_cells; center_id++ ) {
