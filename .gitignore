@@ -1,3 +1,4 @@
+*.swp
 build*/
 install*/
 release*/
@@ -20,10 +21,6 @@ test/
 Automaton/*.log
 Automaton/update_wiki.sh
 *~
-Algorithms/Tracking/include/Algo/*/*.swp
-Algorithms/Tracking/include/Algo/*.swp
-Algorithms/Tracking/src/*/*.swp
-Algorithms/Tracking/src/*.swp
 /workspace/
 cmake-build-debug/
 cmake-build-debug-docker/

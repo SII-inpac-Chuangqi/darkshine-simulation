@@ -32,6 +32,7 @@
 #include "Algo/RiemannFit/RiemannFitHelper.h"
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Vertex/VertexFinder.h"
+#include "Algo/HitPool.h"
 
 TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(
         std::move(name), std::move(evtwrt)) {
@@ -497,6 +498,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             if (hit->getE() < remove_hit_less_E) continue;
             raw_rectrk2_hits.emplace_back(*hit);
         }
+
+        // Better to move to FillTruth
         // Fill pcontrib
         if (!clean) {
             for (auto const& [collection_name, hit_collection]: simuhit_collection) {
