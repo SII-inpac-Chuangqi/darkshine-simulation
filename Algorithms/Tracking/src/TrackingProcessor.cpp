@@ -27,12 +27,10 @@
 //TRACKING
 #include "Algo/TypeDef.h"
 #include "Algo/Utils/Util.h"
-#include "Algo/TrkHit.h"
 #include "Algo/GreedyFinder.h"
 #include "Algo/RiemannFit/RiemannFitHelper.h"
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Vertex/VertexFinder.h"
-#include "Algo/HitPool.h"
 
 TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(
         std::move(name), std::move(evtwrt)) {
@@ -523,9 +521,9 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             }
         }
 
-
 //................................................................................//
 //Tag tracker
+        Pool tag_hit_pool;
         TrkHitPVecMap clus_tag_trkhit_map;
         if (IsValidHitSize(raw_tagtrk2_hits))
         {
@@ -568,6 +566,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Recoil tracker
+        Pool rec_hit_pool;
         TrkHitPVecMap clus_rec_trkhit_map;
         if (IsValidHitSize(raw_rectrk2_hits))
         {
