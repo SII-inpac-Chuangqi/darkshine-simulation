@@ -14,7 +14,7 @@ verbosity:
   tracking: 0
 
 random_seed:
-  seed: 505421462
+  seed: 42
   restore_file: non
 
 general_particle_source:

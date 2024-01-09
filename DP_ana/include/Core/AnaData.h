@@ -38,9 +38,6 @@
 
 using std::vector, std::tuple;
 
-#define ACC(x,y,z) (((x)-1)+N_ECal_cell_x*((y)-1)+N_ECal_cell_x*N_ECal_cell_y*((z)-1)) // posmap start from 0 0 0
-
-
 class AnaData {
 public:
     AnaData(const AnaData &) = delete;
@@ -137,6 +134,9 @@ public:
     std::map<pair<int, int>, vector<DTruthState *>> getTruthTracks(DTruth::DTruthDetPV DetPV, double min_energy = 50., int min_hits = 4) const;
 
     const DTruth* getInitialElectron() const;
+
+
+    int getACC(int x, int y,int z) const { return (((x)-1)+N_ECal_cell_x*((y)-1)+N_ECal_cell_x*N_ECal_cell_y*((z)-1)); }
 
     //const McPHelper* getInitialElectron() const;
     //void PrintTruthMcPHelper() const;

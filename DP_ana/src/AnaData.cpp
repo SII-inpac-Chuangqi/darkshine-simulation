@@ -457,7 +457,7 @@ bool AnaData::makeCenterIdNeighborIdsMap_staggered() {
         for(int i=-1;i<=+1;i++)
             for(int j=-1;j<=+1;j++){
                 if (i==0 && j==0) continue;
-                neighbor_id = 1 + ACC(center_x + i, center_y + j, center_z);
+                neighbor_id = 1 + getACC(center_x + i, center_y + j, center_z);
                 if (neighbor_id < 1 || neighbor_id > ecal_cell_n) continue;
                 neighbors.emplace_back(neighbor_id);
             }
@@ -467,7 +467,7 @@ bool AnaData::makeCenterIdNeighborIdsMap_staggered() {
                 for(int j=0;j<=+1;j++)
                     for(int k=-1;k<=+1;k++) {
                         if (k==0) continue;
-                        neighbor_id = 1 + ACC(center_x + i, center_y + j, center_z + k);
+                        neighbor_id = 1 + getACC(center_x + i, center_y + j, center_z + k);
                         if (neighbor_id < 1 || neighbor_id > ecal_cell_n) continue;
                         neighbors.emplace_back(neighbor_id);
                     }
@@ -476,7 +476,7 @@ bool AnaData::makeCenterIdNeighborIdsMap_staggered() {
                 for(int j=-1;j<=0;j++)
                     for(int k=-1;k<=+1;k++) {
                         if (k==0) continue;
-                        neighbor_id = 1 + ACC(center_x + i,center_y + j,center_z + k);
+                        neighbor_id = 1 + getACC(center_x + i, center_y + j, center_z + k);
                         if (neighbor_id < 1 || neighbor_id > ecal_cell_n) continue;
                         neighbors.emplace_back(neighbor_id);
                     }
