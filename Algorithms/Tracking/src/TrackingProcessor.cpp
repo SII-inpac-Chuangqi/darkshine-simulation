@@ -60,6 +60,7 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
     RegisterDoubleParameter("con_field", "Const magnet field", &con_field, -1.5);
     RegisterIntParameter("skip_hits_geq", "Skip tagging/recoil tracker reconstruction if total hits number >= N in this tracker region (N<=0: infinite)", &skip_hits_geq, 40);
     RegisterDoubleParameter("remove_hit_less_E", "[MeV] Remove small energy deposition that should not counted s a hit. Apply on raw hits.", &remove_hit_less_E, 0.02);
+    RegisterIntParameter("processes", "Processes to run", &process_, tracking::dAll);
 }
 
 void TrackingProcessor::Begin() {
@@ -201,6 +202,14 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("ECal_seed_px", &ECal_seed_px);
     EvtWrt->RegisterOutVariable("ECal_seed_py", &ECal_seed_py);
     EvtWrt->RegisterOutVariable("ECal_seed_pz", &ECal_seed_pz);
+
+    if(Verbose == 0) return;
+    TString process_info;
+    if      (process_ == tracking::dVertex) process_info = "vertexing";
+    else if (process_ == tracking::dFit)    process_info = "fitting";
+    else if (process_ == tracking::dFind)   process_info = "finding";
+    else if (process_ == tracking::dDigi)   process_info = "digitization";
+    std::cout << "[Info] ==> Tracking will run processes until" << process_info << std::endl;
 }
 
 void TrackingProcessor::InitEvt() {
@@ -529,7 +538,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             if_raw_tag_hit_number = true;
 
 //Digitization
-            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, &tag_hit_pool, tracking::tag);            
+            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, &tag_hit_pool, tracking::dTag);            
 
             if(tag_hit_pool.Size())
             {
@@ -571,7 +580,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             if_raw_rec_hit_number = true;
 
 //Digitization
-            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, &rec_hit_pool, tracking::rec);            
+            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, &rec_hit_pool, tracking::dRec);            
 
             if(rec_hit_pool.Size())
             {

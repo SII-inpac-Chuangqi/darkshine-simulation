@@ -22,6 +22,13 @@ void AnaProcessor::RegisterIntParameter(const std::string &name,
     }
 }
 
+void AnaProcessor::RegisterUIntParameter([[maybe_unused]] const std::string &name,
+                                         [[maybe_unused]] const std::string &description,
+                                         [[maybe_unused]] unsigned int *address,
+                                         [[maybe_unused]] unsigned int default_value)
+{
+}
+
 void AnaProcessor::RegisterDoubleParameter(const string &name,
                                            const string &description,
                                            double *address,

@@ -26,7 +26,7 @@
 
 namespace tracking
 {
-    enum detector {tag = 1, rec = 2};
+    enum detector {dTag = 1, dRec = 2};
 }
 
 class Digitization

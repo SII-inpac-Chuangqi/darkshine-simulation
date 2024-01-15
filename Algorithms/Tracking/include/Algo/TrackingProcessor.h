@@ -20,7 +20,10 @@
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Digitization.h"
 
-using namespace std;
+namespace tracking
+{
+    enum process {dAll = 0, dVertex = 1, dFit = 2, dFind = 3, dDigi = 4};
+}
 
 class TrackingProcessor : public AnaProcessor
 {
@@ -69,6 +72,16 @@ private:
 //-- 1: True, add smear in hit reconstruction
     int if_smear{1};
     double remove_hit_less_E{0.02};
+
+//................................................................................//
+//Processing depth
+//-- dAll:    run all processes
+//-- dVertex: run all processes until vertexing
+//-- dFit:    run all processes until fitting
+//-- dFind:   run all processes until finding
+//-- dDigi:   run all processes until digitization
+    int process_{tracking::dAll};
+
 //................................................................................//
 //Fit method
 //-- 0/dNone: No method specified, return pre-fitting results from track finding
