@@ -126,12 +126,13 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
 
                             this->InsertHitMap(reconstructed_hit, reco_trkhit_map);
 
-                            pool->AddHit();
+                            TrkHit hit;
+                            hit.SetCellIdZ(hit1->GetCellIdZ());
+                            pool->AddHit(hit);
                             pool->Back()->SetX(x1);
                             pool->Back()->SetZ(hit1->GetZ());
                             pool->Back()->SetY(y1);
-                            pool->Back()->setCellIdZ(hit1->GetCellIdZ());
-                            pool->InsertMap();
+                            //pool->Back()->setCellIdZ(hit1->GetCellIdZ());
                         }
                     }
                 }
@@ -163,6 +164,7 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
     }
     //std::cout << std::endl;
 
+    std::cout << std::endl;
     for(auto &[key, layer] : **pool)
     {
         std::cout << key << std::endl;

@@ -42,12 +42,11 @@ public:
             key_getter_ = f;
     }
 
-    void AddHit()
+    void AddHit(Element element)
     {
-        pool_.emplace_back(std::make_shared<Element>());
-        std::cout << pool_.back() << std::endl;
+        pool_.emplace_back(std::make_shared<Element>(element));
 
-        //this->InsertMap();
+        this->InsertMap();
     }
 
     std::shared_ptr<Element>& Back() {return pool_.back();}
@@ -71,7 +70,6 @@ private:
         return std::is_same<std::decay_t<decltype(f(Element{}))>, Key>::value;
     }
 
-public:
     void InsertMap()
     {
         if(!key_getter_)
