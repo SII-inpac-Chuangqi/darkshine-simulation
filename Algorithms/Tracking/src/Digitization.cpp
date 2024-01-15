@@ -64,8 +64,12 @@ void Digitization::ReadTrackerInfo(bool if_strip)
 
 //Separate tracker hits into vectors by layers
 void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vector<TrkHit> &trk2_hits, TrkHitPVecMap &reco_trkhit_map,
+                            Pool *pool,
                             int detector)
 {
+    std::function<std::decay_t<decltype(((TrkHit*)nullptr)->GetCellIdZ())>(const TrkHit&)> trk_hit_getter = &TrkHit::GetCellIdZ;
+    pool->SetKeyGetter(trk_hit_getter);
+
     if(if_strip_)
     {
         std::vector<double> *layer_widths  = (detector == tracking::tag) ? &layer_width_tag_  : &layer_width_rec_;
@@ -121,6 +125,13 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
                             reconstructed_hit->setCellIdZ(hit1->GetCellIdZ());
 
                             this->InsertHitMap(reconstructed_hit, reco_trkhit_map);
+
+                            pool->AddHit();
+                            pool->Back()->SetX(x1);
+                            pool->Back()->SetZ(hit1->GetZ());
+                            pool->Back()->SetY(y1);
+                            pool->Back()->setCellIdZ(hit1->GetCellIdZ());
+                            pool->InsertMap();
                         }
                     }
                 }
@@ -151,6 +162,21 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
         //std::cout << std::endl;
     }
     //std::cout << std::endl;
+
+    for(auto &[key, layer] : **pool)
+    {
+        std::cout << key << std::endl;
+
+        for(auto &hit : layer)
+        {
+            //hit->SetU(hit->GetX());
+            //hit->SetV(hit->GetY());
+
+            std::cout << hit->GetX() << ",\t" << hit->GetY() << ",\t" << hit->GetZ() << std::endl;
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
 }
 
 void Digitization::InitHitMap(const TrkHitPVec &trk_hits, TrkHitPVecMap &trk_hit_map)

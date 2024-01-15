@@ -530,7 +530,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             if_raw_tag_hit_number = true;
 
 //Digitization
-            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, clus_tag_trkhit_map, tracking::tag);            
+            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, clus_tag_trkhit_map, &tag_hit_pool, tracking::tag);            
 
             if(clus_tag_trkhit_map.size())
             {
@@ -573,7 +573,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             if_raw_rec_hit_number = true;
 
 //Digitization
-            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, clus_rec_trkhit_map, tracking::rec);            
+            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, clus_rec_trkhit_map, &rec_hit_pool, tracking::rec);            
 
             if(clus_rec_trkhit_map.size())
             {

@@ -17,16 +17,18 @@ class HitPool
 {
 private:
     using Pool = std::vector<std::shared_ptr<Element>>;
-    using Map = std::map<Key, std::vector<std::shared_ptr<Element>*>>;
+    using Map = std::map<Key, std::vector<std::shared_ptr<Element>>>;
     using KeyGetter = std::function<Key(const Element&)>;
 
 public:
-    HitPool()  {structured_ = new Map();}
+    HitPool()  {pool_.reserve(7); structured_ = new Map();}
     ~HitPool() {delete structured_; structured_ = nullptr;}
     HitPool(const Map&) = delete;
 
     Map* operator->()  {IsNull(); return structured_;}
     Map& operator*()   {IsNull(); return *structured_;}
+
+    size_t Size() const {return pool_.size();}
 
     template <typename Arbitrary>
     void SetKeyGetter(std::function<Arbitrary(const Element&)> &f)
@@ -43,6 +45,9 @@ public:
     void AddHit()
     {
         pool_.emplace_back(std::make_shared<Element>());
+        std::cout << pool_.back() << std::endl;
+
+        //this->InsertMap();
     }
 
     std::shared_ptr<Element>& Back() {return pool_.back();}
@@ -54,10 +59,10 @@ private:
 
     bool IsNull()
     {
-        if(structured_) return true;
+        if(structured_) return false;
 
         std::cerr << "[WARNING] ==> Empty map" << std::endl;
-        return false;
+        return true;
     }
 
     template <typename Arbitrary>
@@ -66,6 +71,7 @@ private:
         return std::is_same<std::decay_t<decltype(f(Element{}))>, Key>::value;
     }
 
+public:
     void InsertMap()
     {
         if(!key_getter_)
@@ -76,10 +82,10 @@ private:
 
         if(IsNull()) return;
 
-        Key key = key_getter_(pool_.back());
+        Key key = key_getter_(*pool_.back());
 
-        if(!structured_->insert({key, {&pool_.back()}}).second)
-            structured_->at(key).push_back(&pool_.back());
+        if(!structured_->insert(std::pair<Key, std::vector<std::shared_ptr<Element>>>(key, {pool_.back()})).second)
+            structured_->at(key).push_back(pool_.back());
     }
 
 };

@@ -43,6 +43,7 @@ public:
 //................................................................................//
 //Separate tracker hits into vectors by layers
     void Layering(const std::vector<TrkHit> &trk1_hits, const std::vector<TrkHit> &trk2_hits, TrkHitPVecMap &recoTrkHitMap,
+                  Pool *pool,
                   int detector);
 //................................................................................//
 //Set strip cluster width
