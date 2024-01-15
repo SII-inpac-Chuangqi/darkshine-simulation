@@ -63,7 +63,7 @@ void Digitization::ReadTrackerInfo(bool if_strip)
 }
 
 //Separate tracker hits into vectors by layers
-void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vector<TrkHit> &trk2_hits, TrkHitPVecMap &reco_trkhit_map,
+void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vector<TrkHit> &trk2_hits,
                             Pool *pool,
                             int detector)
 {
@@ -120,21 +120,12 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
                     if(!(std::abs(y1) < 0.5*layer_length))
                         continue;
 
-                    std::shared_ptr<TrkHit> reconstructed_hit = std::make_shared<TrkHit>();
-                    reconstructed_hit->SetX(x1);
-                    reconstructed_hit->SetZ(hit1->GetZ());
-                    reconstructed_hit->SetY(y1);
-                    reconstructed_hit->setCellIdZ(hit1->GetCellIdZ());
-
-                    this->InsertHitMap(reconstructed_hit, reco_trkhit_map);
-
                     TrkHit hit;
                     hit.SetCellIdZ(hit1->GetCellIdZ());
                     pool->AddHit(hit);
                     pool->Back()->SetX(x1);
                     pool->Back()->SetZ(hit1->GetZ());
                     pool->Back()->SetY(y1);
-                    //pool->Back()->setCellIdZ(hit1->GetCellIdZ());
                 }
             }
         }
@@ -142,27 +133,8 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
     else
     {
         for(const auto &it_trkhit : trk2_hits)
-        {
-            std::shared_ptr<TrkHit> reconstructed_hit = std::make_shared<TrkHit>(it_trkhit);
-
-            this->InsertHitMap(reconstructed_hit, reco_trkhit_map);
-        }
+            pool->AddHit(it_trkhit);
     }
-
-    for(auto &layer : reco_trkhit_map)
-    {
-        //std::cout << layer.second.at(0)->GetCellIdZ() << "\t";
-
-        for(auto &hit : layer.second)
-        {
-            hit->SetU(hit->GetX());
-            hit->SetV(hit->GetY());
-
-            //std::cout << hit->GetX() << ",\t" << hit->GetY() << ",\t" << hit->GetZ() << "\t";
-        }
-        //std::cout << std::endl;
-    }
-    //std::cout << std::endl;
 
     //std::cout << std::endl;
     //pool->Print();

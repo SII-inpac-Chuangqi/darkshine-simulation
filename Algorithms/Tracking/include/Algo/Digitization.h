@@ -42,7 +42,7 @@ public:
     void ReadTrackerInfo(bool if_strip);
 //................................................................................//
 //Separate tracker hits into vectors by layers
-    void Layering(const std::vector<TrkHit> &trk1_hits, const std::vector<TrkHit> &trk2_hits, TrkHitPVecMap &recoTrkHitMap,
+    void Layering(const std::vector<TrkHit> &trk1_hits, const std::vector<TrkHit> &trk2_hits,
                   Pool *pool,
                   int detector);
 //................................................................................//

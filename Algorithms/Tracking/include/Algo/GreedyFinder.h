@@ -36,7 +36,7 @@ public:
 //................................................................................//
 //Constructor
 //................................................................................//
-    GreedyFinder(TrkHitPVecMap &clusteredTrkHitsInLayer, int newMinDepth = 3, double newGoodnessCut = 0.999);
+    GreedyFinder(Pool *pool, int newMinDepth = 3, double newGoodnessCut = 0.999);
     ~GreedyFinder() {}
 
     GreedyFinder(const GreedyFinder&) = delete;
@@ -56,7 +56,7 @@ public:
     virtual std::vector<TrkHitPVec>::iterator First() override {return tracks_chosen_.begin();}
     virtual std::vector<TrkHitPVec>::iterator Last () override {return tracks_chosen_.end();  }
 
-    int GetCircleNo() const {return circleNo;}
+    int GetCircleNo() const {return circle_No_;}
 
 private:
 //................................................................................//
@@ -74,8 +74,9 @@ private:
         size_t how_bad;
     };
 
-    TrkHitPVecMap GetTempHitMap(TrkHitPVecMap &clusteredTrkHitsInLayer);
-    void GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer);
+    void GreedyLooping(Pool *pool);
+    TrkHitPVecMap GetTempHitMap(Pool *pool);
+
     bool GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
                        TrkHitPVecMap::iterator itMap,
                        int cirNo);
@@ -97,10 +98,10 @@ private:
 //Choice storage
 //................................................................................//
 //Final choice
-    int minDepth = 3;
-    double goodnessCut = 0.999;
+    int min_depth_ = 3;
+    double goodness_cut_ = 0.999;
 
-    int circleNo{0};
+    int circle_No_{0};
     std::vector<double> r_;
     std::vector<double> center_x_;
     std::vector<double> center_y_;
@@ -114,6 +115,33 @@ private:
 
 //................................................................................//
 //Temp Choice
+    void StoredPushBack(double x, double y, double oth, int hits_no, const TrkHitP &hit)
+    {
+        hits_store_.push_back(hit);
+        x_store_.push_back(x);
+        y_store_.push_back(y);
+        oth_store_.push_back(oth);
+        hits_no_store_.push_back(hits_no);
+    }
+
+    void StoredEraseEnd()
+    {
+        hits_store_.erase(hits_store_.end() - 1);
+        x_store_.erase(x_store_.end() - 1);
+        y_store_.erase(y_store_.end() - 1);
+        oth_store_.erase(oth_store_.end() - 1);
+        hits_no_store_.erase(hits_no_store_.end() - 1);
+    }
+
+    void StoredClear()
+    {
+        hits_store_.clear();
+        x_store_.clear();
+        y_store_.clear();
+        oth_store_.clear();
+        hits_no_store_.clear();
+    }
+
     TrkHitPVec hits_store_;
     std::vector<double> x_store_;
     std::vector<double> y_store_;

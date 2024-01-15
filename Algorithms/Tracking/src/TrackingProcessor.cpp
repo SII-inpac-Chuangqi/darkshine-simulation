@@ -524,22 +524,21 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Tag tracker
         Pool tag_hit_pool;
-        TrkHitPVecMap clus_tag_trkhit_map;
         if (IsValidHitSize(raw_tagtrk2_hits))
         {
             if_raw_tag_hit_number = true;
 
 //Digitization
-            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, clus_tag_trkhit_map, &tag_hit_pool, tracking::tag);            
+            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, &tag_hit_pool, tracking::tag);            
 
-            if(clus_tag_trkhit_map.size())
+            if(tag_hit_pool.Size())
             {
                 if_reco_tag_hits = true;
 
                 if(if_raw_tag_hit_number && if_reco_tag_hits)
                 {
 //Finding, by pre-fitting
-                    GreedyFinder find_tag(clus_tag_trkhit_map);
+                    GreedyFinder find_tag(&tag_hit_pool);
                     find_tag.FillTracks(&tag_tracks_);
         
 //Fit, by Genfit, Kalman filter/by Riemann fitting
@@ -567,22 +566,21 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Recoil tracker
         Pool rec_hit_pool;
-        TrkHitPVecMap clus_rec_trkhit_map;
         if (IsValidHitSize(raw_rectrk2_hits))
         {
             if_raw_rec_hit_number = true;
 
 //Digitization
-            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, clus_rec_trkhit_map, &rec_hit_pool, tracking::rec);            
+            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, &rec_hit_pool, tracking::rec);            
 
-            if(clus_rec_trkhit_map.size())
+            if(rec_hit_pool.Size())
             {
                 if_reco_rec_hits = true;
 
                 if(if_raw_rec_hit_number && if_reco_rec_hits)
                 {
 //Finding, by pre-fitting
-                    GreedyFinder find_rec(clus_rec_trkhit_map);
+                    GreedyFinder find_rec(&rec_hit_pool);
                     find_rec.FillTracks(&rec_tracks_);
 
 //Fit, by Genfit, Kalman filter/by Riemann fitting
