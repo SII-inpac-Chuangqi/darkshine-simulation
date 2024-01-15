@@ -51,6 +51,24 @@ public:
 
     std::shared_ptr<Element>& Back() {return pool_.back();}
 
+    void Print()
+    {
+        if(IsNull()) return;
+
+        for(auto &[key, layer] : *structured_)
+        {
+            std::cout << key << std::endl;
+
+            for(auto &hit : layer)
+            {
+                //std::cout << hit << std::endl;
+                std::cout << hit->GetX() << ",\t" << hit->GetY() << ",\t" << hit->GetZ() << std::endl;
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    }
+
 private:
     Pool pool_;
     Map* structured_{nullptr};

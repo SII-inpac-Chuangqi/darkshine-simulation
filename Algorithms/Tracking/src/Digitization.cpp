@@ -90,51 +90,51 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
         for(auto layer1 : map1)
         {
             auto it_find_layer2 = map2.find(layer1.first);
-            if(it_find_layer2 != map2.end())
+            if(it_find_layer2 == map2.end())
+                continue;
+
+            double angle        = angles->at((layer1.first - 1)*2 + 1);
+            double strip_no     = strip_nos->at((layer1.first - 1)*2 + 1);
+            double layer_width  = layer_widths->at((layer1.first - 1)*2 + 1);
+            double layer_length = layer_lengths->at((layer1.first - 1)*2 + 1); 
+            //std::cout << strip_no << std::endl;
+    
+            auto layer2 = map2.at(layer1.first);
+            for(auto hit1 : layer1.second)
             {
-                double angle        = angles->at((layer1.first - 1)*2 + 1);
-                double strip_no     = strip_nos->at((layer1.first - 1)*2 + 1);
-                double layer_width  = layer_widths->at((layer1.first - 1)*2 + 1);
-                double layer_length = layer_lengths->at((layer1.first - 1)*2 + 1); 
-                //std::cout << strip_no << std::endl;
-    
-                auto layer2 = map2.at(layer1.first);
-                for(auto hit1 : layer1.second)
+                for(auto hit2 : layer2)
                 {
-                    for(auto hit2 : layer2)
+                    double smear1 = 0.;
+                    double smear2 = 0.;
+                    if(if_smear_)
                     {
-                        double smear1 = 0.;
-                        double smear2 = 0.;
-                        if(if_smear_)
-                        {
-                            smear1 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
-                            smear2 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
-                        }
-                        //double x1 = hit1->GetX() + smear1;
-                        //double y1 = -x1/tan(angle) + ((hit2->GetCellIdX() - 0.5*(strip_no + 1))*layer_width/strip_no + smear2)/sin(angle);
-                        double x1 = hit1->GetX() + smear1;
-                        double x2 = hit2->GetX() + smear2;
-                        double y1 = -x1/tan(angle) + x2/sin(angle);
-    
-                        if(std::abs(y1) < 0.5*layer_length)
-                        {
-                            std::shared_ptr<TrkHit> reconstructed_hit = std::make_shared<TrkHit>();
-                            reconstructed_hit->SetX(x1);
-                            reconstructed_hit->SetZ(hit1->GetZ());
-                            reconstructed_hit->SetY(y1);
-                            reconstructed_hit->setCellIdZ(hit1->GetCellIdZ());
-
-                            this->InsertHitMap(reconstructed_hit, reco_trkhit_map);
-
-                            TrkHit hit;
-                            hit.SetCellIdZ(hit1->GetCellIdZ());
-                            pool->AddHit(hit);
-                            pool->Back()->SetX(x1);
-                            pool->Back()->SetZ(hit1->GetZ());
-                            pool->Back()->SetY(y1);
-                            //pool->Back()->setCellIdZ(hit1->GetCellIdZ());
-                        }
+                        smear1 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
+                        smear2 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
                     }
+                    //double x1 = hit1->GetX() + smear1;
+                    //double y1 = -x1/tan(angle) + ((hit2->GetCellIdX() - 0.5*(strip_no + 1))*layer_width/strip_no + smear2)/sin(angle);
+                    double x1 = hit1->GetX() + smear1;
+                    double x2 = hit2->GetX() + smear2;
+                    double y1 = -x1/tan(angle) + x2/sin(angle);
+    
+                    if(!(std::abs(y1) < 0.5*layer_length))
+                        continue;
+
+                    std::shared_ptr<TrkHit> reconstructed_hit = std::make_shared<TrkHit>();
+                    reconstructed_hit->SetX(x1);
+                    reconstructed_hit->SetZ(hit1->GetZ());
+                    reconstructed_hit->SetY(y1);
+                    reconstructed_hit->setCellIdZ(hit1->GetCellIdZ());
+
+                    this->InsertHitMap(reconstructed_hit, reco_trkhit_map);
+
+                    TrkHit hit;
+                    hit.SetCellIdZ(hit1->GetCellIdZ());
+                    pool->AddHit(hit);
+                    pool->Back()->SetX(x1);
+                    pool->Back()->SetZ(hit1->GetZ());
+                    pool->Back()->SetY(y1);
+                    //pool->Back()->setCellIdZ(hit1->GetCellIdZ());
                 }
             }
         }
@@ -164,21 +164,8 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
     }
     //std::cout << std::endl;
 
-    std::cout << std::endl;
-    for(auto &[key, layer] : **pool)
-    {
-        std::cout << key << std::endl;
-
-        for(auto &hit : layer)
-        {
-            //hit->SetU(hit->GetX());
-            //hit->SetV(hit->GetY());
-
-            std::cout << hit->GetX() << ",\t" << hit->GetY() << ",\t" << hit->GetZ() << std::endl;
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
+    //std::cout << std::endl;
+    //pool->Print();
 }
 
 void Digitization::InitHitMap(const TrkHitPVec &trk_hits, TrkHitPVecMap &trk_hit_map)
