@@ -75,7 +75,7 @@ McParticle *SecondaryMaxEFinder::FindDPDecay(McParticle *mcp){
     auto mcps = Evt->getMcParticleCollection().at("RawMCParticle");
     auto itrp = (mcp == nullptr) ? mcps->at(0) : mcp;
     int n_particles = 0;
-    for (auto p : *(itrp->getChildren())) {
+    for ([[maybe_unused]] auto p : *(itrp->getChildren())) {
         n_particles+=1;
      }
     if (n_particles == 2){

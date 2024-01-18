@@ -34,7 +34,7 @@ RecECAL::RecECAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProce
     RegisterIntParameter("useDTruth", "useDTruth(new truth class), instead of MCPhelper(via virtual SD between tracker and ECAL) to get the truth seed", &useDTruth, 1);
     RegisterIntParameter("StaggeredECAL", "use StaggeredECAL Algo", &StaggeredECAL, 1);
     // detailed parameters
-    RegisterDoubleParameter("Enoise", "Enoise/MeV or Digit", &_Enoise, 1); 
+    RegisterDoubleParameter("Enoise", "Enoise/MeV or Digit", &_Enoise, 10);
     RegisterDoubleParameter("EThres_S", "EThres_S/noise", &_EThres_S, 4); 
     RegisterDoubleParameter("EThres_N", "EThres_N/noise", &_EThres_N, 2); 
     RegisterDoubleParameter("EThres_P", "EThres_P/noise", &_EThres_P, 0); 
