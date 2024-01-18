@@ -47,7 +47,7 @@ public:
     void FillTruth(DTruth *truth_info,
                    //std::vector<DStep*> *initial_steps,
                    //std::vector<McParticle *> *raw_mc_ptl,
-                   TFile *outputFile,
+                   //TFile *outputFile,
                    TTree *outputTree,
                    std::vector<TrkHit> rawTrk1Hits,
                    std::vector<TrkHit> rawTrk2Hits);

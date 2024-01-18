@@ -43,18 +43,20 @@ public:
     virtual ~TruthParticleProcessor() {};
 
     void Begin() override;
+
+    TTree* MakeTree();
 //................................................................................//
 //Initialize all vars to be stored in output files
     void InitEvt() override;
 //................................................................................//
 //Map process string name to number. Utility/UTIL/include/Utility/PhysicsProcessDef.h
     unsigned int mapStringToUint(const std::string& str) const;
-
-
+//................................................................................//
 //Fill truth variables
-    void FillTruth(DTruth *truth_info,
-                   std::vector<DStep *> *initial_steps,
-                   std::vector<McParticle *> *raw_mc_ptl);
+    void FillTruth( TTree *outputTree,
+                    DTruth *truth_info,
+                    std::vector<DStep *> *initial_steps,
+                    std::vector<McParticle *> *raw_mc_ptl);
 
     void ProcessEvt(AnaEvent* evt) override;
     void CheckEvt(AnaEvent* evt) override;
@@ -64,8 +66,18 @@ private:
 //................................................................................//
 //New root file
 //................................................................................//
-    TFile* outputFile;
-    TTree* outputTree;
+    //TFile* outputFile;
+    //TTree* outputTree;
+    TFile *fileT;
+    TFile *fileR;
+    TTree* outputTreeT;
+    TTree* outputTreeR;
+//................................................................................//
+//Truth recording in some tracking region
+//--0: False
+//--1: True
+    int if_tagging{0};
+    int if_recoil{1};
 //................................................................................//
 //Truth
 //................................................................................//

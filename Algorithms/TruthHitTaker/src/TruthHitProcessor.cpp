@@ -43,7 +43,7 @@ TruthHitProcessor::TruthHitProcessor(string name, shared_ptr<EventStoreAndWriter
     RegisterIntParameter("verbose", "Verbose", &Verbose, 0);
     RegisterIntParameter("if_strip", "If use strip structures in trackers", &if_strip, 1);
     RegisterIntParameter("if_tagging", "If write truth info in tagging trackers", &if_tagging, 1);
-    RegisterIntParameter("if_recoil", "If write truth info in recoil trackers", &if_recoil, 0);
+    RegisterIntParameter("if_recoil", "If write truth info in recoil trackers", &if_recoil, 1);
 }
 
 
@@ -140,7 +140,7 @@ void TruthHitProcessor::InitEvt() {
 void TruthHitProcessor::FillTruth(DTruth *truth_info,
                                   //std::vector<DStep*> *initial_steps,
                                  // std::vector<McParticle *> *raw_mc_ptl,
-                                TFile *outputFile,
+                                //TFile *outputFile,
                                 TTree *outputTree,
                                 std::vector<TrkHit> raw_trk1_hits,
                                 std::vector<TrkHit> raw_trk2_hits) {
@@ -197,10 +197,7 @@ void TruthHitProcessor::FillTruth(DTruth *truth_info,
                         if (foundMatchingCellId) { break; }
                     }//End loop for hit1
 
-
-                    if (outputTree) {
-                        outputTree->Fill();
-                    }
+                    if (outputTree) { outputTree->Fill(); }
                 } ////end if:
             }
         }
@@ -230,8 +227,8 @@ void TruthHitProcessor::ProcessEvt(AnaEvent *evt) {
             if (hit->getE() < 0.01) continue;
             raw_trk2_hits.emplace_back(*hit);
         }
-        this->FillTruth(evt->getTruthInfo(), fileT, outputTreeT,
-                        raw_trk1_hits, raw_trk2_hits);
+        this->FillTruth(evt->getTruthInfo(), //fileT,
+                        outputTreeT, raw_trk1_hits, raw_trk2_hits);
     }
 
     if (if_recoil) {
@@ -245,8 +242,8 @@ void TruthHitProcessor::ProcessEvt(AnaEvent *evt) {
             if (hit->getE() < 0.01) continue;
             raw_trk2_hits.emplace_back(*hit);
         }
-        this->FillTruth(evt->getTruthInfo(), fileR, outputTreeR,
-                        raw_trk1_hits, raw_trk2_hits);
+        this->FillTruth(evt->getTruthInfo(), //fileR,
+                        outputTreeR, raw_trk1_hits, raw_trk2_hits);
     }
 
     //const auto &initial_steps = step_collection.at("Initial_Particle_Step");

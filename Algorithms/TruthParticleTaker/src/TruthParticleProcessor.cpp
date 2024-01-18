@@ -30,16 +30,13 @@ TruthParticleProcessor::TruthParticleProcessor(string name, shared_ptr<EventStor
     // Add description for this AnaProcessor
     Description = "Tracking truth hits and particles taken by Joseph ZHANG";
     RegisterIntParameter("verbose", "Verbose", &Verbose, 0);
+    RegisterIntParameter("if_tagging", "If write truth info in tagging trackers", &if_tagging, 1);
+    RegisterIntParameter("if_recoil", "If write truth info in recoil trackers", &if_recoil, 1);
 }
 
-void TruthParticleProcessor::Begin() {
-// Open a ROOT file for writing
-    TString outputFileName = "dp_particles.root"; // Figure out file name
-    outputFile = new TFile(outputFileName, "RECREATE");
+TTree* TruthParticleProcessor::MakeTree() {
 // Create a new TTree
-    outputTree = new TTree("particles", "particles");
-//................................................................................//
-//Truth
+    TTree *outputTree = new TTree("particles", "particles");
 //................................................................................//
     outputTree->Branch("event_id", &event_id);
     outputTree->Branch("particle_id", &particle_id);
@@ -68,7 +65,21 @@ void TruthParticleProcessor::Begin() {
     outputTree->Branch("generation",    &generation  );
     outputTree->Branch("sub_particle",  &sub_particle);
 
-//    outputTree->Branch("pfin",  &pfin);
+    return outputTree;
+}
+
+void TruthParticleProcessor::Begin() {
+// Open a ROOT file for writing
+//    TString outputFileName = "dp_particles.root"; // Figure out file name
+//    outputFile = new TFile(outputFileName, "RECREATE");
+    if (if_tagging) {
+        fileT = new TFile(TString("dp_tag_particles.root"), "RECREATE");
+        outputTreeT = MakeTree();
+    }
+    if (if_recoil) {
+        fileR = new TFile(TString("dp_rcl_particles.root"), "RECREATE");
+        outputTreeR = MakeTree();
+    }
 }
 
 void TruthParticleProcessor::InitEvt() {
@@ -98,21 +109,20 @@ void TruthParticleProcessor::InitEvt() {
     vector<unsigned int>().swap(generation);
     vector<unsigned int>().swap(sub_particle);
 
-//    std::vector<float>().swap(pfin);
 }
 
 unsigned int TruthParticleProcessor::mapStringToUint(const std::string& str) const {
-    static std::unordered_map<std::string, unsigned int> stringToUintMap;
+    static std::unordered_map<std::string, unsigned int> localStrToUintMap;
     // 如果映射表为空，初始化它
-    if (stringToUintMap.empty()) {
+    if (localStrToUintMap.empty()) {
         // 建立字符串到 unsigned int 的映射
         for (size_t i = 1; i < physicsDef.dPhyTypeVec.size(); ++i) {
-            stringToUintMap[physicsDef.dPhyTypeVec[i]] = static_cast<unsigned int>(i);
+            localStrToUintMap[physicsDef.dPhyTypeVec[i]] = static_cast<unsigned int>(i);
         }
     }
 
-    auto it = stringToUintMap.find(str);
-    if (it != stringToUintMap.end()) {
+    auto it = localStrToUintMap.find(str);
+    if (it != localStrToUintMap.end()) {
         return it->second;
     } else {
         // 如果找不到，返回一个默认值，或者抛出异常，具体取决于你的需求
@@ -120,13 +130,16 @@ unsigned int TruthParticleProcessor::mapStringToUint(const std::string& str) con
     }
 }
 
-void TruthParticleProcessor::FillTruth(DTruth *truth_info, std::vector<DStep *> *initial_steps, std::vector<McParticle *> *raw_mc_ptl )
+void TruthParticleProcessor::FillTruth(TTree *outputTree,
+                                       DTruth *truth_info,
+                                       std::vector<DStep *> *initial_steps,
+                                       std::vector<McParticle *> *raw_mc_ptl )
 {
     dAnaData->LoadTruthInfo(truth_info);
 
-//    bool trkTargetFlag = false;
+    //Figure out charged particles around TARGET in recoil region
     for (auto step : *initial_steps) {
-        if (step->getPVName() == "World" && step->getZ() > -0.0 && step->getZ() < 0.5) //around the target
+        if (outputTree == outputTreeR && step->getPVName() == "World" && step->getZ() > -0.0 && step->getZ() < 0.5) //around the target
         {
             px.push_back(static_cast<float>(step->getPx()/1000.0f));
             py.push_back(static_cast<float>(step->getPy()/1000.0f));
@@ -155,10 +168,47 @@ void TruthParticleProcessor::FillTruth(DTruth *truth_info, std::vector<DStep *> 
 
     for (auto iptl : *raw_mc_ptl) {
         TParticlePDG* particlePDG = TDatabasePDG::Instance()->GetParticle(iptl->getPdg());
-        if (particlePDG) {
-            if( ( iptl->getParents() == 0 && particlePDG->Charge() != 0 ) ||
-                ( iptl->getVertexZ() > -0.175 && particlePDG->Charge() != 0 ) )
-            {
+        if (particlePDG && particlePDG->Charge() != 0 ) {
+
+            bool taggingCondition = outputTree == outputTreeT && iptl->getVertexZ() < -609.0 && iptl->getParents() == 0;
+            bool recoilCondition = outputTree == outputTreeR && iptl->getVertexZ() > -0.175;
+
+            //Tagging Selection
+            if( taggingCondition ) {
+                px.push_back(0.0f);
+                px.push_back(0.0f);
+                pz.push_back(static_cast<float>(iptl->getPz()/1000.0f));
+                vx.push_back(iptl->getVertexX());
+                vy.push_back(iptl->getVertexY());
+                vz.push_back(iptl->getVertexZ());
+                vt.push_back(0.0f);  //DSS 没有记录打靶时间信息, 暂时搁置
+                //truth momentum
+                p.push_back(static_cast<float>(iptl->getPz()/1000.0f));
+                //transverse momentum
+                pt.push_back(0.0f);
+                phi.push_back( 0.0f );
+                eta.push_back( 6.0f );
+
+                particle_id.push_back(iptl->getId());
+                particle_type.push_back(iptl->getPdg()); // Get the electric charge of the particle
+                q.push_back( particlePDG->Charge() / 3 );
+                m.push_back(iptl->getMass()/1000.0f);
+                auto processString = iptl->getCreateProcess();
+                //std::string processString = "msc";
+                if (!processString.empty()) {
+                    process.push_back(mapStringToUint(processString));
+                } else {
+                    process.push_back(0); // 如果 processString 为空，可以根据需求添加默认值，这里添加0
+                }
+                vertex_primary.push_back(1);
+                vertex_secondary.push_back(0);
+                particle.push_back(iptl->getId());
+                generation.push_back(0);
+                sub_particle.push_back(0);
+            }
+
+            //Recoil Selection
+            if( ( iptl->getParents() == 0 || recoilCondition ) && outputTree == outputTreeR){
                 particle_id.push_back(iptl->getId());
                 particle_type.push_back(iptl->getPdg());
                 // Get the electric charge of the particle
@@ -179,10 +229,12 @@ void TruthParticleProcessor::FillTruth(DTruth *truth_info, std::vector<DStep *> 
                 generation.push_back(0);
                 sub_particle.push_back(0);
 
-                //从靶子开始发射的粒子分两类:
-                // 第一类是-61cm入射的粒子, 我们记录它的id即可, 因为顶点信息已经写在上面了
-                // 第二类是靶子上面核反应之后产生的新粒子, 如果带电, 我们就重新记录他们的顶点, 以免错漏
-                if( iptl->getVertexZ() > -0.175 && particlePDG->Charge() != 0 ) {
+                //Particles emitted from the target can be classified into two types:
+                //(1) Particles entering at -61 cm. We record their IDs since vertex information is already captured above.
+                //(2) The secondary-particles resulting from nuclear reactions on the target.
+                //    For charged particles in this category, we re-record their vertex information to avoid omissions or errors.
+
+                if( recoilCondition && particlePDG->Charge() != 0 ) {
                     px.push_back(static_cast<float>(iptl->getPx()/1000.0f));
                     py.push_back(static_cast<float>(iptl->getPy()/1000.0f));
                     pz.push_back(static_cast<float>(iptl->getPz()/1000.0f));
@@ -207,36 +259,53 @@ void TruthParticleProcessor::FillTruth(DTruth *truth_info, std::vector<DStep *> 
         }
     }
 
-//    bool trackerFlag = false;
-//    for (auto step : *initial_steps) {
-//        if (InRecTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
-//            trackerFlag = true;
-//        } else if (!InRecTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
-//            pfin.push_back(
-//                    sqrt(step->getPx() * step->getPx() + step->getPy() * step->getPy() + step->getPz() * step->getPz())
-//            );
-//            break;
-//        }
-//    }
-
-    outputTree->Fill();
+    if (outputTree) { outputTree->Fill(); }
 }
 
 void TruthParticleProcessor::ProcessEvt(AnaEvent *evt) {
-//Initialize vars
-    this->InitEvt();
+
     const auto &step_collection = evt->getStepCollection();
     const auto &MCCollection = evt->getMcParticleCollection();
     [[maybe_unused]]const auto &simuhit_collection = evt->getSimulatedHitCollection();
-
     event_id = evt->getEventId();
-    const auto &initial_steps = step_collection.at("Initial_Particle_Step");
-    const auto &raw_mc_ptl = MCCollection.at("RawMCParticle");
+
+    std::vector<DStep *> initial_steps;
+    std::vector<McParticle *> raw_mc_ptl;
 
 //    std::cout << "====================" << std::endl;
 
-//Write truth
-    this->FillTruth(evt->getTruthInfo(), initial_steps, raw_mc_ptl);
+    if (if_tagging) {
+        //Initialize vars
+        this->InitEvt();
+//        const auto &step_collection = evt->getStepCollection();
+//        const auto &MCCollection = evt->getMcParticleCollection();
+//        event_id = evt->getEventId();
+
+        initial_steps.clear();
+        raw_mc_ptl.clear();
+        for (auto istep : *step_collection.at("Initial_Particle_Step")) {
+            initial_steps.emplace_back(istep);
+        }
+        for (auto iMcParticle : *MCCollection.at("RawMCParticle")) {
+            raw_mc_ptl.emplace_back(iMcParticle);
+        }
+        this->FillTruth(outputTreeT, evt->getTruthInfo(), &initial_steps, &raw_mc_ptl);
+    }
+
+    if (if_recoil) {
+        //Initialize vars
+        this->InitEvt();
+        initial_steps.clear();
+        raw_mc_ptl.clear();
+        for (auto istep : *step_collection.at("Initial_Particle_Step")) {
+            initial_steps.emplace_back(istep);
+        }
+        for (auto iMcParticle : *MCCollection.at("RawMCParticle")) {
+            raw_mc_ptl.emplace_back(iMcParticle);
+        }
+        this->FillTruth(outputTreeR, evt->getTruthInfo(), &initial_steps, &raw_mc_ptl);
+    }
+
 }
 
 void TruthParticleProcessor::CheckEvt(AnaEvent *evt) {
@@ -244,7 +313,13 @@ void TruthParticleProcessor::CheckEvt(AnaEvent *evt) {
 }
 
 void TruthParticleProcessor::End() {
-    outputFile->Write();
-    outputFile->Close();
+    if (if_tagging && fileT) {
+        fileT->Write();
+        fileT->Close();
+    }
+    if (if_recoil && fileR) {
+        fileR->Write();
+        fileR->Close();
+    }
     //cout<<"End!"<<endl;
 }
