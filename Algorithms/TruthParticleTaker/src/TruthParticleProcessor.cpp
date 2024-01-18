@@ -31,7 +31,7 @@ TruthParticleProcessor::TruthParticleProcessor(string name, shared_ptr<EventStor
     Description = "Tracking truth hits and particles taken by Joseph ZHANG";
     RegisterIntParameter("verbose", "Verbose", &Verbose, 0);
     RegisterIntParameter("if_tagging", "If write truth info in tagging trackers", &if_tagging, 1);
-    RegisterIntParameter("if_recoil", "If write truth info in recoil trackers", &if_recoil, 1);
+    RegisterIntParameter("if_recoil", "If write truth info in recoil trackers", &if_recoil, 0);
 }
 
 TTree* TruthParticleProcessor::MakeTree() {
@@ -174,9 +174,9 @@ void TruthParticleProcessor::FillTruth(TTree *outputTree,
             bool recoilCondition = outputTree == outputTreeR && iptl->getVertexZ() > -0.175;
 
             //Tagging Selection
-            if( taggingCondition ) {
+            if( taggingCondition) {
                 px.push_back(0.0f);
-                px.push_back(0.0f);
+                py.push_back(0.0f);
                 pz.push_back(static_cast<float>(iptl->getPz()/1000.0f));
                 vx.push_back(iptl->getVertexX());
                 vy.push_back(iptl->getVertexY());
@@ -277,10 +277,6 @@ void TruthParticleProcessor::ProcessEvt(AnaEvent *evt) {
     if (if_tagging) {
         //Initialize vars
         this->InitEvt();
-//        const auto &step_collection = evt->getStepCollection();
-//        const auto &MCCollection = evt->getMcParticleCollection();
-//        event_id = evt->getEventId();
-
         initial_steps.clear();
         raw_mc_ptl.clear();
         for (auto istep : *step_collection.at("Initial_Particle_Step")) {
