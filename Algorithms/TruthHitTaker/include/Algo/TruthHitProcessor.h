@@ -37,6 +37,8 @@ public:
     virtual ~TruthHitProcessor() {};
 
     void Begin() override;
+
+    TTree* MakeTree();
 //................................................................................//
 //Initialize all vars to be stored in output files
     void InitEvt() override;
@@ -45,8 +47,10 @@ public:
     void FillTruth(DTruth *truth_info,
                    //std::vector<DStep*> *initial_steps,
                    //std::vector<McParticle *> *raw_mc_ptl,
-                   std::vector<TrkHit> rawRecTrk1Hits,
-                   std::vector<TrkHit> rawRecTrk2Hits);
+                   TFile *outputFile,
+                   TTree *outputTree,
+                   std::vector<TrkHit> rawTrk1Hits,
+                   std::vector<TrkHit> rawTrk2Hits);
     void ProcessEvt(AnaEvent* evt) override;
     void CheckEvt(AnaEvent* evt) override;
     void End() override;
@@ -61,30 +65,27 @@ private:
 //-- 1: True, automatically load strip structures from geometry
     int if_strip{1};
 //................................................................................//
+//Truth recording in some tracking region
+//--0: False
+//--1: True
+    int if_tagging{0};
+    int if_recoil{1};
 //Geometry
 //................................................................................//
     Digitization digitizer;
 //................................................................................//
 //Truth
 //................................................................................//
-//    double TagTrk2_pp_truth_x{RETURN};
-//    double TagTrk2_pp_truth_y{RETURN};
-//    double TagTrk2_pp_truth_z{RETURN};
-//    double TagTrk2_pp_truth_e{RETURN};
-//    double TagTrk2_truth_hit_x{RETURN};
-//    double TagTrk2_truth_hit_y{RETURN};
-//    double TagTrk2_truth_hit_z{RETURN};
-//    double TagTrk2_truth_hit_t{RETURN};
 
-    float RecTrk2_truth_hit_x = 0;
-    float RecTrk2_truth_hit_y = 0;
-    float RecTrk2_truth_hit_z = 0;
-    float RecTrk2_truth_hit_t = 0;
+    float truth_hit_x = 0;
+    float truth_hit_y = 0;
+    float truth_hit_z = 0;
+    float truth_hit_t = 0;
 
-    float RecTrk2_pp_truth_x = 0;
-    float RecTrk2_pp_truth_y = 0;
-    float RecTrk2_pp_truth_z = 0;
-    float RecTrk2_pp_truth_e = 0;
+    float pp_truth_x = 0;
+    float pp_truth_y = 0;
+    float pp_truth_z = 0;
+    float pp_truth_e = 0;
 
     float deltapx = 0;
     float deltapy = 0;
@@ -105,8 +106,11 @@ private:
 //................................................................................//
 //New root file
 //................................................................................//
-    TFile* outputFile;
-    TTree* outputTree;
+//    TFile* outputFile;
+    TFile *fileT;
+    TFile *fileR;
+    TTree* outputTreeT;
+    TTree* outputTreeR;
 
 };
 

@@ -128,14 +128,14 @@ void TruthParticleProcessor::FillTruth(DTruth *truth_info, std::vector<DStep *> 
     for (auto step : *initial_steps) {
         if (step->getPVName() == "World" && step->getZ() > -0.0 && step->getZ() < 0.5) //around the target
         {
-            px.push_back(static_cast<float>(step->getPx()/1000.));
-            py.push_back(static_cast<float>(step->getPy()/1000.));
-            pz.push_back(static_cast<float>(step->getPz()/1000.));
+            px.push_back(static_cast<float>(step->getPx()/1000.0f));
+            py.push_back(static_cast<float>(step->getPy()/1000.0f));
+            pz.push_back(static_cast<float>(step->getPz()/1000.0f));
 
             vx.push_back(step->getX());
             vy.push_back(step->getY());
             vz.push_back(step->getZ());
-            vt.push_back(0.0);  //DSS 没有记录打靶时间信息, 暂时搁置
+            vt.push_back(0.0f);  //DSS 没有记录打靶时间信息, 暂时搁置
 
             //truth momentum
             p.push_back( sqrt(
@@ -149,7 +149,7 @@ void TruthParticleProcessor::FillTruth(DTruth *truth_info, std::vector<DStep *> 
 
             phi.push_back( std::atan( step->getPy() / step->getPx() ) );
             float theta = std::atan2( sqrt( step->getPx() * step->getPx() + step->getPy() * step->getPy() ), step->getPz());
-            eta.push_back( -std::log(std::tan(theta / 2.0)) );
+            eta.push_back( -std::log(std::tan(theta / 2.0f)) );
         }
     }
 
@@ -157,7 +157,7 @@ void TruthParticleProcessor::FillTruth(DTruth *truth_info, std::vector<DStep *> 
         TParticlePDG* particlePDG = TDatabasePDG::Instance()->GetParticle(iptl->getPdg());
         if (particlePDG) {
             if( ( iptl->getParents() == 0 && particlePDG->Charge() != 0 ) ||
-                ( iptl->getVertexZ() > -0.0 /* && iptl->getVertexZ() < 0.2 */ && particlePDG->Charge() != 0 ) )
+                ( iptl->getVertexZ() > -0.175 && particlePDG->Charge() != 0 ) )
             {
                 particle_id.push_back(iptl->getId());
                 particle_type.push_back(iptl->getPdg());
@@ -182,14 +182,14 @@ void TruthParticleProcessor::FillTruth(DTruth *truth_info, std::vector<DStep *> 
                 //从靶子开始发射的粒子分两类:
                 // 第一类是-61cm入射的粒子, 我们记录它的id即可, 因为顶点信息已经写在上面了
                 // 第二类是靶子上面核反应之后产生的新粒子, 如果带电, 我们就重新记录他们的顶点, 以免错漏
-                if( iptl->getVertexZ() > -0.0 /* && iptl->getVertexZ() < 0.2*/ && particlePDG->Charge() != 0 ) {
-                    px.push_back(static_cast<float>(iptl->getPx()/1000.));
-                    py.push_back(static_cast<float>(iptl->getPy()/1000.));
-                    pz.push_back(static_cast<float>(iptl->getPz()/1000.));
+                if( iptl->getVertexZ() > -0.175 && particlePDG->Charge() != 0 ) {
+                    px.push_back(static_cast<float>(iptl->getPx()/1000.0f));
+                    py.push_back(static_cast<float>(iptl->getPy()/1000.0f));
+                    pz.push_back(static_cast<float>(iptl->getPz()/1000.0f));
                     vx.push_back(iptl->getVertexX());
                     vy.push_back(iptl->getVertexY());
                     vz.push_back(iptl->getVertexZ());
-                    vt.push_back(0.0);  //DSS 没有记录打靶时间信息, 暂时搁置
+                    vt.push_back(0.0f);  //DSS 没有记录打靶时间信息, 暂时搁置
                     //truth momentum
                     p.push_back(sqrt(
                             iptl->getPx() * iptl->getPx() + iptl->getPy() * iptl->getPy() +
@@ -199,6 +199,9 @@ void TruthParticleProcessor::FillTruth(DTruth *truth_info, std::vector<DStep *> 
                     pt.push_back(sqrt(
                             iptl->getPx() * iptl->getPx() + iptl->getPy() * iptl->getPy()
                     )/1000.0f);
+                    phi.push_back( std::atan( iptl->getPy() / iptl->getPx() ) );
+                    float theta = std::atan2( sqrt( iptl->getPx() * iptl->getPx() + iptl->getPy() * iptl->getPy() ), iptl->getPz());
+                    eta.push_back( -std::log( std::tan(theta / 2.0f) ) );
                 }
             }
         }
