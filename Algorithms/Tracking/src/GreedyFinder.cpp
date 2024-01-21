@@ -70,6 +70,8 @@ std::vector<std::shared_ptr<DTrack>>* GreedyFinder::GetTracks()
 //
 TrkHitPVecMap GreedyFinder::GetTempHitMap(Pool *pool)
 {
+     if(pool->IsNull()) return {{}};
+
      auto temp_pool_structured = **pool;
      if(temp_pool_structured.size() <= 2) return temp_pool_structured;
 
@@ -134,11 +136,7 @@ void GreedyFinder::GreedyLooping(Pool *pool)
             hits_chosen_.clear();
             hits_no_chosen_.clear();
 
-            x_store_.clear();
-            y_store_.clear();
-            oth_store_.clear();
-            hits_store_.clear();
-            hits_no_store_.clear();
+            StoredClear();
 
             circle_No_ = 0;
             goodness_Kasa_ = -INFINITY;
@@ -249,13 +247,13 @@ void GreedyFinder::SortHits()
 //Kasa method
 
 void GreedyFinder::MethodLooping(const std::vector<double> &track_x, const std::vector<double> &track_y,
-                                  double &cur_A, double &cur_B, double &cur_R, double &cur_goodness)
+                                 double &cur_A, double &cur_B, double &cur_R, double &cur_goodness)
 {
     MethodKasa(track_x, track_y, cur_A, cur_B, cur_R, cur_goodness);
 }
 
 double GreedyFinder::MethodKasa(const std::vector<double> &track_x, const std::vector<double> &track_y,
-                                 double &cur_A, double &cur_B, double &cur_R, double &cur_goodness)
+                                double &cur_A, double &cur_B, double &cur_R, double &cur_goodness)
 {
     if(track_x.size() != track_y.size())
     {

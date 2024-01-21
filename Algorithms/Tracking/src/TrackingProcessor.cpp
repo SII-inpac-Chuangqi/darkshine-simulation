@@ -25,7 +25,7 @@
 
 //................................................................................//
 //TRACKING
-#include "Algo/TypeDef.h"
+//#include "Algo/TypeDef.h"
 #include "Algo/Utils/Util.h"
 #include "Algo/GreedyFinder.h"
 #include "Algo/RiemannFit/RiemannFitHelper.h"
@@ -213,9 +213,14 @@ void TrackingProcessor::Begin() {
 }
 
 void TrackingProcessor::InitEvt() {
+//We clear vertices first, then tracks, finally pools which hold the hits' memory
+    rec_vertexes_.clear(); rec_vertexes_.shrink_to_fit();
 
     tag_tracks_.clear(); tag_tracks_.shrink_to_fit();
     rec_tracks_.clear(); rec_tracks_.shrink_to_fit();
+
+    tag_hit_pool_.Clear();
+    rec_hit_pool_.Clear();
 
     std::vector<double>().swap(TagTrk2_truth_hit_x);
     std::vector<double>().swap(TagTrk2_truth_hit_y);
@@ -298,8 +303,11 @@ void TrackingProcessor::InitEvt() {
     std::vector<double>().swap(ECal_seed_py);
     std::vector<double>().swap(ECal_seed_pz);
 
-    rec_vertexes_   .clear(); rec_vertexes_   .shrink_to_fit();
     RecTrk2_vertex_z.clear(); RecTrk2_vertex_z.shrink_to_fit();
+
+//Now we init the pools
+    tag_hit_pool_.Init();
+    rec_hit_pool_.Init();
 }
 
 void TrackingProcessor::FillTruth(DTruth *truth_info,
@@ -532,22 +540,21 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Tag tracker
-        Pool tag_hit_pool;
         if (IsValidHitSize(raw_tagtrk2_hits))
         {
             if_raw_tag_hit_number = true;
 
 //Digitization
-            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, &tag_hit_pool, tracking::dTag);            
+            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, &tag_hit_pool_, tracking::dTag);            
 
-            if(tag_hit_pool.Size())
+            if(tag_hit_pool_.Size())
             {
                 if_reco_tag_hits = true;
 
                 if(if_raw_tag_hit_number && if_reco_tag_hits)
                 {
 //Finding, by pre-fitting
-                    GreedyFinder find_tag(&tag_hit_pool);
+                    GreedyFinder find_tag(&tag_hit_pool_);
                     find_tag.FillTracks(&tag_tracks_);
         
 //Fit, by Genfit, Kalman filter/by Riemann fitting
@@ -574,22 +581,21 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Recoil tracker
-        Pool rec_hit_pool;
         if (IsValidHitSize(raw_rectrk2_hits))
         {
             if_raw_rec_hit_number = true;
 
 //Digitization
-            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, &rec_hit_pool, tracking::dRec);            
+            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, &rec_hit_pool_, tracking::dRec);            
 
-            if(rec_hit_pool.Size())
+            if(rec_hit_pool_.Size())
             {
                 if_reco_rec_hits = true;
 
                 if(if_raw_rec_hit_number && if_reco_rec_hits)
                 {
 //Finding, by pre-fitting
-                    GreedyFinder find_rec(&rec_hit_pool);
+                    GreedyFinder find_rec(&rec_hit_pool_);
                     find_rec.FillTracks(&rec_tracks_);
 
 //Fit, by Genfit, Kalman filter/by Riemann fitting

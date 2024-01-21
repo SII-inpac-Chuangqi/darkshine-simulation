@@ -21,12 +21,26 @@ private:
     using KeyGetter = std::function<Key(const Element&)>;
 
 public:
-    HitPool()  {pool_.reserve(7); structured_ = new Map();}
-    ~HitPool() {delete structured_; structured_ = nullptr;}
+    HitPool()  {this->Init();}
+    ~HitPool() {this->Clear();}
     HitPool(const Map&) = delete;
 
     Map* operator->()  {IsNull(); return structured_;}
     Map& operator*()   {IsNull(); return *structured_;}
+
+    void Init() {pool_.reserve(7); structured_ = new Map();}
+    void Clear()
+    {
+        delete structured_; structured_ = nullptr;
+        pool_.clear();
+    }
+    bool IsNull()
+    {
+        if(structured_) return false;
+
+        std::cerr << "[WARNING] ==> Empty map" << std::endl;
+        return true;
+    }
 
     size_t Size() const {return pool_.size();}
 
@@ -55,11 +69,11 @@ public:
     {
         if(IsNull()) return;
 
-        for(auto &[key, layer] : *structured_)
+        for(const auto &[key, layer] : *structured_)
         {
             std::cout << key << std::endl;
 
-            for(auto &hit : layer)
+            for(const auto &hit : layer)
             {
                 //std::cout << hit << std::endl;
                 std::cout << hit->GetX() << ",\t" << hit->GetY() << ",\t" << hit->GetZ() << std::endl;
@@ -73,14 +87,6 @@ private:
     Pool pool_;
     Map* structured_{nullptr};
     KeyGetter key_getter_;
-
-    bool IsNull()
-    {
-        if(structured_) return false;
-
-        std::cerr << "[WARNING] ==> Empty map" << std::endl;
-        return true;
-    }
 
     template <typename Arbitrary>
     bool IsSameKey(std::function<Arbitrary(const Element&)> &f)

@@ -15,7 +15,8 @@
 
 //................................................................................//
 //TRACKING
-#include "Algo/TrkHit.h"
+//#include "Algo/TrkHit.h"
+#include "Algo/TypeDef.h"
 #include "Algo/DTrack.h"
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Digitization.h"
@@ -153,6 +154,10 @@ private:
 //................................................................................//
 //Reconstructed
 //................................................................................//
+//We store hits here in the pools, so all tracks and vertices do not hold the memory
+    Pool tag_hit_pool_;
+    Pool rec_hit_pool_;
+
     std::vector<std::shared_ptr<DTrack>> tag_tracks_;
     std::vector<std::shared_ptr<DTrack>> rec_tracks_;
 
