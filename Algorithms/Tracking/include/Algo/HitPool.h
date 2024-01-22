@@ -17,7 +17,7 @@ class HitPool
 {
 private:
     using Pool = std::vector<std::shared_ptr<Element>>;
-    using Map = std::map<Key, std::vector<std::shared_ptr<Element>>>;
+    using Map = std::map<Key, std::vector<Element*>>;
     using KeyGetter = std::function<Key(const Element&)>;
 
 public:
@@ -106,8 +106,8 @@ private:
 
         Key key = key_getter_(*pool_.back());
 
-        if(!structured_->insert(std::pair<Key, std::vector<std::shared_ptr<Element>>>(key, {pool_.back()})).second)
-            structured_->at(key).push_back(pool_.back());
+        if(!structured_->insert(std::pair<Key, std::vector<Element*>>(key, {pool_.back().get()})).second)
+            structured_->at(key).push_back(pool_.back().get());
     }
 
 };

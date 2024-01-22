@@ -77,14 +77,14 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
         std::vector<int>    *strip_nos = (detector == tracking::dTag) ? &strip_no_tag_ : &strip_no_rec_;
         std::vector<double> *angles    = (detector == tracking::dTag) ? &angles_tag_   : &angles_rec_;
  
-        TrkHitPVec clustered_trk1_hits;
-        TrkHitPVec clustered_trk2_hits;
+        TrkHitSPVec clustered_trk1_hits;
+        TrkHitSPVec clustered_trk2_hits;
         for(const auto &hit : trk1_hits) clustered_trk1_hits.push_back(std::make_shared<TrkHit>(hit));
         for(const auto &hit : trk2_hits) clustered_trk2_hits.push_back(std::make_shared<TrkHit>(hit));
 
-        TrkHitPVecMap map1;
+        TrkHitSPVecMap map1;
         this->InitHitMap(clustered_trk1_hits, map1);
-        TrkHitPVecMap map2;
+        TrkHitSPVecMap map2;
         this->InitHitMap(clustered_trk2_hits, map2);
    
         for(auto layer1 : map1)
@@ -140,15 +140,15 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
     //pool->Print();
 }
 
-void Digitization::InitHitMap(const TrkHitPVec &trk_hits, TrkHitPVecMap &trk_hit_map)
+void Digitization::InitHitMap(const TrkHitSPVec &trk_hits, TrkHitSPVecMap &trk_hit_map)
 {
-    TrkHitPVecMap unclustered_trk_hit_map;
+    TrkHitSPVecMap unclustered_trk_hit_map;
     for(const auto &trk_hit : trk_hits)
         this->InsertHitMap(trk_hit, unclustered_trk_hit_map);
 
     for(auto &layer : unclustered_trk_hit_map)
     {
-        Clusterer<TrkHitP> clusterer;
+        Clusterer<TrkHitSP> clusterer;
         clusterer.SetClusterWidth(cluster_width_);
 
         for(auto &hit : layer.second)
@@ -163,7 +163,7 @@ void Digitization::InitHitMap(const TrkHitPVec &trk_hits, TrkHitPVecMap &trk_hit
         //clusterer.ShowPoints();
         clusterer.FindClusters();
 
-        TrkHitPVec clustered_layer;
+        TrkHitSPVec clustered_layer;
         auto n_hits = clusterer.GetNClusters();
         for(size_t i = 0; i < n_hits; i++)
         {
@@ -172,16 +172,16 @@ void Digitization::InitHitMap(const TrkHitPVec &trk_hits, TrkHitPVecMap &trk_hit
             clustered_layer.back()->SetZ(layer.second.at(0)->GetZ());
             clustered_layer.back()->SetCellIdZ(layer.first);
         }
-        trk_hit_map.insert(std::pair<int, TrkHitPVec>(layer.first, clustered_layer));
+        trk_hit_map.insert(std::pair<int, TrkHitSPVec>(layer.first, clustered_layer));
     }
     //std::cout << std::endl;
 }
 
-void Digitization::InsertHitMap(const TrkHitP &trk_hit, TrkHitPVecMap &trk_hit_map)
+void Digitization::InsertHitMap(const TrkHitSP &trk_hit, TrkHitSPVecMap &trk_hit_map)
 {
     auto it_search_map = trk_hit_map.find(trk_hit->GetCellIdZ());
     if(it_search_map != trk_hit_map.end())
         it_search_map->second.emplace_back(trk_hit);
     else
-        trk_hit_map.insert(std::pair<int, TrkHitPVec>(trk_hit->GetCellIdZ(), {trk_hit}));
+        trk_hit_map.insert(std::pair<int, TrkHitSPVec>(trk_hit->GetCellIdZ(), {trk_hit}));
 }

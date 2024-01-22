@@ -53,8 +53,8 @@ public:
 
 private:
 
-    void InitHitMap(const TrkHitPVec &trk_hits, TrkHitPVecMap &trk_hit_map);
-    void InsertHitMap(const TrkHitP &trk_hit, TrkHitPVecMap &trk_hit_map);
+    void InitHitMap(const TrkHitSPVec &trk_hits, TrkHitSPVecMap &trk_hit_map);
+    void InsertHitMap(const TrkHitSP &trk_hit, TrkHitSPVecMap &trk_hit_map);
 
     bool if_strip_{true};
     bool if_smear_{true};
