@@ -187,6 +187,15 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("RecTrk2_track_preR", &RecTrk2_track_preR);
     }
 
+    //regist some recoil angles, which got by reconstructed recoil x and z.
+    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_21", &RecTrk2_track_theta_21);
+    EvtWrt->RegisterOutVariable("Rec_ThetaEnd", &Rec_ThetaEnd);
+    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_43", &RecTrk2_track_theta_43);
+    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_54", &RecTrk2_track_theta_54);
+    EvtWrt->RegisterOutVariable("RecTrk2_track_theta_65", &RecTrk2_track_theta_65);
+    EvtWrt->RegisterOutVariable("Rec_zNo", &Rec_zNo);
+    EvtWrt->RegisterOutVariable("RecTrk2_pp_fixed_by_theta", &RecTrk2_pp_fixed_by_theta);
+
     EvtWrt->RegisterOutVariable("RecTrk2_vertex_z", &RecTrk2_vertex_z);
 
     EvtWrt->RegisterOutVariable("ECal_seed_x_truth",  &ECal_seed_x_truth);
@@ -296,6 +305,16 @@ void TrackingProcessor::InitEvt() {
 
     rec_vertexes_   .clear(); rec_vertexes_   .shrink_to_fit();
     RecTrk2_vertex_z.clear(); RecTrk2_vertex_z.shrink_to_fit();
+
+    //Initialize some variables, which using for theta-momentum maps
+    std::vector<double>().swap(RecTrk2_track_theta_21);
+    std::vector<double>().swap(RecTrk2_track_theta_43);
+    std::vector<double>().swap(RecTrk2_track_theta_54);
+    std::vector<double>().swap(RecTrk2_track_theta_65);
+    std::vector<double>().swap(RecTrk2_pp_fixed_by_theta);
+    std::vector<int>().swap(Rec_zNo);
+    std::vector<double>().swap(Rec_ThetaEnd);
+
 }
 
 void TrackingProcessor::FillTruth(DTruth *truth_info,
@@ -698,6 +717,77 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Write truth
         this->FillTruth(evt->getTruthInfo(), initial_steps, raw_tagtrk2_hits, raw_rectrk2_hits);
+
+// Use number of trackers hit by particle for calculating angles of some track
+        if (RecTrk2_track_z.size() > 0 && RecTrk2_pp_truth_fin) {
+            for(int i = 0; i < RecTrk2_track_z.size(); ++i ){
+                //number of trackers hit by particles
+                int iRec_zNo = 0;
+                iRec_zNo = RecTrk2_track_z[i].size();
+                Rec_zNo.push_back( iRec_zNo );
+                /*
+                 *  Meaning of "RecTrk2_track_theta_21" (unit in rad):
+                 *  Use the first and second hit-coordinates (x and z), called (z[1], x[1]) and (z[2], x[2]), then
+                 *                                                     x[2] - x[1]
+                 *  get the tangent:  Tan(RecTrk2_track_theta_21) == ————————————————
+                 *                                                     z[2] - z[1]
+                 *  Similar for other angles:
+                 *                                                        x[i] - x[j]
+                 *  Tan(RecTrk2_track_theta_ij) == Tan(Rec_ThetaEnd) == ————————————————
+                 *                                                        z[i] - z[j]
+                 *  i is the last piece of recoil tracker hit by some particle.
+                 */
+                RecTrk2_track_theta_21.push_back(
+                        TMath::ATan(
+                                (RecTrk2_track_x[i][iRec_zNo - 2] - RecTrk2_track_x[i][iRec_zNo - 1]) /
+                                (RecTrk2_track_z[i][iRec_zNo - 2] - RecTrk2_track_z[i][iRec_zNo - 1])     )
+                );
+                Rec_ThetaEnd.push_back(
+                        TMath::ATan(
+                                (RecTrk2_track_x[i][0] - RecTrk2_track_x[i][1]) /
+                                (RecTrk2_track_z[i][0] - RecTrk2_track_z[i][1])   )
+                );
+
+                //Select the last piece of recoil tracker
+                if (iRec_zNo == 6) {
+                    RecTrk2_track_theta_65 = Rec_ThetaEnd;
+                    if (RecTrk2_pp_truth_fin < 800.0) {
+                        //This is the momentum reconstructed by theta-momentum maps, when reconstructing some lower momentum events.
+                        //Delta theta is useful for lower momentum reconstruction, which seems like:
+                        // RecTrk2_track_theta_65 - RecTrk2_track_theta_21
+                        //The following is an empirical formula：
+                        RecTrk2_pp_fixed_by_theta.push_back(
+                                std::fabs( 11.52 - 47.0838 / (RecTrk2_track_theta_65[i] - RecTrk2_track_theta_21[i]) )
+                        );
+                    }else{  //for events with momentum more than 800 MeV, the scaled momentum is the same as Junhua fixed before.
+                        RecTrk2_pp_fixed_by_theta = RecTrk2_fixed_pp;
+                    }
+                }
+                if (iRec_zNo == 5) {
+                    RecTrk2_track_theta_54 = Rec_ThetaEnd;
+                    if (RecTrk2_pp_truth_fin < 800.0) {
+                        RecTrk2_pp_fixed_by_theta.push_back(
+                                std::fabs( 3812.42 - 0.0000720903 * TMath::Exp(
+                                        17.7819 + 0.00632341 / (RecTrk2_track_theta_54[i] - RecTrk2_track_theta_21[i])  )  )
+                        );
+                    }else{  //for events with momentum more than 800 MeV, the scaled momentum is the same as Junhua fixed before.
+                        RecTrk2_pp_fixed_by_theta = RecTrk2_fixed_pp;
+                    }
+                }
+                if (iRec_zNo == 4) {
+                    RecTrk2_track_theta_43 = Rec_ThetaEnd;
+                    if (RecTrk2_pp_truth_fin < 800.0) {
+                        RecTrk2_pp_fixed_by_theta.push_back(
+                                std::fabs( -11.6262 + TMath::Exp(
+                                        3.11256 - 0.290107 / (RecTrk2_track_theta_43[i] - RecTrk2_track_theta_21[i])
+                                )   )
+                        );
+                    }else{  //for events with momentum more than 800 MeV, the scaled momentum is the same as Junhua fixed before.
+                        RecTrk2_pp_fixed_by_theta = RecTrk2_fixed_pp;
+                    }
+                }
+            }
+        }
     }
 }
 

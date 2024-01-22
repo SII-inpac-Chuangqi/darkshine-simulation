@@ -175,7 +175,7 @@ void TruthParticleProcessor::FillTruth(TTree *outputTree,
 
             //Tagging Selection
             if( taggingCondition) {
-                px.push_back(0.0f);
+                px.push_back(0.0001f);
                 py.push_back(0.0f);
                 pz.push_back(static_cast<float>(iptl->getPz()/1000.0f));
                 vx.push_back(iptl->getVertexX());
@@ -185,7 +185,7 @@ void TruthParticleProcessor::FillTruth(TTree *outputTree,
                 //truth momentum
                 p.push_back(static_cast<float>(iptl->getPz()/1000.0f));
                 //transverse momentum
-                pt.push_back(0.0f);
+                pt.push_back(0.0001f);
                 phi.push_back( 0.0f );
                 eta.push_back( 6.0f );
 
