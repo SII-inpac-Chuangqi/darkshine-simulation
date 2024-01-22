@@ -40,6 +40,7 @@ void EventReader::RegisterOutput() {
 
     // Initialized Processed Number
     eventProcessedNumber = 0;
+    //Written by Junhua ZHANG to check code RIGHT!
 }
 
 
