@@ -17,8 +17,6 @@
 #include "Algo/TrackingProcessor.h"
 #include "Algo/CutFlowAnalysis.h"
 #include "Algo/GNN_DataExporter.h"
-#include "Algo/TruthHitProcessor.h"
-#include "Algo/TruthParticleProcessor.h"
 
 #ifdef BUILD_HDF5
 #include "Algo/ECAL_ML_IO.h"
@@ -82,8 +80,6 @@ void ControlManager::run() {
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<RecHCAL>(new RecHCAL("RecHCAL", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<CutFlowAnalysis>(new CutFlowAnalysis("CutFlowAnalysis", EvtWrt)));
-    algo->RegisterAnaProcessor(shared_ptr<TruthHitProcessor>(new TruthHitProcessor("TruthHitTaker", EvtWrt)));
-    algo->RegisterAnaProcessor(shared_ptr<TruthParticleProcessor>(new TruthParticleProcessor("TruthParticleTaker", EvtWrt)));
 
     if (ConfMgr) {
         ConfMgr->ReadAlgoList();
