@@ -120,9 +120,9 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
                     if(!(std::abs(y1) < 0.5*layer_length))
                         continue;
 
-                    TrkHit hit;
-                    hit.SetCellIdZ(hit1->GetCellIdZ());
-                    pool->AddHit(hit);
+                    auto hit = std::make_shared<TrkHit>();
+                    hit->SetCellIdZ(hit1->GetCellIdZ());
+                    pool->AddHit(std::move(hit));
                     pool->Back()->SetX(x1);
                     pool->Back()->SetZ(hit1->GetZ());
                     pool->Back()->SetY(y1);

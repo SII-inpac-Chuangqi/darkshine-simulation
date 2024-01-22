@@ -56,7 +56,14 @@ public:
             key_getter_ = f;
     }
 
-    void AddHit(Element element)
+    void AddHit(std::shared_ptr<Element> &&element)
+    {
+        pool_.emplace_back(element);
+
+        this->InsertMap();
+    }
+
+    void AddHit(const Element &element)
     {
         pool_.emplace_back(std::make_shared<Element>(element));
 
@@ -64,6 +71,17 @@ public:
     }
 
     std::shared_ptr<Element>& Back() {return pool_.back();}
+
+    std::shared_ptr<Element>& Retrieve(Element *e_p)
+    {
+        for(const auto &e : pool_)
+        {
+            if(e.get() == e_p)
+                return  e;
+        }
+
+        return nullptr;
+    }
 
     void Print()
     {
