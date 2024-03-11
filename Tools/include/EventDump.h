@@ -10,7 +10,7 @@
 class EventDump {
 public:
 
-    EventDump() : file_(nullptr), tree_(nullptr) { this->Help(); }
+    EventDump() = delete;
 
     EventDump(TString file_name, TString tree_name);
 
@@ -18,7 +18,7 @@ public:
 
     void Dump(long long skip_number = -1, long long event_number = -1);
 
-    void Help();
+    static void Help();
 
 private:
 
