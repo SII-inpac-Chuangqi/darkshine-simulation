@@ -13,13 +13,17 @@ int main(int argc, char **argv) {
     long long skip_number = -1;
     long long event_number = -1;
 
-    for(int i = 1; i < argc - 1; i++)
+    for(int i = 1; i < argc; i++)
     {
-        if ((TString) argv[1] == (TString) "-h") {
-            EventDump dump;
+        if ((TString) argv[i] == (TString) "-h")
+        {
+            EventDump::Help();
             return -1;
         }
+    }
 
+    for(int i = 1; i < argc - 1; i++)
+    {
         if     ((TString) argv[i] == (TString) "-f")
             file_name = argv[i + 1];
         else if((TString) argv[i] == (TString) "-t")
