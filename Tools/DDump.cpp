@@ -6,39 +6,20 @@
 
 #include "EventDump.h"
 #include "Object/DEvent.h"
+#include "Utility/parser.h"
 
 int main(int argc, char **argv) {
     std::string file_name = "dp_simu.root";
     std::string tree_name = "Dark_Photon";
-    long long skip_number = -1;
-    long long event_number = -1;
+    long skip_number = -1;
+    long event_number = -1;
 
-    for(int i = 1; i < argc; i++)
-    {
-        if ((TString) argv[i] == (TString) "-h")
-        {
-            EventDump::Help();
-            return -1;
-        }
-    }
-
-    for(int i = 1; i < argc - 1; i++)
-    {
-        if     ((TString) argv[i] == (TString) "-f")
-            file_name = argv[i + 1];
-        else if((TString) argv[i] == (TString) "-t")
-            tree_name = argv[i + 1];
-        else if((TString) argv[i] == (TString) "-j")
-        {
-            TString temp(argv[i + 1]);
-            if(temp.IsDec()) skip_number = temp.Atoll();
-        }
-        else if((TString) argv[i] == (TString) "-e")
-        {
-            TString temp(argv[i + 1]);
-            if(temp.IsDec()) event_number = temp.Atoll();
-        }
-    }
+    arg_parser::Parser parser;
+    parser.Add("f,file", file_name, "dp_simu.root", "name of the file to dump");
+    parser.Add("t,tree", tree_name, "Dark_Photon",  "name of the tree storing DEvents");
+    parser.Add("s,skip", skip_number, -1,  "optional: not set or < 0, dump all events; >= 0, skip events from 0 to skip number");
+    parser.Add("e,event", event_number, -1, "optional: activated if skip number >= 0; not set or < 0, dump all events unskipped; >= 0, dump events from skip number to skip number + event number");
+    parser.Parse(argc, argv);
 
     EventDump dump(file_name, tree_name);
     dump.Dump(skip_number, event_number);
