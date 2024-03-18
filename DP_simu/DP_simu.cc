@@ -39,6 +39,7 @@
 #include "Control/Control.h"
 #include "Bias_Filter/FilterManager.hh"
 #include "Utility/TruthManager.h"
+#include "Utility/parser.h"
 
 #include "G4StepLimiterPhysics.hh"  // Geant4.10
 #include "G4GenericBiasingPhysics.hh"
