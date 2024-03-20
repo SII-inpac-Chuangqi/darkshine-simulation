@@ -39,7 +39,7 @@ std::string StrTolower(std::string str)
     return str;
 }
 
-template<typename T> T Convert(const std::string &value);
+template<typename T> T Convert(const std::string&);
 template<> std::string Convert(const std::string &value) { return value; }
 template<> int Convert(const std::string &value) { return std::stoi(value); }
 template<> long Convert(const std::string &value) { return std::stol(value); }
@@ -92,6 +92,8 @@ private:
     T *t_ = nullptr;
 
     T* GetP() const {return t_;}
+
+    friend class Entry;
 };
 
 struct Entry
@@ -117,6 +119,8 @@ public:
     {
         data_ = new ParserType<T>(data);
         default_data_ = new ParserType<T>(default_data, true);
+
+        *(dynamic_cast<ParserType<T>*>(data_)->GetP()) = default_data;
     }
 
     void Convert(const std::string &value) { data_->Convert(value); }
@@ -125,12 +129,16 @@ public:
     template <typename T> T GetDefault() const { return dynamic_cast<ParserType<T>*>(default_data_)->Get(); }
 
     bool IfNoArg() const {return if_no_arg_;}
+    void InCommmandLine(bool if_set_from_arg) {if_in_command_line_ = if_set_from_arg;}
+    bool IfInCommmandLine() const {return if_in_command_line_;}
 
     std::string GetKey() const {return key_;}
     std::string GetShortKey() const {return short_key_;}
     std::string GetHelp() const {return help_;}
 
 private:
+    bool if_in_command_line_{false};
+
     const bool if_no_arg_;
     const std::string key_;
     const std::string short_key_;
@@ -157,7 +165,7 @@ public:
             return;
         }
 
-        T1 default_t1 = default_t2;
+        T1 default_t1(default_t2);
 
         auto [key, short_key] = GetKeyAndShort(keys_str);
         if( !params_.insert({key, std::make_shared<Entry>(key, short_key, t, default_t1, false, help)}).second )
@@ -194,6 +202,17 @@ public:
         return params_.at(key)->GetDefault<T>();
     }
 
+    bool IfInCommmandLine(const std::string &key) const
+    {
+        if( !params_.count(key) )
+        {
+            std::cerr << "[WARNING] ==> Key \033[31m" << key << "\033[0m does not exist" << std::endl;
+            return false;
+        }
+
+        return params_.at(key)->IfInCommmandLine();
+    }
+
     void Parse(int argc, char* argv[])
     {
         for(int i = 1; i < argc; i++)
@@ -218,6 +237,7 @@ public:
                 {
                     if(param->IfNoArg()) param->Convert(std::to_string(!param->GetDefault<bool>()));
                     else                 param->Convert(argv[i + 1]);
+                    param->InCommmandLine(true);
                 }
             }
         }
@@ -225,17 +245,17 @@ public:
 
     void Help()
     {
-        auto GetMax = [&]() -> int 
-                      {
-                          int max_shift = 0;
-                          for(const auto &[key, param] : params_)
-                          {
-                              int shift = param->GetKey().size() + param->GetShortKey().size();
-                              if( shift > max_shift ) max_shift = shift;
-                          }
+        auto GetMaxShift = [&]() -> int 
+                           {
+                               int max_shift = 0;
+                               for(const auto &[key, param] : params_)
+                               {
+                                   int shift = param->GetKey().size() + param->GetShortKey().size();
+                                   if( shift > max_shift ) max_shift = shift;
+                               }
 
-                          return max_shift > 8 ? max_shift + 9 : 17;
-                      };
+                               return max_shift > 8 ? max_shift + 9 : 17;
+                           };
 
         auto GetKeyTokenStr = [&](const std::string &key, const std::string &short_key, const std::string &split) -> std::string
                               {
@@ -243,7 +263,7 @@ public:
                                          ( short_key.size() && key.size() != 1 ? split + "-" + short_key : "");
                               };
 
-        auto max_shift = GetMax();
+        auto max_shift = GetMaxShift();
 
         std::cout << "Usage:\t";
         for(const auto &[key, param] : params_)
