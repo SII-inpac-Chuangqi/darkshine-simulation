@@ -39,6 +39,7 @@
 #include "Control/Control.h"
 #include "Bias_Filter/FilterManager.hh"
 #include "Utility/TruthManager.h"
+#include "Utility/parser.h"
 
 #include "G4StepLimiterPhysics.hh"  // Geant4.10
 #include "G4GenericBiasingPhysics.hh"
@@ -48,7 +49,6 @@
 #include "DarkPhysics/DarkMatterPhysics.hh"
 #include "G4OpticalPhysics.hh"
 #include "Animation/AnimationData.h"
-#include "argparse/argparse.hpp"
 
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
@@ -89,31 +89,6 @@ namespace {
         cerr << "DSIMU " << "v1.5.5" << endl;
 #endif
     }
-
-    void PrintUsage() {
-        PrintIntroduction();
-        if_introduction = false;
-        PrintVersion();
-
-        G4cerr << G4endl;
-        G4cerr << " Usage: " << G4endl;
-        G4cerr << " DSimu [-y default.yaml] [-m macro ] [-o OpticalMacro]" << G4endl;
-        G4cerr << "   note: yaml file is necessary." << G4endl;
-        G4cerr << " -g --gui                        Gui Mode" << G4endl;
-        G4cerr << " -y --yaml default.yaml          Read YAML file" << G4endl;
-        G4cerr << " -v --version                    Print version" << G4endl;
-        G4cerr << "\n The following arguments overwrite the YAML settings." << G4endl;
-        G4cerr << " -s --seed 42                    Set seed" << G4endl;
-        G4cerr << "    --save_geometry 0            Set save_geometry" << G4endl;
-        G4cerr << " -f --outfile_Name dp_simu.root   Set output filename" << G4endl;
-        G4cerr
-                << " -n --Run_Number 0               Set the run number for this job (EventID = id + beam_on * Run_Number)"
-                << G4endl;
-        G4cerr << " -b --beam_on 1                  Set beam-on number" << G4endl;
-        G4cerr << "**************************************************************" << G4endl;
-        G4cerr << G4endl;
-    }
-
 }
 
 int main(int argc, char **argv) {
@@ -132,47 +107,62 @@ int main(int argc, char **argv) {
 //-------------------------------------------------------------------------------
 // Evaluate Arguments
 
-    G4String macro;
-    G4String OpticalMacro;
-    G4String yamlFileName;
-
+    std::string macro;
+    std::string OpticalMacro;
+    std::string yamlFileName;
     bool gui_mode = false;
-    for (G4int i = 1; i < argc; i = i + 2) {
-        if (G4String(argv[i]) == "-g" || G4String(argv[i]) == "--gui") gui_mode = true;
-        else if (G4String(argv[i]) == "-m" || G4String(argv[i]) == "--macro") macro = argv[i + 1];
-        else if (G4String(argv[i]) == "-o" || G4String(argv[i]) == "--opticalMacro") OpticalMacro = argv[i + 1];
-        else if (G4String(argv[i]) == "-y" || G4String(argv[i]) == "--yaml") yamlFileName = argv[i + 1];
-        else if (G4String(argv[i]) == "-s" || G4String(argv[i]) == "--seed") {
-            dControl->read_yaml_random_seed = false;
-            dControl->random_seed = std::stol(argv[i + 1]);
-        } else if (G4String(argv[i]) == "--save_geometry") {
-            dControl->read_yaml_save_geometry = false;
-            dControl->save_geometry = std::stoi(argv[i + 1]);
-        } else if (G4String(argv[i]) == "-f" || G4String(argv[i]) == "--outfile_Name") {
-            dControl->read_yaml_outfile_Name = false;
-            dControl->outfile_Name = G4String(argv[i + 1]);
-        } else if (G4String(argv[i]) == "-n" || G4String(argv[i]) == "--Run_Number") {
-            dControl->read_yaml_Run_Number = false;
-            //dControl->Run_Number = *argv[i + 1] - '0';
-            dControl->Run_Number = std::stoi(argv[i + 1]);
-        } else if (G4String(argv[i]) == "-b" || G4String(argv[i]) == "--beam_on") {
-            dControl->read_yaml_BeamOnNumber = false;
-            //dControl->BeamOnNumber = *argv[i + 1] - '0';
-            dControl->BeamOnNumber = std::stoi(argv[i + 1]);
-        } else if (G4String(argv[i]) == "-h" || G4String(argv[i]) == "--help") {
-            PrintUsage();
-            return 1;
-        } else if (G4String(argv[i]) == "-v" || G4String(argv[i]) == "--version") {
-            PrintVersion();
-            return 1;
-        } else if (G4String(argv[i]) == "--animation") {
+    long random_seed;
+    bool save_geometry = true;
+    std::string outfile_Name;
+    int Run_Number;
+    int beam_on;
+    bool print_version = false;
+    bool if_animation = false;
+
+    arg_parser::Parser parser;
+    parser.Add("m,macro",        macro,        "");
+    parser.Add("o,opticalMacro", OpticalMacro, "Optical macro name");
+    parser.Add("y,yaml",         yamlFileName, "YAML file name");
+    parser.Add("s,seed",         random_seed,  "Random seed, if not set read from YAML");
+    parser.Add("f,outfile_Name", outfile_Name, "Output name, if not set read from YAML");
+    parser.Add("n,Run_Number",   Run_Number,   "Run number for this job (EventID = id + beam_on * Run_Number), if not set read from YAML");
+    parser.Add("b,beam_on",      beam_on,      "Beam on number, if not set read from YAML");
+    parser.AddFlag("g,gui",         gui_mode,      false, "GUI mode");
+    parser.AddFlag("save_geometry", save_geometry, true,  "Save Geometry, if not set read from YAML");
+    parser.AddFlag("v,version",     print_version, false, "Print version");
+    parser.AddFlag("a,animation",   if_animation,  false, "Store animation info for DDis");
+    parser.Parse(argc, argv);
+
+    if(print_version) {
+        PrintVersion();
+        return 0;
+    }
+
+    if(parser.IfInCommmandLine("seed")) {
+        dControl->read_yaml_random_seed = false;
+        dControl->random_seed = random_seed;
+    }
+    if(parser.IfInCommmandLine("save_geometry")) {
+        dControl->read_yaml_save_geometry = false;
+        dControl->save_geometry = save_geometry;
+    }
+    if(parser.IfInCommmandLine("outfile_Name")) {
+        dControl->read_yaml_outfile_Name = false;
+        dControl->outfile_Name = outfile_Name;
+    }
+    if(parser.IfInCommmandLine("Run_Number")) {
+        dControl->read_yaml_Run_Number = false;
+        dControl->Run_Number = Run_Number;
+    }
+    if(parser.IfInCommmandLine("beam_on")) {
+        dControl->read_yaml_BeamOnNumber = false;
+        dControl->BeamOnNumber = beam_on;
+    }
+
+    if (if_animation) {
             pAniData->setUseAni(true);
             G4cout << "[ Animation ]: Activated." << G4endl;
             pAniData->initialization();
-        } else {
-            PrintUsage();
-            //return 1;
-        }
     }
 
     if (if_introduction) PrintIntroduction();

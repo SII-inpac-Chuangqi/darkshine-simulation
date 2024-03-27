@@ -15,17 +15,17 @@ void EventDump::CheckFile() {
     if (!file_->IsOpen())
         exit(-1);
 
-    tree_ = file_->Get<TTree>(tree_name_);
+    tree_ = dynamic_cast<TTree*>(file_->Get(tree_name_));
     if (!tree_) {
-        std::cerr << "Error No tree " << tree_name_ << " found" << std::endl
-                  << "Error Please check the file:" << std::endl;
+        std::cerr << "[Error] ==> No tree " << tree_name_ << " found" << std::endl
+                  << "[Error] ==> Please check the file:" << std::endl;
         this->ListRecursive();
         exit(-1);
     }
 
     TString branch_name("DEvent");
     if (!tree_->FindBranch("DEvent")) {
-        std::cout << "Error No branch named DEvent found" << std::endl;
+        std::cout << "[Error] ==> No branch named DEvent found" << std::endl;
 
         int n_branch = tree_->GetNbranches();
         auto branch_list = tree_->GetListOfBranches();
@@ -77,7 +77,7 @@ void EventDump::Dump(long long skip_number, long long event_number) {
 
     if (end - start >= 100) {
         TString confirm;
-        std::cout << "[Warning] ==> Requested more than 100 events, are you sure? [Y/y] ";
+        std::cout << "[Warning] ==> Requested more than 100 events, are you sure? [y/n] ";
         std::cin  >> confirm;
         std::cout << " " << std::endl;
         confirm.ToLower();

@@ -7,6 +7,7 @@
 
 #include "Core/AlgoManager.h"
 #include "Core/ControlManager.h"
+#include "Utility/parser.h"
 
 using namespace std;
 
@@ -33,33 +34,21 @@ namespace {
         cerr << "DAna " << "v1.5.5" << endl;
 #endif
     }
-
-    void PrintUsage() {
-        PrintIntroduction();
-        if_introduction = false;
-
-        cerr << " Usage: " << endl;
-        cerr << " DAna [ -c config ] [ -x ]" << endl;
-        cerr << "   note: -x option will print all avaliable AnaProcessors" << endl;
-        cerr << endl;
-    }
 }
 
 int main(int argc, char **argv) {
-    if (argc > 3 || argc < 2) {
-        PrintUsage();
-        return 1;
-    }
 
-    bool PrintUsage = false;
+    bool print_usage = false;
+    bool print_version = false;
     std::string configfile;
-    if (std::string(argv[1]) == "-c") configfile = argv[2];
-    else if (std::string(argv[1]) == "-x") {
-        PrintUsage = true;
-    } else if (std::string(argv[1]) == "-v") {
-        PrintVersion();
-        return EXIT_SUCCESS;
-    } else return -1;
+
+    arg_parser::Parser parser;
+    parser.Add("c,config", configfile, "config.txt", "name of the config file");
+    parser.AddFlag("x", print_usage, false, "if print usage");
+    parser.AddFlag("v,version", print_version, false, "if print version");
+    parser.Parse(argc, argv);
+
+    if(print_version) { PrintVersion(); exit(EXIT_SUCCESS); }
 
     if(if_introduction) PrintIntroduction();
     PrintVersion();
@@ -67,7 +56,7 @@ int main(int argc, char **argv) {
     AnaData::CreateInstance();
 
     auto control = new ControlManager();
-    control->setOnlyPrintUsage(PrintUsage);
+    control->setOnlyPrintUsage(print_usage);
 
     auto evtrdr = new EventReader();
     control->setEvtReader(evtrdr);
@@ -75,7 +64,7 @@ int main(int argc, char **argv) {
     auto algo = new AlgoManager();
     control->setAlgo(algo);
 
-    if (!PrintUsage) control->setConfMgr(new ConfigManager(configfile, algo));
+    if (!print_usage) control->setConfMgr(new ConfigManager(configfile, algo));
     control->run();
 
     delete control;
