@@ -45,8 +45,8 @@ public:
     void SetId(int newId) {setId(newId);}
     void SetCellIdZ(int newIdZ) {setCellIdZ(newIdZ);}
 
-    void SetX(double newX) {setX(newX);}
-    void SetY(double newY) {setY(newY);}
+    void SetX(double newX) {setX(newX); u_ = X;}
+    void SetY(double newY) {setY(newY); v_ = Y;}
     void SetZ(double newZ) {setZ(newZ);}
     void SetE(double newE) {setE(newE);}
 

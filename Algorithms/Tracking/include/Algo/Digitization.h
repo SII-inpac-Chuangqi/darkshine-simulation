@@ -26,7 +26,7 @@
 
 namespace tracking
 {
-    enum detector {tag = 1, rec = 2};
+    enum detector {dTag = 1, dRec = 2};
 }
 
 class Digitization
@@ -42,7 +42,8 @@ public:
     void ReadTrackerInfo(bool if_strip);
 //................................................................................//
 //Separate tracker hits into vectors by layers
-    void Layering(const std::vector<TrkHit> &trk1_hits, const std::vector<TrkHit> &trk2_hits, TrkHitPVecMap &recoTrkHitMap,
+    void Layering(const std::vector<TrkHit> &trk1_hits, const std::vector<TrkHit> &trk2_hits,
+                  Pool *pool,
                   int detector);
 //................................................................................//
 //Set strip cluster width
@@ -52,8 +53,8 @@ public:
 
 private:
 
-    void InitHitMap(const TrkHitPVec &trk_hits, TrkHitPVecMap &trk_hit_map);
-    void InsertHitMap(const TrkHitP &trk_hit, TrkHitPVecMap &trk_hit_map);
+    void InitHitMap(const TrkHitSPVec &trk_hits, TrkHitSPVecMap &trk_hit_map);
+    void InsertHitMap(const TrkHitSP &trk_hit, TrkHitSPVecMap &trk_hit_map);
 
     bool if_strip_{true};
     bool if_smear_{true};

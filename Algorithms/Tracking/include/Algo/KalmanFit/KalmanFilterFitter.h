@@ -17,7 +17,7 @@
 
 //................................................................................//
 //GenFit
-#include "GenFitInclude.h"
+#include "KalmanFit/GenFitInclude.h"
 
 //................................................................................//
 //Framework
@@ -34,7 +34,7 @@ public:
 //................................................................................//
 //Constructor
     KalmanFilterFitter() {}
-    KalmanFilterFitter(const TrkHitPVec &track, std::initializer_list<double>, int verbose = 0);
+    KalmanFilterFitter(const TrkHitSPVec &track, std::initializer_list<double>, int verbose = 0);
     ~KalmanFilterFitter()
     {
         //delete measurement; measurement = nullptr;
@@ -47,13 +47,13 @@ public:
 
 //................................................................................//
 //Processor
-    virtual void Init(const TrkHitPVec &track, std::initializer_list<double>) override;
-    virtual void Fit (const TrkHitPVec &track, std::initializer_list<double>) override;
-    virtual void Fill(const TrkHitPVec &track, std::initializer_list<double>) override;
+    virtual void Init(const TrkHitSPVec &track, std::initializer_list<double>) override;
+    virtual void Fit (const TrkHitSPVec &track, std::initializer_list<double>) override;
+    virtual void Fill(const TrkHitSPVec &track, std::initializer_list<double>) override;
 
 //................................................................................//
 //Get
-    //int GetSign(const TrkHitPVec &track);
+    //int GetSign(const TrkHitSPVec &track);
     virtual std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir = tracking::dX);
 
 private:

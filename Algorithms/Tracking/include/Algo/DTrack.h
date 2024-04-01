@@ -21,8 +21,7 @@
 //................................................................................//
 //Tracking
 #include "Algo/TypeDef.h"
-#include "Algo/KalmanFilterFitter.h"
-#include "Algo/RiemannFit/RiemannFitHelper.h"
+#include "Algo/Fitter.h"
 
 class DVertex;
 
@@ -40,7 +39,7 @@ class DTrack
 public:
 
     DTrack() = default;
-    DTrack(const TrkHitPVec &newHits,
+    DTrack(const TrkHitSPVec &newHits,
            double newPreR, 
            double newPreXc,
            double newPreYc);
@@ -80,8 +79,8 @@ public:
     int GetInitCellIdZ() const;
 
     int GetSize() const {return hits_.size();}
-    TrkHitP At(int i) {return hits_.at(i);}
-    TrkHitP AtCellIdZ(int i);
+    TrkHitSP At(int i) {return hits_.at(i);}
+    TrkHitSP AtCellIdZ(int i);
     double GetQuality() const {return quality_;}
 
     double GetNdf() const {return ndf_;}
@@ -173,7 +172,7 @@ private:
  
 //................................................................................//
 //Hits collection
-    TrkHitPVec hits_;
+    TrkHitSPVec hits_;
 
 //................................................................................//
 //Link to vertex

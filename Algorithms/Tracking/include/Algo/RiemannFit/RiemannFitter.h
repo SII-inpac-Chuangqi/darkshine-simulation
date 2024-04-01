@@ -6,6 +6,8 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <functional>
+#include <utility>
 
 //................................................................................//
 //ROOT
@@ -28,7 +30,7 @@ public:
 //................................................................................//
 //Constructor
     RiemannFitter() {}
-    RiemannFitter(const TrkHitPVec &track, std::initializer_list<double>);
+    RiemannFitter(const TrkHitSPVec &track, std::initializer_list<double>);
     ~RiemannFitter() {};
 
     RiemannFitter(const RiemannFitter&) = delete;
@@ -36,15 +38,15 @@ public:
 
 //................................................................................//
 //Processor
-    virtual void Init(const TrkHitPVec &track, std::initializer_list<double>) override;
-    virtual void Fit (const TrkHitPVec &track, std::initializer_list<double>) override;
-    virtual void Fill(const TrkHitPVec &track, std::initializer_list<double>) override;
+    virtual void Init(const TrkHitSPVec &track, std::initializer_list<double>) override;
+    virtual void Fit (const TrkHitSPVec &track, std::initializer_list<double>) override;
+    virtual void Fill(const TrkHitSPVec &track, std::initializer_list<double>) override;
 
 //................................................................................//
 //Getter
 //................................................................................//
 //Estimate theta(angle between pT and magnet) from track measureements
-    double GetTheta(const TrkHitPVec &track);
+    double GetTheta(const TrkHitSPVec &track);
 
 //................................................................................//
 //Get Corrections from inhomogeneous magnet
@@ -61,7 +63,7 @@ private:
 //
 // s = u*u + v*v
 //
-    TMatrixD GetCartCoo(const TrkHitPVec &track);
+    TMatrixD GetCartCoo(const TrkHitSPVec &track);
 
 //................................................................................//
 //Get hit measurements projected on the paraboloid surface in polar coordinates
@@ -73,14 +75,33 @@ private:
 // r = sqrt(u*u + v*v)
 // φ = atan(v, u)
 //
-    TMatrixD GetPolarCoo(const TrkHitPVec &track);
+    TMatrixD GetPolarCoo(const TrkHitSPVec &track);
 
 //................................................................................//
 //Get multiple scattering covariance matrix element
 //Multiple scattering variance function MultipleScatteringError from fit helper RiemannFitHelper::GetMultipleScatteringError
+    template <typename ... FArgs, typename ... Args>
     double GetVradmsIJ(const TMatrixD &polar_coo, int i, int j,
-                       const double &p, // momentum, MeV
-                       double (*MultipleScatteringError)(const double &p));
+                       std::function<double(FArgs...)> error_func,
+                       Args && ... error_para)
+    {
+        double sigma_ms = error_func(std::forward<Args>(error_para)...);
+    
+        double v_radms_i_j = 0.;
+        double ii = 0., jj = 0.;
+        const double *element = polar_coo.GetMatrixArray();
+        ii = *(element + i);
+        jj = *(element + j);
+    
+        int k_max = (i < j) ? i : j;
+        for(int k = 0; k < k_max; k++)
+        {
+            double kk = *(element + k);
+            v_radms_i_j += (ii - kk)*(jj - kk)*sigma_ms*sigma_ms/sin(pre_theta_)/sin(pre_theta_);
+        }
+    
+        return v_radms_i_j;
+    }
 
 //................................................................................//
 //Get multiple scattering covariance matrix
@@ -114,11 +135,11 @@ private:
 
 //................................................................................//
 //Get Jacobian matrix from Cartesian to polar coordinate
-    TMatrixD GetJ1(const TrkHitPVec &track);
+    TMatrixD GetJ1(const TrkHitSPVec &track);
 
 //................................................................................//
 //Get Jacobian matrix from R-Φ to RΦ-R
-    TMatrixD GetJ2(const TrkHitPVec &track);
+    TMatrixD GetJ2(const TrkHitSPVec &track);
 
 //................................................................................//
 //Get covariance matrix of measurement in RΦ-R coordinate
@@ -152,9 +173,9 @@ private:
 
 //................................................................................//
 //Get Corrections from inhomogeneous magnet 
-    std::vector<double> GetDeltax(const TrkHitPVec &track);
+    std::vector<double> GetDeltax(const TrkHitSPVec &track);
 //Get covariance matrix of delta x in Cartesian coordinates
-    TMatrixD GetVcartx(const TrkHitPVec &track);
+    TMatrixD GetVcartx(const TrkHitSPVec &track);
 
 //................................................................................//
 //Get covariance matrix of delta x in RΦ-R coordinate
