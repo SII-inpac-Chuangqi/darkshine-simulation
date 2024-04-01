@@ -43,14 +43,14 @@ public:
 
 //................................................................................//
 //Processor
-    virtual void Init(const TrkHitPVec&, std::initializer_list<double>) {}
-    virtual void Fit (const TrkHitPVec&, std::initializer_list<double>) {}
-    virtual void Fill(const TrkHitPVec&, std::initializer_list<double>) {}
+    virtual void Init(const TrkHitSPVec&, std::initializer_list<double>) {}
+    virtual void Fit (const TrkHitSPVec&, std::initializer_list<double>) {}
+    virtual void Fill(const TrkHitSPVec&, std::initializer_list<double>) {}
 
 //................................................................................//
 //Get
     virtual int    GetVerbose() const {return verbose_;}
-    virtual int    GetSign(const TrkHitPVec &track);
+    virtual int    GetSign(const TrkHitSPVec &track);
     virtual double GetPx() const {return px;}
     virtual double GetPy() const {return py;}
     virtual double GetPz() const {return pz;}

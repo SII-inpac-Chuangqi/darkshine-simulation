@@ -68,7 +68,7 @@ private:
         {
             if(dim_ != point.dim_)
             {
-                std::cerr << "[WARNING] Point dimensions don't converge, " << point.dim_ << " provided, " << dim_ << " needed" << std::endl;
+                std::cerr << "[WARNING] ==> Point dimensions don't converge, " << point.dim_ << " provided, " << dim_ << " needed" << std::endl;
                 return RETURN;
             }
 

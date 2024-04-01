@@ -95,6 +95,8 @@ public:
     // Register Parameters
     void RegisterIntParameter(const std::string &name, const std::string &description, int *address, int default_value);
 
+    void RegisterUIntParameter(const std::string &name, const std::string &description, unsigned int *address, unsigned int default_value);
+
     void RegisterDoubleParameter(const std::string &name, const std::string &description, double *address,
                                  double default_value);
 

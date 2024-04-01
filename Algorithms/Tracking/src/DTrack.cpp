@@ -15,7 +15,8 @@
 //................................................................................//
 //Tracking
 #include "Algo/DTrack.h"
-//#include "Algo/KalmanFilterFitter.h"
+#include "Algo/KalmanFit/KalmanFilterFitter.h"
+#include "Algo/RiemannFit/RiemannFitter.h"
 
 //................................................................................//
 //public:
@@ -25,7 +26,7 @@ double DTrack::x_resolution_ = 0.;
 double DTrack::y_resolution_ = 0.;
 double DTrack::z_resolution_ = 0.;
 
-DTrack::DTrack(const TrkHitPVec &newHits,
+DTrack::DTrack(const TrkHitSPVec &newHits,
                double newPreR,
                double newPreXc,
                double newPreYc) : preR_(newPreR),
@@ -153,7 +154,7 @@ DTrack& DTrack::operator=(const DTrack &old_track)
     return *this;
 }
 
-TrkHitP DTrack::AtCellIdZ(int i)
+TrkHitSP DTrack::AtCellIdZ(int i)
 {
     for(const auto hit : hits_)
     {
