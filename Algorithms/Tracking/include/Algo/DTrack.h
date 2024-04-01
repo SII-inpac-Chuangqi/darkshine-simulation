@@ -21,8 +21,7 @@
 //................................................................................//
 //Tracking
 #include "Algo/TypeDef.h"
-#include "Algo/KalmanFilterFitter.h"
-#include "Algo/RiemannFit/RiemannFitHelper.h"
+#include "Algo/Fitter.h"
 
 class DVertex;
 

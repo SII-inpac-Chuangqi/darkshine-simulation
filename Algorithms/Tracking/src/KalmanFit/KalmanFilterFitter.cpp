@@ -24,7 +24,7 @@
 //................................................................................//
 //Tracking
 #include "Algo/TrkHit.h"
-#include "Algo/KalmanFilterFitter.h"
+#include "Algo/KalmanFit/KalmanFilterFitter.h"
 
 //................................................................................//
 //Constructor

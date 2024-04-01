@@ -15,7 +15,8 @@
 //................................................................................//
 //Tracking
 #include "Algo/DTrack.h"
-//#include "Algo/KalmanFilterFitter.h"
+#include "Algo/KalmanFit/KalmanFilterFitter.h"
+#include "Algo/RiemannFit/RiemannFitter.h"
 
 //................................................................................//
 //public:
