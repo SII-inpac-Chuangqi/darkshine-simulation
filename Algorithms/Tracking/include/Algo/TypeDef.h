@@ -21,9 +21,9 @@ using TrkHitSP       = std::shared_ptr<TrkHit>;
 using TrkHitSPVec    = std::vector<std::shared_ptr<TrkHit>>;
 using TrkHitSPVecMap = std::map<int, std::vector<std::shared_ptr<TrkHit>>>;
 
-using TrkHitP       = TrkHit*;
-using TrkHitPVec    = std::vector<TrkHit*>;
-using TrkHitPVecMap = std::map<int, std::vector<TrkHit*>>;
+//using TrkHitP       = TrkHit*;
+//using TrkHitPVec    = std::vector<TrkHit*>;
+//using TrkHitPVecMap = std::map<int, std::vector<TrkHit*>>;
 
 using Key  = std::decay_t<decltype(((TrkHit*)nullptr)->GetCellIdZ())>;
 using Pool = HitPool<Key, TrkHit>;

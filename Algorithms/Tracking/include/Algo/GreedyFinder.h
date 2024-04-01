@@ -53,8 +53,8 @@ public:
     virtual double GetCenterY(int i) const override {return center_y_.at(i); } //z direction in detector!
     virtual double GetChi2   (int i) const override {return goodness_.at(i);}
     virtual int    GetTrackNo(     ) const override {return tracks_chosen_.size();}
-    virtual std::vector<TrkHitPVec>::iterator First() override {return tracks_chosen_.begin();}
-    virtual std::vector<TrkHitPVec>::iterator Last () override {return tracks_chosen_.end();  }
+    virtual std::vector<TrkHitSPVec>::iterator First() override {return tracks_chosen_.begin();}
+    virtual std::vector<TrkHitSPVec>::iterator Last () override {return tracks_chosen_.end();  }
 
     int GetCircleNo() const {return circle_No_;}
 
@@ -75,10 +75,10 @@ private:
     };
 
     void GreedyLooping(Pool *pool);
-    TrkHitPVecMap GetTempHitMap(Pool *pool);
+    TrkHitSPVecMap GetTempHitMap(Pool *pool);
 
-    bool GreedyLooping(TrkHitPVecMap &clusteredTrkHitsInLayer,
-                       TrkHitPVecMap::iterator itMap,
+    bool GreedyLooping(TrkHitSPVecMap &clusteredTrkHitsInLayer,
+                       TrkHitSPVecMap::iterator itMap,
                        int cirNo);
     void CutTracks();
     void SortHits();
@@ -106,16 +106,16 @@ private:
     std::vector<double> center_x_;
     std::vector<double> center_y_;
     std::vector<double> goodness_;
-    std::vector<TrkHitPVec> tracks_chosen_;
+    std::vector<TrkHitSPVec> tracks_chosen_;
 
 //................................................................................//
 //Current choice
-    TrkHitPVec hits_chosen_;
+    TrkHitSPVec hits_chosen_;
     std::vector<int> hits_no_chosen_;
 
 //................................................................................//
 //Temp Choice
-    void StoredPushBack(double x, double y, double oth, int hits_no, const TrkHitP &hit)
+    void StoredPushBack(double x, double y, double oth, int hits_no, const TrkHitSP &hit)
     {
         hits_store_.push_back(hit);
         x_store_.push_back(x);
@@ -142,7 +142,7 @@ private:
         hits_no_store_.clear();
     }
 
-    TrkHitPVec hits_store_;
+    TrkHitSPVec hits_store_;
     std::vector<double> x_store_;
     std::vector<double> y_store_;
     std::vector<double> oth_store_;

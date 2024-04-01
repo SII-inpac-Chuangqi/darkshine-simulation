@@ -28,7 +28,7 @@
 
 //................................................................................//
 //Constructor
-KalmanFilterFitter::KalmanFilterFitter(const TrkHitPVec &track, std::initializer_list<double> list, int verbose) : hitCov(2)
+KalmanFilterFitter::KalmanFilterFitter(const TrkHitSPVec &track, std::initializer_list<double> list, int verbose) : hitCov(2)
 {
     verbose_ = verbose;
 
@@ -69,8 +69,8 @@ KalmanFilterFitter::KalmanFilterFitter(const TrkHitPVec &track, std::initializer
 //Processor
 //................................................................................//
 //Initialize the fitter, set up magnetic, material manager, track representation, fitter and track model
-//void KalmanFilterFitter::Init(const TrkHitPVec &track, double preR, double B)
-void KalmanFilterFitter::Init(const TrkHitPVec &track, std::initializer_list<double> list)
+//void KalmanFilterFitter::Init(const TrkHitSPVec &track, double preR, double B)
+void KalmanFilterFitter::Init(const TrkHitSPVec &track, std::initializer_list<double> list)
 {
     auto it = list.begin();
     double preR = *it; it++;
@@ -96,7 +96,7 @@ void KalmanFilterFitter::Init(const TrkHitPVec &track, std::initializer_list<dou
 
 //................................................................................//
 //Do the fit
-void KalmanFilterFitter::Fit(const TrkHitPVec &track, std::initializer_list<double>)
+void KalmanFilterFitter::Fit(const TrkHitSPVec &track, std::initializer_list<double>)
 {
     //Create vitual detector planes and fill the track
     int detId = 0;   //virtual detector
@@ -132,7 +132,7 @@ void KalmanFilterFitter::Fit(const TrkHitPVec &track, std::initializer_list<doub
 
 //................................................................................//
 //Fill results
-void KalmanFilterFitter::Fill(const TrkHitPVec &track, std::initializer_list<double>)
+void KalmanFilterFitter::Fill(const TrkHitSPVec &track, std::initializer_list<double>)
 {
     fitTrack->getFittedState().getPosMomCov(pos, mom, hitCov);
     px = std::abs(mom.Px())*1000;                           //GeV->MeV
@@ -195,7 +195,7 @@ void KalmanFilterFitter::Fill(const TrkHitPVec &track, std::initializer_list<dou
 //................................................................................//
 //Calculate sign of charge of input track
 /*
-int KalmanFilterFitter::GetSign(const TrkHitPVec &track)
+int KalmanFilterFitter::GetSign(const TrkHitSPVec &track)
 {
     double xl  = track.at(track.size() - 1)->GetU();
     double xlr = track.at(track.size() - 2)->GetU();

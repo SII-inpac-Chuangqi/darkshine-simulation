@@ -43,8 +43,8 @@ public:
 
     virtual std::vector<double> GetMagnetFieldAt(double x, double y, double z);
 
-    virtual std::vector<TrkHitPVec>::iterator First() = 0;
-    virtual std::vector<TrkHitPVec>::iterator Last () = 0;
+    virtual std::vector<TrkHitSPVec>::iterator First() = 0;
+    virtual std::vector<TrkHitSPVec>::iterator Last () = 0;
 
 protected:
     std::vector<std::shared_ptr<DTrack>> *tracks_;

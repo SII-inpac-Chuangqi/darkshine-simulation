@@ -17,23 +17,25 @@ class HitPool
 {
 private:
     using Pool = std::vector<std::shared_ptr<Element>>;
-    using Map = std::map<Key, std::vector<Element*>>;
+    using Map = std::map<Key, std::vector<std::shared_ptr<Element>>>;
     using KeyGetter = std::function<Key(const Element&)>;
 
 public:
     HitPool()  {this->Init();}
     ~HitPool() {this->Clear();}
-    HitPool(const Map&) = delete;
+    HitPool(const Pool&) = delete;
 
     Map* operator->()  {IsNull(); return structured_;}
     Map& operator*()   {IsNull(); return *structured_;}
 
     void Init() {pool_.reserve(7); structured_ = new Map();}
+
     void Clear()
     {
         delete structured_; structured_ = nullptr;
         pool_.clear();
     }
+
     bool IsNull()
     {
         if(structured_) return false;
@@ -103,7 +105,7 @@ public:
 
 private:
     Pool pool_;
-    Map* structured_{nullptr};
+    Map *structured_{nullptr};
     KeyGetter key_getter_;
 
     template <typename Arbitrary>
@@ -124,8 +126,8 @@ private:
 
         Key key = key_getter_(*pool_.back());
 
-        if(!structured_->insert(std::pair<Key, std::vector<Element*>>(key, {pool_.back().get()})).second)
-            structured_->at(key).push_back(pool_.back().get());
+        if(!structured_->insert(std::pair<Key, std::vector<std::shared_ptr<Element>>>(key, {pool_.back()})).second)
+            structured_->at(key).push_back(pool_.back());
     }
 
 };

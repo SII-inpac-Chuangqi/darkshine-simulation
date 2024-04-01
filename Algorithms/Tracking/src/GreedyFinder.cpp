@@ -68,7 +68,7 @@ std::vector<std::shared_ptr<DTrack>>* GreedyFinder::GetTracks()
 //Finding method
 //................................................................................//
 //
-TrkHitPVecMap GreedyFinder::GetTempHitMap(Pool *pool)
+TrkHitSPVecMap GreedyFinder::GetTempHitMap(Pool *pool)
 {
      if(pool->IsNull()) return {{}};
 
@@ -102,7 +102,7 @@ TrkHitPVecMap GreedyFinder::GetTempHitMap(Pool *pool)
 //Finding control
 void GreedyFinder::GreedyLooping(Pool *pool)
 {
-    TrkHitPVecMap temp_pool_structured = GetTempHitMap(pool);
+    TrkHitSPVecMap temp_pool_structured = GetTempHitMap(pool);
 
     for(;;)
     {
@@ -150,8 +150,8 @@ void GreedyFinder::GreedyLooping(Pool *pool)
 
 }
 
-bool GreedyFinder::GreedyLooping(TrkHitPVecMap &clustered_trk_hits_in_layer,
-                                 TrkHitPVecMap::iterator it_map,
+bool GreedyFinder::GreedyLooping(TrkHitSPVecMap &clustered_trk_hits_in_layer,
+                                 TrkHitSPVecMap::iterator it_map,
                                  int cirNo)
 {
     circle_No_++;
@@ -239,7 +239,7 @@ void GreedyFinder::CutTracks()
 void GreedyFinder::SortHits()
 {
     for(auto &track : tracks_chosen_)
-        std::sort(track.begin(), track.end(), [](const TrkHitP &hit1, const TrkHitP &hit2)
+        std::sort(track.begin(), track.end(), [](const TrkHitSP &hit1, const TrkHitSP &hit2)
                                               { return hit1->GetCellIdZ() > hit2->GetCellIdZ(); } );
 }
 
