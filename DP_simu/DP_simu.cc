@@ -138,23 +138,23 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    if(parser.IfInCommmandLine("seed")) {
+    if(parser.IfInCommandLine("seed")) {
         dControl->read_yaml_random_seed = false;
         dControl->random_seed = random_seed;
     }
-    if(parser.IfInCommmandLine("save_geometry")) {
+    if(parser.IfInCommandLine("save_geometry")) {
         dControl->read_yaml_save_geometry = false;
         dControl->save_geometry = save_geometry;
     }
-    if(parser.IfInCommmandLine("outfile_Name")) {
+    if(parser.IfInCommandLine("outfile_Name")) {
         dControl->read_yaml_outfile_Name = false;
         dControl->outfile_Name = outfile_Name;
     }
-    if(parser.IfInCommmandLine("Run_Number")) {
+    if(parser.IfInCommandLine("Run_Number")) {
         dControl->read_yaml_Run_Number = false;
         dControl->Run_Number = Run_Number;
     }
-    if(parser.IfInCommmandLine("beam_on")) {
+    if(parser.IfInCommandLine("beam_on")) {
         dControl->read_yaml_BeamOnNumber = false;
         dControl->BeamOnNumber = beam_on;
     }

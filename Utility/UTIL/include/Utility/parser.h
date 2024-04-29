@@ -129,8 +129,8 @@ public:
     template <typename T> T GetDefault() const { return dynamic_cast<ParserType<T>*>(default_data_)->Get(); }
 
     bool IfNoArg() const {return if_no_arg_;}
-    void InCommmandLine(bool if_set_from_arg) {if_in_command_line_ = if_set_from_arg;}
-    bool IfInCommmandLine() const {return if_in_command_line_;}
+    void InCommandLine(bool if_set_from_arg) {if_in_command_line_ = if_set_from_arg;}
+    bool IfInCommandLine() const {return if_in_command_line_;}
 
     std::string GetKey() const {return key_;}
     std::string GetShortKey() const {return short_key_;}
@@ -202,7 +202,7 @@ public:
         return params_.at(key)->GetDefault<T>();
     }
 
-    bool IfInCommmandLine(const std::string &key) const
+    bool IfInCommandLine(const std::string &key) const
     {
         if( !params_.count(key) )
         {
@@ -210,7 +210,7 @@ public:
             return false;
         }
 
-        return params_.at(key)->IfInCommmandLine();
+        return params_.at(key)->IfInCommandLine();
     }
 
     void Parse(int argc, char* argv[])
@@ -237,7 +237,7 @@ public:
                 {
                     if(param->IfNoArg()) param->Convert(std::to_string(!param->GetDefault<bool>()));
                     else                 param->Convert(argv[i + 1]);
-                    param->InCommmandLine(true);
+                    param->InCommandLine(true);
                 }
             }
         }
