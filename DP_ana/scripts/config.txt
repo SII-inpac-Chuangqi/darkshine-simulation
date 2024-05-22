@@ -20,6 +20,7 @@ MemoryCheck.Verbose           = 0
 
 ### Algorithm List
 ###
+# ActsSequencer: Acts Algorithm sequence
 # CutFlowAnalysis: None
 # Digitizer: Digitizer for Calorimeter(ECAL) with optical process
 # ECAL_ML_IO: ECAL ML I/O for Calorimeter(ECAL)
@@ -34,7 +35,6 @@ Algorithm.List = GNN_DataExporter Digitizer MCTruthAnalysis Tracking ActsSequenc
 ### Algorithm Configuration
 
 ActsSequencer.ckf_selection_nmax = 10  # Maximum number of measurement candidates on a surface for CKF measurement selection
-ActsSequencer.if_strip = 1  # If use strip structures in trackers
 ActsSequencer.truth_smeared_seeded = 1  # Use track parameters smeared from truth particles for steering CKF
 ActsSequencer.use_dmagnet = 1  # 1: Use Read non-constant magnetic filed from DMagnet. 0: Use constant magnetic field
 ActsSequencer.ckf_selection_chi2max = 150  # Maximum chi2 for CKF measurement selection
@@ -103,6 +103,7 @@ Tracking.Tag_fit_method = 2  # Specify fitting method: 0, no fine fitting; 1, Ka
 Tracking.clean = 0  # Clean mode: no truth information
 Tracking.if_smear = 1  # If smear hits in strip structure
 Tracking.if_strip = 1  # If use strip structures in trackers
+Tracking.processes = 0  # Processes to run
 Tracking.skip_hits_geq = 40  # Skip tagging/recoil tracker reconstruction if total hits number >= N in this tracker region (N<=0: infinite)
 Tracking.verbose = 0  # Verbose
 Tracking.con_field = -1.5  # Const magnet field

@@ -91,17 +91,17 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
         // N.B. initial particle starts from 1 and parent==0
         if (aStep->GetTrack()->GetParentID()==0 && dControl->if_HardBrem) {
             // If out of selection region, check event status
-            if (prev->GetTotalEnergy() < 4 * GeV || prev->GetPosition()[2] >= 180 * mm) {
+            if (prev->GetTotalEnergy() < dControl->BiasEmin || prev->GetPosition()[2] >= 180 * mm) {
                 if (!dFilterManager->GetHardbremFound()) {
                     dRootMng->AddFEvtNbKilledByFilter();
                     G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
                     G4EventManager::GetEventManager()->AbortCurrentEvent();
                 }
-            } else if (fabs(prev->GetKineticEnergy() - post->GetKineticEnergy()) >= 4 * GeV) {
+            } else if (fabs(prev->GetKineticEnergy() - post->GetKineticEnergy()) >= dControl->BiasEmin) {
                 // Search for all secondaries in current step
                 for (auto sec: *(aStep->GetSecondaryInCurrentStep())) {
                     if (sec->GetParticleDefinition()->GetPDGEncoding() == 22
-                        && sec->GetTotalEnergy() >= 4 * GeV) {
+                        && sec->GetTotalEnergy() >= dControl->BiasEmin) {
                         dFilterManager->SetHardbremFound(true);
                     }
                 }

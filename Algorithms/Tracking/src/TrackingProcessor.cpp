@@ -59,7 +59,7 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
                          2);
     RegisterDoubleParameter("con_field", "Const magnet field", &con_field, -1.5);
     RegisterIntParameter("skip_hits_geq", "Skip tagging/recoil tracker reconstruction if total hits number >= N in this tracker region (N<=0: infinite)", &skip_hits_geq, 40);
-    RegisterDoubleParameter("remove_hit_less_E", "[MeV] Remove small energy deposition that should not counted s a hit. Apply on raw hits.", &remove_hit_less_E, 0.02);
+    RegisterDoubleParameter("remove_hit_less_E", "[MeV] Remove small energy deposition that should not counted as a hit. Apply on raw hits.", &remove_hit_less_E, 0.02);
     RegisterIntParameter("processes", "Processes to run", &process_, tracking::dAll);
 }
 

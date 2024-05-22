@@ -31,7 +31,7 @@ general_particle_source:
     ang/rot1: "0 1 0"
     ang/rot2: "1 0 0"
     ene/type: "Gauss"
-    ene/mono: "8 GeV"
+    ene/mono: "4 GeV"
     #direction: "0 0 1"
     #position: "0 0 -61 cm"
   beam_on: 10
@@ -55,7 +55,7 @@ signal_mass: [ 500, "MeV" ]
 # If to use signal LUT
 signal_use_LUT: false
 # signal LUT place
-signal_lookup_table: "/lustre/collider/chenxiang/Dark_Photon/generator/dp_lookup_table_20220515.root"
+signal_lookup_table: "dp_E4_W_LUT_20240327.root"
 # setups for visble decay (Currently visible decay mode only supports signal_mass < 500 MeV --Xiang Chen on 6/7/2022)
 visible_decay: false
 # decay channel: [ee or mumu]
@@ -66,7 +66,7 @@ dp_eplsion: 1e-3
 # Magnetic field
 ###########################################
 MagField:
-  mag_field_input: "mag_default.root"
+  mag_field_input: "magnet_0.75_20240521.root"
   uniform_mag_field: false # false - use mag_field_input; true - use the following setup
   tag_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
   rec_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
@@ -131,7 +131,7 @@ Biasing:
   BiasProcess: "photonNuclear"
   # BiasProcess: "DMProcessDMBrem"
   BiasFactor: 1e21
-  BiasEmin: [ 4.0, "GeV" ]
+  BiasEmin: [ 2.0, "GeV" ]
 
 ###########################################
 # Event Filters
@@ -139,8 +139,8 @@ Biasing:
 Filters:
   # if to apply filters
   if_filter: false
-  veto_ECAL_geq: 4 # GeV
-  veto_missP_leq: 2 # GeV
+  veto_ECAL_geq: 2.5 # GeV
+  veto_missP_leq: 1 # GeV
   # if to apply filter on hard-brem event
   if_HardBrem: false
   # Filter Parameters description:
@@ -149,14 +149,14 @@ Filters:
     # fStage0 - true: apply filter on primary track; false: not apply on primary track
     # fStage1 - true: apply filter on secondaries track; false: not apply on secondary track
   particle_filters_parameters: # PDG, min Energy [Unit], max Energy [Unit] , min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
-  # - [ 22, 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, true, false ] # help GMM / PN ECAL
+  # - [ 22, 2, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, true, false ] # help GMM / PN ECAL
   process_filters_parameters: # Process Name, min Energy [Unit], max Energy [Unit], min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
-  # - [ "GammaToMuPair", 4, "GeV", -1, "GeV", -607.5, "mm", 180, "mm", true, false, true] # GMM Target
-  # - [ "GammaToMuPair", 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, false, true] # GMM ECAL
-  # - [ "photonNuclear", 4, "GeV", -1, "GeV", -607.5, "mm", 180, "mm", true, false, true] # PN Target
-  # - [ "photonNuclear", 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, false, true] # PN ECAL
-  # - [ "electronNuclear", 4, "GeV", -1, "GeV", -607.5, "mm", 180, "mm", true, true, false] # EN Target
-  # - [ "electronNuclear", 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, true, false] # EN ECAL
+  # - [ "GammaToMuPair",   2, "GeV", -1, "GeV", -607.5, "mm", 180,   "mm", true, false, true] # GMM Target
+  # - [ "GammaToMuPair",   2, "GeV", -1, "GeV", 180.5,  "mm", 636.5, "mm", true, false, true] # GMM ECAL
+  # - [ "photonNuclear",   2, "GeV", -1, "GeV", -607.5, "mm", 180,   "mm", true, false, true] # PN Target
+  # - [ "photonNuclear",   2, "GeV", -1, "GeV", 180.5,  "mm", 636.5, "mm", true, false, true] # PN ECAL
+  # - [ "electronNuclear", 4, "GeV", -1, "GeV", -607.5, "mm", 180,   "mm", true, true, false] # EN Target
+  # - [ "electronNuclear", 4, "GeV", -1, "GeV", 180.5,  "mm", 636.5, "mm", true, true, false] # EN ECAL
 
 ###########################################
 # Optical Options

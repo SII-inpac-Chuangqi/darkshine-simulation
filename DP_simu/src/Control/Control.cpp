@@ -167,7 +167,7 @@ Control::Control() {
 
     BiasProcess = "GammaToMuPair"; // or DMProcessDMBrem
     BiasFactor = 1e20;
-    BiasEmin = 4.0 * GeV;
+    BiasEmin = 2.0 * GeV;
 
     //========================================
     /* Filters */
@@ -177,11 +177,11 @@ Control::Control() {
     if_HardBrem = false;
     // Example of particle filter
     // select photon with energy < 4 GeV within range from -1 m to 0.2 m
-    particle_filters_parameters.emplace_back(22, 6 * GeV, 8 * GeV, -1 * m, 0.2 * m, 1, 1, 1);
+    //particle_filters_parameters.emplace_back(22, 6 * GeV, 8 * GeV, -1 * m, 0.2 * m, 1, 1, 1);
 
     // Example of processor filter
     // exclude event with process of energy < 4 GeV within range from -1 m to 0.2 m
-    process_filters_parameters.emplace_back("GammaToMuPair", 2 * GeV, 4 * GeV, -1 * m, 0.2 * m, 0, 1, 1);
+    //process_filters_parameters.emplace_back("GammaToMuPair", 2 * GeV, 2 * GeV, -1 * m, 0.2 * m, 0, 1, 1);
 
     //========================================
     /* Optical */
