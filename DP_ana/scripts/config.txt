@@ -29,9 +29,16 @@ MemoryCheck.Verbose           = 0
 # RecHCAL: Hadronic Calorimeter Reconstruction Processor
 # Tracking: Tracking by Yi-Fan Zhu
 ###
-Algorithm.List = GNN_DataExporter Digitizer MCTruthAnalysis Tracking RecECAL RecHCAL CutFlowAnalysis 
+Algorithm.List = GNN_DataExporter Digitizer MCTruthAnalysis Tracking ActsSequencer RecECAL RecHCAL CutFlowAnalysis
 
 ### Algorithm Configuration
+
+ActsSequencer.ckf_selection_nmax = 10  # Maximum number of measurement candidates on a surface for CKF measurement selection
+ActsSequencer.if_strip = 1  # If use strip structures in trackers
+ActsSequencer.truth_smeared_seeded = 1  # Use track parameters smeared from truth particles for steering CKF
+ActsSequencer.use_dmagnet = 1  # 1: Use Read non-constant magnetic filed from DMagnet. 0: Use constant magnetic field
+ActsSequencer.ckf_selection_chi2max = 150  # Maximum chi2 for CKF measurement selection
+ActsSequencer.const_bfiled = -1.5  # Constant magnetic field By [Tesla] (Used with use_dmagnet=0)
 
 
 Digitizer.ApplytoECAL = 1  # Smearing on ECAL

@@ -12,7 +12,7 @@
 2023-11-17:
     1. DAna v1.5.10
         1. Split HCAL Reconstruction into new processor: RecHCAL
-        2. Add Tracking config racking.skip_hits_geq = 20
+        2. Add Tracking config tracking.skip_hits_geq = 20
         3. Add Verbosity
         4. Add ECAL help message
 

@@ -10,6 +10,7 @@
 #include "TObjectTable.h"
 #include "TROOT.h"
 
+#include "G4Version.hh"
 #include "G4TouchableHistory.hh"
 
 #include <stdexcept>
@@ -41,7 +42,7 @@ RootManager::RootManager()
     initialize();
 
     fStart = dControl->Run_Number;
-    fEvtNb = dControl->Total_Event_Number;
+    fEvtNb = dControl->BeamOnNumber;
 
     OpticalHCALYield = dControl->Optical_HCAL_Yield;
 
@@ -149,6 +150,14 @@ void RootManager::bookCollection(const G4String &cIn) {  //run level initilize b
 Long64_t RootManager::save() {
     Long64_t file_size = 0.;
     if (rootFile) {
+        // Add Metadata
+        TList *userInfo = tr->GetUserInfo();
+        userInfo->Add(new TParameter<Int_t>("Total_Event_Number", fEvtNb));
+        userInfo->Add(new TParameter<Int_t>("Recorded_Event_Number", fEvtNRecorded));
+        userInfo->Add(new TParameter<Int_t>("Event_Number_Killed_by_Truth_Filter", fEvtNbKilledByTruthFilter));
+        userInfo->Add(new TParameter<Int_t>("Event_Number_Killed_by_Filter", fEvtNbKilledByFilter));
+        userInfo->Add(new TParameter<Double_t>("TruthFilter_Efficiency", fEvtNb > 0 ? 1 - static_cast<double>(fEvtNbKilledByTruthFilter) / static_cast<double>(fEvtNb) : 0 ));
+
         rootFile->WriteTObject(tr, "", "Overwrite");
         file_size = rootFile->GetSize();
         rootFile->Close();
@@ -219,12 +228,19 @@ McParticle *RootManager::FillMC(McParticle *fMC, int ParentID) {
     mc->setParents(McParticle::SearchID(mcps, ParentID));
 
     auto tmp1 = G4String(mc->getCreateProcess());
+# if G4VERSION_NUMBER >= 1100
+    std::string tmp2(tmp1.c_str());
+    if (G4StrUtil::contains(tmp1, "biasWrapper"))
+        tmp2 = tmp1.substr(tmp1.find("(") + 1, tmp1.find(")") - tmp1.find("(") - 1);
+    mc->setCreateProcess(tmp2);
+# else
     std::string_view tmp2;
     if (tmp1.contains("biasWrapper"))
         tmp2 = std::string_view(tmp1.c_str() + tmp1.find("(") + 1, tmp1.find(")") - tmp1.find("(") - 1);
     else
         tmp2 = std::string_view(tmp1);
     mc->setCreateProcess(std::string(tmp2));
+# endif
 
     mcps->emplace_back(mc);
 
@@ -272,7 +288,7 @@ void RootManager::FillSim(Int_t eventID, const Double_t *Rnd) {
 
     ++fEvtNRecorded;
 
-#ifdef DEBUG
+#ifdef DSIMU_DEBUG
     /* Get DTruth (Truth Info) from DEvent */
     auto truth_info = Evt->getTruthInfo();
     /* Print event topology */
@@ -411,12 +427,19 @@ void RootManager::FillParticleStep(const G4Step *aStep) {
     } else {
         step->setPVName(post->GetPhysicalVolume()->GetName().data());
         auto tmp2 = post->GetProcessDefinedStep()->GetProcessName();
+# if G4VERSION_NUMBER >= 1100
+        std::string tmp3(tmp2.c_str());
+        if (G4StrUtil::contains(tmp2, "biasWrapper"))
+            tmp3 = tmp2.substr(tmp2.find("(") + 1, tmp2.find(")") - tmp2.find("(") - 1);
+        step->setProcessName(tmp3);
+# else
         std::string_view tmp3;
         if (tmp2.contains("biasWrapper"))
             tmp3 = std::string_view(tmp2.c_str() + tmp2.find("(") + 1, tmp2.find(")") - tmp2.find("(") - 1);
         else
             tmp3 = std::string_view(tmp2);
         step->setProcessName(std::string(tmp3));
+# endif
     }
 
     Steps->emplace_back(step);

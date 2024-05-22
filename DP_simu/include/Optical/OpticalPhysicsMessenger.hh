@@ -42,8 +42,14 @@
 #ifndef OpticalPhysicsMessenger_h
 #define OpticalPhysicsMessenger_h 1
 
-#include "G4UImessenger.hh"
+#include "G4Version.hh"
+# if G4VERSION_NUMBER > 1072
+#include "G4OpticalParameters.hh"
+#else
 #include "G4OpticalProcessIndex.hh"
+#endif
+
+#include "G4UImessenger.hh"
 
 #include "globals.hh"
 

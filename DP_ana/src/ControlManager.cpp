@@ -17,6 +17,7 @@
 #include "Algo/TrackingProcessor.h"
 #include "Algo/CutFlowAnalysis.h"
 #include "Algo/GNN_DataExporter.h"
+#include "Algo/ActsSequencer.h"
 
 #ifdef BUILD_HDF5
 #include "Algo/ECAL_ML_IO.h"
@@ -77,6 +78,7 @@ void ControlManager::run() {
 #endif
     algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<TrackingProcessor>(new TrackingProcessor("Tracking", EvtWrt)));
+    algo->RegisterAnaProcessor(shared_ptr<ActsSequencer>(new ActsSequencer("ActsSequencer", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<RecHCAL>(new RecHCAL("RecHCAL", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<CutFlowAnalysis>(new CutFlowAnalysis("CutFlowAnalysis", EvtWrt)));
@@ -124,7 +126,7 @@ void ControlManager::run() {
             cout << " --------------------------" << endl;
         } else if (ConfMgr->getEventReaderVerbose() == 1) {
             if (i < 100 || i % fPrintModulo == 0) {
-                cout << " Process Event:  " << i << " ...";
+                cout << " Process Event:  " << i << " ..." << std::endl;
             }
         }
 
@@ -161,7 +163,7 @@ void ControlManager::run() {
             cout << " --------------------------" << endl;
         } else if (ConfMgr->getEventReaderVerbose() == 1) {
             if (i < 100 || i % fPrintModulo == 0) {
-                cout << "[OK]" << endl;
+                cout << " Done." << endl;
             }
         }
 

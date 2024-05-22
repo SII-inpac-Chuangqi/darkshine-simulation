@@ -264,12 +264,12 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
 
                 //dump track informations
                 if(SaveTrackInfo>0 || (TrackMatch>0 && MatchTruth==0)){ 
-                    auto _ECal_seed_x = EvtWrt->FindOutVariable<std::vector<double>>("ECal_seed_x");
-                    auto _ECal_seed_y = EvtWrt->FindOutVariable<std::vector<double>>("ECal_seed_y");
-                    auto _ECal_seed_px = EvtWrt->FindOutVariable<std::vector<double>>("ECal_seed_px");
-                    auto _ECal_seed_py = EvtWrt->FindOutVariable<std::vector<double>>("ECal_seed_py");
-                    auto _ECal_seed_pz = EvtWrt->FindOutVariable<std::vector<double>>("ECal_seed_pz");
-                    auto _RecTrk2_track_chi2=EvtWrt->FindOutVariable<std::vector<double>>("RecTrk2_track_chi2");
+                    auto _ECal_seed_x = EvtWrt->FindOutVariable<std::vector<double>>("Acts_ECal_seed_x");
+                    auto _ECal_seed_y = EvtWrt->FindOutVariable<std::vector<double>>("Acts_ECal_seed_y");
+                    auto _ECal_seed_px = EvtWrt->FindOutVariable<std::vector<double>>("Acts_ECal_seed_px");
+                    auto _ECal_seed_py = EvtWrt->FindOutVariable<std::vector<double>>("Acts_ECal_seed_py");
+                    auto _ECal_seed_pz = EvtWrt->FindOutVariable<std::vector<double>>("Acts_ECal_seed_pz");
+                    auto _RecTrk2_track_chi2=EvtWrt->FindOutVariable<std::vector<double>>("Acts_RecTrk_chi2");
 
                     std::vector<double> _ECAL_trkSeed_X{};
                     std::vector<double> _ECAL_trkSeed_Y{};

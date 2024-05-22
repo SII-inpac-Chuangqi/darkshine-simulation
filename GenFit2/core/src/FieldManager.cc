@@ -47,7 +47,7 @@ void FieldManager::getFieldVal(const double& posX, const double& posY, const dou
 
     static const double epsilon = 0.001;
 
-    #ifdef DEBUG
+    #ifdef DSIMU_DEBUG
     static int used = 0;
     static int notUsed = 0;
     #endif
@@ -59,7 +59,7 @@ void FieldManager::getFieldVal(const double& posX, const double& posY, const dou
         Bx = cache_[i].Bx;
         By = cache_[i].By;
         Bz = cache_[i].Bz;
-        #ifdef DEBUG
+        #ifdef DSIMU_DEBUG
         ++used;
         debugOut<<"used the cache! " << double(used)/(used + notUsed) << "\n";
         #endif
@@ -79,7 +79,7 @@ void FieldManager::getFieldVal(const double& posX, const double& posY, const dou
     Bx = cache_[last_written_i].Bx;
     By = cache_[last_written_i].By;
     Bz = cache_[last_written_i].Bz;
-    #ifdef DEBUG
+    #ifdef DSIMU_DEBUG
     ++notUsed;
     debugOut<<"did NOT use the cache! \n";
     #endif

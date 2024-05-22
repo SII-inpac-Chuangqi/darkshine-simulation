@@ -41,6 +41,8 @@
 #include "Utility/TruthManager.h"
 #include "Utility/parser.h"
 
+#include "G4Version.hh"
+
 #include "G4StepLimiterPhysics.hh"  // Geant4.10
 #include "G4GenericBiasingPhysics.hh"
 #include "DP_simu/GammaPhysics.h"
@@ -195,7 +197,13 @@ int main(int argc, char **argv) {
     dControl->ReadAndSetRandomSeed();
 
     G4Random::setTheEngine(new CLHEP::RanecuEngine());
-    if (!dControl->random_restore_file.contains(".rndm")) {
+    if (
+# if G4VERSION_NUMBER >= 1100
+        !G4StrUtil::contains(dControl->random_restore_file, ".rndm")
+# else
+        !dControl->random_restore_file.contains(".rndm")
+# endif
+       ) {
         G4Random::setTheSeed(dControl->random_seed);
     } else {
         G4Random::restoreEngineStatus(dControl->random_restore_file.c_str());
@@ -275,7 +283,7 @@ int main(int argc, char **argv) {
     }
 
 
-#ifdef DEBUG
+#ifdef DSIMU_DEBUG
     std::cout << "[INFO] Navigator CheckMode ON" << std::endl;
     UImanager->ApplyCommand("/geometry/navigator/check_mode 1");
 #endif

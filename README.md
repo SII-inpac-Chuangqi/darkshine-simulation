@@ -42,7 +42,17 @@ Or, if you are using clusters with CVMFS installed, you can directly source the 
 source /cvmfs/sft.cern.ch/lcg/views/LCG_97rc4python3/x86_64-centos7-gcc9-opt/setup.sh
 ```
 
+<font color=FF0000>**If you want to build the branch acts-xuliang on bl-0, run**</font>
+
+```shell
+source /lustre/collider/zhuyifan/Software/xuliang-ACTS/setup.sh
+source /lustre/collider/zhuyifan/Software/xuliang-ACTS/install/python/setup.sh
+```
+
+Otherwise you have to build ACTS from here: [modifield ACTS](https://github.com/ykrsama/acts/tree/xuliang-v30)
+
 With everything needed, it's ready to install :v:
+
 
 ```shell
 cd darkshine-simulation   # <source-directory>

@@ -4,6 +4,8 @@
 
 #include <utility>
 
+#include "G4Version.hh"
+
 #include "Bias_Filter/FilterProcess.hh"
 #include "Control/Control.h"
 
@@ -65,7 +67,13 @@ G4bool FilterProcess::In_Filter(const G4Step *aStep) {
         && (infty_maxE || deltaE < Energy_Max)
         && post_distance >= ScanDistance_Min
         && post_distance < ScanDistance_Max
-        && pname.contains(Process_Name)) {
+# if G4VERSION_NUMBER >= 1100
+        && G4StrUtil::contains(pname, Process_Name)
+# else
+        && pname.contains(Process_Name)
+# endif
+       )
+    {
         Found_Result = true;
         return true;
     } else

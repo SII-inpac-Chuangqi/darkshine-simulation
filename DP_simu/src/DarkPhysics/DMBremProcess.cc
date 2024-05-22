@@ -53,7 +53,7 @@ G4double DMBremProcess::GetMeanFreePath(const G4Track &aTrack, G4double, /*previ
 void DMBremProcess::LUTRandom() {
     TString file_name = dControl->signal_lookup_table;
     TString graph_name = std::to_string((int) dControl->signal_mass) + "MEV";
-#ifdef DEBUG
+#ifdef DSIMU_DEBUG
     std::cout << graph_name << std::endl;
 #endif
     if (!f || !Lut_hist) {
@@ -90,7 +90,7 @@ G4VParticleChange *DMBremProcess::PostStepDoIt(const G4Track &aTrack, const G4St
         //double temp_var[2] ={0,0};
         electron.rec_theta = var_LUT[1];
         XAcc = 1 - var_LUT[0] / 8;
-#ifdef DEBUG
+#ifdef DSIMU_DEBUG
         std::cout << "This time XAcc : " << XAcc << std::endl;
 #endif
 

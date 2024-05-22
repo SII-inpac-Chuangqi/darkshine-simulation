@@ -28,6 +28,8 @@
 //
 #include <utility>
 
+#include "G4Version.hh"
+
 #include "Bias_Filter/BOptrChangeCrossSection.hh"
 #include "G4BiasingProcessInterface.hh"
 #include "G4BOptnChangeCrossSection.hh"
@@ -117,7 +119,12 @@ BOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track *track,
         for (unsigned i = 2; i < process_mgr->GetProcessList()[0].size()-1; ++i) {
             auto pn = process_mgr->GetProcessList()[0][i]->GetProcessName();
             double pl = -999;
-            if (pn.contains("biasWrapper")) {
+# if G4VERSION_NUMBER >= 1100
+            if (G4StrUtil::contains(pn, "biasWrapper"))
+# else
+            if (pn.contains("biasWrapper"))
+# endif
+            {
                 if (((G4BiasingProcessInterface *) process_mgr->GetProcessList()[0][i])->GetWrappedProcess())
                     pl = ((G4BiasingProcessInterface *) process_mgr->GetProcessList()[0][i])->GetPostStepGPIL();
             } else

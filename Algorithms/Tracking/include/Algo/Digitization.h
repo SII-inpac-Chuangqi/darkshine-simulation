@@ -24,10 +24,6 @@
 #include "Algo/TypeDef.h"
 #include "Algo/TrkHit.h"
 
-namespace tracking
-{
-    enum detector {dTag = 1, dRec = 2};
-}
 
 class Digitization
 {

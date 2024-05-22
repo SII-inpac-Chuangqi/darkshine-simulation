@@ -156,7 +156,7 @@ DTrack& DTrack::operator=(const DTrack &old_track)
 
 TrkHitSP DTrack::AtCellIdZ(int i)
 {
-    for(const auto hit : hits_)
+    for(auto hit : hits_)
     {
         if(hit->GetCellIdZ() == i)
             return hit;
