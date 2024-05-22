@@ -42,7 +42,13 @@
 #ifndef OpticalPhysics_h
 #define OpticalPhysics_h 1
 
+#include "G4Version.hh"
+# if G4VERSION_NUMBER > 1072
+#include "G4OpticalParameters.hh"
+#else
 #include "G4OpticalProcessIndex.hh"
+#endif
+
 #include "OpticalPhysicsMessenger.hh"
 #include "G4OpticalSurface.hh"
 

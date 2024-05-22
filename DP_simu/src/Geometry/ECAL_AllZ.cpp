@@ -46,7 +46,7 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, bool fCheckOverlaps) 
     auto ECAL_Box = new G4Box("ecal", Size_ECALRegion.x() / 2, Size_ECALRegion.y() / 2, Size_ECALRegion.z() / 2);
     ECal_LV = new G4LogicalVolume(ECAL_Box, ECALRegion_Mat, "ECAL", nullptr, nullptr, nullptr);
     new G4PVPlacement(nullptr, Pos_ECALRegion, ECal_LV, "ECAL", World_LV, false, 0, fCheckOverlaps);
-#ifndef DEBUG
+#ifndef DSIMU_DEBUG
     ECal_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
 #endif
     if (build_ECAL_Center) {
@@ -58,7 +58,7 @@ bool ECAL_AllZ::Build(int type, G4LogicalVolume *World_LV, bool fCheckOverlaps) 
         ECAL_Center->SetCALMaterial(ECAL_Center_Mat);
         ECAL_Center->SetWrapMaterial(ECAL_Wrap_Mat);
         ECAL_Center->SetVis(new G4VisAttributes(G4Colour(0.3, 0.5, 0.8)));
-#ifdef DEBUG
+#ifdef DSIMU_DEBUG
         ECAL_Center->SetWrapVis(new G4VisAttributes(G4Colour(1, 1, 1)));
 #endif
         ECAL_Center->SetAPDVis(new G4VisAttributes(G4Colour(0.5, 0.5, .0)));

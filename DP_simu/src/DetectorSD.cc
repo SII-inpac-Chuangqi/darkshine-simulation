@@ -167,9 +167,9 @@ G4bool DetectorSD::ProcessHits(G4Step *step,
         fMC->setPdg(step->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
         fMC->setId(step->GetTrack()->GetTrackID());
         fMC->setEnergy(step->GetTrack()->GetKineticEnergy());
-        fMC->setPx(step->GetTrack()->GetMomentum()[0]);
-        fMC->setPy(step->GetTrack()->GetMomentum()[1]);
-        fMC->setPz(step->GetTrack()->GetMomentum()[2]);
+        fMC->setPx(step->GetTrack()->GetMomentum().x());
+        fMC->setPy(step->GetTrack()->GetMomentum().y());
+        fMC->setPz(step->GetTrack()->GetMomentum().z());
         if (step->GetTrack()->GetCreatorProcess())
             fMC->setCreateProcess(step->GetTrack()->GetCreatorProcess()->GetProcessName());
         hit->addParticleContribution(*fMC, edep, fType == nTagTracker || fType == nRecTracker);

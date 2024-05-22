@@ -5,6 +5,7 @@
 #include "Control/Control.h"
 
 // Geant4
+#include "G4Version.hh"
 #include "G4UnitsTable.hh"
 
 // Required by Singleton
@@ -57,7 +58,6 @@ Control::Control() {
     tree_Name = "Dark_Photon";
 
     Run_Number = 0;
-    Total_Event_Number = 10000;
 
     //----------------------------------------
     // Out Collection Options
@@ -563,12 +563,16 @@ void Control::ConstructG4MaterialTable() const {
     double ScintEnergy[nEntries] = {0.1 * eV, 2.21 * eV, 2.58 * eV, 2.82 * eV, 2.95 * eV, 3.10 * eV, 4.00 * eV};
     double ScintFast[nEntries] = {0.0, 0.23, 0.85, 1.93, 2.15, 1.08, 0.0};
 
+# if G4VERSION_NUMBER > 1072
+    MPT->AddProperty("SCINTILLATIONCOMPONENT1", ScintEnergy, ScintFast, nEntries);
+    MPT->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 40. * ns);
+# else
     MPT->AddProperty("FASTCOMPONENT", ScintEnergy, ScintFast, nEntries);
-
-    MPT->AddConstProperty("SCINTILLATIONYIELD", 20000. / MeV);
-    MPT->AddConstProperty("RESOLUTIONSCALE", 1.0);
     MPT->AddConstProperty("FASTTIMECONSTANT", 40. * ns);
     MPT->AddConstProperty("YIELDRATIO", 1.);
+# endif
+    MPT->AddConstProperty("SCINTILLATIONYIELD", 20000. / MeV);
+    MPT->AddConstProperty("RESOLUTIONSCALE", 1.0);
 
     LYSO->SetMaterialPropertiesTable(MPT);
 
@@ -590,10 +594,15 @@ void Control::ConstructG4MaterialTable() const {
     auto *MPTPStyrene = new G4MaterialPropertiesTable();
     MPTPStyrene->AddProperty("RINDEX", wls_Energy, rIndexPstyrene, wlsnum);
     MPTPStyrene->AddProperty("ABSLENGTH", wls_Energy, absorption1, wlsnum);
+# if G4VERSION_NUMBER > 1072
+    MPTPStyrene->AddProperty("SCINTILLATIONCOMPONENT1", wls_Energy, scintilFast, wlsnum);
+    MPTPStyrene->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 10. * ns);
+# else
     MPTPStyrene->AddProperty("FASTCOMPONENT", wls_Energy, scintilFast, wlsnum);
+    MPTPStyrene->AddConstProperty("FASTTIMECONSTANT", 10. * ns);
+# endif
     MPTPStyrene->AddConstProperty("SCINTILLATIONYIELD", Optical_HCAL_Yield); //VIP
     MPTPStyrene->AddConstProperty("RESOLUTIONSCALE", 1.0);
-    MPTPStyrene->AddConstProperty("FASTTIMECONSTANT", 10. * ns);
 
     // Fiber Clad
     G4double RefractiveIndexClad1[] = {1.49, 1.49, 1.49, 1.49};
@@ -742,7 +751,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         tree_Name = Node["RootManager"]["tree_Name"].as<std::string>();
         if (read_yaml_Run_Number) Run_Number = Node["RootManager"]["Run_Number"].as<int>();
         else std::cout << "[Control] ==> Run_Number read from arguments: " << Run_Number << std::endl;
-        if (read_yaml_BeamOnNumber) Total_Event_Number = Node["general_particle_source"]["beam_on"].as<int>();
+        if (read_yaml_BeamOnNumber) BeamOnNumber = Node["general_particle_source"]["beam_on"].as<int>();
         //----------------------------------------
         // Out Collection Options
         save_all_mcp = Node["OutCollection"]["save_all_mcp"].as<bool>();

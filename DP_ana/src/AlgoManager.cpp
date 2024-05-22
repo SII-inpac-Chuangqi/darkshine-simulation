@@ -60,7 +60,9 @@ void AlgoManager::ProcessEvtAnaProcessors(AnaEvent *evt, int cur_evt_num) {
             cout << "[ PROCESSOR ] (Verbosity 3) : " << itr << endl;
         }
 
-
+#ifdef DSIMU_DEBUG
+        AnaProcessors.at(itr)->ProcessEvt(evt);
+#else
         try {
             // process evt
             AnaProcessors.at(itr)->ProcessEvt(evt);
@@ -73,6 +75,7 @@ void AlgoManager::ProcessEvtAnaProcessors(AnaEvent *evt, int cur_evt_num) {
                       << itr << endl;
             AnaProcessors.at(itr)->InitEvt();
         }
+#endif
 
         // record end time for each processor
         end_processing = clock();

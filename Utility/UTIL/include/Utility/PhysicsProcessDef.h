@@ -61,7 +61,8 @@ struct PhysicsDef {
             "GammaToMuPair",                    // 41
             "muonNuclear",                      // 42
             "hPairProd",                        // 43
-            "nKiller",                          // 44
+            "hBrems",                           // 44
+            "nKiller",                          // 45
     };
     /** the map of process types */
     unordered_map<string, int> dPhyTypeMap;

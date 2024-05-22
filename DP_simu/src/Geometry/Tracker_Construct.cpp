@@ -79,7 +79,7 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, G4bool fChe
             TrackerRegion_LV, 0, fCheckOverlaps
     );
 
-#ifndef DEBUG
+#ifndef DSIMU_DEBUG
     TrackerRegion_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
 #endif
 

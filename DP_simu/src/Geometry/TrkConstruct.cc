@@ -166,7 +166,7 @@ G4ThreeVector TrkConstruct::SMTConstruct() {
                                        nullptr, nullptr, nullptr);
     fStripLV = StripLV;
     fStripLVVector.emplace_back(StripLV);
-#ifdef DEBUG
+#ifdef DSIMU_DEBUG
     fStripVis = fVis;
 #endif
     if (fStripVis)

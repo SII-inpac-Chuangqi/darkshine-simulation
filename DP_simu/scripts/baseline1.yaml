@@ -55,7 +55,12 @@ signal_mass: [ 500, "MeV" ]
 # If to use signal LUT
 signal_use_LUT: false
 # signal LUT place
-signal_lookup_table: "signal.root"
+signal_lookup_table: "/lustre/collider/chenxiang/Dark_Photon/generator/dp_lookup_table_20220515.root"
+# setups for visble decay (Currently visible decay mode only supports signal_mass < 500 MeV --Xiang Chen on 6/7/2022)
+visible_decay: false
+# decay channel: [ee or mumu]
+dp_decay_channel: "ee"
+dp_eplsion: 1e-3
 
 ###########################################
 # Magnetic field
@@ -87,9 +92,30 @@ OutCollection:
   save_MC: true
   # save the initial particle step
   save_initial_particle_step: true
+  # save snapshot of particle passing through surface of ECAL Region
+  save_mcp_helper: false
 
   RawMCCollection_Name: "RawMCParticle"
   InitialParticleStepCollection_Name: "Initial_Particle_Step"
+  MCPHelperCollection_Name: "MCPHelper"
+
+# Truth particle will be recorded if satisfied any of the followings
+TruthAnalysis:
+  ### For truth particles
+  # minimal kinetic energy to record the truth particle
+  E_kin_min_record: [1000, "MeV"]
+  # minimal kinetic energy to process in stepping action
+  E_kin_min_step: [100, "MeV"]
+  # minimal leakage to record the truth particle
+  E_leak_min: [50, "MeV"]
+  # minimal escaping energy to record the truth particle
+  E_remain_min: [100, "MeV"]
+  ### For truth processes
+  # minimal process energy to record the truth process
+  E_min_process: [1, "GeV"]
+  # minimal energy transfer
+  E_process_ratio: 0.5
+
 
 ###########################################
 # Event Biasing
@@ -99,9 +125,12 @@ Biasing:
   if_bias_target: false
   if_bias_ECAL: false
 
-  BiasProcess: "GammaToMuPair"
+  BiasParticle:
+    e-: true # for electron*, DMProcess, etc.
+    gamma: false # for Gamma*, photon*, conv, etc.
+  BiasProcess: "photonNuclear"
   # BiasProcess: "DMProcessDMBrem"
-  BiasFactor: 1e20
+  BiasFactor: 1e21
   BiasEmin: [ 4.0, "GeV" ]
 
 ###########################################
@@ -110,15 +139,17 @@ Biasing:
 Filters:
   # if to apply filters
   if_filter: false
+  veto_ECAL_geq: 4 # GeV
+  veto_missP_leq: 2 # GeV
   # if to apply filter on hard-brem event
   if_HardBrem: false
-  # Parameters description:
-  # max Energy -  set to a minus value = Infinity
-  # fInclude - true: including filter, only save event when particle/process is in the filter; false: excluding filter, abort particle/process in the filter
-  # fStage0 - true: apply filter on primary track; false: not apply on primary track
+    # Filter Parameters description:
+    # max Energy -  set to a minus value = Infinity
+    # fInclude - true: inclusive filter, only save event when particle/process is in the filter; false: exclusive filter, abort particle/process in the filter
+    # fStage0 - true: apply filter on primary track; false: not apply on primary track
   # fStage1 - true: apply filter on secondaries track; false: not apply on secondary track
   particle_filters_parameters: # PDG, min Energy [Unit], max Energy [Unit] , min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
-  # - [ 22, 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, true, false ] # help GMM / PN / EN ECAL
+  # - [ 22, 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, true, false ] # help GMM / PN ECAL
   process_filters_parameters: # Process Name, min Energy [Unit], max Energy [Unit], min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
   # - [ "GammaToMuPair", 4, "GeV", -1, "GeV", -607.5, "mm", 180, "mm", true, false, true] # GMM Target
   # - [ "GammaToMuPair", 4, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, false, true] # GMM ECAL
@@ -155,10 +186,12 @@ Optical:
 Geometry:
   # Build options
   build_target: true
+  build_MagnetShield: false
   build_tag_tracker: true
   build_rec_tracker: true
   build_ECAL: true
   build_HCAL: true
+  build_SideHCAL: false
 
   # Build only
   build_only_target: false
@@ -172,6 +205,8 @@ Geometry:
     Target_Mat: "G4_W"
     Target_Size: [ 10 , "cm", 20 , "cm", 350 , "um" ]
     Target_Pos: [ 0 , "cm", 0 , "cm", 0 , "cm" ]
+  MagnetShield:
+    MagnetShield_Thickness: [ 50, "cm" ]
   Tracker:
     build_silicon_micro_strip: false # false - only build one silicon micro strip in one tracker volume
     Trk_Tar_Dis: [ 7.5, "mm" ]
@@ -205,6 +240,7 @@ Geometry:
       - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 6
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 7
     tag_Tracker_Strip_N: [ 1000 , 1000 , 1000 , 1000 , 1000 , 1000 , 1000 ]
+    tag_Tracker_Strip_Block_N: 100 # Strip number per block. This number must be a common divisor of tag_Tracker_Strip_N !
     # Recoil Tracker
     rec_Size_Tracker:
       - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 1
@@ -228,8 +264,11 @@ Geometry:
       - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 5
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 6
     rec_Tracker_Strip_N: [ 2000, 2000 , 2000 , 2000 , 2000 , 2000 ]
+    rec_Tracker_Strip_Block_N: 100 # Strip number per Block. This number must be a common divisor of rec_Tracker_Strip_N !
   ECAL:
     ECAL_Name: "ECAL"
+    ECAL_Staggered_x: false
+    ECAL_Staggered_y: false
 
     # ECAL Main Region Material
     ECALRegion_Mat: "CarbonFiber"
@@ -239,15 +278,19 @@ Geometry:
     # Wrapper Material
     ECAL_Wrap_Mat: "G4_Al"
 
-    ECAL_Center_Wrap_Size: [ 0.3 , "mm", 0.3 , "mm", 0.3 , "mm" ] # 2 x warpper thickness
+    ECAL_Center_Wrap_Size: [ 0.3 , "mm", 0.3 , "mm", 0.3 , "mm" ] # ECAL_Center_Wrap_Size = 2 x wrapper thickness
     # ECAL APD Size
     ECAL_APD_Size: [1, "cm", 1, "cm", 1, "mm"]
     # ECAL Scintillator cell size
     ECAL_Center_Size: [ 2.5 , "cm", 2.5 , "cm", 4.0 , "cm" ]
-    # ECAL Scintillator cell placement (x,y,z)
-    ECAL_Center_Module_No: [ 20, 20, 11 ]
+
+    ECAL_Block_No: [4, 4, 11]
+    ECAL_Cell_No: [5, 5, 1] # Cell Number per Block
+    ECAL_Cell_Gap: [0.1 , "mm", 0.1, "mm", 0.1, "mm"]
+
   HCAL:
     HCAL_Name: "HCAL"
+    HCAL_is_XAbsY: false # true: X-Abs-Y-Abs...-X; false: XY-Abs-XY-Abs..-XY.
 
     # HCAL Absorber Material
     HCAL_Absorber_Mat: "G4_Fe"
@@ -256,23 +299,26 @@ Geometry:
     # HCAL Scintillator Material
     HCAL_Mat: "Polystyrene"
     # Wrapper Material
-    HCAL_Wrap_Mat: "G4_Al"
+    HCAL_Wrap_Mat: "G4_C"
 
-    HCAL_Wrap_Size: [0.3 , "mm", 0.3 , "mm", 0.3 , "mm"] # 2 x warpper thickness
+    HCAL_Wrap_Size: [0.3 , "mm", 0.3 , "mm", 0.3 , "mm"] # HCAL_Wrap_Size = 2 x wrapper thickness
     # HCAL APD Size
     HCAL_APD_Size: [3, "mm", 3, "mm", 1, "mm"]
     # HCAL Scintillator cell size along x, the odd layer place along x, even along y
-    HCAL_Size_Dir: [ 1, "cm", 5 , "cm", 100.57 , "cm"] # z = HCAL_Mod_No_Dir.x() * (HCAL_Size_Dir.y() + HCAL_Wrap_Size.y() + eps)
-                                                       #     -HCAL_Wrap_Size.y() - eps
-    # HCAL Scintillator cell placement (x,y,z)
-    HCAL_Mod_No_Dir: [20, 20, 160]
-    # HCAL Module Number placement (x,y,z)
+    HCAL_Size_Dir: [ 1, "cm", 5 , "cm", 100.57 , "cm"] # z = HCAL_Cell_XY_N * y + (HCAL_Cell_XY_N - 1) * (HCAL_Wrap_Size.y)
+
     HCAL_Module_No: [4, 4, 1]
-    HCAL_Module_Gap: [0.5 , "mm"]
-    # HCAL Absorber Thickness
-    HCAL_Absorber_Thickness: [3 , "cm"] # Set this value to zero will not build Absorber.
+    HCAL_Cell_XY_N: 20
+    HCAL_Absorber_Thickness_List:
+      - [  1,  80,   30, "mm"] # [start, end, thickness, unit]. Start from 1. Set thickness value to zero will skip this Absorber layer.
+    HCAL_Module_Gap: [0.5 , "mm", 0.5, "mm", 0, "um"]
+    HCAL_Show_Cell: false
 
-
+    # Side HCAL
+    SideHCAL_Name: "SideHCAL"
+    SideHCAL_Size_Dir: [1, "cm", 45.511, "cm", 105., "cm"]
+    SideHCAL_Absorber_Thickness_List:
+      - [  1,  25,   10, "mm"] # [start, end, thickness, unit]. Start from 1. Set thickness value to zero will skip this Absorber layer.
 # End of File
 ---
 

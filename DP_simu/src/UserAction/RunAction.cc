@@ -61,9 +61,11 @@ void RunAction::BeginOfRunAction(const G4Run *aRun) {
 void RunAction::EndOfRunAction(const G4Run *) {
     auto file_size = static_cast<long double>(dRootMng->save());
     auto N_events = static_cast<long double>(dRootMng->getFEvtNRecorded());
+    auto N_killed_by_truth_filter = static_cast<long double>(dRootMng->getFEvtNbKilledByTruthFilter());
     auto event_size = (N_events > 0) ? file_size / 1000. / N_events : 0;
 
     G4cout << "[Performance Statistics] ==> recorded events: " << Form("%.0Lf", N_events) << G4endl;
+    G4cout << "[Performance Statistics] ==> truth filter efficiency: " << std::scientific << std::setprecision(2) << 1 - N_killed_by_truth_filter / dRootMng->GetNbEvent() << G4endl;
     G4cout << "[Performance Statistics] ==> event size [KB/event]: " << Form("%.2Lf", event_size) << G4endl;
 
     // record time information

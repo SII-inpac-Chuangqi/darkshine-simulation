@@ -21,7 +21,7 @@ CutFlowAnalysis::CutFlowAnalysis(string name, shared_ptr<EventStoreAndWriter> ev
 void CutFlowAnalysis::Begin() {
       weight = EvtWrt->FindOutVariable<double>("weight");
       //weight = EvtWrt->FindDoubleVar("weight");
-      ECal_seed_x = EvtWrt->FindOutVariable<std::vector<double>>("ECal_seed_x");
+      ECal_seed_x = EvtWrt->FindOutVariable<std::vector<double>>("Acts_ECal_seed_x");
 
       EvtWrt->RegisterOutVariable("test_store",  &test_store);
 }

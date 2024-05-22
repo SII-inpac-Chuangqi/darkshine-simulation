@@ -361,7 +361,7 @@ void Track::insertPoint(TrackPoint* point, int id) {
 
   point->setTrack(this);
 
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "Track::insertPoint at position " << id  << "\n";
 //  #endif
   assert(point!=nullptr);
@@ -469,7 +469,7 @@ void Track::insertPoints(std::vector<TrackPoint*> points, int id) {
 
 void Track::deletePoint(int id) {
 
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "Track::deletePoint at position " << id  << "\n";
 //  #endif
 
@@ -523,7 +523,7 @@ void Track::deleteFittedState(const genfit::AbsTrackRep* rep) {
 
 void Track::mergeTrack(const Track* other, int id) {
 
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "Track::mergeTrack\n";
 //  #endif
 
@@ -538,7 +538,7 @@ void Track::mergeTrack(const Track* other, int id) {
     for (std::vector<AbsTrackRep*>::const_iterator thisRep=trackReps_.begin(); thisRep!=trackReps_.end(); ++thisRep) {
       if ((*thisRep)->isSame(*otherRep)) {
         otherRepThisRep[*otherRep] = *thisRep;
-//        #ifdef DEBUG
+//        #ifdef DSIMU_DEBUG
 //        debugOut << " map other rep " << *otherRep << " to " << (*thisRep) << "\n";
 //        #endif
         if (found) {
@@ -552,7 +552,7 @@ void Track::mergeTrack(const Track* other, int id) {
     }
     if (!found) {
       otherRepsToRemove.push_back(*otherRep);
-//      #ifdef DEBUG
+//      #ifdef DSIMU_DEBUG
 //      debugOut << " remove other rep " << *otherRep << "\n";
 //      #endif
     }
@@ -643,7 +643,7 @@ void Track::determineCardinalRep() {
 
 
 bool Track::sort() {
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "Track::sort \n";
 //  #endif
 
@@ -676,7 +676,7 @@ bool Track::sort() {
       break;
   }
 
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "Track::sort. Equal up to (including) hit " << equalUntil << " and from (including) hit " << equalFrom << " \n";
 //  #endif
 
@@ -747,7 +747,7 @@ void Track::reverseTrack() {
 
 
 void Track::deleteForwardInfo(int startId, int endId, const AbsTrackRep* rep) {
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "Track::deleteForwardInfo from position " << startId  << " to " << endId << "\n";
 //  #endif
 
@@ -777,7 +777,7 @@ void Track::deleteForwardInfo(int startId, int endId, const AbsTrackRep* rep) {
 
 void Track::deleteBackwardInfo(int startId, int endId, const AbsTrackRep* rep) {
 
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "Track::deleteBackwardInfo from position " << startId  << " to " << endId << "\n";
 //  #endif
 
@@ -808,7 +808,7 @@ void Track::deleteBackwardInfo(int startId, int endId, const AbsTrackRep* rep) {
 
 void Track::deleteReferenceInfo(int startId, int endId, const AbsTrackRep* rep) {
 
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "Track::deleteReferenceInfo from position " << startId  << " to " << endId << "\n";
 //  #endif
 
@@ -838,7 +838,7 @@ void Track::deleteReferenceInfo(int startId, int endId, const AbsTrackRep* rep) 
 
 void Track::deleteMeasurementInfo(int startId, int endId, const AbsTrackRep* rep) {
 
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "Track::deleteMeasurementInfo from position " << startId  << " to " << endId << "\n";
 //  #endif
 
@@ -868,7 +868,7 @@ void Track::deleteMeasurementInfo(int startId, int endId, const AbsTrackRep* rep
 
 void Track::deleteFitterInfo(int startId, int endId, const AbsTrackRep* rep) {
 
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "Track::deleteFitterInfo from position " << startId  << " to " << endId << "\n";
 //  #endif
 
@@ -1110,7 +1110,7 @@ void Track::prune(const Option_t* option) {
 
   fillPointsWithMeasurement();
 
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "pruned Track: "; Print();
 //  #endif
 
@@ -1467,7 +1467,7 @@ void Track::checkConsistency() const {
 
 void Track::trackHasChanged() {
 
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "Track::trackHasChanged \n";
 //  #endif
 

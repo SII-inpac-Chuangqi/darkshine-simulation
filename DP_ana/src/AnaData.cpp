@@ -101,12 +101,14 @@ void AnaData::readGeometryDetails() {
     layer_width_tag.clear();
     layer_length_tag.clear();
     layer_thickness_tag.clear();
+    layer_centers_z_tag.clear();
     strip_no_tag.clear();
     angles_tag.clear();
 
     layer_width_rec.clear();
     layer_length_rec.clear();
     layer_thickness_rec.clear();
+    layer_centers_z_tag.clear();
     strip_no_rec.clear();
     angles_rec.clear();
 
@@ -158,6 +160,8 @@ void AnaData::readGeometryDetails() {
                     layer_width_tag.push_back(2.*CUNIT*layer_shape->GetDX());
                     layer_length_tag.push_back(2.*CUNIT*layer_shape->GetDY());
                     layer_thickness_tag.push_back(2.*CUNIT*layer_shape->GetDZ());
+                    layer_centers_z_tag.push_back(CUNIT*(detector->GetMatrix()->GetTranslation()[2]
+                                                         + layer->GetMatrix()->GetTranslation()[2]));
                     auto *block0 = dynamic_cast<TGeoNode*>(layer->GetDaughter(0));
                     strip_no_tag.push_back(layer->GetNdaughters() * block0->GetNdaughters());
                     angles_tag.push_back(std::asin(rotation[1]));
@@ -166,6 +170,8 @@ void AnaData::readGeometryDetails() {
                     layer_width_rec.push_back(2.*CUNIT*layer_shape->GetDX());
                     layer_length_rec.push_back(2.*CUNIT*layer_shape->GetDY());
                     layer_thickness_rec.push_back(2.*CUNIT*layer_shape->GetDZ());
+                    layer_centers_z_rec.push_back(CUNIT*(detector->GetMatrix()->GetTranslation()[2]
+                                                         + layer->GetMatrix()->GetTranslation()[2]));
                     auto *block0 = dynamic_cast<TGeoNode*>(layer->GetDaughter(0));
                     strip_no_rec.push_back(layer->GetNdaughters() * block0->GetNdaughters());
                     angles_rec.push_back(std::asin(rotation[1]));

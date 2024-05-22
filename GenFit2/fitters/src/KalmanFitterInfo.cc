@@ -193,7 +193,7 @@ const MeasuredStateOnPlane& KalmanFitterInfo::getFittedState(bool biased) const 
   bool first(false), last(false);
   PruneFlags& flag = tr->getFitStatus(rep)->getPruneFlags();
   // if Track is pruned so that only one TrackPoint remains, see if it was the first or last one
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  if (flag.isPruned()) {
 //    debugOut << "KalmanFitterInfo::getFittedState - Track is pruned and has " << tr->getNumPoints() << " TrackPoints \n";
 //    flag.Print();
@@ -202,13 +202,13 @@ const MeasuredStateOnPlane& KalmanFitterInfo::getFittedState(bool biased) const 
   if (flag.isPruned() && tr->getNumPoints() == 1) {
     if (flag.hasFlags("F")) {
       first = true;
-//      #ifdef DEBUG
+//      #ifdef DSIMU_DEBUG
 //      debugOut << "KalmanFitterInfo::getFittedState - has flag F \n";
 //      #endif
     }
     else if (flag.hasFlags("L")) {
       last = true;
-//      #ifdef DEBUG
+//      #ifdef DSIMU_DEBUG
 //      debugOut << "KalmanFitterInfo::getFittedState - has flag L \n";
 //      #endif
     }
@@ -218,7 +218,7 @@ const MeasuredStateOnPlane& KalmanFitterInfo::getFittedState(bool biased) const 
     last = tr->getPointWithFitterInfo(-1, rep) == tp;
   }
 
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "KalmanFitterInfo::getFittedState first " << first << ", last " << last << "\n";
 //  debugOut << "KalmanFitterInfo::getFittedState forwardPrediction_ " << forwardPrediction_.get() << ", forwardUpdate_ " << forwardUpdate_.get() << "\n";
 //  debugOut << "KalmanFitterInfo::getFittedState backwardPrediction_ " << backwardPrediction_.get() << ", backwardUpdate_ " << backwardUpdate_.get() << "\n";
@@ -239,7 +239,7 @@ const MeasuredStateOnPlane& KalmanFitterInfo::getFittedState(bool biased) const 
         e.setFatal();
         throw e;
       }
-//      #ifdef DEBUG
+//      #ifdef DSIMU_DEBUG
 //      debugOut << "KalmanFitterInfo::getFittedState - biased at last measurement = forwardUpdate_ \n";
 //      #endif
       return *forwardUpdate_;
@@ -252,7 +252,7 @@ const MeasuredStateOnPlane& KalmanFitterInfo::getFittedState(bool biased) const 
         e.setFatal();
         throw e;
       }
-//      #ifdef DEBUG
+//      #ifdef DSIMU_DEBUG
 //      debugOut << "KalmanFitterInfo::getFittedState - biased at first measurement = backwardUpdate_ \n";
 //      //backwardUpdate_->Print();
 //      #endif
@@ -264,7 +264,7 @@ const MeasuredStateOnPlane& KalmanFitterInfo::getFittedState(bool biased) const 
       e.setFatal();
       throw e;
     }
-//    #ifdef DEBUG
+//    #ifdef DSIMU_DEBUG
 //    debugOut << "KalmanFitterInfo::getFittedState - biased = mean(forwardUpdate_, backwardPrediction_) \n";
 //    #endif
     fittedStateBiased_.reset(new MeasuredStateOnPlane(calcAverageState(*forwardUpdate_, *backwardPrediction_)));
@@ -280,7 +280,7 @@ const MeasuredStateOnPlane& KalmanFitterInfo::getFittedState(bool biased) const 
       e.setFatal();
       throw e;
     }
-//    #ifdef DEBUG
+//    #ifdef DSIMU_DEBUG
 //    debugOut << "KalmanFitterInfo::getFittedState - unbiased at last measurement = forwardPrediction_ \n";
 //    #endif
     return *forwardPrediction_;
@@ -293,7 +293,7 @@ const MeasuredStateOnPlane& KalmanFitterInfo::getFittedState(bool biased) const 
       e.setFatal();
       throw e;
     }
-//    #ifdef DEBUG
+//    #ifdef DSIMU_DEBUG
 //    debugOut << "KalmanFitterInfo::getFittedState - unbiased at first measurement = backwardPrediction_ \n";
 //    #endif
     return *backwardPrediction_;
@@ -304,7 +304,7 @@ const MeasuredStateOnPlane& KalmanFitterInfo::getFittedState(bool biased) const 
     e.setFatal();
     throw e;
   }
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "KalmanFitterInfo::getFittedState - unbiased = mean(forwardPrediction_, backwardPrediction_) \n";
 //  #endif
   fittedStateUnbiased_.reset(new MeasuredStateOnPlane(calcAverageState(*forwardPrediction_, *backwardPrediction_)));

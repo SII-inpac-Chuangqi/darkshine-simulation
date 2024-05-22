@@ -65,6 +65,11 @@ ELSE()
     target_link_libraries(DDisplay PUBLIC genfit2)
 ENDIF()
 
+IF (BUILD_ACTS)
+    get_library_names(${Acts_libraries} Acts_LIB_NAMES)
+    target_link_libraries(DDisplay PUBLIC tbb ${Acts_LIB_NAMES} ${Boost_LIBRARIES})
+ENDIF()
+
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
 
 target_link_libraries(DDis PUBLIC DDisplay)

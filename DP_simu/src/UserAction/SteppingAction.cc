@@ -34,6 +34,7 @@
 #include "Bias_Filter/FilterManager.hh"
 #include "Animation/AnimationData.h"
 
+#include "G4Version.hh"
 #include "G4Step.hh"
 #include "G4EventManager.hh"
 #include "G4SystemOfUnits.hh"
@@ -74,11 +75,13 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
             if (dControl->veto_missP && dControl->fStage == 0
                 && prev->GetPosition().z() <= dControl->ECAL_Front_Z
                 && (dRootMng->GetEvt()->getStepCollection().at(dControl->InitialParticleStepCollection_Name)->at(0)->getE() - prev->GetTotalEnergy()) < dControl->veto_missP_leq_E) {
+                dRootMng->AddFEvtNbKilledByTruthFilter();
                 G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
                 G4EventManager::GetEventManager()->AbortCurrentEvent();
             }
             dFilterManager->AddEstimateInECALEnergy(aStep->GetTotalEnergyDeposit());
             if (dControl->veto_ECAL && dFilterManager->GetEstimateInECALEnergy() > dControl->veto_ECAL_geq_E) {
+                dRootMng->AddFEvtNbKilledByTruthFilter();
                 G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
                 G4EventManager::GetEventManager()->AbortCurrentEvent();
             }
@@ -90,6 +93,7 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
             // If out of selection region, check event status
             if (prev->GetTotalEnergy() < 4 * GeV || prev->GetPosition()[2] >= 180 * mm) {
                 if (!dFilterManager->GetHardbremFound()) {
+                    dRootMng->AddFEvtNbKilledByFilter();
                     G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
                     G4EventManager::GetEventManager()->AbortCurrentEvent();
                 }
@@ -108,6 +112,7 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
             if ((dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process(aStep)) // Process filters
                 || (dFilterManager->GetifFilter_Particle() &&
                     !dFilterManager->Filter_Particle(aStep))) { // Particle filters
+                dRootMng->AddFEvtNbKilledByFilter();
                 G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
                 G4EventManager::GetEventManager()->AbortCurrentEvent();
             }
@@ -116,6 +121,7 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
             dFilterManager->SetifCheckIncludeResult(false);
             if ((dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process_Found_Result())
                 || (dFilterManager->GetifFilter_Particle() && !dFilterManager->Filter_Particle_Found_Result())) {
+                dRootMng->AddFEvtNbKilledByFilter();
                 G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
                 G4EventManager::GetEventManager()->AbortCurrentEvent();
             }
@@ -135,7 +141,14 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
         dRootMng->FillParticleStep(aStep);
     }
     if (aStep->GetTrack()->GetParentID()==0) { // initial particle
-        if (post->GetProcessDefinedStep()->GetProcessName().contains("electronNuclear")) {
+        if (
+# if G4VERSION_NUMBER >= 1100
+             G4StrUtil::contains(post->GetProcessDefinedStep()->GetProcessName(), "electronNuclear")
+# else
+             post->GetProcessDefinedStep()->GetProcessName().contains("electronNuclear")
+# endif
+           )
+        {
 //            || post->GetProcessDefinedStep()->GetProcessName() == "biasWrapper(electronNuclear)" ) {
             G4double deltaE = fabs(prev->GetKineticEnergy() - post->GetKineticEnergy());
             if (post->GetPosition()[2] <= 100. * mm) {

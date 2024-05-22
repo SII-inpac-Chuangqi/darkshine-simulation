@@ -41,6 +41,7 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
+#include "G4Version.hh"
 #include "G4ios.hh"
 #include "globals.hh"
 #include "G4PhysicalConstants.hh"
@@ -176,10 +177,17 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
         return G4VRestDiscreteProcess::PostStepDoIt(aTrack, aStep);
     }
 
+# if G4VERSION_NUMBER > 1072
+G4MaterialPropertyVector *Fast_Intensity =
+            aMaterialPropertiesTable->GetProperty(kSCINTILLATIONCOMPONENT1);
+    G4MaterialPropertyVector *Slow_Intensity =
+            aMaterialPropertiesTable->GetProperty(kSCINTILLATIONCOMPONENT2);
+# else
     G4MaterialPropertyVector *Fast_Intensity =
             aMaterialPropertiesTable->GetProperty(kFASTCOMPONENT);
     G4MaterialPropertyVector *Slow_Intensity =
             aMaterialPropertiesTable->GetProperty(kSLOWCOMPONENT);
+# endif
 
     if (!Fast_Intensity && !Slow_Intensity) {//no scitilation
         if (verboseLevel > 0) {
@@ -271,7 +279,11 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
     G4NavigationHistory const *navHistory = touchable_counted->GetHistory();
 
     G4String cIn = touchable_counted->GetVolume(1)->GetLogicalVolume()->GetName(); //like, ECAL_LVW
+# if G4VERSION_NUMBER >= 1100
+    cIn = cIn.erase(cIn.find("_LVW"));
+# else
     cIn = cIn.remove(cIn.index("_LVW"));
+# endif
     G4int copyNum = touchable_counted->GetCopyNumber(1);
     G4bool calobound_good = true; //now dummy. used to filter non-optical region where optical property setted
 
@@ -353,25 +365,44 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
         if (scnt == 1) { //
             if (nscnt == 1) { // only faat or slow component of sci. light
                 if (Fast_Intensity) {
+# if G4VERSION_NUMBER > 1072
+                    ScintillationTime = aMaterialPropertiesTable->GetConstProperty(kSCINTILLATIONTIMECONSTANT1);
+                    if (fFiniteRiseTime) {
+                        ScintillationRiseTime = aMaterialPropertiesTable->GetConstProperty(kSCINTILLATIONRISETIME1);
+                    }
+# else
                     ScintillationTime = aMaterialPropertiesTable->GetConstProperty(kFASTTIMECONSTANT);
                     if (fFiniteRiseTime) {
                         ScintillationRiseTime = aMaterialPropertiesTable->GetConstProperty(kFASTSCINTILLATIONRISETIME);
                     }
+# endif
                     ScintillationType = Fast;
                     ScintillationIntegral =
                             (G4PhysicsOrderedFreeVector *) ((*fFastIntegralTable)(materialIndex));
                 }
                 if (Slow_Intensity) {
+# if G4VERSION_NUMBER > 1072
+                    ScintillationTime = aMaterialPropertiesTable->GetConstProperty(kSCINTILLATIONTIMECONSTANT2);
+                    if (fFiniteRiseTime) {
+                        ScintillationRiseTime = aMaterialPropertiesTable->GetConstProperty(kSCINTILLATIONRISETIME2);
+                    }
+# else
                     ScintillationTime = aMaterialPropertiesTable->GetConstProperty(kSLOWTIMECONSTANT);
                     if (fFiniteRiseTime) {
                         ScintillationRiseTime = aMaterialPropertiesTable->GetConstProperty(kSLOWSCINTILLATIONRISETIME);
                     }
+#endif
                     ScintillationType = Slow;
                     ScintillationIntegral =
                             (G4PhysicsOrderedFreeVector *) ((*fSlowIntegralTable)(materialIndex));
                 }
             } else { //fast + slow components: add fast
+# if G4VERSION_NUMBER > 1072
+                G4double yieldRatio = aMaterialPropertiesTable->GetConstProperty(kSCINTILLATIONYIELD1) /
+                                      aMaterialPropertiesTable->GetConstProperty(kSCINTILLATIONYIELD2);
+# else
                 G4double yieldRatio = aMaterialPropertiesTable->GetConstProperty(kYIELDRATIO);
+# endif
                 if (fExcitationRatio == 1.0 ||
                     fExcitationRatio == 0.0) //by default, this ratio is not set then taken yield ratio from material
                 {
@@ -380,20 +411,34 @@ ScintillationLUT::PostStepDoIt(const G4Track &aTrack, const G4Step &aStep)
                     Num = G4int(std::min(fExcitationRatio, 1.0) *
                                 fNumPhotons); //if set exctition ratio, use this (for both )
                 }
+# if G4VERSION_NUMBER > 1072
+                ScintillationTime = aMaterialPropertiesTable->GetConstProperty(kSCINTILLATIONTIMECONSTANT1);
+                if (fFiniteRiseTime) {
+                    ScintillationRiseTime = aMaterialPropertiesTable->GetConstProperty(kSCINTILLATIONRISETIME1);
+                }
+# else
                 ScintillationTime = aMaterialPropertiesTable->GetConstProperty(kFASTTIMECONSTANT);
                 if (fFiniteRiseTime) {
                     ScintillationRiseTime = aMaterialPropertiesTable->GetConstProperty(kFASTSCINTILLATIONRISETIME);
                 }
+# endif
                 ScintillationType = Fast;
                 ScintillationIntegral =
                         (G4PhysicsOrderedFreeVector *) ((*fFastIntegralTable)(materialIndex));
             }
         } else { //fast + slow components: add slow
             Num = fNumPhotons - Num;
+# if G4VERSION_NUMBER > 1072
+            ScintillationTime = aMaterialPropertiesTable->GetConstProperty(kSCINTILLATIONTIMECONSTANT2);
+            if (fFiniteRiseTime) {
+                ScintillationRiseTime = aMaterialPropertiesTable->GetConstProperty(kSCINTILLATIONRISETIME2);
+            }
+# else
             ScintillationTime = aMaterialPropertiesTable->GetConstProperty(kSLOWTIMECONSTANT);
             if (fFiniteRiseTime) {
                 ScintillationRiseTime = aMaterialPropertiesTable->GetConstProperty(kSLOWSCINTILLATIONRISETIME);
             }
+# endif
             ScintillationType = Slow;
             ScintillationIntegral =
                     (G4PhysicsOrderedFreeVector *) ((*fSlowIntegralTable)(materialIndex));
@@ -601,9 +646,13 @@ void ScintillationLUT::BuildThePhysicsTable() {
                 aMaterial->GetMaterialPropertiesTable();
 
         if (aMaterialPropertiesTable) {
-
+# if G4VERSION_NUMBER > 1072
+            G4MaterialPropertyVector *theFastLightVector =
+                    aMaterialPropertiesTable->GetProperty(kSCINTILLATIONCOMPONENT1);
+# else
             G4MaterialPropertyVector *theFastLightVector =
                     aMaterialPropertiesTable->GetProperty(kFASTCOMPONENT);
+# endif
 
             if (theFastLightVector) {
 
@@ -652,8 +701,13 @@ void ScintillationLUT::BuildThePhysicsTable() {
                 }
             }
 
+# if G4VERSION_NUMBER > 1072
+            G4MaterialPropertyVector *theSlowLightVector =
+                    aMaterialPropertiesTable->GetProperty(kSCINTILLATIONCOMPONENT1);
+# else
             G4MaterialPropertyVector *theSlowLightVector =
                     aMaterialPropertiesTable->GetProperty(kSLOWCOMPONENT);
+# endif
 
             if (theSlowLightVector) {
 

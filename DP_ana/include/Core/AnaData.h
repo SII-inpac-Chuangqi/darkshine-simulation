@@ -38,6 +38,11 @@
 
 using std::vector, std::tuple;
 
+namespace tracking
+{
+    enum detector {dTag = 1, dRec = 2};
+}
+
 class AnaData {
 public:
     AnaData(const AnaData &) = delete;
@@ -72,6 +77,7 @@ public:
     const std::vector<double> getLayerWidthTag()  const {return layer_width_tag;}
     const std::vector<double> getLayerLengthTag() const {return layer_length_tag;}
     const std::vector<double> getLayerThicknessTag() const {return layer_thickness_tag;}
+    const std::vector<double> getLayerCentersZTag() const {return layer_centers_z_tag;}
     const std::vector<int>    getStripNoTag() const {return strip_no_tag;}
     const std::vector<double> getAnglesTag()  const {return angles_tag;}
     double getCenterXTag() const {return center_x_tag_;}
@@ -85,6 +91,7 @@ public:
     const std::vector<double> getLayerWidthRec()  const {return layer_width_rec;}
     const std::vector<double> getLayerLengthRec() const {return layer_length_rec;}
     const std::vector<double> getLayerThicknessRec() const {return layer_thickness_rec;}
+    const std::vector<double> getLayerCentersZRec() const {return layer_centers_z_rec;}
     const std::vector<int>    getStripNoRec() const {return strip_no_rec;}
     const std::vector<double> getAnglesRec()  const {return angles_rec;}
 
@@ -154,6 +161,7 @@ protected:
     std::vector<double> layer_width_tag;
     std::vector<double> layer_length_tag;
     std::vector<double> layer_thickness_tag;
+    std::vector<double> layer_centers_z_tag;
     std::vector<int> strip_no_tag;
     std::vector<double> angles_tag;
     double center_x_tag_{0.};
@@ -166,6 +174,7 @@ protected:
     std::vector<double> layer_width_rec;
     std::vector<double> layer_length_rec;
     std::vector<double> layer_thickness_rec;
+    std::vector<double> layer_centers_z_rec;
     std::vector<int> strip_no_rec;
     std::vector<double> angles_rec;
     double center_x_rec_{0.};

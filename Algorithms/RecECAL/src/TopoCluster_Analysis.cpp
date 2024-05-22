@@ -18,15 +18,6 @@
     #pragma message "Clustering Debug mode... note your printout!!" 
 #endif
 
-// Why I use macors? see this http://conal.net/blog/posts/the-c-language-is-purely-functional
-// define 1D accesor for 3D XYZ cell structure since C++ has no 3D array. For other structure of ECAL need rewrite this.
-//this accsor is the normal one. output starts from 0
-/*e.g. (x,y), dNX=2, dNY=3
-(2,3) (1,3)           5 4
-(2,2) (1,2)    -->    3 2
-(2,1) (1,1)           1 0
-*/
-#define ACC(x,y,z) (((x)-1)+dNX()*((y)-1)+dNX()*dNY()*((z)-1)) // posmap start from 0 0 0
 // #ifndef CLUSTER_DEBUG
 //     // #define EIGEN_NO_DEBUG
 // #endif
@@ -64,7 +55,7 @@ bool TopoCluster_Analysis::makeSortedCenterIdNeighborsCHitMap() {
 
 const TVector3& TopoCluster_Analysis::toPos(CHit* h){ // Pos from AnaData always be mm //note CHit never need to bo const -- it designs to be const
     //first access the geometry information
-    return POS().at(ACC(h->X(),h->Y(),h->Z()));
+    return POS().at(dAnaData->getACC(h->X(),h->Y(),h->Z()));
 }
 
 double TopoCluster_Analysis::calDistance(CHit* h, const TVector3& loc){
@@ -111,7 +102,7 @@ bool TopoCluster_Analysis::MakePOSMAP() {
     POSMAP.clear();
     POSMAP.resize(dAnaData->getNECalCells(), nullptr);
     for (auto h: allhits) {
-        POSMAP.at(ACC(h->X(), h->Y(), h->Z())) = h;
+        POSMAP.at(dAnaData->getACC(h->X(), h->Y(), h->Z())) = h;
     }
     return true;
 }

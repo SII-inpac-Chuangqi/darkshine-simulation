@@ -34,11 +34,17 @@ add_executable(DAna DP_ana.cpp ${Ana_sources} ${Ana_headers}
         ${PROJECT_SOURCE_DIR}/Utility/UTIL/src/Config.cpp
         ${Algo_sources} ${Algo_headers})
 
+target_link_libraries(DAna genfit2)
+
 IF (BUILD_HDF5)
-    target_link_libraries(DAna genfit2 ${HDF5_CXX_LIBRARIES} ${HDF5_LINK_LIBS})
-ELSE()
-    target_link_libraries(DAna genfit2)
+    target_link_libraries(DAna ${HDF5_CXX_LIBRARIES} ${HDF5_LINK_LIBS})
 ENDIF()
+
+IF (BUILD_ACTS)
+    get_library_names(${Acts_libraries} Acts_LIB_NAMES)
+    target_link_libraries(DAna tbb ${Acts_LIB_NAMES} ${Boost_LIBRARIES})
+ENDIF()
+
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #

@@ -37,7 +37,7 @@ double MeanExcEnergy_get(TGeoMaterial*);
 bool
 TGeoMaterialInterface::initTrack(double posX, double posY, double posZ,
                                    double dirX, double dirY, double dirZ){
-//  #ifdef DEBUG
+//  #ifdef DSIMU_DEBUG
 //  debugOut << "TGeoMaterialInterface::initTrack. \n";
 //  debugOut << "Pos    "; TVector3(posX, posY, posZ).Print();
 //  debugOut << "Dir    "; TVector3(dirX, dirY, dirZ).Print();

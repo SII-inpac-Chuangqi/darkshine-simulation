@@ -106,7 +106,6 @@ public:
     /* event_id = id + Run_Number * Total_Event_Number */
     int Run_Number; // run number
     bool read_yaml_Run_Number = true;
-    int Total_Event_Number; // event number
 
     //----------------------------------------
     // Out Collection Options

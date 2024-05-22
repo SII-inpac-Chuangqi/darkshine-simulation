@@ -15,6 +15,7 @@
 #include "TLorentzVector.h"
 #include "TRandom3.h"
 #include "TArrayD.h"
+#include "TParameter.h"
 
 #include "G4Step.hh"
 #include "G4Track.hh"
@@ -77,6 +78,22 @@ public:
 
     [[nodiscard]] DEvent *GetEvt() const { return Evt; }
 
+    [[nodiscard]] TFile *getRootFile() const {
+        return rootFile;
+    }
+
+    [[nodiscard]] Long64_t getFEvtNRecorded() const {
+        return fEvtNRecorded;
+    }
+
+    [[nodiscard]] Int_t getFEvtNbKilledByTruthFilter() const {
+        return fEvtNbKilledByTruthFilter;
+    }
+
+    [[nodiscard]] Int_t getFEvtNbKillByFilter() const {
+        return fEvtNbKilledByFilter;
+    }
+
     /* fill methods */
     void FillSim(Int_t EventID, const Double_t *Rndm);
 
@@ -103,16 +120,16 @@ public:
 
     void FillGeometry(const G4String &filename);
 
-    TFile *getRootFile() const {
-        return rootFile;
-    }
-
     void FillWeight(double w) {
         weight = w;
     }
 
-    Long64_t getFEvtNRecorded() const {
-        return fEvtNRecorded;
+    void AddFEvtNbKilledByTruthFilter() {
+        fEvtNbKilledByTruthFilter++;
+    }
+
+    void AddFEvtNbKilledByFilter() {
+        fEvtNbKilledByFilter++;
     }
 
 private:
@@ -132,7 +149,9 @@ private:
     Int_t fStart; // Run Number, Initialized to 0. Set method: RootManager::SetStartID(int id)
     Int_t fEvtNb; // Event Number, Initialized to 100000. Set method: RootManager::SetNbEvent(int id)
     Int_t fEvtN{};
-    Long64_t fEvtNRecorded{0};
+    Int_t fEvtNbKilledByTruthFilter{0};
+    Int_t fEvtNbKilledByFilter{0};
+    Int_t fEvtNRecorded{0};
     Double_t weight{0.};
     Double_t OpticalHCALYield{0.};
 
