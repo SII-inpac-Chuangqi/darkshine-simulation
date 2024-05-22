@@ -43,7 +43,7 @@ stages:
   - test
   - post
 
-build with ccache:
+build:
   stage: build
   script:
     - cat ./Automaton/build.sh | /bin/bash --login
@@ -52,16 +52,13 @@ build with ccache:
     paths:
       - "install/*"
       - "test/*"
-  cache:
-    paths:
-      - "build/ccache/*"
 
 # run tests using the binary built before
 # we use a central script to tun all the test, or it could be decomposed later
 test simu and ana:
   stage: test
   dependencies: 
-    - build with ccache
+    - build
   script:
     - cat ./Automaton/test.sh | /bin/bash --login
   artifacts:
