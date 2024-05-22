@@ -260,6 +260,10 @@ void Control::RebuildVariables() {
             particle_filters_parameters.clear();
         }
         if_filter = true;
+        veto_ECAL_geq_E = 0;
+        veto_ECAL = false;
+        veto_missP_leq_E = 0;
+        veto_missP = false;
         process_filters_parameters.emplace_back("DMProcessDMBrem", 0 * GeV, -1 * GeV, -7.5 * mm, 7.5 * mm, 1, 1, 0);
     }
 
