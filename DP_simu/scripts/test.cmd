@@ -2,7 +2,7 @@ _obj=DSimu
 _type=Default
 _log=${_obj}.${_type}.log
 cp ${_DSS_TEST_ROOT}/default.yaml .
-cp ${_DSS_TEST_ROOT}/mag_default.root .
+cp ${_DSS_TEST_ROOT}/magnet_0.75_20240521.root  .
 DSimu -y default.yaml -b 50000 |& tee ${_log} # 1>/dev/null
 _DSS_TEST_STATUS=${PIPESTATUS[0]}
 if [ ${_DSS_TEST_STATUS} -ne 0 ]; then
