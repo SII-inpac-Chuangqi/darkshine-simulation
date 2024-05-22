@@ -33,6 +33,11 @@ public:
 
     void ReadProcess(AnaEvent* Evt);
 
+    void SetInitialE(DStep_b1_5 *step) {
+        initial_E = step->getE();
+        minProcE = 0.5 * initial_E;
+    };
+
 
 private:
 
@@ -61,6 +66,9 @@ private:
     unsigned int GMM_Id{};
     unsigned int PN_Id{};
     Bool_t if_refresh_hardbrem;
+
+    double initial_E; // energy of the first initial track step
+    double minProcE;
 
     // Event Type
     TString  MainProcessName;

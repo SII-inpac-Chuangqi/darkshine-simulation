@@ -90,6 +90,7 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
 
         // Process MCTruthEvent -- ProcessClassifier
         ProcReader->initialization();
+        ProcReader->SetInitialE(steps->front());
         ProcReader->ReadProcess(evt);
 
         // Record Initial Particle Status

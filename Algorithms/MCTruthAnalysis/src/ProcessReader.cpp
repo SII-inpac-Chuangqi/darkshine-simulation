@@ -44,10 +44,10 @@ void ProcessReader::ReadProcess(AnaEvent *Evt) {
         vector < DTruthProcess * > v_processes = tp->sec_process_link;
         for (auto const& process: v_processes) {
             // Define Event Type (Main Process)
-            if (process->E > 4000.) {
+            if (process->E > minProcE) {
                 if (process->index == eBrem_Id && process->E > MainProcessEnergy) { // HardBrem
                     if_refresh_hardbrem = true;
-                    if (MainProcessEnergy > 4000.)
+                    if (MainProcessEnergy > minProcE)
                         for (auto const& proc_name: InterestProcName) // prevent hardbem overwrite Interested Process with E > 4GeV
                             if (MainProcessName == proc_name) if_refresh_hardbrem = false;
                     if (if_refresh_hardbrem)
@@ -62,7 +62,7 @@ void ProcessReader::ReadProcess(AnaEvent *Evt) {
                 setMainProcess(process);
             }
             // Set process flag
-            if ( process->E > 4000. && process->index == eBrem_Id) { // HardBrem
+            if ( process->E > minProcE && process->index == eBrem_Id) { // HardBrem
                 process_HardBrem++;
                 if (dAnaData->getRegionName(process->vertex) == "Target") process_HardBrem_Target++;
                 else if (dAnaData->getRegionName(process->vertex) == "ECAL") process_HardBrem_ECAL++;
