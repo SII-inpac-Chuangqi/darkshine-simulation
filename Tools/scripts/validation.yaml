@@ -29,7 +29,7 @@ variables:
     range: [ 20,0,5000 ] # [bin size, min, max]
     label: [ "Leading E^{Recoil}_{Tracker}", "MeV" ]
   - name: "TagTrk2_pp[0] - RecTrk2_pp[0]"
-    range: [ 20,0,5000 ] # [bin size, min, max]
+    range: [ 20,0,4000 ] # [bin size, min, max]
     label: [ "Tracker missing P", "MeV" ]
   - name: "Acts_TagTrk_P[0]"
     range: [ 20,0,5000 ]
@@ -38,7 +38,7 @@ variables:
     range: [ 20,0,5000 ]
     label: [ "Acts Leading E^{Recoil}_{Tracker}", "MeV" ]
   - name: "Acts_TagTrk_P[0] - Acts_RecTrk_P[0]"
-    range: [ 20,0,5000 ]
+    range: [ 20,0,4000 ]
     label: [ "Acts Tracker missing P", "MeV" ]
 
 
