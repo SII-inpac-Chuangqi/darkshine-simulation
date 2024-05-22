@@ -19,15 +19,15 @@ global_selection: "1"
 global_selection_title: "Inclusive Validation"
 
 variables:
+  - name: "process_ID"
+    range: [ 50, 0, 50]
+    label: ["MC Process ID", ""]
   - name: "TagTrk2_pp[0]"
-    range: [ 20,0,9000 ] # [bin size, min, max]
+    range: [ 36,0,9000 ] # [bin size, min, max]
     label: [ "Leading E^{Tagging}_{Tracker}", "MeV" ]
   - name: "RecTrk2_pp[0]"
-    range: [ 20,0,9000 ] # [bin size, min, max]
+    range: [ 36,0,9000 ] # [bin size, min, max]
     label: [ "Leading E^{Recoil}_{Tracker}", "MeV" ]
-  - name: "TagTrk2_pp[0] - RecTrk2_pp[0]"
-    range: [ 18,0,8100 ] # [bin size, min, max]
-    label: [ "E^{Tagging}_{Tracker} - E^{Recoil}_{Tracker}", "MeV" ]
 
   - name: "ECAL_E_total[0]"
     vbins: [4000,5000,6000,6500,7000,7250,7500,7600,7700,7800,7900,8000,8100]
