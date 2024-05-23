@@ -103,16 +103,16 @@ OutCollection:
 TruthAnalysis:
   ### For truth particles
   # minimal kinetic energy to record the truth particle
-  E_kin_min_record: [1000, "MeV"]
+  E_kin_min_record: [500, "MeV"]
   # minimal kinetic energy to process in stepping action
-  E_kin_min_step: [100, "MeV"]
+  E_kin_min_step: [50, "MeV"]
   # minimal leakage to record the truth particle
-  E_leak_min: [50, "MeV"]
+  E_leak_min: [20, "MeV"]
   # minimal escaping energy to record the truth particle
-  E_remain_min: [100, "MeV"]
+  E_remain_min: [50, "MeV"]
   ### For truth processes
   # minimal process energy to record the truth process
-  E_min_process: [1, "GeV"]
+  E_min_process: [500, "MeV"]
   # minimal energy transfer
   E_process_ratio: 0.5
 

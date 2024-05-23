@@ -89,8 +89,8 @@ void TrackingAction::PreUserTrackingAction(const G4Track *aTrack) {
     // For McParticle Collection
     if (dControl->save_MC) {
         if (dControl->save_all_mcp || (aTrack->GetParentID()==0
-                                       || pm >= 1. * GeV
-                                       || (kin_energy >= 1. * GeV && kin_energy <= 10. * GeV)
+                                       || pm >= 500. * MeV
+                                       || kin_energy >= 500. * MeV
                                        || abs(pdg) == 13   // Muon
                                        || abs(pdg) == 111  // Pion0
                                        || abs(pdg) == 211  // Pion+-
