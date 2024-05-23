@@ -11,7 +11,7 @@ Performance Stats
 ${DSS_PERF_STATS}
 ```
 
-Validation of ECAL variables
+Validation of variables
 
 ![plot](validation_plots/fig_0.png)
 
