@@ -23,12 +23,32 @@ They could be executed separately, with totally different configuration file for
 DarkSHINE Software can be easily downloaded through GitLab.
 
 ```c++
-    git clone git@code.ihep.ac.cn:darkshine/darkshine-simulation.git
+    git clone git@code.ihep.ac.cn:darkshine/darkshine-simulation.git --depth 1
 ```
 
 **Note:** for users who want to run Baseline 1 samples, please use ``` git checkout tags/baseline1 ``` instead. The current version of config files of DSimu and DAna may not be compatible with previous releases. See example rare process yaml file on [Wiki page](https://code.ihep.ac.cn/darkshine/darkshine-simulation/-/wikis/Sample-Production).
 
-Before installing, if you are using your own machine, several dependencies need to be checked.
+### Environment setup
+
+If you are using your **own** machin, Docker is recommended. Go to this [link](https://hub.docker.com/repository/docker/ykrsama/darkshine-simulation/general) to setup the darkshine docker.
+
+If you are using INPAC cluster:
+
+```bash
+export DSS_CONTAINER="/lustre/collider/hepmc/darkshine-docker/darkshine-simulation_latest.sbox"
+export PATH="/home/hepmc/usr/bin:${PATH}"
+dss # Enter the singularity
+```
+
+If you only want to use a pre-compiled version on INPAC, and **skip** the installation steps. make sure you are in the bash (if in Singularity> , type exit), then:
+
+```bash
+DSS_VERSION=1.6.2 dss # Enter the singularity
+```
+
+**Manual environment setup (not recommanded)**
+
+several dependencies need to be checked.
 
 - C++17
 - Geant4 10.06
@@ -36,22 +56,9 @@ Before installing, if you are using your own machine, several dependencies need 
 - gsl
 - yaml-cpp
 - [nlohmann/json](https://github.com/nlohmann/json)
+- build ACTS from here: [modifield ACTS](https://github.com/ykrsama/acts/tree/xuliang-v30)
 
-Or, if you are using clusters with CVMFS installed, you can directly source the LCG environment:
-```shell
-source /cvmfs/sft.cern.ch/lcg/views/LCG_97rc4python3/x86_64-centos7-gcc9-opt/setup.sh
-```
-
-<font color=FF0000>**If you want to build the branch acts-xuliang on bl-0, run**</font>
-
-```shell
-source /lustre/collider/zhuyifan/Software/xuliang-ACTS/setup.sh
-source /lustre/collider/zhuyifan/Software/xuliang-ACTS/install/python/setup.sh
-```
-
-Otherwise you have to build ACTS from here: [modifield ACTS](https://github.com/ykrsama/acts/tree/xuliang-v30)
-
-With everything needed, it's ready to install :v:
+### With everything needed, it's ready to install :v:
 
 
 ```shell

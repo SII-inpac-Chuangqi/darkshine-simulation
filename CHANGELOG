@@ -1,8 +1,10 @@
-2024-05-23:
-    1. DSimu: from 8 GeV to 4 GeV
+2024-05-24:
+    1. DSimu v1.6.2: from 8 GeV to 4 GeV
         1. new signal LUT
         2. new magnet
         3. fix some hard-coded definition i.e. energy of hardbrem, MainProcess
+    2. DAna v1.6.2:
+        1. Added Acts Sequencer
 
 2023-12-17:
     1. DAna v1.5.12
