@@ -19,9 +19,6 @@ global_selection: "1"
 global_selection_title: "Inclusive Validation"
 
 variables:
-  - name: "process_ID"
-    range: [ 50, 0, 50]
-    label: ["MC Process ID", ""]
   - name: "TagTrk2_pp[0]"
     range: [ 20,0,5000 ] # [bin size, min, max]
     label: [ "Leading E^{Tagging}_{Tracker}", "MeV" ]
@@ -93,6 +90,10 @@ variables:
   - name: "HCAL_E_Max_Cell[0]"
     range: [ 10, 0, 50 ]
     label: [ "E^{HCAL}_{Cell Max}", "MeV"]
+
+  - name: "process_ID"
+    range: [ 50, 0, 50]
+    label: ["MC Process ID", ""]
 
 samples:
   - name: "Testing"
