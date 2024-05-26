@@ -129,8 +129,8 @@ int main(int argc, char **argv) {
     parser.Add("f,outfile_Name", outfile_Name, "Output name, if not set read from YAML");
     parser.Add("n,Run_Number",   Run_Number,   "Run number for this job (EventID = id + beam_on * Run_Number), if not set read from YAML");
     parser.Add("b,beam_on",      beam_on,      "Beam on number, if not set read from YAML");
+    parser.Add("save_geometry",  save_geometry, "true: Save Geometry, if not set read from YAML");
     parser.AddFlag("g,gui",         gui_mode,      false, "GUI mode");
-    parser.AddFlag("save_geometry", save_geometry, true,  "Save Geometry, if not set read from YAML");
     parser.AddFlag("v,version",     print_version, false, "Print version");
     parser.AddFlag("a,animation",   if_animation,  false, "Store animation info for DDis");
     parser.Parse(argc, argv);

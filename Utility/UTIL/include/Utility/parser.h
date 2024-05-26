@@ -43,7 +43,10 @@ template<typename T> T Convert(const std::string&);
 template<> std::string Convert(const std::string &value) { return value; }
 template<> int Convert(const std::string &value) { return std::stoi(value); }
 template<> long Convert(const std::string &value) { return std::stol(value); }
-template<> bool Convert(const std::string &value) { return StrTolower(value) == "true" || std::stoi(value) != 0; }
+template<> bool Convert(const std::string &value) {
+    if (StrTolower(value) == "false") return false;
+    return StrTolower(value) == "true" || std::stoi(value) != 0;
+}
 template<> double Convert(const std::string &value) { return std::stof(value); }
 template<> float Convert(const std::string &value) { return std::stof(value); }
 template<> TString Convert(const std::string &value) { return value.data(); }
