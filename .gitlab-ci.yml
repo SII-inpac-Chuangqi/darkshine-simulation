@@ -35,6 +35,7 @@ workflow:
 variables:
   # set to local to run at local server
   BUILD_RUNNER: remote
+  GIT_DEPTH: 1
 
 image: ykrsama/darkshine-simulation
 
@@ -68,6 +69,7 @@ test simu and ana:
       - "test/*"
     exclude:
       - "test/*.root"
+      - "test/*/*.root"
 
 ci write wiki:
   stage: post

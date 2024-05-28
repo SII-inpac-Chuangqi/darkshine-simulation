@@ -1,7 +1,8 @@
 _obj=DAna
 _type=Export
 _log=${_obj}.${_type}.log
-DAna -x |& tee ${_log} > DAna.test.config
+DAna -x |& tee ${_log} > config.txt
+sed -i "/InputGeoFile   =/c InputGeoFile   = ${PWD}/Geometry.root" config.txt
 _DSS_TEST_STATUS=${PIPESTATUS[0]}
 if [ ${_DSS_TEST_STATUS} -ne 0 ]; then
     export _DSS_TEST_FATAL="${_type}"
@@ -12,7 +13,11 @@ fi
 _obj=DAna
 _type=Test
 _log=${_obj}.${_type}.log
-DAna -c DAna.test.config |& tee ${_log} # 1>/dev/null
+parDSS.sh Ana ${_DSS_NPROC} |& tee -a ${_log}
+parDSS.sh Merge ${_DSS_NPROC} |& tee -a ${_log}
+parDSS.sh Remove ${_DSS_NPROC} |& tee -a ${_log}
+mv dp_ana/merge_0.root dp_ana.root
+#DAna -c DAna.test.config |& tee ${_log} # 1>/dev/null
 _DSS_TEST_STATUS=${PIPESTATUS[0]}
 if [ ${_DSS_TEST_STATUS} -ne 0 ]; then
     export _DSS_TEST_FATAL="${_type}"

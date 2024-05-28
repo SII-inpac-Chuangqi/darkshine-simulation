@@ -29,7 +29,13 @@ export _DSS_TEST_PREFIX=${PWD}
 mkdir -p ${_DSS_TEST_PREFIX}/test
 cd ${_DSS_TEST_PREFIX}/test
 #update perf stats
-export DSS_PERF_STATS="`grep "Performance Statistics" DSimu.Default.log`"
+DSS_PERF_STATS="""======================================================================
+$(sed -n "/DSimu Performance Statistics for job 0:/,/======/p" DSimu.Default.log)
+======================================================================
+$(sed -n "/DAna Performance Statistics for job 0:/,/======/p" DAna.Test.log)"""
+
+export DSS_PERF_STATS
+
 #
 for wiki in validation.md
 do

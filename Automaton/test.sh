@@ -13,15 +13,17 @@ if [[ ! -f "CMakeLists.txt" ]]; then
 fi
 
 export _DSS_TEST_PREFIX=${PWD}
+export _DSS_NPROC=10
 export LD_LIBRARY_PATH="${_DSS_TEST_PREFIX}/install/lib:${LD_LIBRARY_PATH}"
 export PATH="${_DSS_TEST_PREFIX}/install/bin:${PATH}"
+export PATH="${_DSS_TEST_PREFIX}/Automaton:${PATH}"
 
 mkdir -p ${_DSS_TEST_PREFIX}/test
 cd ${_DSS_TEST_PREFIX}/test
 for obj in DP_simu DP_ana Tools
 do
     export _DSS_TEST_ROOT=${_DSS_TEST_PREFIX}/${obj}/scripts
-    . ${_DSS_TEST_ROOT}/test.cmd
+    . ${_DSS_TEST_ROOT}/test.sh
     if [ -n "${_DSS_TEST_FATAL}" ]; then 
         diagnostic
         # cat ${_DSS_TEST_LOG}
