@@ -32,18 +32,11 @@ DarkSHINE Software can be easily downloaded through GitLab.
 
 If you are using your **own** machin, Docker is recommended. Go to this [link](https://hub.docker.com/repository/docker/ykrsama/darkshine-simulation/general) to setup the darkshine docker.
 
-If you are using INPAC cluster:
+If you are using the INPAC cluster:
 
-```bash
-export DSS_CONTAINER="/lustre/collider/hepmc/darkshine-docker/darkshine-simulation_latest.sbox"
-export PATH="/home/hepmc/usr/bin:${PATH}"
-dss # Enter the singularity
-```
-
-If you only want to use a pre-compiled version on INPAC, and **skip** the installation steps. make sure you are in the bash (if in Singularity> , type exit), then:
-
-```bash
-DSS_VERSION=1.6.2 dss # Enter the singularity
+```shell
+source /lustre/collider/zhuyifan/Software/xuliang-ACTS/setup.sh
+source /lustre/collider/zhuyifan/Software/xuliang-ACTS/install/python/setup.sh
 ```
 
 **Manual environment setup (not recommanded)**
