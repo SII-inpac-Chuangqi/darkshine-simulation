@@ -7,7 +7,7 @@ Name: ${CI_COMMIT_TITLE}
 ======================================================
 
 Performance Stats
-```bash
+```
 ${DSS_PERF_STATS}
 ```
 
