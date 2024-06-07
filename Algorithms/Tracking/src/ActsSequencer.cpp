@@ -396,7 +396,7 @@ void ActsSequencer::ProcessEvt(AnaEvent *evt) {
         // sort by momentum
         std::sort(cur_trk_vars->track.begin(), cur_trk_vars->track.end(),
             [](const auto& l, const auto& r) {
-                return l.P > r.P;
+                return std::abs(l.P) > std::abs(r.P);
         });
         // fill flattened parameters
         for (const auto& track : cur_trk_vars->track) {
