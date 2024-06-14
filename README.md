@@ -67,7 +67,9 @@ cd ..
 Write a file to export environment variables, i.e. setup.sh
 
 ```shell
-source /cvmfs/sft.cern.ch/lcg/views/LCG_97rc4python3/x86_64-centos7-gcc9-opt/setup.sh
+# For inpac cluster
+source /lustre/collider/zhuyifan/Software/xuliang-ACTS/setup.sh
+source /lustre/collider/zhuyifan/Software/xuliang-ACTS/install/python/setup.sh
 DSS_DIR=<your-install-directory>
 export PATH=${DSS_DIR}/bin:${PATH}
 export LD_LIBRARY_PATH=${DSS_DIR}/lib:${LD_LIBRARY_PATH}
