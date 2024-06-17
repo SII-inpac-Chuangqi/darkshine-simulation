@@ -76,12 +76,14 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
                 && prev->GetPosition().z() <= dControl->ECAL_Front_Z
                 && (dRootMng->GetEvt()->getStepCollection().at(dControl->InitialParticleStepCollection_Name)->at(0)->getE() - prev->GetTotalEnergy()) < dControl->veto_missP_leq_E) {
                 dRootMng->AddFEvtNbKilledByTruthFilter();
+                dRootMng->SetKilledByTruthFilter(true);
                 G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
                 G4EventManager::GetEventManager()->AbortCurrentEvent();
             }
             dFilterManager->AddEstimateInECALEnergy(aStep->GetTotalEnergyDeposit());
             if (dControl->veto_ECAL && dFilterManager->GetEstimateInECALEnergy() > dControl->veto_ECAL_geq_E) {
                 dRootMng->AddFEvtNbKilledByTruthFilter();
+                dRootMng->SetKilledByTruthFilter(true);
                 G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->SetEventAborted();
                 G4EventManager::GetEventManager()->AbortCurrentEvent();
             }

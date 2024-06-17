@@ -139,7 +139,7 @@ Biasing:
 Filters:
   # if to apply filters
   if_filter: false
-  veto_ECAL_geq: 2.5 # GeV
+  veto_ECAL_geq: 3 # GeV
   veto_missP_leq: 1 # GeV
   # if to apply filter on hard-brem event
   if_HardBrem: false
@@ -149,14 +149,14 @@ Filters:
     # fStage0 - true: apply filter on primary track; false: not apply on primary track
     # fStage1 - true: apply filter on secondaries track; false: not apply on secondary track
   particle_filters_parameters: # PDG, min Energy [Unit], max Energy [Unit] , min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
-  # - [ 22, 2, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, true, false ] # help GMM / PN ECAL
+  # - [ 22, 2, "GeV", -1, "GeV", 180.5, "mm", 636.5, "mm", true, true, false ]
   process_filters_parameters: # Process Name, min Energy [Unit], max Energy [Unit], min Distance [Unit], max Distance [Unit], fInclude, fStage0, fStage1
   # - [ "GammaToMuPair",   2, "GeV", -1, "GeV", -607.5, "mm", 180,   "mm", true, false, true] # GMM Target
   # - [ "GammaToMuPair",   2, "GeV", -1, "GeV", 180.5,  "mm", 636.5, "mm", true, false, true] # GMM ECAL
   # - [ "photonNuclear",   2, "GeV", -1, "GeV", -607.5, "mm", 180,   "mm", true, false, true] # PN Target
   # - [ "photonNuclear",   2, "GeV", -1, "GeV", 180.5,  "mm", 636.5, "mm", true, false, true] # PN ECAL
-  # - [ "electronNuclear", 4, "GeV", -1, "GeV", -607.5, "mm", 180,   "mm", true, true, false] # EN Target
-  # - [ "electronNuclear", 4, "GeV", -1, "GeV", 180.5,  "mm", 636.5, "mm", true, true, false] # EN ECAL
+  # - [ "electronNuclear", 2, "GeV", -1, "GeV", -607.5, "mm", 180,   "mm", true, true, false] # EN Target
+  # - [ "electronNuclear", 2, "GeV", -1, "GeV", 180.5,  "mm", 636.5, "mm", true, true, false] # EN ECAL
 
 ###########################################
 # Optical Options

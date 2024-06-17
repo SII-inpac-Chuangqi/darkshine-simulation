@@ -48,6 +48,7 @@
 
 #include "G4VBiasingOperator.hh"
 #include "BiasingMessenger.hh"
+#include "DP_simu/RootManager.hh"
 
 class G4BOptnChangeCrossSection;
 

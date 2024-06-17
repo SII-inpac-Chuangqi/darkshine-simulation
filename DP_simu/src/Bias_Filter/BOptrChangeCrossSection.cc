@@ -220,6 +220,11 @@ BOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track *track,
             operation->UpdateForStep(0.0);
         }
     }
+
+    if (! dRootMng->getIsBiasPool()) {
+        dRootMng->SetIsBiasPool(true);
+        dRootMng->AddBiasNPool();
+    }
 //    print_process();
     return operation;
 
