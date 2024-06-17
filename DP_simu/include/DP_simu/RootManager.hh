@@ -16,6 +16,7 @@
 #include "TRandom3.h"
 #include "TArrayD.h"
 #include "TParameter.h"
+#include "TH1D.h"
 
 #include "G4Step.hh"
 #include "G4Track.hh"
@@ -94,6 +95,15 @@ public:
         return fEvtNbKilledByFilter;
     }
 
+    [[nodiscard]] Bool_t getIsBiasPool() const {
+        return is_bias_pool;
+    }
+
+    [[nodiscard]] Bool_t getKilledByTruthFilter() const {
+        return killed_by_truth_filter;
+    }
+
+
     /* fill methods */
     void FillSim(Int_t EventID, const Double_t *Rndm);
 
@@ -124,6 +134,11 @@ public:
         weight = w;
     }
 
+    void FillHistBin(TH1* hist, int nbin, TString label, Double_t content) {
+        hist->GetXaxis()->SetBinLabel(nbin, label);
+        hist->SetBinContent(nbin, content);
+    }
+
     void AddFEvtNbKilledByTruthFilter() {
         fEvtNbKilledByTruthFilter++;
     }
@@ -131,6 +146,23 @@ public:
     void AddFEvtNbKilledByFilter() {
         fEvtNbKilledByFilter++;
     }
+
+    void AddBiasNPool() {
+        fBiasNPool++;
+    }
+
+    void AddBiasNPoolPassTruthFilter() {
+        fBiasNPoolPassTruthFilter++;
+    }
+
+    void SetIsBiasPool(Bool_t in) {
+        is_bias_pool = in;
+    }
+
+    void SetKilledByTruthFilter(Bool_t in) {
+        killed_by_truth_filter = in;
+    }
+
 
 private:
 
@@ -152,6 +184,8 @@ private:
     Int_t fEvtNbKilledByTruthFilter{0};
     Int_t fEvtNbKilledByFilter{0};
     Int_t fEvtNRecorded{0};
+    Int_t fBiasNPool{0};
+    Int_t fBiasNPoolPassTruthFilter{0};
     Double_t weight{0.};
     Double_t OpticalHCALYield{0.};
 
@@ -173,6 +207,10 @@ private:
 
     // DEvent Collection
     DEvent *Evt;
+
+    // Change during event
+    Bool_t is_bias_pool{false}; // for biasing, count if mother particle can perform bias
+    Bool_t killed_by_truth_filter{false};
 
 private:
     RootManager();

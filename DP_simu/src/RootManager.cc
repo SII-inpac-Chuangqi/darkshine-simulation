@@ -151,14 +151,20 @@ Long64_t RootManager::save() {
     Long64_t file_size = 0.;
     if (rootFile) {
         // Add Metadata
-        TList *userInfo = tr->GetUserInfo();
-        userInfo->Add(new TParameter<Int_t>("Total_Event_Number", fEvtNb));
-        userInfo->Add(new TParameter<Int_t>("Recorded_Event_Number", fEvtNRecorded));
-        userInfo->Add(new TParameter<Int_t>("Event_Number_Killed_by_Truth_Filter", fEvtNbKilledByTruthFilter));
-        userInfo->Add(new TParameter<Int_t>("Event_Number_Killed_by_Filter", fEvtNbKilledByFilter));
-        userInfo->Add(new TParameter<Double_t>("TruthFilter_Efficiency", fEvtNb > 0 ? 1 - static_cast<double>(fEvtNbKilledByTruthFilter) / static_cast<double>(fEvtNb) : 0 ));
+        //TList *userInfo = tr->GetUserInfo();
+        //userInfo->Add(new TParameter<Int_t>("Total_Event_Number", fEvtNb));
+        // Add Truth Cutflow
+        int nbins = 6;
+        auto h = new TH1D("truth_cutflow", "Truth Cutflow", nbins, 0, nbins);
+        FillHistBin(h, 1, "Beam_On", fEvtNb);
+        FillHistBin(h, 2, "Pass_Truth_Filter", fEvtNb - fEvtNbKilledByTruthFilter);
+        FillHistBin(h, 3, "Pass_Filter", fEvtNb - fEvtNbKilledByTruthFilter - fEvtNbKilledByFilter);
+        FillHistBin(h, 4, "Bias_N_Pool", fBiasNPool);
+        FillHistBin(h, 5, "Bias_N_Pool_Pass_Truth_Filter", fBiasNPoolPassTruthFilter);
+        FillHistBin(h, 6, "Recorded_Event_Number", fEvtNRecorded);
 
         rootFile->WriteTObject(tr, "", "Overwrite");
+        rootFile->WriteTObject(h, "", "Overwrite");
         file_size = rootFile->GetSize();
         rootFile->Close();
         G4cout << "[Root Manager] ==> Simulation Tree is saved \n" << G4endl;

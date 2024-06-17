@@ -64,6 +64,8 @@ EventAction::~EventAction()
 
 void EventAction::BeginOfEventAction(const G4Event *event) {
     dRootMng->FillWeight(1);
+    dRootMng->SetIsBiasPool(false);
+    dRootMng->SetKilledByTruthFilter(false);
     dFilterManager->SetifCheckIncludeResult(true);
     fPrintModulo = dRootMng->GetNbEvent() / 100;
 
@@ -90,8 +92,14 @@ void EventAction::BeginOfEventAction(const G4Event *event) {
 
 void EventAction::EndOfEventAction(const G4Event *event) {
     if (event->IsAborted()) {
+        if (! dRootMng->getKilledByTruthFilter() && dRootMng->getIsBiasPool()) {
+            dRootMng->AddBiasNPoolPassTruthFilter();
+        }
         dRootMng->initialize();
         return;
+    }
+    if(dRootMng->getIsBiasPool()) {
+        dRootMng->AddBiasNPoolPassTruthFilter();
     }
     if (dControl->if_filter) {
         if ((dFilterManager->GetifFilter_Process() && !dFilterManager->Filter_Process_Found_Result())
