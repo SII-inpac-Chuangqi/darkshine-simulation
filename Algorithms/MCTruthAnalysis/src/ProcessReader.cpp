@@ -62,22 +62,24 @@ void ProcessReader::ReadProcess(AnaEvent *Evt) {
                 setMainProcess(process);
             }
             // Set process flag
-            if ( process->E > minProcE && process->index == eBrem_Id) { // HardBrem
-                process_HardBrem++;
-                if (dAnaData->getRegionName(process->vertex) == "Target") process_HardBrem_Target++;
-                else if (dAnaData->getRegionName(process->vertex) == "ECAL") process_HardBrem_ECAL++;
-            } else if ( process->index == GMM_Id ) { // GammaToMuPair
-                process_GMM++;
-                if (dAnaData->getRegionName(process->vertex) == "Target") process_GMM_Target++;
-                else if (dAnaData->getRegionName(process->vertex) == "ECAL") process_GMM_ECAL++;
-            } else if ( process->index == PN_Id ) {
-                process_PN++;
-                if (dAnaData->getRegionName(process->vertex) == "Target") process_PN_Target++;
-                else if (dAnaData->getRegionName(process->vertex) == "ECAL") process_PN_ECAL++;
-            } else if ( process->index == EN_Id ) {
-                process_EN++;
-                if (dAnaData->getRegionName(process->vertex) == "Target") process_EN_Target++;
-                else if (dAnaData->getRegionName(process->vertex) == "ECAL") process_EN_ECAL++;
+            if (process->E > minProcE) {
+                if ( process->index == eBrem_Id) { // HardBrem
+                    process_HardBrem++;
+                    if (dAnaData->getRegionName(process->vertex) == "Target") process_HardBrem_Target++;
+                    else if (dAnaData->getRegionName(process->vertex) == "ECAL") process_HardBrem_ECAL++;
+                } else if ( process->index == GMM_Id ) { // GammaToMuPair
+                    process_GMM++;
+                    if (dAnaData->getRegionName(process->vertex) == "Target") process_GMM_Target++;
+                    else if (dAnaData->getRegionName(process->vertex) == "ECAL") process_GMM_ECAL++;
+                } else if ( process->index == PN_Id ) {
+                    process_PN++;
+                    if (dAnaData->getRegionName(process->vertex) == "Target") process_PN_Target++;
+                    else if (dAnaData->getRegionName(process->vertex) == "ECAL") process_PN_ECAL++;
+                } else if ( process->index == EN_Id ) {
+                    process_EN++;
+                    if (dAnaData->getRegionName(process->vertex) == "Target") process_EN_Target++;
+                    else if (dAnaData->getRegionName(process->vertex) == "ECAL") process_EN_ECAL++;
+                }
             }
             // fill process
             process_ID.emplace_back(process->index);
