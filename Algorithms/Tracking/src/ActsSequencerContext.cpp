@@ -82,7 +82,7 @@ void ActsSequencerContext::setupParticleSelector() {
     particle_selector_cfg_.inputParticles = particle_reader_cfg_.outputParticles;
     particle_selector_cfg_.inputMeasurementParticlesMap = digi_cfg_->outputMeasurementParticlesMap;
     particle_selector_cfg_.outputParticles = "particles_selected";
-    particle_selector_cfg_.ptMin = 100._MeV;
+    particle_selector_cfg_.ptMin = particle_selector_ptmin;
     particle_selector_cfg_.etaMin = -7.0;
     particle_selector_cfg_.etaMax = 7.0;
     particle_selector_cfg_.rhoMin = - std::numeric_limits<double>::max();

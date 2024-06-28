@@ -37,8 +37,9 @@ Algorithm.List = GNN_DataExporter Digitizer MCTruthAnalysis Tracking ActsSequenc
 ActsSequencer.ckf_selection_nmax = 10  # Maximum number of measurement candidates on a surface for CKF measurement selection
 ActsSequencer.truth_smeared_seeded = 1  # Use track parameters smeared from truth particles for steering CKF
 ActsSequencer.use_dmagnet = 1  # 1: Use Read non-constant magnetic filed from DMagnet. 0: Use constant magnetic field
-ActsSequencer.ckf_selection_chi2max = 150  # Maximum chi2 for CKF measurement selection
-ActsSequencer.const_bfiled = -1.5  # Constant magnetic field By [Tesla] (Used with use_dmagnet=0)
+ActsSequencer.ckf_selection_chi2max = 200  # Maximum chi2 for CKF measurement selection
+ActsSequencer.const_bfiled = -0.75  # Constant magnetic field By [Tesla] (Used with use_dmagnet=0)
+ActsSequencer.particle_selector_ptmin = 0  # Minimum pT of truth particle for truth seeding (Recoil Tracker)
 
 
 Digitizer.ApplytoECAL = 1  # Smearing on ECAL

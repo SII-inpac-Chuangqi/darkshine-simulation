@@ -62,6 +62,7 @@ private:
     int use_dmagnet{0};
     double const_bfield{0};
     double ckf_selection_chi2max{0};
+    double particle_selector_ptmin{1};
     int ckf_selection_nmax{0};
     int if_smear{1};
 

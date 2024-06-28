@@ -15,6 +15,7 @@ ActsSequencer::ActsSequencer(std::string name, shared_ptr<EventStoreAndWriter> e
     RegisterIntParameter("use_dmagnet", "1: Use Read non-constant magnetic filed from DMagnet. 0: Use constant magnetic field", &use_dmagnet, 1);
     RegisterDoubleParameter("const_bfiled", "Constant magnetic field By [Tesla] (Used with use_dmagnet=0)", &const_bfield, -1.5);
     RegisterDoubleParameter("ckf_selection_chi2max", "Maximum chi2 for CKF measurement selection", &ckf_selection_chi2max, 150);
+    RegisterDoubleParameter("particle_selector_ptmin", "Minimum pT of truth particle for truth seeding (Recoil Tracker)", &particle_selector_ptmin, 1);
     RegisterIntParameter("ckf_selection_nmax", "Maximum number of measurement candidates on a surface for CKF measurement selection", &ckf_selection_nmax, 10);
 }
 
@@ -312,12 +313,14 @@ void ActsSequencer::Begin() {
     acts_contexts_.at(tracking::dTag)->detector_type = tracking::dTag;
     acts_contexts_.at(tracking::dTag)->truthSmearedSeeded = truth_smeared_seeded;
     acts_contexts_.at(tracking::dTag)->useDMagnet = use_dmagnet;
+    acts_contexts_.at(tracking::dTag)->particle_selector_ptmin = 100._MeV;
     acts_contexts_.at(tracking::dTag)->setConstantBField(const_bfield);
     acts_contexts_.at(tracking::dTag)->setup(tracker_infos.at(tracking::dTag).arguments);
     acts_contexts_[tracking::dRec] = std::make_shared<ActsSequencerContext>();
     acts_contexts_.at(tracking::dRec)->detector_type = tracking::dRec;
     acts_contexts_.at(tracking::dRec)->truthSmearedSeeded = truth_smeared_seeded;
     acts_contexts_.at(tracking::dRec)->useDMagnet = use_dmagnet;
+    acts_contexts_.at(tracking::dRec)->particle_selector_ptmin = particle_selector_ptmin  * Acts::UnitConstants::MeV;
     acts_contexts_.at(tracking::dRec)->setConstantBField(const_bfield);
     acts_contexts_.at(tracking::dRec)->setup(tracker_infos.at(tracking::dRec).arguments);
     assert(m_outputSimHits.empty());

@@ -55,6 +55,7 @@ public:
     tracking::detector detector_type{};
     bool useDMagnet = false;
     bool truthSmearedSeeded = true;
+    double particle_selector_ptmin{};
 //    Acts::Logging::Level logLevel = Acts::Logging::DEBUG;
     Acts::Logging::Level logLevel = Acts::Logging::ERROR;
     // Acts whiteboard

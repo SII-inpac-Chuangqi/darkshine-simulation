@@ -1,3 +1,9 @@
+2024-06-28:
+    1.6.4
+    1. DAna ActsSequencer:
+        1. sort by absolute value of track momentum
+        2. optimize efficiency
+
 2024-05-24:
     1. DSimu v1.6.2: from 8 GeV to 4 GeV
         1. new signal LUT
