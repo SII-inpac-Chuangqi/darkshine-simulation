@@ -14,8 +14,8 @@ ActsSequencer::ActsSequencer(std::string name, shared_ptr<EventStoreAndWriter> e
     RegisterIntParameter("truth_smeared_seeded", "Use track parameters smeared from truth particles for steering CKF", &truth_smeared_seeded, 1);
     RegisterIntParameter("use_dmagnet", "1: Use Read non-constant magnetic filed from DMagnet. 0: Use constant magnetic field", &use_dmagnet, 1);
     RegisterDoubleParameter("const_bfiled", "Constant magnetic field By [Tesla] (Used with use_dmagnet=0)", &const_bfield, -1.5);
-    RegisterDoubleParameter("ckf_selection_chi2max", "Maximum chi2 for CKF measurement selection", &ckf_selection_chi2max, 150);
-    RegisterDoubleParameter("particle_selector_ptmin", "Minimum pT of truth particle for truth seeding (Recoil Tracker)", &particle_selector_ptmin, 1);
+    RegisterDoubleParameter("ckf_selection_chi2max", "Maximum chi2 for CKF measurement selection", &ckf_selection_chi2max, 200);
+    RegisterDoubleParameter("particle_selector_ptmin", "Minimum pT of truth particle for truth seeding (Recoil Tracker)", &particle_selector_ptmin, 0);
     RegisterIntParameter("ckf_selection_nmax", "Maximum number of measurement candidates on a surface for CKF measurement selection", &ckf_selection_nmax, 10);
 }
 
