@@ -280,7 +280,11 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                     std::vector<double> _ECAL_trkSeed_PY{};
                     std::vector<double> _ECAL_trkSeed_PZ{};
 
-                    assert(_ECal_seed_x->size()==_RecTrk2_track_chi2->size());
+                    if (!_ECal_seed_x) continue;
+                    if (!_RecTrk2_track_chi2) continue;
+                    if (_ECal_seed_x->size()!=_RecTrk2_track_chi2->size()) {
+                        continue;
+                    }
                     #ifdef PFCLUSTER_DEBUG
                         std::cout<<"[DEBUG] N_trkSeed "<<_ECal_seed_x->size()<<std::endl;
                     #endif
