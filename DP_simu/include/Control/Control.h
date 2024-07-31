@@ -78,7 +78,6 @@ public:
     bool save_geometry; // save the geometry in root
     bool check_overlaps; // check the geometry overlap, may be very slow and verbose
     bool signal_production; // production of signal Dark Photon Process
-    double beam_ene_mono{};
 
     //----------------------------------------
     // Signal Option
@@ -375,9 +374,6 @@ private:
     static G4ThreeVector readV3(const YAML::Node &n, bool unit = false);
 
     static double readV2(const YAML::Node &n);
-
-    // read and convert strings like "4.0 GeV" to a double
-    static double readStrWithUnit(const YAML::Node &n);
 };
 
 extern Control *dControl;
