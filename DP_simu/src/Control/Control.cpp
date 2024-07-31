@@ -735,6 +735,8 @@ bool Control::ReadYAML(const G4String &file_in) {
         dp_decay_channel = Node["dp_decay_channel"].IsDefined()
                           ? Node["dp_decay_channel"].as<std::string>() : "ee";
         dp_eplsion = Node["dp_eplsion"].as<double>();
+        beam_ene_mono = Node["general_particle_source"]["settings"]["ene/mono"].IsDefined() ? readStrWithUnit(
+                Node["general_particle_source"]["settings"]["ene/mono"]) : 4 * GeV;
         
         //========================================
         // Magnetic field
@@ -1016,6 +1018,30 @@ double Control::readV2(const YAML::Node &n) {
         return -999999;
     }
     return n[0].as<double>() * G4UnitDefinition::GetValueOf(n[1].as<std::string>());
+}
+
+double Control::readStrWithUnit(const YAML::Node &n) {
+    std::stringstream ss(n.as<std::string>());
+    double number;
+    std::string unit;
+
+    if (!(ss >> number)) {
+        throw std::runtime_error("Failed to parse number from input");
+    }
+
+    if (!(ss >> unit)) {
+        throw std::runtime_error("Failed to parse unit from input");
+    }
+
+    if (unit == "GeV") {
+        return number * GeV;
+    } else if (unit == "MeV") {
+        return number * MeV;
+    } else if (unit == "TeV") {
+        return number * TeV;
+    } else {
+        throw std::runtime_error("Unsupported unit: " + unit);
+    }
 }
 
 //Optical LUT loader//simplified implementation
