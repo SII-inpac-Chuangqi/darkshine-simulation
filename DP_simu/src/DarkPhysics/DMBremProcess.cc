@@ -89,7 +89,7 @@ G4VParticleChange *DMBremProcess::PostStepDoIt(const G4Track &aTrack, const G4St
         LUTRandom();
         //double temp_var[2] ={0,0};
         electron.rec_theta = var_LUT[1];
-        XAcc = 1 - var_LUT[0] / (incidentE / GeV);
+        XAcc = 1 - var_LUT[0] / (dControl->beam_ene_mono / GeV);
 #ifdef DSIMU_DEBUG
         std::cout << "This time XAcc : " << XAcc << std::endl;
 #endif
