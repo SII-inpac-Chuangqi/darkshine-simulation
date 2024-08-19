@@ -28,6 +28,7 @@
 namespace tracking
 {
     enum direction {dX, dY, dZ};
+    class Calibrator;
 }
 
 class Fitter
@@ -76,6 +77,9 @@ public:
 //Set
     virtual void   SetVerbose(int verbose) {verbose_ = verbose;}
 
+    virtual void   SetCalibrator(tracking::Calibrator *calibrator) {calibrator_ = calibrator;}
+    virtual tracking::Calibrator* GetCalibrator() const {return calibrator_;}
+
 protected:
 //................................................................................//
 //Verbose
@@ -98,6 +102,8 @@ protected:
     double fChi2{RETURN};
     double xSigma{RETURN};
     double ySigma{RETURN};
+
+    tracking::Calibrator *calibrator_{nullptr};
 };
 
 #endif

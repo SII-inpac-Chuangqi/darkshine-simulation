@@ -17,6 +17,7 @@
 #include "Algo/DTrack.h"
 #include "Algo/KalmanFit/KalmanFilterFitter.h"
 #include "Algo/RiemannFit/RiemannFitter.h"
+#include "Algo/Calibrator/NullCalibrator.h"
 
 //................................................................................//
 //public:
@@ -316,6 +317,8 @@ void DTrack::Fit(int method)
 
     if(fitter_)
     {
+        fitter_->SetCalibrator(new tracking::NullCalibrator());
+
         px_ = fitter_->GetPx();
         py_ = fitter_->GetPy();
         pz_ = fitter_->GetPz();
