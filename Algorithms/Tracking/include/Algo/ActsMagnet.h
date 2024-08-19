@@ -1,3 +1,5 @@
+#if BUILD_ACTS
+
 #ifndef TRACKING_ACTS_MAGNET_H
 #define TRACKING_ACTS_MAGNET_H
 
@@ -74,3 +76,5 @@ public:
 };
 
 #endif // TRACKING_ACTS_MAGNET_H
+
+#endif

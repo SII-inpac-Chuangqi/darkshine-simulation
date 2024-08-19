@@ -5,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <type_traits>
 
 //................................................................................//
 //ROOT
@@ -25,7 +26,8 @@ using TrkHitSPVecMap = std::map<int, std::vector<std::shared_ptr<TrkHit>>>;
 //using TrkHitPVec    = std::vector<TrkHit*>;
 //using TrkHitPVecMap = std::map<int, std::vector<TrkHit*>>;
 
-using Key  = std::decay_t<decltype(((TrkHit*)nullptr)->GetCellIdZ())>;
+//using Key  = std::decay_t<decltype(((TrkHit*)nullptr)->GetCellIdZ())>;
+using Key = std::invoke_result_t<decltype(&TrkHit::GetCellIdZ), TrkHit>;
 using Pool = HitPool<Key, TrkHit>;
 //std::function<std::decay_t<decltype(((TrkHit*)nullptr)->GetCellIdZ())>(const TrkHit&)> trk_hit_getter = &TrkHit::GetCellIdZ;
 
