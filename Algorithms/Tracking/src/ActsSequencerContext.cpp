@@ -2,6 +2,8 @@
 // Created by xuliang on 2024/3/29.
 //
 
+#if BUILD_ACTS
+
 #include "Algo/ActsSequencerContext.h"
 
 #include "ActsExamples/EventData/MeasurementCalibration.hpp"
@@ -286,3 +288,5 @@ int ActsSequencerContext::setup(const std::vector<std::string>& arguments) {
 
     return EXIT_SUCCESS;
 }
+
+#endif

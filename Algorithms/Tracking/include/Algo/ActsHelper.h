@@ -1,3 +1,5 @@
+#if BUILD_ACTS
+
 #ifndef TRACKING_ACTS_HELPER_H
 #define TRACKING_ACTS_HELPER_H
 
@@ -42,3 +44,5 @@ inline T fromActsReferenceFrameD3(const T& v_in) {
 }
 
 #endif // TRACKING_ACTS_HELPER_H
+
+#endif

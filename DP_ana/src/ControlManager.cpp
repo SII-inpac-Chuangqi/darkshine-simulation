@@ -78,7 +78,9 @@ void ControlManager::run() {
 #endif
     algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<TrackingProcessor>(new TrackingProcessor("Tracking", EvtWrt)));
+#if BUILD_ACTS
     algo->RegisterAnaProcessor(shared_ptr<ActsSequencer>(new ActsSequencer("ActsSequencer", EvtWrt)));
+#endif
     algo->RegisterAnaProcessor(shared_ptr<RecECAL>(new RecECAL("RecECAL", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<RecHCAL>(new RecHCAL("RecHCAL", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<CutFlowAnalysis>(new CutFlowAnalysis("CutFlowAnalysis", EvtWrt)));
