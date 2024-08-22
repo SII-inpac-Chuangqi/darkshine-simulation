@@ -35,7 +35,7 @@ If you are using your **own** machin, Docker is recommended. Go to this [link](h
 If you are using the INPAC cluster:
 
 ```shell
-/lustre/collider/zhuxuliang/darkshine-simulation/setup.sh
+source /lustre/collider/zhuxuliang/darkshine-simulation/setup.sh
 ```
 
 **Manual environment setup (not recommanded)**
