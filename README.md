@@ -35,8 +35,7 @@ If you are using your **own** machin, Docker is recommended. Go to this [link](h
 If you are using the INPAC cluster:
 
 ```shell
-source /lustre/collider/zhuyifan/Software/xuliang-ACTS/setup.sh
-source /lustre/collider/zhuyifan/Software/xuliang-ACTS/install/python/setup.sh
+/lustre/collider/zhuxuliang/darkshine-simulation/setup.sh
 ```
 
 **Manual environment setup (not recommanded)**
