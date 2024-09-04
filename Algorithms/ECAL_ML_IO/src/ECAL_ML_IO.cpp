@@ -10,7 +10,6 @@
 
 #include <utility>
 #include "Core/AnaData.h"
-#include <zlib.h>
 
 ECAL_ML_IO::ECAL_ML_IO(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name),
                                                                                            std::move(evtwrt))
