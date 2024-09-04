@@ -53,6 +53,7 @@ Digitizer.Nominal_Yield = 20000  # Nominal Yield of material, like 20000/MeV for
 Digitizer.voltageToADC = 1.2207  # voltageToADC: fullRangeMV/ADCbits
 Digitizer.CalibrationFile =   # YAML file for reference
 
+ECAL_ML_IO.CompressionLevel = 1  # Compression level for hdf5 (0-9)
 ECAL_ML_IO.RW = 1  # 0(Read) in or 1(Write) out
 ECAL_ML_IO.chunk = 1000  # how many event in the buffer
 ECAL_ML_IO.ConditionValueExport = 8e+06  # The condition value which will be saved to the hdf5 in the conditionDS

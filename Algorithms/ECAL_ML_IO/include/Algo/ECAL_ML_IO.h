@@ -104,6 +104,8 @@ private:
             // end_cond[2]={0},
             max_read=0;
     int    to_read=0,index=0; //remaining and index of event inside one chunk
+
+    int compression_level;
 };
 
 

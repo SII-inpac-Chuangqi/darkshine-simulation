@@ -10,6 +10,7 @@
 
 #include <utility>
 #include "Core/AnaData.h"
+#include <zlib.h>
 
 ECAL_ML_IO::ECAL_ML_IO(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProcessor(std::move(name),
                                                                                            std::move(evtwrt))
@@ -36,6 +37,7 @@ ECAL_ML_IO::ECAL_ML_IO(string name, shared_ptr<EventStoreAndWriter> evtwrt) : An
     // later the truth value or individual partcle energy could be used
     RegisterIntParameter("chunk", "how many event in the buffer", &nbuffer, 1000);
 
+    RegisterIntParameter("CompressionLevel", "Compression level for hdf5 (0-9)", &compression_level, 1);
     // RegisterDoubleParameter("Calibration_Factor", "Calibration Factor", &scale_factor,
     //                         1.); //this is for post-calibration
 }
@@ -248,7 +250,7 @@ void ECAL_ML_IO::Begin()
         cparms_E.setChunk(4, chunk_E);
         double fill_val = 0.;
         cparms_E.setFillValue(PredType::NATIVE_DOUBLE, &fill_val);
-        cparms_E.setDeflate(9);
+        cparms_E.setDeflate(compression_level);
 
         h5d_E = new DataSet(h5f->createDataSet(
             ecal_en, PredType::NATIVE_DOUBLE,
@@ -261,7 +263,7 @@ void ECAL_ML_IO::Begin()
         DSetCreatPropList cparms_cond;
         cparms_cond.setChunk(2, chunk_cond);
         cparms_cond.setFillValue(PredType::NATIVE_DOUBLE, &fill_val);
-        cparms_cond.setDeflate(9);
+        cparms_cond.setDeflate(compression_level);
 
         h5d_cond = new DataSet(h5f->createDataSet(
             ecal_cn, PredType::NATIVE_DOUBLE,
@@ -299,7 +301,7 @@ void ECAL_ML_IO::flush()
     // build mem space
     DataSpace mspace_E(4, ext_dims_E);
 
-    // write
+    // write data
     h5d_E->write(***wdata, PredType::NATIVE_DOUBLE, mspace_E, fspace_E);
 
     // same for condition
@@ -317,7 +319,7 @@ void ECAL_ML_IO::flush()
     // build mem space
     DataSpace mspace_cond(2, ext_dims_cond);
 
-    // write
+    // write condition data
     h5d_cond->write(*cdata, PredType::NATIVE_DOUBLE, mspace_cond, fspace_cond);
 
     // clean buffer
