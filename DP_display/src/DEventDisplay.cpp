@@ -445,7 +445,11 @@ void DEventDisplay::gotoEvent(unsigned int id) {
 
     // Redraw Event
     drawEvent(_eventID);
-    // plot debug reference point
+    if (evt) {
+        std::cout << "Run ID: " << evt->getRunId() << ", Event ID: " << evt->getEventId() << std::endl;
+    } else {
+        std::cerr << "Event data is not available." << std::endl;
+    }
     // double ref_point[]={-0.0686,0.0283,18.14};
     // gEve->GetDefaultViewer()
     //     ->GetGLViewer()
