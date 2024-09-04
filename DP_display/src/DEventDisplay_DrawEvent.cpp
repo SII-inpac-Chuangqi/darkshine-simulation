@@ -282,6 +282,7 @@ void DEventDisplay::drawMCParticles() {
         for (unsigned i = 0; i < MCs->size(); ++i) {
             auto mc=MCs->at(i);
             // if(trkmap->at(mc->getId())=="INC") continue; // skip initial particle since they generated in the tracker and not able to trace
+            if (mc->getId() == 1) continue; // Skip initial track with trkID=1
             if (mc->getP() < MC_Emin) continue; // we use momentum since somtime the Nuclear with huge E will spoil it!
             if ( (MC_PDG) && (abs(mc->getPdg()) != MC_PDG)) continue;
 
