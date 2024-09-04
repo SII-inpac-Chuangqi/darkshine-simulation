@@ -25,6 +25,7 @@
 //Tracking
 #include "Algo/TrkHit.h"
 #include "Algo/KalmanFit/KalmanFilterFitter.h"
+#include "Algo/Calibrator/NullCalibrator.h"
 
 //................................................................................//
 //Constructor
@@ -138,8 +139,10 @@ void KalmanFilterFitter::Fill(const TrkHitSPVec &track, std::initializer_list<do
     px = std::abs(mom.Px())*1000;                           //GeV->MeV
     py = std::abs(mom.Py())*1000;                           //
     pz = std::abs(mom.Pz())*1000;                           //
-    pp = sqrt(mom.Pz()*mom.Pz() + mom.Px()*mom.Px())*1000.; //
-    pl = std::abs(mom.Py())*1000;                           //
+    pp = sqrt(mom.Pz()*mom.Pz() + mom.Px()*mom.Px())*1000.;
+    pl = std::abs(mom.Py())*1000;
+    if(calibrator_)
+        std::tie(pp, pl) = calibrator_->GetCalibratedP(pp, pl);
 
     double bChi2;
     double bNdf;

@@ -2,6 +2,8 @@
 // Created by xuliang on 2024/1/31.
 //
 
+#if BUILD_ACTS
+
 #include "Algo/ActsSequencer.h"
 #include "Algo/ActsHelper.h"
 #include <iostream>
@@ -465,3 +467,5 @@ void ActsSequencer::End() {
         }
     }
 }
+
+#endif

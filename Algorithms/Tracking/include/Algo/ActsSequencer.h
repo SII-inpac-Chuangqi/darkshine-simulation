@@ -2,6 +2,8 @@
 // Created by xuliang on 2024/1/31.
 //
 
+#if BUILD_ACTS
+
 #ifndef TRACKING_ACTSSEQUENCER_H
 #define TRACKING_ACTSSEQUENCER_H
 
@@ -230,3 +232,5 @@ private:
 };
 
 #endif //TRACKING_ACTSSEQUENCER_H
+
+#endif
