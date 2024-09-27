@@ -547,7 +547,7 @@ void Control::ConstructG4MaterialTable() const {
     nistManager->FindOrBuildMaterial("G4_Al");
     nistManager->FindOrBuildMaterial("G4_Fe");
     nistManager->FindOrBuildMaterial("G4_C");
-    nistManager->FindOrBuildElement("G4_Pb");
+    nistManager->FindOrBuildMaterial("G4_Pb");
 
     /* Define Optical Properties */
     //
