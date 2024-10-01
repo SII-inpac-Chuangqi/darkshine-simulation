@@ -64,7 +64,7 @@ IF (BUILD_DANA)
 ENDIF ()
 
 # ACTS
-option(BUILD_ACTS "BUILD_ACTS" ON)
+option(BUILD_ACTS "BUILD_ACTS" OFF)
 IF (BUILD_ACTS)
     FIND_PACKAGE(Acts REQUIRED COMPONENTS Core PluginJson)
     FIND_PACKAGE(Boost 1.71.0 REQUIRED COMPONENTS program_options unit_test_framework container)
@@ -145,7 +145,7 @@ endif ()
 #
 HEADER_DIRECTORIES(Algo_List Algo_File "Algorithms")
 HEADER_DIRECTORIES(Util_List Util_File "Utility")
-HEADER_DIRECTORIES_GENFIT2(GenFit2_List GenFit2_File "GenFit2")
+HEADER_DIRECTORIES_GENFIT2(GenFit2_List GenFit2_File "ThirdParty/GenFit2")
 
 include_directories(
         ./
@@ -177,7 +177,7 @@ option(BUILD_DDIS "BUILD_DDIS" ON)
 if (BUILD_DANA)
     add_definitions(-DDANA_VERSION=\"v1.6.5\")
 
-    add_subdirectory(GenFit2)
+    add_subdirectory(ThirdParty/GenFit2)
     add_subdirectory(DP_ana)
     if (BUILD_DDIS)
         add_subdirectory(DP_display)
