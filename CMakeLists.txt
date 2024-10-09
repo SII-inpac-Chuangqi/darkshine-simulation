@@ -64,7 +64,7 @@ IF (BUILD_DANA)
 ENDIF ()
 
 # ACTS
-option(BUILD_ACTS "BUILD_ACTS" OFF)
+option(BUILD_ACTS "BUILD_ACTS" ON)
 IF (BUILD_ACTS)
     FIND_PACKAGE(Acts REQUIRED COMPONENTS Core PluginJson)
     FIND_PACKAGE(Boost 1.71.0 REQUIRED COMPONENTS program_options unit_test_framework container)
