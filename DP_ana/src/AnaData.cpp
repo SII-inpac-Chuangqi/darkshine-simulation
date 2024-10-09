@@ -305,7 +305,7 @@ void AnaData::printGeometryDetails() const {
         std::cerr << std::endl;
     }
 
-    if(ECal_cell_length_x.size() && ECal_cell_length_y.size() && ECal_cell_length_z.size())
+    if(ECal_cell_length_x.size() > 10 && ECal_cell_length_y.size() > 10 && ECal_cell_length_z.size() > 2)
         std::cerr << "           ECal:        center x at     "      << ECAL_center_x                                      << " mm" << std::endl
                   << "                        center y at     "      << ECAL_center_y                                      << " mm" << std::endl
                   << "                        center z at     "      << ECAL_center_z                                      << " mm" << std::endl
