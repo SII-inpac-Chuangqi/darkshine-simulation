@@ -74,6 +74,8 @@ private:
     int if_smear{1};
     double remove_hit_less_E{0.02};
 
+    int if_backwards{0};
+
 //................................................................................//
 //Processing depth
 //-- dAll:    run all processes

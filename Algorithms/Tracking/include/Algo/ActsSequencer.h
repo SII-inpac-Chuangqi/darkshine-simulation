@@ -67,6 +67,7 @@ private:
     double particle_selector_ptmin{1};
     int ckf_selection_nmax{0};
     int if_smear{1};
+    int if_backward{0};
 
     struct TrackerInfo {
         void createArguments(bool use_dmagnet, double const_bfield, double ckf_selection_chi2max, int ckf_selection_nmax) {

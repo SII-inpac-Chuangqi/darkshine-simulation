@@ -49,6 +49,7 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
     RegisterIntParameter("clean", "Clean mode: no truth information", &clean, 1);
     RegisterIntParameter("if_strip", "If use strip structures in trackers", &if_strip, 1);
     RegisterIntParameter("if_smear", "If smear hits in strip structure", &if_smear, 1);
+    RegisterIntParameter("if_backwards", "", &if_backwards, 0);
     RegisterIntParameter("Tag_fit_method",
                          "Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting",
                          &Tag_fit_method,
@@ -563,6 +564,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     for (auto &track : tag_tracks_)
                     {
                         track->SetVerbose(Verbose);
+                        if(if_backwards) track->Reverse();
+
                         int size = track->GetSize();
                         double x = 0.;
                         double y = 0.5*(track->At(0)->GetY() + track->At(size - 1)->GetY());
@@ -603,6 +606,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
               
                     for (auto &track : rec_tracks_) {
                         track->SetVerbose(Verbose);
+                        if(if_backwards) track->Reverse();
+
                         int size = track->GetSize();
                         double x = 0.;
                         double y = 0.5*(track->At(0)->GetY() + track->At(size - 1)->GetY());

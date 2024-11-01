@@ -84,7 +84,7 @@ void ActsSequencerContext::setupParticleSelector() {
     particle_selector_cfg_.inputParticles = particle_reader_cfg_.outputParticles;
     particle_selector_cfg_.inputMeasurementParticlesMap = digi_cfg_->outputMeasurementParticlesMap;
     particle_selector_cfg_.outputParticles = "particles_selected";
-    particle_selector_cfg_.ptMin = particle_selector_ptmin;
+    particle_selector_cfg_.ptMin = config_.particle_selector_ptmin;
     particle_selector_cfg_.etaMin = -7.0;
     particle_selector_cfg_.etaMax = 7.0;
     particle_selector_cfg_.rhoMin = - std::numeric_limits<double>::max();
@@ -195,6 +195,7 @@ void ActsSequencerContext::setupCKFTrackFinder(std::string& inputInitialTrackPar
     track_finding_cfg_.inputInitialTrackParameters = inputInitialTrackParameters;
     track_finding_cfg_.outputTracks = "tracks_found";
     track_finding_cfg_.computeSharedHits = true;
+    track_finding_cfg_.backward = config_.if_backward;
     track_finding_cfg_.findTracks = ActsExamples::TrackFindingAlgorithm::makeTrackFinderFunction(
             trackingGeometry, magneticField,
             *Acts::getDefaultLogger("TrackFinder", logLevel));
@@ -257,7 +258,7 @@ int ActsSequencerContext::setup(const std::vector<std::string>& arguments) {
     }
 
     // Set up the magnetic field
-    if (useDMagnet) {
+    if (config_.useDMagnet) {
         magneticField = std::make_shared<DMagnetField>();
         Acts::Vector3 origin;
         std::cout << "[INFO] ==> magnet (T) in ACTS reference frame: \n"
@@ -269,7 +270,7 @@ int ActsSequencerContext::setup(const std::vector<std::string>& arguments) {
     std::string outputTrackParameters;
     setupSimHitReader();
     setupDigitization();
-    if (truthSmearedSeeded) {
+    if (config_.truthSmearedSeeded) {
         setupParticleReader();
         setupParticleSelector();
         setupParticleSmearing();
