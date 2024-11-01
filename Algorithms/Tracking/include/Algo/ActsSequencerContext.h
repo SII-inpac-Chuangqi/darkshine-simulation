@@ -47,17 +47,27 @@
 
 class ActsSequencerContext {
 public:
+    struct Config
+    {
+        bool if_backward = false;
+        tracking::detector detector_type{};
+        bool useDMagnet = false;
+        bool truthSmearedSeeded = true;
+        double particle_selector_ptmin{};
+    };
+
+public:
     ActsSequencerContext() = default;
+    ActsSequencerContext(Config&& config) : config_(std::move(config)) {}
     ~ActsSequencerContext() = default;
     int setup(const std::vector<std::string>& arguments);
     void setConstantBField(double in) {
         constantBField.at(2) = -in;
     }
 public:
-    tracking::detector detector_type{};
-    bool useDMagnet = false;
-    bool truthSmearedSeeded = true;
-    double particle_selector_ptmin{};
+    bool truthSmearedSeeded() const {return config_.truthSmearedSeeded;}
+    double particleSelectorpTmin() const {return config_.particle_selector_ptmin;};
+
 //    Acts::Logging::Level logLevel = Acts::Logging::DEBUG;
     Acts::Logging::Level logLevel = Acts::Logging::ERROR;
     // Acts whiteboard
@@ -119,6 +129,8 @@ private:
     std::vector<std::shared_ptr<ActsExamples::IContextDecorator>>> geometry;
     std::shared_ptr<const Acts::TrackingGeometry> trackingGeometry;
     std::shared_ptr<Acts::MagneticFieldProvider> magneticField;
+
+    Config config_;
 };
 
 #endif //TRACKING_ACTSSEQUENCERCONTEXT_H

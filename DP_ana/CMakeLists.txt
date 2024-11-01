@@ -42,7 +42,7 @@ ENDIF()
 
 IF (BUILD_ACTS)
     get_library_names(${Acts_libraries} Acts_LIB_NAMES)
-    target_link_libraries(DAna tbb ${Acts_LIB_NAMES} ${Boost_LIBRARIES})
+    target_link_libraries(DAna ${Acts_LIB_NAMES} Boost::program_options Boost::unit_test_framework Boost::container tbb)
 ENDIF()
 
 #----------------------------------------------------------------------------

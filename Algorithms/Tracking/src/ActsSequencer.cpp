@@ -19,6 +19,7 @@ ActsSequencer::ActsSequencer(std::string name, shared_ptr<EventStoreAndWriter> e
     RegisterDoubleParameter("ckf_selection_chi2max", "Maximum chi2 for CKF measurement selection", &ckf_selection_chi2max, 200);
     RegisterDoubleParameter("particle_selector_ptmin", "Minimum pT of truth particle for truth seeding (Recoil Tracker)", &particle_selector_ptmin, 0);
     RegisterIntParameter("ckf_selection_nmax", "Maximum number of measurement candidates on a surface for CKF measurement selection", &ckf_selection_nmax, 10);
+    RegisterIntParameter("if_backward", "", &if_backward, 0);
 }
 
 
@@ -311,20 +312,28 @@ void ActsSequencer::Begin() {
 
     // TODO: non-constant magnetic field
     // TODO: Material config
-    acts_contexts_[tracking::dTag] = std::make_shared<ActsSequencerContext>();
-    acts_contexts_.at(tracking::dTag)->detector_type = tracking::dTag;
-    acts_contexts_.at(tracking::dTag)->truthSmearedSeeded = truth_smeared_seeded;
-    acts_contexts_.at(tracking::dTag)->useDMagnet = use_dmagnet;
-    acts_contexts_.at(tracking::dTag)->particle_selector_ptmin = 100._MeV;
+
+    ActsSequencerContext::Config tag_ctx_config;
+    ActsSequencerContext::Config rec_ctx_config;
+
+    tag_ctx_config.if_backward   = if_backward;
+    tag_ctx_config.detector_type = tracking::dTag;
+    tag_ctx_config.useDMagnet    = use_dmagnet;
+    tag_ctx_config.truthSmearedSeeded = truth_smeared_seeded;
+    tag_ctx_config.particle_selector_ptmin = 100._MeV;
+    acts_contexts_[tracking::dTag] = std::make_shared<ActsSequencerContext>(std::move(tag_ctx_config));
     acts_contexts_.at(tracking::dTag)->setConstantBField(const_bfield);
     acts_contexts_.at(tracking::dTag)->setup(tracker_infos.at(tracking::dTag).arguments);
-    acts_contexts_[tracking::dRec] = std::make_shared<ActsSequencerContext>();
-    acts_contexts_.at(tracking::dRec)->detector_type = tracking::dRec;
-    acts_contexts_.at(tracking::dRec)->truthSmearedSeeded = truth_smeared_seeded;
-    acts_contexts_.at(tracking::dRec)->useDMagnet = use_dmagnet;
-    acts_contexts_.at(tracking::dRec)->particle_selector_ptmin = particle_selector_ptmin  * Acts::UnitConstants::MeV;
+
+    rec_ctx_config.if_backward   = if_backward;
+    rec_ctx_config.detector_type = tracking::dRec;
+    rec_ctx_config.useDMagnet    = use_dmagnet;
+    rec_ctx_config.truthSmearedSeeded = truth_smeared_seeded;
+    rec_ctx_config.particle_selector_ptmin = particle_selector_ptmin * Acts::UnitConstants::MeV;
+    acts_contexts_[tracking::dRec] = std::make_shared<ActsSequencerContext>(std::move(rec_ctx_config));
     acts_contexts_.at(tracking::dRec)->setConstantBField(const_bfield);
     acts_contexts_.at(tracking::dRec)->setup(tracker_infos.at(tracking::dRec).arguments);
+
     assert(m_outputSimHits.empty());
     assert(m_outputSimParticles.empty());
     assert(m_inputTrajectories.empty());
@@ -333,7 +342,7 @@ void ActsSequencer::Begin() {
         auto curActsContext = acts_contexts_.at(detector);
         // initialize Readers
         InitializeSimHitsReader(detector);
-        if (curActsContext->truthSmearedSeeded) {
+        if (curActsContext->truthSmearedSeeded()) {
             InitializeSimParticlesReader(detector);
         }
         // Initialize Algorithms
@@ -362,7 +371,7 @@ void ActsSequencer::ProcessEvt(AnaEvent *evt) {
         ActsExamples::AlgorithmContext context(0, evt->getEventId(), eventStore);
         // Transfer data from DEvent to Acts Event Store
         SimHitsReader(evt, ++context, detector);
-        if (acts_contexts_.at(detector)->truthSmearedSeeded) {
+        if (acts_contexts_.at(detector)->truthSmearedSeeded()) {
             ParticleReader(evt, ++context, detector);
         }
         // Execute Acts algorithm sequence
