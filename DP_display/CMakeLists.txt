@@ -43,7 +43,7 @@ target_link_libraries(DDisplay PUBLIC DAlgo)
 
 IF (BUILD_ACTS)
     get_library_names(${Acts_libraries} Acts_LIB_NAMES)
-    target_link_libraries(DDisplay PUBLIC tbb ${Acts_LIB_NAMES} ${Boost_LIBRARIES})
+    target_link_libraries(DDisplay PUBLIC tbb ${Acts_LIB_NAMES} Boost::program_options Boost::unit_test_framework Boost::container tbb)
 ENDIF()
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
