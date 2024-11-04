@@ -30,12 +30,17 @@ DarkSHINE Software can be easily downloaded through GitLab.
 
 ### Environment setup
 
-If you are using your **own** machin, Docker is recommended. Go to this [link](https://hub.docker.com/repository/docker/ykrsama/darkshine-simulation/general) to setup the darkshine docker.
+If you are using your **own** machine, Docker is recommended. Go to this [link](https://hub.docker.com/repository/docker/ykrsama/darkshine-simulation/general) to setup the darkshine docker.
 
-If you are using the INPAC cluster:
+If you are on the INPAC cluster, use
 
 ```shell
 source /lustre/collider/zhuxuliang/darkshine-simulation/setup.sh
+```
+or the environment with ACTS in development
+
+```shell
+source /lustre/collider/zhuyifan/Software/xuliang-ACTS/setup.sh
 ```
 
 **Manual environment setup (not recommanded)**
@@ -49,6 +54,7 @@ several dependencies need to be checked.
 - yaml-cpp
 - [nlohmann/json](https://github.com/nlohmann/json)
 - build ACTS from here: [modifield ACTS](https://github.com/ykrsama/acts/tree/xuliang-v30)
+
 
 ### With everything needed, it's ready to install :v:
 
