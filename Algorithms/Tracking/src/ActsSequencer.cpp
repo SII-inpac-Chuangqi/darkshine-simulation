@@ -292,9 +292,21 @@ void ActsSequencer::Begin() {
     EvtWrt->RegisterOutVariable("Acts_RecTrk_No", &(rec_trk_vars.No), "Reconstructed number of track in recoil tracker");
     EvtWrt->RegisterOutVariable("Acts_TagTrk_P", &(tag_trk_vars.P), "Reconstructed track momentum in tagging tracker");
     EvtWrt->RegisterOutVariable("Acts_RecTrk_P", &(rec_trk_vars.P), "Reconstructed track momentum in recoil tracker");
+    EvtWrt->RegisterOutVariable("Acts_TagTrk_theta", &(tag_trk_vars.theta), "Reconstructed track theta in tagging tracker");
+    EvtWrt->RegisterOutVariable("Acts_RecTrk_theta", &(rec_trk_vars.theta), "Reconstructed track theta in recoil tracker");
+    EvtWrt->RegisterOutVariable("Acts_TagTrk_phi", &(tag_trk_vars.phi), "Reconstructed track phi in tagging tracker");
+    EvtWrt->RegisterOutVariable("Acts_RecTrk_phi", &(rec_trk_vars.phi), "Reconstructed track phi in recoil tracker");
     EvtWrt->RegisterOutVariable("Acts_TagTrk_chi2", &(tag_trk_vars.chi2), "Reconstructed track chi^2 in tagging tracker");
     EvtWrt->RegisterOutVariable("Acts_RecTrk_chi2", &(rec_trk_vars.chi2), "Reconstructed track chi^2 in recoil tracker");
-    EvtWrt->RegisterOutVariable("Acts_RecTrk_chi2", &(rec_trk_vars.chi2), "Reconstructed track chi^2 in recoil tracker");
+    EvtWrt->RegisterOutVariable("Acts_TagTrk_ndf", &(tag_trk_vars.ndf), "Reconstructed track NDF in tagging tracker");
+    EvtWrt->RegisterOutVariable("Acts_RecTrk_ndf", &(rec_trk_vars.ndf), "Reconstructed track NDF in recoil tracker");
+    EvtWrt->RegisterOutVariable("Acts_TagTrk_nRecHits", &(tag_trk_vars.nMeasurements), "Reconstructed track number of measurements in tagging tracker");
+    EvtWrt->RegisterOutVariable("Acts_RecTrk_nRecHits", &(rec_trk_vars.nMeasurements), "Reconstructed track number of measurements in recoil tracker");
+    EvtWrt->RegisterOutVariable("Acts_TagTrk_nOutliers", &(tag_trk_vars.nOutliers), "Reconstructed track number of outliers in tagging tracker");
+    EvtWrt->RegisterOutVariable("Acts_RecTrk_nOutliers", &(rec_trk_vars.nOutliers), "Reconstructed track number of outliers in recoil tracker");
+    EvtWrt->RegisterOutVariable("Acts_TagTrk_nHoles", &(tag_trk_vars.nHoles), "Reconstructed track number of holes in tagging tracker");
+    EvtWrt->RegisterOutVariable("Acts_RecTrk_nHoles", &(rec_trk_vars.nHoles), "Reconstructed track number of holes in recoil tracker");
+
     EvtWrt->RegisterOutVariable("Acts_ECal_seed_x",  &dECAL_seeds.x);
     EvtWrt->RegisterOutVariable("Acts_ECal_seed_y",  &dECAL_seeds.y);
     EvtWrt->RegisterOutVariable("Acts_ECal_seed_z",  &dECAL_seeds.z);
@@ -403,7 +415,11 @@ void ActsSequencer::ProcessEvt(AnaEvent *evt) {
                     params[Acts::eBoundPhi],
                     params[Acts::eBoundTheta],
                     params[Acts::eBoundQOverP] != 0 ? -1.0 / params[Acts::eBoundQOverP] / MeV_to_GeV : RETURN, // assume Q = -1
-                    trajState.chi2Sum
+                    trajState.chi2Sum,
+                    trajState.NDF,
+                    trajState.nMeasurements,
+                    trajState.nOutliers,
+                    trajState.nHoles
                 })
             );
         }
@@ -420,6 +436,10 @@ void ActsSequencer::ProcessEvt(AnaEvent *evt) {
             cur_trk_vars->theta.emplace_back(track.theta);
             cur_trk_vars->P.emplace_back(track.P);
             cur_trk_vars->chi2.emplace_back(track.chi2);
+            cur_trk_vars->ndf.emplace_back(track.ndf);
+            cur_trk_vars->nMeasurements.emplace_back(track.nMeasurements);
+            cur_trk_vars->nOutliers.emplace_back(track.nOutliers);
+            cur_trk_vars->nHoles.emplace_back(track.nHoles);
         }
         // ====================================================
         // Output Vertex Variables

@@ -148,6 +148,10 @@ private:
         double P{RETURN};
         // trajectory summary info
         double chi2{RETURN};
+        int ndf{0};
+        int nMeasurements{0};
+        int nOutliers{0};
+        int nHoles{0};
     };
     struct TrackerOuptput {
         int No{0};
@@ -159,6 +163,10 @@ private:
         std::vector<double> theta{};
         std::vector<double> P{};
         std::vector<double> chi2{};
+        std::vector<int> ndf{};
+        std::vector<int> nMeasurements{};
+        std::vector<int> nOutliers{};
+        std::vector<int> nHoles{};
     };
     TrackerOuptput tag_trk_vars;
     TrackerOuptput rec_trk_vars;
