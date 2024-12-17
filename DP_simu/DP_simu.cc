@@ -38,7 +38,7 @@
 #include "DP_simu/RootManager.hh"
 #include "Control/Control.h"
 #include "Bias_Filter/FilterManager.hh"
-#include "Utility/TruthManager.h"
+#include "Object/Util/TruthManager.h"
 #include "Utility/parser.h"
 
 #include "G4Version.hh"

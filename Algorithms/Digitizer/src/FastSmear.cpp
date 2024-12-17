@@ -2,7 +2,7 @@
 // Created by Zhang Yulei on 8/3/21.
 //
 
-#include "Algorithms/Digitizer/include/Algo/FastSmear.h"
+#include "Algo/FastSmear.h"
 
 
 void FastSmear::RegisterParameters(const std::string &cf, bool aecal, bool ahcal, int seed) {

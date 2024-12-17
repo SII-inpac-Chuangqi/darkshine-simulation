@@ -6,6 +6,8 @@
 // Input: read in hdf5 and creates the collection
 // Output: derive to hdf5 format
 
+#ifdef USE_HDF5
+
 #ifndef DANA_ECAL_ML_IO_H
 #define DANA_ECAL_ML_IO_H
 
@@ -110,3 +112,5 @@ private:
 
 
 #endif //DSIMU_EXAMPLEPROCESSOR_H
+
+#endif // USE_HDF5

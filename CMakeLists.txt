@@ -10,42 +10,68 @@ set(CMAKE_PLATFORM_INDEPENDENT_CODE ON)
 
 set(OpenGL_GL_PREFERENCE GLVND)
 
+OPTION(ENABLE_GCOV "Enable gcov (debug, Linux builds only)" OFF)
+
+option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
+option(MEMCK "MEMCK" OFF)
+option(BUILD_ACTS "BUILD_ACTS" OFF)
+option(BUILD_HDF5 "BUILD_HDF5" ON)
+
+option(BUILD_DANA "BUILD_DANA" ON)
+option(BUILD_DSIMU "BUILD_DSIMU" ON)
+option(BUILD_DDIS "BUILD_DDIS" ON)
+option(BUILD_TOOLS "BUILD_TOOLS" ON)
+
 # define path to macros and settings
+#
 LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 INCLUDE(macros)
 
-OPTION(ENABLE_GCOV "Enable gcov (debug, Linux builds only)" OFF)
 IF (ENABLE_GCOV AND NOT WIN32 AND NOT APPLE)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
 ENDIF()
 
+
 #----------------------------------------------------------------------------
+# Find required packages)
+#
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
 # to build a batch mode only executable
 #
-option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
 if (WITH_GEANT4_UIVIS)
     find_package(Geant4 REQUIRED ui_all vis_all)
 else ()
     find_package(Geant4 REQUIRED)
 endif ()
-
-#----------------------------------------------------------------------------
-# Setup Geant4 include directories and compile definitions
-#
 include(${Geant4_USE_FILE})
 
-#----------------------------------------------------------------------------
-# Find required packages)
+# Find ROOT
 #
+FIND_PACKAGE(OpenGL)
 
+FIND_PACKAGE(ROOT COMPONENTS Geom TMVA Eve Gui RGL EG)
+#FIND_PACKAGE(ROOT COMPONENTS Geom TMVA Gui EG)
+IF (ROOT_FOUND)
+    INCLUDE_DIRECTORIES(SYSTEM ${ROOT_INCLUDE_DIRS})
+    INCLUDE_DIRECTORIES(SYSTEM ${ROOT_INCLUDE_DIR})
+    LINK_LIBRARIES(${ROOT_LIBRARIES})
+    LINK_DIRECTORIES(${ROOT_LIBRARY_DIR})
+
+    if (${ROOT_VERSION} VERSION_EQUAL "6.24.0")
+        ADD_DEFINITIONS("-DRM_UNIT")
+    endif ()
+ENDIF ()
+
+# Find GSL
+#
 find_package(GSL REQUIRED)
 LINK_LIBRARIES(${GSL_LIBRARIES})
 
 # yaml-cpp
+#
 find_package(yaml-cpp REQUIRED)
 LINK_LIBRARIES(yaml-cpp)
 
@@ -56,7 +82,7 @@ if (XercesC_FOUND)
 endif ()
 
 # GenFit2
-option(BUILD_DANA "BUILD_DANA" ON)
+#
 IF (BUILD_DANA)
     FIND_PACKAGE(Eigen3 REQUIRED)
     INCLUDE_DIRECTORIES(SYSTEM ${EIGEN3_INCLUDE_DIR})
@@ -64,7 +90,7 @@ IF (BUILD_DANA)
 ENDIF ()
 
 # ACTS
-option(BUILD_ACTS "BUILD_ACTS" OFF)
+#
 IF (BUILD_ACTS)
     FIND_PACKAGE(Boost REQUIRED COMPONENTS program_options unit_test_framework container)
     FIND_PACKAGE(Acts REQUIRED COMPONENTS Core PluginJson)
@@ -94,7 +120,7 @@ ELSE()
 ENDIF()
 
 # HDF5
-option(BUILD_HDF5 "BUILD_HDF5" ON)
+#
 IF (BUILD_HDF5)
     FIND_PACKAGE(HDF5 COMPONENTS C CXX)
     IF (HDF5_FOUND)
@@ -105,26 +131,14 @@ IF (BUILD_HDF5)
         SET(BUILD_HDF5 OFF)
     ENDIF ()
 ENDIF ()
+
+IF (BUILD_HDF5)
+    add_definitions(-DUSE_HDF5)
+ENDIF ()
+
 # json
 find_package(nlohmann_json 3.2.0 REQUIRED)
 
-#----------------------------------------------------------------------------
-# Find ROOT (required package)
-#
-FIND_PACKAGE(OpenGL)
-
-FIND_PACKAGE(ROOT COMPONENTS Geom TMVA Eve Gui RGL EG)
-#FIND_PACKAGE(ROOT COMPONENTS Geom TMVA Gui EG)
-IF (ROOT_FOUND)
-    INCLUDE_DIRECTORIES(SYSTEM ${ROOT_INCLUDE_DIRS})
-    INCLUDE_DIRECTORIES(SYSTEM ${ROOT_INCLUDE_DIR})
-    LINK_LIBRARIES(${ROOT_LIBRARIES})
-    LINK_DIRECTORIES(${ROOT_LIBRARY_DIR})
-
-    if (${ROOT_VERSION} VERSION_EQUAL "6.24.0")
-        ADD_DEFINITIONS("-DRM_UNIT")
-    endif ()
-ENDIF ()
 
 #----------------------------------------------------------------------------
 # For Debug
@@ -133,80 +147,91 @@ if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     add_definitions("-DDSIMU_DEBUG")
 endif ()
 
+
 #----------------------------------------------------------------------------
 # For Memory Check
 #
-option(MEMCK "MEMCK" OFF)
 if (MEMCK OR ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
     MESSAGE("-- Memory Check is ON")
     add_definitions("-DMEMCK")
 endif ()
 
+
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
-#
-HEADER_DIRECTORIES(Algo_List Algo_File "Algorithms")
-HEADER_DIRECTORIES(Util_List Util_File "Utility")
-HEADER_DIRECTORIES_GENFIT2(GenFit2_List GenFit2_File "ThirdParty/GenFit2")
 
-include_directories(
-        ./
-        ${GenFit2_List}
-        ${Util_List}
-        ${Algo_List}
-        ${Geant4_INCLUDE_DIR}
-        ${HEPMC_INCLUDE_DIR}
-)
+FIND_DIRECTORIES(Object_Include_Dir Object_Headers "Utility/Object/include/*" "*.h")
+FIND_DIRECTORIES(Util_Include_Dir   Util_Headers   "Utility/UTIL/include/*" "*.h")
+FIND_DIRECTORIES(GenFit_Include_Dir GenFit_Headers "ThirdParty/GenFit2/*/include" "*.h" ON)
+FIND_DIRECTORIES(Algo_Include_Dir   Algo_Headers   "Algorithms/*/include/Algo" "*.h")
+FIND_DIRECTORIES(DAna_Include_Dir   DAna_Headers   "DP_ana/include/*" "*.h")
+#message(STATUS "Object include dir: ${Object_Include_Dir}")
+#message(STATUS "Object include headers: ${Object_Headers}")
+#message(STATUS "Algo include dir: ${Algo_Include_Dir}")
+#message(STATUS "GenFit2 include dir: ${GenFit_Include_Dir}")
+include_directories(${Object_Include_Dir})
+include_directories(${Util_Include_Dir})
+include_directories(${Algo_Include_Dir})
+include_directories(${DAna_Include_Dir})
+#include_directories(${HEPMC_INCLUDE_DIR})
+include_directories(${GenFit_Include_Dir})
 
 
 #----------------------------------------------------------------------------
+# Core lib
+#
 # DEvent
 #
 add_subdirectory(Utility/Object)
 link_libraries(DEvent)
 
+
+#----------------------------------------------------------------------------
+# Executables
+#
 # DSimu
-option(BUILD_DSIMU "BUILD_DSIMU" ON)
+#
 if (BUILD_DSIMU)
     add_definitions(-DDSIMU_VERSION=\"1.6.6\")
     add_subdirectory(DP_simu)
 endif ()
 
-#----------------------------------------------------------------------------
 # DAna
 #
-option(BUILD_DDIS "BUILD_DDIS" ON)
 if (BUILD_DANA)
     add_definitions(-DDANA_VERSION=\"v1.6.6\")
 
     add_subdirectory(ThirdParty/GenFit2)
+    add_subdirectory(Algorithms)
     add_subdirectory(DP_ana)
-    if (BUILD_DDIS)
-        add_subdirectory(DP_display)
-    endif ()
 endif ()
 
-#---------------------------------------------------------------------------
+# DDis
+#
+if (BUILD_DDIS)
+    add_subdirectory(DP_display)
+endif ()
+
 # Tools
 #
-option(BUILD_TOOLS "BUILD_TOOLS" ON)
 if (BUILD_TOOLS)
     add_subdirectory(Tools)
 endif()
 
-#----------------------------------------------------------------------------
-# Copy all scripts to the build directory
-#
-set(RUN_SCRIPTS
-        DP_simu/scripts/default.yaml
-        DP_simu/scripts/init_vis.mac
-        DP_simu/scripts/gui.mac
-        )
 
-foreach (_script ${RUN_SCRIPTS})
-    configure_file(
-            ${PROJECT_SOURCE_DIR}/${_script}
-            ${PROJECT_BINARY_DIR}/
-            COPYONLY
-    )
-endforeach ()
+##----------------------------------------------------------------------------
+## Copy all scripts to the build directory
+##
+#set(RUN_SCRIPTS
+#        DP_simu/scripts/default.yaml
+#        DP_simu/scripts/init_vis.mac
+#        DP_simu/scripts/gui.mac
+#        )
+#
+#foreach (_script ${RUN_SCRIPTS})
+#    configure_file(
+#            ${PROJECT_SOURCE_DIR}/${_script}
+#            ${PROJECT_BINARY_DIR}/
+#            COPYONLY
+#    )
+#endforeach ()

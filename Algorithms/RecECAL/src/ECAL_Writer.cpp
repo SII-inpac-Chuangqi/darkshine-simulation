@@ -2,7 +2,7 @@
 // Created by Zhang Yulei on 11/30/20.
 //
 
-#include "Algorithms/RecECAL/include/Algo/ECAL_Writer.h"
+#include "Algo/ECAL_Writer.h"
 
 void ECAL_Writer::BookTree(const TString &filename, const TString &treename, int nb_channel) {
     outFile = shared_ptr<TFile>(new TFile(filename, "RECREATE"));

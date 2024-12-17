@@ -11,12 +11,12 @@ file(GLOB_RECURSE Simu_headers include/*)
 
 SET(UTIL_LIST
         # headers
-        ${PROJECT_SOURCE_DIR}/Utility/UTIL/include/Utility/TruthManager.h
-        ${PROJECT_SOURCE_DIR}/Utility/UTIL/include/Utility/PhysicsProcessDef.h
-        ${PROJECT_SOURCE_DIR}/Utility/UTIL/include/Utility/DetectorPVDef.h
+        ${PROJECT_SOURCE_DIR}/Utility/Object/include/Object/Util/TruthManager.h
+        ${PROJECT_SOURCE_DIR}/Utility/Object/include/Object/Util/PhysicsProcessDef.h
+        ${PROJECT_SOURCE_DIR}/Utility/Object/include/Object/Util/DetectorPVDef.h
 
         # sources
-        ${PROJECT_SOURCE_DIR}/Utility/UTIL/src/TruthManager.cpp
+        ${PROJECT_SOURCE_DIR}/Utility/Object/src/Util/TruthManager.cpp
         )
 
 #----------------------------------------------------------------------------
