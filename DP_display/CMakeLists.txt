@@ -39,12 +39,7 @@ add_library(DDisplay SHARED ${Display_header_shared} ${Display_source} G__Displa
                 ${PROJECT_SOURCE_DIR}/Utility/UTIL/include/Utility/Config.h
                 ${PROJECT_SOURCE_DIR}/Utility/UTIL/src/Config.cpp)
 
-target_link_libraries(DDisplay PUBLIC genfit2 DAlgo)
-
-IF (BUILD_ACTS)
-    get_library_names(${Acts_libraries} Acts_LIB_NAMES)
-    target_link_libraries(DDisplay PUBLIC tbb ${Acts_LIB_NAMES} Boost::program_options Boost::unit_test_framework Boost::container tbb)
-ENDIF()
+target_link_libraries(DDisplay PUBLIC DAlgo)
 
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
 
