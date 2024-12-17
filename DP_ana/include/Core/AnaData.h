@@ -118,6 +118,9 @@ public:
     int getNECalCellY() const {return N_ECal_cell_y;}
     int getNECalCellZ() const {return N_ECal_cell_z;}
     int getNECalCells() const {return N_ECal_cells;}
+    double getECalCellDx() const {return ECAL_cell_dx;}
+    double getECalCellDy() const {return ECAL_cell_dy;}
+    double getECalCellDz() const {return ECAL_cell_dz;}
     double getECalSurfaceZ() const {return ECAL_center_z - 0.5*ECAL_length_z;}
     const std::vector<std::vector<int>> &getCenterIdNeighborIds_staggered() {return centerIdNeighborIds_staggered;}
     TString getRegionName(const float vertex[3]);
@@ -143,7 +146,7 @@ public:
     const DTruth* getInitialElectron() const;
 
 
-    int getACC(int x, int y,int z) const { return (((x)-1)+N_ECal_cell_x*((y)-1)+N_ECal_cell_x*N_ECal_cell_y*((z)-1)); }
+    int getACC(int x, int y, int z) const { return (((x)-1)+N_ECal_cell_x*((y)-1)+N_ECal_cell_x*N_ECal_cell_y*((z)-1)); }
 
     //const McPHelper* getInitialElectron() const;
     //void PrintTruthMcPHelper() const;

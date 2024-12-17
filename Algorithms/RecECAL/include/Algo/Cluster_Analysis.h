@@ -15,6 +15,11 @@
 #include <utility>
 #include <algorithm>
 #include "TVector3.h"
+#include "TROOT.h"
+#include "TMath.h"
+#include <Math/Minimizer.h>
+#include <Math/Factory.h>
+#include <Math/Functor.h>
 
 // Utility functions
 template<class ClusterHit>
@@ -67,9 +72,25 @@ public:
     bool FineECellYZ(std::vector<double>* ECell);
     bool FineECellZ(std::vector<double>* ECell);
     bool FineECellXYZ(std::vector<double>* ECell);
+    bool FinePosCellXYZ(std::vector<TVector3>* PosCell);
     bool maxXY(std::vector<int>* ECell);
     bool NXY(std::vector<int>* ECell);
     
+    bool Calculate_COG(std::vector<TVector3>* PosCell, std::vector<double>* ECell,
+                       double& COG_X, double& COG_Y, double& COG_Z);
+    TVector3 PosToIndex(TVector3 PosCell);
+    double GetECellNeighbor(TVector3 IndexCell, std::vector<double>* ECell, int n);
+    int GetShowerStartLayer(std::vector<int>* hits_on_layer);
+    int GetShowerEndLayer(std::vector<int>* hits_on_layer);
+    bool GetLayerCOGWidth(std::vector<TVector3>* COG_Layer, std::vector<TVector3>* shower_layer_width, std::vector<int>* hits_on_layer, std::vector<double>* ECell, std::vector<TVector3> *PosCell);
+    double DistanceToLine(const double* par, const TVector3& point);
+    // double SumDist2(const double* par);
+    bool GetRMSRadius(std::vector<TVector3>* COG_Layer, std::vector<double>* ECell, std::vector<TVector3> *PosCell, double* radius, double* radius_w);
+    double GetShowerDensity(std::vector<TVector3>* IndexCell, std::vector<double>* ECell, double ECAL_Hit_Threshold, int n);
+    int NewScale(std::vector<TVector3>* PosCell, std::vector<TVector3>* IndexCell, int ratio_x, int ratio_y, int ratio_z);
+    bool GetFD2D(std::vector<TVector3>* PosCell, std::vector<TVector3>* IndexCell, double* mean, double* rms);
+    bool GetFD3D(std::vector<TVector3>* PosCell, std::vector<TVector3>* IndexCell, double* mean, double* rms);
+
 protected:
     // data
     //std::shared_ptr<std::vector<ClusterHit *> > ClusterVec;
