@@ -466,7 +466,7 @@ if [[ ${Remove} == true ]]; then
         echo "Ana / Merge not finished. Keeping ${jobname} dir."
     else
         echo "Cleaning ${jobname} dir."
-        rm ${jobname}/*.root
+        rm ${jobname}/j*/*.root
     fi
 fi
 
