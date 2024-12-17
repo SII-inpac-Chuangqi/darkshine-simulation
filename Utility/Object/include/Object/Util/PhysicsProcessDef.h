@@ -63,6 +63,7 @@ struct PhysicsDef {
             "hPairProd",                        // 43
             "hBrems",                           // 44
             "nKiller",                          // 45
+            "positronNuclear",                  // 46
     };
     /** the map of process types */
     unordered_map<string, int> dPhyTypeMap;
