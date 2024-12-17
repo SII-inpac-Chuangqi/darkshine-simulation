@@ -67,73 +67,73 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
                             Pool *pool,
                             int detector)
 {
-    std::function<std::decay_t<decltype(((TrkHit*)nullptr)->GetCellIdZ())>(const TrkHit&)> trk_hit_getter = &TrkHit::GetCellIdZ;
+    std::function<Key(const TrkHit&)> trk_hit_getter = &TrkHit::GetCellIdZ;
     pool->SetKeyGetter(trk_hit_getter);
 
-    if(if_strip_)
-    {
-        std::vector<double> *layer_widths  = (detector == tracking::dTag) ? &layer_width_tag_  : &layer_width_rec_;
-        std::vector<double> *layer_lengths = (detector == tracking::dTag) ? &layer_length_tag_ : &layer_length_rec_;
-        std::vector<int>    *strip_nos = (detector == tracking::dTag) ? &strip_no_tag_ : &strip_no_rec_;
-        std::vector<double> *angles    = (detector == tracking::dTag) ? &angles_tag_   : &angles_rec_;
- 
-        TrkHitSPVec clustered_trk1_hits;
-        TrkHitSPVec clustered_trk2_hits;
-        for(const auto &hit : trk1_hits) clustered_trk1_hits.push_back(std::make_shared<TrkHit>(hit));
-        for(const auto &hit : trk2_hits) clustered_trk2_hits.push_back(std::make_shared<TrkHit>(hit));
-
-        TrkHitSPVecMap map1;
-        this->InitHitMap(clustered_trk1_hits, map1);
-        TrkHitSPVecMap map2;
-        this->InitHitMap(clustered_trk2_hits, map2);
-   
-        for(auto layer1 : map1)
-        {
-            auto it_find_layer2 = map2.find(layer1.first);
-            if(it_find_layer2 == map2.end())
-                continue;
-
-            double angle        = angles->at((layer1.first - 1)*2 + 1);
-            double strip_no     = strip_nos->at((layer1.first - 1)*2 + 1);
-            double layer_width  = layer_widths->at((layer1.first - 1)*2 + 1);
-            double layer_length = layer_lengths->at((layer1.first - 1)*2 + 1); 
-            //std::cout << strip_no << std::endl;
-    
-            auto layer2 = map2.at(layer1.first);
-            for(auto hit1 : layer1.second)
-            {
-                for(auto hit2 : layer2)
-                {
-                    double smear1 = 0.;
-                    double smear2 = 0.;
-                    if(if_smear_)
-                    {
-                        smear1 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
-                        smear2 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
-                    }
-                    //double x1 = hit1->GetX() + smear1;
-                    //double y1 = -x1/tan(angle) + ((hit2->GetCellIdX() - 0.5*(strip_no + 1))*layer_width/strip_no + smear2)/sin(angle);
-                    double x1 = hit1->GetX() + smear1;
-                    double x2 = hit2->GetX() + smear2;
-                    double y1 = -x1/tan(angle) + x2/sin(angle);
-    
-                    if(!(std::abs(y1) < 0.5*layer_length))
-                        continue;
-
-                    auto hit = std::make_shared<TrkHit>();
-                    hit->SetCellIdZ(hit1->GetCellIdZ());
-                    pool->AddHit(std::move(hit));
-                    pool->Back()->SetX(x1);
-                    pool->Back()->SetZ(hit1->GetZ());
-                    pool->Back()->SetY(y1);
-                }
-            }
-        }
-    }
-    else
+    if(!if_strip_)
     {
         for(const auto &it_trkhit : trk2_hits)
             pool->AddHit(it_trkhit);
+
+        return;
+    }
+    
+    std::vector<double> *layer_widths  = (detector == tracking::dTag) ? &layer_width_tag_  : &layer_width_rec_;
+    std::vector<double> *layer_lengths = (detector == tracking::dTag) ? &layer_length_tag_ : &layer_length_rec_;
+    std::vector<int>    *strip_nos = (detector == tracking::dTag) ? &strip_no_tag_ : &strip_no_rec_;
+    std::vector<double> *angles    = (detector == tracking::dTag) ? &angles_tag_   : &angles_rec_;
+ 
+    TrkHitSPVec clustered_trk1_hits;
+    TrkHitSPVec clustered_trk2_hits;
+    for(const auto &hit : trk1_hits) clustered_trk1_hits.push_back(std::make_shared<TrkHit>(hit));
+    for(const auto &hit : trk2_hits) clustered_trk2_hits.push_back(std::make_shared<TrkHit>(hit));
+
+    TrkHitSPVecMap map1;
+    this->InitHitMap(clustered_trk1_hits, map1);
+    TrkHitSPVecMap map2;
+    this->InitHitMap(clustered_trk2_hits, map2);
+   
+    for(auto layer1 : map1)
+    {
+        auto it_find_layer2 = map2.find(layer1.first);
+        if(it_find_layer2 == map2.end())
+            continue;
+
+        double angle        = angles->at((layer1.first - 1)*2 + 1);
+        double strip_no     = strip_nos->at((layer1.first - 1)*2 + 1);
+        double layer_width  = layer_widths->at((layer1.first - 1)*2 + 1);
+        double layer_length = layer_lengths->at((layer1.first - 1)*2 + 1); 
+        //std::cout << strip_no << std::endl;
+    
+        auto layer2 = map2.at(layer1.first);
+        for(auto hit1 : layer1.second)
+        {
+            for(auto hit2 : layer2)
+            {
+                double smear1 = 0.;
+                double smear2 = 0.;
+                if(if_smear_)
+                {
+                    smear1 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
+                    smear2 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
+                }
+                //double x1 = hit1->GetX() + smear1;
+                //double y1 = -x1/tan(angle) + ((hit2->GetCellIdX() - 0.5*(strip_no + 1))*layer_width/strip_no + smear2)/sin(angle);
+                double x1 = hit1->GetX() + smear1;
+                double x2 = hit2->GetX() + smear2;
+                double y1 = -x1/tan(angle) + x2/sin(angle);
+    
+                if(!(std::abs(y1) < 0.5*layer_length))
+                    continue;
+
+                auto hit = std::make_shared<TrkHit>();
+                hit->SetCellIdZ(hit1->GetCellIdZ());
+                pool->AddHit(std::move(hit));
+                pool->Back()->SetX(x1);
+                pool->Back()->SetZ(hit1->GetZ());
+                pool->Back()->SetY(y1);
+            }
+        }
     }
 
     //std::cout << std::endl;

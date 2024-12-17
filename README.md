@@ -55,9 +55,7 @@ several dependencies need to be checked.
 - [nlohmann/json](https://github.com/nlohmann/json)
 - build ACTS from here: [modifield ACTS](https://github.com/ykrsama/acts/tree/xuliang-v30)
 
-
 ### With everything needed, it's ready to install :v:
-
 
 ```shell
 cd darkshine-simulation   # <source-directory>
