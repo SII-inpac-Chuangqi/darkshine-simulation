@@ -120,6 +120,53 @@ void RecECAL::Begin() {
                 EvtWrt->RegisterOutVariable("ECAL_ClusterSub_matchRecTrk", &ECAL_ClusterSub_matchRecTrk, "Sub-Cluster (used when tracker-match enabled) matched track Id");
         }
         if(enAda>1){
+            EvtWrt->RegisterOutVariable("ECAL_NHits", &ECAL_NHits, "Number of hits in ECAL");
+            EvtWrt->RegisterOutVariable("ECAL_Emean", &ECAL_Emean, "Average energy of hits in ECAL");
+            EvtWrt->RegisterOutVariable("ECAL_COG_X_mean", &ECAL_COG_X_mean, "Center of gravite in X direction/mm");
+            EvtWrt->RegisterOutVariable("ECAL_COG_Y_mean", &ECAL_COG_Y_mean, "Center of gravite in Y direction/mm");
+            EvtWrt->RegisterOutVariable("ECAL_COG_Z_mean", &ECAL_COG_Z_mean, "Center of gravite in Z direction/mm");
+            EvtWrt->RegisterOutVariable("ECAL_Ecenter", &ECAL_Ecenter, "Energy at the center of gravite of the event");
+            EvtWrt->RegisterOutVariable("ECAL_Ecenter_3", &ECAL_Ecenter_3, "Energy at the center of gravite of the event (3x3 cells)");
+            EvtWrt->RegisterOutVariable("ECAL_Ecenter_5", &ECAL_Ecenter_5, "Energy at the center of gravite of the event (5x5 cells)");
+            EvtWrt->RegisterOutVariable("ECAL_Ecenter_7", &ECAL_Ecenter_7, "Energy at the center of gravite of the event (7x7 cells)");
+            EvtWrt->RegisterOutVariable("ECAL_E1E3_center", &ECAL_E1E3_center, "Energy deposition of the central cell divided by the total energy deposition in the 3x3 cells around it");
+            EvtWrt->RegisterOutVariable("ECAL_E1E5_center", &ECAL_E1E5_center, "Energy deposition of the central cell divided by the total energy deposition in the 5x5 cells around it");
+            EvtWrt->RegisterOutVariable("ECAL_E1E7_center", &ECAL_E1E7_center, "Energy deposition of the central cell divided by the total energy deposition in the 7x7 cells around it");
+            EvtWrt->RegisterOutVariable("ECAL_E3E5_center", &ECAL_E3E5_center, "Energy deposition of the central 3x3 cells divided by the total energy deposition in the central 5x5 cells");
+            EvtWrt->RegisterOutVariable("ECAL_E3E7_center", &ECAL_E3E7_center, "Energy deposition of the central 3x3 cells divided by the total energy deposition in the central 7x7 cells");
+            EvtWrt->RegisterOutVariable("ECAL_Hits_XWidth", &ECAL_Hits_XWidth, "RMS value of the hits in X direction (with respect to COGX)");
+            EvtWrt->RegisterOutVariable("ECAL_Hits_YWidth", &ECAL_Hits_YWidth, "RMS value of the hits in Y direction (with respect to COGY)");
+            EvtWrt->RegisterOutVariable("ECAL_Hits_ZDepth", &ECAL_Hits_ZDepth, "RMS value of the hits in Z direction");
+            EvtWrt->RegisterOutVariable("ECAL_Ecell_max", &ECAL_Ecell_max, "The max energy deposition of a cell in ECAL");
+            EvtWrt->RegisterOutVariable("ECAL_Ecell_second", &ECAL_Ecell_second, "The second-max energy deposition of a cell in ECAL");
+            EvtWrt->RegisterOutVariable("ECAL_Ecell_max_sec_diff", &ECAL_Ecell_max_sec_diff, "Relative difference between the max and second-max energy deposition of a cell in ECAL");
+            EvtWrt->RegisterOutVariable("ECAL_Ecell_max_sec_dist", &ECAL_Ecell_max_sec_dist, "Distance between the max cell and second-max cell in ECAL");
+            EvtWrt->RegisterOutVariable("ECAL_Ecell_max_3", &ECAL_Ecell_max_3, "Energy of the 3x3 cells around the max cell");
+            EvtWrt->RegisterOutVariable("ECAL_Ecell_max_5", &ECAL_Ecell_max_5, "Energy of the 5x5 cells around the max cell");
+            EvtWrt->RegisterOutVariable("ECAL_Ecell_max_7", &ECAL_Ecell_max_7, "Energy of the 7x7 cells around the max cell");
+            EvtWrt->RegisterOutVariable("ECAL_E1E3_max", &ECAL_E1E3_max, "Energy ratio between the max cell and the 3x3 cells around it");
+            EvtWrt->RegisterOutVariable("ECAL_E1E5_max", &ECAL_E1E5_max, "Energy ratio between the max cell and the 5x5 cells around it");
+            EvtWrt->RegisterOutVariable("ECAL_E1E7_max", &ECAL_E1E7_max, "Energy ratio between the max cell and the 7x7 cells around it");
+            EvtWrt->RegisterOutVariable("ECAL_E3E5_max", &ECAL_E3E5_max, "Energy ratio between the 3x3 cells around the max cell and the 5x5 cells around it");
+            EvtWrt->RegisterOutVariable("ECAL_E3E7_max", &ECAL_E3E7_max, "Energy ratio between the 3x3 cells around the max cell and the 7x7 cells around it");
+            EvtWrt->RegisterOutVariable("ECAL_E1Edep_max", &ECAL_E1Edep_max, "Energy ratio between the max cell and the total energy deposition in ECAL");
+            EvtWrt->RegisterOutVariable("ECAL_E3Edep_max", &ECAL_E3Edep_max, "Energy ratio between the 3x3 cells around the max cell and the total energy deposition in ECAL");
+            EvtWrt->RegisterOutVariable("ECAL_E5Edep_max", &ECAL_E5Edep_max, "Energy ratio between the 5x5 cells around the max cell and the total energy deposition in ECAL");
+            EvtWrt->RegisterOutVariable("ECAL_E7Edep_max", &ECAL_E7Edep_max, "Energy ratio between the 7x7 cells around the max cell and the total energy deposition in ECAL");
+            EvtWrt->RegisterOutVariable("ECAL_Shower_start", &ECAL_Shower_start, "The layer where the shower begins, defined as three consecutive layers with at least # hits; otherwise it is set to be -1");
+            EvtWrt->RegisterOutVariable("ECAL_Shower_end", &ECAL_Shower_end, "The layer where the shower ends, defined as two consecutive layers with less than # hits");
+            EvtWrt->RegisterOutVariable("ECAL_Hit_layer", &ECAL_Hit_layer, "Number of layers with at least # hit");
+            EvtWrt->RegisterOutVariable("ECAL_Shower_radius", &ECAL_Shower_radius, "Shower radius with respect to the event axis, which was obtained from 3-dimensional fitting of all the hits (unweighted)");
+            EvtWrt->RegisterOutVariable("ECAL_Weighted_radius", &ECAL_Weighted_radius, "Shower radius with respect to the event axis, which was obtained from 3-dimensional fitting of all the hits (weighted)");
+            EvtWrt->RegisterOutVariable("ECAL_Shower_layer", &ECAL_Shower_layer, "Number of layers with xwidth, ywidth >= #");
+            EvtWrt->RegisterOutVariable("ECAL_Shower_layer_ratio", &ECAL_Shower_layer_ratio, "The proportion of layers with xwidth, ywidth >= 6 cm within the layers with at least one hit");
+            EvtWrt->RegisterOutVariable("ECAL_Shower_density", &ECAL_Shower_density, "The number of hits divided by the number of layers with at least one hit");
+            EvtWrt->RegisterOutVariable("ECAL_Shower_length", &ECAL_Shower_length, "The distance between the layer with the largest RMS value of position (with respect to COGX and COGY) and the beginning layer");
+            EvtWrt->RegisterOutVariable("ECAL_FD_2D_mean", &ECAL_FD_2D_mean, "Mean value of all the 2-dimensional fractal dimensions");
+            EvtWrt->RegisterOutVariable("ECAL_FD_2D_rms", &ECAL_FD_2D_rms, "RMS value of all the 2-dimensional fractal dimensions");
+            EvtWrt->RegisterOutVariable("ECAL_FD_3D_mean", &ECAL_FD_3D_mean, "Mean value of all the 3-dimensional fractal dimensions");
+            EvtWrt->RegisterOutVariable("ECAL_FD_3D_rms", &ECAL_FD_3D_rms, "RMS value of all the 3-dimensional fractal dimensions");
+
             EvtWrt->RegisterOutVariable("ECAL_Cluster_E"          ,&ECAL_Cluster_E          ,"Pri-Cluster Energy/MeV (used when tracker-match enabled)");
             EvtWrt->RegisterOutVariable("ECAL_Cluster_X"          ,&ECAL_Cluster_X          ,"Pri-Cluster Center in X direction/cm (used when tracker-match enabled)");
             EvtWrt->RegisterOutVariable("ECAL_Cluster_Y"          ,&ECAL_Cluster_Y          ,"Pri-Cluster Center in Y direction/cm (used when tracker-match enabled)");
@@ -536,7 +583,140 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                 }
                 //level 2: dump parent cluster
                 if (enAda > 1)
-                {                  
+                {   
+                    double ECAL_Hit_Threshold = 0.0;
+                    std::vector<double> ECellXYZ;
+                    std::vector<double> _ECellXYZ;
+                    std::vector<TVector3> PosCellXYZ;
+                    std::vector<TVector3> _PosCellXYZ;
+                    TVector3 RMSPosCellXYZ = TVector3(0, 0, 0);
+                    std::vector<TVector3> IndexCellXYZ;
+                    int _ECAL_NHits = 0;
+                    _ECellXYZ.resize(dAnaData->getNECalCells());
+                    _PosCellXYZ.resize(dAnaData->getNECalCells());
+                    if (cluster_ana->FineECellXYZ(&_ECellXYZ) && cluster_ana->FinePosCellXYZ(&_PosCellXYZ)) {
+                        for (size_t i = 0; i < _ECellXYZ.size(); ++i) {
+                            if (_ECellXYZ[i] > ECAL_Hit_Threshold) {
+                                ECellXYZ.emplace_back(_ECellXYZ[i]);
+                                PosCellXYZ.emplace_back(_PosCellXYZ[i]);
+                                RMSPosCellXYZ += TVector3(pow(_PosCellXYZ[i].X(), 2), pow(_PosCellXYZ[i].Y(), 2), pow(_PosCellXYZ[i].Z(), 2));
+                                IndexCellXYZ.emplace_back(cluster_ana->PosToIndex(_PosCellXYZ[i]));
+                                ++_ECAL_NHits;
+                            }
+                        }
+
+                        if(_ECAL_NHits>0){
+                            RMSPosCellXYZ.SetX(std::sqrt(RMSPosCellXYZ.X() / _ECAL_NHits));
+                            RMSPosCellXYZ.SetY(std::sqrt(RMSPosCellXYZ.Y() / _ECAL_NHits));
+                            RMSPosCellXYZ.SetZ(std::sqrt(RMSPosCellXYZ.Z() / _ECAL_NHits));
+                        }
+                        else{
+                            RMSPosCellXYZ = TVector3(0, 0, 0);
+                        }
+                        ECAL_NHits.emplace_back(_ECAL_NHits);
+                    }
+
+                    if(_ECAL_NHits > 0){
+                        ECAL_Emean.emplace_back(cluster_ana->FindETotal() / _ECAL_NHits);
+                        double _ECAL_COG_X_mean = 0.0;
+                        double _ECAL_COG_Y_mean = 0.0;
+                        double _ECAL_COG_Z_mean = 0.0;
+                        cluster_ana->Calculate_COG(&PosCellXYZ, &ECellXYZ, _ECAL_COG_X_mean, _ECAL_COG_Y_mean, _ECAL_COG_Z_mean);
+                        ECAL_COG_X_mean.emplace_back(_ECAL_COG_X_mean);
+                        ECAL_COG_Y_mean.emplace_back(_ECAL_COG_Y_mean);
+                        ECAL_COG_Z_mean.emplace_back(_ECAL_COG_Z_mean);
+                        TVector3 PosCOG = TVector3(_ECAL_COG_X_mean, _ECAL_COG_Y_mean, _ECAL_COG_Z_mean);
+                        TVector3 IndexCOG = cluster_ana->PosToIndex(PosCOG); // Index begin from 0
+                        ECAL_Ecenter.emplace_back(_ECellXYZ[dAnaData->getACC(IndexCOG.X() + 1, IndexCOG.Y() + 1, IndexCOG.Z() + 1)]);
+                        ECAL_Ecenter_3.emplace_back(cluster_ana->GetECellNeighbor(IndexCOG, &_ECellXYZ, 3));
+                        ECAL_Ecenter_5.emplace_back(cluster_ana->GetECellNeighbor(IndexCOG, &_ECellXYZ, 5));
+                        ECAL_Ecenter_7.emplace_back(cluster_ana->GetECellNeighbor(IndexCOG, &_ECellXYZ, 7));
+                        ECAL_E1E3_center.emplace_back(ECAL_Ecenter.back() / ECAL_Ecenter_3.back());
+                        ECAL_E1E5_center.emplace_back(ECAL_Ecenter.back() / ECAL_Ecenter_5.back());
+                        ECAL_E1E7_center.emplace_back(ECAL_Ecenter.back() / ECAL_Ecenter_7.back());
+                        ECAL_E3E5_center.emplace_back(ECAL_Ecenter_3.back() / ECAL_Ecenter_5.back());
+                        ECAL_E3E7_center.emplace_back(ECAL_Ecenter_3.back() / ECAL_Ecenter_7.back());
+                        
+                        ECAL_Hits_XWidth.emplace_back(RMSPosCellXYZ.X());
+                        ECAL_Hits_YWidth.emplace_back(RMSPosCellXYZ.Y());
+                        ECAL_Hits_ZDepth.emplace_back(RMSPosCellXYZ.Z());
+
+                        auto max_iter = std::max_element(ECellXYZ.begin(), ECellXYZ.end());
+                        double max_E = *max_iter;
+                        int max_index = std::distance(ECellXYZ.begin(), max_iter);
+                        TVector3 PosMax = PosCellXYZ.at(max_index);
+                        TVector3 IndexMax = IndexCellXYZ.at(max_index);
+                        *max_iter = std::numeric_limits<double>::min();
+                        auto second_max_iter = std::max_element(ECellXYZ.begin(), ECellXYZ.end());
+                        double second_max_E = *second_max_iter;
+                        int second_max_index = std::distance(ECellXYZ.begin(), second_max_iter);
+                        TVector3 PosSecondMax = PosCellXYZ.at(second_max_index);
+                        TVector3 IndexSecondMax = IndexCellXYZ.at(second_max_index);
+                        *max_iter = max_E;
+                        ECAL_Ecell_max.emplace_back(max_E);
+                        ECAL_Ecell_second.emplace_back(second_max_E);
+                        ECAL_Ecell_max_sec_diff.emplace_back((second_max_E > 0) ? (max_E - second_max_E) / second_max_E : 0);
+                        ECAL_Ecell_max_sec_dist.emplace_back((PosMax - PosSecondMax).Mag());
+                        ECAL_Ecell_max_3.emplace_back(cluster_ana->GetECellNeighbor(IndexMax, &_ECellXYZ, 3));
+                        ECAL_Ecell_max_5.emplace_back(cluster_ana->GetECellNeighbor(IndexMax, &_ECellXYZ, 5));
+                        ECAL_Ecell_max_7.emplace_back(cluster_ana->GetECellNeighbor(IndexMax, &_ECellXYZ, 7));
+                        ECAL_E1E3_max.emplace_back(max_E / ECAL_Ecell_max_3.back());
+                        ECAL_E1E5_max.emplace_back(max_E / ECAL_Ecell_max_5.back());
+                        ECAL_E1E7_max.emplace_back(max_E / ECAL_Ecell_max_7.back());
+                        ECAL_E3E5_max.emplace_back(ECAL_Ecell_max_3.back() / ECAL_Ecell_max_5.back());
+                        ECAL_E3E7_max.emplace_back(ECAL_Ecell_max_3.back() / ECAL_Ecell_max_7.back());
+                        ECAL_E1Edep_max.emplace_back(max_E / cluster_ana->FindETotal());
+                        ECAL_E3Edep_max.emplace_back(ECAL_Ecell_max_3.back() / cluster_ana->FindETotal());
+                        ECAL_E5Edep_max.emplace_back(ECAL_Ecell_max_5.back() / cluster_ana->FindETotal());
+                        ECAL_E7Edep_max.emplace_back(ECAL_Ecell_max_7.back() / cluster_ana->FindETotal());
+
+                        std::vector<int> hits_on_layer(dAnaData->getNECalCellZ());
+                        for (auto index : IndexCellXYZ) hits_on_layer[index.Z()]++;
+                        ECAL_Shower_start.emplace_back(cluster_ana->GetShowerStartLayer(&hits_on_layer));
+                        ECAL_Shower_end.emplace_back(cluster_ana->GetShowerEndLayer(&hits_on_layer));
+                        ECAL_Hit_layer.emplace_back(std::count_if(hits_on_layer.begin(), hits_on_layer.end(), [](int x) { return x >= 1; }));
+
+                        double _ECAL_Shower_radius = 0.0;
+                        double _ECAL_Shower_radius_w = 0.0;
+                        std::vector<TVector3> COG_Layer(dAnaData->getNECalCellZ());
+                        std::vector<TVector3> shower_layer_width(dAnaData->getNECalCellZ());
+                        cluster_ana->GetLayerCOGWidth(&COG_Layer, &shower_layer_width, &hits_on_layer, &ECellXYZ, &PosCellXYZ);
+                        if (ECAL_Hit_layer.back() > 1) cluster_ana->GetRMSRadius(&COG_Layer, &ECellXYZ, &PosCellXYZ, &_ECAL_Shower_radius, &_ECAL_Shower_radius_w);
+                        ECAL_Shower_radius.emplace_back(_ECAL_Shower_radius);
+                        ECAL_Weighted_radius.emplace_back(_ECAL_Shower_radius_w);
+
+                        double shower_width_threshold = 2 * (dAnaData->getECalCellDx() + dAnaData->getECalCellDy()) / 2; 
+                        ECAL_Shower_layer.emplace_back(std::count_if(shower_layer_width.begin(), shower_layer_width.end(), [&](TVector3 x) { return x.Mag() > shower_width_threshold;}));
+                        ECAL_Shower_layer_ratio.emplace_back(ECAL_Shower_layer.back() / ECAL_Hit_layer.back());
+                        ECAL_Shower_density.emplace_back(cluster_ana->GetShowerDensity(&IndexCellXYZ, &_ECellXYZ, ECAL_Hit_Threshold, 3));
+                        auto max_shower_layer_width_iter = std::max_element(shower_layer_width.begin(), shower_layer_width.end(),
+                                     [](const TVector3& a, const TVector3& b) {
+                                         return a.Mag() < b.Mag();
+                                     });
+                        int max_shower_layer_width_index = std::distance(shower_layer_width.begin(), max_shower_layer_width_iter);
+                        ECAL_Shower_length.emplace_back((ECAL_Shower_start.back() < max_shower_layer_width_index && ECAL_Shower_start.back() != -1) ? max_shower_layer_width_index - ECAL_Shower_start.back() : 0);
+
+                        double _ECAL_FD_2D_mean = 0.0;
+                        double _ECAL_FD_2D_rms = 0.0;
+                        double _ECAL_FD_3D_mean = 0.0;
+                        double _ECAL_FD_3D_rms = 0.0;
+                        cluster_ana->GetFD2D(&PosCellXYZ, &IndexCellXYZ, &_ECAL_FD_2D_mean, &_ECAL_FD_2D_rms);
+                        cluster_ana->GetFD3D(&PosCellXYZ, &IndexCellXYZ, &_ECAL_FD_3D_mean, &_ECAL_FD_3D_rms);
+                        ECAL_FD_2D_mean.emplace_back(_ECAL_FD_2D_mean);
+                        ECAL_FD_2D_rms.emplace_back(_ECAL_FD_2D_rms);
+                        ECAL_FD_3D_mean.emplace_back(_ECAL_FD_3D_mean);
+                        ECAL_FD_3D_rms.emplace_back(_ECAL_FD_3D_rms);
+
+                        COG_Layer.clear();
+                        hits_on_layer.clear();
+                        shower_layer_width.clear();
+                    }
+                    _ECellXYZ.clear();
+                    _PosCellXYZ.clear();
+                    ECellXYZ.clear();
+                    PosCellXYZ.clear();
+                    IndexCellXYZ.clear();
+
                     std::vector<std::map<std::string, double>> ret1;
                     ret1.reserve(100);
                     std::vector<std::map<std::string, double>> ret2;
@@ -571,8 +751,7 @@ void RecECAL::ProcessEvt(AnaEvent *evt) {
                             if(TrackMatch>0){
                                 ECAL_Cluster_NSub_orig.push_back(m.at("NSub_orig"));
                                 ECAL_Cluster_NMatch_orig.push_back(m.at("NMatch_orig"));
-                            }
-                            ECAL_Cluster_P0.push_back(m.at("P0"));
+                            }                            ECAL_Cluster_P0.push_back(m.at("P0"));
                             ECAL_Cluster_cosTheta.push_back(abs(m.at("cosTheta"))); //since th fitting do no consider the direction +-
                             ECAL_Cluster_phi.push_back(m.at("phi"));
                             ECAL_Cluster_X_cast.push_back(m.at("X_cast"));

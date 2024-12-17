@@ -315,6 +315,9 @@ void AnaData::printGeometryDetails() const {
                   << "                        cell size x     "      << ECal_cell_length_x.at(0)                           << " mm" << std::endl
                   << "                        cell size y     "      << ECal_cell_length_y.at(0)                           << " mm" << std::endl
                   << "                        cell size z     "      << ECal_cell_length_z.at(0)                           << " mm" << std::endl
+                  << "                        cell dx         "      << ECAL_cell_dx                                       << " mm" << std::endl
+                  << "                        cell dy         "      << ECAL_cell_dy                                       << " mm" << std::endl
+                  << "                        cell dz         "      << ECAL_cell_dz                                       << " mm" << std::endl
                   << "                        POS0 pos x   "         << ECAL_pos0->x()                              << " mm" << std::endl
                   << "                        POS0 pos y   "         << ECAL_pos0->y()                              << " mm" << std::endl
                   << "                        POS0 pos z   "         << ECAL_pos0->z()                              << " mm" << std::endl
@@ -324,6 +327,9 @@ void AnaData::printGeometryDetails() const {
                   << "                        cell No. x      "      << N_ECal_cell_x                                               << std::endl
                   << "                        cell No. y      "      << N_ECal_cell_y                                               << std::endl
                   << "                        cell No. z      "      << N_ECal_cell_z                                               << std::endl
+                  << "                        --> cell[9,9,0] pos x   "  << ECAL_posmap.at(9 + N_ECal_cell_x*9).X()        << " mm" << std::endl
+                  << "                        --> cell[9,9,0] pos y   "  << ECAL_posmap.at(9 + N_ECal_cell_x*9).Y()        << " mm" << std::endl
+                  << "                        --> cell[9,9,0] pos z   "  << ECAL_posmap.at(9 + N_ECal_cell_x*9).Z()        << " mm" << std::endl
                   << "                        --> cell[10,10,0] pos x   "  << ECAL_posmap.at(10 + N_ECal_cell_x*10).X()        << " mm" << std::endl
                   << "                        --> cell[10,10,0] pos y   "  << ECAL_posmap.at(10 + N_ECal_cell_x*10).Y()        << " mm" << std::endl
                   << "                        --> cell[10,10,0] pos z   "  << ECAL_posmap.at(10 + N_ECal_cell_x*10).Z()        << " mm" << std::endl
