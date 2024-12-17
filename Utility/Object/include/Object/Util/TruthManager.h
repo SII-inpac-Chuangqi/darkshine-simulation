@@ -3,8 +3,8 @@
 
 #include <map>
 #include <string>
-#include "Utility/PhysicsProcessDef.h"
-#include "Utility/DetectorPVDef.h"
+#include "Object/Util/PhysicsProcessDef.h"
+#include "Object/Util/DetectorPVDef.h"
 #include "Object/DTruth.h"
 
 using std::map;

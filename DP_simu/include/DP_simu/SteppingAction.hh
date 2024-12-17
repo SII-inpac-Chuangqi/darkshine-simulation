@@ -35,7 +35,7 @@
 #include "globals.hh"
 #include "RootManager.hh"
 
-#include "Utility/TruthManager.h"
+#include "Object/Util/TruthManager.h"
 
 #include "Object/McParticle.h"
 #include "Object/McPHelper.h"

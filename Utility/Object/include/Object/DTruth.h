@@ -6,9 +6,9 @@
 #define DSIMU_DTRUTH_H
 
 #include "TObject.h"
-#include "Utility/TruthManager.h"
+#include "Object/Util/TruthManager.h"
 #include "Object/McParticle.h"
-#include "Utility/PhysicsProcessDef.h"
+#include "Object/Util/PhysicsProcessDef.h"
 
 #include <vector>
 #include <map>

@@ -36,7 +36,7 @@
 #include "G4TrackingManager.hh"
 #include "G4Event.hh"
 #include "DP_simu/RootManager.hh"
-#include "Utility/TruthManager.h"
+#include "Object/Util/TruthManager.h"
 #include "G4SystemOfUnits.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

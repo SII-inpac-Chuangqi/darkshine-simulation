@@ -2,7 +2,7 @@
 // Created by Yulei on 2023/6/22.
 //
 
-#include "Algorithms/DataExporter/include/Algo/GNN_Digitization.h"
+#include "Algo/GNN_Digitization.h"
 
 #include "Core/AnaData.h"
 

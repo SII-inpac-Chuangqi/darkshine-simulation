@@ -2,7 +2,7 @@
 // Created by Zhang Yulei on 11/30/20.
 //
 
-#include "Algorithms/RecECAL/include/Algo/ECAL_RNN.h"
+#include "Algo/ECAL_RNN.h"
 #include "TMVA/Factory.h"
 #include "TMVA/DataLoader.h"
 #include "TMVA/DataSetInfo.h"

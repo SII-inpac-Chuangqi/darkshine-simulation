@@ -1,7 +1,3 @@
-INCLUDE_DIRECTORIES(
-        include
-)
-
 SET(DEvent_header_shared
         # Reference the current persistent version:
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/DHit.h
@@ -31,6 +27,10 @@ SET(DEvent_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DMagnet_b1.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/DDetectorIDMaps_b1_5.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/versions/McPHelper_b1_5.h
+        # 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/Util/DetectorPVDef.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/Util/PhysicsProcessDef.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Object/Util/TruthManager.h
         )
 SET(DEvent_source
         # Reference the current persistent version:
@@ -44,9 +44,11 @@ SET(DEvent_source
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DDetectorIDMaps.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/McPHelper.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DTruth.cpp
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Util/TruthManager.cpp
         )
 
-root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF include/Object/DEventLinkDef.h)
+root_generate_dictionary(G__DEvent ${DEvent_header_shared} LINKDEF include/Object/LinkDef/DEventLinkDef.h)
 add_library(DEvent SHARED ${DEvent_header_shared} ${DEvent_source} G__DEvent.cxx)
 
 install(TARGETS DEvent LIBRARY DESTINATION lib )
