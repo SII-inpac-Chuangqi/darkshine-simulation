@@ -416,10 +416,10 @@ void ActsSequencer::ProcessEvt(AnaEvent *evt) {
                     params[Acts::eBoundTheta],
                     params[Acts::eBoundQOverP] != 0 ? -1.0 / params[Acts::eBoundQOverP] / MeV_to_GeV : RETURN, // assume Q = -1
                     trajState.chi2Sum,
-                    trajState.NDF,
-                    trajState.nMeasurements,
-                    trajState.nOutliers,
-                    trajState.nHoles
+                    (int)trajState.NDF,
+                    (int)trajState.nMeasurements,
+                    (int)trajState.nOutliers,
+                    (int)trajState.nHoles
                 })
             );
         }

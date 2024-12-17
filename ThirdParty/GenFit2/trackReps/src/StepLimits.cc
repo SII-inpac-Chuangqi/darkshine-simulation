@@ -90,7 +90,7 @@ void StepLimits::reduceLimit(StepLimitType type, double value) {
 }
 
 
-void StepLimits::setStepSign(char signedVal) {
+void StepLimits::setStepSign(signed char signedVal) {
   if (signedVal < 0)
     stepSign_ = -1;
   else

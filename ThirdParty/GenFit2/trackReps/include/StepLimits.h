@@ -90,7 +90,7 @@ class StepLimits {
   //! absolute of value will be taken! If limit is already lower, it will be set to value anyway.
   void setLimit(StepLimitType type, double value) {limits_[type] = fabs(value);}
   //! sets #stepSign_ to sign of signedVal
-  void setStepSign(char signedVal);
+  void setStepSign(signed char signedVal);
   //! sets #stepSign_ to sign of signedVal
   void setStepSign(double signedVal);
 

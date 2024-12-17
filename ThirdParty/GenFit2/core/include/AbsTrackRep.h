@@ -363,7 +363,7 @@ class AbsTrackRep : public TObject {
   //! Particle code
   int pdgCode_;
   //! propagation direction (-1, 0, 1) -> (backward, auto, forward)
-  char propDir_;
+  signed char propDir_;
 
   unsigned int debugLvl_;
 
