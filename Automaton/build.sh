@@ -21,7 +21,7 @@ cd ${_DSS_TEST_PREFIX}/build
 #ls -la # list cache
 #export CCACHE_DIR=${_DSS_TEST_PREFIX}/build/ccache
 #ccache --set-config=max_size=500M
-cmake -DWITH_GEANT4_UIVIS=OFF -DCMAKE_INSTALL_PREFIX=${_DSS_TEST_PREFIX}/install -DCMAKE_BUILD_TYPE=RelWithDebInfo ../ |& tee ${_DSS_TEST_PREFIX}/test/DSS.build.log \
+cmake -DWITH_GEANT4_UIVIS=OFF -DBUILD_ACTS=ON -DCMAKE_INSTALL_PREFIX=${_DSS_TEST_PREFIX}/install -DCMAKE_BUILD_TYPE=RelWithDebInfo ../ |& tee ${_DSS_TEST_PREFIX}/test/DSS.build.log \
                 && make install -j$(nproc) |& tee -a ${_DSS_TEST_PREFIX}/test/DSS.build.log # 1>/dev/null
 _DSS_TEST_STATUS=${PIPESTATUS[0]}
 if [ ${_DSS_TEST_STATUS} -ne 0 ]; then
