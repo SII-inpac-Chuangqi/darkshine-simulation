@@ -41,11 +41,6 @@ add_library(DDisplay SHARED ${Display_header_shared} ${Display_source} G__Displa
 
 target_link_libraries(DDisplay PUBLIC DAlgo)
 
-IF (BUILD_ACTS)
-    get_library_names(${Acts_libraries} Acts_LIB_NAMES)
-    target_link_libraries(DDisplay PUBLIC tbb ${Acts_LIB_NAMES} Boost::program_options Boost::unit_test_framework Boost::container tbb)
-ENDIF()
-
 add_executable(DDis DP_display.cpp ${Display_sources} ${Display_headers})
 
 target_link_libraries(DDis PUBLIC DDisplay)
