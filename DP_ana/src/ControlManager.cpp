@@ -73,7 +73,7 @@ void ControlManager::run() {
     /* DEFINE ALGO PROCESSOR HERE */
     algo->RegisterAnaProcessor(shared_ptr<GNN_DataExporter>(new GNN_DataExporter("GNN_DataExporter", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<Digitizer>(new Digitizer("Digitizer", EvtWrt)));
-#ifdef BUILD_HDF5
+#if BUILD_HDF5
     algo->RegisterAnaProcessor(shared_ptr<ECAL_ML_IO>(new ECAL_ML_IO("ECAL_ML_IO", EvtWrt)), false); // not add to default
 #endif
     algo->RegisterAnaProcessor(shared_ptr<MCTruthAnalysis>(new MCTruthAnalysis("MCTruthAnalysis", EvtWrt)));

@@ -132,10 +132,6 @@ IF (BUILD_HDF5)
     ENDIF ()
 ENDIF ()
 
-IF (BUILD_HDF5)
-    add_definitions(-DUSE_HDF5)
-ENDIF ()
-
 # json
 find_package(nlohmann_json 3.2.0 REQUIRED)
 

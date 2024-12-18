@@ -6,7 +6,7 @@
 // Input: read in hdf5 and creates the collection
 // Output: derive to hdf5 format
 
-#ifdef USE_HDF5
+#ifdef BUILD_HDF5
 
 #include "Algo/ECAL_ML_IO.h"
 
@@ -506,4 +506,4 @@ void ECAL_ML_IO::End()
     cout << "BUffer cleaned." << endl;
 }
 
-#endif // USE_HDF5
+#endif // BUILD_HDF5
