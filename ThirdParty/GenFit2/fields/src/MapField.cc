@@ -67,9 +67,10 @@ namespace genfit
             Bz = INFINITY;
         }
 
-        Bx = Bx_->GetField(x, y, z)*unit_;
-        By = By_->GetField(x, y, z)*unit_;
-        Bz = Bz_->GetField(x, y, z)*unit_;
+        double cm2mm = 10.;
+        Bx = Bx_->GetField(x * cm2mm, y * cm2mm, z * cm2mm)*unit_;
+        By = By_->GetField(x * cm2mm, y * cm2mm, z * cm2mm)*unit_;
+        Bz = Bz_->GetField(x * cm2mm, y * cm2mm, z * cm2mm)*unit_;
     }
 
 //................................................................................//

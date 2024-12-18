@@ -77,14 +77,12 @@ void KalmanFilterFitter::Init(const TrkHitSPVec &track, std::initializer_list<do
     double preR = *it; it++;
     double B = *it;
 
-    int pdg = -GetSign(track)*11;              //pdg id, e- hypothesis
-    pos = TVector3((*track.at(0)).GetX()*0.1,  //pre fitting results --postion,  mm->cm
-                   (*track.at(0)).GetY()*0.1,  //
-                   (*track.at(0)).GetZ()*0.1); //
-    mom = TVector3(0, 0, 0.3*B*preR*0.001);    //                    --momentum, MeV->GeV
-    hitCov.UnitMatrix();                       //covariance matrix
-    hitCov(0, 0) = 0.001*0.001;                //resolution, cm --x 6µm
-    hitCov(1, 1) = 0.02 *0.02;                 //               --y 60µm
+    int pdg = -GetSign(track)*11;                  //pdg id, e- hypothesis
+    pos = TVector3((*track.at(0)).GetX() * mm2cm,  //pre fitting results --postion,  mm->cm
+                   (*track.at(0)).GetY() * mm2cm,  //
+                   (*track.at(0)).GetZ() * mm2cm); //
+    mom = TVector3(0, 0, 0.3*B*preR / GeV2MeV);    //                    --momentum, MeV->GeV
+    hitCov.UnitMatrix();                           //covariance matrix
 
     //genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
     //genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., B*10., 0.)); //Magnet, T->kGs
@@ -107,8 +105,14 @@ void KalmanFilterFitter::Fit(const TrkHitSPVec &track, std::initializer_list<dou
     //genfit::PlanarMeasurement* measurement = nullptr;
     for(size_t i = 0; i < track.size(); i++)
     {
-        hitCoords[0] = 0.1*(*track.at(i)).GetU();
-        hitCoords[1] = 0.1*(*track.at(i)).GetV();
+        auto hit = track.at(i);
+        hitCoords[0] = hit->GetX() * mm2cm;
+        hitCoords[1] = hit->GetY() * mm2cm;
+        hitCov(0, 0) = hit->GetXYCov(0, 0) * mm2cm*mm2cm;
+        hitCov(0, 1) = hit->GetXYCov(0, 1) * mm2cm*mm2cm;
+        hitCov(1, 0) = hit->GetXYCov(1, 0) * mm2cm*mm2cm;
+        hitCov(1, 1) = hit->GetXYCov(1, 1) * mm2cm*mm2cm;
+
         //virtual plane
         measurement = new genfit::PlanarMeasurement(hitCoords,
                                                     hitCov,
@@ -117,7 +121,7 @@ void KalmanFilterFitter::Fit(const TrkHitSPVec &track, std::initializer_list<dou
                                                     nullptr);  //TrackPoint* trackPoint
         measurement->setPlane(genfit::SharedPlanePtr(new genfit::DetPlane(TVector3(0.,          //origin vector
                                                                                    0.,
-                                                                                   (*track.at(i)).GetZ()*0.1),
+                                                                                   hit->GetZ() * mm2cm),
                                                                           TVector3(1, 0, 0),   //spanning vector u
                                                                           TVector3(0, 1, 0))), //spanning vector v
                                                                           ++planeId);
@@ -136,12 +140,13 @@ void KalmanFilterFitter::Fit(const TrkHitSPVec &track, std::initializer_list<dou
 void KalmanFilterFitter::Fill(const TrkHitSPVec &track, std::initializer_list<double>)
 {
     fitTrack->getFittedState().getPosMomCov(pos, mom, hitCov);
-    px = std::abs(mom.Px())*1000;                           //GeV->MeV
-    py = std::abs(mom.Py())*1000;                           //
-    pz = std::abs(mom.Pz())*1000;                           //
-    pp = sqrt(mom.Pz()*mom.Pz() + mom.Px()*mom.Px())*1000.;
-    pl = std::abs(mom.Py())*1000;
-    if(calibrator_)
+
+    px = std::abs(mom.Px()) * GeV2MeV;
+    py = std::abs(mom.Py()) * GeV2MeV;
+    pz = std::abs(mom.Pz()) * GeV2MeV;
+    pp = sqrt(mom.Pz() * mom.Pz() + mom.Px() * mom.Px()) * GeV2MeV;
+    pl = std::abs(mom.Py()) * GeV2MeV;
+    if (calibrator_)
         std::tie(pp, pl) = calibrator_->GetCalibratedP(pp, pl);
 
     double bChi2;
@@ -149,20 +154,20 @@ void KalmanFilterFitter::Fill(const TrkHitSPVec &track, std::initializer_list<do
     fitter->getChiSquNdf(fitTrack, rep, bChi2, fChi2, bNdf, fNdf);
 
     {
-        genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
-        genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
+        genfit::TrackPoint *tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
+        genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo *>(tp->getFitterInfo(rep))->getBackwardUpdate()));
         genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
                                                                    0.,
-                                                                   (*track.at(0)).GetZ()*0.1),
+                                                                   (*track.at(0)).GetZ() * mm2cm),
                                                           TVector3(1, 0, 0),
                                                           TVector3(0, 1, 0)));
         rep->extrapolateToPlane(kfsop, plane);
         const TVectorD& state = kfsop.getState();
         //std::cout << "dimension of state: " << state.GetNoElements() << std::endl;
         //std::cout << "momemtum error: " << 1/abs(state[0])*1000 - sqrt(pp*pp + pl*pl) << std::endl;
-        xSigma = state[3]*10 - (*track.at(0)).GetX();
+        xSigma = state[3] / mm2cm - (*track.at(0)).GetX();
         //std::cout << "position error: " << xSigma << std::endl;
-        ySigma = state[4]*10 - (*track.at(0)).GetY();
+        ySigma = state[4] / mm2cm - (*track.at(0)).GetY();
     }
 
     double ECal_front_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
@@ -173,7 +178,7 @@ void KalmanFilterFitter::Fill(const TrkHitSPVec &track, std::initializer_list<do
         genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
         genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
                                                                    0.,
-                                                                   ECal_front_surface*0.1),
+                                                                   ECal_front_surface * mm2cm),
                                                           TVector3(1, 0, 0),
                                                           TVector3(0, 1, 0)));
         rep->extrapolateToPlane(kfsop, plane);
@@ -181,15 +186,15 @@ void KalmanFilterFitter::Fill(const TrkHitSPVec &track, std::initializer_list<do
         //ECal_qop = 1./state[0]*1000.;
         //ECal_dirct_x = state[1];
         //ECal_dirct_y = state[2];
-        ECal_seed_x = state[3]*10;
-        ECal_seed_y = state[4]*10;
+        ECal_seed_x = state[3] / mm2cm;
+        ECal_seed_y = state[4] / mm2cm;
         //std::cout << ECal_seed_pz << std::endl;
         //std::cout << ECal_seed_y << std::endl;
 
         auto mom_on_ECal = kfsop.getMom();
-        ECal_seed_px = -mom_on_ECal[0]*1000.; //fix direction
-        ECal_seed_py =  mom_on_ECal[1]*1000.; //
-        ECal_seed_pz = -mom_on_ECal[2]*1000.; //
+        ECal_seed_px = -mom_on_ECal[0] * GeV2MeV; //fix direction
+        ECal_seed_py =  mom_on_ECal[1] * GeV2MeV; //
+        ECal_seed_pz = -mom_on_ECal[2] * GeV2MeV; //
     }
 }
 
@@ -242,7 +247,7 @@ std::vector<double> KalmanFilterFitter::ExtrapolateTo(const std::vector<double> 
         genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
         genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
                                                                    0.,
-                                                                   plane_z*0.1),
+                                                                   plane_z * mm2cm),
                                                           TVector3(1, 0, 0),
                                                           TVector3(0, 1, 0)));
 
