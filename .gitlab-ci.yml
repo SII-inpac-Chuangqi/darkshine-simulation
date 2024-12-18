@@ -47,7 +47,7 @@ stages:
 build:
   stage: build
   script:
-    - cat ./Automaton/build.sh | /bin/bash --login
+    - ./Automaton/build.sh
   artifacts:
     expire_in: 1 week
     paths:
@@ -61,7 +61,7 @@ test simu and ana:
   dependencies: 
     - build
   script:
-    - cat ./Automaton/test.sh | /bin/bash --login
+    - ./Automaton/test.sh
   artifacts:
     when: always
     name: "Validation"
@@ -76,7 +76,7 @@ ci write wiki:
   dependencies: 
     - test simu and ana
   script:
-    - cat ./Automaton/make_wiki.sh | /bin/bash --login
+    - ./Automaton/make_wiki.sh
   artifacts:
     when: always
     paths:

@@ -446,31 +446,35 @@ void ActsSequencer::ProcessEvt(AnaEvent *evt) {
         // ----------------------------------------------------
         auto input_vertices_handle = m_inputVertices.at(detector);
         auto cur_vtx_vars = acts_vtx_vars.at(detector);
-        auto vertex_collection = (*input_vertices_handle)(++context);
-        cur_vtx_vars->No = (int)vertex_collection.size();
-        for (const auto &vtx : vertex_collection) {
-            auto vtx_dss = ActsHelper::fromActsReferenceFrameV3(vtx.position());
-            cur_vtx_vars->vertex.emplace_back(
-                VertexParams({
-                    vtx_dss.x(),
-                    vtx_dss.y(),
-                    vtx_dss.z(),
-                    vtx.fitQuality().first
-                })
+        try {
+            auto vertex_collection = (*input_vertices_handle)(++context);
+            cur_vtx_vars->No = (int)vertex_collection.size();
+            for (const auto &vtx : vertex_collection) {
+                auto vtx_dss = ActsHelper::fromActsReferenceFrameV3(vtx.position());
+                cur_vtx_vars->vertex.emplace_back(
+                        VertexParams({
+                                             vtx_dss.x(),
+                                             vtx_dss.y(),
+                                             vtx_dss.z(),
+                                             vtx.fitQuality().first
+                                     })
+                );
+            }
+            // sort by z position (DSS Frame)
+            std::sort(cur_vtx_vars->vertex.begin(), cur_vtx_vars->vertex.end(),
+                      [](const auto& l, const auto& r) {
+                          return l.z < r.z;
+                      }
             );
-        }
-        // sort by z position (DSS Frame)
-        std::sort(cur_vtx_vars->vertex.begin(), cur_vtx_vars->vertex.end(),
-             [](const auto& l, const auto& r) {
-                 return l.z < r.z;
-             }
-        );
-        // fill flattened parameters
-        for (const auto& vtx : cur_vtx_vars->vertex) {
-            cur_vtx_vars->x.emplace_back(vtx.x);
-            cur_vtx_vars->y.emplace_back(vtx.y);
-            cur_vtx_vars->z.emplace_back(vtx.z);
-            cur_vtx_vars->chi2.emplace_back(vtx.chi2);
+            // fill flattened parameters
+            for (const auto& vtx : cur_vtx_vars->vertex) {
+                cur_vtx_vars->x.emplace_back(vtx.x);
+                cur_vtx_vars->y.emplace_back(vtx.y);
+                cur_vtx_vars->z.emplace_back(vtx.z);
+                cur_vtx_vars->chi2.emplace_back(vtx.chi2);
+            }
+        } catch (...) {
+            cur_vtx_vars->No = 0;
         }
         // ====================================================
         // Output ECAL Seed Variables

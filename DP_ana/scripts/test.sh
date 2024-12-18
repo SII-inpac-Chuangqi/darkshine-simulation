@@ -1,7 +1,7 @@
 _obj=DAna
 _type=Export
 _log=${_obj}.${_type}.log
-DAna -x |& tee ${_log} > config.txt
+DAna -x | tee ${_log} > config.txt
 sed -i "/InputGeoFile   =/c InputGeoFile   = ${PWD}/Geometry.root" config.txt
 _DSS_TEST_STATUS=${PIPESTATUS[0]}
 if [ ${_DSS_TEST_STATUS} -ne 0 ]; then

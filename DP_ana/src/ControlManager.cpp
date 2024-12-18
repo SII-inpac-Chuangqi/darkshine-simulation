@@ -19,7 +19,7 @@
 #include "Algo/GNN_DataExporter.h"
 #include "Algo/ActsSequencer.h"
 
-#ifdef BUILD_HDF5
+#if BUILD_HDF5
 #include "Algo/ECAL_ML_IO.h"
 #endif
 
