@@ -188,14 +188,14 @@ link_libraries(DEvent)
 # DSimu
 #
 if (BUILD_DSIMU)
-    add_definitions(-DDSIMU_VERSION=\"1.6.6\")
+    add_definitions(-DDSIMU_VERSION=\"1.7.0\")
     add_subdirectory(DP_simu)
 endif ()
 
 # DAna
 #
 if (BUILD_DANA)
-    add_definitions(-DDANA_VERSION=\"v1.6.6\")
+    add_definitions(-DDANA_VERSION=\"1.7.0\")
 
     add_subdirectory(ThirdParty/GenFit2)
     add_subdirectory(Algorithms)

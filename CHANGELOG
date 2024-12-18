@@ -1,3 +1,14 @@
+2024-12-18:
+    1.7.0
+    1. Core
+        1. Optimise complilation structure
+        2. Fix pipeline
+        3. Add dunits
+    2. DAna 1.7.0
+        1. Fix genfit field map
+        2. Optimise tracking digitization
+        3. Add ECal BDT vars
+
 2024-12-06:
     1.6.6
     DAna add acts tracking variables
