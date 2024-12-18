@@ -132,6 +132,7 @@ private:
             size_t dim = points_.at(0)->dim_;
             double sum_of_weights = 0.;
             double *sum_of_splits = new double[dim];
+            for (size_t i = 0; i < dim; i++) sum_of_splits[i] = 0.;
 
             for(const auto &point : points_)
             {
@@ -224,10 +225,8 @@ void Clusterer<T>::FindClusters()
         clusters_.push_back(cluster);
 
         seed = this->GetNextSeed();
-        //std::cout << "seed: " << seed << "\tlonely: " << n_lonely_point << std::endl;
     }
 
-    //std::cout << "N clusters: " << clusters_.size() << std::endl;
 }
 
 template <class T>

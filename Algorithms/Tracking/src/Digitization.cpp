@@ -11,6 +11,8 @@
 #include "TMath.h"
 #include "TGeoBBox.h"
 #include "TRandom.h"
+#include "TVectorD.h"
+#include "TMatrixDSym.h"
 
 //................................................................................//
 //Framework
@@ -21,6 +23,15 @@
 #include "Algo/TrkHit.h"
 #include "Algo/Digitization.h"
 #include "Algo/Utils/Clusterer.h"
+
+// Utillity function, determine whether a point (x,y) is inside a rectangle with length a, width b, and rotated by thta
+bool in_rectangle(double x, double y, double a, double b, double theta)
+{
+    double x_prime = x * cos(theta) + y * sin(theta);
+    double y_prime = -x * sin(theta) + y * cos(theta);
+
+    return abs(x_prime) < 0.5 * a && abs(y_prime) < 0.5 * b;
+}
 
 void Digitization::SetIfSmear(bool if_smear)
 {
@@ -77,12 +88,12 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
 
         return;
     }
-    
+
     std::vector<double> *layer_widths  = (detector == tracking::dTag) ? &layer_width_tag_  : &layer_width_rec_;
     std::vector<double> *layer_lengths = (detector == tracking::dTag) ? &layer_length_tag_ : &layer_length_rec_;
     std::vector<int>    *strip_nos = (detector == tracking::dTag) ? &strip_no_tag_ : &strip_no_rec_;
     std::vector<double> *angles    = (detector == tracking::dTag) ? &angles_tag_   : &angles_rec_;
- 
+
     TrkHitSPVec clustered_trk1_hits;
     TrkHitSPVec clustered_trk2_hits;
     for(const auto &hit : trk1_hits) clustered_trk1_hits.push_back(std::make_shared<TrkHit>(hit));
@@ -92,19 +103,19 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
     this->InitHitMap(clustered_trk1_hits, map1);
     TrkHitSPVecMap map2;
     this->InitHitMap(clustered_trk2_hits, map2);
-   
+
     for(auto layer1 : map1)
     {
         auto it_find_layer2 = map2.find(layer1.first);
         if(it_find_layer2 == map2.end())
             continue;
 
-        double angle        = angles->at((layer1.first - 1)*2 + 1);
+        double angle1       = angles->at((layer1.first - 1)*2);
+        double angle2       = angles->at((layer1.first - 1)*2 + 1);
         double strip_no     = strip_nos->at((layer1.first - 1)*2 + 1);
         double layer_width  = layer_widths->at((layer1.first - 1)*2 + 1);
         double layer_length = layer_lengths->at((layer1.first - 1)*2 + 1); 
-        //std::cout << strip_no << std::endl;
-    
+
         auto layer2 = map2.at(layer1.first);
         for(auto hit1 : layer1.second)
         {
@@ -117,21 +128,44 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
                     smear1 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
                     smear2 = rnd_.Uniform(layer_width/strip_no) - 0.5*layer_width/strip_no;
                 }
-                //double x1 = hit1->GetX() + smear1;
-                //double y1 = -x1/tan(angle) + ((hit2->GetCellIdX() - 0.5*(strip_no + 1))*layer_width/strip_no + smear2)/sin(angle);
                 double x1 = hit1->GetX() + smear1;
+                double y1 = hit1->GetY();
                 double x2 = hit2->GetX() + smear2;
-                double y1 = -x1/tan(angle) + x2/sin(angle);
-    
-                if(!(std::abs(y1) < 0.5*layer_length))
-                    continue;
+                double y2 = hit2->GetY();
+                
+                double u = x1 * cos(angle1) - y1 * sin(angle1);
+                double v = x2 * cos(angle2) - y2 * sin(angle2);
 
+                TVectorD u_vec(2), v_vec(2);
+                TMatrixDSym uv_cov(2);
+
+                u_vec[0] = cos(angle1);
+                u_vec[1] = -sin(angle1);
+                v_vec[0] = cos(angle2);
+                v_vec[1] = -sin(angle2);
+
+                double u_err_2 = pow(layer_width / strip_no / sqrt(12), 2);
+                uv_cov(0, 0) = u_err_2;
+                uv_cov(1, 1) = u_err_2;
+                uv_cov(0, 1) = 0.;
+                uv_cov(1, 0) = 0.;
+                
                 auto hit = std::make_shared<TrkHit>();
                 hit->SetCellIdZ(hit1->GetCellIdZ());
+                hit->SetZ((hit1->GetZ() + hit2->GetZ()) / 2.);
+                hit->SetZErr(abs(hit1->GetZ() - hit2->GetZ()) / 2.);
+                hit->SetU(u);
+                hit->SetV(v);
+                hit->SetUVec(u_vec);
+                hit->SetVVec(v_vec);
+                hit->SetUVCov(uv_cov);
+
+                hit->UpdateXY(); // Derive x and y from u and v
+
+                if (!in_rectangle(hit->GetX(), hit->GetY(), layer_width, layer_length, angle1) || !in_rectangle(hit->GetX(), hit->GetY(), layer_width, layer_length, angle2))
+                    continue;
+
                 pool->AddHit(std::move(hit));
-                pool->Back()->SetX(x1);
-                pool->Back()->SetZ(hit1->GetZ());
-                pool->Back()->SetY(y1);
             }
         }
     }
@@ -153,14 +187,15 @@ void Digitization::InitHitMap(const TrkHitSPVec &trk_hits, TrkHitSPVecMap &trk_h
 
         for(auto &hit : layer.second)
         {
-            double *splits = new double[1];
+            double *splits = new double[2];
             splits[0] = hit->GetX();
-            clusterer.CreatePoint(&hit, 1, splits, hit->GetE());
+            splits[1] = hit->GetY();
+            clusterer.CreatePoint(&hit, 2, splits, hit->GetE());
 
             delete[] splits; splits = nullptr;
         }
 
-        //clusterer.ShowPoints();
+        // clusterer.ShowPoints();
         clusterer.FindClusters();
 
         TrkHitSPVec clustered_layer;
@@ -169,6 +204,7 @@ void Digitization::InitHitMap(const TrkHitSPVec &trk_hits, TrkHitSPVecMap &trk_h
         {
             clustered_layer.push_back(std::make_shared<TrkHit>());
             clustered_layer.back()->SetX(clusterer.GetClusterCenterSplits(i).at(0));
+            clustered_layer.back()->SetY(clusterer.GetClusterCenterSplits(i).at(1));
             clustered_layer.back()->SetZ(layer.second.at(0)->GetZ());
             clustered_layer.back()->SetCellIdZ(layer.first);
         }
