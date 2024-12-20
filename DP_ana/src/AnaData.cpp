@@ -92,6 +92,8 @@ int AnaData::getECAL_globalID(int block, int unit){ // globalID start from 0 and
 }
 
 void AnaData::readGeometryDetails() {
+    using namespace dunits;
+
     world_ = dynamic_cast<TGeoNode*>(gGeoManager->GetListOfNodes()->At(0));
     if(!world_) {
         std::cerr << "[WARNING] ==> No world node ..." << std::endl;
@@ -133,21 +135,21 @@ void AnaData::readGeometryDetails() {
             auto *detector_shape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
             if      (detector_name.Contains("TAG") || detector_name.Contains("Tag"))
             {
-                center_x_tag_ = CUNIT*detector->GetMatrix()->GetTranslation()[0];
-                center_y_tag_ = CUNIT*detector->GetMatrix()->GetTranslation()[1];
-                center_z_tag_ = CUNIT*detector->GetMatrix()->GetTranslation()[2];
-                length_x_tag_ = CUNIT*2*detector_shape->GetDX();
-                length_y_tag_ = CUNIT*2*detector_shape->GetDY();
-                length_z_tag_ = CUNIT*2*detector_shape->GetDZ();
+                center_x_tag_ = root_to_dss::ul*detector->GetMatrix()->GetTranslation()[0];
+                center_y_tag_ = root_to_dss::ul*detector->GetMatrix()->GetTranslation()[1];
+                center_z_tag_ = root_to_dss::ul*detector->GetMatrix()->GetTranslation()[2];
+                length_x_tag_ = root_to_dss::ul*2*detector_shape->GetDX();
+                length_y_tag_ = root_to_dss::ul*2*detector_shape->GetDY();
+                length_z_tag_ = root_to_dss::ul*2*detector_shape->GetDZ();
             }
             else if (detector_name.Contains("REC") || detector_name.Contains("Rec"))
             {
-                center_x_rec_ = CUNIT*detector->GetMatrix()->GetTranslation()[0];
-                center_y_rec_ = CUNIT*detector->GetMatrix()->GetTranslation()[1];
-                center_z_rec_ = CUNIT*detector->GetMatrix()->GetTranslation()[2];
-                length_x_rec_ = CUNIT*2*detector_shape->GetDX();
-                length_y_rec_ = CUNIT*2*detector_shape->GetDY();
-                length_z_rec_ = CUNIT*2*detector_shape->GetDZ();
+                center_x_rec_ = root_to_dss::ul*detector->GetMatrix()->GetTranslation()[0];
+                center_y_rec_ = root_to_dss::ul*detector->GetMatrix()->GetTranslation()[1];
+                center_z_rec_ = root_to_dss::ul*detector->GetMatrix()->GetTranslation()[2];
+                length_x_rec_ = root_to_dss::ul*2*detector_shape->GetDX();
+                length_y_rec_ = root_to_dss::ul*2*detector_shape->GetDY();
+                length_z_rec_ = root_to_dss::ul*2*detector_shape->GetDZ();
             }
 
             for(int j = 0; j < detector->GetNdaughters(); j++) {
@@ -157,20 +159,20 @@ void AnaData::readGeometryDetails() {
                 auto rotation = layer->GetMatrix()->GetRotationMatrix();
 
                 if(layer_name.Contains("Tag")) { // TagTrk1_LV or TagTRk2_LV
-                    layer_width_tag.push_back(2.*CUNIT*layer_shape->GetDX());
-                    layer_length_tag.push_back(2.*CUNIT*layer_shape->GetDY());
-                    layer_thickness_tag.push_back(2.*CUNIT*layer_shape->GetDZ());
-                    layer_centers_z_tag.push_back(CUNIT*(detector->GetMatrix()->GetTranslation()[2]
+                    layer_width_tag.push_back(2.*root_to_dss::ul*layer_shape->GetDX());
+                    layer_length_tag.push_back(2.*root_to_dss::ul*layer_shape->GetDY());
+                    layer_thickness_tag.push_back(2.*root_to_dss::ul*layer_shape->GetDZ());
+                    layer_centers_z_tag.push_back(root_to_dss::ul*(detector->GetMatrix()->GetTranslation()[2]
                                                          + layer->GetMatrix()->GetTranslation()[2]));
                     auto *block0 = dynamic_cast<TGeoNode*>(layer->GetDaughter(0));
                     strip_no_tag.push_back(layer->GetNdaughters() * block0->GetNdaughters());
                     angles_tag.push_back(std::asin(rotation[1]));
                 }
                 else if(layer_name.Contains("Rec")) {
-                    layer_width_rec.push_back(2.*CUNIT*layer_shape->GetDX());
-                    layer_length_rec.push_back(2.*CUNIT*layer_shape->GetDY());
-                    layer_thickness_rec.push_back(2.*CUNIT*layer_shape->GetDZ());
-                    layer_centers_z_rec.push_back(CUNIT*(detector->GetMatrix()->GetTranslation()[2]
+                    layer_width_rec.push_back(2.*root_to_dss::ul*layer_shape->GetDX());
+                    layer_length_rec.push_back(2.*root_to_dss::ul*layer_shape->GetDY());
+                    layer_thickness_rec.push_back(2.*root_to_dss::ul*layer_shape->GetDZ());
+                    layer_centers_z_rec.push_back(root_to_dss::ul*(detector->GetMatrix()->GetTranslation()[2]
                                                          + layer->GetMatrix()->GetTranslation()[2]));
                     auto *block0 = dynamic_cast<TGeoNode*>(layer->GetDaughter(0));
                     strip_no_rec.push_back(layer->GetNdaughters() * block0->GetNdaughters());
@@ -182,12 +184,12 @@ void AnaData::readGeometryDetails() {
         if(detector_name.Contains("ECAL")) {
             auto *detector_shape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
             auto *detector_matrix = detector->GetMatrix();
-            ECAL_center_x = CUNIT*detector_matrix->GetTranslation()[0];
-            ECAL_center_y = CUNIT*detector_matrix->GetTranslation()[1];
-            ECAL_center_z = CUNIT*detector_matrix->GetTranslation()[2];
-            ECAL_length_x = CUNIT*2*detector_shape->GetDX();
-            ECAL_length_y = CUNIT*2*detector_shape->GetDY();
-            ECAL_length_z = CUNIT*2*detector_shape->GetDZ();
+            ECAL_center_x = root_to_dss::ul*detector_matrix->GetTranslation()[0];
+            ECAL_center_y = root_to_dss::ul*detector_matrix->GetTranslation()[1];
+            ECAL_center_z = root_to_dss::ul*detector_matrix->GetTranslation()[2];
+            ECAL_length_x = root_to_dss::ul*2*detector_shape->GetDX();
+            ECAL_length_y = root_to_dss::ul*2*detector_shape->GetDY();
+            ECAL_length_z = root_to_dss::ul*2*detector_shape->GetDZ();
             double subdetector_pos[3];
             double block_pos[3];
 
@@ -211,28 +213,28 @@ void AnaData::readGeometryDetails() {
                     if (subdetector_name.Contains("LVW")) { 
                         auto *crystal = dynamic_cast<TGeoNode*>(subdetector->GetDaughter(0));
                         auto *crystal_shape = dynamic_cast<TGeoBBox*>(crystal->GetVolume()->GetShape());
-                        ECal_cell_length_x.push_back(CUNIT*2*crystal_shape->GetDX());
-                        ECal_cell_length_y.push_back(CUNIT*2*crystal_shape->GetDY());
-                        ECal_cell_length_z.push_back(CUNIT*2*crystal_shape->GetDZ());
+                        ECal_cell_length_x.push_back(root_to_dss::ul*2*crystal_shape->GetDX());
+                        ECal_cell_length_y.push_back(root_to_dss::ul*2*crystal_shape->GetDY());
+                        ECal_cell_length_z.push_back(root_to_dss::ul*2*crystal_shape->GetDZ());
 
                         for (int l = 0; l < 3; l++)
                             subdetector_pos[l] = subdetector_matrix->GetTranslation()[l] + block_matrix->GetTranslation()[l] + detector_matrix->GetTranslation()[l];
-                        if ( !ECAL_pos0 ) ECAL_pos0 = new TVector3(CUNIT * subdetector_pos[0],CUNIT * subdetector_pos[1],CUNIT * subdetector_pos[2]);
+                        if ( !ECAL_pos0 ) ECAL_pos0 = new TVector3(root_to_dss::ul * subdetector_pos[0],root_to_dss::ul * subdetector_pos[1],root_to_dss::ul * subdetector_pos[2]);
 
                         if (subdetector_pos[2] > last_pos[2]) {
-                            if (ECAL_cell_dz == 0 && N_ECal_cell_z == 1) ECAL_cell_dz = CUNIT * fabs(subdetector_pos[2] - last_pos[2]);
+                            if (ECAL_cell_dz == 0 && N_ECal_cell_z == 1) ECAL_cell_dz = root_to_dss::ul * fabs(subdetector_pos[2] - last_pos[2]);
                             if ( j==0 ) N_ECal_cell_per_block.at(2)++;
                             last_pos[2] = subdetector_pos[2];
                             N_ECal_cell_z++;
                         }
                         if (subdetector_pos[1] > last_pos[1]) {
-                            if (ECAL_cell_dy == 0 && N_ECal_cell_y == 1) ECAL_cell_dy = CUNIT * fabs(subdetector_pos[1] - last_pos[1]);
+                            if (ECAL_cell_dy == 0 && N_ECal_cell_y == 1) ECAL_cell_dy = root_to_dss::ul * fabs(subdetector_pos[1] - last_pos[1]);
                             if ( j==0 ) N_ECal_cell_per_block.at(1)++;
                             last_pos[1] = subdetector_pos[1];
                             N_ECal_cell_y++;
                         }
                         if (subdetector_pos[0] > last_pos[0]) {
-                            if (ECAL_cell_dx == 0 && N_ECal_cell_x == 1) ECAL_cell_dx = CUNIT * fabs(subdetector_pos[0] - last_pos[0]);
+                            if (ECAL_cell_dx == 0 && N_ECal_cell_x == 1) ECAL_cell_dx = root_to_dss::ul * fabs(subdetector_pos[0] - last_pos[0]);
                             if ( j==0 ) N_ECal_cell_per_block.at(0)++;
                             last_pos[0] = subdetector_pos[0];
                             N_ECal_cell_x++;
@@ -254,7 +256,7 @@ void AnaData::readGeometryDetails() {
                         if (!subdetector_name.Contains("LVW")) continue;
                         for (int l = 0; l < 3; l++)
                             subdetector_pos[l] = subdetector_matrix->GetTranslation()[l] + block_matrix->GetTranslation()[l] + detector_matrix->GetTranslation()[l];
-                        ECAL_posmap.at(getECAL_globalID(j,k)) = TVector3(subdetector_pos) * CUNIT;
+                        ECAL_posmap.at(getECAL_globalID(j,k)) = TVector3(subdetector_pos) * root_to_dss::ul;
                     }
                 }
             }

@@ -9,6 +9,8 @@
 #include "TMath.h"
 #include "TEveVector.h"
 
+#include "Utility/Units.h"
+
 #include "DisData.h"
 
 class DSMagneticField : public TEveMagField{
@@ -23,10 +25,12 @@ public:
 
     TEveVectorD GetFieldD(Double_t x_cm, Double_t y_cm, Double_t z_cm) const override //cm since it is based on TEve
     {
+        using namespace dunits;
+
         // all the length inside DSimu/DAna/DDis will be mm
-        auto x = x_cm * CUNIT;
-        auto y = y_cm * CUNIT;
-        auto z = z_cm * CUNIT;
+        auto x = x_cm * root_to_dss::ul;
+        auto y = y_cm * root_to_dss::ul;
+        auto z = z_cm * root_to_dss::ul;
         // std::cout<<"Checking By... "<<z<<std::endl;
         if (dDisData->isInBfieldRegion(x,y,z)) // TODO: move into dDisData
         {

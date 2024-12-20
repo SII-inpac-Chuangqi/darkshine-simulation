@@ -2,15 +2,6 @@
 #define DISDATA_H
 
 #include <array>
-#ifdef RM_UNIT
-#define CUNIT 1
-#else
-#define CUNIT 10
-#endif
-//logic of length unit
-// GEANT4 aleays use mm
-// TGeo and TEve depends on version, and defined using CUNIT
-// Plain number in DSimu/DAna/DDis always using mm
 
 #include "TFile.h"
 

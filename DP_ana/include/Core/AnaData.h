@@ -5,18 +5,6 @@
 #ifndef DSIMU_ANADATA_H
 #define DSIMU_ANADATA_H
 
-#ifdef RM_UNIT
-#define CUNIT 1
-#else
-#define CUNIT 10
-#endif
-//logic of length unit
-// GEANT4 aleays use mm
-// TGeo and TEve depends on version, and defined using CUNIT
-// When read from TGeo/yaml/TEve x=f() : x*CUNIT = x_mm
-// When send to TGeo/TEve f(x) : x_mm/CUNIT = x
-// Plain number in DSimu/DAna/DDis always using mm
-
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
 #endif
@@ -28,6 +16,7 @@
 #include "TGeoManager.h"
 #include "TVector3.h"
 
+#include "Utility/Units.h"
 #include "Object/DTruth.h"
 #include "Object/DMagnet.h"
 #include "Object/McPHelper.h"

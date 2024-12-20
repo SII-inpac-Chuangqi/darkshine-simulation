@@ -85,6 +85,8 @@ void ActsSequencer::InitializeSimHitsReader(tracking::detector detector) {
 }
 
 void ActsSequencer::SimHitsReader(AnaEvent *evt, ActsExamples::AlgorithmContext context, tracking::detector detector) {
+    using namespace dunits;
+
     const auto &simuhit_collection = evt->getSimulatedHitCollection();
     auto trk_info = tracker_infos.at(detector);
 
@@ -118,16 +120,16 @@ void ActsSequencer::SimHitsReader(AnaEvent *evt, ActsExamples::AlgorithmContext 
 
             auto pcontrib = hit1.getPContribution().front();
             ActsFatras::Hit::Vector4 mom4{
-                    pcontrib.getPx() * MeV_to_GeV,
-                    pcontrib.getPy() * MeV_to_GeV,
-                    pcontrib.getPz() * MeV_to_GeV,
-                    pcontrib.getEnergy() * MeV_to_GeV
+                    pcontrib.getPx() * dss_to_acts::MeV,
+                    pcontrib.getPy() * dss_to_acts::MeV,
+                    pcontrib.getPz() * dss_to_acts::MeV,
+                    pcontrib.getEnergy() * dss_to_acts::MeV
             };
             ActsFatras::Hit::Vector4 delta4{
                     0,
                     0,
-                    -hit1.GetE() * MeV_to_GeV,
-                    -hit1.GetE() * MeV_to_GeV
+                    -hit1.GetE() * dss_to_acts::MeV,
+                    -hit1.GetE() * dss_to_acts::MeV
             };
 
             // FIXME: should read from geom!
@@ -211,6 +213,8 @@ void ActsSequencer::InitializeTrajectoryReader(tracking::detector detector) {
 }
 
 void ActsSequencer::ParticleReader(AnaEvent *evt, ActsExamples::AlgorithmContext context, tracking::detector detector) {
+    using namespace dunits;
+
     ActsExamples::SimParticleContainer::sequence_type unordered;
     auto trk_info = tracker_infos.at(detector);
     const auto &truth_tracks = evt->getTruthInfo()->getTracksInRegion(detector == tracking::dTag ? DTruth::DTruthDetPV::TagTrk : DTruth::DTruthDetPV::RecTrk);
@@ -234,9 +238,9 @@ void ActsSequencer::ParticleReader(AnaEvent *evt, ActsExamples::AlgorithmContext
                 0 * Acts::UnitConstants::ns
         };
         ActsFatras::Particle::Vector3 momentum {
-                state->momentum[0] * MeV_to_GeV,
-                state->momentum[1] * MeV_to_GeV,
-                state->momentum[2] * MeV_to_GeV
+                state->momentum[0] * dss_to_acts::MeV,
+                state->momentum[1] * dss_to_acts::MeV,
+                state->momentum[2] * dss_to_acts::MeV
         };
         particle.setPosition4(ActsHelper::toActsReferenceFrameV4(vertex));
         // Only used for direction; normalization/units do not matter
@@ -267,9 +271,9 @@ void ActsSequencer::ParticleReader(AnaEvent *evt, ActsExamples::AlgorithmContext
             0 * Acts::UnitConstants::ns
         };
         ActsFatras::Particle::Vector3 momentum {
-                mcp->getPx() * MeV_to_GeV,
-                mcp->getPy() * MeV_to_GeV,
-                mcp->getPz() * MeV_to_GeV
+                mcp->getPx() * dss_to_acts::MeV,
+                mcp->getPy() * dss_to_acts::MeV,
+                mcp->getPz() * dss_to_acts::MeV
         };
         particle.setPosition4(ActsHelper::toActsReferenceFrameV4(vertex));
         // Only used for direction; normalization/units do not matter
@@ -372,6 +376,8 @@ void ActsSequencer::Begin() {
 }
 
 void ActsSequencer::ProcessEvt(AnaEvent *evt) {
+    using namespace dunits;
+
     InitEvt();
     // Run Acts algorithms
     for (auto detector : detectors_) {
@@ -414,7 +420,7 @@ void ActsSequencer::ProcessEvt(AnaEvent *evt) {
                     params[Acts::eBoundLoc1],
                     params[Acts::eBoundPhi],
                     params[Acts::eBoundTheta],
-                    params[Acts::eBoundQOverP] != 0 ? -1.0 / params[Acts::eBoundQOverP] / MeV_to_GeV : RETURN, // assume Q = -1
+                    params[Acts::eBoundQOverP] != 0 ? -1.0 / params[Acts::eBoundQOverP] * acts_to_dss::GeV : RETURN, // assume Q = -1
                     trajState.chi2Sum,
                     (int)trajState.NDF,
                     (int)trajState.nMeasurements,

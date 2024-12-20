@@ -3,6 +3,7 @@
 #ifndef TRACKING_ACTS_MAGNET_H
 #define TRACKING_ACTS_MAGNET_H
 
+#include "Utility/Units.h"
 #include "Core/AnaData.h"
 #include "Object/DMagnet.h"
 #include "Algo/ActsHelper.h"
@@ -67,11 +68,14 @@ public:
 
     TEveVectorD GetFieldD(Double_t x, Double_t y, Double_t z) const override
     {
+        using namespace dunits;
         using namespace ActsHelper;
-        auto pos_dss = fromActsReferenceFrameV3(Acts::Vector3(x * CUNIT, y * CUNIT, z * CUNIT));
+
+        auto pos_dss = fromActsReferenceFrameV3(Acts::Vector3(x * root_to_dss::ul, y * root_to_dss::ul, z * root_to_dss::ul)); // ACTS has same default length as DSS
         auto field_dss = dAnaData->getMagnetFieldAt({pos_dss.x(), pos_dss.y(), pos_dss.z()});
         auto filed_acts = ActsHelper::toActsReferenceFrameV3(Acts::Vector3(field_dss.at(0), field_dss.at(1), field_dss.at(2)));
-        return TEveVectorD(-filed_acts.x(), -filed_acts.y(), -filed_acts.z());
+
+        return TEveVectorD(-filed_acts.x(), -filed_acts.y(), -filed_acts.z()); // No unit change here
     }
 };
 
