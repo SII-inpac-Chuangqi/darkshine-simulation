@@ -13,6 +13,8 @@
 #include <iomanip>
 
 void DEventDisplay::inspectMainRegion() {
+    using namespace dunits;
+
     if (!gGeoManager) {
         std::cerr << "[Det Info] ==> No gGeoManager..." << std::endl;
         return;
@@ -35,11 +37,11 @@ void DEventDisplay::inspectMainRegion() {
         std::cout << "=============================================================================" <<std::endl;
         std::cout << std::left;
         std::cout << "Node " << i << ") " << std::setw(10) << cur_Name << ": ";
-        std::cout << "center z = " << std::setw(10) << CUNIT * current_node->GetMatrix()->GetTranslation()[2] << " [mm], ";
+        std::cout << "center z = " << std::setw(10) << root_to_dss::ul * current_node->GetMatrix()->GetTranslation()[2] << " [mm], ";
         std::cout << std::right;
-        std::cout << "size = (" << std::setw(8) << CUNIT * 2 * cur_shape->GetDX() << ","
-                  << std::setw(8) << CUNIT * 2 * cur_shape->GetDY() << ","
-                  << std::setw(8) << CUNIT * 2 * cur_shape->GetDZ() << ") [mm]";
+        std::cout << "size = (" << std::setw(8) << root_to_dss::ul * 2 * cur_shape->GetDX() << ","
+                  << std::setw(8) << root_to_dss::ul * 2 * cur_shape->GetDY() << ","
+                  << std::setw(8) << root_to_dss::ul * 2 * cur_shape->GetDZ() << ") [mm]";
         std::cout << std::endl;
         std::cout << "-----------------------------------------------------------------------------" <<std::endl;
 
@@ -62,6 +64,8 @@ void DEventDisplay::inspectMainRegion() {
 
 
 void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
+    using namespace dunits;
+
     // Print daughter region of mother volume id
     auto *current_node = dynamic_cast<TGeoNode *>(world_node->GetDaughter(id));
     auto region_Name = TString(current_node->GetVolume()->GetName()); // TAGTrk or RECTrk
@@ -85,7 +89,7 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
         // Tracker
         if (dt == DTracker) {
             auto mother_z = current_node->GetMatrix()->GetTranslation()[2];
-            auto daughter_z = CUNIT * (mother_z + cur_node->GetMatrix()->GetTranslation()[2]); // mm
+            auto daughter_z = root_to_dss::ul * (mother_z + cur_node->GetMatrix()->GetTranslation()[2]); // mm
             if (TString(cur_node->GetName()).Contains("Trk1")) {
                 std::cout << std::right;
                 std::cout << "    ==> " << std::setw(3) << i/2 << ") ";
@@ -93,13 +97,13 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
                 std::cout << std::setw(10) << "Tracker 1" << ": ";
                 std::cout << "center z = " << std::setw(8) << daughter_z << " [mm], ";
                 std::cout << std::right;
-                std::cout << "size = (" << std::setw(6) << CUNIT * 2 * cur_shape->GetDX() << ","
-                          << std::setw(6) << CUNIT * 2 * cur_shape->GetDY() << ","
-                          << std::setw(6) << CUNIT * 2 * cur_shape->GetDZ() << ") [mm]";
+                std::cout << "size = (" << std::setw(6) << root_to_dss::ul * 2 * cur_shape->GetDX() << ","
+                          << std::setw(6) << root_to_dss::ul * 2 * cur_shape->GetDY() << ","
+                          << std::setw(6) << root_to_dss::ul * 2 * cur_shape->GetDZ() << ") [mm]";
 //                std::cout << std::endl;
                 // set B field region
-                if(TString(cur_node->GetName()).Contains("Tag") && i==0) dDisData->setBfieldRegionZleft(daughter_z+cur_shape->GetDZ()*CUNIT); // TODO: extend the B field region?
-                else if(TString(cur_node->GetName()).Contains("Rec") && i==(current_node->GetNdaughters()-2)) dDisData->setBfieldRegionZright(daughter_z-cur_shape->GetDZ()*CUNIT);
+                if(TString(cur_node->GetName()).Contains("Tag") && i==0) dDisData->setBfieldRegionZleft(daughter_z+cur_shape->GetDZ()*root_to_dss::ul); // TODO: extend the B field region?
+                else if(TString(cur_node->GetName()).Contains("Rec") && i==(current_node->GetNdaughters()-2)) dDisData->setBfieldRegionZright(daughter_z-cur_shape->GetDZ()*root_to_dss::ul);
             } else {
                 auto rot_mat = cur_node->GetMatrix()->GetRotationMatrix();
 
@@ -128,9 +132,9 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
             }
 
             // record ecal cell size
-            size_cal[0] = CUNIT * 2 * cur_shape->GetDX();
-            size_cal[1] = CUNIT * 2 * cur_shape->GetDY();
-            size_cal[2] = CUNIT * 2 * cur_shape->GetDZ();
+            size_cal[0] = root_to_dss::ul * 2 * cur_shape->GetDX();
+            size_cal[1] = root_to_dss::ul * 2 * cur_shape->GetDY();
+            size_cal[2] = root_to_dss::ul * 2 * cur_shape->GetDZ();
 
             ECAL_Cell_Arr = TVector3(n_cell[0],n_cell[1],n_cell[2]);
             ECAL_Cell_Size = TVector3(size_cal[0],size_cal[1],size_cal[2]);
@@ -157,9 +161,9 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
                         if (daughter_pos[0] != last_pos[0]) n_cell[0]++;
                     }
                     // record first layer cell size
-                    size_cal[0] = CUNIT * 2 * cur_shape->GetDX();
-                    size_cal[1] = CUNIT * 2 * cur_shape->GetDY();
-                    size_cal[2] = CUNIT * 2 * cur_shape->GetDZ();
+                    size_cal[0] = root_to_dss::ul * 2 * cur_shape->GetDX();
+                    size_cal[1] = root_to_dss::ul * 2 * cur_shape->GetDY();
+                    size_cal[2] = root_to_dss::ul * 2 * cur_shape->GetDZ();
                 }
                 // Only count the second layer
                 if (n_cell[2] == 2) {
@@ -171,18 +175,18 @@ void DEventDisplay::inspectSubRegion(int id, Det_Type dt) {
                         if (daughter_pos[0] != last_pos[0]) n_cell2[0]++;
                     }
                     // record second layer cell size
-                    size_cal2[0] = CUNIT * 2 * cur_shape->GetDX();
-                    size_cal2[1] = CUNIT * 2 * cur_shape->GetDY();
-                    size_cal2[2] = CUNIT * 2 * cur_shape->GetDZ();
+                    size_cal2[0] = root_to_dss::ul * 2 * cur_shape->GetDX();
+                    size_cal2[1] = root_to_dss::ul * 2 * cur_shape->GetDY();
+                    size_cal2[2] = root_to_dss::ul * 2 * cur_shape->GetDZ();
                 }
             }
             // Concerning Absorber
             else {
                 mat_abs = TString(cur_node->GetVolume()->GetMaterial()->GetName());
                 // record absorber size
-                size_abs[0] = CUNIT * 2 * cur_shape->GetDX();
-                size_abs[1] = CUNIT * 2 * cur_shape->GetDY();
-                size_abs[2] = CUNIT * 2 * cur_shape->GetDZ();
+                size_abs[0] = root_to_dss::ul * 2 * cur_shape->GetDX();
+                size_abs[1] = root_to_dss::ul * 2 * cur_shape->GetDY();
+                size_abs[2] = root_to_dss::ul * 2 * cur_shape->GetDZ();
             }
 
             for (int j = 0; j < 3; ++j)

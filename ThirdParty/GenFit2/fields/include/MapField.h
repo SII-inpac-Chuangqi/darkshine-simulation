@@ -30,19 +30,18 @@
 
 #include "AbsBField.h"
 
+#include "Utility/Units.h"
 #include "Object/DMagnet.h"
 
 namespace genfit
 {
-    enum {Tesla = 10, kGauss = 1};
-
     class MapField : public AbsBField
     {
     public:
 //................................................................................//
 //Constructor & destructor
-        MapField() {}
-        MapField(const DMagnet &Bx, const DMagnet &By, const DMagnet &Bz, int unit = kGauss);
+        MapField() = delete;
+        MapField(const DMagnet &Bx, const DMagnet &By, const DMagnet &Bz, double unit);
         ~MapField() {}
 
 //................................................................................//
@@ -60,7 +59,7 @@ namespace genfit
         DMagnet *By_;
         DMagnet *Bz_;
 
-        int unit_;
+        const double unit_;
     };
 
 }

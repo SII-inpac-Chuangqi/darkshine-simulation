@@ -23,6 +23,8 @@
 
 #include "TMultiDimFit.h"
 
+#include "Utility/Units.h"
+
 #include "MapField.h"
 
 namespace genfit
@@ -32,13 +34,11 @@ namespace genfit
 //public:
 //................................................................................//
 //Constructor & destructor
-    MapField::MapField(const DMagnet &Bx, const DMagnet &By, const DMagnet &Bz, int unit)
+    MapField::MapField(const DMagnet &Bx, const DMagnet &By, const DMagnet &Bz, double unit) : unit_(unit)
     {
         Bx_ = &(const_cast<DMagnet&>(Bx));
         By_ = &(const_cast<DMagnet&>(By));
         Bz_ = &(const_cast<DMagnet&>(Bz));
-
-        unit_ = unit;
     }
 
 //................................................................................//
@@ -59,18 +59,19 @@ namespace genfit
     void MapField::get(const double& x, const double& y, const double& z,
                        double& Bx,      double& By,      double& Bz) const
     {
+        using namespace dunits;
+
         if(!Bx_ || !By_ || !Bz_)
         {
-            std::cout << "WARNING	No manget found" << std::endl;
+            std::cout << "[WARNING] ==> No manget found" << std::endl;
             Bx = INFINITY;
             By = INFINITY;
             Bz = INFINITY;
         }
 
-        double cm2mm = 10.;
-        Bx = Bx_->GetField(x * cm2mm, y * cm2mm, z * cm2mm)*unit_;
-        By = By_->GetField(x * cm2mm, y * cm2mm, z * cm2mm)*unit_;
-        Bz = Bz_->GetField(x * cm2mm, y * cm2mm, z * cm2mm)*unit_;
+        Bx = Bx_->GetField(x * genfit_to_dss::cm, y * genfit_to_dss::cm, z * genfit_to_dss::cm)*unit_;
+        By = By_->GetField(x * genfit_to_dss::cm, y * genfit_to_dss::cm, z * genfit_to_dss::cm)*unit_;
+        Bz = Bz_->GetField(x * genfit_to_dss::cm, y * genfit_to_dss::cm, z * genfit_to_dss::cm)*unit_;
     }
 
 //................................................................................//
