@@ -56,9 +56,6 @@ public:
     //int GetSign(const TrkHitSPVec &track);
     virtual std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir = tracking::dX);
 
-    double mm2cm = 0.1;
-    double GeV2MeV = 1000;
-
 private:
 //................................................................................//
 //Method specific

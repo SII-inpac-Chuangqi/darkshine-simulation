@@ -7,6 +7,7 @@
 #ifndef TRACKING_ACTSSEQUENCER_H
 #define TRACKING_ACTSSEQUENCER_H
 
+#include "Utility/Units.h"
 #include "Core/AnaProcessor.h"
 #include "Core/AnaData.h"
 #include "Algo/TrkHit.h"
@@ -17,10 +18,6 @@
 #include <TDatabasePDG.h>
 
 #include <cassert>
-
-#define MeV_to_GeV 0.001
-
-
 
 class ActsSequencer : public AnaProcessor {
 public:
@@ -133,8 +130,8 @@ private:
 
     // Magnetic field for propagation
     DPropagator propagator;
-    TEveVectorD ECAL_Surface_Point{dAnaData->getECalSurfaceZ() / CUNIT, 0, 0}; // In Acts Frame
-    TEveVectorD ECAL_Surface_Normal{1, 0, 0}; // In Acts Frame
+    TEveVectorD ECAL_Surface_Point{dAnaData->getECalSurfaceZ() * dunits::dss_to_root::mm, 0, 0}; // DSS units to ROOT
+    TEveVectorD ECAL_Surface_Normal{1, 0, 0};
 
     // ====================================================
     // Output Tracker Variables
@@ -213,12 +210,15 @@ private:
     ECalSeeds dECAL_seeds{};
 
     void AddECALSeed(const TrackParams &trk) {
+        using namespace dunits;
         using namespace ActsHelper;
-        // Initial position and momentum, Reference Frame: Acts, unit: GeV, cm, Tesla
+        // Initial position and momentum, DSS unit to ROOT
         double charge = -1.0; // convention
-        double pt = trk.P * MeV_to_GeV * sin(trk.theta);
-        double pz = trk.P * MeV_to_GeV * cos(trk.theta);
-        TEveVectorD vertex( -trk.d0 * sin(trk.phi) / CUNIT, trk.d0 * cos(trk.phi) / CUNIT, trk.z0 / CUNIT);
+        double pt = trk.P * dss_to_root::MeV * sin(trk.theta);
+        double pz = trk.P * dss_to_root::MeV * cos(trk.theta);
+        TEveVectorD vertex(-trk.d0 * sin(trk.phi) * dss_to_root::mm,
+                            trk.d0 * cos(trk.phi) * dss_to_root::mm,
+                            trk.z0 * dss_to_root::mm);
         TEveVectorD momentum(pt * cos(trk.phi), pt * sin(trk.phi), pz);
         TEveVectorD itsect_pos;
         TEveVectorD itsect_mom;
@@ -228,12 +228,12 @@ private:
         // from Acts Frame to Lab Frame
         itsect_pos = fromActsReferenceFrameD3(itsect_pos);
         itsect_mom = fromActsReferenceFrameD3(itsect_mom);
-        dECAL_seeds.x.emplace_back(itsect_pos.fX * CUNIT);
-        dECAL_seeds.y.emplace_back(itsect_pos.fY * CUNIT);
-        dECAL_seeds.z.emplace_back(itsect_pos.fZ * CUNIT);
-        dECAL_seeds.px.emplace_back(itsect_mom.fX / MeV_to_GeV);
-        dECAL_seeds.py.emplace_back(itsect_mom.fY / MeV_to_GeV);
-        dECAL_seeds.pz.emplace_back(itsect_mom.fZ / MeV_to_GeV);
+        dECAL_seeds.x.emplace_back(itsect_pos.fX * root_to_dss::ul);
+        dECAL_seeds.y.emplace_back(itsect_pos.fY * root_to_dss::ul);
+        dECAL_seeds.z.emplace_back(itsect_pos.fZ * root_to_dss::ul);
+        dECAL_seeds.px.emplace_back(itsect_mom.fX * root_to_dss::GeV);
+        dECAL_seeds.py.emplace_back(itsect_mom.fY * root_to_dss::GeV);
+        dECAL_seeds.pz.emplace_back(itsect_mom.fZ * root_to_dss::GeV);
     }
 
     PhysicsDef pDef;
