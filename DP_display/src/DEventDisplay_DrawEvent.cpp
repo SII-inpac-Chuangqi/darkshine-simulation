@@ -84,7 +84,9 @@ bool DEventDisplay::drawEvent(int id, bool resCam) {
     return true;
 }
 
-void DEventDisplay::drawInitialParticleStep() { // initial particle will loos energy during passing the tracker... so recorded their steps
+void DEventDisplay::drawInitialParticleStep() { // initial particle will loose energy during passing the tracker... so recorded their steps
+    using namespace dunits;
+
     // Step Collection
     auto StepCols = evt->getStepCollection();
     for (const auto &StepCol : StepCols) {
@@ -108,8 +110,8 @@ void DEventDisplay::drawInitialParticleStep() { // initial particle will loos en
                 auto step = Steps->at(i);
                 auto next_step = Steps->at(i + 1);
 
-                TVector3 start(step->getX() / CUNIT, step->getY() / CUNIT, step->getZ() / CUNIT);
-                TVector3 end(next_step->getX() / CUNIT, next_step->getY() / CUNIT, next_step->getZ() / CUNIT);
+                TVector3 start(step->getX() * dss_to_root::mm, step->getY() * dss_to_root::mm, step->getZ() * dss_to_root::mm);
+                TVector3 end(next_step->getX() * dss_to_root::mm, next_step->getY() * dss_to_root::mm, next_step->getZ() * dss_to_root::mm);
 
                 makeLines(lineSet, start, end, kRed, 1, false, 3, 0);
             }
@@ -133,8 +135,8 @@ void DEventDisplay::drawInitialParticleStep() { // initial particle will loos en
                     if(i==0)
                         initialE=step->getE();
 
-                    TVector3 start(step->getX() / CUNIT, step->getY() / CUNIT, step->getZ() / CUNIT);
-                    TVector3 end(next_step->getX() / CUNIT, next_step->getY() / CUNIT, next_step->getZ() / CUNIT);
+                    TVector3 start(step->getX() * dss_to_root::mm, step->getY() * dss_to_root::mm, step->getZ() * dss_to_root::mm);
+                    TVector3 end(next_step->getX() * dss_to_root::mm, next_step->getY() * dss_to_root::mm, next_step->getZ() * dss_to_root::mm);
 
                     makeLines(lineSet, start, end, kRed, 1, false, 3, 0);
                 }
@@ -177,7 +179,7 @@ int DEventDisplay::recursiveFindTracks(int mother, MCParticleVec* MCs, int* coun
     int traced=0;
     for (unsigned i = 0; i < MCs->size(); ++i) {
         auto mc=MCs->at(i);
-        if(sto && sto->at(mc->getId())!=""){ // the particle has definate path, no ned to consider again
+        if(sto && sto->at(mc->getId())!=""){ // the particle has definate path, no need to consider again
             continue;
         }
         if(isInitialMC(mc)) continue; //skipinitial particle
@@ -220,8 +222,8 @@ void DEventDisplay::drawMCParticles() {
         if(dDisData->isMagnets()) std::cout<<"[INFO] B filed: using magnets(high defination B map)..."<<std::endl;
         else std::cout<<"[INFO] B field: no valid magents found. using uniform B..."<<std::endl;
         // trkProp->PrintMagField (0,0,0);
-        // trkProp->PrintMagField (0,0,+180 / CUNIT);
-        // trkProp->PrintMagField (0,0,+200 / CUNIT);
+        // trkProp->PrintMagField (0,0,+180 * dss_to_root::mm);
+        // trkProp->PrintMagField (0,0,+200 * dss_to_root::mm);
     } else {
         trkProp->SetMagField(0,0,0);
         std::cout<<"[INFO] MC track prop: NO B field!!"<<std::endl;
@@ -387,6 +389,8 @@ void DEventDisplay::makeLines(TEveStraightLineSet *lineSet, const TVector3 &star
 }
 
 TEveTrack *DEventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned /*id*/, McParticle *mc, std::shared_ptr<DStepVec> steps) {
+    using namespace dunits;
+
     // refer to https://root.cern.ch/doc/master/classTEvePathMarkT.html
     // get mother id
     int m_id = -999;
@@ -397,7 +401,7 @@ TEveTrack *DEventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned /*i
     rt.SetPdgCode(mc->getPdg());
     rt.SetUniqueID(mc->getId());
     rt.SetMomentum(mc->getPx() * 1e-3, mc->getPy() * 1e-3, mc->getPz() * 1e-3, mc->getEnergy() * 1e-3);
-    rt.SetProductionVertex(mc->getVertexX() / CUNIT, mc->getVertexY() / CUNIT, mc->getVertexZ() / CUNIT, 0.);
+    rt.SetProductionVertex(mc->getVertexX() * dss_to_root::mm, mc->getVertexY() * dss_to_root::mm, mc->getVertexZ() * dss_to_root::mm, 0.);
 
     auto *track = new TEveTrack(&rt, trkProp);
     track->SetName(Form("Trk %d: PDG %d", rt.GetUniqueID(), rt.GetPdgCode()));
@@ -427,15 +431,15 @@ TEveTrack *DEventDisplay::makeMCTrack(TEveTrackPropagator *trkProp, unsigned /*i
     // add other step points if avalible
     if(steps)
         for(auto s:*steps){
-            // std::cout<<"Step added/cm "<<s->getX() / CUNIT << " " <<s->getY() / CUNIT << " " <<s->getZ() / CUNIT<<std::endl;
+            // std::cout<<"Step added/cm "<<s->getX() * dss_to_root::mm << " " <<s->getY() * dss_to_root::mm << " " <<s->getZ() * dss_to_root::mm<<std::endl;
             // std::cout<<"Step added/GEV "<<s->getPz() / 1e3 << " " <<s->getPy() / 1e3 << " " <<s->getPx() / 1e3<<std::endl;
             track->AddPathMark(TEvePathMarkD(TEvePathMarkD::kReference,
-                  TEveVectorD(s->getX() / CUNIT, s->getY() / CUNIT, s->getZ() / CUNIT),
+                  TEveVectorD(s->getX() * dss_to_root::mm, s->getY() * dss_to_root::mm, s->getZ() * dss_to_root::mm),
                   TEveVectorD(s->getPx()* 1e-3, s->getPy()* 1e-3, s->getPz()* 1e-3)));
         }
 
     track->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDecay,
-                  TEveVectorD(mc->getEndPointX() / CUNIT, mc->getEndPointY() / CUNIT, mc->getEndPointZ() / CUNIT)));
+                  TEveVectorD(mc->getEndPointX() * dss_to_root::mm, mc->getEndPointY() * dss_to_root::mm, mc->getEndPointZ() * dss_to_root::mm)));
 
     track->SetTitle((Form("Index=%d, Pdg=%d\n"
                           "MotherID=%d\n"
@@ -566,7 +570,9 @@ TEveBox *DEventDisplay::makeRotBox(const double *abs_pos, const double *half_siz
 
 
 TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) const {
-    gGeoManager->FindNode(hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT);
+    using namespace dunits;
+
+    gGeoManager->FindNode(hit->getX() * dss_to_root::mm, hit->getY() * dss_to_root::mm, hit->getZ() * dss_to_root::mm);
 //    auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
 
     auto *mother_node = gGeoManager->GetMother();
@@ -589,7 +595,7 @@ TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) const {
     double hy = fabs(hx1 * RotationMatrix3[3] + hy1 * RotationMatrix3[4] + hz1 * RotationMatrix3[5]);
     double hz = fabs(hx1 * RotationMatrix3[6] + hy1 * RotationMatrix3[7] + hz1 * RotationMatrix3[8]);
 
-    double abs_pos[3] = {hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT};
+    double abs_pos[3] = {hit->getX() * dss_to_root::mm, hit->getY() * dss_to_root::mm, hit->getZ() * dss_to_root::mm};
     double half_size[3] = {hx, hy, hz};
 
     if (_drawScaleSimuCaloBox) {
@@ -623,7 +629,9 @@ TEveBox *DEventDisplay::makeSimuCaloBox(SimulatedHit *hit, double EMax) const {
 }
 
 TEveBox *DEventDisplay::makeRecCaloBox(CalorimeterHit *hit, double EMax, int copyNo) {
-    gGeoManager->FindNode(hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT);
+    using namespace dunits;
+
+    gGeoManager->FindNode(hit->getX() * dss_to_root::mm, hit->getY() * dss_to_root::mm, hit->getZ() * dss_to_root::mm);
     auto *mother_node = gGeoManager->GetMother();
     auto *cur_shape = dynamic_cast<TGeoBBox *>(mother_node->GetVolume()->GetShape());
     auto RotationMatrix = mother_node->GetMatrix()->GetRotationMatrix();
@@ -638,7 +646,7 @@ TEveBox *DEventDisplay::makeRecCaloBox(CalorimeterHit *hit, double EMax, int cop
     double hy = fabs(hx0 * RotationMatrix2[3] + hy0 * RotationMatrix2[4] + hz0 * RotationMatrix2[5]);
     double hz = fabs(hx0 * RotationMatrix2[6] + hy0 * RotationMatrix2[7] + hz0 * RotationMatrix2[8]);
 
-    double abs_pos[3] = {hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT};
+    double abs_pos[3] = {hit->getX() * dss_to_root::mm, hit->getY() * dss_to_root::mm, hit->getZ() * dss_to_root::mm};
     double half_size[3] = {hx, hy, hz};
 
     auto *box = makeBox(abs_pos, half_size);
@@ -663,9 +671,11 @@ TEveBox *DEventDisplay::makeRecCaloBox(CalorimeterHit *hit, double EMax, int cop
 
 template<class Hit>
 TEveBox *DEventDisplay::makeTrackerBox(Hit *hit, double scale) {
-    auto cur_node = gGeoManager->FindNode(hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT );
+    using namespace dunits;
+
+    auto cur_node = gGeoManager->FindNode(hit->getX() * dss_to_root::mm, hit->getY() * dss_to_root::mm, hit->getZ() * dss_to_root::mm );
     auto *cur_shape = dynamic_cast<TGeoBBox *>(cur_node->GetVolume()->GetShape());
-    double abs_pos[3] = {hit->getX() / CUNIT, hit->getY() / CUNIT, hit->getZ() / CUNIT};
+    double abs_pos[3] = {hit->getX() * dss_to_root::mm, hit->getY() * dss_to_root::mm, hit->getZ() * dss_to_root::mm};
     double half_size[3] = {cur_shape->GetDX() * scale, cur_shape->GetDY() * scale, cur_shape->GetDZ() * scale};
 
     auto *mother2_node = gGeoManager->GetMother(2);
@@ -721,9 +731,9 @@ void DEventDisplay::makeCaloLego(CaloCol col, CaloHitsDisplay *calo_dis, bool if
             for (auto hits : *CALs) {
                 int i = ECALslice_calo ? hits->getCellIdZ() - 1 : 0;
                 CaloHit tmp;
-                tmp.X = hits->getX() / CUNIT; // cm
-                tmp.Y = hits->getY() / CUNIT; // cm
-                tmp.Z = hits->getZ() / CUNIT; // cm
+                tmp.X = hits->getX() * dss_to_root::mm; // cm
+                tmp.Y = hits->getY() * dss_to_root::mm; // cm
+                tmp.Z = hits->getZ() * dss_to_root::mm; // cm
                 tmp.E = hits->getE();    // MeV
                 tmp.Color = kGreen + i;
                 tmp.id = hits->getCellId();

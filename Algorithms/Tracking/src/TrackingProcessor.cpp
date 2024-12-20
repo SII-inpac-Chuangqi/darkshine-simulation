@@ -22,6 +22,7 @@
 //................................................................................//
 //FRAMEWORK
 #include "Core/AnaData.h"
+#include "Utility/Units.h"
 
 //................................................................................//
 //TRACKING
@@ -81,6 +82,8 @@ void TrackingProcessor::Begin() {
     if(magnets.size() != 3 || !magnets.at(0) || !magnets.at(1) || !magnets.at(2))
         dAnaData->setConstMagnetField({0., con_field, 0.});
 
+    using namespace dunits;
+
     if(Tag_fit_method == tracking::dKalman || Rec_fit_method == tracking::dKalman)
     {
         genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
@@ -88,11 +91,11 @@ void TrackingProcessor::Begin() {
             genfit::FieldManager::getInstance()->init(new genfit::MapField(*(magnets.at(0)),
                                                                            *(magnets.at(1)),
                                                                            *(magnets.at(2)),
-                                                                           genfit::Tesla)); //T->kGs
+                                                                           dss_to_genfit::T)); //T->kGs
         } else {
-            genfit::FieldManager::getInstance()->init(new genfit::ConstField(dAnaData->getMagnetFieldAt({0., 0., 0.}).at(0)*10.,
-                                                                             dAnaData->getMagnetFieldAt({0., 0., 0.}).at(1)*10., //T->kGs
-                                                                             dAnaData->getMagnetFieldAt({0., 0., 0.}).at(2)*10.));
+            genfit::FieldManager::getInstance()->init(new genfit::ConstField(dAnaData->getMagnetFieldAt({0., 0., 0.}).at(0)*dss_to_genfit::T,
+                                                                             dAnaData->getMagnetFieldAt({0., 0., 0.}).at(1)*dss_to_genfit::T,
+                                                                             dAnaData->getMagnetFieldAt({0., 0., 0.}).at(2)*dss_to_genfit::T));
         }
     }
 
