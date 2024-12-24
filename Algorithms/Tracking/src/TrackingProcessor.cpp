@@ -551,6 +551,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //Digitization
             digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, &tag_hit_pool_, tracking::dTag);
 
+            tag_hit_pool_.Print();
+
             if(tag_hit_pool_.Size())
             {
                 if_reco_tag_hits = true;
