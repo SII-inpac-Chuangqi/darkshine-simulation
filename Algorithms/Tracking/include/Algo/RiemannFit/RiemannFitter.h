@@ -182,6 +182,8 @@ private:
     TMatrixD GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, const TMatrixD &j2);
 
 private:
+    int max_trial_ = 100;
+
 //................................................................................//
 //Dimesion of the matrices, or, No. of hits in the track
     int dim_{0};

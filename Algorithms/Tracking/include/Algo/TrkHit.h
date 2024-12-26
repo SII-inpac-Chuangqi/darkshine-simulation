@@ -58,6 +58,7 @@ public:
     void SetUVec(const TVectorD &newUVec) {u_vec_ = newUVec;}
     void SetVVec(const TVectorD &newVVec) {v_vec_ = newVVec;}
     void SetUVCov(const TMatrixDSym &newCov) {uv_cov_ = newCov;}
+    void SetXYCov(const TMatrixDSym &newCov) {xy_cov_ = newCov;}
 
     void SetTrack(const std::shared_ptr<DTrack> &track) {track_ = track;}
 //................................................................................//
@@ -80,6 +81,8 @@ public:
     double GetV() const {return v_;}
     double GetUVec(int i) const {return u_vec_[i];}
     double GetVVec(int i) const {return v_vec_[i];}
+    auto GetUVCov() const {return uv_cov_;}
+    auto GetXYCov() const {return xy_cov_;}
     double GetUVCov(int i, int j) const {return uv_cov_(i, j);}
     double GetXYCov(int i, int j) const {return xy_cov_(i, j);}
 
