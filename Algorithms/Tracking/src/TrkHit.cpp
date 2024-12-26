@@ -52,7 +52,17 @@ TrkHit::TrkHit(const SimulatedHit &newSimuHit) : SimulatedHit(newSimuHit),
                                                  v_vec_(2),
                                                  uv_cov_(2),
                                                  xy_cov_(2)
-{}
+{
+    double err = 1e-4;
+    TMatrixDSym cov(2);
+    cov(0, 0) = err;
+    cov(1, 1) = err;
+    cov(0, 1) = 0.;
+    cov(1, 0) = 0.;
+
+    uv_cov_ = cov;
+    xy_cov_ = cov;
+}
 
 void TrkHit::operator =(const TrkHit &oldTrkHit)
 {
