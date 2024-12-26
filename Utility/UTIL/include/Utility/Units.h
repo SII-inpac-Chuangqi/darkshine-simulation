@@ -16,6 +16,7 @@ namespace dunits
     constexpr double Tesla = 1.0;
     constexpr double T = Tesla;
     constexpr double kGauss = 0.1*Tesla;
+    constexpr double acts_mag_unit = 1./0.000299792458*Tesla;
 
     #define DSS_DEFINE_UNIT_LITERAL(name)                      \
     constexpr double operator""_##name(long double x) {        \
@@ -38,6 +39,7 @@ namespace dunits
     DSS_DEFINE_UNIT_LITERAL(Tesla)
     DSS_DEFINE_UNIT_LITERAL(T)
     DSS_DEFINE_UNIT_LITERAL(kGauss)
+    DSS_DEFINE_UNIT_LITERAL(acts_mag_unit)
 
     #undef DSS_DEFINE_UNIT_LITERAL
 

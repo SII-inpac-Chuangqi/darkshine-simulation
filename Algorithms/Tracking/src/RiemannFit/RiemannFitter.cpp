@@ -49,12 +49,8 @@ void RiemannFitter::Fit(const TrkHitSPVec &track, std::initializer_list<double>)
     n2_ = 0.;
     n3_ = 0.;
 
-    for(int i = 0; i < 100; i++)
+    for(int i = 0; i < max_trial_; i++)
     {
-        //std::cout << pre_Xc_ << std::endl;
-        //std::cout << pre_Yc_ << std::endl;
-        //std::cout << pre_R_ << std::endl;
-
         TMatrixD cart_coo(GetCartCoo(track));
         //cart_coo.Print();
         TMatrixD polar_coo(GetPolarCoo(track));
@@ -97,9 +93,15 @@ void RiemannFitter::Fit(const TrkHitSPVec &track, std::initializer_list<double>)
         double curr_R = std::abs(sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
         double curr_Xc = -0.5*n1_/n3_;
         double curr_Yc = -0.5*n2_/n3_;
-        if(std::abs(curr_Xc - pre_Xc_)/pre_Xc_ < 1e-6 &&
-           std::abs(curr_Yc - pre_Yc_)/pre_Yc_ < 1e-6 &&
-           std::abs(curr_R - pre_R_)/pre_R_ < 1e-6)
+
+//        std::cout << i << ": " << std::endl;
+//        std::cout << " -- " << pre_Xc_ << ", \t" << curr_Xc << ", \t" << std::abs(curr_Xc/(pre_Xc_ + curr_Xc)) << std::endl;
+//        std::cout << " -- " << pre_Yc_ << ", \t" << curr_Yc << ", \t" << std::abs(curr_Yc/(pre_Yc_ + curr_Yc)) << std::endl;
+//        std::cout << " -- " << pre_R_  << ", \t" << curr_R  << ", \t" << std::abs((curr_R - pre_R_)/pre_R_) << std::endl;
+
+        if(std::abs(curr_Xc/(pre_Xc_ + curr_Xc)) < 1e-4 &&
+           std::abs(curr_Yc/(pre_Yc_ + curr_Yc)) < 1e-4 &&
+           std::abs((curr_R - pre_R_)/pre_R_) < 1e-4)
             break;
         else
         {

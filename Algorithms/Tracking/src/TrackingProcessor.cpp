@@ -600,17 +600,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             {
                 if_reco_rec_hits = true;
 
-                if (Verbose > 2) {
-                    std::cout << "[Rec hits]" << std::endl;
-                    // Get hit from rec_hit_pool_
-                    for (const auto& [key, layer]: *rec_hit_pool_) {
-                        for (const auto& hit: layer) {
-                            auto field = dAnaData->getMagnetFieldAt({hit->GetX(), hit->GetY(), hit->GetZ()});
-                            std::cout << Form("  Hit: (%.3f(%.3f), %.3f(%.3f), %.3f(%.3f))", hit->GetX(), hit->GetXErr(), hit->GetY(), hit->GetYErr(), hit->GetZ(), hit->GetZErr()) << " Field: (" << field.at(0) << ", " << field.at(1) << ", " << field.at(2) << ")" << std::endl;
-                        }
-                    }
-                }
-
                 if(if_raw_rec_hit_number && if_reco_rec_hits)
                 {
 //Finding, by pre-fitting
