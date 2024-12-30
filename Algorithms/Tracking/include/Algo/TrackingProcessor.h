@@ -20,6 +20,7 @@
 #include "Algo/DTrack.h"
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Digitization.h"
+#include "Algo/GreedyFinder.h"
 
 namespace tracking
 {
@@ -54,6 +55,7 @@ private:
     }
 
 private:
+    GreedyFinder::Config finding_config_;
 
 //................................................................................//
 //Parameters from config file

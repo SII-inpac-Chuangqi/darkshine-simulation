@@ -27,6 +27,11 @@
 class RiemannFitter : public Fitter
 {
 public:
+    struct Config
+    {
+    };
+
+public:
 //................................................................................//
 //Constructor
     RiemannFitter() {}
@@ -182,6 +187,8 @@ private:
     TMatrixD GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, const TMatrixD &j2);
 
 private:
+    Config config_;
+
     int max_trial_ = 100;
 
 //................................................................................//

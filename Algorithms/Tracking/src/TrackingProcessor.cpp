@@ -28,7 +28,6 @@
 //TRACKING
 //#include "Algo/TypeDef.h"
 #include "Algo/Utils/Util.h"
-#include "Algo/GreedyFinder.h"
 #include "Algo/RiemannFit/RiemannFitHelper.h"
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Vertex/VertexFinder.h"
@@ -558,7 +557,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 if(if_raw_tag_hit_number && if_reco_tag_hits)
                 {
 //Finding, by pre-fitting
-                    GreedyFinder find_tag(&tag_hit_pool_);
+                    GreedyFinder find_tag(&tag_hit_pool_, finding_config_);
                     find_tag.FillTracks(&tag_tracks_);
         
 //Fit, by Genfit, Kalman filter/by Riemann fitting
@@ -601,7 +600,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 if(if_raw_rec_hit_number && if_reco_rec_hits)
                 {
 //Finding, by pre-fitting
-                    GreedyFinder find_rec(&rec_hit_pool_);
+                    GreedyFinder find_rec(&rec_hit_pool_, finding_config_);
                     find_rec.FillTracks(&rec_tracks_);
 
 //Fit, by Genfit, Kalman filter/by Riemann fitting
