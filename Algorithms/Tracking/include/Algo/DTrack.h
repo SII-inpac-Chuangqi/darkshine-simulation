@@ -60,13 +60,6 @@ public:
     double GetPz() const {return pz_;}
     double GetPp() const {return pp_;}
     std::shared_ptr<DVertex> GetVertex() const {return vertex_.lock();}
-//................................................................................//
-//Correction on reco momentum in recoil tracker ( p_rcs ) by comparing the peak
-//values of reco and truth level momenta with different beam energy
-//
-// p_fixed = 4.517e-6 * p_rcs^2 + 0.89787 * p_rcs
-//
-    double GetFixedPp() const {return 0.000004517*pp_*pp_ + 0.89787*pp_;}
     double GetPl() const {return py_;}
     double GetPreR()  const {return preR_;}
     double GetPreXc() const {return preXc_;}
@@ -79,6 +72,7 @@ public:
     int GetInitCellIdZ() const;
 
     int GetSize() const {return hits_.size();}
+    TrkHitSPVec& GetHits() {return hits_;}
     TrkHitSP At(int i) {return hits_.at(i);}
     TrkHitSP AtCellIdZ(int i);
     double GetQuality() const {return quality_;}
@@ -111,7 +105,7 @@ public:
 //................................................................................//
 //Processor
 //................................................................................//
-    void Fit(int method);
+//    void Fit(int method);
     std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir = tracking::dX);
     void Evaluate();
     void Reverse() {std::reverse(hits_.begin(), hits_.end());}

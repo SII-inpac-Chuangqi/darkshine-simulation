@@ -577,7 +577,11 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                                                                 dAnaData->getMagnetFieldAt({x, y, z}).at(2)*10.};
                         track->ExceptionHandler(magnet_at_origin);
                         track->Reverse();
-                        track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
+
+                        genfit_config_.pre_R = track->GetPreR();
+                        genfit_config_.const_B = -1.5;
+                        KalmanFilterFitter(track->GetHits(), genfit_config_);
+                        //track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
                         //track->Evaluate();
                     }
                 }
@@ -607,20 +611,20 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     RecTrk2_track_No = find_rec.GetTrackNo();
               
                     for (auto &track : rec_tracks_) {
-                        track->SetVerbose(Verbose);
-                        if(if_backwards) track->Reverse();
+                    //    track->SetVerbose(Verbose);
+                    //    if(if_backwards) track->Reverse();
 
-                        int size = track->GetSize();
-                        double x = 0.;
-                        double y = 0.5*(track->At(0)->GetY() + track->At(size - 1)->GetY());
-                        double z = 0.5*(track->At(0)->GetZ() + track->At(size - 1)->GetZ());
-                        std::vector<double> magnet_at_median = {dAnaData->getMagnetFieldAt({x, y, z}).at(0)*10.,
-                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(1)*10.,
-                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(2)*10.};
-                        track->ExceptionHandler(magnet_at_origin);
-                        track->Reverse();
-                        track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
-                        //track->Evaluate();
+                    //    int size = track->GetSize();
+                    //    double x = 0.;
+                    //    double y = 0.5*(track->At(0)->GetY() + track->At(size - 1)->GetY());
+                    //    double z = 0.5*(track->At(0)->GetZ() + track->At(size - 1)->GetZ());
+                    //    std::vector<double> magnet_at_median = {dAnaData->getMagnetFieldAt({x, y, z}).at(0)*10.,
+                    //                                            dAnaData->getMagnetFieldAt({x, y, z}).at(1)*10.,
+                    //                                            dAnaData->getMagnetFieldAt({x, y, z}).at(2)*10.};
+                    //    track->ExceptionHandler(magnet_at_origin);
+                    //    track->Reverse();
+                    //    track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
+                    //    //track->Evaluate();
                     }
                 }
             }
@@ -673,7 +677,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         for(auto &track : rec_tracks_)
         {
             RecTrk2_pp.push_back(track->GetPp());
-            RecTrk2_fixed_pp.push_back(track->GetFixedPp());
             RecTrk2_track_chi2.push_back(track->GetChi2());
 
             ECal_seed_x.push_back(track->GetECalSeedX());

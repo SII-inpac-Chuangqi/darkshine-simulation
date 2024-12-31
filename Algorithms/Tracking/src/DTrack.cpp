@@ -281,7 +281,7 @@ void DTrack::Remove(int i)
 {
     hits_.erase(std::remove(hits_.begin(), hits_.end(), hits_.at(i)), hits_.end());
 }
-
+/*
 void DTrack::Fit(int method)
 {
 //    Fitter *fitter_ = nullptr;
@@ -345,7 +345,7 @@ void DTrack::Fit(int method)
     else
         pp_ = 0.3*preR_*std::abs(By_);
 }
-
+*/
 std::vector<double> DTrack::ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir)
 {
     if(!fitter_)

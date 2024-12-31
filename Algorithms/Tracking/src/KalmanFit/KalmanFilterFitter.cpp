@@ -148,6 +148,8 @@ void KalmanFilterFitter::Fill(const TrkHitSPVec &track)
     if (calibrator_)
         std::tie(pp, pl) = calibrator_->GetCalibratedP(pp, pl);
 
+    std::cout << pp << std::endl;
+
     double bChi2;
     double bNdf;
     fitter->getChiSquNdf(fitTrack, rep, bChi2, fChi2, bNdf, fNdf);

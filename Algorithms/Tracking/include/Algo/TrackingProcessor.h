@@ -21,6 +21,7 @@
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Digitization.h"
 #include "Algo/GreedyFinder.h"
+#include "Algo/KalmanFit/KalmanFilterFitter.h"
 
 namespace tracking
 {
@@ -56,6 +57,7 @@ private:
 
 private:
     GreedyFinder::Config finding_config_;
+    KalmanFilterFitter::Config genfit_config_;
 
 //................................................................................//
 //Parameters from config file
