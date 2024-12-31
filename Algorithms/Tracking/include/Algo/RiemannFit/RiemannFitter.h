@@ -29,13 +29,18 @@ class RiemannFitter : public Fitter
 public:
     struct Config
     {
+        double const_B;
+        double pre_Xc;
+        double pre_Yc;
+        double pre_R;
+        int max_trial = 100;
     };
 
 public:
 //................................................................................//
 //Constructor
     RiemannFitter() {}
-    RiemannFitter(const TrkHitSPVec &track, std::initializer_list<double>);
+    RiemannFitter(const TrkHitSPVec &track, Config config, int verbose = 0);
     ~RiemannFitter() {};
 
     RiemannFitter(const RiemannFitter&) = delete;
@@ -188,8 +193,6 @@ private:
 
 private:
     Config config_;
-
-    int max_trial_ = 100;
 
 //................................................................................//
 //Dimesion of the matrices, or, No. of hits in the track

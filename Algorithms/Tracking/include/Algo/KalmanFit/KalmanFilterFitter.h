@@ -31,10 +31,17 @@
 class KalmanFilterFitter : public Fitter
 {
 public:
+    struct Config
+    {
+        double pre_R;
+        double const_B;
+    };
+
+public:
 //................................................................................//
 //Constructor
     KalmanFilterFitter() {}
-    KalmanFilterFitter(const TrkHitSPVec &track, std::initializer_list<double>, int verbose = 0);
+    KalmanFilterFitter(const TrkHitSPVec &track, Config config, int verbose = 0);
     ~KalmanFilterFitter()
     {
         //delete measurement; measurement = nullptr;
@@ -57,6 +64,8 @@ public:
     virtual std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir = tracking::dX);
 
 private:
+    Config config_;
+
 //................................................................................//
 //Method specific
     genfit::AbsTrackRep *rep = nullptr;

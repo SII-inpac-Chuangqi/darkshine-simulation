@@ -30,7 +30,7 @@
 
 //................................................................................//
 //Constructor
-KalmanFilterFitter::KalmanFilterFitter(const TrkHitSPVec &track, std::initializer_list<double> list, int verbose) : hitCov(2)
+KalmanFilterFitter::KalmanFilterFitter(const TrkHitSPVec &track, Config config, int verbose) : config_(config), hitCov(2)
 {
     verbose_ = verbose;
 
@@ -38,7 +38,7 @@ KalmanFilterFitter::KalmanFilterFitter(const TrkHitSPVec &track, std::initialize
     {
         if(track.size() < 4) throw -1;
         
-        Init(track, list);
+        Init(track, {});
         Fit (track, {});
         Fill(track, {});
     }
@@ -47,10 +47,7 @@ KalmanFilterFitter::KalmanFilterFitter(const TrkHitSPVec &track, std::initialize
         if(verbose_ > 0)
             std::cerr << "[WARNING] ==> Fewer than 4 hits in this track" << std::endl;
 
-        auto it = list.begin();
-        double preR = *it; it++;
-        double B = *it;
-        pp = 0.3*std::abs(B)*preR;
+        pp = 0.3*std::abs(config_.const_B)*config_.pre_R;
     }
     catch(genfit::Exception& e)
     {
@@ -60,10 +57,7 @@ KalmanFilterFitter::KalmanFilterFitter(const TrkHitSPVec &track, std::initialize
             std::cerr << "[WARNING] ==> Exception, next track" << std::endl;
         }
 
-        auto it = list.begin();
-        double preR = *it; it++;
-        double B = *it;
-        pp = 0.3*std::abs(B)*preR;
+        pp = 0.3*std::abs(config_.const_B)*config_.pre_R;
     }
 }
 
@@ -71,20 +65,18 @@ KalmanFilterFitter::KalmanFilterFitter(const TrkHitSPVec &track, std::initialize
 //Processor
 //................................................................................//
 //Initialize the fitter, set up magnetic, material manager, track representation, fitter and track model
-//void KalmanFilterFitter::Init(const TrkHitSPVec &track, double preR, double B)
-void KalmanFilterFitter::Init(const TrkHitSPVec &track, std::initializer_list<double> list)
+void KalmanFilterFitter::Init(const TrkHitSPVec &track, std::initializer_list<double> /*list*/)
 {
     using namespace dunits;
 
-    auto it = list.begin();
-    double preR = *it; it++;
-    double B = *it;
+    double pre_R = config_.pre_R;
+    double B = config_.const_B;
 
     int pdg = -GetSign(track)*11;                  //pdg id, e- hypothesis
     pos = TVector3((*track.at(0)).GetX() * dss_to_genfit::mm,  //pre fitting results --postion,  mm->cm
                    (*track.at(0)).GetY() * dss_to_genfit::mm,  //
                    (*track.at(0)).GetZ() * dss_to_genfit::mm); //
-    mom = TVector3(0, 0, 0.3*B*preR * dss_to_genfit::MeV);    //                    --momentum, MeV->GeV
+    mom = TVector3(0, 0, 0.3*B*pre_R * dss_to_genfit::MeV);    //                    --momentum, MeV->GeV
     hitCov.UnitMatrix();                           //covariance matrix
 
     //genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());

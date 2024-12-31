@@ -12,31 +12,32 @@
 
 //................................................................................//
 //Constructor
-RiemannFitter::RiemannFitter(const TrkHitSPVec &track, std::initializer_list<double> list)
+RiemannFitter::RiemannFitter(const TrkHitSPVec &track, Config config, int verbose) : config_(config)
 {
+    verbose_ = verbose;
+
+    pre_Xc_ = config_.pre_Xc;
+    pre_Yc_ = config_.pre_Yc;
+    pre_R_ = config_.pre_R; 
+
     try
     {
-        this->Init(track, list);
+        this->Init(track, {});
         this->Fit (track, {});
         this->Fill(track, {});
     }
     catch(...)
     {
-        std::cerr << "[Error]" << std::endl;
-        pp = RETURN;
+        std::cerr << "[Error] ==> Unexpected error in RiemannFitter" << std::endl;
+        pp = 0.3*std::abs(config_.const_B)*config_.pre_R;
         return;
     }
 }
 
 //................................................................................//
 //Processor
-void RiemannFitter::Init(const TrkHitSPVec &track, std::initializer_list<double> list)
+void RiemannFitter::Init(const TrkHitSPVec &track, std::initializer_list<double> /*list*/)
 {
-    auto it = list.begin();
-    pre_Xc_ = *it; it++;
-    pre_Yc_ = *it; it++;
-    pre_R_  = *it;
-
     dim_ = track.size();
     corrections_x_ = this->GetDeltax(track);
     this->GetTheta(track);
@@ -49,7 +50,7 @@ void RiemannFitter::Fit(const TrkHitSPVec &track, std::initializer_list<double>)
     n2_ = 0.;
     n3_ = 0.;
 
-    for(int i = 0; i < max_trial_; i++)
+    for(int i = 0; i < config_.max_trial; i++)
     {
         TMatrixD cart_coo(GetCartCoo(track));
         //cart_coo.Print();

@@ -290,13 +290,18 @@ void DTrack::Fit(int method)
     {
         case tracking::dKalman  :
                                   fitter_ = new KalmanFilterFitter(hits_,
-                                                                   {preR_,   //Fix to 2 ordered parameters! --bending radius as fitting seed
-                                                                    By_},    //                             --magnet to manage exception condition
-                                                                   verbose_  //Verbose
+                                                                   {preR_,   // config.pre_R   -- bending radius as fitting seed
+                                                                    By_},    //       .const_B -- magnet to manage exception condition
+                                                                   verbose_  // verbose
                                                                   );
                                   break;
         case tracking::dRiemann :
-                                  fitter_ = new RiemannFitter(hits_, {preXc_, preYc_, preR_});
+                                  fitter_ = new RiemannFitter(hits_,
+                                                              {By_,    // config.const_B -- magnet to manage exception condition
+                                                               preXc_, //       .pre_Xc  -- prefit Xc as fitting seed
+                                                               preYc_, //       .pre_Yc  -- prefit Yc
+                                                               preR_}, //       .pre_R   -- prefit R
+                                                              verbose_);
                                   if(verbose_ > 0)
                                       std::cout << "[INFO] ==> Riemann fit coming soon" << std::endl;
                                   break;
