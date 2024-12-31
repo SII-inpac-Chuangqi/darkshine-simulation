@@ -8,7 +8,7 @@
 #include <vector>
 #include <memory>
 #include <cmath>
-#include <initializer_list>
+//#include <initializer_list>
 
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
@@ -44,9 +44,9 @@ public:
 
 //................................................................................//
 //Processor
-    virtual void Init(const TrkHitSPVec&, std::initializer_list<double>) {}
-    virtual void Fit (const TrkHitSPVec&, std::initializer_list<double>) {}
-    virtual void Fill(const TrkHitSPVec&, std::initializer_list<double>) {}
+    virtual void Init(const TrkHitSPVec&) {}
+    virtual void Fit (const TrkHitSPVec&) {}
+    virtual void Fill(const TrkHitSPVec&) {}
 
 //................................................................................//
 //Get

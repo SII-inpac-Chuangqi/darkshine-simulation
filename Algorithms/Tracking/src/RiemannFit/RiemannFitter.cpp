@@ -22,9 +22,9 @@ RiemannFitter::RiemannFitter(const TrkHitSPVec &track, Config config, int verbos
 
     try
     {
-        this->Init(track, {});
-        this->Fit (track, {});
-        this->Fill(track, {});
+        this->Init(track);
+        this->Fit (track);
+        this->Fill(track);
     }
     catch(...)
     {
@@ -36,14 +36,14 @@ RiemannFitter::RiemannFitter(const TrkHitSPVec &track, Config config, int verbos
 
 //................................................................................//
 //Processor
-void RiemannFitter::Init(const TrkHitSPVec &track, std::initializer_list<double> /*list*/)
+void RiemannFitter::Init(const TrkHitSPVec &track)
 {
     dim_ = track.size();
     corrections_x_ = this->GetDeltax(track);
     this->GetTheta(track);
 }
 
-void RiemannFitter::Fit(const TrkHitSPVec &track, std::initializer_list<double>)
+void RiemannFitter::Fit(const TrkHitSPVec &track)
 {
     c_ = 0.;
     n1_ = 0.;
@@ -115,7 +115,7 @@ void RiemannFitter::Fit(const TrkHitSPVec &track, std::initializer_list<double>)
     //std::cout << 0.3*abs(RiemannFitHelper::GetMagnetAtOrigin(tracking::dY)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_) << " MeV" << std::endl;
 }
 
-void RiemannFitter::Fill(const TrkHitSPVec& track, std::initializer_list<double>)
+void RiemannFitter::Fill(const TrkHitSPVec& track)
 {
     auto s = GetSign(track);
     double y = 0.5*(track.at(0)->GetY() + track.at(dim_ - 1)->GetY());

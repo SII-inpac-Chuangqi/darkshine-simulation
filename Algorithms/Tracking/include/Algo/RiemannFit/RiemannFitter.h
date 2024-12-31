@@ -48,9 +48,9 @@ public:
 
 //................................................................................//
 //Processor
-    virtual void Init(const TrkHitSPVec &track, std::initializer_list<double>) override;
-    virtual void Fit (const TrkHitSPVec &track, std::initializer_list<double>) override;
-    virtual void Fill(const TrkHitSPVec &track, std::initializer_list<double>) override;
+    virtual void Init(const TrkHitSPVec &track) override;
+    virtual void Fit (const TrkHitSPVec &track) override;
+    virtual void Fill(const TrkHitSPVec &track) override;
 
 //................................................................................//
 //Getter

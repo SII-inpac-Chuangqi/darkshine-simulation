@@ -38,9 +38,9 @@ KalmanFilterFitter::KalmanFilterFitter(const TrkHitSPVec &track, Config config, 
     {
         if(track.size() < 4) throw -1;
         
-        Init(track, {});
-        Fit (track, {});
-        Fill(track, {});
+        Init(track);
+        Fit (track);
+        Fill(track);
     }
     catch(int e)
     {
@@ -65,7 +65,7 @@ KalmanFilterFitter::KalmanFilterFitter(const TrkHitSPVec &track, Config config, 
 //Processor
 //................................................................................//
 //Initialize the fitter, set up magnetic, material manager, track representation, fitter and track model
-void KalmanFilterFitter::Init(const TrkHitSPVec &track, std::initializer_list<double> /*list*/)
+void KalmanFilterFitter::Init(const TrkHitSPVec &track)
 {
     using namespace dunits;
 
@@ -90,7 +90,7 @@ void KalmanFilterFitter::Init(const TrkHitSPVec &track, std::initializer_list<do
 
 //................................................................................//
 //Do the fit
-void KalmanFilterFitter::Fit(const TrkHitSPVec &track, std::initializer_list<double>)
+void KalmanFilterFitter::Fit(const TrkHitSPVec &track)
 {
     using namespace dunits;
 
@@ -134,7 +134,7 @@ void KalmanFilterFitter::Fit(const TrkHitSPVec &track, std::initializer_list<dou
 
 //................................................................................//
 //Fill results
-void KalmanFilterFitter::Fill(const TrkHitSPVec &track, std::initializer_list<double>)
+void KalmanFilterFitter::Fill(const TrkHitSPVec &track)
 {
     using namespace dunits;
 
