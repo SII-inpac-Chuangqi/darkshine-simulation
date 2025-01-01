@@ -316,8 +316,9 @@ void TrackingProcessor::InitEvt() {
 
 void TrackingProcessor::FillTruth(DTruth *truth_info,
                                   std::vector<DStep*> *initial_steps,
-                                  std::vector<TrkHit> raw_tagtrk2_hits,
-                                  std::vector<TrkHit> raw_rectrk2_hits) {
+                                  const SimulatedHitMap &simu_hits,
+                                  const std::vector<TrkHit> &raw_tagtrk2_hits,
+                                  const std::vector<TrkHit> &raw_rectrk2_hits) {
 
         dAnaData->LoadTruthInfo(truth_info);
         //dAnaData->PrintTruthInfo();
@@ -390,6 +391,27 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
         delete temp_v;
 
     if (!clean) {
+    // Fill pcontrib
+        for (auto const& [collection_name, hit_collection]: simu_hits) {
+            if(collection_name.substr(3,3) != "Trk") continue;
+            for (auto const &hit: *hit_collection) {
+                if (hit->getPContribution().empty()) continue;
+                if (hit->getE() < remove_hit_less_E) continue;
+                Trk_contrib_pdg.emplace_back(hit->getPContribution().at(0).getPdg());
+                std::string proc_name = hit->getPContribution().at(0).getCreateProcess().empty() ? "Initial" : hit->getPContribution().at(0).getCreateProcess();
+                Trk_contrib_create_process.emplace_back(proc_name);
+                Trk_contrib_z.emplace_back(hit->getZ());
+                Trk_contrib_E.emplace_back(hit->getPContribution().at(0).getEnergy());
+                Trk_deposit_E.emplace_back(hit->getE());
+                if (proc_name == "Initial") Trk_contrib_Initial_count++;
+                else if (proc_name == "conv") Trk_contrib_conv_count++;
+                else if (proc_name == "eIoni") Trk_contrib_eIoni_count++;
+                else if (proc_name == "compt") Trk_contrib_compt_count++;
+                else if (proc_name == "eBrem") Trk_contrib_eBrem_count++;
+                else if (proc_name == "phot") Trk_contrib_phot_count++;
+            }
+        }
+
         TagTrk2_No = raw_tagtrk2_hits.size();
  
         bool trackerFlag = false;
@@ -464,10 +486,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     [[maybe_unused]] bool if_reco_tag_hits(false);
     [[maybe_unused]] bool if_reco_rec_hits(false);
 
-    std::vector<double> magnet_at_origin = {magnets.size() && magnets.at(0) ? magnets.at(0)->GetField(0., 0., 0.) : 0.,
-                                            magnets.size() && magnets.at(1) ? magnets.at(1)->GetField(0., 0., 0.) : con_field,
-                                            magnets.size() && magnets.at(2) ? magnets.at(2)->GetField(0., 0., 0.) : 0.};
-
 //................................................................................//
 //Initialize vars
     this->InitEvt();
@@ -481,227 +499,202 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     auto it_find_tag2 = simuhit_collection.find("TagTrk2");
     auto it_find_rec1 = simuhit_collection.find("RecTrk1");
     auto it_find_rec2 = simuhit_collection.find("RecTrk2");
-    if (it_find_step != step_collection.end() &&
-        it_find_tag1 != simuhit_collection.end() &&
-        it_find_tag2 != simuhit_collection.end() &&
-        it_find_rec1 != simuhit_collection.end() &&
-        it_find_rec2 != simuhit_collection.end())
-    {
-        if_initial_steps = true;
-        if_raw_tag_hits = true;
-        if_raw_rec_hits = true;
+    if (it_find_step == step_collection.end() ||
+        it_find_tag1 == simuhit_collection.end() ||
+        it_find_tag2 == simuhit_collection.end() ||
+        it_find_rec1 == simuhit_collection.end() ||
+        it_find_rec2 == simuhit_collection.end())
+        return;
+
+    if_initial_steps = true;
+    if_raw_tag_hits = true;
+    if_raw_rec_hits = true;
 
 //................................................................................//
 //Read
-        //const auto &mc = MCCollection.at("RawMCParticle");
-        const auto &initial_steps = step_collection.at("Initial_Particle_Step");
+    //const auto &mc = MCCollection.at("RawMCParticle");
+    const auto &initial_steps = step_collection.at("Initial_Particle_Step");
 
-        std::vector<TrkHit> raw_tagtrk1_hits;
-        std::vector<TrkHit> raw_tagtrk2_hits;
-        for (auto hit : *simuhit_collection.at("TagTrk1")) {
-            if (hit->getE() < remove_hit_less_E) continue;
-            raw_tagtrk1_hits.emplace_back(*hit);
-        }
-        for (auto hit : *simuhit_collection.at("TagTrk2")){
-            if (hit->getE() < remove_hit_less_E) continue;
-            raw_tagtrk2_hits.emplace_back(*hit);
-        }
+    std::vector<TrkHit> raw_tagtrk1_hits;
+    std::vector<TrkHit> raw_tagtrk2_hits;
+    for (auto hit : *simuhit_collection.at("TagTrk1")) {
+        if (hit->getE() < remove_hit_less_E) continue;
+        raw_tagtrk1_hits.emplace_back(*hit);
+    }
+    for (auto hit : *simuhit_collection.at("TagTrk2")){
+        if (hit->getE() < remove_hit_less_E) continue;
+        raw_tagtrk2_hits.emplace_back(*hit);
+    }
 
-        std::vector<TrkHit> raw_rectrk1_hits;
-        std::vector<TrkHit> raw_rectrk2_hits;
-        for (auto hit : *simuhit_collection.at("RecTrk1")) {
-            if (hit->getE() < remove_hit_less_E) continue;
-            raw_rectrk1_hits.emplace_back(*hit);
-        }
-        for (auto hit : *simuhit_collection.at("RecTrk2")) {
-            if (hit->getE() < remove_hit_less_E) continue;
-            raw_rectrk2_hits.emplace_back(*hit);
-        }
-
-        // Better to move to FillTruth
-        // Fill pcontrib
-        if (!clean) {
-            for (auto const& [collection_name, hit_collection]: simuhit_collection) {
-                if(collection_name.substr(3,3) != "Trk") continue;
-                for (auto const &hit: *hit_collection) {
-                    if (hit->getPContribution().empty()) continue;
-                    if (hit->getE() < remove_hit_less_E) continue;
-                    Trk_contrib_pdg.emplace_back(hit->getPContribution().at(0).getPdg());
-                    std::string proc_name = hit->getPContribution().at(0).getCreateProcess().empty() ? "Initial" : hit->getPContribution().at(0).getCreateProcess();
-                    Trk_contrib_create_process.emplace_back(proc_name);
-                    Trk_contrib_z.emplace_back(hit->getZ());
-                    Trk_contrib_E.emplace_back(hit->getPContribution().at(0).getEnergy());
-                    Trk_deposit_E.emplace_back(hit->getE());
-                    if (proc_name == "Initial") Trk_contrib_Initial_count++;
-                    else if (proc_name == "conv") Trk_contrib_conv_count++;
-                    else if (proc_name == "eIoni") Trk_contrib_eIoni_count++;
-                    else if (proc_name == "compt") Trk_contrib_compt_count++;
-                    else if (proc_name == "eBrem") Trk_contrib_eBrem_count++;
-                    else if (proc_name == "phot") Trk_contrib_phot_count++;
-                }
-            }
-        }
+    std::vector<TrkHit> raw_rectrk1_hits;
+    std::vector<TrkHit> raw_rectrk2_hits;
+    for (auto hit : *simuhit_collection.at("RecTrk1")) {
+        if (hit->getE() < remove_hit_less_E) continue;
+        raw_rectrk1_hits.emplace_back(*hit);
+    }
+    for (auto hit : *simuhit_collection.at("RecTrk2")) {
+        if (hit->getE() < remove_hit_less_E) continue;
+        raw_rectrk2_hits.emplace_back(*hit);
+    }
 
 //................................................................................//
 //Tag tracker
-        if (IsValidHitSize(raw_tagtrk2_hits))
-        {
-            if_raw_tag_hit_number = true;
+    if (IsValidHitSize(raw_tagtrk2_hits))
+    {
+        if_raw_tag_hit_number = true;
 
 //Digitization
-            digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, &tag_hit_pool_, tracking::dTag);
+        digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, &tag_hit_pool_, tracking::dTag);
 
-            if(tag_hit_pool_.Size())
+        if(tag_hit_pool_.Size())
+        {
+            if_reco_tag_hits = true;
+
+            if(if_raw_tag_hit_number && if_reco_tag_hits)
             {
-                if_reco_tag_hits = true;
-
-                if(if_raw_tag_hit_number && if_reco_tag_hits)
-                {
 //Finding, by pre-fitting
-                    GreedyFinder find_tag(finding_config_, &tag_hit_pool_);
-                    find_tag.FillTracks(&tag_tracks_);
-        
+                GreedyFinder find_tag(finding_config_, &tag_hit_pool_);
+                find_tag.FillTracks(&tag_tracks_);
+    
 //Fit, by Genfit, Kalman filter/by Riemann fitting
-                    TagTrk2_track_No = find_tag.GetTrackNo();
+                TagTrk2_track_No = find_tag.GetTrackNo();
 
-                    for (auto &track : tag_tracks_)
-                    {
-                        track->SetVerbose(Verbose);
-                        if(if_backwards) track->Reverse();
+                for (auto &track : tag_tracks_)
+                {
+                    track->SetVerbose(Verbose);
+                    if(if_backwards) track->Reverse();
 
-                        WrappedFitter fitter;
-                        if      (Tag_fit_method == tracking::dKalman)  fitter.Run(genfit_config_, track);
-                        else if (Tag_fit_method == tracking::dRiemann) fitter.Run(riemann_config_, track);
-                    }
+                    WrappedFitter fitter;
+                    if      (Tag_fit_method == tracking::dKalman)  fitter.Run(genfit_config_, track);
+                    else if (Tag_fit_method == tracking::dRiemann) fitter.Run(riemann_config_, track);
                 }
             }
         }
+    }
 
 //................................................................................//
 //Recoil tracker
-        if (IsValidHitSize(raw_rectrk2_hits))
-        {
-            if_raw_rec_hit_number = true;
+    if (IsValidHitSize(raw_rectrk2_hits))
+    {
+        if_raw_rec_hit_number = true;
 
 //Digitization
-            digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, &rec_hit_pool_, tracking::dRec);
+        digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, &rec_hit_pool_, tracking::dRec);
 
-            if(rec_hit_pool_.Size())
+        if(rec_hit_pool_.Size())
+        {
+            if_reco_rec_hits = true;
+
+            if(if_raw_rec_hit_number && if_reco_rec_hits)
             {
-                if_reco_rec_hits = true;
-
-                if(if_raw_rec_hit_number && if_reco_rec_hits)
-                {
 //Finding, by pre-fitting
-                    GreedyFinder find_rec(finding_config_, &rec_hit_pool_);
-                    find_rec.FillTracks(&rec_tracks_);
+                GreedyFinder find_rec(finding_config_, &rec_hit_pool_);
+                find_rec.FillTracks(&rec_tracks_);
 
 //Fit, by Genfit, Kalman filter/by Riemann fitting
-                    RecTrk2_track_No = find_rec.GetTrackNo();
-              
-                    for (auto &track : rec_tracks_) {
-                        track->SetVerbose(Verbose);
-                        if(if_backwards) track->Reverse();
+                RecTrk2_track_No = find_rec.GetTrackNo();
+          
+                for (auto &track : rec_tracks_) {
+                    track->SetVerbose(Verbose);
+                    if(if_backwards) track->Reverse();
 
-                        WrappedFitter fitter;
-                        if      (Rec_fit_method == tracking::dKalman)  fitter.Run(genfit_config_, track);
-                        else if (Rec_fit_method == tracking::dRiemann) fitter.Run(riemann_config_, track);
-                    }
+                    WrappedFitter fitter;
+                    if      (Rec_fit_method == tracking::dKalman)  fitter.Run(genfit_config_, track);
+                    else if (Rec_fit_method == tracking::dRiemann) fitter.Run(riemann_config_, track);
                 }
             }
         }
+    }
 
 //................................................................................//
 //Sort tracks by P
-        std::sort(tag_tracks_.begin(), tag_tracks_.end(), [](std::shared_ptr<DTrack> &track1, std::shared_ptr<DTrack> &track2)
-                                                          { return track1->GetPp() > track2->GetPp(); } );
-        std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](std::shared_ptr<DTrack> &track1, std::shared_ptr<DTrack> &track2)
+    std::sort(tag_tracks_.begin(), tag_tracks_.end(), [](std::shared_ptr<DTrack> &track1, std::shared_ptr<DTrack> &track2)
+                                                      { return track1->GetPp() > track2->GetPp(); } );
+    std::sort(rec_tracks_.begin(), rec_tracks_.end(), [](std::shared_ptr<DTrack> &track1, std::shared_ptr<DTrack> &track2)
                                                           { return track1->GetPp() > track2->GetPp(); } );
 /*
-        for(const auto &track : rec_tracks_)
-        {
-            std::cout << "track: " << track.get() << std::endl;
-            for(int i = 0; i < track->GetSize(); i++)
-                std::cout << "hit " << i << ": " << track->At(i)->GetTrack().get() << std::endl;
-        }
-        std::cout << std::endl;
+    for(const auto &track : rec_tracks_)
+    {
+        std::cout << "track: " << track.get() << std::endl;
+        for(int i = 0; i < track->GetSize(); i++)
+            std::cout << "hit " << i << ": " << track->At(i)->GetTrack().get() << std::endl;
+    }
+    std::cout << std::endl;
 */
 
 //Vertex
 /*
-        if(rec_tracks_.size() > 1)
-        {
-            VertexFinder vertex_finder(&rec_tracks_);
-            vertex_finder.FindVertexes(&rec_vertexes_);
+    if(rec_tracks_.size() > 1)
+    {
+        VertexFinder vertex_finder(&rec_tracks_);
+        vertex_finder.FindVertexes(&rec_vertexes_);
 
-            for(const auto &vertex: rec_vertexes_)
-                RecTrk2_vertex_z.push_back(vertex->GetZ());
-            }
-        }
+        for(const auto &vertex: rec_vertexes_)
+            RecTrk2_vertex_z.push_back(vertex->GetZ());
+    }
 */
 //................................................................................//
 //Fill
-        for(auto &track : tag_tracks_)
-        {
-            TagTrk2_pp.push_back(track->GetPp());
+    for(auto &track : tag_tracks_)
+    {
+        TagTrk2_pp.push_back(track->GetPp());
 //            TagTrk2_track_chi2.push_back(track->GetChi2());
-        
-            if (!clean)
-            {
-                TagTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
-                TagTrk2_track_quality.push_back(track->GetQuality());
-                TagTrk2_track_x_sigma.push_back(track->GetXSigma());
-                TagTrk2_track_y_sigma.push_back(track->GetYSigma());
-            }
-        }
-
-        for(auto &track : rec_tracks_)
+    
+        if (!clean)
         {
-            RecTrk2_pp.push_back(track->GetPp());
+            TagTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
+            TagTrk2_track_quality.push_back(track->GetQuality());
+            TagTrk2_track_x_sigma.push_back(track->GetXSigma());
+            TagTrk2_track_y_sigma.push_back(track->GetYSigma());
+        }
+    }
+
+    for(auto &track : rec_tracks_)
+    {
+        RecTrk2_pp.push_back(track->GetPp());
 //            RecTrk2_track_chi2.push_back(track->GetChi2());
 
-            ECal_seed_x.push_back(track->GetECalSeedX());
-            ECal_seed_y.push_back(track->GetECalSeedY());
-            ECal_seed_px.push_back(track->GetECalDirctX());
-            ECal_seed_py.push_back(track->GetECalDirctY());
-            ECal_seed_pz.push_back(track->GetECalQoP());
+        ECal_seed_x.push_back(track->GetECalSeedX());
+        ECal_seed_y.push_back(track->GetECalSeedY());
+        ECal_seed_px.push_back(track->GetECalDirctX());
+        ECal_seed_py.push_back(track->GetECalDirctY());
+        ECal_seed_pz.push_back(track->GetECalQoP());
 
-            if (!clean) {
-                RecTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
-                RecTrk2_track_quality.push_back(track->GetQuality());
-                RecTrk2_track_x_sigma.push_back(track->GetXSigma());
-                RecTrk2_track_y_sigma.push_back(track->GetYSigma());
-         
-                std::vector<double> track_x;
-                std::vector<double> track_y;
-                std::vector<double> track_z;
-                for(int hit = 0; hit < track->Size(); hit++)
-                {
-                    track_x.push_back(track->At(hit)->GetX());
-                    track_y.push_back(track->At(hit)->GetY());
-                    track_z.push_back(track->At(hit)->GetZ());
-                }
-                RecTrk2_track_x.push_back(track_x);
-                RecTrk2_track_y.push_back(track_y);
-                RecTrk2_track_z.push_back(track_z);
-
-                //auto extrapolated_x = track->GetExtrapolated(tracking::dX);
-                //auto extrapolated_y = track->GetExtrapolated(tracking::dY);
-                //RecTrk2_track_extrapolated_x.push_back(extrapolated_x);
-                //RecTrk2_track_extrapolated_y.push_back(extrapolated_y);
-
-                RecTrk2_track_corrections_x.push_back(track->GetCorrectionsX());
-
-                RecTrk2_track_preA.push_back(track->GetPreXc());
-                RecTrk2_track_preB.push_back(track->GetPreYc());
-                RecTrk2_track_preR.push_back(track->GetPreR());
+        if (!clean) {
+            RecTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
+            RecTrk2_track_quality.push_back(track->GetQuality());
+            RecTrk2_track_x_sigma.push_back(track->GetXSigma());
+            RecTrk2_track_y_sigma.push_back(track->GetYSigma());
+     
+            std::vector<double> track_x;
+            std::vector<double> track_y;
+            std::vector<double> track_z;
+            for(int hit = 0; hit < track->Size(); hit++)
+            {
+                track_x.push_back(track->At(hit)->GetX());
+                track_y.push_back(track->At(hit)->GetY());
+                track_z.push_back(track->At(hit)->GetZ());
             }
+            RecTrk2_track_x.push_back(track_x);
+            RecTrk2_track_y.push_back(track_y);
+            RecTrk2_track_z.push_back(track_z);
+
+            //auto extrapolated_x = track->GetExtrapolated(tracking::dX);
+            //auto extrapolated_y = track->GetExtrapolated(tracking::dY);
+            //RecTrk2_track_extrapolated_x.push_back(extrapolated_x);
+            //RecTrk2_track_extrapolated_y.push_back(extrapolated_y);
+
+            RecTrk2_track_corrections_x.push_back(track->GetCorrectionsX());
+
+            RecTrk2_track_preA.push_back(track->GetPreXc());
+            RecTrk2_track_preB.push_back(track->GetPreYc());
+            RecTrk2_track_preR.push_back(track->GetPreR());
         }
+    }
 
 //................................................................................//
 //Write truth
-        this->FillTruth(evt->getTruthInfo(), initial_steps, raw_tagtrk2_hits, raw_rectrk2_hits);
-    }
+    this->FillTruth(evt->getTruthInfo(), initial_steps, simuhit_collection, raw_tagtrk2_hits, raw_rectrk2_hits);
 }
 
 void TrackingProcessor::CheckEvt(AnaEvent *evt) {

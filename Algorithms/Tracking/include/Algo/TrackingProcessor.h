@@ -45,8 +45,8 @@ public:
     void InitEvt() override;
 //................................................................................//
 //Fill truth variables
-    void FillTruth(DTruth *truth_info, std::vector<DStep*> *stepIni,
-                   std::vector<TrkHit> rawTagTrk2Hits, std::vector<TrkHit> rawRecTrk2Hits);
+    void FillTruth(DTruth *truth_info, std::vector<DStep*> *stepIni, const SimulatedHitMap &simu_hits,
+                   const std::vector<TrkHit> &rawTagTrk2Hits, const std::vector<TrkHit> &rawRecTrk2Hits);
 
     void ProcessEvt(AnaEvent* evt) override;
 
