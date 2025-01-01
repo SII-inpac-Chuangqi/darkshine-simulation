@@ -33,15 +33,14 @@ class KalmanFilterFitter : public Fitter
 public:
     struct Config
     {
-        double pre_R;
-        double const_B;
+        double const_B = -1.5;
     };
 
 public:
 //................................................................................//
 //Constructor
     KalmanFilterFitter() {}
-    KalmanFilterFitter(const TrkHitSPVec &track, Config config, int verbose = 0);
+    KalmanFilterFitter(DTrackP track, Config config, int verbose = 0);
     ~KalmanFilterFitter()
     {
         //delete measurement; measurement = nullptr;

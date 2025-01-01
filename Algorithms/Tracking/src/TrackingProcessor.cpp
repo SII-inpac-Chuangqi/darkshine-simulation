@@ -568,21 +568,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                         track->SetVerbose(Verbose);
                         if(if_backwards) track->Reverse();
 
-                        int size = track->GetSize();
-                        double x = 0.;
-                        double y = 0.5*(track->At(0)->GetY() + track->At(size - 1)->GetY());
-                        double z = 0.5*(track->At(0)->GetZ() + track->At(size - 1)->GetZ());
-                        std::vector<double> magnet_at_median = {dAnaData->getMagnetFieldAt({x, y, z}).at(0)*10.,
-                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(1)*10.,
-                                                                dAnaData->getMagnetFieldAt({x, y, z}).at(2)*10.};
-                        track->ExceptionHandler(magnet_at_origin);
-                        track->Reverse();
-
-                        genfit_config_.pre_R = track->GetPreR();
-                        genfit_config_.const_B = -1.5;
-                        KalmanFilterFitter(track->GetHits(), genfit_config_);
-                        //track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
-                        //track->Evaluate();
+                        KalmanFilterFitter(track, genfit_config_);
                     }
                 }
             }
@@ -611,20 +597,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     RecTrk2_track_No = find_rec.GetTrackNo();
               
                     for (auto &track : rec_tracks_) {
-                    //    track->SetVerbose(Verbose);
-                    //    if(if_backwards) track->Reverse();
+                        track->SetVerbose(Verbose);
+                        if(if_backwards) track->Reverse();
 
-                    //    int size = track->GetSize();
-                    //    double x = 0.;
-                    //    double y = 0.5*(track->At(0)->GetY() + track->At(size - 1)->GetY());
-                    //    double z = 0.5*(track->At(0)->GetZ() + track->At(size - 1)->GetZ());
-                    //    std::vector<double> magnet_at_median = {dAnaData->getMagnetFieldAt({x, y, z}).at(0)*10.,
-                    //                                            dAnaData->getMagnetFieldAt({x, y, z}).at(1)*10.,
-                    //                                            dAnaData->getMagnetFieldAt({x, y, z}).at(2)*10.};
-                    //    track->ExceptionHandler(magnet_at_origin);
-                    //    track->Reverse();
-                    //    track->Fit(Tag_fit_method);            //choose fitting method: Kalman filter/Riemann fit
-                    //    //track->Evaluate();
+                        KalmanFilterFitter(track, genfit_config_);
                     }
                 }
             }
@@ -663,7 +639,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         for(auto &track : tag_tracks_)
         {
             TagTrk2_pp.push_back(track->GetPp());
-            TagTrk2_track_chi2.push_back(track->GetChi2());
+//            TagTrk2_track_chi2.push_back(track->GetChi2());
         
             if (!clean)
             {
@@ -677,7 +653,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         for(auto &track : rec_tracks_)
         {
             RecTrk2_pp.push_back(track->GetPp());
-            RecTrk2_track_chi2.push_back(track->GetChi2());
+//            RecTrk2_track_chi2.push_back(track->GetChi2());
 
             ECal_seed_x.push_back(track->GetECalSeedX());
             ECal_seed_y.push_back(track->GetECalSeedY());
@@ -694,7 +670,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 std::vector<double> track_x;
                 std::vector<double> track_y;
                 std::vector<double> track_z;
-                for(int hit = 0; hit < track->GetSize(); hit++)
+                for(int hit = 0; hit < track->Size(); hit++)
                 {
                     track_x.push_back(track->At(hit)->GetX());
                     track_y.push_back(track->At(hit)->GetY());

@@ -29,7 +29,7 @@ RiemannFitter::RiemannFitter(const TrkHitSPVec &track, Config config, int verbos
     catch(...)
     {
         std::cerr << "[Error] ==> Unexpected error in RiemannFitter" << std::endl;
-        pp = 0.3*std::abs(config_.const_B)*config_.pre_R;
+        pp_ = 0.3*std::abs(config_.const_B)*config_.pre_R;
         return;
     }
 }
@@ -125,7 +125,7 @@ void RiemannFitter::Fill(const TrkHitSPVec& track)
     //double z = track.at(0)->GetZ();
     //double x = track.at(0)->GetX();
     //std::cout << 0.5*(track.at(0)->GetX() + track.at(dim_ - 1)->GetX()) << "\t" << x << std::endl;
-    pp = 0.3*abs(RiemannFitHelper::GetMagnetY(x, y, z)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
+    pp_ = 0.3*abs(RiemannFitHelper::GetMagnetY(x, y, z)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
 }
 
 //................................................................................//

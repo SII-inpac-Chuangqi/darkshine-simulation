@@ -263,7 +263,7 @@ std::vector<double> DTrack::GetExtrapolated(tracking::direction extrop_dir)
 
     return {};
 }
-
+/*
 void DTrack::ExceptionHandler(const std::vector<double> &magnet)
 {
     if(verbose_ > 0 && magnet.size() != 3)
@@ -276,7 +276,7 @@ void DTrack::ExceptionHandler(const std::vector<double> &magnet)
 
     By_ = magnet.at(1);
 }
-
+*/
 void DTrack::Remove(int i)
 {
     hits_.erase(std::remove(hits_.begin(), hits_.end(), hits_.at(i)), hits_.end());

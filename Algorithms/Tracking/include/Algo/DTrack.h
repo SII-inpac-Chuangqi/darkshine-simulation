@@ -21,18 +21,10 @@
 //................................................................................//
 //Tracking
 #include "Algo/TypeDef.h"
-#include "Algo/Fitter.h"
 
 class DVertex;
 
-//................................................................................//
-//Fit methods implemented in Dark Shine tracking
-//-- dNone: No method specified, return pre-fitting results from track finding
-//-- dKalman: Kalman fitter_ from GenFit
-namespace tracking
-{
-    enum FitMethods {dNone, dKalman, dRiemann};
-}
+class Fitter;
 
 class DTrack
 {
@@ -47,7 +39,7 @@ public:
     DTrack(DTrack &&oldTrack);
     DTrack& operator=(const DTrack&);
 
-    ~DTrack() {delete fitter_; fitter_ = nullptr;};
+    ~DTrack() {/*delete fitter_; fitter_ = nullptr;*/}; // DO NOT release fitter_, memory not owned here
 
 //................................................................................//
 //Get
@@ -71,7 +63,7 @@ public:
     double GetECalQoP() const {return ECal_seed_pz_;}
     int GetInitCellIdZ() const;
 
-    int GetSize() const {return hits_.size();}
+    int Size() const {return hits_.size();}
     TrkHitSPVec& GetHits() {return hits_;}
     TrkHitSP At(int i) {return hits_.at(i);}
     TrkHitSP AtCellIdZ(int i);
@@ -89,14 +81,26 @@ public:
 //................................................................................//
 //Set
 //................................................................................//
-    void ExceptionHandler(const std::vector<double> &magnet);
+//    void ExceptionHandler(const std::vector<double> &magnet);
+    void LinkFitter(Fitter *fitter) {fitter_ = fitter;}
     void SetVerbose(int verbose) {verbose_ = verbose;}
-    void SetPDG(int newPDG)   {pdg_ = newPDG;}
+    void SetPDG(int newPDG) {pdg_ = newPDG;}
     void SetSign(int newSign) {sign_ = newSign;}
-    void SetPx(double newPx)  {px_ = newPx;}
-    void SetPy(double newPy)  {py_ = newPy;}
-    void SetPz(double newPz)  {pz_ = newPz;}
+    void SetPx(double newPx) {px_ = newPx;}
+    void SetPy(double newPy) {py_ = newPy;}
+    void SetPz(double newPz) {pz_ = newPz;}
+    void SetPp(double newPp) {pp_ = newPp;}
+    void SetPl(double newPl) {pl_ = newPl;}
+    void SetNdf(double newNdf) {ndf_ = newNdf;}
+    void SetXSigma(double newXSigma) {xSigma_ = newXSigma;}
+    void SetYSigma(double newYSigma) {ySigma_ = newYSigma;}
+    void SetECalSeedX(double newECalSeedX) {ECal_seed_x_ = newECalSeedX;}
+    void SetECalSeedY(double newECalSeedY) {ECal_seed_y_ = newECalSeedY;}
+    void SetECalDirctX(double newECalDirctX) {ECal_seed_px_ = newECalDirctX;}
+    void SetECalDirctY(double newECalDirctY) {ECal_seed_py_ = newECalDirctY;}
+    void SetECalQoP(double newECalQoP) {ECal_seed_pz_ = newECalQoP;}
     void SetChi2(double newChi2) {chi2_ = newChi2;}
+    void SetChi2Algo(double newChi2) {chi2_algo_ = newChi2;}
     void Remove(int i);
     void SetVertex(const std::shared_ptr<DVertex> &vertex) {vertex_ = vertex;}
     static void SetResolutions(double x_resolution, double y_resolution, double z_resolution)
