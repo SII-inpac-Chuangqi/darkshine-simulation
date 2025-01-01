@@ -17,6 +17,7 @@
 //TRACKING
 #include "Algo/TrkHit.h"
 #include "Algo/Finder.h"
+#include "Algo/HitPool.h"
 
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
@@ -24,6 +25,9 @@
 
 class GreedyFinder : public Finder
 {
+public:
+    using Pool = HitPool<Key, TrkHit>;
+
 public:
     struct Config
     {
@@ -37,7 +41,7 @@ public:
 //................................................................................//
 //Constructor
 //................................................................................//
-    GreedyFinder(Pool *pool, Config config);
+    GreedyFinder(Config config, Pool *pool);
     ~GreedyFinder() {}
 
     GreedyFinder(const GreedyFinder&) = delete;

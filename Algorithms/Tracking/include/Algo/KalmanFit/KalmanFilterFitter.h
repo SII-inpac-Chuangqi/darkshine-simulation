@@ -40,7 +40,7 @@ public:
 //................................................................................//
 //Constructor
     KalmanFilterFitter() {}
-    KalmanFilterFitter(DTrackP track, Config config, int verbose = 0);
+    KalmanFilterFitter(Config config, DTrackP track, int verbose = 0);
     ~KalmanFilterFitter()
     {
         //delete measurement; measurement = nullptr;

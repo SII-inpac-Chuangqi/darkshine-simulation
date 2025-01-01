@@ -28,6 +28,7 @@
 //TRACKING
 //#include "Algo/TypeDef.h"
 #include "Algo/Utils/Util.h"
+#include "Algo/WrappedFitter.h"
 #include "Algo/RiemannFit/RiemannFitHelper.h"
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Vertex/VertexFinder.h"
@@ -557,7 +558,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 if(if_raw_tag_hit_number && if_reco_tag_hits)
                 {
 //Finding, by pre-fitting
-                    GreedyFinder find_tag(&tag_hit_pool_, finding_config_);
+                    GreedyFinder find_tag(finding_config_, &tag_hit_pool_);
                     find_tag.FillTracks(&tag_tracks_);
         
 //Fit, by Genfit, Kalman filter/by Riemann fitting
@@ -568,7 +569,9 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                         track->SetVerbose(Verbose);
                         if(if_backwards) track->Reverse();
 
-                        KalmanFilterFitter(track, genfit_config_);
+                        WrappedFitter fitter;
+                        if      (Tag_fit_method == tracking::dKalman)  fitter.Run(genfit_config_, track);
+                        else if (Tag_fit_method == tracking::dRiemann) fitter.Run(riemann_config_, track);
                     }
                 }
             }
@@ -590,7 +593,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 if(if_raw_rec_hit_number && if_reco_rec_hits)
                 {
 //Finding, by pre-fitting
-                    GreedyFinder find_rec(&rec_hit_pool_, finding_config_);
+                    GreedyFinder find_rec(finding_config_, &rec_hit_pool_);
                     find_rec.FillTracks(&rec_tracks_);
 
 //Fit, by Genfit, Kalman filter/by Riemann fitting
@@ -600,7 +603,9 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                         track->SetVerbose(Verbose);
                         if(if_backwards) track->Reverse();
 
-                        KalmanFilterFitter(track, genfit_config_);
+                        WrappedFitter fitter;
+                        if      (Rec_fit_method == tracking::dKalman)  fitter.Run(genfit_config_, track);
+                        else if (Rec_fit_method == tracking::dRiemann) fitter.Run(riemann_config_, track);
                     }
                 }
             }

@@ -23,7 +23,7 @@
 //................................................................................//
 //Constructor
 //
-GreedyFinder::GreedyFinder(Pool *pool, GreedyFinder::Config config) : config_(config)
+GreedyFinder::GreedyFinder(Config config, Pool *pool) : config_(config)
 {
     circle_No_ = 0;
 

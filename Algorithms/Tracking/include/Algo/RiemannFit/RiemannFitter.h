@@ -29,18 +29,15 @@ class RiemannFitter : public Fitter
 public:
     struct Config
     {
-        double const_B;
-        double pre_Xc;
-        double pre_Yc;
-        double pre_R;
         int max_trial = 100;
+        double const_B = -1.5;
     };
 
 public:
 //................................................................................//
 //Constructor
     RiemannFitter() {}
-    RiemannFitter(const TrkHitSPVec &track, Config config, int verbose = 0);
+    RiemannFitter(Config config, DTrackP track, int verbose = 0);
     ~RiemannFitter() {};
 
     RiemannFitter(const RiemannFitter&) = delete;

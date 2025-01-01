@@ -78,6 +78,8 @@ public:
     std::vector<double> GetExtrapolated(tracking::direction extrop_dir = tracking::dX);
     std::vector<double> GetCorrectionsX() const {return corrections_x_;}
 
+    Fitter* GetFitter() {return fitter_;}
+
 //................................................................................//
 //Set
 //................................................................................//

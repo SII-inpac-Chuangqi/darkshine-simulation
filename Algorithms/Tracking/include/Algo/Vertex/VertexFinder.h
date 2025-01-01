@@ -10,6 +10,8 @@
 
 //................................................................................//
 //TRACKING
+#include "Algo/TypeDef.h"
+#include "Algo/TrkHit.h"
 #include "Algo/DTrack.h"
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Utils/Clusterer.h"

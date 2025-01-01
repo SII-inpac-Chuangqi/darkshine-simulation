@@ -31,7 +31,7 @@
 
 //................................................................................//
 //Constructor
-KalmanFilterFitter::KalmanFilterFitter(DTrackP track, Config config, int verbose) : config_(config), hitCov(2)
+KalmanFilterFitter::KalmanFilterFitter(Config config, DTrackP track, int verbose) : config_(config), hitCov(2)
 {
     track_   = track;
     verbose_ = verbose;

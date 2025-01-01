@@ -108,4 +108,7 @@ protected:
 private:
 };
 
+//using Key  = std::decay_t<decltype(((TrkHit*)nullptr)->GetCellIdZ())>;
+using Key = std::invoke_result_t<decltype(&TrkHit::GetCellIdZ), TrkHit>;
+
 #endif

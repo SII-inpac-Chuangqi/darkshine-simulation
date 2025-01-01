@@ -9,41 +9,45 @@
 //................................................................................//
 //Tracking
 #include "Algo/RiemannFit/RiemannFitHelper.h"
+#include "Algo/DTrack.h"
 
 //................................................................................//
 //Constructor
-RiemannFitter::RiemannFitter(const TrkHitSPVec &track, Config config, int verbose) : config_(config)
+RiemannFitter::RiemannFitter(Config config, DTrackP track, int verbose) : config_(config)
 {
+    track_   = track;
     verbose_ = verbose;
 
-    pre_Xc_ = config_.pre_Xc;
-    pre_Yc_ = config_.pre_Yc;
-    pre_R_ = config_.pre_R; 
+    pre_Xc_ = track_->GetPreXc();
+    pre_Yc_ = track_->GetPreYc();
+    pre_R_ = track_->GetPreR(); 
+
+    auto hits = track_->GetHits();
 
     try
     {
-        this->Init(track);
-        this->Fit (track);
-        this->Fill(track);
+        this->Init(hits);
+        this->Fit (hits);
+        this->Fill(hits);
     }
     catch(...)
     {
         std::cerr << "[Error] ==> Unexpected error in RiemannFitter" << std::endl;
-        pp_ = 0.3*std::abs(config_.const_B)*config_.pre_R;
+        pp_ = 0.3*std::abs(config_.const_B)*track_->GetPreR();
         return;
     }
 }
 
 //................................................................................//
 //Processor
-void RiemannFitter::Init(const TrkHitSPVec &track)
+void RiemannFitter::Init(const TrkHitSPVec &hits)
 {
-    dim_ = track.size();
-    corrections_x_ = this->GetDeltax(track);
-    this->GetTheta(track);
+    dim_ = hits.size();
+    corrections_x_ = this->GetDeltax(hits);
+    this->GetTheta(hits);
 }
 
-void RiemannFitter::Fit(const TrkHitSPVec &track)
+void RiemannFitter::Fit(const TrkHitSPVec &hits)
 {
     c_ = 0.;
     n1_ = 0.;
@@ -52,18 +56,18 @@ void RiemannFitter::Fit(const TrkHitSPVec &track)
 
     for(int i = 0; i < config_.max_trial; i++)
     {
-        TMatrixD cart_coo(GetCartCoo(track));
+        TMatrixD cart_coo(GetCartCoo(hits));
         //cart_coo.Print();
-        TMatrixD polar_coo(GetPolarCoo(track));
+        TMatrixD polar_coo(GetPolarCoo(hits));
         //polar_coo.Print();
         
         TMatrixD v_cart0(GetVcart0());
         //v_cart0.Print();
-        TMatrixD v_cartx(GetVcartx(track));
+        TMatrixD v_cartx(GetVcartx(hits));
         //v_cartx.Print();
-        TMatrixD j1(GetJ1(track));
+        TMatrixD j1(GetJ1(hits));
         //j1.Print();
-        TMatrixD j2(GetJ2(track));
+        TMatrixD j2(GetJ2(hits));
         //j2.Print();
         TMatrixD v_rad0(GetVrad0(v_cart0, j1, j2));
         //v_rad0.Print();
@@ -115,45 +119,47 @@ void RiemannFitter::Fit(const TrkHitSPVec &track)
     //std::cout << 0.3*abs(RiemannFitHelper::GetMagnetAtOrigin(tracking::dY)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_) << " MeV" << std::endl;
 }
 
-void RiemannFitter::Fill(const TrkHitSPVec& track)
+void RiemannFitter::Fill(const TrkHitSPVec& hits)
 {
-    auto s = GetSign(track);
-    double y = 0.5*(track.at(0)->GetY() + track.at(dim_ - 1)->GetY());
-    double z = 0.5*(track.at(0)->GetZ() + track.at(dim_ - 1)->GetZ());
+    auto s = GetSign(hits);
+    double y = 0.5*(hits.at(0)->GetY() + hits.at(dim_ - 1)->GetY());
+    double z = 0.5*(hits.at(0)->GetZ() + hits.at(dim_ - 1)->GetZ());
     double x = -s*sqrt(pre_R_*pre_R_ - (z - pre_Yc_)*(z - pre_Yc_)) + pre_Xc_;
-    //double y = track.at(0)->GetY();
-    //double z = track.at(0)->GetZ();
-    //double x = track.at(0)->GetX();
-    //std::cout << 0.5*(track.at(0)->GetX() + track.at(dim_ - 1)->GetX()) << "\t" << x << std::endl;
+    //double y = hits.at(0)->GetY();
+    //double z = hits.at(0)->GetZ();
+    //double x = hits.at(0)->GetX();
+    //std::cout << 0.5*(hits.at(0)->GetX() + hits.at(dim_ - 1)->GetX()) << "\t" << x << std::endl;
     pp_ = 0.3*abs(RiemannFitHelper::GetMagnetY(x, y, z)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
+
+    track_->SetPp(pp_);
 }
 
 //................................................................................//
 //Getter
-double RiemannFitter::GetTheta(const TrkHitSPVec &track)
+double RiemannFitter::GetTheta(const TrkHitSPVec &hits)
 {
-    double ax = track.at(0)->GetX() - pre_Xc_;
-    double ay = track.at(0)->GetZ() - pre_Yc_;
-    double bx = track.at(track.size() - 1)->GetX() - pre_Xc_;
-    double by = track.at(track.size() - 1)->GetZ() - pre_Yc_;
+    double ax = hits.at(0)->GetX() - pre_Xc_;
+    double ay = hits.at(0)->GetZ() - pre_Yc_;
+    double bx = hits.at(hits.size() - 1)->GetX() - pre_Xc_;
+    double by = hits.at(hits.size() - 1)->GetZ() - pre_Yc_;
 
     double phi = atan((ax*by - ay*bx)/(ax*bx + ay*by));
-    pre_theta_ = atan(phi*pre_R_/(track.at(track.size() - 1)->GetY() - track.at(0)->GetX())) + TMath::Pi()/2;
+    pre_theta_ = atan(phi*pre_R_/(hits.at(hits.size() - 1)->GetY() - hits.at(0)->GetX())) + TMath::Pi()/2;
 
     return pre_theta_;
 }
 
 //................................................................................//
 //Get hit measurements projected on the paraboloid surface in Cartesian coordinates
-TMatrixD RiemannFitter::GetCartCoo(const TrkHitSPVec &track)
+TMatrixD RiemannFitter::GetCartCoo(const TrkHitSPVec &hits)
 {
-    int s = GetSign(track);	
+    int s = GetSign(hits);	
     TArrayD data(3*dim_);
     for (int i = 0; i < dim_; i++)
     {
-        double u = track.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(track)[i])*s;
-        //double u = track.at(i)->GetX() - pre_Xc_;
-        double v = track.at(i)->GetZ() - pre_Yc_;
+        double u = hits.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(hits)[i])*s;
+        //double u = hits.at(i)->GetX() - pre_Xc_;
+        double v = hits.at(i)->GetZ() - pre_Yc_;
         data[i] = u;
         data[i + dim_] = v;
         data[i + 2*dim_] = u*u + v*v;
@@ -167,14 +173,14 @@ TMatrixD RiemannFitter::GetCartCoo(const TrkHitSPVec &track)
 
 //................................................................................//
 //Get hit measurements projected on the paraboloid surface in polar coordinates
-TMatrixD RiemannFitter::GetPolarCoo(const TrkHitSPVec &track)
+TMatrixD RiemannFitter::GetPolarCoo(const TrkHitSPVec &hits)
 {
-    int s = GetSign(track);
+    int s = GetSign(hits);
     TArrayD data(2*dim_);
     for (int i = 0; i < dim_; i++)
     {
-        double u = track.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(track)[i])*s;
-        double v = track.at(i)->GetZ() - pre_Yc_;
+        double u = hits.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(hits)[i])*s;
+        double v = hits.at(i)->GetZ() - pre_Yc_;
         data[i] = sqrt(u*u + v*v);
         data[i + dim_] = TMath::ATan2(v, u);
     }
@@ -238,7 +244,7 @@ TMatrixD RiemannFitter::GetVcart0()
 }
 //................................................................................//
 //Get delta x
-std::vector<double> RiemannFitter::GetDeltax(const TrkHitSPVec &track)    
+std::vector<double> RiemannFitter::GetDeltax(const TrkHitSPVec &hits)    
 {
     double pT = 0.3 * RiemannFitHelper::GetMagnetAtOrigin(tracking::dY) * pre_R_; // momentum, MeV
 
@@ -252,9 +258,9 @@ std::vector<double> RiemannFitter::GetDeltax(const TrkHitSPVec &track)
 
     for (int i = 0; i < dim_; i++)
     {
-        Xk[i] = track.at(i)->GetX();
-        Yk[i] = track.at(i)->GetY();
-        Zk[i] = track.at(i)->GetZ();
+        Xk[i] = hits.at(i)->GetX();
+        Yk[i] = hits.at(i)->GetY();
+        Zk[i] = hits.at(i)->GetZ();
         Bk[i] = RiemannFitHelper::GetMagnetY(Xk[i], Yk[i], Zk[i]);
         if(i == 0)
             Ak[i] = 0.0;
@@ -284,10 +290,10 @@ std::vector<double> RiemannFitter::GetDeltax(const TrkHitSPVec &track)
 
 //..............................................................................//
 //Get covariance matrix of dx in Cartesian coordinates 
-TMatrixD RiemannFitter::GetVcartx(const TrkHitSPVec &track)
+TMatrixD RiemannFitter::GetVcartx(const TrkHitSPVec &hits)
 {
     TArrayD data(4*dim_*dim_);
-    auto D = GetDeltax(track);
+    auto D = GetDeltax(hits);
     for(int i = 0; i < dim_; i++)
     {
         for(int j = 0; j < dim_; j++)
@@ -306,14 +312,14 @@ TMatrixD RiemannFitter::GetVcartx(const TrkHitSPVec &track)
 
 //................................................................................//
 //Get Jacobian matrix from Cartesian to polar coordinate
-TMatrixD RiemannFitter::GetJ1(const TrkHitSPVec &track)
+TMatrixD RiemannFitter::GetJ1(const TrkHitSPVec &hits)
 {
-    int s = GetSign(track);
+    int s = GetSign(hits);
     TArrayD data(4*dim_*dim_);
     for (int i = 0; i < dim_; i++)
     {
-        double u = track.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(track)[i])*s;
-        double v = track.at(i)->GetZ() - pre_Yc_;
+        double u = hits.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(hits)[i])*s;
+        double v = hits.at(i)->GetZ() - pre_Yc_;
         double h = sqrt(u*u + v*v);
 
         for(Int_t j = 0; j < dim_; j++)
@@ -343,14 +349,14 @@ TMatrixD RiemannFitter::GetJ1(const TrkHitSPVec &track)
 
 //................................................................................//
 //Get Jacobian matrix from R-Φ to RΦ-R
-TMatrixD RiemannFitter::GetJ2(const TrkHitSPVec &track)
+TMatrixD RiemannFitter::GetJ2(const TrkHitSPVec &hits)
 {
-    int s = GetSign(track);
+    int s = GetSign(hits);
     TArrayD data(2*dim_*dim_);
     for (int i = 0; i < dim_; i++)
     {
-        double u = track.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(track)[i])*s;
-        double v = track.at(i)->GetZ() - pre_Yc_;
+        double u = hits.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(hits)[i])*s;
+        double v = hits.at(i)->GetZ() - pre_Yc_;
 
         for(Int_t j = 0; j < dim_; j++)
         {

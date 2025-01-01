@@ -22,6 +22,7 @@
 #include "Algo/Digitization.h"
 #include "Algo/GreedyFinder.h"
 #include "Algo/KalmanFit/KalmanFilterFitter.h"
+#include "Algo/RiemannFit/RiemannFitter.h"
 
 namespace tracking
 {
@@ -30,6 +31,9 @@ namespace tracking
 
 class TrackingProcessor : public AnaProcessor
 {
+public:
+    using Pool = HitPool<Key, TrkHit>;
+
 public:
     // Must initialized with Name
     explicit TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt);
@@ -58,6 +62,7 @@ private:
 private:
     GreedyFinder::Config finding_config_;
     KalmanFilterFitter::Config genfit_config_;
+    RiemannFitter::Config riemann_config_;
 
 //................................................................................//
 //Parameters from config file
