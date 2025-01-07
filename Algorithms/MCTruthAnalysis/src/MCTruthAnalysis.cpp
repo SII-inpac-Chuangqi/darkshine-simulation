@@ -22,6 +22,7 @@ MCTruthAnalysis::MCTruthAnalysis(string name, shared_ptr<EventStoreAndWriter> ev
     // Register Parameters
     RegisterIntParameter("Verbose", "Verbosity", &verbose, 0);
     RegisterIntParameter("Sec_PDG", "PDG of secondary", &Sec_PDG, 0);
+    RegisterDoubleParameter("minProcE", "", &minProcE, 0.);
 }
 
 void MCTruthAnalysis::Begin() {
@@ -90,7 +91,8 @@ void MCTruthAnalysis::ProcessEvt(AnaEvent *evt) {
 
         // Process MCTruthEvent -- ProcessClassifier
         ProcReader->initialization();
-        ProcReader->SetInitialE(steps->front());
+//        ProcReader->SetInitialE(steps->front());
+        ProcReader->SetInitialE(minProcE);
         ProcReader->ReadProcess(evt);
 
         // Record Initial Particle Status

@@ -71,7 +71,7 @@ public:
 
     double GetNdf() const {return ndf_;}
     double GetChi2();
-    double GetChi2Algo() const {return chi2_algo_;}
+    double GetChi2Algo() const {return chi2_algo_/ndf_;}
     double GetXSigma() const {return xSigma_;}
     double GetYSigma() const {return ySigma_;}
     double GetDeltaR(const DTrack *another) const;
