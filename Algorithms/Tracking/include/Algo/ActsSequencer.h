@@ -210,6 +210,8 @@ private:
     ECalSeeds dECAL_seeds{};
 
     void AddECALSeed(const TrackParams &trk) {
+        if (!dAnaData->ifBuiltECal()) return;
+
         using namespace dunits;
         using namespace ActsHelper;
         // Initial position and momentum, DSS unit to ROOT
