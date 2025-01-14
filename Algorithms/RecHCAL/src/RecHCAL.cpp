@@ -65,9 +65,11 @@ void RecHCAL::Begin() {
             EvtWrt->RegisterOutVariable("HCAL_E_Min_Cell"          ,&HCAL_E_Min_Cell           ,"HCAL min E");
             EvtWrt->RegisterOutVariable("HCAL_E_concentration"          ,&HCAL_E_concentration           ,"HCAL (max_cell - sub_max_cell)/(max_cell + sub_max_cell)");
             EvtWrt->RegisterOutVariable("HCAL_E_Max_layer"          ,&HCAL_E_Max_layer           ,"HCAL layer number with max E");
+            EvtWrt->RegisterOutVariable("HCAL_E_Max_layer_num"          ,&HCAL_E_Max_layer_num           ,"HCAL layer with max E");
             EvtWrt->RegisterOutVariable("HCAL_lighted_cells_per_lighted_layer"          ,&HCAL_lighted_cells_per_lighted_layer           ,"HCAL average number of cells per lighted layer");
             EvtWrt->RegisterOutVariable("HCAL_total_length"          ,&HCAL_total_length           ,"HCAL lighted length");
             EvtWrt->RegisterOutVariable("HCAL_total_lighted_layer"          ,&HCAL_total_lighted_layer           ,"HCAL total lighter layer number");
+            EvtWrt->RegisterOutVariable("HCAL_E_main_side_ratio"          ,&HCAL_E_main_side_ratio           ,"Ratio between main HCAL E and Side HCAL E");
         }
     }
 }
@@ -99,6 +101,9 @@ void RecHCAL::ProcessEvt(AnaEvent *evt) {
 
     const auto &HitCollection = evt->getCalorimeterHitCollection();
 
+    double E_HCAL;
+    double E_sideHCAL;
+    double E_ratio_main_side;
     for (const auto &HCAL_Collection_Name: hcal_cols) {
         // temporary HCAL Analyzer
         double HCAL_E = 0;
@@ -144,6 +149,8 @@ void RecHCAL::ProcessEvt(AnaEvent *evt) {
                 if (temp_max_cell != HCAL_E_Max_cell) {
                     E_sec_max = temp_max_cell;
                     temp_max_cell = HCAL_E_Max_cell;
+                }else if (E_sec_max < hit->getE()) {
+                    E_sec_max = hit->getE();
                 }
 
                 if (bdt_var_store) {
@@ -158,12 +165,15 @@ void RecHCAL::ProcessEvt(AnaEvent *evt) {
 
                     if (iLayer %2 == 1) {
                         x_num++;
-                        x_all = x_all + hit->getE();
+                        x_all = x_all + hit->getX();
                     } else {
                         y_num++;
-                        y_all = y_all + hit->getE();
+                        y_all = y_all + hit->getY();
                     }
                 }
+            }
+            if (bdt_var_store) {
+              if (E_min == 8000) E_min = 0;
             }
         }
 
@@ -212,15 +222,17 @@ void RecHCAL::ProcessEvt(AnaEvent *evt) {
             }
             HCAL_E_Min_Cell.emplace_back(E_min);
             HCAL_E_concentration.emplace_back((HCAL_E_Max_cell - E_sec_max) / (HCAL_E_Max_cell + E_sec_max));
-            HCAL_E_Max_layer.emplace_back(Max_layer_num);
+            HCAL_E_Max_layer.emplace_back(E_max_layer);
+            HCAL_E_Max_layer_num.emplace_back(Max_layer_num);
             if (n_cell == 0) {
                 HCAL_lighted_cells_per_lighted_layer.emplace_back(0);
             } else {
-                HCAL_total_length.emplace_back(layer_n.back() - layer_n.front());
+                HCAL_total_length.emplace_back(layer_n.back() - layer_n.front() + 1);
                 HCAL_total_lighted_layer.emplace_back(layer_n.size());
                 HCAL_lighted_cells_per_lighted_layer.emplace_back(n_cell / layer_n.size());
             }
         
+            E_HCAL = HCAL_E;
         }
     }
     for (const auto &SideHCAL_Collection_Name: sidehcal_cols) {
@@ -246,6 +258,15 @@ void RecHCAL::ProcessEvt(AnaEvent *evt) {
         }
         SideHCAL_total.emplace_back(sideHCAL_E);
         SideHCAL_E_Max_Cell.emplace_back(sideHCAL_E_Max_Cell);
+        if (bdt_var_store) {
+            E_sideHCAL = sideHCAL_E;
+        }
+    }
+    if (bdt_var_store) {
+        if (E_sideHCAL != 0) {
+            E_ratio_main_side = E_HCAL / E_sideHCAL;
+        }
+        HCAL_E_main_side_ratio.emplace_back(E_ratio_main_side);
     }
 }
 
