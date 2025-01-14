@@ -69,9 +69,11 @@ public:
         HCAL_E_Min_Cell.clear();
         HCAL_E_concentration.clear();
         HCAL_E_Max_layer.clear();
+        HCAL_E_Max_layer_num.clear();
         HCAL_lighted_cells_per_lighted_layer.clear();
         HCAL_total_length.clear();
         HCAL_total_lighted_layer.clear();
+        HCAL_E_main_side_ratio.clear();
     };
 
     [[nodiscard]] const string &getDescription() const override {
@@ -132,10 +134,12 @@ private:
     vector<double> HCAL_E_per_layer;
     vector<double> HCAL_E_Min_Cell;
     vector<double> HCAL_E_concentration;
-    vector<int> HCAL_E_Max_layer;
+    vector<double> HCAL_E_Max_layer;
+    vector<int> HCAL_E_Max_layer_num;
     vector<double> HCAL_lighted_cells_per_lighted_layer;
     vector<int> HCAL_total_length;
     vector<int> HCAL_total_lighted_layer;
+    vector<double> HCAL_E_main_side_ratio;
 
 
 };
