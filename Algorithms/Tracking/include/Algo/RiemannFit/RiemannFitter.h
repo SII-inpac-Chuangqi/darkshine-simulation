@@ -27,10 +27,17 @@
 class RiemannFitter : public Fitter
 {
 public:
+    struct Config
+    {
+        int max_trial = 100;
+        double const_B = -1.5;
+    };
+
+public:
 //................................................................................//
 //Constructor
     RiemannFitter() {}
-    RiemannFitter(const TrkHitSPVec &track, std::initializer_list<double>);
+    RiemannFitter(Config config, DTrackP track, int verbose = 0);
     ~RiemannFitter() {};
 
     RiemannFitter(const RiemannFitter&) = delete;
@@ -38,9 +45,9 @@ public:
 
 //................................................................................//
 //Processor
-    virtual void Init(const TrkHitSPVec &track, std::initializer_list<double>) override;
-    virtual void Fit (const TrkHitSPVec &track, std::initializer_list<double>) override;
-    virtual void Fill(const TrkHitSPVec &track, std::initializer_list<double>) override;
+    virtual void Init(const TrkHitSPVec &track) override;
+    virtual void Fit (const TrkHitSPVec &track) override;
+    virtual void Fill(const TrkHitSPVec &track) override;
 
 //................................................................................//
 //Getter
@@ -182,7 +189,7 @@ private:
     TMatrixD GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, const TMatrixD &j2);
 
 private:
-    int max_trial_ = 100;
+    Config config_;
 
 //................................................................................//
 //Dimesion of the matrices, or, No. of hits in the track

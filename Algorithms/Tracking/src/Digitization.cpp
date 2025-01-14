@@ -20,7 +20,6 @@
 
 //................................................................................//
 //Tracking
-#include "Algo/TrkHit.h"
 #include "Algo/Digitization.h"
 #include "Algo/Utils/Clusterer.h"
 

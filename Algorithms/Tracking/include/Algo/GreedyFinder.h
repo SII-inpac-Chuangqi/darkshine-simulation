@@ -17,26 +17,31 @@
 //TRACKING
 #include "Algo/TrkHit.h"
 #include "Algo/Finder.h"
+#include "Algo/HitPool.h"
 
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
 #endif
 
-//#ifndef NEGINF_DOUBLE
-//#define NEGINF_DOUBLE -std::numeric_limits<double>::infinity()
-//#endif
-
-#ifndef MAX_CIRCLE
-#define MAX_CIRCLE 1000000 // 10^7, (max n hit)^(n layers)
-#endif
-
 class GreedyFinder : public Finder
 {
+public:
+    using Pool = HitPool<Key, TrkHit>;
+
+public:
+    struct Config
+    {
+        int max_circle = 1000000; // 10^7, (max n hit)^(n layers)
+        int min_depth = 3;
+        double goodness_cut = 0.999;
+        double cut_y = 4.;
+    };
+
 public:
 //................................................................................//
 //Constructor
 //................................................................................//
-    GreedyFinder(Pool *pool, int newMinDepth = 3, double newGoodnessCut = 0.999);
+    GreedyFinder(Config config, Pool *pool);
     ~GreedyFinder() {}
 
     GreedyFinder(const GreedyFinder&) = delete;
@@ -59,6 +64,8 @@ public:
     int GetCircleNo() const {return circle_No_;}
 
 private:
+    Config config_;
+
 //................................................................................//
 //Calculate deflection
 //................................................................................//
@@ -98,9 +105,6 @@ private:
 //Choice storage
 //................................................................................//
 //Final choice
-    int min_depth_ = 3;
-    double goodness_cut_ = 0.999;
-
     int circle_No_{0};
     std::vector<double> r_;
     std::vector<double> center_x_;

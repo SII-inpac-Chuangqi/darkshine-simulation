@@ -36,7 +36,11 @@ public:
     void SetInitialE(DStep_b1_5 *step) {
         initial_E = step->getE();
         minProcE = 0.5 * initial_E;
-    };
+    }
+
+    void SetInitialE(double new_minProcE) {
+        minProcE = new_minProcE;
+    }
 
 
 private:

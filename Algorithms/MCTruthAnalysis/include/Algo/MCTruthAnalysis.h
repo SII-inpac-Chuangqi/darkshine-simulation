@@ -66,6 +66,7 @@ private:
 
     int verbose{0};
     int Sec_PDG{0};
+    double minProcE{0.};
 
     std::shared_ptr<SecondaryMaxEFinder> SecFinder;
     std::shared_ptr<ProcessReader> ProcReader;

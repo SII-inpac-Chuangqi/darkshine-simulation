@@ -18,20 +18,14 @@
 #include "Algo/TrkHit.h"
 #include "Algo/GreedyFinder.h"
 
-#ifndef CUT_Y
-#define CUT_Y 1.8
-#endif
-
 //................................................................................//
 //public:
 //................................................................................//
 //Constructor
 //
-GreedyFinder::GreedyFinder(Pool *pool, int min_depth, double goodness_cut)
+GreedyFinder::GreedyFinder(Config config, Pool *pool) : config_(config)
 {
     circle_No_ = 0;
-    min_depth_ = min_depth;
-    goodness_cut_ = goodness_cut;
 
     GreedyLooping(pool);
     SortHits();
@@ -48,7 +42,7 @@ void GreedyFinder::FillTracks(std::vector<std::shared_ptr<DTrack>> *tracks)
                                                    this->GetR(i),         //used in Kalman filter
                                                    this->GetCenterX(i),
                                                    this->GetCenterY(i)));
-        for(int j = 0; j < tracks->at(i)->GetSize(); j++)
+        for(int j = 0; j < tracks->at(i)->Size(); j++)
             tracks->at(i)->At(j)->SetTrack(tracks->at(i));
     }
 
@@ -110,8 +104,7 @@ void GreedyFinder::GreedyLooping(Pool *pool)
         if(!GreedyLooping(temp_pool_structured, it_map, circle_No_)) return;
         //std::cout << goodness_Kasa_ << ", n hit " << hits_chosen_.size() << std::endl;
 
-        //if(goodness[circle_No_] > goodness_cut_ && static_cast<int>(hits_chosen_.size()) > min_depth_)
-        if(goodness_Kasa_ > goodness_cut_ && static_cast<int>(hits_chosen_.size()) > min_depth_)
+        if(goodness_Kasa_ > config_.goodness_cut && static_cast<int>(hits_chosen_.size()) > config_.min_depth)
         {
             tracks_chosen_.push_back(hits_chosen_);
             r_.push_back(r_Kasa_);
@@ -143,9 +136,7 @@ void GreedyFinder::GreedyLooping(Pool *pool)
         }
         else return;
 
-        //if(circle_No_ >= MAX_CIRCLE - 1) break;
-
-        if(static_cast<int>(temp_pool_structured.size()) <= min_depth_) return;
+        if(static_cast<int>(temp_pool_structured.size()) <= config_.min_depth) return;
     }
 
 }
@@ -156,7 +147,7 @@ bool GreedyFinder::GreedyLooping(TrkHitSPVecMap &clustered_trk_hits_in_layer,
 {
     circle_No_++;
     //if(circle_No_%10000 == 0) std::cout << circle_No_ << std::endl;
-    if(circle_No_ >= MAX_CIRCLE) return false;
+    if(circle_No_ >= config_.max_circle) return false;
 
     it_map--;
     if(it_map == clustered_trk_hits_in_layer.begin())
@@ -186,7 +177,7 @@ bool GreedyFinder::GreedyLooping(TrkHitSPVecMap &clustered_trk_hits_in_layer,
                 {
                     double dis = PointToLineDistance(abr[0], -1., abr[1], x[ii], y[ii]);
                     //std::cout << "ii " << ii << " dis " << dis << std::endl;
-                    calibrtion_cut = dis < 4.;
+                    calibrtion_cut = dis < config_.cut_y;
                     if(!calibrtion_cut) break;
                 }
             }

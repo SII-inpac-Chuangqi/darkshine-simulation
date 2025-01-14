@@ -23,10 +23,13 @@
 //Tracking
 #include "Algo/TypeDef.h"
 #include "Algo/TrkHit.h"
-
+#include "Algo/HitPool.h"
 
 class Digitization
 {
+public:
+    using Pool = HitPool<Key, TrkHit>;
+
 public:
 
     Digitization() = default;

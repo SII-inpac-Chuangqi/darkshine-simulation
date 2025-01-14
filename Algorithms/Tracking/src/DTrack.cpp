@@ -263,7 +263,7 @@ std::vector<double> DTrack::GetExtrapolated(tracking::direction extrop_dir)
 
     return {};
 }
-
+/*
 void DTrack::ExceptionHandler(const std::vector<double> &magnet)
 {
     if(verbose_ > 0 && magnet.size() != 3)
@@ -276,12 +276,12 @@ void DTrack::ExceptionHandler(const std::vector<double> &magnet)
 
     By_ = magnet.at(1);
 }
-
+*/
 void DTrack::Remove(int i)
 {
     hits_.erase(std::remove(hits_.begin(), hits_.end(), hits_.at(i)), hits_.end());
 }
-
+/*
 void DTrack::Fit(int method)
 {
 //    Fitter *fitter_ = nullptr;
@@ -290,13 +290,18 @@ void DTrack::Fit(int method)
     {
         case tracking::dKalman  :
                                   fitter_ = new KalmanFilterFitter(hits_,
-                                                                   {preR_,   //Fix to 2 ordered parameters! --bending radius as fitting seed
-                                                                    By_},    //                             --magnet to manage exception condition
-                                                                   verbose_  //Verbose
+                                                                   {preR_,   // config.pre_R   -- bending radius as fitting seed
+                                                                    By_},    //       .const_B -- magnet to manage exception condition
+                                                                   verbose_  // verbose
                                                                   );
                                   break;
         case tracking::dRiemann :
-                                  fitter_ = new RiemannFitter(hits_, {preXc_, preYc_, preR_});
+                                  fitter_ = new RiemannFitter(hits_,
+                                                              {By_,    // config.const_B -- magnet to manage exception condition
+                                                               preXc_, //       .pre_Xc  -- prefit Xc as fitting seed
+                                                               preYc_, //       .pre_Yc  -- prefit Yc
+                                                               preR_}, //       .pre_R   -- prefit R
+                                                              verbose_);
                                   if(verbose_ > 0)
                                       std::cout << "[INFO] ==> Riemann fit coming soon" << std::endl;
                                   break;
@@ -340,7 +345,7 @@ void DTrack::Fit(int method)
     else
         pp_ = 0.3*preR_*std::abs(By_);
 }
-
+*/
 std::vector<double> DTrack::ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir)
 {
     if(!fitter_)

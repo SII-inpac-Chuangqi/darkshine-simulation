@@ -66,8 +66,8 @@ void AlgoManager::ProcessEvtAnaProcessors(AnaEvent *evt, int cur_evt_num) {
         try {
             // process evt
             AnaProcessors.at(itr)->ProcessEvt(evt);
-        } catch (const std::out_of_range &oor) {
-            std::cerr << "[ERROR] Evt: " << cur_evt_num << " -- Out of Range error: " << oor.what() << " in Algo"
+        } catch (const std::exception &oor) {
+            std::cerr << "[ERROR] Evt: " << cur_evt_num << " --  Std error: " << oor.what() << " in Algo"
                       << itr << endl;
             AnaProcessors.at(itr)->InitEvt();
         } catch (...) {

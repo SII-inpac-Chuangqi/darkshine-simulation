@@ -92,6 +92,7 @@ public:
     double getLengthZRec() const {return length_z_rec_;}
 
 //ECal
+    bool ifBuiltECal() const {return N_ECal_cells > 0 && N_ECal_cell_x > 0 && N_ECal_cell_y > 0 && N_ECal_cell_z > 0;}
     int getECAL_globalID(int block, int unit);
     const std::vector<TVector3>& getECalPosMap() const {return ECAL_posmap;};
     [[maybe_unused]] double getECalCenterX() const {return ECAL_center_x;}

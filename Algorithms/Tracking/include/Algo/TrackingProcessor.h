@@ -20,6 +20,9 @@
 #include "Algo/DTrack.h"
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Digitization.h"
+#include "Algo/GreedyFinder.h"
+#include "Algo/KalmanFit/KalmanFilterFitter.h"
+#include "Algo/RiemannFit/RiemannFitter.h"
 
 namespace tracking
 {
@@ -28,6 +31,9 @@ namespace tracking
 
 class TrackingProcessor : public AnaProcessor
 {
+public:
+    using Pool = HitPool<Key, TrkHit>;
+
 public:
     // Must initialized with Name
     explicit TrackingProcessor(string name, shared_ptr<EventStoreAndWriter> evtwrt);
@@ -39,8 +45,8 @@ public:
     void InitEvt() override;
 //................................................................................//
 //Fill truth variables
-    void FillTruth(DTruth *truth_info, std::vector<DStep*> *stepIni,
-                   std::vector<TrkHit> rawTagTrk2Hits, std::vector<TrkHit> rawRecTrk2Hits);
+    void FillTruth(DTruth *truth_info, std::vector<DStep*> *stepIni, const SimulatedHitMap &simu_hits,
+                   const std::vector<TrkHit> &rawTagTrk2Hits, const std::vector<TrkHit> &rawRecTrk2Hits);
 
     void ProcessEvt(AnaEvent* evt) override;
 
@@ -54,6 +60,9 @@ private:
     }
 
 private:
+    GreedyFinder::Config finding_config_;
+    KalmanFilterFitter::Config genfit_config_;
+    RiemannFitter::Config riemann_config_;
 
 //................................................................................//
 //Parameters from config file

@@ -8,7 +8,7 @@
 #include <vector>
 #include <memory>
 #include <cmath>
-#include <initializer_list>
+//#include <initializer_list>
 
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
@@ -27,12 +27,16 @@
 
 namespace tracking
 {
-    enum direction {dX, dY, dZ};
     class Calibrator;
 }
 
+class DTrack;
+
 class Fitter
 {
+protected:
+    using DTrackP = std::shared_ptr<DTrack>;
+
 public:
 //................................................................................//
 //Constructor
@@ -44,29 +48,29 @@ public:
 
 //................................................................................//
 //Processor
-    virtual void Init(const TrkHitSPVec&, std::initializer_list<double>) {}
-    virtual void Fit (const TrkHitSPVec&, std::initializer_list<double>) {}
-    virtual void Fill(const TrkHitSPVec&, std::initializer_list<double>) {}
+    virtual void Init(const TrkHitSPVec&) {}
+    virtual void Fit (const TrkHitSPVec&) {}
+    virtual void Fill(const TrkHitSPVec&) {}
 
 //................................................................................//
 //Get
     virtual int    GetVerbose() const {return verbose_;}
     virtual int    GetSign(const TrkHitSPVec &track);
-    virtual double GetPx() const {return px;}
-    virtual double GetPy() const {return py;}
-    virtual double GetPz() const {return pz;}
-    virtual double GetPp() const {return pp;}
-    virtual double GetPl() const {return pl;}
-    virtual double GetECalSeedX() const {return ECal_seed_x;}
-    virtual double GetECalSeedY() const {return ECal_seed_y;}
-    virtual double GetECalDirctX() const {return ECal_seed_px;}
-    virtual double GetECalDirctY() const {return ECal_seed_py;}
-    virtual double GetECalQoP() const {return ECal_seed_pz;}
+    virtual double GetPx() const {return px_;}
+    virtual double GetPy() const {return py_;}
+    virtual double GetPz() const {return pz_;}
+    virtual double GetPp() const {return pp_;}
+    virtual double GetPl() const {return pl_;}
+    virtual double GetECalSeedX() const {return ECal_seed_x_;}
+    virtual double GetECalSeedY() const {return ECal_seed_y_;}
+    virtual double GetECalDirctX() const {return ECal_seed_px_;}
+    virtual double GetECalDirctY() const {return ECal_seed_py_;}
+    virtual double GetECalQoP() const {return ECal_seed_pz_;}
 
-    virtual double GetNdf()  const {return fNdf;}
-    virtual double GetChi2() const {return fChi2;}
-    virtual double GetXSigma() const {return xSigma;}
-    virtual double GetYSigma() const {return ySigma;}
+    virtual double GetNdf()  const {return fndf_;}
+    virtual double GetChi2() const {return fchi2_;}
+    virtual double GetXSigma() const {return x_sigma_;}
+    virtual double GetYSigma() const {return y_sigma_;}
 
     virtual std::vector<double> ExtrapolateTo([[maybe_unused]] const std::vector<double> &planes_z,
                                               [[maybe_unused]] tracking::direction extrop_dir = tracking::dX)
@@ -87,23 +91,25 @@ protected:
 
 //................................................................................//
 //Results
-    double px{RETURN};
-    double py{RETURN};
-    double pz{RETURN};
-    double pp{RETURN};
-    double pl{RETURN};
-    double ECal_seed_x{RETURN};
-    double ECal_seed_y{RETURN};
-    double ECal_seed_px{RETURN};
-    double ECal_seed_py{RETURN};
-    double ECal_seed_pz{RETURN};
+    double px_{RETURN};
+    double py_{RETURN};
+    double pz_{RETURN};
+    double pp_{RETURN};
+    double pl_{RETURN};
+    double ECal_seed_x_{RETURN};
+    double ECal_seed_y_{RETURN};
+    double ECal_seed_px_{RETURN};
+    double ECal_seed_py_{RETURN};
+    double ECal_seed_pz_{RETURN};
 
-    double fNdf{0.};
-    double fChi2{RETURN};
-    double xSigma{RETURN};
-    double ySigma{RETURN};
+    double fndf_{0.};
+    double fchi2_{RETURN};
+    double x_sigma_{RETURN};
+    double y_sigma_{RETURN};
 
     tracking::Calibrator *calibrator_{nullptr};
+
+    DTrackP track_;
 };
 
 #endif
