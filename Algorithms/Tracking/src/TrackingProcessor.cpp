@@ -125,6 +125,9 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_z", &TagTrk2_truth_hit_z);
         EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_e", &TagTrk2_truth_hit_e);
         EvtWrt->RegisterIntVariable("TagTrk2_track_No_truth", &TagTrk2_track_No_truth, "TagTrk2_track_No_truth/I");
+        EvtWrt->RegisterOutVariable("TagTrk2_truth_state_x", &TagTrk2_truth_state_x);
+        EvtWrt->RegisterOutVariable("TagTrk2_truth_state_y", &TagTrk2_truth_state_y);
+        EvtWrt->RegisterOutVariable("TagTrk2_truth_state_z", &TagTrk2_truth_state_z);
 
         EvtWrt->RegisterIntVariable("RecTrk2_No", &RecTrk2_No, "RecTrk2_No/I");
         EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_ini", &RecTrk2_pp_truth_ini, "RecTrk2_pp_truth_ini/D");
@@ -432,6 +435,25 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
             TagTrk2_truth_hit_y.push_back(raw_tagtrk2_hits.at(i).GetY());
             TagTrk2_truth_hit_z.push_back(raw_tagtrk2_hits.at(i).GetZ());
             TagTrk2_truth_hit_e.push_back(raw_tagtrk2_hits.at(i).GetE());
+        }
+
+        auto truth_tracks_in_tag = dAnaData->getTruthTracks(DTruth::DTruthDetPV::TagTrk);
+        for(const auto &truth_track : truth_tracks_in_tag)
+        {
+            std::vector<double> truth_state_x;
+            std::vector<double> truth_state_y;
+            std::vector<double> truth_state_z;
+
+            for(const auto &state : truth_track.second)
+            {
+                truth_state_x.push_back(state->vertex[0]);
+                truth_state_y.push_back(state->vertex[1]);
+                truth_state_z.push_back(state->vertex[2]);
+            }
+
+            TagTrk2_truth_state_x.push_back(truth_state_x);
+            TagTrk2_truth_state_y.push_back(truth_state_y);
+            TagTrk2_truth_state_z.push_back(truth_state_z);
         }
  
         RecTrk2_No = raw_rectrk2_hits.size();
