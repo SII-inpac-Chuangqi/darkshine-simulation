@@ -101,9 +101,9 @@ void RecHCAL::ProcessEvt(AnaEvent *evt) {
 
     const auto &HitCollection = evt->getCalorimeterHitCollection();
 
-    double E_HCAL;
-    double E_sideHCAL;
-    double E_ratio_main_side;
+    double E_HCAL(0.);
+    double E_sideHCAL(0.);
+    double E_ratio_main_side(0.);
     for (const auto &HCAL_Collection_Name: hcal_cols) {
         // temporary HCAL Analyzer
         double HCAL_E = 0;
