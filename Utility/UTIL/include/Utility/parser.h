@@ -231,18 +231,29 @@ public:
 
         for(int i = 1; i < argc; i++)
         {
+            std::string input_token(argv[i]);
+            bool if_valid_token = false;
+
             for(const auto &[key, param] : params_)
             {
                 std::string key_token = "--" + param->GetKey();
                 std::string short_key_token = "-" + param->GetShortKey();
-                std::string input_token(argv[i]);
-                if( input_token == key_token || input_token == short_key_token )
+                if(input_token == key_token || input_token == short_key_token)
                 {
                     if(param->IfNoArg()) param->Convert(std::to_string(!param->GetDefault<bool>()));
                     else                 param->Convert(argv[i + 1]);
                     param->InCommandLine(true);
+
+                    if_valid_token = true;
                 }
             }
+
+#if __cplusplus >= 202002L
+            if(!if_valid_token && input_token.starts_with("--"))
+#else
+            if(!if_valid_token && input_token.rfind("--", 0) == 0)
+#endif
+                std::cerr << "[WARNING] ==> Unkown key \033[31m" << input_token.substr(2) << "\033[0m" << std::endl;
         }
     }
 
