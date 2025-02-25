@@ -14,6 +14,8 @@
 //Tracking
 #include "Algo/Utils/Util.h"
 
+namespace tracking
+{
 //If particle pass through trackers
 bool InTagTrack(double x, double y, double z)
 {
@@ -76,7 +78,4 @@ void LinearFit(double abr[], double x[], double y[], int n)
    abr[2] = dy2sum1 / dy2sum2;//r^2
 }
 
-double PointToLineDistance(double A, double B, double C, double x, double y)
-{
-    return std::abs(A*x + B*y + C)/std::sqrt(A*A + B*B);
-}
+} // namespace tracking
