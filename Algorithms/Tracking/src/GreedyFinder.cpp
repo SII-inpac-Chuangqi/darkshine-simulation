@@ -171,11 +171,11 @@ bool GreedyFinder::GreedyLooping(TrkHitSPVecMap &clustered_trk_hits_in_layer,
                 double *x = &y_store_.at(0);
                 double *y = &oth_store_.at(0);
                 double abr[3];
-                LinearFit(abr, x, y, 2);
+                tracking::LinearFit(abr, x, y, 2);
 
                 for(size_t ii = 0; ii < N; ii++)
                 {
-                    double dis = PointToLineDistance(abr[0], -1., abr[1], x[ii], y[ii]);
+                    double dis = tracking::PointToLineDistance(abr[0], -1., abr[1], x[ii], y[ii]);
                     //std::cout << "ii " << ii << " dis " << dis << std::endl;
                     calibrtion_cut = dis < config_.cut_y;
                     if(!calibrtion_cut) break;

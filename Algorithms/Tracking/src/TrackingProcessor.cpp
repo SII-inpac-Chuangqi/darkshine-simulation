@@ -419,11 +419,11 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
  
         bool trackerFlag = false;
         for (auto step : *initial_steps) {
-            if (InTagTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
+            if (tracking::InTagTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
                 TagTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
                                             step->getPz() * step->getPz());
                 trackerFlag = true;
-            } else if (!InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
+            } else if (!tracking::InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
                 TagTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
                                             step->getPz() * step->getPz());
                 break;
@@ -460,11 +460,11 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
  
         trackerFlag = false;
         for (auto step : *initial_steps) {
-            if (InRecTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
+            if (tracking::InRecTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
                 RecTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
                                             step->getPz() * step->getPz());
                 trackerFlag = true;
-            } else if (!InRecTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
+            } else if (!tracking::InRecTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
                 RecTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
                                             step->getPz() * step->getPz());
                 break;
