@@ -20,6 +20,7 @@
 #include "Algo/DTrack.h"
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Digitization.h"
+#include "Algo/Seeding/seed_finder.h"
 #include "Algo/GreedyFinder.h"
 #include "Algo/KalmanFit/KalmanFilterFitter.h"
 #include "Algo/RiemannFit/RiemannFitter.h"
