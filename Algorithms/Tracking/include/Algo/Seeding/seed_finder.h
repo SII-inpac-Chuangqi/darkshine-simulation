@@ -1,7 +1,7 @@
 #ifndef TRACKING_SEEDING_FINDER_H
 #define TRACKING_SEEDING_FINDER_H
 
-#include "Algo/Util/Utils.h"
+#include "Algo/Utils/Util.h"
 #include "Algo/Seeding/seed_helper.h"
 
 #include <functional>
@@ -270,6 +270,8 @@ private:
     template <typename seed_container_t>
     void FilterSeeds(SeedFinderSnapshot &snapshot, seed_container_t &seeds)
     {
+        using namespace tracking;
+
         if(config_.verbose > 0)
         {
             std::cout << "\ncandidate:\n" << std::endl;
