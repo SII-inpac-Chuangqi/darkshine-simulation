@@ -45,7 +45,7 @@ namespace seed_helper
         double X1Y2 = 0.;
         double X2Y1 = 0.;
 
-        for(int i = 0; i < n; i++)
+        for(size_t i = 0; i < n; i++)
         {
             X1 += x[i];
             Y1 += y[i];
@@ -73,7 +73,7 @@ namespace seed_helper
         R = 0.5*std::sqrt(a*a + b*b - 4*c);
 
         double s = 0.;
-        for (int i = 0; i < n; i++)
+        for (size_t i = 0; i < n; i++)
         {
             double xi = x[i] - A;
             double yi = y[i] - B;
