@@ -2,8 +2,8 @@
 // Created by zhuxu on 2021/7/29.
 //
 
-#ifndef DSIMU_ANADATA_H
-#define DSIMU_ANADATA_H
+#ifndef DANA_ANADATA_H
+#define DANA_ANADATA_H
 
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
@@ -212,4 +212,4 @@ private:
 };
 
 extern AnaData *dAnaData;
-#endif //DSIMU_ANADATA_H
+#endif //DANA_ANADATA_H
