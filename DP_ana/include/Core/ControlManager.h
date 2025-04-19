@@ -5,11 +5,16 @@
 #ifndef DSIMU_CONTROLMANAGER_H
 #define DSIMU_CONTROLMANAGER_H
 
+#include <map>
+
 #include "Core/AnaData.h"
 #include "Core/AlgoManager.h"
 #include "Event/EventReader.h"
 #include "Core/ConfigManager.h"
 #include "Event/EventStoreAndWriter.h"
+
+class DataHandle;
+class DataHandleBase;
 
 class ControlManager {
     /*
@@ -112,6 +117,8 @@ private:
     AlgoManager *algo{};
     EventReader *EvtReader{};
     ConfigManager *ConfMgr{};
+
+    std::map<std::string, DataHandleBase*> data_handle_;
 
     bool Only_PrintUsage = false;
 };
