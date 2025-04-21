@@ -73,6 +73,7 @@ void ControlManager::run() {
     /* Initialize and Select the AnaProcessors to use*/
     /* Explicitly declare processors with name */
     /* DEFINE ALGO PROCESSOR HERE */
+    algo->RegisterAnaProcessor(shared_ptr<ExampleProcessor>(new ExampleProcessor("ExampleProcessor", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<GNN_DataExporter>(new GNN_DataExporter("GNN_DataExporter", EvtWrt)));
     algo->RegisterAnaProcessor(shared_ptr<Digitizer>(new Digitizer("Digitizer", EvtWrt)));
 #if BUILD_HDF5
@@ -98,6 +99,7 @@ void ControlManager::run() {
     /*
      *  Begin
      */
+    algo->LinkDataHandles(&data_handles_);
     algo->BeginAnaProcessors();
 
     if (Only_PrintUsage) {
