@@ -43,6 +43,9 @@ void ExampleProcessor::Begin() {
 
     // Register Output Variable
     EvtWrt->RegisterOutVariable("Output_Var1", &Output_Var1);
+
+    insertSharedData<std::vector<int>>("test_vector", {}, "shared data for test");
+    insertSharedData<Foo>("test_class", Foo(), "shared data for test");
 }
 
 void ExampleProcessor::ProcessEvt(AnaEvent *evt) {
@@ -87,6 +90,13 @@ void ExampleProcessor::ProcessEvt(AnaEvent *evt) {
             cerr << "MCCollection not found" << endl;
 
     }
+
+    auto shared_vector = createSharedData<std::vector<int>>("test_vector");
+    shared_vector->clear();
+    for(int i = 0; i < 10; i++) shared_vector->push_back(i);
+
+    auto shared_foo = createSharedData<Foo>("test_class");
+    shared_foo->Clear();
 }
 
 void ExampleProcessor::CheckEvt(AnaEvent* /*evt*/) {

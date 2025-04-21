@@ -13,17 +13,25 @@
 #include "Core/ConfigManager.h"
 #include "Event/EventStoreAndWriter.h"
 
-class DataHandle;
 class DataHandleBase;
 
 class ControlManager {
     /*
      * Control the whole analysis workflow
      */
+private:
+    using data_handles_t = std::map<std::string, DataHandleBase*>;
+
 public:
     ControlManager() = default;
 
     ~ControlManager() {
+        for(auto it = data_handles_.begin(); it != data_handles_.end();)
+        {
+            delete it->second;
+            it = data_handles_.erase(it);
+        }
+
         delete EvtReader;
         delete algo;
         delete ConfMgr;
@@ -118,7 +126,7 @@ private:
     EventReader *EvtReader{};
     ConfigManager *ConfMgr{};
 
-    std::map<std::string, DataHandleBase*> data_handle_;
+    data_handles_t data_handles_;
 
     bool Only_PrintUsage = false;
 };

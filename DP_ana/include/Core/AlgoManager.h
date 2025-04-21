@@ -8,7 +8,12 @@
 #include "Object/TypeDef.h"
 #include "Core/AnaProcessor.h"
 
+class DataHandleBase;
+
 class AlgoManager {
+private:
+    using data_handles_t = std::map<std::string, DataHandleBase*>;
+
 public:
 
     // Constructor and Destructor
@@ -64,6 +69,8 @@ public:
 
     void RegisterAnaProcessor(const std::shared_ptr<AnaProcessor>& AnaP, bool addDefault=true);
 
+    void LinkDataHandles(data_handles_t *data_handles) {data_handles_ = data_handles;}
+
     // Run AnaProcessor
     void BeginAnaProcessors();
 
@@ -89,6 +96,8 @@ private:
     vector<std::string> AnaProcessorList;
 
     vector<std::string> AnaProcessorList_default;
+
+    data_handles_t *data_handles_{nullptr};
 };
 
 

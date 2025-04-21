@@ -29,8 +29,8 @@ void AnaProcessor::RegisterUIntParameter([[maybe_unused]] const std::string &nam
 {
 }
 
-void AnaProcessor::RegisterDoubleParameter(const string &name,
-                                           const string &description,
+void AnaProcessor::RegisterDoubleParameter(const std::string &name,
+                                           const std::string &description,
                                            double *address,
                                            double default_value) {
     if (DoubleParameters.count(name) != 0)
@@ -47,9 +47,9 @@ void AnaProcessor::RegisterDoubleParameter(const string &name,
 
 }
 
-void AnaProcessor::RegisterStringParameter(const string &name,
-                                           const string &description,
-                                           string *address,
+void AnaProcessor::RegisterStringParameter(const std::string &name,
+                                           const std::string &description,
+                                           std::string *address,
                                            std::string default_value) {
     if (StringParameters.count(name) != 0)
         std::cerr << "[WARNING] ==> Parameter name already exists." << std::endl;
@@ -86,12 +86,7 @@ void AnaProcessor::setStringValue(const std::string &name, const std::string &va
         *(StringParameters.at(name).second) = value;
 }
 
-ostream &operator<<(ostream &os, const AnaProcessor &processor) {
+std::ostream &operator<<(std::ostream &os, const AnaProcessor &processor) {
     os << "Name: " << processor.Name;
     return os;
 }
-
-
-
-
-
