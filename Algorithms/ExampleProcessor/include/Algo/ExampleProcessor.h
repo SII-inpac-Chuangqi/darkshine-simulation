@@ -6,6 +6,7 @@
 #define DSIMU_EXAMPLEPROCESSOR_H
 
 #include <utility>
+#include <vector>
 
 #include "Core/AnaProcessor.h"
 

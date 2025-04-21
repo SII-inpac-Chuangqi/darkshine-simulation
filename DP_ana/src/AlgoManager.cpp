@@ -36,6 +36,8 @@ void AlgoManager::BeginAnaProcessors() {
             itr = AnaProcessorList.erase(itr);
         }
         // Initialize Processor
+        if(data_handles_ != nullptr)
+            AnaProcessors.at(*itr)->linkDataHandles(data_handles_);
         AnaProcessors.at(*itr)->Begin();
 
         // Initialize Timer
