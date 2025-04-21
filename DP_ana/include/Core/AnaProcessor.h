@@ -131,7 +131,7 @@ public:
     }
 
     template<class data_t>
-    data_t* retrieveSharedData(std::string key) const
+    const data_t* retrieveSharedData(std::string key) const
     {
         if(!datahandlesEmptyCheck(key)) return nullptr;
 
