@@ -5,9 +5,7 @@
 file(GLOB_RECURSE Algo_Sources ${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp)
 #message("-- Algo dirs: ${Algo_Include_Dir}")
 
-add_library(DAlgo SHARED ${Algo_Headers} ${PROJECT_SOURCE_DIR}/DP_ana/include/Core/AnaProcessor.h ${PROJECT_SOURCE_DIR}/DP_ana/include/Core/AnaData.h
-                         ${Algo_Sources} ${PROJECT_SOURCE_DIR}/DP_ana/src/AnaProcessor.cpp ${PROJECT_SOURCE_DIR}/DP_ana/src/AnaData.cpp
-                         ${PROJECT_SOURCE_DIR}/DP_ana/include/Core/DataHandle.h
+add_library(DAlgo SHARED ${Algo_Headers} ${Algo_Sources}
                          ${PROJECT_SOURCE_DIR}/Utility/Object/include/Object/Util/PhysicsProcessDef.h)
 target_link_libraries(DAlgo genfit2)
 
