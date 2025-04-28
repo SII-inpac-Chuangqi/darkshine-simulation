@@ -158,6 +158,7 @@ endif ()
 
 FIND_DIRECTORIES(Object_Include_Dir Object_Headers "Utility/Object/include/*" "*.h")
 FIND_DIRECTORIES(Util_Include_Dir   Util_Headers   "Utility/UTIL/include/*" "*.h")
+FIND_DIRECTORIES(Service_Include_Dir   Service_Headers   "Utility/Service/include/*" "*.h")
 FIND_DIRECTORIES(GenFit_Include_Dir GenFit_Headers "ThirdParty/GenFit2/*/include" "*.h" ON)
 FIND_DIRECTORIES(Algo_Include_Dir   Algo_Headers   "Algorithms/*/include/Algo" "*.h")
 FIND_DIRECTORIES(DAna_Include_Dir   DAna_Headers   "DP_ana/include/*" "*.h")
@@ -167,6 +168,7 @@ FIND_DIRECTORIES(DAna_Include_Dir   DAna_Headers   "DP_ana/include/*" "*.h")
 #message(STATUS "GenFit2 include dir: ${GenFit_Include_Dir}")
 include_directories(${Object_Include_Dir})
 include_directories(${Util_Include_Dir})
+include_directories(${Service_Include_Dir})
 include_directories(${Algo_Include_Dir})
 include_directories(${DAna_Include_Dir})
 #include_directories(${HEPMC_INCLUDE_DIR})
@@ -181,6 +183,9 @@ include_directories(${GenFit_Include_Dir})
 add_subdirectory(Utility/Object)
 link_libraries(DEvent)
 
+# DService
+add_subdirectory(Utility/Service)
+link_libraries(DService)
 
 #----------------------------------------------------------------------------
 # Executables

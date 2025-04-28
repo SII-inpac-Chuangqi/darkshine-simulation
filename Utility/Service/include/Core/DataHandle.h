@@ -1,12 +1,6 @@
 #ifndef DANA_DATAHANDLE_H
 #define DANA_DATAHANDLE_H
 
-class Foo
-{
-public:
-    void Clear() {}
-};
-
 class DataHandleBase
 {
 public:
