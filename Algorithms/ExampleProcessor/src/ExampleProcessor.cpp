@@ -93,9 +93,6 @@ void ExampleProcessor::ProcessEvt(AnaEvent *evt) {
     auto shared_vector = createSharedData<std::vector<int>>("test_vector");
     shared_vector->clear();
     for(int i = 0; i < 10; i++) shared_vector->push_back(i);
-
-    auto shared_foo = createSharedData<Foo>("test_class");
-    shared_foo->Clear();
 }
 
 void ExampleProcessor::CheckEvt(AnaEvent* /*evt*/) {
