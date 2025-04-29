@@ -45,7 +45,6 @@ void ExampleProcessor::Begin() {
     EvtWrt->RegisterOutVariable("Output_Var1", &Output_Var1);
 
     insertSharedData<std::vector<int>>("test_vector", {}, "shared data for test");
-    insertSharedData<Foo>("test_class", Foo(), "shared data for test");
 }
 
 void ExampleProcessor::ProcessEvt(AnaEvent *evt) {
