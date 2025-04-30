@@ -17,7 +17,6 @@ SET(Display_header_shared
         ${CMAKE_CURRENT_SOURCE_DIR}/include/CaloHitsDisplay.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/DisData.h
         ${PROJECT_SOURCE_DIR}/DP_ana/include/Event/EventReader.h
-        ${PROJECT_SOURCE_DIR}/DP_ana/include/Event/EventStoreAndWriter.h
         )
 
 # Source
@@ -30,7 +29,6 @@ SET(Display_source
         ${CMAKE_CURRENT_SOURCE_DIR}/src/CaloHitsDisplay.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DisData.cpp
         ${PROJECT_SOURCE_DIR}/DP_ana/src/EventReader.cpp
-        ${PROJECT_SOURCE_DIR}/DP_ana/src/EventStoreAndWriter.cpp
         )
 root_generate_dictionary(G__Display ${Display_header_shared} LINKDEF include/DisplayLinkDef.h)
 
