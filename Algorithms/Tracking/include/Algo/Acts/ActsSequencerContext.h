@@ -8,7 +8,7 @@
 #define TRACKING_ACTSSEQUENCERCONTEXT_H
 
 #include "Core/AnaData.h"
-#include "Algo/ActsMagnet.h"
+#include "Algo/Acts/ActsMagnet.h"
 
 // Acts Core
 #include "Acts/Utilities/Logger.hpp"

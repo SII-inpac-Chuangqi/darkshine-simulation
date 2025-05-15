@@ -39,6 +39,4 @@ namespace tracking
     enum direction {dX, dY, dZ};
 }
 
-
-
 #endif

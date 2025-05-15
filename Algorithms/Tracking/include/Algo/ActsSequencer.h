@@ -10,8 +10,8 @@
 #include "Utility/Units.h"
 #include "Core/AnaProcessor.h"
 #include "Core/AnaData.h"
-#include "Algo/TrkHit.h"
-#include "Algo/ActsSequencerContext.h"
+#include "Algo/Object/TrkHit.h"
+#include "Algo/Acts/ActsSequencerContext.h"
 #include "Algo/DPropagator.h"
 
 #include <TParticlePDG.h>

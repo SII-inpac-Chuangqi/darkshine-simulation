@@ -15,9 +15,9 @@
 
 //................................................................................//
 //TRACKING
-#include "Algo/TrkHit.h"
+#include "Algo/Object/TrkHit.h"
 #include "Algo/Finder.h"
-#include "Algo/HitPool.h"
+#include "Algo/Object/HitPool.h"
 
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
