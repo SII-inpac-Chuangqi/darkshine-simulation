@@ -17,8 +17,11 @@
 //................................................................................//
 //Tracking
 #include "Algo/TypeDef.h"
-#include "Algo/TrkHit.h"
-#include "Algo/DTrack.h"
+//#include "Algo/Object/TrkHit.h"
+//#include "Algo/Object/DTrack.h"
+
+class TrkHit;
+class DTrack;
 
 class Finder
 {

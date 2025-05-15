@@ -4,7 +4,7 @@
 
 #if BUILD_ACTS
 
-#include "Algo/ActsSequencerContext.h"
+#include "Algo/Acts/ActsSequencerContext.h"
 
 #include "ActsExamples/EventData/MeasurementCalibration.hpp"
 

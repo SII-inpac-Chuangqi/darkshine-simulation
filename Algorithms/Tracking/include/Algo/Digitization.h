@@ -22,8 +22,8 @@
 //................................................................................//
 //Tracking
 #include "Algo/TypeDef.h"
-#include "Algo/TrkHit.h"
-#include "Algo/HitPool.h"
+#include "Algo/Object/TrkHit.h"
+#include "Algo/Object/HitPool.h"
 
 class Digitization
 {

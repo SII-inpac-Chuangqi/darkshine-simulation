@@ -23,7 +23,7 @@
 //................................................................................//
 //Tracking
 #include "Algo/TypeDef.h"
-#include "Algo/TrkHit.h"
+#include "Algo/Object/TrkHit.h"
 
 namespace tracking
 {
