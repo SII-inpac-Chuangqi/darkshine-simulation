@@ -1,5 +1,5 @@
-#ifndef DIGITIZATION_H
-#define DIGITIZATION_H
+#ifndef TRACKING_DIGITIZATION_H
+#define TRACKING_DIGITIZATION_H
 
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
@@ -73,4 +73,4 @@ private:
     TRandom rnd_;
 };
 
-#endif
+#endif // TRACKING_DIGITIZATION_H

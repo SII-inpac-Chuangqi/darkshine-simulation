@@ -25,6 +25,7 @@ public:
     ~HitPool() {this->Clear();}
     HitPool(const Pool&) = delete;
 
+    Map* GetPool()     {IsNull(); return structured_;}
     Map* operator->()  {IsNull(); return structured_;}
     Map& operator*()   {IsNull(); return *structured_;}
 

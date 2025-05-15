@@ -11,6 +11,7 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <bitset>
 
 //................................................................................//
 //ROOT
@@ -30,6 +31,12 @@ class DTrack;
 
 class TrkHit : public SimulatedHit
 {
+private:
+    using HitStatus = std::bitset<2>;
+
+    static constexpr HitStatus seeded{0b01};
+    static constexpr HitStatus tracked{0b10};
+
 public:
 //................................................................................//
 //Constructor
@@ -60,6 +67,11 @@ public:
     void SetUVCov(const TMatrixDSym &newCov) {uv_cov_ = newCov;}
     void SetXYCov(const TMatrixDSym &newCov) {xy_cov_ = newCov;}
 
+    void SetSeeded() {status_ |= TrkHit::seeded;}
+    void SetUnSeeded() {status_ &= (~TrkHit::seeded);}
+
+    void SetTracked() {status_ |= TrkHit::tracked;}
+    void SetUnTracked() {status_ &= (~TrkHit::tracked);}
     void SetTrack(const std::shared_ptr<DTrack> &track) {track_ = track;}
 //................................................................................//
 //Get
@@ -86,6 +98,9 @@ public:
     double GetUVCov(int i, int j) const {return uv_cov_(i, j);}
     double GetXYCov(int i, int j) const {return xy_cov_(i, j);}
 
+    bool Seeded() {return (status_ & TrkHit::seeded) == TrkHit::seeded;}
+
+    bool Tracked() {return (status_ & TrkHit::tracked) == TrkHit::tracked;}
     std::shared_ptr<DTrack> GetTrack() const {return track_.lock();}
 
     // Update xy and xy_cov from uv and uv_cov
@@ -94,6 +109,7 @@ public:
 protected:
 
     bool if_in_track_{false};
+    HitStatus status_{0b00};
 
     double u_{RETURN};
     double v_{RETURN};
