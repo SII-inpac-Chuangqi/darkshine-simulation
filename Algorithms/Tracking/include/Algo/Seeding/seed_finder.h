@@ -51,7 +51,7 @@ public:
         std::vector<double> seed_r2;
         std::vector<int> seed_n_cand_per_mid;
 
-        void Clear()
+        void clear()
         {
             candidates.clear();
             seed_Rmax.clear();
@@ -101,7 +101,7 @@ public:
                       "Seed type in seed_container_t not compatible with seed_t in CreateSeeds()");
 
         seeds.clear();
-        snapshot.Clear();
+        snapshot.clear();
 
         if(bottom_ids.size() == 0 || bottom_ids.size() > 2)
         {
