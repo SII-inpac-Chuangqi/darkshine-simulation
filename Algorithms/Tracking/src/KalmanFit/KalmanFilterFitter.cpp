@@ -24,8 +24,8 @@
 
 //................................................................................//
 //Tracking
-#include "Algo/TrkHit.h"
-#include "Algo/DTrack.h"
+#include "Algo/Object/TrkHit.h"
+#include "Algo/Object/DTrack.h"
 #include "Algo/KalmanFit/KalmanFilterFitter.h"
 #include "Algo/Calibrator/NullCalibrator.h"
 

@@ -4,8 +4,8 @@
 
 #if BUILD_ACTS
 
-#include "Algo/ActsSequencer.h"
-#include "Algo/ActsHelper.h"
+#include "Algo/Acts/ActsSequencer.h"
+#include "Algo/Acts/ActsHelper.h"
 #include <iostream>
 #include <cassert>
 

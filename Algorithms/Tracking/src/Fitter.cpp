@@ -1,5 +1,7 @@
 #include "Algo/Fitter.h"
 
+#include "Algo/Object/DTrack.h"
+
 int Fitter::GetSign(const TrkHitSPVec &track)
 {
     double xl  = track.at(track.size() - 1)->GetX();
