@@ -12,25 +12,33 @@
 //#include <ranges>
 #include <cmath>
 
-struct SeedFinderConfig
-{
-    double kasa_chi2 = 0.97;
-    double linear_r2 = 0.03;
-    double min_R = 250.;
-    double sigma_z = 1.;
-    size_t max_seed = 10;
-    int verbose = 0;
-};
-
 template <typename seed_t, typename layers_t, typename hit_p_t>
 class SeedFinder
 {
+public:
+    struct SeedFinderConfig
+    {
+        double kasa_chi2 = 0.97;
+        double linear_r2 = 0.03;
+        double min_R = 250.;
+        double sigma_z = 1.;
+        int max_seed = 10;
+        int verbose = 0;
+    };
+
 private:
     using hit_t = tracking::utils::remove_pointer_s_t<hit_p_t>;
     using coordinate_getter = std::function<double(const hit_t&)>;
 
     struct Triplet
     {
+        Triplet(hit_p_t h1, hit_p_t h2, hit_p_t h3, 
+                double p1, double p2, double p3)
+                 : bottom_hit(h1), 
+                   middle_hit(h2), 
+                   top_hit(h3), 
+                   A(p1), B(p2), R(p3) {}
+
         hit_p_t bottom_hit{nullptr};
         hit_p_t middle_hit{nullptr};
         hit_p_t top_hit{nullptr};
@@ -80,7 +88,7 @@ public:
 // Assume seed_container_t and id_container_t are iterable and hits in layers are pointers/smart pointers;
 //        layers_t has access to hit_t objects via at().at()
     template <typename seed_container_t, typename id_container_t>
-    void CreateSeeds(SeedFinderSnapshot &snapshot,
+    void FindSeeds(SeedFinderSnapshot &snapshot,
                      const layers_t &layers,
                      seed_container_t &seeds,
                      const id_container_t &bottom_ids, const size_t &middle_id, const size_t &top_id)
@@ -119,7 +127,7 @@ public:
         std::vector<hit_p_t> bottom1_layer;
         if(bottom_ids.size() == 2) bottom1_layer.assign(layers.at(*bottom_ids.rbegin()).begin(), layers.at(*bottom_ids.rbegin()).end());
 
-        auto get_t = [](double x1, double y1, double x2, double y2, double a, double b)
+        [[maybe_unused]] auto get_t = [](double x1, double y1, double x2, double y2, double a, double b)
                      {
                          double a_dot_b = (x1 - a)*(x2 - a) + (y1 - b)*(y2 - b);
                          double r1sq = (x1 - a)*(x1 - a) + (y1 - b)*(y1 - b);

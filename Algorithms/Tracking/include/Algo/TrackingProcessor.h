@@ -18,6 +18,7 @@
 //#include "Algo/TrkHit.h"
 #include "Algo/TypeDef.h"
 #include "Algo/Object/DTrack.h"
+#include "Algo/Object/seed.h"
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Digitization.h"
 #include "Algo/Seeding/seed_finder.h"
@@ -33,7 +34,10 @@ namespace tracking
 class TrackingProcessor : public AnaProcessor
 {
 public:
-    using Pool = HitPool<Key, TrkHit>;
+    using Pool_t = HitPool<Key, TrkHit>;
+    using Seed_t = Seed<TrkHit>; 
+    using SeedFinder_t = SeedFinder<Seed_t, TrkHitSPVecMap, TrkHitSP>; 
+    using SeedContainer_t = std::vector<Seed_t>;
 
 public:
     // Must initialized with Name
@@ -61,6 +65,11 @@ private:
     }
 
 private:
+    SeedFinder_t seed_finder_;
+
+    SeedFinder_t::SeedFinderSnapshot seed_finder_snapshot_;
+
+    SeedFinder_t::SeedFinderConfig seed_finder_config_;
     GreedyFinder::Config finding_config_;
     KalmanFilterFitter::Config genfit_config_;
     RiemannFitter::Config riemann_config_;
@@ -73,12 +82,12 @@ private:
 //-- 1: True, store reco level only
     int clean{0};
 //................................................................................//
-//Strip structure
+//Strip structure flag
 //-- 0: False
 //-- 1: True, automatically load strip structures from geometry
     int if_strip{1};
 //................................................................................//
-//Smear
+//Smearing
 //-- 0: False
 //-- 1: True, add smear in hit reconstruction
     int if_smear{1};
@@ -87,7 +96,7 @@ private:
     int if_backwards{0};
 
 //................................................................................//
-//Processing depth
+//Processing mask
 //-- dAll:    run all processes
 //-- dVertex: run all processes until vertexing
 //-- dFit:    run all processes until fitting
@@ -108,9 +117,9 @@ private:
     double con_field{-1.5};
 
 //................................................................................//
-//Geometry
+//Digitization
 //................................................................................//
-    Digitization digitizer;
+    Digitization digitizer_;
 
 //................................................................................//
 //Magnet
@@ -162,16 +171,18 @@ private:
     int Trk_contrib_eBrem_count{};
     int Trk_contrib_phot_count{};
 
-
 //................................................................................//
 //Reconstructed
 //................................................................................//
 //We store hits here in the pools, so all tracks and vertices do not hold the memory
-    Pool tag_hit_pool_;
-    Pool rec_hit_pool_;
+    Pool_t tag_hit_pool_;
+    Pool_t rec_hit_pool_;
 
     std::vector<std::shared_ptr<DTrack>> tag_tracks_;
     std::vector<std::shared_ptr<DTrack>> rec_tracks_;
+
+//No of seeds
+    int RecTrk2_seed_No{-1};
 
 //No of reconstructed tracks
     int TagTrk2_track_No{-1};

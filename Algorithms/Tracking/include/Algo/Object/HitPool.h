@@ -11,6 +11,8 @@
 #include <functional>
 #include <vector>
 #include <map>
+#include <tuple>
+#include <set>
 
 template <typename Key, typename Element>
 class HitPool
@@ -19,6 +21,7 @@ private:
     using Pool = std::vector<std::shared_ptr<Element>>;
     using Map = std::map<Key, std::vector<std::shared_ptr<Element>>>;
     using KeyGetter = std::function<Key(const Element&)>;
+    using id_container_t = std::set<int>;
 
 public:
     HitPool()  {this->Init();}
@@ -45,7 +48,7 @@ public:
         return true;
     }
 
-    size_t Size() const {return pool_.size();}
+    size_t size() const {return pool_.size();}
 
     template <typename Arbitrary>
     void SetKeyGetter(std::function<Arbitrary(const Element&)> &f)
@@ -71,6 +74,37 @@ public:
         pool_.emplace_back(std::make_shared<Element>(element));
 
         this->InsertMap();
+    }
+
+    std::tuple<id_container_t, int, int> GetIds(const int &n_bottom_id, const int &shift = 0)
+    {
+        const int n_top_id = 1;
+        const int n_middle_id = 1;
+
+        if(std::abs(shift) + n_bottom_id + n_middle_id + n_top_id > static_cast<int>(structured_->size()))
+        {
+            std::cerr << "[WARNING] ==> Required total ids exceeds pool size" << std::endl;
+            return std::make_tuple(id_container_t(), 0, 0);
+        }
+
+        id_container_t middel_ids;
+        bottom_ids_.clear();
+
+        auto it_top = std::next(structured_->rbegin(), shift > 0 ? 0 : -shift);
+        top_id_ = it_top++->first;
+        middle_id_ = it_top++->first;
+
+        auto it_bottom = std::next(structured_->begin(), shift < 0 ? 0 : shift);
+        bottom_ids_.insert(bottom_ids_.end(), it_bottom++->first);
+
+        auto it_middle = 0;
+        for(; it_middle < n_middle_id; it_middle++)
+        {
+            if     (it_middle%2 == 0 && it_bottom != structured_->end()) bottom_ids_.insert(bottom_ids_.end(), it_bottom++->first);
+            else if(it_middle%2 == 1 && it_top != structured_->rend())   bottom_ids_.insert(bottom_ids_.end(), it_top++->first);
+        }
+
+        return std::make_tuple(bottom_ids_, middle_id_, top_id_);
     }
 
     std::shared_ptr<Element>& Back() {return pool_.back();}
@@ -105,6 +139,10 @@ public:
     }
 
 private:
+    id_container_t bottom_ids_;
+    size_t middle_id_{0};
+    size_t top_id_{0};
+
     Pool pool_;
     Map *structured_{nullptr};
     KeyGetter key_getter_;
