@@ -615,22 +615,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
             if(if_raw_rec_hit_number && if_reco_rec_hits)
             {
-/*
-                auto print_ids = [](const auto &ids)
-                                 {
-                                     TString output;
-                                     int i_id = ids.size() - 1;
-                                     for(const auto &id : ids)
-                                         output += TString::Format("%i%s", id, (i_id-- == 0 ? "" : ", "));
-                                     return output;
-                                 };
-*/
-                seed_finder_snapshot_.clear();
-                auto [bottom_ids, middle_id, top_id] = rec_hit_pool_.GetIds(2);
-//                std::cout << "bottom ids: " << print_ids(bottom_ids)
-//                          << " middle id: "  << middle_id << " top id: " << top_id << std::endl;
                 SeedContainer_t seeds;
-                seed_finder_.FindSeeds(seed_finder_snapshot_, *rec_hit_pool_, seeds, bottom_ids, middle_id, top_id);
+                seed_finder_.Run(seed_finder_config_, seeds, &rec_hit_pool_);
 //                std::cout << seeds.size() << " seeds are found" << std::endl;
                 RecTrk2_seed_No = seeds.size();
 

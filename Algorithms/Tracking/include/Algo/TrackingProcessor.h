@@ -21,6 +21,8 @@
 #include "Algo/Object/seed.h"
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Digitization.h"
+
+#include "Algo/WrappedSeedFinder.h"
 #include "Algo/Seeding/seed_finder.h"
 #include "Algo/GreedyFinder.h"
 #include "Algo/KalmanFit/KalmanFilterFitter.h"
@@ -36,7 +38,8 @@ class TrackingProcessor : public AnaProcessor
 public:
     using Pool_t = HitPool<Key, TrkHit>;
     using Seed_t = Seed<TrkHit>; 
-    using SeedFinder_t = SeedFinder<Seed_t, TrkHitSPVecMap, TrkHitSP>; 
+//    using SeedFinder_t = SeedFinder<Seed_t, TrkHitSPVecMap, TrkHitSP>; 
+    using SeedFinder_t = WrappedSeedFinder;
     using SeedContainer_t = std::vector<Seed_t>;
 
 public:
@@ -66,8 +69,6 @@ private:
 
 private:
     SeedFinder_t seed_finder_;
-
-    SeedFinder_t::SeedFinderSnapshot seed_finder_snapshot_;
 
     SeedFinder_t::SeedFinderConfig seed_finder_config_;
     GreedyFinder::Config finding_config_;
@@ -124,7 +125,7 @@ private:
 //................................................................................//
 //Magnet
 //................................................................................//
-    std::vector<DMagnet *> magnets;
+    std::vector<DMagnet*> magnets;
 
 //................................................................................//
 //Truth
