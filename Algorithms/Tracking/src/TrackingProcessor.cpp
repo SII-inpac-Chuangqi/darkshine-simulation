@@ -67,13 +67,15 @@ TrackingProcessor::TrackingProcessor(string name, shared_ptr<EventStoreAndWriter
 
 void TrackingProcessor::Begin() {
 //................................................................................//
-//Load geometry
+//Setup algos
 //................................................................................//
-    digitizer.ReadTrackerInfo(if_strip);
-    digitizer.SetIfSmear(if_smear);
-    digitizer.SetClusterWidth(0.03);
-
     DTrack::SetResolutions(0.03, 0.03/0.05, 0.);
+
+    digitizer_.ReadTrackerInfo(if_strip);
+    digitizer_.SetIfSmear(if_smear);
+    digitizer_.SetClusterWidth(0.03);
+
+    seed_finder_.Connect(&TrkHit::GetX, &TrkHit::GetZ, &TrkHit::GetY);
 
 //................................................................................//
 //Load fitter info
@@ -108,7 +110,7 @@ void TrackingProcessor::Begin() {
                                             dAnaData->getMagnetFieldAt({0., 0., 0.}).at(1),
                                             dAnaData->getMagnetFieldAt({0., 0., 0.}).at(2));
         RiemannFitHelper::SetTrackerLayerThickness(dAnaData->getLayerThicknessRec().at(0));
-        RiemannFitHelper::SetMeasurementError(digitizer.GetClusterWidth(), dAnaData->getAnglesRec().at(0));
+        RiemannFitHelper::SetMeasurementError(digitizer_.GetClusterWidth(), dAnaData->getAnglesRec().at(0));
     }
 
 //................................................................................//
@@ -174,6 +176,8 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("RecTrk2_track_chi2_algo", &RecTrk2_track_chi2_algo);
 
     if (!clean) {
+        EvtWrt->RegisterIntVariable("RecTrk2_seed_No", &RecTrk2_seed_No, "RecTrk2_seed_No/I");
+
         EvtWrt->RegisterOutVariable("RecTrk2_track_quality", &RecTrk2_track_quality);
         EvtWrt->RegisterOutVariable("RecTrk2_track_x_sigma", &RecTrk2_track_x_sigma);
         EvtWrt->RegisterOutVariable("RecTrk2_track_y_sigma", &RecTrk2_track_y_sigma);
@@ -255,6 +259,8 @@ void TrackingProcessor::InitEvt() {
     Trk_contrib_compt_count = 0;
     Trk_contrib_eBrem_count = 0;
     Trk_contrib_phot_count = 0;
+
+    RecTrk2_seed_No = -1;
 
     TagTrk2_track_No_truth = 0;
     RecTrk2_track_No_truth = 0;
@@ -566,9 +572,9 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         if_raw_tag_hit_number = true;
 
 //Digitization
-        digitizer.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, &tag_hit_pool_, tracking::dTag);
+        digitizer_.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, &tag_hit_pool_, tracking::dTag);
 
-        if(tag_hit_pool_.Size())
+        if(tag_hit_pool_.size())
         {
             if_reco_tag_hits = true;
 
@@ -601,14 +607,33 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         if_raw_rec_hit_number = true;
 
 //Digitization
-        digitizer.Layering(raw_rectrk1_hits, raw_rectrk2_hits, &rec_hit_pool_, tracking::dRec);
+        digitizer_.Layering(raw_rectrk1_hits, raw_rectrk2_hits, &rec_hit_pool_, tracking::dRec);
 
-        if(rec_hit_pool_.Size())
+        if(rec_hit_pool_.size())
         {
             if_reco_rec_hits = true;
 
             if(if_raw_rec_hit_number && if_reco_rec_hits)
             {
+/*
+                auto print_ids = [](const auto &ids)
+                                 {
+                                     TString output;
+                                     int i_id = ids.size() - 1;
+                                     for(const auto &id : ids)
+                                         output += TString::Format("%i%s", id, (i_id-- == 0 ? "" : ", "));
+                                     return output;
+                                 };
+*/
+                seed_finder_snapshot_.clear();
+                auto [bottom_ids, middle_id, top_id] = rec_hit_pool_.GetIds(2);
+//                std::cout << "bottom ids: " << print_ids(bottom_ids)
+//                          << " middle id: "  << middle_id << " top id: " << top_id << std::endl;
+                SeedContainer_t seeds;
+                seed_finder_.FindSeeds(seed_finder_snapshot_, *rec_hit_pool_, seeds, bottom_ids, middle_id, top_id);
+//                std::cout << seeds.size() << " seeds are found" << std::endl;
+                RecTrk2_seed_No = seeds.size();
+
 //Finding, by pre-fitting
                 GreedyFinder find_rec(finding_config_, &rec_hit_pool_);
                 find_rec.FillTracks(&rec_tracks_);

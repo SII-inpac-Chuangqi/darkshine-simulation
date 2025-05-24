@@ -33,7 +33,7 @@ void GreedyFinder::ColinearFit()
 GreedyFinder::hit_map_t GreedyFinder::GetFurnishedPool(pool_t *pool)
 {
     if(pool->IsNull()) return {{}};
-    if(pool->Size() == 0)
+    if(pool->size() == 0)
     {
         std::cerr << "[WARNING] ==> Empty pool passed to track finder" << std::endl;
         return {{}};
