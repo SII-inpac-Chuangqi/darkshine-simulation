@@ -32,9 +32,9 @@ public:
 
     DTrack() = default;
     DTrack(const TrkHitSPVec &newHits,
-           double newPreR, 
            double newPreXc,
-           double newPreYc);
+           double newPreYc,
+           double newPreR);
     DTrack(const DTrack &oldTrack);
     DTrack(DTrack &&oldTrack);
     DTrack& operator=(const DTrack&);

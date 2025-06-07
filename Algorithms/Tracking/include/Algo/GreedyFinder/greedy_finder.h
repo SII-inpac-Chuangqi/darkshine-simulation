@@ -19,7 +19,7 @@ public:
         int min_depth = 3;
         double min_R = 250.;
         double kasa_chi2 = 0.9995;
-        double linear_r2 = 0.98;
+        double linear_r2 = 0.9;
         int verbose = 0;
     };
 
@@ -114,8 +114,9 @@ public:
         {
             tracks.push_back(std::make_shared<track_t>(track->candidate,
                                                        manager_.output_As.at(i_track), manager_.output_Bs.at(i_track),
-                                                       manager_.output_Rs.at(i_track),
-                                                       manager_.output_chi2s.at(i_track), manager_.output_r2s.at(i_track)));
+                                                       manager_.output_Rs.at(i_track)
+//                                                       manager_.output_chi2s.at(i_track), manager_.output_r2s.at(i_track))
+                                                      ));
 
 //            for(const auto &hit : track->candidate)
 //                hit->SetTrack(tracks.back());

@@ -83,8 +83,8 @@ private:
 //................................................................................//
 //Configs
 //................................................................................//
-    SeedFinder_t::SeedFinderConfig seed_finder_tag_config_;
-    SeedFinder_t::SeedFinderConfig seed_finder_rec_config_;
+    SeedFinder_t::SeedFinderConfig tag_seeder_config_;
+    SeedFinder_t::SeedFinderConfig rec_seeder_config_;
     GreedyFinder::GreedyFinderConfig tag_finder_config_;
     GreedyFinder::GreedyFinderConfig rec_finder_config_;
     KalmanFilterFitter::Config genfit_config_;
