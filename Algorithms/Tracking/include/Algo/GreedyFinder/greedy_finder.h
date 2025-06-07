@@ -10,21 +10,19 @@
 #include "Algo/Object/seed.h"
 #include "Algo/Object/HitPool.h"
 
-namespace tracking
-{
-struct GreedyFinderConfig
-{
-    int max_circle = 100000;
-    int min_depth = 3;
-    double min_R = 250.;
-    double kasa_chi2 = 0.9995;
-    double linear_r2 = 0.98;
-    int verbose = 0;
-};
-}
-
 class GreedyFinder
 {
+public:
+    struct GreedyFinderConfig
+    {
+        int max_circle = 100000;
+        int min_depth = 3;
+        double min_R = 250.;
+        double kasa_chi2 = 0.9995;
+        double linear_r2 = 0.98;
+        int verbose = 0;
+    };
+
 private:
     using hit_p_t = std::shared_ptr<TrkHit>; 
     using seed_t = Seed<TrkHit>;
@@ -91,8 +89,8 @@ private:
         std::vector<double> output_Bs;
         std::vector<double> output_Rs;
 
-        void reset(const tracking::GreedyFinderConfig &config, double *chi2 = nullptr, double *r2 = nullptr);
-        void clear(const tracking::GreedyFinderConfig &config, double *chi2 = nullptr, double *r2 = nullptr);
+        void reset(const GreedyFinderConfig &config, double *chi2 = nullptr, double *r2 = nullptr);
+        void clear(const GreedyFinderConfig &config, double *chi2 = nullptr, double *r2 = nullptr);
         void Choose();
         template<class id_container_t> void Remove(const id_container_t &removed_ids);
         void Output();
@@ -101,7 +99,7 @@ private:
 public:
     GreedyFinder() {}
 
-    GreedyFinder(const tracking::GreedyFinderConfig &config) : config_(config) {}
+    GreedyFinder(const GreedyFinderConfig &config) : config_(config) {}
 
     void FindTracks(pool_t *pool, GreedyFinderSnapshot *snapshot, const std::vector<seed_t> &seeds = {});
 
@@ -128,6 +126,8 @@ public:
         return tracks;
     }
 
+    void Config(GreedyFinderConfig config) {config_ = config;};
+
 private:
     void KasaFit();
     void ColinearFit();
@@ -139,7 +139,7 @@ private:
     void MergeTrack();
     bool GreedyLooping(hit_map_t &pool, hit_map_t::iterator layer, const seed_t *seed = nullptr);
 
-    tracking::GreedyFinderConfig config_;
+    GreedyFinderConfig config_;
     GreedyFinderSnapshot *snapshot_{nullptr};
 
     ProtoTrackManager manager_;

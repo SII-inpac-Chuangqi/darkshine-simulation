@@ -163,6 +163,7 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("TagTrk2_track_chi2_algo", &TagTrk2_track_chi2_algo);
 
     if (!clean) {
+        EvtWrt->RegisterIntVariable("TagTrk2_seed_No", &TagTrk2_seed_No, "TagTrk2_seed_No/I");
         EvtWrt->RegisterOutVariable("TagTrk2_track_quality", &TagTrk2_track_quality);
         EvtWrt->RegisterOutVariable("TagTrk2_track_x_sigma", &TagTrk2_track_x_sigma);
         EvtWrt->RegisterOutVariable("TagTrk2_track_y_sigma", &TagTrk2_track_y_sigma);
@@ -221,288 +222,6 @@ void TrackingProcessor::Begin() {
     else if (process_ == tracking::dFind)   process_info = "finding";
     else if (process_ == tracking::dDigi)   process_info = "digitization";
     std::cout << "[Info] ==> Tracking will run processes until" << process_info << std::endl;
-}
-
-void TrackingProcessor::InitEvt() {
-//We clear vertices first, then tracks, finally pools which hold the hits' memory
-    rec_vertexes_.clear(); rec_vertexes_.shrink_to_fit();
-
-    tag_tracks_.clear(); tag_tracks_.shrink_to_fit();
-    rec_tracks_.clear(); rec_tracks_.shrink_to_fit();
-
-    tag_hit_pool_.Clear();
-    rec_hit_pool_.Clear();
-
-    std::vector<double>().swap(TagTrk2_truth_hit_x);
-    std::vector<double>().swap(TagTrk2_truth_hit_y);
-    std::vector<double>().swap(TagTrk2_truth_hit_z);
-    std::vector<double>().swap(TagTrk2_truth_hit_e);
-    std::vector<double>().swap(RecTrk2_truth_hit_x);
-    std::vector<double>().swap(RecTrk2_truth_hit_y);
-    std::vector<double>().swap(RecTrk2_truth_hit_z);
-    std::vector<double>().swap(RecTrk2_truth_hit_e);
-
-    std::vector<std::vector<double>>().swap(TagTrk2_truth_state_x);
-    std::vector<std::vector<double>>().swap(TagTrk2_truth_state_y);
-    std::vector<std::vector<double>>().swap(TagTrk2_truth_state_z);
-    std::vector<std::vector<double>>().swap(RecTrk2_truth_state_x);
-    std::vector<std::vector<double>>().swap(RecTrk2_truth_state_y);
-    std::vector<std::vector<double>>().swap(RecTrk2_truth_state_z);
-    std::vector<int>().swap(Trk_contrib_pdg);
-    std::vector<TString>().swap(Trk_contrib_create_process);
-    std::vector<double>().swap(Trk_contrib_z);
-    std::vector<double>().swap(Trk_contrib_E);
-    std::vector<double>().swap(Trk_deposit_E);
-    Trk_contrib_Initial_count = 0;
-    Trk_contrib_conv_count = 0;
-    Trk_contrib_eIoni_count = 0;
-    Trk_contrib_compt_count = 0;
-    Trk_contrib_eBrem_count = 0;
-    Trk_contrib_phot_count = 0;
-
-    RecTrk2_seed_No = -1;
-
-    TagTrk2_track_No_truth = 0;
-    RecTrk2_track_No_truth = 0;
-    TagTrk2_track_No = -1;
-    RecTrk2_track_No = -1;
-
-    TagTrk2_pp_truth_ini = RETURN;
-    TagTrk2_pp_truth_fin = RETURN;
-    RecTrk2_pp_truth_ini = RETURN;
-    RecTrk2_pp_truth_fin = RETURN;
-
-    std::vector<double>().swap(TagTrk2_pp);
-    std::vector<double>().swap(TagTrk2_track_chi2);
-    std::vector<double>().swap(TagTrk2_track_chi2_algo);
-    std::vector<double>().swap(TagTrk2_track_quality);
-    std::vector<double>().swap(TagTrk2_track_x_sigma);
-    std::vector<double>().swap(TagTrk2_track_y_sigma);
-
-    std::vector<double>().swap(RecTrk2_pp);
-    std::vector<double>().swap(RecTrk2_fixed_pp);
-    std::vector<double>().swap(RecTrk2_track_chi2);
-    std::vector<double>().swap(RecTrk2_track_chi2_algo);
-    std::vector<double>().swap(RecTrk2_track_quality);
-    std::vector<double>().swap(RecTrk2_track_x_sigma);
-    std::vector<double>().swap(RecTrk2_track_y_sigma);
-
-    std::vector<std::vector<double>>().swap(RecTrk2_track_x);
-    std::vector<std::vector<double>>().swap(RecTrk2_track_y);
-    std::vector<std::vector<double>>().swap(RecTrk2_track_z);
-
-    std::vector<std::vector<double>>().swap(RecTrk2_track_extrapolated_x);
-    std::vector<std::vector<double>>().swap(RecTrk2_track_extrapolated_y);
-    std::vector<std::vector<double>>().swap(RecTrk2_track_corrections_x);
-
-    std::vector<double>().swap(RecTrk2_track_preA);
-    std::vector<double>().swap(RecTrk2_track_preB);
-    std::vector<double>().swap(RecTrk2_track_preR);
-
-    std::vector<double>().swap(ECal_seed_x_truth);
-    std::vector<double>().swap(ECal_seed_y_truth);
-    std::vector<double>().swap(ECal_seed_px_truth);
-    std::vector<double>().swap(ECal_seed_py_truth);
-    std::vector<double>().swap(ECal_seed_pz_truth);
-    std::vector<double>().swap(ECal_seed_e_truth);
-    std::vector<double>().swap(ECal_seed_theta_truth);
-    std::vector<double>().swap(ECal_seed_phi_truth);
-    std::vector<int>().swap(ECal_seed_pdg);
-    std::vector<int>().swap(ECal_seed_id_rec_track);
-
-    std::vector<double>().swap(ECal_seed_x);
-    std::vector<double>().swap(ECal_seed_y);
-    std::vector<double>().swap(ECal_seed_px);
-    std::vector<double>().swap(ECal_seed_py);
-    std::vector<double>().swap(ECal_seed_pz);
-
-    RecTrk2_vertex_z.clear(); RecTrk2_vertex_z.shrink_to_fit();
-
-//Now we init the pools
-    tag_hit_pool_.Init();
-    rec_hit_pool_.Init();
-}
-
-void TrackingProcessor::FillTruth(DTruth *truth_info,
-                                  std::vector<DStep*> *initial_steps,
-                                  const SimulatedHitMap &simu_hits,
-                                  const std::vector<TrkHit> &raw_tagtrk2_hits,
-                                  const std::vector<TrkHit> &raw_rectrk2_hits) {
-
-        dAnaData->LoadTruthInfo(truth_info);
-        //dAnaData->PrintTruthInfo();
-
-        TagTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::TagTrk);
-        RecTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::RecTrk);
-
-        auto truth_states_at_ECal = dAnaData->getTruthStatesAtECalFront();
-        auto n_truth_states_at_ECal = truth_states_at_ECal.size();
-
-        std::vector<std::pair<int, std::pair<const DTruthState*, int>>> truth_states_at_ECal_sorted; // If not match std::get<0>=-1
-        // //first sort by truth E
-        // std::sort(truth_states_at_ECal.begin(), truth_states_at_ECal.end(),
-        //             [&](std::pair<const DTruthState*, int> A, std::pair<const DTruthState*, int> B) -> bool {
-        //                     return A.second->E > B.second->E;
-        //         });
-        
-        //then match rec track
-        int id_rec_track=-1;
-        for(auto &track : rec_tracks_)
-        {
-            id_rec_track++;
-            int min_id(-1);
-            double min_dis(INFINITY);
-
-            for(size_t i = 0; i < truth_states_at_ECal.size(); i++)
-            {
-                double dis = (std::hypot(truth_states_at_ECal.at(i).first->vertex[0] - track->GetECalSeedX(),
-                                         truth_states_at_ECal.at(i).first->vertex[1] - track->GetECalSeedY())
-                             );
-                if(dis < min_dis) {min_dis = dis; min_id = i;}
-            }
-
-            if(min_id >= 0 && min_id < static_cast<int>(truth_states_at_ECal.size()))
-            {
-                truth_states_at_ECal_sorted.push_back(std::make_pair(id_rec_track, truth_states_at_ECal.at(min_id)));
-                truth_states_at_ECal.at(min_id).first = nullptr;
-                truth_states_at_ECal.erase(truth_states_at_ECal.begin() + min_id);
-            }
-        }
-
-        for(auto track : truth_states_at_ECal){ // appending other truth tracks (unmatched)
-            truth_states_at_ECal_sorted.push_back(std::make_pair(-1, track));
-        }
-
-        //sanity check
-        if(Verbose > 0 && n_truth_states_at_ECal != truth_states_at_ECal_sorted.size()) {
-            std::cerr << "[WARNING] ==> Number of sorted truth tracks changed" << std::endl;
-            return;
-        }
-
-        auto temp_v = new ROOT::Math::PxPyPzEVector();
-        for(auto truth_state_sorted : truth_states_at_ECal_sorted)
-        {
-            auto track = truth_state_sorted.second.first;
-            auto pdg = truth_state_sorted.second.second;
-            temp_v->SetPxPyPzE(track->momentum[0], track->momentum[1], track->momentum[2], track->E);
-
-            ECal_seed_x_truth.push_back(track->vertex[0]);
-            ECal_seed_y_truth.push_back(track->vertex[1]);
-            ECal_seed_px_truth.push_back(track->momentum[0]);
-            ECal_seed_py_truth.push_back(track->momentum[1]);
-            ECal_seed_pz_truth.push_back(track->momentum[2]);
-            ECal_seed_e_truth.push_back(track->E);
-            ECal_seed_theta_truth.push_back(temp_v->Theta());
-            ECal_seed_phi_truth.push_back(temp_v->Phi());
-            ECal_seed_pdg.push_back(pdg);
-            ECal_seed_id_rec_track.push_back(truth_state_sorted.first);
-        }
-        delete temp_v;
-
-    if (!clean) {
-    // Fill pcontrib
-        for (auto const& [collection_name, hit_collection]: simu_hits) {
-            if(collection_name.substr(3,3) != "Trk") continue;
-            for (auto const &hit: *hit_collection) {
-                if (hit->getPContribution().empty()) continue;
-                if (hit->getE() < remove_hit_less_E) continue;
-                Trk_contrib_pdg.emplace_back(hit->getPContribution().at(0).getPdg());
-                std::string proc_name = hit->getPContribution().at(0).getCreateProcess().empty() ? "Initial" : hit->getPContribution().at(0).getCreateProcess();
-                Trk_contrib_create_process.emplace_back(proc_name);
-                Trk_contrib_z.emplace_back(hit->getZ());
-                Trk_contrib_E.emplace_back(hit->getPContribution().at(0).getEnergy());
-                Trk_deposit_E.emplace_back(hit->getE());
-                if (proc_name == "Initial") Trk_contrib_Initial_count++;
-                else if (proc_name == "conv") Trk_contrib_conv_count++;
-                else if (proc_name == "eIoni") Trk_contrib_eIoni_count++;
-                else if (proc_name == "compt") Trk_contrib_compt_count++;
-                else if (proc_name == "eBrem") Trk_contrib_eBrem_count++;
-                else if (proc_name == "phot") Trk_contrib_phot_count++;
-            }
-        }
-
-        TagTrk2_No = raw_tagtrk2_hits.size();
- 
-        bool trackerFlag = false;
-        for (auto step : *initial_steps) {
-            if (tracking::InTagTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
-                TagTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
-                                            step->getPz() * step->getPz());
-                trackerFlag = true;
-            } else if (!tracking::InTagTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
-                TagTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
-                                            step->getPz() * step->getPz());
-                break;
-            }
-        }
- 
-        for (int i = 0; i < TagTrk2_No; ++i) {
-            TagTrk2_truth_hit_x.push_back(raw_tagtrk2_hits.at(i).GetX());
-            TagTrk2_truth_hit_y.push_back(raw_tagtrk2_hits.at(i).GetY());
-            TagTrk2_truth_hit_z.push_back(raw_tagtrk2_hits.at(i).GetZ());
-            TagTrk2_truth_hit_e.push_back(raw_tagtrk2_hits.at(i).GetE());
-        }
-
-        auto truth_tracks_in_tag = dAnaData->getTruthTracks(DTruth::DTruthDetPV::TagTrk);
-        for(const auto &truth_track : truth_tracks_in_tag)
-        {
-            std::vector<double> truth_state_x;
-            std::vector<double> truth_state_y;
-            std::vector<double> truth_state_z;
-
-            for(const auto &state : truth_track.second)
-            {
-                truth_state_x.push_back(state->vertex[0]);
-                truth_state_y.push_back(state->vertex[1]);
-                truth_state_z.push_back(state->vertex[2]);
-            }
-
-            TagTrk2_truth_state_x.push_back(truth_state_x);
-            TagTrk2_truth_state_y.push_back(truth_state_y);
-            TagTrk2_truth_state_z.push_back(truth_state_z);
-        }
- 
-        RecTrk2_No = raw_rectrk2_hits.size();
- 
-        trackerFlag = false;
-        for (auto step : *initial_steps) {
-            if (tracking::InRecTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
-                RecTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
-                                            step->getPz() * step->getPz());
-                trackerFlag = true;
-            } else if (!tracking::InRecTrack(step->getX(), step->getY(), step->getZ()) && trackerFlag) {
-                RecTrk2_pp_truth_fin = sqrt(step->getPx() * step->getPx() +
-                                            step->getPz() * step->getPz());
-                break;
-            }
-        }
- 
-        for (int i = 0; i < RecTrk2_No; ++i) {
-            RecTrk2_truth_hit_x.push_back(raw_rectrk2_hits.at(i).GetX());
-            RecTrk2_truth_hit_y.push_back(raw_rectrk2_hits.at(i).GetY());
-            RecTrk2_truth_hit_z.push_back(raw_rectrk2_hits.at(i).GetZ());
-            RecTrk2_truth_hit_e.push_back(raw_rectrk2_hits.at(i).GetE());
-        }
-
-        auto truth_tracks_in_rec = dAnaData->getTruthTracks(DTruth::DTruthDetPV::RecTrk);
-        for(const auto &truth_track : truth_tracks_in_rec)
-        {
-            std::vector<double> truth_state_x;
-            std::vector<double> truth_state_y;
-            std::vector<double> truth_state_z;
-
-            for(const auto &state : truth_track.second)
-            {
-                truth_state_x.push_back(state->vertex[0]);
-                truth_state_y.push_back(state->vertex[1]);
-                truth_state_z.push_back(state->vertex[2]);
-            }
-
-            RecTrk2_truth_state_x.push_back(truth_state_x);
-            RecTrk2_truth_state_y.push_back(truth_state_y);
-            RecTrk2_truth_state_z.push_back(truth_state_z);
-        }
-    }
 }
 
 void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
@@ -580,22 +299,29 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
             if(if_raw_tag_hit_number && if_reco_tag_hits)
             {
+//Seeding
+                SeedContainer_t seeds;
+                seed_finder_.Run(seed_finder_tag_config_, seeds, &tag_hit_pool_);
+//                std::cout << seeds.size() << " seeds are found" << std::endl;
+                TagTrk2_seed_No = seeds.size();
+
 //Finding, by pre-fitting
-                GreedyFinder find_tag(finding_config_, &tag_hit_pool_);
-                find_tag.FillTracks(&tag_tracks_);
+//                GreedyFinder find_tag(finding_config_, &tag_hit_pool_);
+//                find_tag.FillTracks(&tag_tracks_);
+                  tag_finder_.Config(tag_finder_config_);
     
 //Fit, by Genfit, Kalman filter/by Riemann fitting
-                TagTrk2_track_No = find_tag.GetTrackNo();
-
-                for (auto &track : tag_tracks_)
-                {
-                    track->SetVerbose(Verbose);
-                    if(if_backwards) track->Reverse();
-
-                    WrappedFitter fitter;
-                    if      (Tag_fit_method == tracking::dKalman)  fitter.Run(genfit_config_, track);
-                    else if (Tag_fit_method == tracking::dRiemann) fitter.Run(riemann_config_, track);
-                }
+//                TagTrk2_track_No = find_tag.GetTrackNo();
+//
+//                for (auto &track : tag_tracks_)
+//                {
+//                    track->SetVerbose(Verbose);
+//                    if(if_backwards) track->Reverse();
+//
+//                    WrappedFitter fitter;
+//                    if      (Tag_fit_method == tracking::dKalman)  fitter.Run(genfit_config_, track);
+//                    else if (Tag_fit_method == tracking::dRiemann) fitter.Run(riemann_config_, track);
+//                }
             }
         }
     }
@@ -615,26 +341,27 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
             if(if_raw_rec_hit_number && if_reco_rec_hits)
             {
+//Seeding
                 SeedContainer_t seeds;
-                seed_finder_.Run(seed_finder_config_, seeds, &rec_hit_pool_);
+                seed_finder_.Run(seed_finder_rec_config_, seeds, &rec_hit_pool_);
 //                std::cout << seeds.size() << " seeds are found" << std::endl;
                 RecTrk2_seed_No = seeds.size();
 
 //Finding, by pre-fitting
-                GreedyFinder find_rec(finding_config_, &rec_hit_pool_);
-                find_rec.FillTracks(&rec_tracks_);
+//                GreedyFinder find_rec(finding_config_, &rec_hit_pool_);
+//                find_rec.FillTracks(&rec_tracks_);
 
 //Fit, by Genfit, Kalman filter/by Riemann fitting
-                RecTrk2_track_No = find_rec.GetTrackNo();
-          
-                for (auto &track : rec_tracks_) {
-                    track->SetVerbose(Verbose);
-                    if(if_backwards) track->Reverse();
-
-                    WrappedFitter fitter;
-                    if      (Rec_fit_method == tracking::dKalman)  fitter.Run(genfit_config_, track);
-                    else if (Rec_fit_method == tracking::dRiemann) fitter.Run(riemann_config_, track);
-                }
+//                RecTrk2_track_No = find_rec.GetTrackNo();
+//          
+//                for (auto &track : rec_tracks_) {
+//                    track->SetVerbose(Verbose);
+//                    if(if_backwards) track->Reverse();
+//
+//                    WrappedFitter fitter;
+//                    if      (Rec_fit_method == tracking::dKalman)  fitter.Run(genfit_config_, track);
+//                    else if (Rec_fit_method == tracking::dRiemann) fitter.Run(riemann_config_, track);
+//                }
             }
         }
     }
