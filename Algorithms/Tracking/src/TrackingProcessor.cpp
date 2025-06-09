@@ -76,8 +76,9 @@ void TrackingProcessor::Begin() {
     digitizer_.SetClusterWidth(0.03);
 
     tag_seeder_config_.verbose = Verbose;
-    rec_seeder_config_.verbose = Verbose;
+//    rec_seeder_config_.verbose = Verbose;
     seed_finder_.Connect(&TrkHit::GetX, &TrkHit::GetZ, &TrkHit::GetY);
+    tag_finder_config_.verbose = Verbose;
 
 //................................................................................//
 //Load fitter info
@@ -355,10 +356,10 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //Finding, by pre-fitting
 //                GreedyFinder find_rec(finding_config_, &rec_hit_pool_);
 //                find_rec.FillTracks(&rec_tracks_);
-                rec_finder_.Config(tag_finder_config_);
+                rec_finder_.Config(rec_finder_config_);
                 rec_finder_snapshot_.clear();
-                rec_finder_.FindTracks(&tag_hit_pool_, &tag_finder_snapshot_, seeds);
-                rec_tracks_ = tag_finder_.GetTracks<DTrack>();
+                rec_finder_.FindTracks(&rec_hit_pool_, &rec_finder_snapshot_, seeds);
+                rec_tracks_ = rec_finder_.GetTracks<DTrack>();
 
 //Fit, by Genfit, Kalman filter/by Riemann fitting
                 RecTrk2_track_No = rec_tracks_.size();
