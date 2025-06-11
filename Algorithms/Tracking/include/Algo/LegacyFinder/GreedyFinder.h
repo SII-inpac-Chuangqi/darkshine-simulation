@@ -1,5 +1,5 @@
-#ifndef GREEDY_FINDER_H
-#define GREEDY_FINDER_H
+#ifndef TRACKING_LEGACY_GREEDY_FINDER_H
+#define TRACKING_LEGACY_GREEDY_FINDER_H
 
 //................................................................................//
 //C++
@@ -16,7 +16,7 @@
 //................................................................................//
 //TRACKING
 #include "Algo/Object/TrkHit.h"
-#include "Algo/Finder.h"
+#include "Algo/LegacyFinder/Finder.h"
 #include "Algo/Object/HitPool.h"
 
 #ifndef RETURN
@@ -153,4 +153,4 @@ private:
     std::vector<int> hits_no_store_;
 };
 
-#endif
+#endif // TRACKING_LEGACY_GREEDY_FINDER_H

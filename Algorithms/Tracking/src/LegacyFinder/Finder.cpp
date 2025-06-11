@@ -12,7 +12,7 @@
 
 //................................................................................//
 //Tracking
-#include "Algo/Finder.h"
+#include "Algo/LegacyFinder/Finder.h"
 
 std::vector<double> Finder::GetMagnetFieldAt(double x, double y, double z)
 {
