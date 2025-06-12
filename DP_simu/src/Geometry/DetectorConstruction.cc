@@ -28,12 +28,9 @@
 /// \file DetectorConstruction.cc
 /// \brief Implementation of the DetectorConstruction class
 
-#include "DP_simu/DetectorConstruction.hh"
-#include "DP_simu/RootManager.hh"
-#include "Bias_Filter/BOptrChangeCrossSection.hh"
-#include "Bias_Filter/BOptrMultiParticleChangeCrossSection.hh"
-#include "DP_simu/TrkConstruct.hh"
-#include "Animation/AnimationData.h"
+#include <iterator>
+#include <cstdio>
+#include <filesystem>
 
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
@@ -55,9 +52,13 @@
 #include "G4LogicalVolumeStore.hh"
 #include "G4PhysicalVolumeStore.hh"
 
-#include <iterator>
-#include <cstdio>
-#include <filesystem>
+#include "Control/DetectorType.h"
+#include "DP_simu/DetectorConstruction.hh"
+#include "DP_simu/RootManager.hh"
+#include "Bias_Filter/BOptrChangeCrossSection.hh"
+#include "Bias_Filter/BOptrMultiParticleChangeCrossSection.hh"
+#include "DP_simu/TrkConstruct.hh"
+#include "Animation/AnimationData.h"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -109,10 +110,10 @@ void DetectorConstruction::DefineParameters() {
     Target_Pos = dControl->Target_Pos;
 
     ///  Tagging Tracker
-    TagTrk->DefineParameters(dTagging);
+    TagTrk->DefineParameters(TrackerType::dTagging);
 
     ///  Recoil Tracker
-    RecTrk->DefineParameters(dRecoil);
+    RecTrk->DefineParameters(TrackerType::dRecoil);
 
     ///  ECAL
     ECAL_Con2->DefineParameters();
@@ -139,9 +140,9 @@ G4VPhysicalVolume *DetectorConstruction::DefineVolumes() {
     // Build MagnetShield
     if (dControl->build_MagnetShield) DefineMagnetShield();
     // Build Tagging Tracker
-    if (dControl->build_tag_tracker) TagTrk->Build(dTagging, World_LV, fCheckOverlaps);
+    if (dControl->build_tag_tracker) TagTrk->Build(static_cast<int>(TrackerType::dTagging), World_LV, fCheckOverlaps);
     // Build Recoil Tracker
-    if (dControl->build_rec_tracker) RecTrk->Build(dRecoil, World_LV, fCheckOverlaps);
+    if (dControl->build_rec_tracker) RecTrk->Build(static_cast<int>(TrackerType::dRecoil), World_LV, fCheckOverlaps);
     // Build ECAL
     if (dControl->build_ECAL) ECAL_Con2->Build(0, World_LV, fCheckOverlaps);
     // Build HCAL
@@ -234,8 +235,8 @@ void DetectorConstruction::ConstructSDandField() {
     /* Construct Sensitive Detector */
     /*                              */
 
-    if (dControl->build_tag_tracker) TagTrk->BuildSDandField(dTagging);
-    if (dControl->build_rec_tracker) RecTrk->BuildSDandField(dRecoil);
+    if (dControl->build_tag_tracker) TagTrk->BuildSDandField(static_cast<int>(TrackerType::dTagging));
+    if (dControl->build_rec_tracker) RecTrk->BuildSDandField(static_cast<int>(TrackerType::dRecoil));
     if (dControl->build_ECAL) ECAL_Con2->BuildSD();
     if (dControl->build_HCAL) HCAL_Con->BuildSD();
     if (dControl->build_SideHCAL) SideHCAL_Con->BuildSD();
