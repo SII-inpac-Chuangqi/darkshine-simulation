@@ -4,11 +4,13 @@
 
 #include "Geometry/Tracker_Construct.h"
 
+#include "Control/DetectorType.h"
+
 /// \brief Define Parameters of Trackers
 /// \param[in] type
 /// \param[in] preset  0 = Tagging Tracker; 1 = Recoil Tracker
 /// \param[in] Target_Size
-void Tracker_Construct::DefineParameters(Tracker_Type type) {
+void Tracker_Construct::DefineParameters(TrackerType type) {
 
     // Global tracker parameter
     Tracker_Mat = dControl->Tracker_Mat;
@@ -17,10 +19,10 @@ void Tracker_Construct::DefineParameters(Tracker_Type type) {
     Tracker2_Color = dControl->Tracker2_Color;
 
     switch (type) {
-        case dNone:
+        case TrackerType::dNone:
             break;
 
-        case dTagging:
+        case TrackerType::dTagging:
             Size_Tracker = dControl->tag_Size_Tracker;
             Pos_Tracker = dControl->tag_Pos_Tracker;
             StripN_Tracker = dControl->tag_Tracker_Strip_N;
@@ -33,7 +35,7 @@ void Tracker_Construct::DefineParameters(Tracker_Type type) {
             Tracker_MagField = dControl->tag_Tracker_MagField;
 
             break;
-        case dRecoil:
+        case TrackerType::dRecoil:
             Size_Tracker = dControl->rec_Size_Tracker;
             Pos_Tracker = dControl->rec_Pos_Tracker;
             StripN_Tracker = dControl->rec_Tracker_Strip_N;
@@ -54,28 +56,28 @@ void Tracker_Construct::DefineParameters(Tracker_Type type) {
 
 bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, G4bool fCheckOverlaps) {
 
-    if (type == dNone) return false;
+    if (type == static_cast<int>(TrackerType::dNone)) return false;
 
     auto TrackerRegion_Box = new G4Box(
-            (type == dTagging ? "TagTrk" : "RecTrk"),
+            (type == static_cast<int>(TrackerType::dTagging) ? "TagTrk" : "RecTrk"),
             Size_TrackerRegion.x() / 2.,
             Size_TrackerRegion.y() / 2.,
             Size_TrackerRegion.z() / 2.
     );
     TrackerRegion_LV = new G4LogicalVolume(
             TrackerRegion_Box, TrackerRegion_Mat,
-            (type == dTagging ? "TAGTrk" : "RECTrk"),
+            (type == static_cast<int>(TrackerType::dTagging) ? "TAGTrk" : "RECTrk"),
             nullptr, nullptr, nullptr
     );
 
     new G4PVPlacement(
             nullptr, Pos_TrackerRegion, TrackerRegion_LV,
-            (type == dTagging ? "TAGTrk" : "RECTrk"),
+            (type == static_cast<int>(TrackerType::dTagging) ? "TAGTrk" : "RECTrk"),
             World_LV, false, 0, fCheckOverlaps
     );
 
     auto Tracker = new TrkConstruct(
-            (type == dTagging ? "TagTrk" : "RecTrk"),
+            (type == static_cast<int>(TrackerType::dTagging) ? "TagTrk" : "RecTrk"),
             TrackerRegion_LV, 0, fCheckOverlaps
     );
 
@@ -88,7 +90,7 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, G4bool fChe
     Tracker->SetVis2(new G4VisAttributes(G4Colour(Tracker2_Color[0], Tracker2_Color[1], Tracker2_Color[2])));
     Tracker->LinearPlacement(No_Tracker, &Size_Tracker[0], &Pos_Tracker[0], StripN_Tracker,
                             &Strip_Angle_Gap_Tracker[0],
-                            type == dTagging ? dControl->tag_Tracker_Strip_Block_N : dControl->rec_Tracker_Strip_Block_N);
+                            type == static_cast<int>(TrackerType::dTagging) ? dControl->tag_Tracker_Strip_Block_N : dControl->rec_Tracker_Strip_Block_N);
 
     Tracker_LV = Tracker->GetTrkLVVector();
     TrackerStrip_LV = Tracker->GetStripLVVector();
@@ -115,15 +117,15 @@ bool Tracker_Construct::BuildSDandField(G4int type) {
     /// Construct Sensitive Detector
 
     auto *Tracker1SD = new DetectorSD(
-            (type == dTagging ? nTagTracker : nRecTracker),
-            (type == dTagging ? "TagTrk1" : "RecTrk1"),
-            G4ThreeVector((type == dTagging ? dControl->tag_Tracker_Strip_Block_N : dControl->rec_Tracker_Strip_Block_N),
+            (type == static_cast<int>(TrackerType::dTagging) ? nTagTracker : nRecTracker),
+            (type == static_cast<int>(TrackerType::dTagging) ? "TagTrk1" : "RecTrk1"),
+            G4ThreeVector((type == static_cast<int>(TrackerType::dTagging) ? dControl->tag_Tracker_Strip_Block_N : dControl->rec_Tracker_Strip_Block_N),
                           1,
                           No_Tracker) );
     auto *Tracker2SD = new DetectorSD(
-            (type == dTagging ? nTagTracker : nRecTracker),
-            (type == dTagging ? "TagTrk2" : "RecTrk2"),
-            G4ThreeVector((type == dTagging ? dControl->tag_Tracker_Strip_Block_N : dControl->rec_Tracker_Strip_Block_N),
+            (type == static_cast<int>(TrackerType::dTagging) ? nTagTracker : nRecTracker),
+            (type == static_cast<int>(TrackerType::dTagging) ? "TagTrk2" : "RecTrk2"),
+            G4ThreeVector((type == static_cast<int>(TrackerType::dTagging) ? dControl->tag_Tracker_Strip_Block_N : dControl->rec_Tracker_Strip_Block_N),
                           1,
                           No_Tracker) );
 
