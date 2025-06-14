@@ -4,6 +4,10 @@
 #ifndef DSIMU_CONTROL_H
 #define DSIMU_CONTROL_H
 
+#include <vector>
+#include <tuple>
+#include <map>
+
 // Geant4 Class
 #include <G4ThreeVector.hh>
 #include "G4Material.hh"
@@ -19,12 +23,10 @@
 // yaml-cpp
 #include "yaml-cpp/yaml.h"
 
-#include <vector>
-#include <tuple>
-#include <map>
-
 #include "Object/DigiForm.hh"
 #include "Object/DDetectorIDMaps.h"
+
+#include "Control/DetectorType.h"
 
 /// \brief The central control class which should store all the data
 
@@ -167,6 +169,7 @@ public:
     //----------------------------------------
     // Tracker
     bool build_silicon_micro_strip;
+    bool build_silicon_pixel;
     double Trk_Tar_Dis;
     G4Material *Tracker_Mat;
     G4Material *TrackerRegion_Mat;
@@ -178,6 +181,7 @@ public:
     std::vector<G4ThreeVector> tag_Pos_Tracker{};
     std::vector<G4ThreeVector> tag_Tracker_Angle_Gap{};
     std::vector<G4int> tag_Tracker_Strip_N{};
+    std::vector<G4int> tag_Tracker_Pixel_N{};
     G4int tag_Tracker_Strip_Block_N{};
     int tag_No_Tracker{};  // dependent
     G4ThreeVector tag_Size_TrackerRegion;  // dependent
@@ -188,6 +192,7 @@ public:
     std::vector<G4ThreeVector> rec_Pos_Tracker{};
     std::vector<G4ThreeVector> rec_Tracker_Angle_Gap{};
     std::vector<G4int> rec_Tracker_Strip_N{};
+    std::vector<G4int> rec_Tracker_Pixel_N{};
     G4int rec_Tracker_Strip_Block_N{};
     int rec_No_Tracker{};  // dependent
     G4ThreeVector rec_Size_TrackerRegion;  // dependent
