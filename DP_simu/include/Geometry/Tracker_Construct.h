@@ -5,19 +5,17 @@
 #ifndef DSIMU_TRACKER_CONSTRUCT_H
 #define DSIMU_TRACKER_CONSTRUCT_H
 
-#include "DP_simu/TrkConstruct.hh"
-#include "DP_simu/DetectorConstruction.hh"
-#include "DP_simu/MagneticField.hh"
-#include "Control/Control.h"
+#include <vector>
+#include <cassert>
 
 #include "G4FieldManager.hh"
 #include "G4RunManager.hh"
 
-#include <cassert>
-
-#include <vector>
-
-enum Tracker_Type {dNone, dTagging, dRecoil};
+#include "DP_simu/TrkConstruct.hh"
+#include "DP_simu/DetectorConstruction.hh"
+#include "DP_simu/MagneticField.hh"
+#include "Control/Control.h"
+#include "Control/DetectorType.h"
 
 /// Class description:
 ///  Users add new tracker by G4UIcmdWith3VectorAndUnit.
@@ -31,7 +29,7 @@ public:
     Tracker_Construct() = default;
     virtual ~Tracker_Construct() = default;
 
-    void DefineParameters(Tracker_Type type);
+    void DefineParameters(TrackerType type);
 
     bool Build(G4int type, G4LogicalVolume *World_LV, G4bool fCheckOverlaps);
 
