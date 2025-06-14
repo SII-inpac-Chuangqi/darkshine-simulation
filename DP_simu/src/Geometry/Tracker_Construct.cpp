@@ -20,37 +20,39 @@ void Tracker_Construct::DefineParameters(TrackerType type) {
 
     switch (type) {
         case TrackerType::dNone:
-            break;
+             break;
 
         case TrackerType::dTagging:
-            Size_Tracker = dControl->tag_Size_Tracker;
-            Pos_Tracker = dControl->tag_Pos_Tracker;
-            StripN_Tracker = dControl->tag_Tracker_Strip_N;
-            Strip_Angle_Gap_Tracker = dControl->tag_Tracker_Angle_Gap;
-            No_Tracker = dControl->tag_No_Tracker;
-            Size_TrackerRegion = dControl->tag_Size_TrackerRegion;
-            Pos_TrackerRegion = dControl->tag_Pos_TrackerRegion;
-            Strip_Block_N = dControl->tag_Tracker_Strip_Block_N;
+             Size_Tracker = dControl->tag_Size_Tracker;
+             Pos_Tracker = dControl->tag_Pos_Tracker;
+             StripN_Tracker = dControl->tag_Tracker_Strip_N;
+             PixelN_Tracker = dControl->tag_Tracker_Pixel_N;
+             Strip_Angle_Gap_Tracker = dControl->tag_Tracker_Angle_Gap;
+             No_Tracker = dControl->tag_No_Tracker;
+             Size_TrackerRegion = dControl->tag_Size_TrackerRegion;
+             Pos_TrackerRegion = dControl->tag_Pos_TrackerRegion;
+             Strip_Block_N = dControl->tag_Tracker_Strip_Block_N;
+ 
+             Tracker_MagField = dControl->tag_Tracker_MagField;
 
-            Tracker_MagField = dControl->tag_Tracker_MagField;
-
-            break;
+             break;
         case TrackerType::dRecoil:
-            Size_Tracker = dControl->rec_Size_Tracker;
-            Pos_Tracker = dControl->rec_Pos_Tracker;
-            StripN_Tracker = dControl->rec_Tracker_Strip_N;
-            Strip_Angle_Gap_Tracker = dControl->rec_Tracker_Angle_Gap;
-            No_Tracker = dControl->rec_No_Tracker;
-            Size_TrackerRegion = dControl->rec_Size_TrackerRegion;
-            Pos_TrackerRegion = dControl->rec_Pos_TrackerRegion;
-            Strip_Block_N = dControl->rec_Tracker_Strip_Block_N;
-
-            Tracker_MagField = dControl->rec_Tracker_MagField;
-
-            break;
+             Size_Tracker = dControl->rec_Size_Tracker;
+             Pos_Tracker = dControl->rec_Pos_Tracker;
+             StripN_Tracker = dControl->rec_Tracker_Strip_N;
+             PixelN_Tracker = dControl->rec_Tracker_Pixel_N;
+             Strip_Angle_Gap_Tracker = dControl->rec_Tracker_Angle_Gap;
+             No_Tracker = dControl->rec_No_Tracker;
+             Size_TrackerRegion = dControl->rec_Size_TrackerRegion;
+             Pos_TrackerRegion = dControl->rec_Pos_TrackerRegion;
+             Strip_Block_N = dControl->rec_Tracker_Strip_Block_N;
+ 
+             Tracker_MagField = dControl->rec_Tracker_MagField;
+ 
+             break;
 
         default:
-            return;
+             return;
     }
 }
 
@@ -89,8 +91,8 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, G4bool fChe
     Tracker->SetVis1(new G4VisAttributes(G4Colour(Tracker1_Color[0], Tracker1_Color[1], Tracker1_Color[2])));
     Tracker->SetVis2(new G4VisAttributes(G4Colour(Tracker2_Color[0], Tracker2_Color[1], Tracker2_Color[2])));
     Tracker->LinearPlacement(No_Tracker, &Size_Tracker[0], &Pos_Tracker[0], StripN_Tracker,
-                            &Strip_Angle_Gap_Tracker[0],
-                            type == static_cast<int>(TrackerType::dTagging) ? dControl->tag_Tracker_Strip_Block_N : dControl->rec_Tracker_Strip_Block_N);
+                             &Strip_Angle_Gap_Tracker[0],
+                             type == static_cast<int>(TrackerType::dTagging) ? dControl->tag_Tracker_Strip_Block_N : dControl->rec_Tracker_Strip_Block_N);
 
     Tracker_LV = Tracker->GetTrkLVVector();
     TrackerStrip_LV = Tracker->GetStripLVVector();

@@ -93,6 +93,7 @@ Control::Control() {
     //----------------------------------------
     // Tracker
     build_silicon_micro_strip = true;
+    build_silicon_pixel = false;
     Trk_Tar_Dis = 7.5 * mm;
     MaterialStr["Tracker_Mat"] = "G4_Si";
     MaterialStr["TrackerRegion_Mat"] = "vacuum";
@@ -820,6 +821,7 @@ bool Control::ReadYAML(const G4String &file_in) {
                     i[10].as<bool>(),
                     i[11].as<bool>());
         }
+
         //========================================
         /* Geometry */
         //----------------------------------------
@@ -836,28 +838,37 @@ bool Control::ReadYAML(const G4String &file_in) {
         build_only_rec_tracker = Node["Geometry"]["build_only_rec_tracker"].as<bool>();
         build_only_ECAL = Node["Geometry"]["build_only_ECAL"].as<bool>();
         build_only_HCAL = Node["Geometry"]["build_only_HCAL"].as<bool>();
+
         //----------------------------------------
         // Target
         MaterialStr["Target_Mat"] = Node["Geometry"]["Target"]["Target_Mat"].as<std::string>();
         Target_Size = readV3(Node["Geometry"]["Target"]["Target_Size"], true);
         Target_Pos = readV3(Node["Geometry"]["Target"]["Target_Pos"], true);
+
         //----------------------------------------
         // MagnetShield
         MagnetShield_Thickness = readV2(Node["Geometry"]["MagnetShield"]["MagnetShield_Thickness"]);
+
         //----------------------------------------
         // Tracker
         build_silicon_micro_strip = Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].IsDefined() &&
                                     Node["Geometry"]["Tracker"]["build_silicon_micro_strip"].as<bool>();
+        build_silicon_pixel = Node["Geometry"]["Tracker"]["build_silicon_pixel"].IsDefined() &&
+                              Node["Geometry"]["Tracker"]["build_silicon_pixel"].as<bool>();
         Trk_Tar_Dis = readV2(Node["Geometry"]["Tracker"]["Trk_Tar_Dis"]);
         MaterialStr["Tracker_Mat"] = Node["Geometry"]["Tracker"]["Tracker_Mat"].as<std::string>();
         MaterialStr["TrackerRegion_Mat"] = Node["Geometry"]["Tracker"]["TrackerRegion_Mat"].as<std::string>();
         Tracker1_Color = readV3(Node["Geometry"]["Tracker"]["Tracker1_Color"]);
         Tracker2_Color = readV3(Node["Geometry"]["Tracker"]["Tracker2_Color"]);
+        if(build_silicon_pixel) build_silicon_micro_strip = false;
+        std::cerr << "[INFO] ==> build_silicon_micro_strip: " << build_silicon_micro_strip << std::endl;
+
         // Tagging Tracker
         tag_Size_Tracker.clear();
         tag_Pos_Tracker.clear();
         tag_Tracker_Angle_Gap.clear();
         tag_Tracker_Strip_N.clear();
+        tag_Tracker_Pixel_N.clear();
         for (auto node: Node["Geometry"]["Tracker"]["tag_Size_Tracker"])
             tag_Size_Tracker.emplace_back(readV3(node, true));
         for (auto node: Node["Geometry"]["Tracker"]["tag_Pos_Tracker"])
@@ -866,15 +877,20 @@ bool Control::ReadYAML(const G4String &file_in) {
             tag_Tracker_Angle_Gap.emplace_back(readV3(node, true));
         for (auto node: Node["Geometry"]["Tracker"]["tag_Tracker_Strip_N"])
             tag_Tracker_Strip_N.emplace_back(node.as<int>());
+        for (auto node: Node["Geometry"]["Tracker"]["tag_Tracker_Pixel_N"])
+            tag_Tracker_Pixel_N.emplace_back(node.as<int>());
         tag_Tracker_Strip_Block_N = Node["Geometry"]["Tracker"]["tag_Tracker_Strip_Block_N"].as<int>();
+
         assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size()); // Sanity Check
         assert(tag_Tracker_Angle_Gap.size() == tag_Size_Tracker.size());
         assert(tag_Tracker_Strip_N.size() == tag_Tracker_Angle_Gap.size());
+
         // Recoil Tracker
         rec_Size_Tracker.clear();
         rec_Pos_Tracker.clear();
         rec_Tracker_Angle_Gap.clear();
         rec_Tracker_Strip_N.clear();
+        rec_Tracker_Pixel_N.clear();
         for (auto node: Node["Geometry"]["Tracker"]["rec_Size_Tracker"])
             rec_Size_Tracker.emplace_back(readV3(node, true));
         for (auto node: Node["Geometry"]["Tracker"]["rec_Pos_Tracker"])
@@ -883,10 +899,14 @@ bool Control::ReadYAML(const G4String &file_in) {
             rec_Tracker_Angle_Gap.emplace_back(readV3(node, true));
         for (auto node: Node["Geometry"]["Tracker"]["rec_Tracker_Strip_N"])
             rec_Tracker_Strip_N.emplace_back(node.as<int>());
+        for (auto node: Node["Geometry"]["Tracker"]["rec_Tracker_Pixel_N"])
+            rec_Tracker_Pixel_N.emplace_back(node.as<int>());
         rec_Tracker_Strip_Block_N = Node["Geometry"]["Tracker"]["rec_Tracker_Strip_Block_N"].as<int>();
+
         assert(rec_Size_Tracker.size() == rec_Pos_Tracker.size()); // Sanity Check
         assert(rec_Tracker_Angle_Gap.size() == rec_Size_Tracker.size());
         assert(rec_Tracker_Strip_N.size() == rec_Tracker_Angle_Gap.size());
+
         //----------------------------------------
         // Electromagnetic Calorimeter
         ECAL_Name = Node["Geometry"]["ECAL"]["ECAL_Name"].as<std::string>();
@@ -902,6 +922,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         ECAL_Cell_No = readV3(Node["Geometry"]["ECAL"]["ECAL_Cell_No"]);
         ECAL_Cell_Gap = readV3(Node["Geometry"]["ECAL"]["ECAL_Cell_Gap"], true);
         //ECAL_Center_Module_No = readV3(Node["Geometry"]["ECAL"]["ECAL_Center_Module_No"]);
+
         //----------------------------------------
         // Hadronic Calorimeter
         HCAL_Name = Node["Geometry"]["HCAL"]["HCAL_Name"].as<std::string>();
