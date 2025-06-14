@@ -1,8 +1,9 @@
-#include "DP_simu/TrkConstruct.hh"
-#include "G4Box.hh"
+#include "Geometry/TrkConstruct.hh"
 
 #include <iterator>
 #include <utility>
+
+#include "G4Box.hh"
 
 // TODO: clean PV, HepRot pointers
 

@@ -2,6 +2,8 @@
 #ifndef TrkConstruct_h
 #define TrkConstruct_h 1
 
+#include <vector>
+
 #include "globals.hh"
 #include "G4Material.hh"
 #include "G4LogicalVolume.hh"
@@ -12,8 +14,6 @@
 #include "G4PhysicalConstants.hh"
 #include "G4PVPlacement.hh"
 #include "Control/Control.h"
-
-#include <vector>
 
 // Volume relationship:
 // 2 Outline (Trk)
