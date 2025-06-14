@@ -11,7 +11,7 @@
 #include "G4FieldManager.hh"
 #include "G4RunManager.hh"
 
-#include "DP_simu/TrkConstruct.hh"
+#include "Geometry/TrkConstruct.hh"
 #include "DP_simu/DetectorConstruction.hh"
 #include "DP_simu/MagneticField.hh"
 #include "Control/Control.h"
@@ -45,6 +45,7 @@ private:
     std::vector<G4ThreeVector> Pos_Tracker{};
     G4int Strip_Block_N{};
     std::vector<G4int> StripN_Tracker{};
+    std::vector<G4int> PixelN_Tracker{};
     std::vector<G4ThreeVector> Strip_Angle_Gap_Tracker{};
     G4int No_Tracker{};
     G4ThreeVector Size_TrackerRegion;
