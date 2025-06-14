@@ -62,6 +62,7 @@ TrkConstruct::TrkConstruct(const TrkConstruct &in) {
     fAngle1 = in.fAngle1;
     fAngle2 = in.fAngle2;
     fStripNum = in.fStripNum;
+    fPixelNum = in.fPixelNum;
     fStripSizeX = in.fStripSizeX;
     fStripSizeY = in.fStripSizeY;
     fStripSizeZ = in.fStripSizeZ;
@@ -127,6 +128,7 @@ G4ThreeVector TrkConstruct::BoxPlacement() {
 // 2 Outline (Trk)
 // └-1 SMTBlock
 //   └-0 Silicon micro-strip (Strip)
+//  (└-0 Silicon pixel (Pixel) )
 G4ThreeVector TrkConstruct::SMTConstruct() {
     auto TotalHalfSize = G4ThreeVector(0, 0, 0);
     // check consistency
@@ -162,6 +164,7 @@ G4ThreeVector TrkConstruct::SMTConstruct() {
 #endif
 
     // Silicon micro-strip
+    G4cout << "[INFO] ==> TrkConstruct::SMTConstruct() fPixelNum: " << fPixelNum << G4endl;
     auto StripBox = new G4Box(fTrkName + "_Strip_Box", fStripSizeX / 2., fStripSizeY / 2., fStripSizeZ / 2.);
     auto StripLV = new G4LogicalVolume(StripBox, fTrkMaterial, fTrkName + "_Strip_LV",
                                        nullptr, nullptr, nullptr);
@@ -230,6 +233,7 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
                                             G4ThreeVector *SizeVec,
                                             G4ThreeVector *PosVec,
                                             std::vector<G4int> StripNVec,
+                                            std::vector<G4int> PixelNVec,
                                             G4ThreeVector *AngleGapVec,
                                             G4int stripBlockN) {
     auto TotalHalfSize = G4ThreeVector(0, 0, 0);
@@ -240,11 +244,16 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         auto CurSizeVec = *(SizeVec + k);
         auto CurPosVec = *(PosVec + k);
         auto CurStripN = StripNVec.at(k);
+        auto CurPixelN = PixelNVec.at(k);
         auto CurAngleGapVec = *(AngleGapVec + k);
+
+        G4cout << "[INFO] ==> TrkConstruct::LinearPlacement() CurPixelN: " << CurPixelN << G4endl;
+        G4cout << "[INFO] ==> TrkConstruct::LinearPlacement() build_silicon_micro_strip: " << dControl->build_silicon_micro_strip << G4endl;
+        G4cout << "[INFO] ==> TrkConstruct::LinearPlacement() build_silicon_pixel: " << dControl->build_silicon_pixel << G4endl;
 
         SetSizeXYZ(CurSizeVec);
         SetPosXYZ(CurPosVec);
-        SetStrip_Angle_Gap(CurStripN, CurAngleGapVec);
+        SetStrip_Angle_Gap(CurStripN, CurPixelN, CurAngleGapVec);
         SetStrip_Block_N(stripBlockN);
 
         if (! dControl->build_silicon_micro_strip ) {
@@ -253,6 +262,10 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
             fStripDistanceX = fSizeX;
             fStripGap = eps;
             fStripSizeX = fSizeX - fStripGap;
+        }
+
+        if (! dControl->build_silicon_pixel ) {
+            fPixelNum = 1;
         }
 
         auto HepRot1 = new G4RotationMatrix();
@@ -299,8 +312,9 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void TrkConstruct::SetStrip_Angle_Gap(const G4int &stripN, const G4ThreeVector &angleGap) {
+void TrkConstruct::SetStrip_Angle_Gap(const G4int &stripN, const G4int &pixelN, const G4ThreeVector &angleGap) {
     fStripNum = stripN;
+    fPixelNum = pixelN;
     fStripDistanceX = fSizeX / stripN;
     fStripSizeX = fStripDistanceX - angleGap.z();
     fStripSizeY = fSizeY;

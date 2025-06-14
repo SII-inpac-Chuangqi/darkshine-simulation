@@ -54,6 +54,10 @@ void Tracker_Construct::DefineParameters(TrackerType type) {
         default:
              return;
     }
+
+    G4cout << "[INFO] ==> Tracker_Construct::DefineParameters() PixelN_Tracker: ";
+    for(const auto &N : PixelN_Tracker) G4cout << N << ", ";
+    G4cout << G4endl;
 }
 
 bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, G4bool fCheckOverlaps) {
@@ -87,10 +91,14 @@ bool Tracker_Construct::Build(G4int type, G4LogicalVolume *World_LV, G4bool fChe
     TrackerRegion_LV->SetVisAttributes(G4VisAttributes::GetInvisible());
 #endif
 
+    G4cout << "[INFO] ==> Tracker_Construct::Build() PixelN_Tracker: ";
+    for(const auto &N : PixelN_Tracker) G4cout << N << ", ";
+    G4cout << G4endl;
+
     Tracker->SetTrkMaterial(Tracker_Mat);
     Tracker->SetVis1(new G4VisAttributes(G4Colour(Tracker1_Color[0], Tracker1_Color[1], Tracker1_Color[2])));
     Tracker->SetVis2(new G4VisAttributes(G4Colour(Tracker2_Color[0], Tracker2_Color[1], Tracker2_Color[2])));
-    Tracker->LinearPlacement(No_Tracker, &Size_Tracker[0], &Pos_Tracker[0], StripN_Tracker,
+    Tracker->LinearPlacement(No_Tracker, &Size_Tracker[0], &Pos_Tracker[0], StripN_Tracker, PixelN_Tracker,
                              &Strip_Angle_Gap_Tracker[0],
                              type == static_cast<int>(TrackerType::dTagging) ? dControl->tag_Tracker_Strip_Block_N : dControl->rec_Tracker_Strip_Block_N);
 

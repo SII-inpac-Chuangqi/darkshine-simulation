@@ -34,6 +34,7 @@ class TrkConstruct
                                   G4ThreeVector *SizeVec,
                                   G4ThreeVector *PosVec,
                                   std::vector<G4int> StripNVec,
+                                  std::vector<G4int> PixelNVec,
                                   G4ThreeVector *AngleGapVec,
                                   G4int stripBlockN);
 
@@ -60,7 +61,7 @@ class TrkConstruct
     void SetZMove(double in)            { fZMove = in; };
     void SetSizeXYZ(const G4ThreeVector &in)   { fSizeX = in.x(); fSizeY = in.y(); fSizeZ = in.z(); };
     void SetPosXYZ(const G4ThreeVector &in)    { fPosX = in.x();  fPosY = in.y();  fPosZ = in.z();  };
-    void SetStrip_Angle_Gap(const G4int &stripN, const G4ThreeVector &angleGap);
+    void SetStrip_Angle_Gap(const G4int &stripN, const G4int &pixelN, const G4ThreeVector &angleGap);
     void SetStrip_Block_N(G4int in) { fStripBlockN = in;};
 
     std::vector<G4LogicalVolume*> GetTrkLVVector() { return fTrkLVVector; };
@@ -117,6 +118,7 @@ class TrkConstruct
     G4LogicalVolume* fStripLV{nullptr};
     std::vector<G4LogicalVolume*> fStripLVVector;
 
+    G4int fPixelNum{-1};
 
     std::vector<G4PVPlacement*> PVVector;
 };
