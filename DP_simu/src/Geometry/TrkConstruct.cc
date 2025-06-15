@@ -165,7 +165,8 @@ G4ThreeVector TrkConstruct::SMTConstruct() {
 
     // Silicon micro-strip
 //    G4cout << "[INFO] ==> TrkConstruct::SMTConstruct() fPixelNum: " << fPixelNum << G4endl;
-    auto StripBox = new G4Box(fTrkName + "_Strip_Box", fStripSizeX / 2., fStripSizeY / 2., fStripSizeZ / 2.);
+    auto fPixelSizeY = fStripSizeY/fPixelNum;
+    auto StripBox = new G4Box(fTrkName + "_Strip_Box", fStripSizeX / 2., fPixelSizeY / 2., fStripSizeZ / 2.);
     auto StripLV = new G4LogicalVolume(StripBox, fTrkMaterial, fTrkName + "_Strip_LV",
                                        nullptr, nullptr, nullptr);
     fStripLV = StripLV;
@@ -189,17 +190,20 @@ G4ThreeVector TrkConstruct::SMTConstruct() {
     // G4PVPlacement* StripPV = nullptr;
     G4int fStripCopyNo = 0;
     for (int i = 0; i < fStripBlockN; i++) {
-        fStripPosX = -1 * TotalHalfSize.x() + (i + 0.5) * fStripDistanceX;
-        auto StripPV = new G4PVPlacement(nullptr,
-                                         G4ThreeVector(fStripPosX, fStripPosY, fStripPosZ),
-                                         fStripLV,
-                                         fTrkName + "_Strip_PV",
-                                         fBlockLV,
-                                         false,
-                                         fStripCopyNo,
-                                         fCheckOverlap);
-        PVVector.emplace_back(StripPV);
-        fStripCopyNo++;
+        for (int j = 0; j < fPixelNum; j++) {
+            fStripPosX = -1 * TotalHalfSize.x() + (i + 0.5) * fStripDistanceX;
+            auto fPixelPosY = 0.5*(j - fPixelNum + 1)*TotalHalfSize.y()/fPixelNum;
+            auto StripPV = new G4PVPlacement(nullptr,
+                                             G4ThreeVector(fStripPosX, fPixelPosY, fStripPosZ),
+                                             fStripLV,
+                                             fTrkName + "_Strip_PV",
+                                             fBlockLV,
+                                             false,
+                                             fStripCopyNo,
+                                             fCheckOverlap);
+            PVVector.emplace_back(StripPV);
+            fStripCopyNo++;
+        }
     }
 
     TotalHalfSize = G4ThreeVector(0.5 * fSizeX,
@@ -240,9 +244,6 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
 
     auto define_PV_size = [=](bool if_pixel)
                           {
-//                              auto PV_size = 2*zNo + 2*zNo*stripBlockN;
-//                              for(const auto &StripN : StripNVec) PV_size += 2*StripN/stripBlockN;
-
                               auto PV_size = zNo;
                               for(int k = 0; k < zNo; k++)
                                   PV_size += stripBlockN*(if_pixel ? PixelNVec.at(k) : 1) + StripNVec.at(k)/stripBlockN;
@@ -272,7 +273,7 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         SetStrip_Param(CurStripN, CurPixelN, CurAngleGapVec);
         SetStrip_Block_N(stripBlockN);
 
-        if (! dControl->build_silicon_micro_strip ) {
+        if (! dControl->build_silicon_micro_strip && ! dControl->build_silicon_pixel) {
             fStripNum = 1;
             fStripBlockN = 1;
             fStripDistanceX = fSizeX;
@@ -287,14 +288,15 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         auto HepRot1 = new G4RotationMatrix();
         HepRot1->rotateZ(fAngle1);
         auto HepRot2 = new G4RotationMatrix();
-        HepRot2->rotateZ(fAngle2);
+        if(! dControl->build_silicon_pixel) HepRot2->rotateZ(fAngle2);
+        else HepRot2->rotateZ(fAngle1);
 
         fZMove = 0.5 * fSizeZ + 2 * eps;
         fPos1 = G4ThreeVector(fPosX, fPosY, fPosZ - fZMove);
         fPos2 = G4ThreeVector(fPosX, fPosY, fPosZ + fZMove);
 
-
         G4ThreeVector CurColor = dControl->Tracker1_Color;
+
         fVis = fVis1;
         //fStripVis = fVis1;
         SMTConstruct();
@@ -320,6 +322,7 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
                                    fCopyNo,
                                    fCheckOverlap);
         PVVector.emplace_back(UnitPV);
+
         fCopyNo++;
     }
 

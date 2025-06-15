@@ -861,7 +861,8 @@ bool Control::ReadYAML(const G4String &file_in) {
         Tracker1_Color = readV3(Node["Geometry"]["Tracker"]["Tracker1_Color"]);
         Tracker2_Color = readV3(Node["Geometry"]["Tracker"]["Tracker2_Color"]);
         if(build_silicon_pixel) build_silicon_micro_strip = false;
-        std::cerr << "[INFO] ==> build_silicon_micro_strip: " << build_silicon_micro_strip << std::endl;
+        std::cerr << "[INFO] ==> Control::ReadYAML(): build_silicon_micro_strip: " << build_silicon_micro_strip << std::endl;
+        std::cerr << "[INFO] ==> Control::ReadYAML(): build_silicon_pixel: " << build_silicon_pixel << std::endl;
 
         // Tagging Tracker
         tag_Size_Tracker.clear();
