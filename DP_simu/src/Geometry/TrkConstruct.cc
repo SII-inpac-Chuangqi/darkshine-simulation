@@ -133,7 +133,7 @@ G4ThreeVector TrkConstruct::SMTConstruct() {
     auto TotalHalfSize = G4ThreeVector(0, 0, 0);
     // check consistency
     if (!fSizeX || !fSizeY || !fSizeZ) {
-        G4cout << fTrkName << " Construction Error: at least size of one dimension is zero." << G4endl;
+        G4cout << "[Error] ==> " << fTrkName << " construction error: size of at least one dimension is zero." << G4endl;
         return TotalHalfSize;
     }
     // outline
@@ -238,6 +238,8 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
                                             G4int stripBlockN) {
     auto TotalHalfSize = G4ThreeVector(0, 0, 0);
 
+    PVVector.reserve(zNo*2);
+
     G4PVPlacement *UnitPV = nullptr;
     // construct Tracker1s
     for (int k = 0; k < zNo; k++) {
@@ -253,7 +255,7 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
 
         SetSizeXYZ(CurSizeVec);
         SetPosXYZ(CurPosVec);
-        SetStrip_Angle_Gap(CurStripN, CurPixelN, CurAngleGapVec);
+        SetStrip_Param(CurStripN, CurPixelN, CurAngleGapVec);
         SetStrip_Block_N(stripBlockN);
 
         if (! dControl->build_silicon_micro_strip ) {
@@ -305,14 +307,16 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
                                    fCheckOverlap);
         PVVector.emplace_back(UnitPV);
         fCopyNo++;
-
     }
+
+    PVVector.shrink_to_fit();
+
     return TotalHalfSize;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void TrkConstruct::SetStrip_Angle_Gap(const G4int &stripN, const G4int &pixelN, const G4ThreeVector &angleGap) {
+void TrkConstruct::SetStrip_Param(const G4int &stripN, const G4int &pixelN, const G4ThreeVector &angleGap) {
     fStripNum = stripN;
     fPixelNum = pixelN;
     fStripDistanceX = fSizeX / stripN;

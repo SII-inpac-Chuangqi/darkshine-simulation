@@ -61,7 +61,7 @@ class TrkConstruct
     void SetZMove(double in)            { fZMove = in; };
     void SetSizeXYZ(const G4ThreeVector &in)   { fSizeX = in.x(); fSizeY = in.y(); fSizeZ = in.z(); };
     void SetPosXYZ(const G4ThreeVector &in)    { fPosX = in.x();  fPosY = in.y();  fPosZ = in.z();  };
-    void SetStrip_Angle_Gap(const G4int &stripN, const G4int &pixelN, const G4ThreeVector &angleGap);
+    void SetStrip_Param(const G4int &stripN, const G4int &pixelN, const G4ThreeVector &angleGap);
     void SetStrip_Block_N(G4int in) { fStripBlockN = in;};
 
     std::vector<G4LogicalVolume*> GetTrkLVVector() { return fTrkLVVector; };
