@@ -884,6 +884,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size()); // Sanity Check
         assert(tag_Tracker_Angle_Gap.size() == tag_Size_Tracker.size());
         assert(tag_Tracker_Strip_N.size() == tag_Tracker_Angle_Gap.size());
+        assert(tag_Tracker_Strip_N.size() == tag_Tracker_Pixel_N.size());
 
         // Recoil Tracker
         rec_Size_Tracker.clear();

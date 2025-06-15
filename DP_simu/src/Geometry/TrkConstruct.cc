@@ -164,7 +164,7 @@ G4ThreeVector TrkConstruct::SMTConstruct() {
 #endif
 
     // Silicon micro-strip
-    G4cout << "[INFO] ==> TrkConstruct::SMTConstruct() fPixelNum: " << fPixelNum << G4endl;
+//    G4cout << "[INFO] ==> TrkConstruct::SMTConstruct() fPixelNum: " << fPixelNum << G4endl;
     auto StripBox = new G4Box(fTrkName + "_Strip_Box", fStripSizeX / 2., fStripSizeY / 2., fStripSizeZ / 2.);
     auto StripLV = new G4LogicalVolume(StripBox, fTrkMaterial, fTrkName + "_Strip_LV",
                                        nullptr, nullptr, nullptr);
@@ -238,7 +238,21 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
                                             G4int stripBlockN) {
     auto TotalHalfSize = G4ThreeVector(0, 0, 0);
 
-    PVVector.reserve(zNo*2);
+    auto define_PV_size = [=](bool if_pixel)
+                          {
+//                              auto PV_size = 2*zNo + 2*zNo*stripBlockN;
+//                              for(const auto &StripN : StripNVec) PV_size += 2*StripN/stripBlockN;
+
+                              auto PV_size = zNo;
+                              for(int k = 0; k < zNo; k++)
+                                  PV_size += stripBlockN*(if_pixel ? PixelNVec.at(k) : 1) + StripNVec.at(k)/stripBlockN;
+
+                              return 2*PV_size;
+                          };
+
+    PVVector.reserve(define_PV_size(dControl->build_silicon_pixel));
+    G4cout << "[INFO] ==> TrkConstruct::LinearPlacement(): zNo: " << zNo << G4endl;
+    G4cout << "[INFO] ==> TrkConstruct::LinearPlacement(): PVVector.capacity(): " << PVVector.capacity() << ", PVVector.size(): " << PVVector.size() << G4endl;
 
     G4PVPlacement *UnitPV = nullptr;
     // construct Tracker1s
@@ -249,9 +263,9 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         auto CurPixelN = PixelNVec.at(k);
         auto CurAngleGapVec = *(AngleGapVec + k);
 
-        G4cout << "[INFO] ==> TrkConstruct::LinearPlacement() CurPixelN: " << CurPixelN << G4endl;
-        G4cout << "[INFO] ==> TrkConstruct::LinearPlacement() build_silicon_micro_strip: " << dControl->build_silicon_micro_strip << G4endl;
-        G4cout << "[INFO] ==> TrkConstruct::LinearPlacement() build_silicon_pixel: " << dControl->build_silicon_pixel << G4endl;
+//        G4cout << "[INFO] ==> TrkConstruct::LinearPlacement() CurPixelN: " << CurPixelN << G4endl;
+//        G4cout << "[INFO] ==> TrkConstruct::LinearPlacement() build_silicon_micro_strip: " << dControl->build_silicon_micro_strip << G4endl;
+//        G4cout << "[INFO] ==> TrkConstruct::LinearPlacement() build_silicon_pixel: " << dControl->build_silicon_pixel << G4endl;
 
         SetSizeXYZ(CurSizeVec);
         SetPosXYZ(CurPosVec);
@@ -308,6 +322,8 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         PVVector.emplace_back(UnitPV);
         fCopyNo++;
     }
+
+    G4cout << "[INFO] ==> TrkConstruct::LinearPlacement(): PVVector.capacity(): " << PVVector.capacity() << ", PVVector.size(): " << PVVector.size() << G4endl;
 
     PVVector.shrink_to_fit();
 
