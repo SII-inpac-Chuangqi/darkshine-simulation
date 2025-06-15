@@ -252,8 +252,8 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
                           };
 
     PVVector.reserve(define_PV_size(dControl->build_silicon_pixel));
-    G4cout << "[INFO] ==> TrkConstruct::LinearPlacement(): zNo: " << zNo << G4endl;
-    G4cout << "[INFO] ==> TrkConstruct::LinearPlacement(): PVVector.capacity(): " << PVVector.capacity() << ", PVVector.size(): " << PVVector.size() << G4endl;
+//    G4cout << "[INFO] ==> TrkConstruct::LinearPlacement(): zNo: " << zNo << G4endl;
+//    G4cout << "[INFO] ==> TrkConstruct::LinearPlacement(): PVVector.capacity(): " << PVVector.capacity() << ", PVVector.size(): " << PVVector.size() << G4endl;
 
     G4PVPlacement *UnitPV = nullptr;
     // construct Tracker1s
@@ -326,7 +326,7 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         fCopyNo++;
     }
 
-    G4cout << "[INFO] ==> TrkConstruct::LinearPlacement(): PVVector.capacity(): " << PVVector.capacity() << ", PVVector.size(): " << PVVector.size() << G4endl;
+//    G4cout << "[INFO] ==> TrkConstruct::LinearPlacement(): PVVector.capacity(): " << PVVector.capacity() << ", PVVector.size(): " << PVVector.size() << G4endl;
 
     PVVector.shrink_to_fit();
 
