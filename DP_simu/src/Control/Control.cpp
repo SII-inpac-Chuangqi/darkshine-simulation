@@ -5,6 +5,7 @@
 #include "Control/Control.h"
 
 // Geant4
+#include "G4NistManager.hh"
 #include "G4Version.hh"
 #include "G4UnitsTable.hh"
 
@@ -417,7 +418,7 @@ void Control::RebuildVariables() {
     // │═ 3 ════│  2  │   y
     // └────────┴──╨──┘ x─┘⊗z
     Size_SideHCALRegion.setX(SideHCAL_Layer_N * Size_SideHCALCell.x() + SideHCAL_Absorber_Thickness_Total + eps);
-    std::cout<<"SideHCAL_Layer_N: "<<SideHCAL_Layer_N<<", Size_SideHCALCell.x(): "<<Size_SideHCALCell.x()<<", SideHCAL_Absorber_Thickness_Total: "<<SideHCAL_Absorber_Thickness_Total<<std::endl;
+    std::cout << "SideHCAL_Layer_N: " << SideHCAL_Layer_N << ", Size_SideHCALCell.x(): " << Size_SideHCALCell.x() << ", SideHCAL_Absorber_Thickness_Total: " << SideHCAL_Absorber_Thickness_Total << std::endl;
     Size_SideHCALRegion.setY(Size_SideHCALCell.z() + eps);
     Size_SideHCALRegion.setZ(Size_SideHCALCell.y() + eps);
 
@@ -427,11 +428,11 @@ void Control::RebuildVariables() {
                                          Pos_HCALRegion.z() - 0.5 * Size_HCALRegion.z() - 0.5 * Size_SideHCALRegion.z() - 1 * mm);
     Pos_SideHCALRegion.emplace_back(Pos_SideHCALRegion_0);
     Pos_SideHCALRegion.emplace_back(G4ThreeVector(- Pos_SideHCALRegion_0.y(),
-                                               Pos_SideHCALRegion_0.x(),
-                                               Pos_SideHCALRegion_0.z()));
+                                                  Pos_SideHCALRegion_0.x(),
+                                                  Pos_SideHCALRegion_0.z()));
     Pos_SideHCALRegion.emplace_back(G4ThreeVector(-Pos_SideHCALRegion_0.x(),
-                                               -Pos_SideHCALRegion_0.y(),
-                                               Pos_SideHCALRegion_0.z()));
+                                                  -Pos_SideHCALRegion_0.y(),
+                                                  Pos_SideHCALRegion_0.z()));
     Pos_SideHCALRegion.emplace_back(G4ThreeVector(Pos_SideHCALRegion_0.y(),
                                                   -Pos_SideHCALRegion_0.x(),
                                                   Pos_SideHCALRegion_0.z()));
@@ -863,6 +864,10 @@ bool Control::ReadYAML(const G4String &file_in) {
         if(build_silicon_pixel) build_silicon_micro_strip = false;
 //        std::cerr << "[INFO] ==> Control::ReadYAML(): build_silicon_micro_strip: " << build_silicon_micro_strip << std::endl;
 //        std::cerr << "[INFO] ==> Control::ReadYAML(): build_silicon_pixel: " << build_silicon_pixel << std::endl;
+
+        if     (build_silicon_pixel)       tracker_style = TrackerStyle::dPixel;
+        else if(build_silicon_micro_strip) tracker_style = TrackerStyle::dStrip;
+        else                               tracker_style = TrackerStyle::dPlane;
 
         // Tagging Tracker
         tag_Size_Tracker.clear();

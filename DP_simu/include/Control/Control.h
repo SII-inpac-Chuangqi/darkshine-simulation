@@ -12,7 +12,7 @@
 #include <G4ThreeVector.hh>
 #include "G4Material.hh"
 #include "G4MaterialTable.hh"
-#include "G4NistManager.hh"
+//#include "G4NistManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4OpticalSurface.hh"
@@ -170,6 +170,7 @@ public:
     // Tracker
     bool build_silicon_micro_strip;
     bool build_silicon_pixel;
+    TrackerStyle tracker_style;
     double Trk_Tar_Dis;
     G4Material *Tracker_Mat;
     G4Material *TrackerRegion_Mat;
