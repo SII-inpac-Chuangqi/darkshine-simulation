@@ -11,22 +11,22 @@ public:
     WrappedFitter() = default;
     ~WrappedFitter() {delete fitter_; fitter_ = nullptr;};
 
-    template <class ... Args>
-    void Run(KalmanFilterFitter::Config config, Args&& ... args)
+    template <class ... Args_t>
+    void Run(KalmanFilterFitter::Config config, Args_t&& ... args)
     {
         if (fitter_) delete fitter_;
 
         method = tracking::dKalman;
-        fitter_ = new KalmanFilterFitter(config, std::forward<Args>(args) ...);
+        fitter_ = new KalmanFilterFitter(config, std::forward<Args_t>(args) ...);
     }
 
-    template <class ... Args>
-    void Run(RiemannFitter::Config config, Args&& ... args)
+    template <class ... Args_t>
+    void Run(RiemannFitter::Config config, Args_t&& ... args)
     {
         if (fitter_) delete fitter_;
 
         method = tracking::dRiemann;
-        fitter_ = new RiemannFitter(config, std::forward<Args>(args) ...);
+        fitter_ = new RiemannFitter(config, std::forward<Args_t>(args) ...);
     }
 
     Fitter* Retrieve()

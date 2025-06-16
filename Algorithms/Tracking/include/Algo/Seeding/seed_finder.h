@@ -18,6 +18,7 @@ class SeedFinder
 public:
     struct SeedFinderConfig
     {
+        int bottoms_n = 2;
         double kasa_chi2 = 0.97;
         double linear_r2 = 0.03;
         double min_R = 250.;
@@ -27,8 +28,8 @@ public:
     };
 
 private:
-    using hit_t = tracking::utils::remove_pointer_s_t<hit_p_t>;
-    using coordinate_getter = std::function<double(const hit_t&)>;
+    using Hit_t = tracking::utils::remove_pointer_s_t<hit_p_t>;
+    using CoordinateGetter_t = std::function<double(const Hit_t&)>;
 
     struct Triplet
     {
@@ -72,26 +73,28 @@ public:
 public:
     SeedFinder(const SeedFinderConfig &config) : config_(config) {}
     SeedFinder() {};
-    SeedFinder(const SeedFinder<seed_t, layers_t, hit_t>&) = delete;
+    SeedFinder(const SeedFinder<seed_t, layers_t, Hit_t>&) = delete;
 
     ~SeedFinder() = default;
 
-    void Connect(coordinate_getter get_x, coordinate_getter get_y, coordinate_getter get_z)
+    void Connect(CoordinateGetter_t get_x, CoordinateGetter_t get_y, CoordinateGetter_t get_z)
     {
         get_x_ = get_x;
         get_y_ = get_y;
         get_z_ = get_z;
     }
 
+    void Config(SeedFinderConfig config) { config_ = config; }
+
 //................................................................................//
-// Create seeds from the structured hit_t object, layers
+// Create seeds from the structured Hit_t object, layers
 // Assume seed_container_t and id_container_t are iterable and hits in layers are pointers/smart pointers;
-//        layers_t has access to hit_t objects via at().at()
+//        layers_t has access to Hit_t objects via at().at()
     template <typename seed_container_t, typename id_container_t>
     void FindSeeds(SeedFinderSnapshot &snapshot,
-                     const layers_t &layers,
-                     seed_container_t &seeds,
-                     const id_container_t &bottom_ids, const size_t &middle_id, const size_t &top_id)
+                   const layers_t &layers,
+                   seed_container_t &seeds,
+                   const id_container_t &bottom_ids, const size_t &middle_id, const size_t &top_id)
     {
         using namespace tracking;
 
@@ -100,7 +103,7 @@ public:
 
         using hit_p_in_layer_t = std::remove_cv_t<std::remove_reference_t<decltype(layers.at(0).at(0))>>;
         static_assert(std::is_same_v<hit_p_in_layer_t, hit_p_t>,
-                      "Hit type in layers_t not compatible with hit_t in CreateSeeds()");
+                      "Hit type in layers_t not compatible with Hit_t in CreateSeeds()");
         using layer_t = std::remove_cv_t<std::remove_reference_t<decltype(layers.at(0))>>;
         static_assert(utils::is_iterable<layer_t>::value, "layer_t is not iterable in CreateSeeds()");
 
@@ -309,9 +312,9 @@ private:
 private:
     SeedFinderConfig config_;
 
-    coordinate_getter get_x_;
-    coordinate_getter get_y_;
-    coordinate_getter get_z_;
+    CoordinateGetter_t get_x_;
+    CoordinateGetter_t get_y_;
+    CoordinateGetter_t get_z_;
 
     std::vector<double> seed_chi2_;
     std::vector<double> seed_r2_;

@@ -37,7 +37,7 @@ inline GreedyFinder::ProtoTrack& GreedyFinder::ProtoTrack::operator =(const seed
     return *this;
 }
 
-inline void GreedyFinder::ProtoTrackManager::reset(const tracking::GreedyFinderConfig &config, double *chi2, double *r2)
+inline void GreedyFinder::ProtoTrackManager::reset(const GreedyFinderConfig &config, double *chi2, double *r2)
 {
     best_chi2 = (chi2 == nullptr) ? config.kasa_chi2 : *chi2;
     best_r2   = (r2   == nullptr) ? config.linear_r2 : *r2;
@@ -58,7 +58,7 @@ inline void GreedyFinder::ProtoTrackManager::reset(const tracking::GreedyFinderC
     chosen_R = 0.;
 }
 
-inline void GreedyFinder::ProtoTrackManager::clear(const tracking::GreedyFinderConfig &config, double *chi2, double *r2)
+inline void GreedyFinder::ProtoTrackManager::clear(const GreedyFinderConfig &config, double *chi2, double *r2)
 {
     this->reset(config, chi2, r2);
 

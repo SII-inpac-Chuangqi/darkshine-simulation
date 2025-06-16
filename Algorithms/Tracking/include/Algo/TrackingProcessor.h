@@ -21,8 +21,11 @@
 #include "Algo/Object/seed.h"
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Digitization.h"
+
+#include "Algo/WrappedSeedFinder.h"
 #include "Algo/Seeding/seed_finder.h"
-#include "Algo/GreedyFinder.h"
+#include "Algo/GreedyFinder/greedy_finder.h"
+//#include "Algo/GreedyFinder.h"
 #include "Algo/KalmanFit/KalmanFilterFitter.h"
 #include "Algo/RiemannFit/RiemannFitter.h"
 
@@ -36,7 +39,8 @@ class TrackingProcessor : public AnaProcessor
 public:
     using Pool_t = HitPool<Key, TrkHit>;
     using Seed_t = Seed<TrkHit>; 
-    using SeedFinder_t = SeedFinder<Seed_t, TrkHitSPVecMap, TrkHitSP>; 
+//    using SeedFinder_t = SeedFinder<Seed_t, TrkHitSPVecMap, TrkHitSP>; 
+    using SeedFinder_t = WrappedSeedFinder;
     using SeedContainer_t = std::vector<Seed_t>;
 
 public:
@@ -65,14 +69,29 @@ private:
     }
 
 private:
+//................................................................................//
+//Digitization
+//................................................................................//
+    Digitization digitizer_;
+//................................................................................//
+//Seed Finder
+//................................................................................//
     SeedFinder_t seed_finder_;
+    GreedyFinder tag_finder_;
+    GreedyFinder rec_finder_;
 
-    SeedFinder_t::SeedFinderSnapshot seed_finder_snapshot_;
-
-    SeedFinder_t::SeedFinderConfig seed_finder_config_;
-    GreedyFinder::Config finding_config_;
+//................................................................................//
+//Configs
+//................................................................................//
+    SeedFinder_t::SeedFinderConfig tag_seeder_config_;
+    SeedFinder_t::SeedFinderConfig rec_seeder_config_;
+    GreedyFinder::GreedyFinderConfig tag_finder_config_;
+    GreedyFinder::GreedyFinderConfig rec_finder_config_;
     KalmanFilterFitter::Config genfit_config_;
     RiemannFitter::Config riemann_config_;
+
+    GreedyFinder::GreedyFinderSnapshot tag_finder_snapshot_;
+    GreedyFinder::GreedyFinderSnapshot rec_finder_snapshot_;
 
 //................................................................................//
 //Parameters from config file
@@ -117,14 +136,9 @@ private:
     double con_field{-1.5};
 
 //................................................................................//
-//Digitization
-//................................................................................//
-    Digitization digitizer_;
-
-//................................................................................//
 //Magnet
 //................................................................................//
-    std::vector<DMagnet *> magnets;
+    std::vector<DMagnet*> magnets;
 
 //................................................................................//
 //Truth
@@ -182,6 +196,7 @@ private:
     std::vector<std::shared_ptr<DTrack>> rec_tracks_;
 
 //No of seeds
+    int TagTrk2_seed_No{-1};
     int RecTrk2_seed_No{-1};
 
 //No of reconstructed tracks
@@ -198,7 +213,6 @@ private:
 //x/y resolution of reconstructed tracks from helix fitting
     std::vector<double> TagTrk2_track_x_sigma{};
     std::vector<double> TagTrk2_track_y_sigma{};
-
 
 //................................................................................//
     int RecTrk2_track_No{-1};

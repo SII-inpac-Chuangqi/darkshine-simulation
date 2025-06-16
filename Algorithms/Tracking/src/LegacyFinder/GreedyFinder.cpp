@@ -17,7 +17,7 @@
 #include "Algo/Utils/Util.h"
 #include "Algo/Object/TrkHit.h"
 #include "Algo/Object/DTrack.h"
-#include "Algo/GreedyFinder.h"
+#include "Algo/LegacyFinder/GreedyFinder.h"
 
 //................................................................................//
 //public:
