@@ -861,7 +861,8 @@ bool Control::ReadYAML(const G4String &file_in) {
         Tracker1_Color = readV3(Node["Geometry"]["Tracker"]["Tracker1_Color"]);
         Tracker2_Color = readV3(Node["Geometry"]["Tracker"]["Tracker2_Color"]);
         if(build_silicon_pixel) build_silicon_micro_strip = false;
-        std::cerr << "[INFO] ==> build_silicon_micro_strip: " << build_silicon_micro_strip << std::endl;
+//        std::cerr << "[INFO] ==> Control::ReadYAML(): build_silicon_micro_strip: " << build_silicon_micro_strip << std::endl;
+//        std::cerr << "[INFO] ==> Control::ReadYAML(): build_silicon_pixel: " << build_silicon_pixel << std::endl;
 
         // Tagging Tracker
         tag_Size_Tracker.clear();
@@ -884,6 +885,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         assert(tag_Size_Tracker.size() == tag_Pos_Tracker.size()); // Sanity Check
         assert(tag_Tracker_Angle_Gap.size() == tag_Size_Tracker.size());
         assert(tag_Tracker_Strip_N.size() == tag_Tracker_Angle_Gap.size());
+        assert(tag_Tracker_Strip_N.size() == tag_Tracker_Pixel_N.size());
 
         // Recoil Tracker
         rec_Size_Tracker.clear();
