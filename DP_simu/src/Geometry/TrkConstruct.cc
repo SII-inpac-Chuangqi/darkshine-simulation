@@ -326,7 +326,7 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         fCopyNo++;
     }
 
-//    G4cout << "[INFO] ==> TrkConstruct::LinearPlacement(): PVVector.capacity(): " << PVVector.capacity() << ", PVVector.size(): " << PVVector.size() << G4endl;
+    G4cout << "[INFO] ==> TrkConstruct::LinearPlacement(): PVVector.capacity(): " << PVVector.capacity() << ", PVVector.size(): " << PVVector.size() << G4endl;
 
     PVVector.shrink_to_fit();
 
