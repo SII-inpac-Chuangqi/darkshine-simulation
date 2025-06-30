@@ -11,7 +11,7 @@ void GreedyFinder::KasaFit()
     if(n_hit < 3) return;
 
     seed_helper::KasaFit(manager_.current_track->x.data(), manager_.current_track->z.data(), n_hit,
-                           manager_.current_A, manager_.current_B, manager_.current_R, manager_.current_chi2);
+                         manager_.current_A, manager_.current_B, manager_.current_R, manager_.current_chi2);
 }
 
 void GreedyFinder::ColinearFit()

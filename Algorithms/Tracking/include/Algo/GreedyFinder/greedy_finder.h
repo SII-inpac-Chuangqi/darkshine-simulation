@@ -113,8 +113,8 @@ public:
         for(const auto &track : manager_.output_tracks)
         {
             tracks.push_back(std::make_shared<track_t>(track->candidate,
-                                                       manager_.output_As.at(i_track), manager_.output_Bs.at(i_track),
-                                                       manager_.output_Rs.at(i_track)
+                                                       manager_.output_Rs.at(i_track),
+                                                       manager_.output_As.at(i_track), manager_.output_Bs.at(i_track)
 //                                                       manager_.output_chi2s.at(i_track), manager_.output_r2s.at(i_track))
                                                       ));
 
