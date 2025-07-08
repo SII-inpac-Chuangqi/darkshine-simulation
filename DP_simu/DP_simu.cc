@@ -28,19 +28,6 @@
 /// \file example.cc
 /// \brief Main program of the  example
 
-#include "DP_simu/DetectorConstruction.hh"
-#include "DP_simu/PrimaryGeneratorAction.hh"
-#include "DP_simu/RunAction.hh"
-#include "DP_simu/EventAction.hh"
-#include "DP_simu/TrackingAction.hh"
-#include "DP_simu/StackingAction.hh"
-#include "DP_simu/SteppingAction.hh"
-#include "DP_simu/RootManager.hh"
-#include "Control/Control.h"
-#include "Bias_Filter/FilterManager.hh"
-#include "Object/Util/TruthManager.h"
-#include "Utility/parser.h"
-
 #include "G4Version.hh"
 
 #include "G4StepLimiterPhysics.hh"  // Geant4.10
@@ -65,6 +52,19 @@
 //#ifdef G4UI_USE
 #include "G4UIExecutive.hh"
 //#endif
+
+#include "DP_simu/DetectorConstruction.hh"
+#include "DP_simu/PrimaryGeneratorAction.hh"
+#include "DP_simu/RunAction.hh"
+#include "DP_simu/EventAction.hh"
+#include "DP_simu/TrackingAction.hh"
+#include "DP_simu/StackingAction.hh"
+#include "DP_simu/SteppingAction.hh"
+#include "DP_simu/RootManager.hh"
+#include "Control/Control.h"
+#include "Bias_Filter/FilterManager.hh"
+#include "Object/Util/TruthManager.h"
+#include "Utility/parser.h"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

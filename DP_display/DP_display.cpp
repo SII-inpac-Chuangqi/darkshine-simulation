@@ -2,33 +2,16 @@
 // Created by Zhang Yulei on 12/18/20.
 //
 
-#include "DEventDisplay.h"
-#include "DisData.h"
+#include <iostream>
 
 #include "TFile.h"
 
-#include <iostream>
+#include "DEventDisplay.h"
+#include "DisData.h"
 
-namespace {
-    void PrintUsage() {
-        std::cerr << "Usage: " << std::endl;
-        std::cerr << "  DDis [ -b ] [ -f dp_simu.root] [ -g geometry.root] [ -t ] [ -h ]" << std::endl;
-        std::cerr << " -- [-b] : only print out detector geometry information" << std::endl;
-        std::cerr << " -- [-g] : read the geometry from input root file" << std::endl;
-        std::cerr << " -- [-t] : use this option when reading truth tracker hit" << std::endl;
-        std::cerr << " -- [-f] : read the event information from input root file" << std::endl;
-        std::cerr << " -- [-c] : read the DAna config (optional)" << std::endl;
-        std::cerr << " -- [-h] : show this help usage" << std::endl;
-        std::cerr << std::endl;
-    }
-}
+#include "Utility/parser.h"
 
 int main(int argc, char **argv) {
-
-    if (argc < 1) {
-        PrintUsage();
-        return 1;
-    }
 
     bool batch_mode = false;
     auto file_in = TString("dp_simu.root");
@@ -36,22 +19,13 @@ int main(int argc, char **argv) {
     auto geo_file_in = TString("dp_simu.root");
     bool no_strip_mode = false;
 
-    for (int i = 1; i < argc; ++i) {
-        if (std::string(argv[i]) == "-f")
-            file_in = TString(argv[i+1]);
-        else if (std::string(argv[i]) == "-c")
-            conf_in = TString(argv[i+1]);
-        else if (std::string(argv[i]) == "-g")
-            geo_file_in = TString(argv[i+1]);
-        else if (std::string(argv[i]) == "-t")
-            no_strip_mode = true;
-        else if (std::string(argv[i]) == "-b")
-            batch_mode = true;
-        else if (std::string(argv[i]) == "-h") {
-            PrintUsage();
-            return 0;
-        }
-    }
+    arg_parser::Parser parser;
+    parser.Add("f,input",  file_in, "read the event information from input root file"); 
+    parser.Add("c,config", conf_in, "read the DAna config (optional)");
+    parser.Add("g,geometry", geo_file_in, "read the geometry from input root file");
+    parser.AddFlag("t", no_strip_mode, false, "read the geometry from input root file");
+    parser.AddFlag("b", batch_mode, false, "only print out detector geometry information");
+    parser.Parse(argc, argv);
 
     DisData::CreateInstance();
     if(geo_file_in==""){
