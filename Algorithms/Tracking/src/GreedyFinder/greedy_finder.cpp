@@ -147,6 +147,8 @@ void GreedyFinder::FindTracks(pool_t *pool, GreedyFinderSnapshot *snapshot, cons
         ShrinkPool(furnished_pool);
     }
 
+    manager_.SortTrackHits();
+
     snapshot_->track_n = manager_.output_tracks.size();
 }
 

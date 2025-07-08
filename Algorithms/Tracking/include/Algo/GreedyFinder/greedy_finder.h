@@ -94,6 +94,7 @@ private:
         void Choose();
         template<class id_container_t> void Remove(const id_container_t &removed_ids);
         void Output();
+        void SortTrackHits();
     };
 
 public:
