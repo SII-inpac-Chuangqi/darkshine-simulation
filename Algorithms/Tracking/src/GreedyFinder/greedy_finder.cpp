@@ -11,7 +11,7 @@ void GreedyFinder::KasaFit()
     if(n_hit < 3) return;
 
     seed_helper::KasaFit(manager_.current_track->x.data(), manager_.current_track->z.data(), n_hit,
-                           manager_.current_A, manager_.current_B, manager_.current_R, manager_.current_chi2);
+                         manager_.current_A, manager_.current_B, manager_.current_R, manager_.current_chi2);
 }
 
 void GreedyFinder::ColinearFit()
@@ -146,6 +146,8 @@ void GreedyFinder::FindTracks(pool_t *pool, GreedyFinderSnapshot *snapshot, cons
 
         ShrinkPool(furnished_pool);
     }
+
+    manager_.SortTrackHits();
 
     snapshot_->track_n = manager_.output_tracks.size();
 }

@@ -64,7 +64,8 @@ public:
     void End() override;
 
 private:
-    bool IsValidHitSize(const std::vector<TrkHit>& trkhits) {
+    template <class T>
+    bool IsValidHitSize(const std::vector<T>& trkhits) {
         return (trkhits.size() > 2 && (skip_hits_geq <= 0 || trkhits.size() < (unsigned long)skip_hits_geq));
     }
 

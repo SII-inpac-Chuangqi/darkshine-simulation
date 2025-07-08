@@ -1,3 +1,5 @@
+#include <algorithm>
+
 inline void GreedyFinder::ProtoTrack::clear()
 {
     candidate.clear();
@@ -111,4 +113,11 @@ inline void GreedyFinder::ProtoTrackManager::Output()
     output_As.push_back(chosen_A);
     output_Bs.push_back(chosen_B);
     output_Rs.push_back(chosen_R);
+}
+
+inline void GreedyFinder::ProtoTrackManager::SortTrackHits()
+{
+    for(auto &track : output_tracks)
+        std::sort(track->candidate.begin(), track->candidate.end(),
+                  [](const auto &hit1, const auto &hit2){return hit1->GetZ() < hit2->GetZ();});
 }

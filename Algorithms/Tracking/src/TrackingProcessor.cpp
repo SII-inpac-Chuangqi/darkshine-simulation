@@ -249,6 +249,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     auto it_find_tag2 = simuhit_collection.find("TagTrk2");
     auto it_find_rec1 = simuhit_collection.find("RecTrk1");
     auto it_find_rec2 = simuhit_collection.find("RecTrk2");
+
     if (it_find_step == step_collection.end() ||
         it_find_tag1 == simuhit_collection.end() ||
         it_find_tag2 == simuhit_collection.end() ||
@@ -289,7 +290,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Tag tracker
-    if (IsValidHitSize(raw_tagtrk2_hits))
+    if (IsValidHitSize(raw_tagtrk2_hits) && IsValidHitSize(raw_tagtrk1_hits))
     {
         if_raw_tag_hit_number = true;
 
