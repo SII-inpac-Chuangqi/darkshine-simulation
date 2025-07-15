@@ -15,7 +15,6 @@
 
 //................................................................................//
 //TRACKING
-//#include "Algo/TrkHit.h"
 #include "Algo/TypeDef.h"
 #include "Algo/Object/DTrack.h"
 #include "Algo/Object/seed.h"
@@ -24,10 +23,9 @@
 
 #include "Algo/WrappedSeedFinder.h"
 #include "Algo/Seeding/seed_finder.h"
+#include "Algo/WrappedFinder.h"
 #include "Algo/GreedyFinder/greedy_finder.h"
-//#include "Algo/GreedyFinder.h"
-#include "Algo/KalmanFit/KalmanFilterFitter.h"
-#include "Algo/RiemannFit/RiemannFitter.h"
+#include "Algo/WrappedFitter.h"
 
 namespace tracking
 {
@@ -78,8 +76,8 @@ private:
 //Seed Finder
 //................................................................................//
     SeedFinder_t seed_finder_;
-    GreedyFinder tag_finder_;
-    GreedyFinder rec_finder_;
+    WrappedFinder tag_finder_;
+    WrappedFinder rec_finder_;
 
 //................................................................................//
 //Configs
@@ -90,9 +88,6 @@ private:
     GreedyFinder::GreedyFinderConfig rec_finder_config_;
     KalmanFilterFitter::Config genfit_config_;
     RiemannFitter::Config riemann_config_;
-
-    GreedyFinder::GreedyFinderSnapshot tag_finder_snapshot_;
-    GreedyFinder::GreedyFinderSnapshot rec_finder_snapshot_;
 
 //................................................................................//
 //Parameters from config file
