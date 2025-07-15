@@ -28,7 +28,6 @@
 //TRACKING
 //#include "Algo/TypeDef.h"
 #include "Algo/Utils/Util.h"
-#include "Algo/WrappedFitter.h"
 #include "Algo/RiemannFit/RiemannFitHelper.h"
 #include "Algo/Vertex/DVertex.h"
 #include "Algo/Vertex/VertexFinder.h"
@@ -306,16 +305,11 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //Seeding
                 SeedContainer_t seeds;
                 seed_finder_.Run(tag_seeder_config_, seeds, &tag_hit_pool_);
-//                std::cout << seeds.size() << " seeds are found" << std::endl;
                 TagTrk2_seed_No = seeds.size();
 
 //Finding, by pre-fitting
-//                GreedyFinder find_tag(finding_config_, &tag_hit_pool_);
-//                find_tag.FillTracks(&tag_tracks_);
-                tag_finder_.Config(tag_finder_config_);
-                tag_finder_snapshot_.clear();
-                tag_finder_.FindTracks(&tag_hit_pool_, &tag_finder_snapshot_, seeds);
-                tag_tracks_ = tag_finder_.GetTracks<DTrack>();
+                tag_finder_.Run(tag_finder_config_, &tag_hit_pool_, seeds);
+                tag_tracks_ = tag_finder_.GetTracks();
     
 //Fit, by Genfit, Kalman filter/by Riemann fitting
                 TagTrk2_track_No = tag_tracks_.size();
@@ -351,16 +345,11 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //Seeding
                 SeedContainer_t seeds;
                 seed_finder_.Run(rec_seeder_config_, seeds, &rec_hit_pool_);
-//                std::cout << seeds.size() << " seeds are found" << std::endl;
                 RecTrk2_seed_No = seeds.size();
 
 //Finding, by pre-fitting
-//                GreedyFinder find_rec(finding_config_, &rec_hit_pool_);
-//                find_rec.FillTracks(&rec_tracks_);
-                rec_finder_.Config(rec_finder_config_);
-                rec_finder_snapshot_.clear();
-                rec_finder_.FindTracks(&rec_hit_pool_, &rec_finder_snapshot_, seeds);
-                rec_tracks_ = rec_finder_.GetTracks<DTrack>();
+                rec_finder_.Run(rec_finder_config_, &rec_hit_pool_, seeds);
+                rec_tracks_ = rec_finder_.GetTracks();
 
 //Fit, by Genfit, Kalman filter/by Riemann fitting
                 RecTrk2_track_No = rec_tracks_.size();
