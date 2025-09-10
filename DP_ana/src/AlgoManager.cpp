@@ -52,7 +52,7 @@ void AlgoManager::BeginAnaProcessors() {
 
 }
 
-void AlgoManager::ProcessEvtAnaProcessors(AnaEvent *evt, int cur_evt_num) {
+void AlgoManager::ProcessEvtAnaProcessors(AnaEvent *evt, [[maybe_unused]] int cur_evt_num) {
     for (const auto &itr : AnaProcessorList) {
 
         // record start time for each processor
