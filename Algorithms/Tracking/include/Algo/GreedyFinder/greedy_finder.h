@@ -12,6 +12,12 @@
 
 class GreedyFinder
 {
+private:
+    using hit_p_t = std::shared_ptr<TrkHit>; 
+    using seed_t = Seed<TrkHit>;
+    using pool_t = HitPool<Key, TrkHit>;
+    using hit_map_t = std::map<int, std::vector<hit_p_t>>;
+
 public:
     struct GreedyFinderConfig
     {
@@ -23,13 +29,6 @@ public:
         int verbose = 0;
     };
 
-private:
-    using hit_p_t = std::shared_ptr<TrkHit>; 
-    using seed_t = Seed<TrkHit>;
-    using pool_t = HitPool<Key, TrkHit>;
-    using hit_map_t = std::map<int, std::vector<hit_p_t>>;
-
-public:
     struct GreedyFinderSnapshot
     {
         int track_n{0};
