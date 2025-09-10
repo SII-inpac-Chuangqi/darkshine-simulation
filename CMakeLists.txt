@@ -22,6 +22,8 @@ option(BUILD_DSIMU "BUILD_DSIMU" ON)
 option(BUILD_DDIS "BUILD_DDIS" ON)
 option(BUILD_TOOLS "BUILD_TOOLS" ON)
 
+option(BUILD_ONNX "BUILD_ONNX" OFF)
+
 # define path to macros and settings
 #
 LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -133,8 +135,15 @@ IF (BUILD_HDF5)
 ENDIF ()
 
 # json
+#
 find_package(nlohmann_json 3.2.0 REQUIRED)
 
+# Onnx
+#
+if (BUILD_ONNX)
+    set(ONNXRUNTIME_INCLUDE_DIRS "/lustre/collider/zhuyifan/Software/onnxruntime/onnxruntime-linux-x64-1.11.1/include")
+    include_directories(${ONNXRUNTIME_INCLUDE_DIRS})
+endif ()
 
 #----------------------------------------------------------------------------
 # For Debug
@@ -162,6 +171,12 @@ FIND_DIRECTORIES(Service_Include_Dir   Service_Headers   "Utility/Service/includ
 FIND_DIRECTORIES(GenFit_Include_Dir GenFit_Headers "ThirdParty/GenFit2/*/include" "*.h" ON)
 FIND_DIRECTORIES(Algo_Include_Dir   Algo_Headers   "Algorithms/*/include/Algo" "*.h")
 FIND_DIRECTORIES(DAna_Include_Dir   DAna_Headers   "DP_ana/include/*" "*.h")
+
+if (BUILD_ONNX)
+    FIND_DIRECTORIES(Onnx_Include_Dir Onnx_Headers "Utility/Onnx/include/*" "*.h")
+    list(APPEND Service_Headers ${Onnx_Headers})
+endif ()
+
 #message(STATUS "Object include dir: ${Object_Include_Dir}")
 #message(STATUS "Object include headers: ${Object_Headers}")
 #message(STATUS "Algo include dir: ${Algo_Include_Dir}")
@@ -173,7 +188,9 @@ include_directories(${Algo_Include_Dir})
 include_directories(${DAna_Include_Dir})
 #include_directories(${HEPMC_INCLUDE_DIR})
 include_directories(${GenFit_Include_Dir})
-
+if (BUILD_ONNX)
+    include_directories(${Onnx_Include_Dir})
+endif ()
 
 #----------------------------------------------------------------------------
 # Core lib
