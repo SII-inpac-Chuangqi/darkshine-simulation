@@ -154,6 +154,9 @@ void GreedyFinder::FindTracks(pool_t *pool, GreedyFinderSnapshot *snapshot, cons
 
 void GreedyFinder::RejectTrack()
 {
+    if(manager_.current_track->candidate.size() <= config_.min_depth)
+        return;
+
     KasaFit();
 
     ColinearFit();
@@ -174,7 +177,8 @@ void GreedyFinder::RejectTrack()
         std::cout << std::endl;
     }
 
-    if(manager_.current_chi2 > manager_.best_chi2 && manager_.current_r2 > manager_.best_r2 && manager_.current_R > config_.min_R)
+    if(manager_.current_chi2 > manager_.best_chi2 && manager_.current_r2 > manager_.best_r2 &&
+       manager_.current_R > config_.min_R && manager_.current_R < config_.max_R)
     {
         manager_.best_chi2 = manager_.current_chi2;
         if(config_.verbose > 2)
@@ -210,7 +214,8 @@ void GreedyFinder::MergeTrack()
                (c == 2 && std::abs(std::hypot(err_A, err_B))/manager_.output_Rs.at(i) < 0.01 && std::abs(err_R) < 0.01))
             {
                 if(config_.verbose > 1)
-                    std::cout << "track i-j share " << c << " hits, and diff in A: " << err_A << " B: " << err_B << " R: " << err_R
+                    std::cout << "track " << i << "-" << j << " share " << c << " hits,"
+                              << " and diff in A: " << err_A << " B: " << err_B << " R: " << err_R
                               << " chi2 i: " << manager_.output_chi2s.at(i)
                               << " chi2 j: " << manager_.output_chi2s.at(j) << std::endl;
 
@@ -223,10 +228,16 @@ void GreedyFinder::MergeTrack()
 
     manager_.Remove(track_to_rm);
 
+    int i_track = 0;
     for(auto &track : output_tracks)
     {
         for(auto &hit : track->candidate)
             hit->SetTracked();
+
+        if(config_.verbose <= 1) continue;
+        std::cout << "output track " << i_track << ":" << std::endl;
+        for(auto &hit : track->candidate)
+            std::cout << *hit << std::endl;
     }
 
     if(config_.verbose > 0 && pre_size != output_tracks.size())

@@ -72,12 +72,13 @@ void TrackingProcessor::Begin() {
 
     digitizer_.ReadTrackerInfo(if_strip);
     digitizer_.SetIfSmear(if_smear);
-    digitizer_.SetClusterWidth(0.03);
+    digitizer_.SetClusterWidth(0.05);
 
-    tag_seeder_config_.verbose = Verbose;
-//    rec_seeder_config_.verbose = Verbose;
+    tag_seeder_config_.verbose = 0;
+    rec_seeder_config_.verbose = Verbose;
     seed_finder_.Connect(&TrkHit::GetX, &TrkHit::GetZ, &TrkHit::GetY);
-    tag_finder_config_.verbose = Verbose;
+    tag_finder_config_.verbose = 0;
+    rec_finder_config_.verbose = Verbose;
 
 //................................................................................//
 //Load fitter info

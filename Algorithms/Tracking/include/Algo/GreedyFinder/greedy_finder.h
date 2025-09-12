@@ -22,8 +22,9 @@ public:
     struct GreedyFinderConfig
     {
         int max_circle = 100000;
-        int min_depth = 3;
+        size_t min_depth = 3;
         double min_R = 250.;
+        double max_R = 36000.;
         double kasa_chi2 = 0.9995;
         double linear_r2 = 0.9;
         int verbose = 0;

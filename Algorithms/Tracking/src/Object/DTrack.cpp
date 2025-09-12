@@ -358,6 +358,12 @@ std::vector<double> DTrack::ExtrapolateTo(const std::vector<double> &planes_z, t
     return fitter_->ExtrapolateTo(planes_z, extrop_dir);
 }
 
+std::ostream &operator<<(std::ostream &os, const DTrack &track)
+{
+    for(const auto &hit : track.hits_) os << *hit << std::endl;
+    return os;
+}
+
 void DTrack::Evaluate()
 {
 /*

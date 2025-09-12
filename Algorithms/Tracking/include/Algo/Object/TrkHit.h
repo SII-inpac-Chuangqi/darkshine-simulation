@@ -1,5 +1,5 @@
-#ifndef TRKHIT_H
-#define TRKHIT_H
+#ifndef TRACKING_TRKHIT_H
+#define TRACKING_TRKHIT_H
 
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
@@ -8,8 +8,6 @@
 //................................................................................//
 //C++
 #include <iostream>
-#include <map>
-#include <vector>
 #include <memory>
 #include <bitset>
 
@@ -19,6 +17,7 @@
 #include "TString.h"
 #include "TVectorD.h"
 #include "TMatrixDSym.h"
+#include "TString.h"
 
 //................................................................................//
 //Framework
@@ -73,6 +72,9 @@ public:
     void SetTracked() {status_ |= TrkHit::tracked;}
     void SetUnTracked() {status_ &= (~TrkHit::tracked);}
     void SetTrack(const std::shared_ptr<DTrack> &track) {track_ = track;}
+
+    // Update xy and xy_cov from uv and uv_cov
+    void UpdateXY();
 //................................................................................//
 //Get
 //................................................................................//
@@ -103,8 +105,7 @@ public:
     bool Tracked() {return (status_ & TrkHit::tracked) == TrkHit::tracked;}
     std::shared_ptr<DTrack> GetTrack() const {return track_.lock();}
 
-    // Update xy and xy_cov from uv and uv_cov
-    void UpdateXY();
+    friend std::ostream &operator<<(std::ostream &os, const TrkHit &hit);
 
 protected:
 
