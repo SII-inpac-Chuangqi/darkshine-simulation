@@ -202,7 +202,7 @@ private:
 //Reconstructed momentum parallel to magnet
     std::vector<double> TagTrk2_pl{};
 
-    std::vector<double> TagTrk2_track_quality{};
+//    std::vector<double> TagTrk2_track_quality{};
 //χ2 of reconstructed tracks from helix fitting
     std::vector<double> TagTrk2_track_chi2{};
     std::vector<double> TagTrk2_track_chi2_algo{};
@@ -213,10 +213,10 @@ private:
 //................................................................................//
     int RecTrk2_track_No{-1};
     std::vector<double> RecTrk2_pp{};
-    std::vector<double> RecTrk2_fixed_pp{};
+//    std::vector<double> RecTrk2_fixed_pp{};
     std::vector<double> RecTrk2_pl{};
 
-    std::vector<double> RecTrk2_track_quality{};
+//    std::vector<double> RecTrk2_track_quality{};
     std::vector<double> RecTrk2_track_chi2{};
     std::vector<double> RecTrk2_track_chi2_algo{};
     std::vector<double> RecTrk2_track_x_sigma{};

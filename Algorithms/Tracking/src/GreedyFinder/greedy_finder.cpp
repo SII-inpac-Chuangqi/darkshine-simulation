@@ -128,7 +128,7 @@ void GreedyFinder::FindTracks(pool_t *pool, GreedyFinderSnapshot *snapshot, cons
         std::cout << manager_.output_tracks.size() << " tracks are found" << std::endl;
 
     double refind_chi2 = 0.99;
-    double refind_r2 = 0.75;
+    double refind_r2 = 0.60;
     manager_.reset(config_, &refind_chi2, &refind_r2);
 
     ShrinkPool(furnished_pool);

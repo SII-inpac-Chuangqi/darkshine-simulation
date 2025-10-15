@@ -72,12 +72,12 @@ void TrackingProcessor::Begin() {
 
     digitizer_.ReadTrackerInfo(if_strip);
     digitizer_.SetIfSmear(if_smear);
-    digitizer_.SetClusterWidth(0.05);
+    digitizer_.SetClusterWidth(0.1);
 
-    tag_seeder_config_.verbose = 0;
+    tag_seeder_config_.verbose = Verbose;
     rec_seeder_config_.verbose = Verbose;
     seed_finder_.Connect(&TrkHit::GetX, &TrkHit::GetZ, &TrkHit::GetY);
-    tag_finder_config_.verbose = 0;
+    tag_finder_config_.verbose = Verbose;
     rec_finder_config_.verbose = Verbose;
 
 //................................................................................//
@@ -167,7 +167,7 @@ void TrackingProcessor::Begin() {
 
     if (!clean) {
         EvtWrt->RegisterIntVariable("TagTrk2_seed_No", &TagTrk2_seed_No, "TagTrk2_seed_No/I");
-        EvtWrt->RegisterOutVariable("TagTrk2_track_quality", &TagTrk2_track_quality);
+//        EvtWrt->RegisterOutVariable("TagTrk2_track_quality", &TagTrk2_track_quality);
         EvtWrt->RegisterOutVariable("TagTrk2_track_x_sigma", &TagTrk2_track_x_sigma);
         EvtWrt->RegisterOutVariable("TagTrk2_track_y_sigma", &TagTrk2_track_y_sigma);
     }
@@ -175,14 +175,14 @@ void TrackingProcessor::Begin() {
 //................................................................................//
     EvtWrt->RegisterIntVariable("RecTrk2_track_No", &RecTrk2_track_No, "RecTrk2_track_No/I");
     EvtWrt->RegisterOutVariable("RecTrk2_pp", &RecTrk2_pp);
-    EvtWrt->RegisterOutVariable("RecTrk2_fixed_pp", &RecTrk2_fixed_pp);
+//    EvtWrt->RegisterOutVariable("RecTrk2_fixed_pp", &RecTrk2_fixed_pp);
     EvtWrt->RegisterOutVariable("RecTrk2_track_chi2",      &RecTrk2_track_chi2);
     EvtWrt->RegisterOutVariable("RecTrk2_track_chi2_algo", &RecTrk2_track_chi2_algo);
 
     if (!clean) {
         EvtWrt->RegisterIntVariable("RecTrk2_seed_No", &RecTrk2_seed_No, "RecTrk2_seed_No/I");
 
-        EvtWrt->RegisterOutVariable("RecTrk2_track_quality", &RecTrk2_track_quality);
+//        EvtWrt->RegisterOutVariable("RecTrk2_track_quality", &RecTrk2_track_quality);
         EvtWrt->RegisterOutVariable("RecTrk2_track_x_sigma", &RecTrk2_track_x_sigma);
         EvtWrt->RegisterOutVariable("RecTrk2_track_y_sigma", &RecTrk2_track_y_sigma);
 
@@ -290,6 +290,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Tag tracker
+
     if (IsValidHitSize(raw_tagtrk2_hits) && IsValidHitSize(raw_tagtrk1_hits))
     {
         if_raw_tag_hit_number = true;
@@ -344,6 +345,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             if(if_raw_rec_hit_number && if_reco_rec_hits)
             {
 //Seeding
+                rec_hit_pool_.Print();
                 SeedContainer_t seeds;
                 seed_finder_.Run(rec_seeder_config_, seeds, &rec_hit_pool_);
                 RecTrk2_seed_No = seeds.size();
@@ -404,7 +406,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         if (!clean)
         {
             TagTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
-            TagTrk2_track_quality.push_back(track->GetQuality());
+//            TagTrk2_track_quality.push_back(track->GetQuality());
             TagTrk2_track_x_sigma.push_back(track->GetXSigma());
             TagTrk2_track_y_sigma.push_back(track->GetYSigma());
         }
@@ -423,7 +425,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
         if (!clean) {
             RecTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
-            RecTrk2_track_quality.push_back(track->GetQuality());
+//            RecTrk2_track_quality.push_back(track->GetQuality());
             RecTrk2_track_x_sigma.push_back(track->GetXSigma());
             RecTrk2_track_y_sigma.push_back(track->GetYSigma());
      

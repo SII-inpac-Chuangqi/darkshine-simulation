@@ -74,15 +74,15 @@ void TrackingProcessor::InitEvt() {
     std::vector<double>().swap(TagTrk2_pp);
     std::vector<double>().swap(TagTrk2_track_chi2);
     std::vector<double>().swap(TagTrk2_track_chi2_algo);
-    std::vector<double>().swap(TagTrk2_track_quality);
+//    std::vector<double>().swap(TagTrk2_track_quality);
     std::vector<double>().swap(TagTrk2_track_x_sigma);
     std::vector<double>().swap(TagTrk2_track_y_sigma);
 
     std::vector<double>().swap(RecTrk2_pp);
-    std::vector<double>().swap(RecTrk2_fixed_pp);
+//    std::vector<double>().swap(RecTrk2_fixed_pp);
     std::vector<double>().swap(RecTrk2_track_chi2);
     std::vector<double>().swap(RecTrk2_track_chi2_algo);
-    std::vector<double>().swap(RecTrk2_track_quality);
+//    std::vector<double>().swap(RecTrk2_track_quality);
     std::vector<double>().swap(RecTrk2_track_x_sigma);
     std::vector<double>().swap(RecTrk2_track_y_sigma);
 
@@ -204,7 +204,7 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
             if(collection_name.substr(3,3) != "Trk") continue;
             for (auto const &hit: *hit_collection) {
                 if (hit->getPContribution().empty()) continue;
-                if (hit->getE() < remove_hit_less_E) continue;
+//                if (hit->getE() < remove_hit_less_E) continue;
                 Trk_contrib_pdg.emplace_back(hit->getPContribution().at(0).getPdg());
                 std::string proc_name = hit->getPContribution().at(0).getCreateProcess().empty() ? "Initial" : hit->getPContribution().at(0).getCreateProcess();
                 Trk_contrib_create_process.emplace_back(proc_name);
