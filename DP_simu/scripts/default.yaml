@@ -32,8 +32,6 @@ general_particle_source:
     ang/rot2: "1 0 0"
     ene/type: "Gauss"
     ene/mono: "4 GeV"
-    #direction: "0 0 1"
-    #position: "0 0 -61 cm"
   beam_on: 10
 
 ###########################################
@@ -66,7 +64,7 @@ dp_eplsion: 1e-3
 # Magnetic field
 ###########################################
 MagField:
-  mag_field_input: "magnet_0.75_20240521.root"
+  mag_field_input: "mag_default.root"
   uniform_mag_field: false # false - use mag_field_input; true - use the following setup
   tag_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
   rec_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
@@ -209,6 +207,7 @@ Geometry:
     MagnetShield_Thickness: [ 50, "cm" ]
   Tracker:
     build_silicon_micro_strip: true # false - only build one silicon micro strip in one tracker volume
+    build_silicon_pixel: false
     Trk_Tar_Dis: [ 7.5, "mm" ]
     Tracker_Mat: "G4_Si"
     TrackerRegion_Mat: "vacuum"
@@ -240,6 +239,7 @@ Geometry:
       - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 6
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 7
     tag_Tracker_Strip_N: [ 6700 , 6700 , 6700 , 6700 , 6700 , 6700 , 6700 ]
+    tag_Tracker_Pixel_N: [ 10 , 10 , 10 , 10 , 10 , 10 , 10 ]
     tag_Tracker_Strip_Block_N: 100 # Strip number per block. This number must be a common divisor of tag_Tracker_Strip_N !
     # Recoil Tracker
     rec_Size_Tracker:
@@ -264,6 +264,7 @@ Geometry:
       - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 5
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 6
     rec_Tracker_Strip_N: [ 6700, 6700, 6700, 8000 , 12000 , 16700 ]
+    rec_Tracker_Pixel_N: [ 10 , 10 , 10 , 10 , 10 , 10 ]
     rec_Tracker_Strip_Block_N: 100 # Strip number per Block. This number must be a common divisor of rec_Tracker_Strip_N !
   ECAL:
     ECAL_Name: "ECAL"
