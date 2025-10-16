@@ -67,9 +67,12 @@ make install
 cd ..
 ```
 
-Write a file to export environment variables, i.e. setup.sh
+Create a new file, i.e. setup.sh, to export environment variables
 
 ```shell
+#setup.sh
+#!bin/bash
+
 # For inpac cluster
 source /lustre/collider/zhuxuliang/darkshine-simulation/setup.sh
 # or if you need ACTS 

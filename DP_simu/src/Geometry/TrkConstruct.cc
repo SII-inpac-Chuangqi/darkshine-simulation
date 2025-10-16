@@ -240,9 +240,10 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
                                             std::vector<G4int> PixelNVec,
                                             G4ThreeVector *AngleGapVec,
                                             G4int stripBlockN) {
+    const bool if_pixel = dControl->build_silicon_pixel;
     auto TotalHalfSize = G4ThreeVector(0, 0, 0);
 
-    auto define_PV_size = [=](bool if_pixel)
+    auto define_PV_size = [=]()
                           {
                               auto PV_size = zNo;
                               for(int k = 0; k < zNo; k++)
@@ -251,7 +252,7 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
                               return 2*PV_size;
                           };
 
-    PVVector.reserve(define_PV_size(dControl->build_silicon_pixel));
+    PVVector.reserve(define_PV_size());
 //    G4cout << "[INFO] ==> TrkConstruct::LinearPlacement(): zNo: " << zNo << G4endl;
 //    G4cout << "[INFO] ==> TrkConstruct::LinearPlacement(): PVVector.capacity(): " << PVVector.capacity() << ", PVVector.size(): " << PVVector.size() << G4endl;
 
@@ -261,7 +262,7 @@ G4ThreeVector TrkConstruct::LinearPlacement(G4int zNo,
         auto CurSizeVec = *(SizeVec + k);
         auto CurPosVec = *(PosVec + k);
         auto CurStripN = StripNVec.at(k);
-        auto CurPixelN = PixelNVec.at(k);
+        auto CurPixelN = if_pixel ? PixelNVec.at(k) : 1;
         auto CurAngleGapVec = *(AngleGapVec + k);
 
 //        G4cout << "[INFO] ==> TrkConstruct::LinearPlacement() CurPixelN: " << CurPixelN << G4endl;
