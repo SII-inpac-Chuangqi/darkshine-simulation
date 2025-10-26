@@ -12,7 +12,7 @@
 #include "Core/AnaData.h"
 #include "Algo/Object/TrkHit.h"
 #include "Algo/Acts/ActsSequencerContext.h"
-#include "Algo/DPropagator.h"
+#include "Algo/Propagator/DPropagator.h"
 
 #include <TParticlePDG.h>
 #include <TDatabasePDG.h>
