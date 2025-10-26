@@ -234,7 +234,7 @@ void GreedyFinder::MergeTrack()
         for(auto &hit : track->candidate)
             hit->SetTracked();
 
-        if(config_.verbose <= 1) continue;
+        if(config_.verbose >= 1) continue;
         std::cout << "output track " << i_track << ":" << std::endl;
         for(auto &hit : track->candidate)
             std::cout << *hit << std::endl;
