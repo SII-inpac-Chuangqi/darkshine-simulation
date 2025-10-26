@@ -107,7 +107,10 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
     {
         auto it_find_layer2 = map2.find(layer1.first);
         if(it_find_layer2 == map2.end())
+        {
+//            std::cout << "layer " << layer1.first << " from layer 1 in layer 2 not found" << std::endl;
             continue;
+        }
 
         double angle1       = angles->at((layer1.first - 1)*2);
         double angle2       = angles->at((layer1.first - 1)*2 + 1);

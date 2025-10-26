@@ -27,6 +27,25 @@ public:
         int verbose = 0;
     };
 
+    struct SeedFinderSnapshot
+    {
+        std::vector<seed_t> candidates;
+
+        std::vector<double> seed_Rmax;
+        std::vector<double> seed_chi2;
+        std::vector<double> seed_r2;
+        std::vector<int> seed_n_cand_per_mid;
+
+        void clear()
+        {
+            candidates.clear();
+            seed_Rmax.clear();
+            seed_chi2.clear();
+            seed_r2.clear();
+            seed_n_cand_per_mid.clear();
+        }
+    };
+
 private:
     using Hit_t = tracking::utils::remove_pointer_s_t<hit_p_t>;
     using CoordinateGetter_t = std::function<double(const Hit_t&)>;
@@ -47,27 +66,6 @@ private:
         double A;
         double B;
         double R;
-    };
-
-
-public:
-    struct SeedFinderSnapshot
-    {
-        std::vector<seed_t> candidates;
-
-        std::vector<double> seed_Rmax;
-        std::vector<double> seed_chi2;
-        std::vector<double> seed_r2;
-        std::vector<int> seed_n_cand_per_mid;
-
-        void clear()
-        {
-            candidates.clear();
-            seed_Rmax.clear();
-            seed_chi2.clear();
-            seed_r2.clear();
-            seed_n_cand_per_mid.clear();
-        }
     };
 
 public:
