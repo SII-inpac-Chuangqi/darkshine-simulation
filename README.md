@@ -58,16 +58,21 @@ several dependencies need to be checked.
 ### With everything needed, it's ready to install :v:
 
 ```shell
-cd darkshine-simulation   # <source-directory>
-mkdir build
+cd darkshine-simulation # <source-directory>
+mkdir build install # install: your install directory
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=<your-install-directory> ../
+cmake -DCMAKE_INSTALL_PREFIX=../install ../
 make -j100  # Just do it!
 make install
 cd ..
 ```
 
-Create a new file, i.e. setup.sh, to export environment variables
+Create a new file, i.e. setup.sh, to export environment variables.
+
+```shell
+vim setup.sh
+```
+Then type "i", and paste the following lines:
 
 ```shell
 #setup.sh
@@ -78,17 +83,15 @@ source /lustre/collider/zhuxuliang/darkshine-simulation/setup.sh
 # or if you need ACTS 
 # source /lustre/collider/zhuyifan/Software/xuliang-ACTS/setup.sh
 # source /lustre/collider/zhuyifan/Software/xuliang-ACTS/install/python/setup.sh
-DSS_DIR=<your-install-directory>
+DSS_DIR=<your-install-directory> # absolute path to your install dir
 export PATH=${DSS_DIR}/bin:${PATH}
 export LD_LIBRARY_PATH=${DSS_DIR}/lib:${LD_LIBRARY_PATH}
 ```
-
-Then, source this file.
+Press "esc", and type ":wq". Then source this file:
 
 ```shell
 source setup.sh
 ```
-
 Now in your install directory, everything should be there. Now it's the time to have fun with them. :relaxed:
 
 ## Quick guide on DSS
