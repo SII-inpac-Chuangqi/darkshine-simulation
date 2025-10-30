@@ -226,7 +226,7 @@ private:
         TEveVectorD itsect_mom;
 
         propagator.InitTrack(vertex, charge);
-        propagator.HelixIntersectPlane(momentum, ECAL_Surface_Point, ECAL_Surface_Normal, itsect_pos, itsect_mom);
+        propagator.HelixIntersectPlane(momentum, ECAL_Surface_Point, ECAL_Surface_Normal, itsect_mom, itsect_pos);
         // from Acts Frame to Lab Frame
         itsect_pos = fromActsReferenceFrameD3(itsect_pos);
         itsect_mom = fromActsReferenceFrameD3(itsect_mom);
