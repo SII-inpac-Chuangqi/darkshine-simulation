@@ -345,7 +345,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             if(if_raw_rec_hit_number && if_reco_rec_hits)
             {
 //Seeding
-                rec_hit_pool_.Print();
                 SeedContainer_t seeds;
                 seed_finder_.Run(rec_seeder_config_, seeds, &rec_hit_pool_);
                 RecTrk2_seed_No = seeds.size();
