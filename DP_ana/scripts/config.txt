@@ -30,7 +30,8 @@ MemoryCheck.Verbose           = 0
 # RecHCAL: Hadronic Calorimeter Reconstruction Processor
 # Tracking: Tracking by Yi-Fan Zhu
 ###
-Algorithm.List = GNN_DataExporter Digitizer MCTruthAnalysis Tracking ActsSequencer RecECAL RecHCAL CutFlowAnalysis
+# Algorithm.List = GNN_DataExporter Digitizer MCTruthAnalysis Tracking ActsSequencer RecECAL RecHCAL CutFlowAnalysis
+Algorithm.List = Digitizer MCTruthAnalysis Tracking RecECAL RecHCAL CutFlowAnalysis
 
 ### Algorithm Configuration
 
