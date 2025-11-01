@@ -99,7 +99,7 @@ DSimu runs the Geant4 simulation.
 
 ```shell
 cp ../DP_simu/scripts/default.yaml .
-cp ../DP_simu/scripts/mag_default.root .
+cp ../DP_simu/scripts/magnet_1.5.root mag_default.root
 DSimu -y default.yaml
 ```
 - **IMPORTANT** The config file after '-y' is a yaml file controlling the whole configuration of the program.
