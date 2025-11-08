@@ -31,6 +31,7 @@ public:
     {
         int max_trial = 100;
         double const_B = -1.5;
+        Propagator *propagator = nullptr;
     };
 
 public:
