@@ -11,7 +11,7 @@
 
 #include "Algo/Propagator/Propagator.h"
 
-class DPropagator: public TEveTrackPropagator, public Propagator {
+class DPropagator final: public TEveTrackPropagator, public Propagator {
 private:
     using vector3D = std::array<double, 3>;
 
@@ -19,7 +19,11 @@ public:
     DPropagator(): TEveTrackPropagator() {};
     virtual ~DPropagator() override = default;
 
-    virtual void Init() override {}
+    virtual void Init(std::shared_ptr<DTrack>& track) override
+    {
+        
+    }
+
     virtual bool ExtrapolateToPlane(const vector3D &mom_in, const vector3D &plane_pos, const vector3D &plane_normal,
                                     vector3D &mom_out, vector3D &pos_out) override
     {

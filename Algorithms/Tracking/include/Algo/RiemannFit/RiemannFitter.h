@@ -24,7 +24,7 @@
 #include "Algo/Object/TrkHit.h"
 #include "Algo/Fitter.h"
 
-class RiemannFitter : public Fitter
+class RiemannFitter final : public Fitter
 {
 public:
     struct Config
