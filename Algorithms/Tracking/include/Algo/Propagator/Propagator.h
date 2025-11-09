@@ -4,7 +4,7 @@
 #include <array>
 #include <memory>
 
-class DTrack
+class DTrack;
 
 class Propagator
 {

@@ -19,9 +19,9 @@ public:
     DPropagator(): TEveTrackPropagator() {};
     virtual ~DPropagator() override = default;
 
-    virtual void Init(std::shared_ptr<DTrack>& track) override
+    virtual void Init([[maybe_unused]] std::shared_ptr<DTrack>& track) override
     {
-        
+//        InitTrack(TEveVectorD(), -1);
     }
 
     virtual bool ExtrapolateToPlane(const vector3D &mom_in, const vector3D &plane_pos, const vector3D &plane_normal,
