@@ -63,11 +63,11 @@ public:
     virtual double GetPz() const {return pz_;}
     virtual double GetPp() const {return pp_;}
     virtual double GetPl() const {return pl_;}
-    virtual double GetECalSeedX() const {return ECal_seed_x_;}
-    virtual double GetECalSeedY() const {return ECal_seed_y_;}
-    virtual double GetECalDirctX() const {return ECal_seed_px_;}
-    virtual double GetECalDirctY() const {return ECal_seed_py_;}
-    virtual double GetECalQoP() const {return ECal_seed_pz_;}
+    virtual double GetECalSeedX() const {return pflow_seed_x_;}
+    virtual double GetECalSeedY() const {return pflow_seed_y_;}
+    virtual double GetECalDirctX() const {return pflow_seed_px_;}
+    virtual double GetECalDirctY() const {return pflow_seed_py_;}
+    virtual double GetECalQoP() const {return pflow_seed_pz_;}
 
     virtual double GetNdf()  const {return fndf_;}
     virtual double GetChi2() const {return fchi2_;}
@@ -100,11 +100,11 @@ protected:
     double pz_{RETURN};
     double pp_{RETURN};
     double pl_{RETURN};
-    double ECal_seed_x_{RETURN};
-    double ECal_seed_y_{RETURN};
-    double ECal_seed_px_{RETURN};
-    double ECal_seed_py_{RETURN};
-    double ECal_seed_pz_{RETURN};
+    double pflow_seed_x_{RETURN};
+    double pflow_seed_y_{RETURN};
+    double pflow_seed_px_{RETURN};
+    double pflow_seed_py_{RETURN};
+    double pflow_seed_pz_{RETURN};
 
     double fndf_{0.};
     double fchi2_{RETURN};

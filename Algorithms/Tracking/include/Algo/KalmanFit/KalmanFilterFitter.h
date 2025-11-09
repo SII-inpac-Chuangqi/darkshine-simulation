@@ -69,7 +69,6 @@ private:
 //................................................................................//
 //Method specific
     genfit::AbsTrackRep *rep = nullptr;
-    //genfit::AbsKalmanFitter *fitter = nullptr;
     std::unique_ptr<genfit::KalmanFitterRefTrack> fitter = std::make_unique<genfit::KalmanFitterRefTrack>();
     genfit::Track *fitTrack = nullptr;
 

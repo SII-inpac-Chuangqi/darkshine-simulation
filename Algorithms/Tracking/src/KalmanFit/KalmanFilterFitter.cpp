@@ -175,31 +175,31 @@ void KalmanFilterFitter::Fill(const TrkHitSPVec &hits)
         y_sigma_ = state[4] * genfit_to_dss::cm - (*hits.at(0)).GetY();
     }
 
-    double ECal_front_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
-    if(std::isnormal(ECal_front_surface) || ECal_front_surface == 0.)
+    double pflow_front_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
+    if(std::isnormal(pflow_front_surface) || pflow_front_surface == 0.)
     {
 
         genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
         genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
         genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
                                                                    0.,
-                                                                   ECal_front_surface * dss_to_genfit::mm),
+                                                                   pflow_front_surface * dss_to_genfit::mm),
                                                           TVector3(1, 0, 0),
                                                           TVector3(0, 1, 0)));
         rep->extrapolateToPlane(kfsop, plane);
         const TVectorD& state = kfsop.getState();
-        //ECal_qop_ = 1./state[0]*1000.;
-        //ECal_dirct_x_ = state[1];
-        //ECal_dirct_y_ = state[2];
-        ECal_seed_x_ = state[3] * genfit_to_dss::cm;
-        ECal_seed_y_ = state[4] * genfit_to_dss::cm;
-        //std::cout << ECal_seed_pz_ << std::endl;
-        //std::cout << ECal_seed_y_ << std::endl;
+        //pflow_qop_ = 1./state[0]*1000.;
+        //pflow_dirct_x_ = state[1];
+        //pflow_dirct_y_ = state[2];
+        pflow_seed_x_ = state[3] * genfit_to_dss::cm;
+        pflow_seed_y_ = state[4] * genfit_to_dss::cm;
+        //std::cout << pflow_seed_pz_ << std::endl;
+        //std::cout << pflow_seed_y_ << std::endl;
 
-        auto mom_on_ECal = kfsop.getMom();
-        ECal_seed_px_ = -mom_on_ECal[0] * genfit_to_dss::GeV; //fix direction
-        ECal_seed_py_ =  mom_on_ECal[1] * genfit_to_dss::GeV; //
-        ECal_seed_pz_ = -mom_on_ECal[2] * genfit_to_dss::GeV; //
+        auto mom_for_pflow = kfsop.getMom();
+        pflow_seed_px_ = -mom_for_pflow[0] * genfit_to_dss::GeV; //fix direction
+        pflow_seed_py_ =  mom_for_pflow[1] * genfit_to_dss::GeV; //
+        pflow_seed_pz_ = -mom_for_pflow[2] * genfit_to_dss::GeV; //
     }
 
     track_->SetPx(px_);
@@ -210,45 +210,16 @@ void KalmanFilterFitter::Fill(const TrkHitSPVec &hits)
     track_->SetChi2Algo(fchi2_);
     track_->SetXSigma(x_sigma_);
     track_->SetYSigma(y_sigma_);
-    track_->SetECalSeedX(ECal_seed_x_);
-    track_->SetECalSeedY(ECal_seed_y_);
-    track_->SetECalDirctX(ECal_seed_px_);
-    track_->SetECalDirctY(ECal_seed_py_);
-    track_->SetECalQoP(ECal_seed_pz_);
+    track_->SetPFlowSeedX(pflow_seed_x_);
+    track_->SetPFlowSeedY(pflow_seed_y_);
+    track_->SetPFlowDirctX(pflow_seed_px_);
+    track_->SetPFlowDirctY(pflow_seed_py_);
+    track_->SetPFlowQoP(pflow_seed_pz_);
 }
 
 //................................................................................//
 //Get
 //................................................................................//
-//Calculate sign of charge of input hits
-/*
-int KalmanFilterFitter::GetSign(const TrkHitSPVec &hits)
-{
-    double xl  = hits.at(hits.size() - 1)->GetU();
-    double xlr = hits.at(hits.size() - 2)->GetU();
-    double xr  = hits.at(0)->GetU();
-    double xrl = hits.at(1)->GetU();
-
-    double zl  = hits.at(hits.size() - 1)->GetZ();
-    double zlr = hits.at(hits.size() - 2)->GetZ();
-    double zr  = hits.at(0)->GetZ();
-    double zrl = hits.at(1)->GetZ();
-
-    if(zr < zl)
-    {
-        std::swap(xl,  xr );
-        std::swap(xlr, xrl);
-        std::swap(zl,  zr );
-        std::swap(zlr, zrl);
-    }
-
-    int s = 0;
-    s = (xr - xrl)/sqrt((xr - xrl)*(xr - xrl) + (zr - zrl)*(zr - zrl)) >
-        (xlr - xl)/sqrt((xl - xlr)*(xl - xlr) + (zl - zlr)*(zl - zlr)) ? 1 : -1;
-    return s;
-}
-*/
-
 std::vector<double> KalmanFilterFitter::ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir)
 {
     using namespace dunits;

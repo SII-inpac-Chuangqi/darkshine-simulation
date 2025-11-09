@@ -416,11 +416,11 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         RecTrk2_pp.push_back(track->GetPp());
 //            RecTrk2_track_chi2.push_back(track->GetChi2());
 
-        ECal_seed_x.push_back(track->GetECalSeedX());
-        ECal_seed_y.push_back(track->GetECalSeedY());
-        ECal_seed_px.push_back(track->GetECalDirctX());
-        ECal_seed_py.push_back(track->GetECalDirctY());
-        ECal_seed_pz.push_back(track->GetECalQoP());
+        ECal_seed_x.push_back(track->GetPFlowSeedX());
+        ECal_seed_y.push_back(track->GetPFlowSeedY());
+        ECal_seed_px.push_back(track->GetPFlowDirctX());
+        ECal_seed_py.push_back(track->GetPFlowDirctY());
+        ECal_seed_pz.push_back(track->GetPFlowQoP());
 
         if (!clean) {
             RecTrk2_track_chi2_algo.push_back(track->GetChi2Algo());

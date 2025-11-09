@@ -154,8 +154,8 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
 
             for(size_t i = 0; i < truth_states_at_ECal.size(); i++)
             {
-                double dis = (std::hypot(truth_states_at_ECal.at(i).first->vertex[0] - track->GetECalSeedX(),
-                                         truth_states_at_ECal.at(i).first->vertex[1] - track->GetECalSeedY())
+                double dis = (std::hypot(truth_states_at_ECal.at(i).first->vertex[0] - track->GetPFlowSeedX(),
+                                         truth_states_at_ECal.at(i).first->vertex[1] - track->GetPFlowSeedY())
                              );
                 if(dis < min_dis) {min_dis = dis; min_id = i;}
             }
