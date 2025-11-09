@@ -1,10 +1,6 @@
 #ifndef DTRACK_H
 #define DTRACK_H
 
-#ifndef RETURN
-#define RETURN std::nan("RETURN")
-#endif
-
 //................................................................................//
 //C++
 #include <iostream>
@@ -21,6 +17,10 @@
 //................................................................................//
 //Tracking
 #include "Algo/TypeDef.h"
+
+#ifndef RETURN
+#define RETURN std::nan("RETURN")
+#endif
 
 class DVertex;
 

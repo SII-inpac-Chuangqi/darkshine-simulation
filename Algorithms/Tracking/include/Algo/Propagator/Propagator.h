@@ -4,6 +4,8 @@
 #include <array>
 #include <memory>
 
+#include "Algo/TypeDef.h"
+
 class DTrack;
 
 class Propagator
@@ -18,6 +20,10 @@ public:
     virtual void Init(std::shared_ptr<DTrack>&) = 0;
     virtual bool ExtrapolateToPlane(const vector3D &mom_in, const vector3D &plane_pos, const vector3D &plane_normal,
                                     vector3D &mom_out, vector3D &pos_out) = 0;
+
+protected:
+    int verbose_;
+    tracking::direction extrop_dir_;
 };
 
 #endif // TRACKING_PROPAGATOR_H

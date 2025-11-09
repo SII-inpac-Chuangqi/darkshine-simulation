@@ -1,13 +1,10 @@
 #ifndef TRACKING_TRACKINGPROCESSOR_H
 #define TRACKING_TRACKINGPROCESSOR_H
 
-#ifndef RETURN
-#define RETURN std::nan("RETURN")
-#endif
-
 //................................................................................//
 //C++
 #include <utility>
+#include <cmath>
 
 //................................................................................//
 //FRAMEWORK
@@ -26,6 +23,10 @@
 #include "Algo/WrappedFinder.h"
 #include "Algo/GreedyFinder/greedy_finder.h"
 #include "Algo/WrappedFitter.h"
+
+#ifndef RETURN
+#define RETURN std::nan("RETURN")
+#endif
 
 namespace tracking
 {

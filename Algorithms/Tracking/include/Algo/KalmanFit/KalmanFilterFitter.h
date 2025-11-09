@@ -45,7 +45,7 @@ public:
     ~KalmanFilterFitter()
     {
         //delete measurement; measurement = nullptr;
-        delete fitTrack; fitTrack = nullptr;
+        delete fit_track_; fit_track_ = nullptr;
         //delete fitter; fitter = nullptr;
     };
 
@@ -68,9 +68,9 @@ private:
 
 //................................................................................//
 //Method specific
-    genfit::AbsTrackRep *rep = nullptr;
+    genfit::AbsTrackRep *rep_ = nullptr;
     std::unique_ptr<genfit::KalmanFitterRefTrack> fitter = std::make_unique<genfit::KalmanFitterRefTrack>();
-    genfit::Track *fitTrack = nullptr;
+    genfit::Track *fit_track_ = nullptr;
 
     genfit::PlanarMeasurement *measurement = nullptr;
 

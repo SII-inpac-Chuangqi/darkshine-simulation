@@ -1,15 +1,12 @@
 #ifndef TRACKING_TRKHIT_H
 #define TRACKING_TRKHIT_H
 
-#ifndef RETURN
-#define RETURN std::nan("RETURN")
-#endif
-
 //................................................................................//
 //C++
 #include <iostream>
 #include <memory>
 #include <bitset>
+#include <cmath>
 
 //................................................................................//
 //ROOT
@@ -22,6 +19,10 @@
 //................................................................................//
 //Framework
 #include "Object/SimulatedHit.h"
+
+#ifndef RETURN
+#define RETURN std::nan("RETURN")
+#endif
 
 //................................................................................//
 //Tracking
