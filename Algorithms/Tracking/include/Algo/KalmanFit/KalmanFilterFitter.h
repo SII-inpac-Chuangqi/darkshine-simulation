@@ -28,12 +28,13 @@
 #include "Algo/Object/TrkHit.h"
 #include "Algo/Fitter.h"
 
-class KalmanFilterFitter : public Fitter
+class KalmanFilterFitter final : public Fitter
 {
 public:
     struct Config
     {
         double const_B = -1.5;
+        Propagator *propagator = nullptr;
     };
 
 public:

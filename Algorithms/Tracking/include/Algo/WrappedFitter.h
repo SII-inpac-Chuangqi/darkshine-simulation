@@ -1,9 +1,11 @@
 #ifndef TRACKING_WRAPPEDFITTER_H
 #define TRACKING_WRAPPEDFITTER_H
 
+// Tracking
 #include "Algo/TypeDef.h"
 #include "Algo/KalmanFit/KalmanFilterFitter.h"
 #include "Algo/RiemannFit/RiemannFitter.h"
+#include "Algo/Propagator/GFPropagator.h"
 
 class WrappedFitter
 {

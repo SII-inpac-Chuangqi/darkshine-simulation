@@ -30,6 +30,8 @@ namespace tracking
     class Calibrator;
 }
 
+class Propagator;
+
 class DTrack;
 
 class Fitter
@@ -75,6 +77,8 @@ public:
     virtual std::vector<double> ExtrapolateTo([[maybe_unused]] const std::vector<double> &planes_z,
                                               [[maybe_unused]] tracking::direction extrop_dir = tracking::dX)
                                              {return {};}
+    virtual void SetPropagator(Propagator *propagator) {propagator_ = propagator;}
+    virtual Propagator* GetPropagator() {return propagator_;}
     virtual std::vector<double> GetCorrectionsX() const {return {};}
 
 //................................................................................//
@@ -108,6 +112,7 @@ protected:
     double y_sigma_{RETURN};
 
     tracking::Calibrator *calibrator_{nullptr};
+    Propagator *propagator_{nullptr};
 
     DTrackP track_;
 };

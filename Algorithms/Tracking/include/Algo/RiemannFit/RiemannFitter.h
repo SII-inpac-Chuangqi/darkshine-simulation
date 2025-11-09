@@ -24,13 +24,14 @@
 #include "Algo/Object/TrkHit.h"
 #include "Algo/Fitter.h"
 
-class RiemannFitter : public Fitter
+class RiemannFitter final : public Fitter
 {
 public:
     struct Config
     {
         int max_trial = 100;
         double const_B = -1.5;
+        Propagator *propagator = nullptr;
     };
 
 public:
