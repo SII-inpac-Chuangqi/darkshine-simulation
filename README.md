@@ -23,7 +23,7 @@ They could be executed separately, with totally different configuration file for
 DarkSHINE Software can be easily downloaded through GitLab.
 
 ```c++
-    git clone git@code.ihep.ac.cn:darkshine/darkshine-simulation.git --depth 1
+git clone git@code.ihep.ac.cn:darkshine/darkshine-simulation.git --depth 1
 ```
 
 **Note:** for users who want to run Baseline 1 samples, please use ``` git checkout tags/baseline1 ``` instead. The current version of config files of DSimu and DAna may not be compatible with previous releases. See example rare process yaml file on [Wiki page](https://code.ihep.ac.cn/darkshine/darkshine-simulation/-/wikis/Sample-Production).
@@ -58,16 +58,16 @@ several dependencies need to be checked.
 ### With everything needed, it's ready to install :v:
 
 ```shell
-cd darkshine-simulation   # <source-directory>
-mkdir build
+cd darkshine-simulation # <source-directory>
+mkdir build install # install: your install directory
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=<your-install-directory> ../
+cmake -DCMAKE_INSTALL_PREFIX=../install ../
 make -j100  # Just do it!
 make install
 cd ..
 ```
 
-Create a new file, i.e. setup.sh, to export environment variables
+Create a new file, i.e. setup.sh, to export environment variables with the following lines:
 
 ```shell
 #setup.sh
@@ -78,17 +78,15 @@ source /lustre/collider/zhuxuliang/darkshine-simulation/setup.sh
 # or if you need ACTS 
 # source /lustre/collider/zhuyifan/Software/xuliang-ACTS/setup.sh
 # source /lustre/collider/zhuyifan/Software/xuliang-ACTS/install/python/setup.sh
-DSS_DIR=<your-install-directory>
+DSS_DIR=<your-install-directory> # absolute path to your install dir
 export PATH=${DSS_DIR}/bin:${PATH}
 export LD_LIBRARY_PATH=${DSS_DIR}/lib:${LD_LIBRARY_PATH}
 ```
-
-Then, source this file.
+Finally, source this file:
 
 ```shell
 source setup.sh
 ```
-
 Now in your install directory, everything should be there. Now it's the time to have fun with them. :relaxed:
 
 ## Quick guide on DSS
@@ -97,28 +95,28 @@ Now in your install directory, everything should be there. Now it's the time to 
 
 ### DSimu
 
+DSimu runs the Geant4 simulation.
 
-Without any arguments, DSimu will run in graphic mode, which is highly not recommended unless it is running on a
-computer with great graphic card.
-
-**Batch Mode**: ```DSimu [ -y default.yaml]```
-
-- **IMPORTANT** The config file after '-y' is the yaml file, controlling the whole configuration of the program.
+```shell
+cp ../DP_simu/scripts/default.yaml .
+cp ../DP_simu/scripts/magnet_1.5.root mag_default.root
+DSimu -y default.yaml
+```
+- **IMPORTANT** The config file after '-y' is a yaml file controlling the whole configuration of the program.
   The default yaml file is in ```DP_simu/scripts/```, or it will also be installed to the ```CMAKE_ISNTALL_PREFIX```
   path.
-- The config file after '-m' is the normal configuration, e.g. particle gun, beam on number.
+- An additional option '-m' will run the Geant4 configuration, e.g. particle gun, beam on number.
+- Without any arguments, DSimu will run in graphic mode. It is highly not recommended unless you are running on a computer with great graphic card.
 
 ### DAna
 
-There are two commands for **DAna**:
+DAna runs reconstruction algorithms after simulation, controlled by the config file:
 
-- ```DAna -x```
-    - **DAna** will print out all the available processors and their corresponding description and parameters (with the
-      default value). One can simply generate an example config file by the bash command
-      ```DAna -x > config.txt```
-
-- ```DAna -c config.txt```
-    - **DAna** will run the config.txt.
+```shell
+cp ../DP_ana/scripts/config.txt .     
+DAna -c config.txt
+```
+You can also run ```DAna -x``` to print out all the available processors and their corresponding description and parameters (with the default value).
 
 ### DDis
 
@@ -128,7 +126,7 @@ Event Display is quite straight forward.
     - print out the help message
 - ```DDis -b```
     - batch mode, which only print out the detector information
-- ```DDis [-g geometry.root] [-f event.root]```
+- ```DDis -g geometry.root -f event.root```
     - the command is not necessary to run the graphic mode. if no specific root file, **DDis**
       will automatically run "dp_simu.root".
 
