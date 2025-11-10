@@ -1,8 +1,11 @@
+#include "Algo/KalmanFit/KalmanFilterFitter.h"
+
 //................................................................................//
 //C++
 #include <iostream>
 #include <map>
 #include <vector>
+#include <array>
 #include <algorithm>
 
 //................................................................................//
@@ -26,8 +29,9 @@
 //Tracking
 #include "Algo/Object/TrkHit.h"
 #include "Algo/Object/DTrack.h"
-#include "Algo/KalmanFit/KalmanFilterFitter.h"
 #include "Algo/Calibrator/NullCalibrator.h"
+#include "Algo/Propagator/Propagator.h"
+#include "Algo/Propagator/GFPropagator.h"
 
 //................................................................................//
 //Constructor
@@ -222,45 +226,37 @@ void KalmanFilterFitter::Fill(const TrkHitSPVec &hits)
 //................................................................................//
 std::vector<double> KalmanFilterFitter::ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir)
 {
-    using namespace dunits;
+    using vector3D = std::array<double, 3>;
 
-    if(!rep_ || !fit_track_)
+    if(!propagator_)
     {
-        if(verbose_ > 0)
-            std::cerr << "[WARNING] ==> No hits to extrapolate" << std::endl;
-
+        std::cerr << "[WARNING] ==> No fitter in KalmanFilterFitter" << std::endl;
         return {};
     }
 
-    std::vector<double> extrapolated;
-    for(const auto &plane_z : planes_z)
+    if(dynamic_cast<GFPropagator*>(propagator_) == nullptr)
     {
-        genfit::TrackPoint* tp = fit_track_->getPointWithMeasurementAndFitterInfo(0, rep_);
-        genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep_))->getBackwardUpdate()));
-        genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
-                                                                   0.,
-                                                                   plane_z * dss_to_genfit::mm),
-                                                          TVector3(1, 0, 0),
-                                                          TVector3(0, 1, 0)));
+        std::cerr << "[WARNING] ==> Currently only GFPropagator supported in KalmanFilterFitter." << std::endl;
+        return {};
+    }
 
-        try
-        {
-            rep_->extrapolateToPlane(kfsop, plane);
-            const TVectorD& state = kfsop.getState();
-            if     (extrop_dir == tracking::dX) extrapolated.push_back(state[3]*10);
-            else if(extrop_dir == tracking::dY) extrapolated.push_back(state[4]*10);
-        }
-        catch(genfit::Exception& e)
-        {
-            if(verbose_ > 1)
-            {
-                std::cerr << "[WARNING] ==> When extrapolating hits at z=" << plane_z << "mm:" << std::endl;
-                std::cerr << "              " << e.what();
-            }
+    std::vector<vector3D> mom_outs;
+    std::vector<vector3D> pos_outs;
 
-            if     (extrop_dir == tracking::dX) extrapolated.push_back(RETURN);
-            else if(extrop_dir == tracking::dY) extrapolated.push_back(RETURN);
-        }
+    mom_outs.reserve(planes_z.size());
+    pos_outs.reserve(planes_z.size());
+
+    auto gf_propagator = dynamic_cast<GFPropagator*>(propagator_);
+
+    gf_propagator->ExtroplateToPlanesWithExistingRep(planes_z, fit_track_, rep_, mom_outs, pos_outs);
+    
+    std::vector<double> extrapolated;
+    for(const auto &pos_out : pos_outs)
+    {
+        if     (extrop_dir == tracking::dX)
+            extrapolated.push_back(pos_out.at(0));
+        else if(extrop_dir == tracking::dY)
+            extrapolated.push_back(pos_out.at(1));
     }
 
     return extrapolated;

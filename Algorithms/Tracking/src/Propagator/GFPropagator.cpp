@@ -19,16 +19,22 @@ void GFPropagator::Init(std::shared_ptr<DTrack>&)
 {
 }
 
-bool GFPropagator::ExtrapolateToPlane(const vector3D &mom_in, const vector3D &plane_pos, const vector3D &plane_normal,
-                                      vector3D &mom_out, vector3D &pos_out)
+bool GFPropagator::ExtrapolateToPlane([[maybe_unused]] const vector3D &mom_in, [[maybe_unused]] const vector3D &plane_pos, [[maybe_unused]] const vector3D &plane_normal,
+                                      [[maybe_unused]] vector3D &mom_out, [[maybe_unused]] vector3D &pos_out)
 {
     return false;
 }
 
-bool GFPropagator::ExtroplateToPlaneWithExistingRep(const std::vector<double> &planes_z,
-                                                    genfit::Track *fit_track, genfit::AbsTrackRep *rep)
+bool GFPropagator::ExtroplateToPlanesWithExistingRep(const std::vector<double> &planes_z,
+                                                     genfit::Track *fit_track, genfit::AbsTrackRep *rep,
+                                                     std::vector<vector3D> &mom_outs, std::vector<vector3D> &pos_outs)
 {
     using namespace dunits;
+
+    mom_outs.clear();
+    pos_outs.clear();
+    mom_outs.reserve(planes_z.size());
+    pos_outs.reserve(planes_z.size());
 
     if(!rep || !fit_track)
     {
@@ -53,8 +59,8 @@ bool GFPropagator::ExtroplateToPlaneWithExistingRep(const std::vector<double> &p
         {
             rep->extrapolateToPlane(kfsop, plane);
             const TVectorD& state = kfsop.getState();
-            if     (extrop_dir_ == tracking::dX) extrapolated.push_back(state[3]*10);
-            else if(extrop_dir_ == tracking::dY) extrapolated.push_back(state[4]*10);
+
+            mom_outs.push_back({state[3]*genfit_to_dss::cm, state[4]*genfit_to_dss::cm, plane_z});
         }
         catch(genfit::Exception& e)
         {
@@ -64,10 +70,15 @@ bool GFPropagator::ExtroplateToPlaneWithExistingRep(const std::vector<double> &p
                 std::cerr << "              " << e.what();
             }
 
-            if     (extrop_dir_ == tracking::dX) extrapolated.push_back(RETURN);
-            else if(extrop_dir_ == tracking::dY) extrapolated.push_back(RETURN);
+            mom_outs.push_back({RETURN, RETURN, plane_z});
         }
     }
 
+    return true;
+}
+
+bool GFPropagator::ExtrapolateToPlanes([[maybe_unused]] const vector3D &mom_in, [[maybe_unused]] const std::vector<vector3D> &plane_poss, [[maybe_unused]] const std::vector<vector3D> &plane_normals,
+                                       [[maybe_unused]] std::vector<vector3D> &mom_outs, [[maybe_unused]] std::vector<vector3D> &pos_outs)
+{
     return false;
 }

@@ -10,7 +10,7 @@ class DTrack;
 
 class Propagator
 {
-private:
+protected:
     using vector3D = std::array<double, 3>;
 
 public:
@@ -21,6 +21,9 @@ public:
     virtual bool ExtrapolateToPlane(const vector3D &mom_in, const vector3D &plane_pos, const vector3D &plane_normal,
                                     vector3D &mom_out, vector3D &pos_out) = 0;
 
+    virtual bool ExtrapolateToPlanes(const vector3D &mom_in, const std::vector<vector3D> &plane_pos, const std::vector<vector3D> &plane_normal,
+                                     std::vector<vector3D> &mom_out, std::vector<vector3D> &pos_out) = 0;
+    
 protected:
     int verbose_;
     tracking::direction extrop_dir_;
