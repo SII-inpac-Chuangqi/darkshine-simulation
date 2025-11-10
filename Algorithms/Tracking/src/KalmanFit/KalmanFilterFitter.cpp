@@ -40,6 +40,8 @@ KalmanFilterFitter::KalmanFilterFitter(Config config, DTrackP track, int verbose
     track_   = track;
     verbose_ = verbose;
 
+    propagator_ = config.propagator;
+
     track_->LinkFitter(this);
 
     auto hits = track_->GetHits();

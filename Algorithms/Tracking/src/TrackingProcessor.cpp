@@ -80,6 +80,8 @@ void TrackingProcessor::Begin() {
     tag_finder_config_.verbose = Verbose;
     rec_finder_config_.verbose = Verbose;
 
+    genfit_config_.propagator = &propagator_;
+
 //................................................................................//
 //Load fitter info
 //................................................................................//

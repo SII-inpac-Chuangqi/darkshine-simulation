@@ -23,6 +23,7 @@
 #include "Algo/WrappedFinder.h"
 #include "Algo/GreedyFinder/greedy_finder.h"
 #include "Algo/WrappedFitter.h"
+#include "Algo/Propagator/GFPropagator.h" 
 
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
@@ -79,6 +80,8 @@ private:
     SeedFinder_t seed_finder_;
     WrappedFinder tag_finder_;
     WrappedFinder rec_finder_;
+
+    GFPropagator propagator_;
 
 //................................................................................//
 //Configs
