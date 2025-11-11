@@ -75,8 +75,8 @@ public:
     double GetXSigma() const {return xSigma_;}
     double GetYSigma() const {return ySigma_;}
     double GetDeltaR(const DTrack *another) const;
-//    std::vector<double> GetExtrapolated(tracking::direction extrop_dir = tracking::dX);
-    std::vector<double> GetCorrectionsX() const {return corrections_x_;}
+    std::vector<double> GetExtrapolated(tracking::direction extrop_dir = tracking::dX);
+    std::vector<double> GetCorrectionsX() const {return corrections_xs_;}
 
     Fitter* GetFitter() {return fitter_;}
 
@@ -157,9 +157,9 @@ private:
     double xSigma_{RETURN};
     double ySigma_{RETURN};
     bool   if_extrapolated_{false};
-    std::vector<double> extrapolated_x_;
-    std::vector<double> extrapolated_y_;
-    std::vector<double> corrections_x_;
+    std::vector<double> extrapolated_xs_;
+    std::vector<double> extrapolated_ys_;
+    std::vector<double> corrections_xs_;
 
 //................................................................................//
 //Finding properties

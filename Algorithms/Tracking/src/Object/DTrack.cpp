@@ -60,8 +60,8 @@ DTrack::DTrack(const DTrack &oldTrack) : pdg_(oldTrack.pdg_),         //physical
                                          xSigma_(oldTrack.xSigma_),
                                          ySigma_(oldTrack.ySigma_),
                                          if_extrapolated_(oldTrack.if_extrapolated_),
-                                         extrapolated_x_(oldTrack.extrapolated_x_),
-                                         extrapolated_y_(oldTrack.extrapolated_y_),
+                                         extrapolated_xs_(oldTrack.extrapolated_xs_),
+                                         extrapolated_ys_(oldTrack.extrapolated_ys_),
 
                                          preR_(oldTrack.preR_),       //finding properties
                                          preXc_(oldTrack.preXc_),
@@ -95,8 +95,8 @@ DTrack::DTrack(DTrack &&oldTrack) : pdg_(std::move(oldTrack.pdg_)),         //ph
                                     xSigma_(std::move(oldTrack.xSigma_)),
                                     ySigma_(std::move(oldTrack.ySigma_)),
                                     if_extrapolated_(std::move(oldTrack.if_extrapolated_)),
-                                    extrapolated_x_(std::move(oldTrack.extrapolated_x_)),
-                                    extrapolated_y_(std::move(oldTrack.extrapolated_y_)),
+                                    extrapolated_xs_(std::move(oldTrack.extrapolated_xs_)),
+                                    extrapolated_ys_(std::move(oldTrack.extrapolated_ys_)),
 
                                     preR_(std::move(oldTrack.preR_)),       //finding properties
                                     preXc_(std::move(oldTrack.preXc_)),
@@ -138,17 +138,14 @@ DTrack& DTrack::operator=(const DTrack &old_track)
     xSigma_ = old_track.xSigma_;
     ySigma_ = old_track.ySigma_;
     if_extrapolated_ = old_track.if_extrapolated_;
-    extrapolated_x_.clear();
-    extrapolated_x_.assign(old_track.extrapolated_x_.begin(), old_track.extrapolated_x_.end());
-    extrapolated_y_.clear();
-    extrapolated_y_.assign(old_track.extrapolated_y_.begin(), old_track.extrapolated_y_.end());
+    extrapolated_xs_ = old_track.extrapolated_xs_;
+    extrapolated_ys_ = old_track.extrapolated_ys_;
 
     preR_ = old_track.preR_;
     preXc_ = old_track.preXc_;
     preYc_ = old_track.preYc_;
 
-    hits_.clear();
-    hits_.assign(old_track.hits_.begin(), old_track.hits_.end());
+    hits_ = old_track.hits_;
 
     vertex_ = old_track.vertex_;
 
@@ -184,32 +181,36 @@ double DTrack::GetChi2()
 
     double mean_x = 0.;
     double mean_y = 0.;
-    std::vector<double> track_x;
-    std::vector<double> track_y;
-    std::vector<double> track_z;
+    std::vector<double> track_xs;
+    std::vector<double> track_ys;
+    std::vector<double> track_zs;
     for(const auto &hit : hits_)
     {
-        track_x.push_back(hit->GetX());
-        track_y.push_back(hit->GetY());
-        track_z.push_back(hit->GetZ());
+        track_xs.push_back(hit->GetX());
+        track_ys.push_back(hit->GetY());
+        track_zs.push_back(hit->GetZ());
 
         mean_x += hit->GetX();
         mean_y += hit->GetY();
     }
-    mean_x /= track_x.size();
-    mean_y /= track_x.size();
+    mean_x /= track_xs.size();
+    mean_y /= track_xs.size();
 
     if(!if_extrapolated_)
     {
-        extrapolated_x_.clear();
-        extrapolated_y_.clear();
-        extrapolated_x_ = fitter_->ExtrapolateTo(track_z, tracking::dX);
-        extrapolated_y_ = fitter_->ExtrapolateTo(track_z, tracking::dY);
+        extrapolated_xs_.clear();
+        extrapolated_ys_.clear();
+        auto [extrapolated_moms, extrapolated_poss] = fitter_->ExtrapolateToPlanes(track_zs);
+        for(const auto &extrapolated_pos : extrapolated_poss)
+        {
+            extrapolated_xs_.push_back(extrapolated_pos[0]);           
+            extrapolated_ys_.push_back(extrapolated_pos[1]);
+        }
 
         if_extrapolated_ = true;
     }
 
-    if(extrapolated_x_.size()*extrapolated_y_.size() == 0)
+    if(extrapolated_xs_.size()*extrapolated_ys_.size() == 0)
     {
         chi2_ = RETURN;
         return chi2_;
@@ -217,10 +218,10 @@ double DTrack::GetChi2()
 
     double variance  = x_resolution_*x_resolution_ + y_resolution_*y_resolution_;
     double deviation = 0.;
-    for(size_t i = 0; i < track_x.size(); i++)
-        deviation += (track_x.at(i) - extrapolated_x_.at(i))*(track_x.at(i) - extrapolated_x_.at(i)) + 
-                     (track_y.at(i) - extrapolated_y_.at(i))*(track_y.at(i) - extrapolated_y_.at(i));
-    chi2_ = deviation/variance*track_x.size()/ndf_;
+    for(size_t i = 0; i < track_xs.size(); i++)
+        deviation += (track_xs.at(i) - extrapolated_xs_.at(i))*(track_xs.at(i) - extrapolated_xs_.at(i)) + 
+                     (track_ys.at(i) - extrapolated_ys_.at(i))*(track_ys.at(i) - extrapolated_ys_.at(i));
+    chi2_ = deviation/variance*track_xs.size()/ndf_;
 
     return chi2_;
 }
@@ -250,28 +251,32 @@ double DTrack::GetDeltaR(const DTrack *another) const
 
     return delta_R;
 }
-/*
+
 std::vector<double> DTrack::GetExtrapolated(tracking::direction extrop_dir)
 {
     if(!if_extrapolated_)
     {
-        std::vector<double> track_z;
-        for(const auto &hit : hits_) track_z.push_back(hit->GetZ());
+        std::vector<double> track_zs;
+        for(const auto &hit : hits_) track_zs.push_back(hit->GetZ());
 
-        extrapolated_x_.clear();
-        extrapolated_y_.clear();
-        extrapolated_x_ = fitter_->ExtrapolateTo(track_z, tracking::dX);
-        extrapolated_y_ = fitter_->ExtrapolateTo(track_z, tracking::dY);
+        extrapolated_xs_.clear();
+        extrapolated_ys_.clear();
+        auto [extrapolated_moms, extrapolated_poss] = fitter_->ExtrapolateToPlanes(track_zs);
+        for(const auto &extrapolated_pos : extrapolated_poss)
+        {
+            extrapolated_xs_.push_back(extrapolated_pos[0]);           
+            extrapolated_ys_.push_back(extrapolated_pos[1]);
+        }
 
         if_extrapolated_ = true;
     }
 
-    if     (extrop_dir == tracking::dX) return extrapolated_x_;
-    else if(extrop_dir == tracking::dY) return extrapolated_y_;
+    if     (extrop_dir == tracking::dX) return extrapolated_xs_;
+    else if(extrop_dir == tracking::dY) return extrapolated_ys_;
 
     return {};
 }
-*/
+
 void DTrack::Remove(int i)
 {
     hits_.erase(std::remove(hits_.begin(), hits_.end(), hits_.at(i)), hits_.end());

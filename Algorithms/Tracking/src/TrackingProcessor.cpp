@@ -80,7 +80,9 @@ void TrackingProcessor::Begin() {
     tag_finder_config_.verbose = Verbose;
     rec_finder_config_.verbose = Verbose;
 
-    genfit_config_.propagator = &propagator_;
+    tag_genfit_config_.propagator = &propagator_;
+    rec_genfit_config_.propagator = &propagator_;
+    rec_genfit_config_.extrapolated_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
 
 //................................................................................//
 //Load fitter info
@@ -324,7 +326,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     if(if_backwards) track->Reverse();
 
                     WrappedFitter fitter;
-                    if      (Tag_fit_method == tracking::dKalman)  fitter.Run(genfit_config_, track);
+                    if      (Tag_fit_method == tracking::dKalman)  fitter.Run(tag_genfit_config_, track);
                     else if (Tag_fit_method == tracking::dRiemann) fitter.Run(riemann_config_, track);
                 }
             }
@@ -363,7 +365,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     if(if_backwards) track->Reverse();
 
                     WrappedFitter fitter;
-                    if      (Rec_fit_method == tracking::dKalman)  fitter.Run(genfit_config_, track);
+                    if      (Rec_fit_method == tracking::dKalman)  fitter.Run(rec_genfit_config_, track);
                     else if (Rec_fit_method == tracking::dRiemann) fitter.Run(riemann_config_, track);
                 }
             }
@@ -406,6 +408,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     
         if (!clean)
         {
+            TagTrk2_track_chi2.push_back(track->GetChi2());
             TagTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
 //            TagTrk2_track_quality.push_back(track->GetQuality());
             TagTrk2_track_x_sigma.push_back(track->GetXSigma());
@@ -425,6 +428,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         ECal_seed_pz.push_back(track->GetPFlowQoP());
 
         if (!clean) {
+            RecTrk2_track_chi2.push_back(track->GetChi2());
             RecTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
 //            RecTrk2_track_quality.push_back(track->GetQuality());
             RecTrk2_track_x_sigma.push_back(track->GetXSigma());

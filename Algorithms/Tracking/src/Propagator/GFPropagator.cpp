@@ -58,9 +58,14 @@ bool GFPropagator::ExtroplateToPlanesWithExistingRep(const std::vector<double> &
         try
         {
             rep->extrapolateToPlane(kfsop, plane);
-            const TVectorD& state = kfsop.getState();
+            const auto &mom = kfsop.getMom();
+            const auto &state = kfsop.getState();
 
-            mom_outs.push_back({state[3]*genfit_to_dss::cm, state[4]*genfit_to_dss::cm, plane_z});
+            mom_outs.push_back({-mom[0]*genfit_to_dss::GeV, mom[1]*genfit_to_dss::GeV, -mom[2]*genfit_to_dss::GeV});
+            pos_outs.push_back({state[3]*genfit_to_dss::cm, state[4]*genfit_to_dss::cm, plane_z});
+            //pflow_qop_ = 1./state[0]*1000.;
+            //pflow_dirct_x_ = state[1];
+            //pflow_dirct_y_ = state[2];
         }
         catch(genfit::Exception& e)
         {
@@ -70,7 +75,8 @@ bool GFPropagator::ExtroplateToPlanesWithExistingRep(const std::vector<double> &
                 std::cerr << "              " << e.what();
             }
 
-            mom_outs.push_back({RETURN, RETURN, plane_z});
+            mom_outs.push_back({RETURN, RETURN, RETURN});
+            pos_outs.push_back({RETURN, RETURN, plane_z});
         }
     }
 

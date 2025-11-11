@@ -3,12 +3,11 @@
 
 //................................................................................//
 //C++
-#include <iostream>
-#include <map>
+#include <array>
 #include <vector>
 #include <memory>
 #include <cmath>
-//#include <initializer_list>
+#include <tuple>
 
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
@@ -38,6 +37,7 @@ class Fitter
 {
 protected:
     using DTrackP = std::shared_ptr<DTrack>;
+    using vector3D = std::array<double, 3>;
 
 public:
 //................................................................................//
@@ -74,9 +74,9 @@ public:
     virtual double GetXSigma() const {return x_sigma_;}
     virtual double GetYSigma() const {return y_sigma_;}
 
-    virtual std::vector<double> ExtrapolateTo([[maybe_unused]] const std::vector<double> &planes_z,
-                                              [[maybe_unused]] tracking::direction extrop_dir = tracking::dX)
-                                             {return {};}
+    virtual std::tuple<std::vector<vector3D>, std::vector<vector3D>> ExtrapolateToPlanes([[maybe_unused]] const std::vector<double> &planes_z)
+                                                                     {return {};}
+    virtual std::tuple<vector3D, vector3D> ExtrapolateToPlane([[maybe_unused]] const double &plane_z) {return {};}
     virtual void SetPropagator(Propagator *propagator) {propagator_ = propagator;}
     virtual Propagator* GetPropagator() {return propagator_;}
     virtual std::vector<double> GetCorrectionsX() const {return {};}

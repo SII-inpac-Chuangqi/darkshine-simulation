@@ -90,7 +90,8 @@ private:
     SeedFinder_t::SeedFinderConfig rec_seeder_config_;
     GreedyFinder::GreedyFinderConfig tag_finder_config_;
     GreedyFinder::GreedyFinderConfig rec_finder_config_;
-    KalmanFilterFitter::Config genfit_config_;
+    KalmanFilterFitter::Config tag_genfit_config_;
+    KalmanFilterFitter::Config rec_genfit_config_;
     RiemannFitter::Config riemann_config_;
 
 //................................................................................//

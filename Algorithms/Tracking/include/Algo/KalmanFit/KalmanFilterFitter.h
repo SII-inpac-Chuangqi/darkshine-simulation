@@ -34,6 +34,7 @@ public:
     struct Config
     {
         double const_B = -1.5;
+        double extrapolated_surface = 0.;
         Propagator *propagator = nullptr;
     };
 
@@ -42,12 +43,7 @@ public:
 //Constructor
     KalmanFilterFitter() {}
     KalmanFilterFitter(Config config, DTrackP track, int verbose = 0);
-    ~KalmanFilterFitter()
-    {
-        //delete measurement; measurement = nullptr;
-        delete fit_track_; fit_track_ = nullptr;
-        //delete fitter; fitter = nullptr;
-    };
+    ~KalmanFilterFitter();
 
     KalmanFilterFitter(const KalmanFilterFitter&) = delete;
     KalmanFilterFitter& operator =(const KalmanFilterFitter&) = delete;
@@ -61,7 +57,8 @@ public:
 //................................................................................//
 //Get
     //int GetSign(const TrkHitSPVec &track);
-    virtual std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir = tracking::dX);
+    virtual std::tuple<std::vector<vector3D>, std::vector<vector3D>> ExtrapolateToPlanes(const std::vector<double> &planes_z);
+    virtual std::tuple<vector3D, vector3D> ExtrapolateToPlane(const double &plane_z);
 
 private:
     Config config_;
