@@ -44,11 +44,12 @@ bool GFPropagator::ExtroplateToPlanesWithExistingRep(const std::vector<double> &
         return false;
     }
 
+    genfit::TrackPoint* tp = fit_track->getPointWithMeasurementAndFitterInfo(0, rep);
+    genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
+
     std::vector<double> extrapolated;
     for(const auto &plane_z : planes_z)
     {
-        genfit::TrackPoint* tp = fit_track->getPointWithMeasurementAndFitterInfo(0, rep);
-        genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
         genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
                                                                    0.,
                                                                    plane_z * dss_to_genfit::mm),

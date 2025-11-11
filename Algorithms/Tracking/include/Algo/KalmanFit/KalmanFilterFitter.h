@@ -56,7 +56,8 @@ public:
 
 //................................................................................//
 //Get
-    //int GetSign(const TrkHitSPVec &track);
+    double CalcTrackChi2(const TrkHitSPVec &);
+
     virtual std::tuple<std::vector<vector3D>, std::vector<vector3D>> ExtrapolateToPlanes(const std::vector<double> &planes_z);
     virtual std::tuple<vector3D, vector3D> ExtrapolateToPlane(const double &plane_z);
 

@@ -70,13 +70,16 @@ public:
     double GetQuality() const {return quality_;}
 
     double GetNdf() const {return ndf_;}
-    double GetChi2();
+    double GetChi2() const {return chi2_;};
     double GetChi2Algo() const {return chi2_algo_/ndf_;}
     double GetXSigma() const {return xSigma_;}
     double GetYSigma() const {return ySigma_;}
     double GetDeltaR(const DTrack *another) const;
     std::vector<double> GetExtrapolated(tracking::direction extrop_dir = tracking::dX);
     std::vector<double> GetCorrectionsX() const {return corrections_xs_;}
+
+    static double GetResolutionX() {return x_resolution_;}
+    static double GetResolutionY() {return y_resolution_;}
 
     Fitter* GetFitter() {return fitter_;}
 

@@ -193,6 +193,7 @@ void KalmanFilterFitter::Fill(const TrkHitSPVec &hits)
     track_->SetPz(pz_);
     track_->SetPp(pp_);
     track_->SetNdf(fndf_);
+    track_->SetChi2(this->CalcTrackChi2(hits));
     track_->SetChi2Algo(fchi2_);
     track_->SetXSigma(x_sigma_);
     track_->SetYSigma(y_sigma_);
@@ -255,4 +256,52 @@ std::tuple<Fitter::vector3D, Fitter::vector3D> KalmanFilterFitter::ExtrapolateTo
     gf_propagator->ExtroplateToPlanesWithExistingRep({plane_z}, fit_track_, rep_, mom_outs, pos_outs);
 
     return {mom_outs.at(0), pos_outs.at(0)};
+}
+
+double KalmanFilterFitter::CalcTrackChi2(const TrkHitSPVec &hits)
+{
+    if(hits.size() < 4)
+    {
+    }
+
+    double mean_x = 0.;
+    double mean_y = 0.;
+    std::vector<double> track_xs;
+    std::vector<double> track_ys;
+    std::vector<double> track_zs;
+    for(const auto &hit : hits)
+    {
+        track_xs.push_back(hit->GetX());
+        track_ys.push_back(hit->GetY());
+        track_zs.push_back(hit->GetZ());
+
+        mean_x += hit->GetX();
+        mean_y += hit->GetY();
+    }
+    mean_x /= track_xs.size();
+    mean_y /= track_xs.size();
+
+    std::vector<double> extrapolated_xs;
+    std::vector<double> extrapolated_ys;
+    auto [extrapolated_moms, extrapolated_poss] = this->ExtrapolateToPlanes(track_zs);
+    for(const auto &extrapolated_pos : extrapolated_poss)
+    {
+        extrapolated_xs.push_back(extrapolated_pos[0]);
+        extrapolated_ys.push_back(extrapolated_pos[1]);
+    }
+
+    if(extrapolated_xs.size()*extrapolated_ys.size() == 0)
+    {
+        track_chi2_ = RETURN;
+        return track_chi2_;
+    }
+
+    double variance  = DTrack::GetResolutionX()*DTrack::GetResolutionX() + DTrack::GetResolutionY()*DTrack::GetResolutionY();
+    double deviation = 0.;
+    for(size_t i = 0; i < track_xs.size(); i++)
+        deviation += (track_xs.at(i) - extrapolated_xs.at(i))*(track_xs.at(i) - extrapolated_xs.at(i)) +
+                     (track_ys.at(i) - extrapolated_ys.at(i))*(track_ys.at(i) - extrapolated_ys.at(i));
+    track_chi2_ = deviation/variance*track_xs.size()/fndf_;
+
+    return track_chi2_;
 }

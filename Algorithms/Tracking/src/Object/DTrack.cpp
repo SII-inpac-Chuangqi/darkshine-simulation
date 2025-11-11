@@ -163,69 +163,6 @@ TrkHitSP DTrack::AtCellIdZ(int i)
     return nullptr;
 }
 
-double DTrack::GetChi2()
-{
-    if(!fitter_)
-    {
-        if(verbose_ > 0)
-            std::cerr << "[WARNING] ==> No fitter to extrapolate" << std::endl;
-        chi2_ = RETURN;
-        return chi2_;
-    }
-
-    if(hits_.size() < 4)
-    {
-        chi2_ = RETURN;
-        return chi2_;
-    }
-
-    double mean_x = 0.;
-    double mean_y = 0.;
-    std::vector<double> track_xs;
-    std::vector<double> track_ys;
-    std::vector<double> track_zs;
-    for(const auto &hit : hits_)
-    {
-        track_xs.push_back(hit->GetX());
-        track_ys.push_back(hit->GetY());
-        track_zs.push_back(hit->GetZ());
-
-        mean_x += hit->GetX();
-        mean_y += hit->GetY();
-    }
-    mean_x /= track_xs.size();
-    mean_y /= track_xs.size();
-
-    if(!if_extrapolated_)
-    {
-        extrapolated_xs_.clear();
-        extrapolated_ys_.clear();
-        auto [extrapolated_moms, extrapolated_poss] = fitter_->ExtrapolateToPlanes(track_zs);
-        for(const auto &extrapolated_pos : extrapolated_poss)
-        {
-            extrapolated_xs_.push_back(extrapolated_pos[0]);           
-            extrapolated_ys_.push_back(extrapolated_pos[1]);
-        }
-
-        if_extrapolated_ = true;
-    }
-
-    if(extrapolated_xs_.size()*extrapolated_ys_.size() == 0)
-    {
-        chi2_ = RETURN;
-        return chi2_;
-    }
-
-    double variance  = x_resolution_*x_resolution_ + y_resolution_*y_resolution_;
-    double deviation = 0.;
-    for(size_t i = 0; i < track_xs.size(); i++)
-        deviation += (track_xs.at(i) - extrapolated_xs_.at(i))*(track_xs.at(i) - extrapolated_xs_.at(i)) + 
-                     (track_ys.at(i) - extrapolated_ys_.at(i))*(track_ys.at(i) - extrapolated_ys_.at(i));
-    chi2_ = deviation/variance*track_xs.size()/ndf_;
-
-    return chi2_;
-}
-
 int DTrack::GetInitCellIdZ() const
 {
     int init_cell_id_z = INT_MAX;

@@ -71,6 +71,7 @@ public:
 
     virtual double GetNdf()  const {return fndf_;}
     virtual double GetChi2() const {return fchi2_;}
+    virtual double GetTrackChi2() const {return track_chi2_;}
     virtual double GetXSigma() const {return x_sigma_;}
     virtual double GetYSigma() const {return y_sigma_;}
 
@@ -108,6 +109,7 @@ protected:
 
     double fndf_{0.};
     double fchi2_{RETURN};
+    double track_chi2_{RETURN};
     double x_sigma_{RETURN};
     double y_sigma_{RETURN};
 
