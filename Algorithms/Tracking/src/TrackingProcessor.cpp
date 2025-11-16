@@ -174,6 +174,18 @@ void TrackingProcessor::Begin() {
 //        EvtWrt->RegisterOutVariable("TagTrk2_track_quality", &TagTrk2_track_quality);
         EvtWrt->RegisterOutVariable("TagTrk2_track_x_sigma", &TagTrk2_track_x_sigma);
         EvtWrt->RegisterOutVariable("TagTrk2_track_y_sigma", &TagTrk2_track_y_sigma);
+
+        EvtWrt->RegisterOutVariable("target_seed_x_truth",  &target_seed_x_truth);
+        EvtWrt->RegisterOutVariable("target_seed_y_truth",  &target_seed_y_truth);
+        EvtWrt->RegisterOutVariable("target_seed_px_truth", &target_seed_px_truth);
+        EvtWrt->RegisterOutVariable("target_seed_py_truth", &target_seed_py_truth);
+        EvtWrt->RegisterOutVariable("target_seed_pz_truth", &target_seed_pz_truth);
+
+        EvtWrt->RegisterOutVariable("target_seed_x",  &target_seed_x);
+        EvtWrt->RegisterOutVariable("target_seed_y",  &target_seed_y);
+        EvtWrt->RegisterOutVariable("target_seed_px", &target_seed_px);
+        EvtWrt->RegisterOutVariable("target_seed_py", &target_seed_py);
+        EvtWrt->RegisterOutVariable("target_seed_pz", &target_seed_pz);
     }
 
 //................................................................................//
@@ -415,6 +427,12 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //            TagTrk2_track_quality.push_back(track->GetQuality());
             TagTrk2_track_x_sigma.push_back(track->GetXSigma());
             TagTrk2_track_y_sigma.push_back(track->GetYSigma());
+
+            target_seed_x.push_back(track->GetPFlowSeedX());
+            target_seed_y.push_back(track->GetPFlowSeedY());
+            target_seed_px.push_back(track->GetPFlowDirctX());
+            target_seed_py.push_back(track->GetPFlowDirctY());
+            target_seed_pz.push_back(track->GetPFlowQoP());
         }
     }
 

@@ -216,6 +216,19 @@ private:
     std::vector<double> TagTrk2_track_y_sigma{};
 
 //................................................................................//
+    std::vector<double> target_seed_x_truth{};
+    std::vector<double> target_seed_y_truth{};
+    std::vector<double> target_seed_px_truth{};
+    std::vector<double> target_seed_py_truth{};
+    std::vector<double> target_seed_pz_truth{};
+
+    std::vector<double> target_seed_x{};
+    std::vector<double> target_seed_y{};
+    std::vector<double> target_seed_px{};
+    std::vector<double> target_seed_py{};
+    std::vector<double> target_seed_pz{};
+
+//................................................................................//
     int RecTrk2_track_No{-1};
     std::vector<double> RecTrk2_pp{};
 //    std::vector<double> RecTrk2_fixed_pp{};

@@ -78,6 +78,18 @@ void TrackingProcessor::InitEvt() {
     TagTrk2_track_x_sigma.clear();
     TagTrk2_track_y_sigma.clear();
 
+    target_seed_x_truth.clear();
+    target_seed_y_truth.clear();
+    target_seed_px_truth.clear();
+    target_seed_py_truth.clear();
+    target_seed_pz_truth.clear();
+
+    target_seed_x.clear();
+    target_seed_y.clear();
+    target_seed_px.clear();
+    target_seed_py.clear();
+    target_seed_pz.clear();
+
     RecTrk2_pp.clear();
 //    RecTrk2_fixed_pp.clear();
     RecTrk2_track_chi2.clear();
@@ -134,19 +146,17 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
         TagTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::TagTrk);
         RecTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::RecTrk);
 
+        auto truth_states_at_target = dAnaData->getTruthStatesAtTarget();
+
         auto truth_states_at_ECal = dAnaData->getTruthStatesAtECalFront();
         auto n_truth_states_at_ECal = truth_states_at_ECal.size();
 
+        //std::vector<std::pair<id, std::pair<state, pdg>>>
         std::vector<std::pair<int, std::pair<const DTruthState*, int>>> truth_states_at_ECal_sorted; // If not match std::get<0>=-1
-        // //first sort by truth E
-        // std::sort(truth_states_at_ECal.begin(), truth_states_at_ECal.end(),
-        //             [&](std::pair<const DTruthState*, int> A, std::pair<const DTruthState*, int> B) -> bool {
-        //                     return A.second->E > B.second->E;
-        //         });
         
-        //then match rec track
+        //match rec track
         int id_rec_track=-1;
-        for(auto &track : rec_tracks_)
+        for(const auto &track : rec_tracks_)
         {
             id_rec_track++;
             int min_id(-1);
@@ -168,7 +178,7 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
             }
         }
 
-        for(auto track : truth_states_at_ECal){ // appending other truth tracks (unmatched)
+        for(const auto &track : truth_states_at_ECal){ // appending other truth tracks (unmatched)
             truth_states_at_ECal_sorted.push_back(std::make_pair(-1, track));
         }
 
@@ -179,10 +189,10 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
         }
 
         auto temp_v = new ROOT::Math::PxPyPzEVector();
-        for(auto truth_state_sorted : truth_states_at_ECal_sorted)
+        for(const auto &[truth_state_id, truth_state_sorted] : truth_states_at_ECal_sorted)
         {
-            auto track = truth_state_sorted.second.first;
-            auto pdg = truth_state_sorted.second.second;
+            auto track = truth_state_sorted.first;
+            auto pdg = truth_state_sorted.second;
             temp_v->SetPxPyPzE(track->momentum[0], track->momentum[1], track->momentum[2], track->E);
 
             ECal_seed_x_truth.push_back(track->vertex[0]);
@@ -194,15 +204,15 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
             ECal_seed_theta_truth.push_back(temp_v->Theta());
             ECal_seed_phi_truth.push_back(temp_v->Phi());
             ECal_seed_pdg.push_back(pdg);
-            ECal_seed_id_rec_track.push_back(truth_state_sorted.first);
+            ECal_seed_id_rec_track.push_back(truth_state_id);
         }
         delete temp_v;
 
     if (!clean) {
     // Fill pcontrib
-        for (auto const& [collection_name, hit_collection]: simu_hits) {
+        for (const auto &[collection_name, hit_collection]: simu_hits) {
             if(collection_name.substr(3,3) != "Trk") continue;
-            for (auto const &hit: *hit_collection) {
+            for (const auto &hit: *hit_collection) {
                 if (hit->getPContribution().empty()) continue;
 //                if (hit->getE() < remove_hit_less_E) continue;
                 Trk_contrib_pdg.emplace_back(hit->getPContribution().at(0).getPdg());
@@ -223,7 +233,7 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
         TagTrk2_No = raw_tagtrk2_hits.size();
  
         bool trackerFlag = false;
-        for (auto step : *initial_steps) {
+        for (const auto &step : *initial_steps) {
             if (tracking::InTagTrack(step->getX(), step->getY(), step->getZ()) && !trackerFlag) {
                 TagTrk2_pp_truth_ini = sqrt(step->getPx() * step->getPx() +
                                             step->getPz() * step->getPz());
@@ -259,6 +269,15 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
             TagTrk2_truth_state_x.push_back(truth_state_x);
             TagTrk2_truth_state_y.push_back(truth_state_y);
             TagTrk2_truth_state_z.push_back(truth_state_z);
+        }
+
+        for(const auto &[state, state_info] : truth_states_at_target)
+        {
+            target_seed_x_truth.push_back(state->vertex[0]);
+            target_seed_y_truth.push_back(state->vertex[1]);
+            target_seed_px_truth.push_back(state->momentum[0]);
+            target_seed_py_truth.push_back(state->momentum[1]);
+            target_seed_pz_truth.push_back(state->momentum[2]);
         }
  
         RecTrk2_No = raw_rectrk2_hits.size();

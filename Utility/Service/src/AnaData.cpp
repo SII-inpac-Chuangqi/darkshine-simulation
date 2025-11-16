@@ -9,7 +9,7 @@
 AnaData *dAnaData = nullptr;
 
 // Get Instance Class
-AnaData *AnaData::CreateInstance() {
+AnaData* AnaData::CreateInstance() {
     if (dAnaData == nullptr)
         dAnaData = new AnaData();
     return dAnaData;
@@ -400,10 +400,24 @@ std::vector<std::pair<const DTruthState*, int>> AnaData::getTruthStatesAtECalFro
     {
         auto if_in_ECal = ECal_states.find(key);
         if(if_in_ECal != ECal_states.end())
-            truth_tracks_at_ECal_front.push_back(std::make_pair(if_in_ECal->second.first,(int)key.second));
+            truth_tracks_at_ECal_front.push_back(std::make_pair(if_in_ECal->second.first, static_cast<int>(key.second)));
     }
 
     return truth_tracks_at_ECal_front;
+}
+
+std::vector<std::pair<DTruthState*, std::pair<int, int>>> AnaData::getTruthStatesAtTarget() const
+{
+    auto tracks_at_target = truth_->getTracksInRegion(DTruth::DTruthDetPV::Target);
+
+    std::vector<std::pair<DTruthState*, std::pair<int, int>>> truth_states_at_target;
+    for(const auto &[state_info, states] : tracks_at_target)
+    {
+        if(states.size() == 0) continue;
+        truth_states_at_target.push_back(std::make_pair(states.at(0), state_info));
+    }
+    
+    return truth_states_at_target;
 }
 
 std::vector<std::pair<const DTruthParticle*, const DTruthState*>> AnaData::getTruthsAtECalFront() const {
@@ -451,7 +465,6 @@ const DTruth* AnaData::getInitialElectron() const
 {
     return nullptr;
 }
-
 
 bool AnaData::makeCenterIdNeighborIdsMap_staggered() {
     std::vector<int> neighbors;
