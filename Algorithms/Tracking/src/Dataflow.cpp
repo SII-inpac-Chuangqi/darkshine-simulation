@@ -31,26 +31,26 @@ void TrackingProcessor::InitEvt() {
     tag_hit_pool_.Clear();
     rec_hit_pool_.Clear();
 
-    std::vector<double>().swap(TagTrk2_truth_hit_x);
-    std::vector<double>().swap(TagTrk2_truth_hit_y);
-    std::vector<double>().swap(TagTrk2_truth_hit_z);
-    std::vector<double>().swap(TagTrk2_truth_hit_e);
-    std::vector<double>().swap(RecTrk2_truth_hit_x);
-    std::vector<double>().swap(RecTrk2_truth_hit_y);
-    std::vector<double>().swap(RecTrk2_truth_hit_z);
-    std::vector<double>().swap(RecTrk2_truth_hit_e);
+    TagTrk2_truth_hit_x.clear();
+    TagTrk2_truth_hit_y.clear();
+    TagTrk2_truth_hit_z.clear();
+    TagTrk2_truth_hit_e.clear();
+    RecTrk2_truth_hit_x.clear();
+    RecTrk2_truth_hit_y.clear();
+    RecTrk2_truth_hit_z.clear();
+    RecTrk2_truth_hit_e.clear();
 
-    std::vector<std::vector<double>>().swap(TagTrk2_truth_state_x);
-    std::vector<std::vector<double>>().swap(TagTrk2_truth_state_y);
-    std::vector<std::vector<double>>().swap(TagTrk2_truth_state_z);
-    std::vector<std::vector<double>>().swap(RecTrk2_truth_state_x);
-    std::vector<std::vector<double>>().swap(RecTrk2_truth_state_y);
-    std::vector<std::vector<double>>().swap(RecTrk2_truth_state_z);
-    std::vector<int>().swap(Trk_contrib_pdg);
-    std::vector<TString>().swap(Trk_contrib_create_process);
-    std::vector<double>().swap(Trk_contrib_z);
-    std::vector<double>().swap(Trk_contrib_E);
-    std::vector<double>().swap(Trk_deposit_E);
+    TagTrk2_truth_state_x.clear();
+    TagTrk2_truth_state_y.clear();
+    TagTrk2_truth_state_z.clear();
+    RecTrk2_truth_state_x.clear();
+    RecTrk2_truth_state_y.clear();
+    RecTrk2_truth_state_z.clear();
+    Trk_contrib_pdg.clear();
+    Trk_contrib_create_process.clear();
+    Trk_contrib_z.clear();
+    Trk_contrib_E.clear();
+    Trk_deposit_E.clear();
     Trk_contrib_Initial_count = 0;
     Trk_contrib_conv_count = 0;
     Trk_contrib_eIoni_count = 0;
@@ -71,51 +71,51 @@ void TrackingProcessor::InitEvt() {
     RecTrk2_pp_truth_ini = RETURN;
     RecTrk2_pp_truth_fin = RETURN;
 
-    std::vector<double>().swap(TagTrk2_pp);
-    std::vector<double>().swap(TagTrk2_track_chi2);
-    std::vector<double>().swap(TagTrk2_track_chi2_algo);
-//    std::vector<double>().swap(TagTrk2_track_quality);
-    std::vector<double>().swap(TagTrk2_track_x_sigma);
-    std::vector<double>().swap(TagTrk2_track_y_sigma);
+    TagTrk2_pp.clear();
+    TagTrk2_track_chi2.clear();
+    TagTrk2_track_chi2_algo.clear();
+//    TagTrk2_track_quality.clear();
+    TagTrk2_track_x_sigma.clear();
+    TagTrk2_track_y_sigma.clear();
 
-    std::vector<double>().swap(RecTrk2_pp);
-//    std::vector<double>().swap(RecTrk2_fixed_pp);
-    std::vector<double>().swap(RecTrk2_track_chi2);
-    std::vector<double>().swap(RecTrk2_track_chi2_algo);
-//    std::vector<double>().swap(RecTrk2_track_quality);
-    std::vector<double>().swap(RecTrk2_track_x_sigma);
-    std::vector<double>().swap(RecTrk2_track_y_sigma);
+    RecTrk2_pp.clear();
+//    RecTrk2_fixed_pp.clear();
+    RecTrk2_track_chi2.clear();
+    RecTrk2_track_chi2_algo.clear();
+//    RecTrk2_track_quality.clear();
+    RecTrk2_track_x_sigma.clear();
+    RecTrk2_track_y_sigma.clear();
 
-    std::vector<std::vector<double>>().swap(RecTrk2_track_x);
-    std::vector<std::vector<double>>().swap(RecTrk2_track_y);
-    std::vector<std::vector<double>>().swap(RecTrk2_track_z);
+    RecTrk2_track_x.clear();
+    RecTrk2_track_y.clear();
+    RecTrk2_track_z.clear();
 
-    std::vector<std::vector<double>>().swap(RecTrk2_track_extrapolated_x);
-    std::vector<std::vector<double>>().swap(RecTrk2_track_extrapolated_y);
-    std::vector<std::vector<double>>().swap(RecTrk2_track_corrections_x);
+    RecTrk2_track_extrapolated_x.clear();
+    RecTrk2_track_extrapolated_y.clear();
+    RecTrk2_track_corrections_x.clear();
 
-    std::vector<double>().swap(RecTrk2_track_preA);
-    std::vector<double>().swap(RecTrk2_track_preB);
-    std::vector<double>().swap(RecTrk2_track_preR);
+    RecTrk2_track_preA.clear();
+    RecTrk2_track_preB.clear();
+    RecTrk2_track_preR.clear();
 
-    std::vector<double>().swap(ECal_seed_x_truth);
-    std::vector<double>().swap(ECal_seed_y_truth);
-    std::vector<double>().swap(ECal_seed_px_truth);
-    std::vector<double>().swap(ECal_seed_py_truth);
-    std::vector<double>().swap(ECal_seed_pz_truth);
-    std::vector<double>().swap(ECal_seed_e_truth);
-    std::vector<double>().swap(ECal_seed_theta_truth);
-    std::vector<double>().swap(ECal_seed_phi_truth);
-    std::vector<int>().swap(ECal_seed_pdg);
-    std::vector<int>().swap(ECal_seed_id_rec_track);
+    ECal_seed_x_truth.clear();
+    ECal_seed_y_truth.clear();
+    ECal_seed_px_truth.clear();
+    ECal_seed_py_truth.clear();
+    ECal_seed_pz_truth.clear();
+    ECal_seed_e_truth.clear();
+    ECal_seed_theta_truth.clear();
+    ECal_seed_phi_truth.clear();
+    ECal_seed_pdg.clear();
+    ECal_seed_id_rec_track.clear();
 
-    std::vector<double>().swap(ECal_seed_x);
-    std::vector<double>().swap(ECal_seed_y);
-    std::vector<double>().swap(ECal_seed_px);
-    std::vector<double>().swap(ECal_seed_py);
-    std::vector<double>().swap(ECal_seed_pz);
+    ECal_seed_x.clear();
+    ECal_seed_y.clear();
+    ECal_seed_px.clear();
+    ECal_seed_py.clear();
+    ECal_seed_pz.clear();
 
-    RecTrk2_vertex_z.clear(); RecTrk2_vertex_z.shrink_to_fit();
+    RecTrk2_vertex_z.clear();
 
 //Now we init the pools
     tag_hit_pool_.Init();

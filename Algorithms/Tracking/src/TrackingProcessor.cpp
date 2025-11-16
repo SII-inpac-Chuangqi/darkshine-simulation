@@ -295,6 +295,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //................................................................................//
 //Tag tracker
 
+//    std::cout << "\n--------------------------------------------------\ntagging" << std::endl;
     if (IsValidHitSize(raw_tagtrk2_hits) && IsValidHitSize(raw_tagtrk1_hits))
     {
         if_raw_tag_hit_number = true;
@@ -335,7 +336,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Recoil tracker
-    if (IsValidHitSize(raw_rectrk2_hits))
+//    std::cout << "\nrecoil" << std::endl;
+    if (IsValidHitSize(raw_rectrk2_hits) && IsValidHitSize(raw_rectrk1_hits))
     {
         if_raw_rec_hit_number = true;
 

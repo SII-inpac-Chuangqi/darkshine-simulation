@@ -125,7 +125,7 @@ void GreedyFinder::FindTracks(pool_t *pool, GreedyFinderSnapshot *snapshot, cons
     MergeTrack();
 
     if(config_.verbose > 0)
-        std::cout << manager_.output_tracks.size() << " tracks are found" << std::endl;
+        std::cout << manager_.output_tracks.size() << " tracks are found at 1st round\n" << std::endl;
 
     double refind_chi2 = 0.99;
     double refind_r2 = 0.60;
@@ -150,6 +150,9 @@ void GreedyFinder::FindTracks(pool_t *pool, GreedyFinderSnapshot *snapshot, cons
     manager_.SortTrackHits();
 
     snapshot_->track_n = manager_.output_tracks.size();
+
+    if(config_.verbose > 0)
+        std::cout << manager_.output_tracks.size() << " tracks are found finally" << std::endl;
 }
 
 void GreedyFinder::RejectTrack()
