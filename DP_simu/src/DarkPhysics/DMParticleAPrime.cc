@@ -52,7 +52,7 @@ DMParticleAPrime *DMParticleAPrime::Definition() {
         //inset for visible decay 
         if (dControl->visible_decay){
             G4double mA = anInstance->GetPDGMass();
-            G4double eplsion= dControl->dp_eplsion;
+            G4double eplsion= dControl->dp_epsilon;
             G4double width = 1;
 
             if (dControl->dp_decay_channel == "ee" && mA>2*0.511) width=  1./3. * 1./137. * eplsion * eplsion * mA * sqrt(1-4*0.511*0.511/mA/mA) * (1+2*0.511*0.511/mA/mA);

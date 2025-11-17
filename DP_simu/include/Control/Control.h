@@ -89,7 +89,7 @@ public:
     bool signal_use_LUT{};
     bool visible_decay;
     G4String dp_decay_channel;
-    double dp_eplsion;
+    double dp_epsilon;
 
     //----------------------------------------
     // Magnetic field
