@@ -58,7 +58,7 @@ signal_lookup_table: "dp_E4_W_LUT_20240327.root"
 visible_decay: false
 # decay channel: [ee or mumu]
 dp_decay_channel: "ee"
-dp_eplsion: 1e-3
+dp_epsilon: 1e-3
 
 ###########################################
 # Magnetic field
