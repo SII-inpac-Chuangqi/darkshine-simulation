@@ -51,7 +51,7 @@ Control::Control() {
     signal_lookup_table = "";
     visible_decay = false;
     dp_decay_channel = "ee";
-    dp_eplsion = 1e-4;
+    dp_epsilon = 1e-4;
 
     //----------------------------------------
     // Root Manager Options
@@ -737,7 +737,7 @@ bool Control::ReadYAML(const G4String &file_in) {
         visible_decay = Node["visible_decay"].IsDefined() && Node["visible_decay"].as<bool>();
         dp_decay_channel = Node["dp_decay_channel"].IsDefined()
                           ? Node["dp_decay_channel"].as<std::string>() : "ee";
-        dp_eplsion = Node["dp_eplsion"].as<double>();
+        dp_epsilon = Node["dp_epsilon"].as<double>();
         beam_ene_mono = Node["general_particle_source"]["settings"]["ene/mono"].IsDefined() ? readStrWithUnit(
                 Node["general_particle_source"]["settings"]["ene/mono"]) : 4 * GeV;
         
