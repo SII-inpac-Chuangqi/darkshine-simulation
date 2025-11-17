@@ -140,73 +140,76 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
                                   const std::vector<TrkHit> &raw_tagtrk2_hits,
                                   const std::vector<TrkHit> &raw_rectrk2_hits) {
 
-        dAnaData->LoadTruthInfo(truth_info);
-        //dAnaData->PrintTruthInfo();
+    dAnaData->LoadTruthInfo(truth_info);
+    //dAnaData->PrintTruthInfo();
 
-        TagTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::TagTrk);
-        RecTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::RecTrk);
+    TagTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::TagTrk);
+    RecTrk2_track_No_truth = dAnaData->getNTruthTracks(DTruth::DTruthDetPV::RecTrk);
 
-        auto truth_states_at_target = dAnaData->getTruthStatesAtTarget();
+    auto truth_states_at_target = dAnaData->getTruthStatesAtTarget();
+//    for(const auto &[state, state_info] : truth_states_at_target)
+//        std::cout << "state id: " << std::get<0>(state_info)
+//                  << ", pdg: " << std::get<1>(state_info) << std::endl;
 
-        auto truth_states_at_ECal = dAnaData->getTruthStatesAtECalFront();
-        auto n_truth_states_at_ECal = truth_states_at_ECal.size();
+    auto truth_states_at_ECal = dAnaData->getTruthStatesAtECalFront();
+    auto n_truth_states_at_ECal = truth_states_at_ECal.size();
 
-        //std::vector<std::pair<id, std::pair<state, pdg>>>
-        std::vector<std::pair<int, std::pair<const DTruthState*, int>>> truth_states_at_ECal_sorted; // If not match std::get<0>=-1
-        
-        //match rec track
-        int id_rec_track=-1;
-        for(const auto &track : rec_tracks_)
+    //std::vector<std::pair<id, std::pair<state, pdg>>>
+    std::vector<std::pair<int, std::pair<const DTruthState*, int>>> truth_states_at_ECal_sorted; // If not match std::get<0>=-1
+    
+    //match rec track
+    int id_rec_track=-1;
+    for(const auto &track : rec_tracks_)
+    {
+        id_rec_track++;
+        int min_id(-1);
+        double min_dis(INFINITY);
+
+        for(size_t i = 0; i < truth_states_at_ECal.size(); i++)
         {
-            id_rec_track++;
-            int min_id(-1);
-            double min_dis(INFINITY);
-
-            for(size_t i = 0; i < truth_states_at_ECal.size(); i++)
-            {
-                double dis = (std::hypot(truth_states_at_ECal.at(i).first->vertex[0] - track->GetPFlowSeedX(),
-                                         truth_states_at_ECal.at(i).first->vertex[1] - track->GetPFlowSeedY())
-                             );
-                if(dis < min_dis) {min_dis = dis; min_id = i;}
-            }
-
-            if(min_id >= 0 && min_id < static_cast<int>(truth_states_at_ECal.size()))
-            {
-                truth_states_at_ECal_sorted.push_back(std::make_pair(id_rec_track, truth_states_at_ECal.at(min_id)));
-                truth_states_at_ECal.at(min_id).first = nullptr;
-                truth_states_at_ECal.erase(truth_states_at_ECal.begin() + min_id);
-            }
+            double dis = (std::hypot(truth_states_at_ECal.at(i).first->vertex[0] - track->GetPFlowSeedX(),
+                                     truth_states_at_ECal.at(i).first->vertex[1] - track->GetPFlowSeedY())
+                         );
+            if(dis < min_dis) {min_dis = dis; min_id = i;}
         }
 
-        for(const auto &track : truth_states_at_ECal){ // appending other truth tracks (unmatched)
-            truth_states_at_ECal_sorted.push_back(std::make_pair(-1, track));
-        }
-
-        //sanity check
-        if(Verbose > 0 && n_truth_states_at_ECal != truth_states_at_ECal_sorted.size()) {
-            std::cerr << "[WARNING] ==> Number of sorted truth tracks changed" << std::endl;
-            return;
-        }
-
-        auto temp_v = new ROOT::Math::PxPyPzEVector();
-        for(const auto &[truth_state_id, truth_state_sorted] : truth_states_at_ECal_sorted)
+        if(min_id >= 0 && min_id < static_cast<int>(truth_states_at_ECal.size()))
         {
-            auto track = truth_state_sorted.first;
-            auto pdg = truth_state_sorted.second;
-            temp_v->SetPxPyPzE(track->momentum[0], track->momentum[1], track->momentum[2], track->E);
-
-            ECal_seed_x_truth.push_back(track->vertex[0]);
-            ECal_seed_y_truth.push_back(track->vertex[1]);
-            ECal_seed_px_truth.push_back(track->momentum[0]);
-            ECal_seed_py_truth.push_back(track->momentum[1]);
-            ECal_seed_pz_truth.push_back(track->momentum[2]);
-            ECal_seed_e_truth.push_back(track->E);
-            ECal_seed_theta_truth.push_back(temp_v->Theta());
-            ECal_seed_phi_truth.push_back(temp_v->Phi());
-            ECal_seed_pdg.push_back(pdg);
-            ECal_seed_id_rec_track.push_back(truth_state_id);
+            truth_states_at_ECal_sorted.push_back(std::make_pair(id_rec_track, truth_states_at_ECal.at(min_id)));
+            truth_states_at_ECal.at(min_id).first = nullptr;
+            truth_states_at_ECal.erase(truth_states_at_ECal.begin() + min_id);
         }
-        delete temp_v;
+    }
+
+    for(const auto &track : truth_states_at_ECal){ // appending other truth tracks (unmatched)
+        truth_states_at_ECal_sorted.push_back(std::make_pair(-1, track));
+    }
+
+    //sanity check
+    if(Verbose > 0 && n_truth_states_at_ECal != truth_states_at_ECal_sorted.size()) {
+        std::cerr << "[WARNING] ==> Number of sorted truth tracks changed" << std::endl;
+        return;
+    }
+
+    auto temp_v = new ROOT::Math::PxPyPzEVector();
+    for(const auto &[truth_state_id, truth_state_sorted] : truth_states_at_ECal_sorted)
+    {
+        auto track = truth_state_sorted.first;
+        auto pdg = truth_state_sorted.second;
+        temp_v->SetPxPyPzE(track->momentum[0], track->momentum[1], track->momentum[2], track->E);
+
+        ECal_seed_x_truth.push_back(track->vertex[0]);
+        ECal_seed_y_truth.push_back(track->vertex[1]);
+        ECal_seed_px_truth.push_back(track->momentum[0]);
+        ECal_seed_py_truth.push_back(track->momentum[1]);
+        ECal_seed_pz_truth.push_back(track->momentum[2]);
+        ECal_seed_e_truth.push_back(track->E);
+        ECal_seed_theta_truth.push_back(temp_v->Theta());
+        ECal_seed_phi_truth.push_back(temp_v->Phi());
+        ECal_seed_pdg.push_back(pdg);
+        ECal_seed_id_rec_track.push_back(truth_state_id);
+    }
+    delete temp_v;
 
     if (!clean) {
     // Fill pcontrib
