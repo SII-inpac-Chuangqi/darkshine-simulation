@@ -31,6 +31,9 @@ void TrackingProcessor::InitEvt() {
     tag_hit_pool_.Clear();
     rec_hit_pool_.Clear();
 
+    TagTrk2_No_truth = -1;
+    RecTrk2_No_truth = -1;
+
     TagTrk2_truth_hit_x.clear();
     TagTrk2_truth_hit_y.clear();
     TagTrk2_truth_hit_z.clear();
@@ -57,6 +60,9 @@ void TrackingProcessor::InitEvt() {
     Trk_contrib_compt_count = 0;
     Trk_contrib_eBrem_count = 0;
     Trk_contrib_phot_count = 0;
+
+    TagTrk2_No = -1;
+    RecTrk2_No = -1;
 
     TagTrk2_seed_No = -1;
     RecTrk2_seed_No = -1;
@@ -233,7 +239,7 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
             }
         }
 
-        TagTrk2_No = raw_tagtrk2_hits.size();
+        TagTrk2_No_truth = raw_tagtrk2_hits.size();
  
         bool trackerFlag = false;
         for (const auto &step : *initial_steps) {
@@ -248,7 +254,7 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
             }
         }
  
-        for (int i = 0; i < TagTrk2_No; ++i) {
+        for (int i = 0; i < TagTrk2_No_truth; ++i) {
             TagTrk2_truth_hit_x.push_back(raw_tagtrk2_hits.at(i).GetX());
             TagTrk2_truth_hit_y.push_back(raw_tagtrk2_hits.at(i).GetY());
             TagTrk2_truth_hit_z.push_back(raw_tagtrk2_hits.at(i).GetZ());
@@ -283,7 +289,7 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
             target_seed_pz_truth.push_back(state->momentum[2]);
         }
  
-        RecTrk2_No = raw_rectrk2_hits.size();
+        RecTrk2_No_truth = raw_rectrk2_hits.size();
  
         trackerFlag = false;
         for (auto step : *initial_steps) {
@@ -298,7 +304,7 @@ void TrackingProcessor::FillTruth(DTruth *truth_info,
             }
         }
  
-        for (int i = 0; i < RecTrk2_No; ++i) {
+        for (int i = 0; i < RecTrk2_No_truth; ++i) {
             RecTrk2_truth_hit_x.push_back(raw_rectrk2_hits.at(i).GetX());
             RecTrk2_truth_hit_y.push_back(raw_rectrk2_hits.at(i).GetY());
             RecTrk2_truth_hit_z.push_back(raw_rectrk2_hits.at(i).GetZ());

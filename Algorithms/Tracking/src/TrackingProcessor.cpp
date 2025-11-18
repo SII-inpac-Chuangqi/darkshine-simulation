@@ -82,6 +82,7 @@ void TrackingProcessor::Begin() {
 
     tag_genfit_config_.propagator = &propagator_;
     rec_genfit_config_.propagator = &propagator_;
+    tag_genfit_config_.extrapolated_surface = -0.175;
     rec_genfit_config_.extrapolated_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
 
 //................................................................................//
@@ -126,7 +127,7 @@ void TrackingProcessor::Begin() {
 //Truth
 //................................................................................//
     if (!clean) {
-        EvtWrt->RegisterIntVariable("TagTrk2_No", &TagTrk2_No, "TagTrk2_No/I");
+        EvtWrt->RegisterIntVariable("TagTrk2_No_truth", &TagTrk2_No_truth, "TagTrk2_No_truth/I");
         EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_ini", &TagTrk2_pp_truth_ini, "TagTrk2_pp_truth_ini/D");
         EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_fin", &TagTrk2_pp_truth_fin, "TagTrk2_pp_truth_fin/D");
         EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_x", &TagTrk2_truth_hit_x);
@@ -138,7 +139,7 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("TagTrk2_truth_state_y", &TagTrk2_truth_state_y);
         EvtWrt->RegisterOutVariable("TagTrk2_truth_state_z", &TagTrk2_truth_state_z);
 
-        EvtWrt->RegisterIntVariable("RecTrk2_No", &RecTrk2_No, "RecTrk2_No/I");
+        EvtWrt->RegisterIntVariable("RecTrk2_No_truth", &RecTrk2_No_truth, "RecTrk2_No_truth/I");
         EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_ini", &RecTrk2_pp_truth_ini, "RecTrk2_pp_truth_ini/D");
         EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_fin", &RecTrk2_pp_truth_fin, "RecTrk2_pp_truth_fin/D");
         EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_x", &RecTrk2_truth_hit_x);
@@ -170,6 +171,8 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("TagTrk2_track_chi2_algo", &TagTrk2_track_chi2_algo);
 
     if (!clean) {
+        EvtWrt->RegisterIntVariable("TagTrk2_No", &TagTrk2_No, "TagTrk2_No/I");
+
         EvtWrt->RegisterIntVariable("TagTrk2_seed_No", &TagTrk2_seed_No, "TagTrk2_seed_No/I");
 //        EvtWrt->RegisterOutVariable("TagTrk2_track_quality", &TagTrk2_track_quality);
         EvtWrt->RegisterOutVariable("TagTrk2_track_x_sigma", &TagTrk2_track_x_sigma);
@@ -196,6 +199,8 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("RecTrk2_track_chi2_algo", &RecTrk2_track_chi2_algo);
 
     if (!clean) {
+        EvtWrt->RegisterIntVariable("RecTrk2_No", &RecTrk2_No, "RecTrk2_No/I");
+
         EvtWrt->RegisterIntVariable("RecTrk2_seed_No", &RecTrk2_seed_No, "RecTrk2_seed_No/I");
 
 //        EvtWrt->RegisterOutVariable("RecTrk2_track_quality", &RecTrk2_track_quality);
@@ -314,6 +319,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //Digitization
         digitizer_.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, &tag_hit_pool_, tracking::dTag);
+        TagTrk2_No = tag_hit_pool_.size();
 
         if(tag_hit_pool_.size())
         {
@@ -355,6 +361,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //Digitization
         digitizer_.Layering(raw_rectrk1_hits, raw_rectrk2_hits, &rec_hit_pool_, tracking::dRec);
+        RecTrk2_No = rec_hit_pool_.size();
 
         if(rec_hit_pool_.size())
         {
