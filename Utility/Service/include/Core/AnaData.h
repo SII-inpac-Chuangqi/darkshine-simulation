@@ -62,6 +62,9 @@ public:
     void readGeometryDetails();
     void printGeometryDetails() const;
 
+//Target
+    double getTargetThickness() const {return target_thickness_;}
+
 //Tag tracker
     const std::vector<double> getLayerWidthTag()  const {return layer_width_tag;}
     const std::vector<double> getLayerLengthTag() const {return layer_length_tag;}
@@ -151,6 +154,8 @@ protected:
     vector<double>   const_mag_field_vec;
 
     TGeoNode* world_{nullptr};
+
+    double target_thickness_{0.35};
 
     std::vector<double> layer_width_tag;
     std::vector<double> layer_length_tag;

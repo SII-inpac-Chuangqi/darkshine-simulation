@@ -182,6 +182,8 @@ void Digitization::InitHitMap(const TrkHitSPVec &trk_hits, TrkHitSPVecMap &trk_h
     for(const auto &trk_hit : trk_hits)
         this->InsertHitMap(trk_hit, unclustered_trk_hit_map);
 
+    double *splits = new double[2];
+
     for(auto &layer : unclustered_trk_hit_map)
     {
         Clusterer<TrkHitSP> clusterer;
@@ -189,12 +191,9 @@ void Digitization::InitHitMap(const TrkHitSPVec &trk_hits, TrkHitSPVecMap &trk_h
 
         for(auto &hit : layer.second)
         {
-            double *splits = new double[2];
             splits[0] = hit->GetX();
             splits[1] = hit->GetY();
             clusterer.CreatePoint(&hit, 2, splits, hit->GetE());
-
-            delete[] splits; splits = nullptr;
         }
 
         // clusterer.ShowPoints();
@@ -213,6 +212,10 @@ void Digitization::InitHitMap(const TrkHitSPVec &trk_hits, TrkHitSPVecMap &trk_h
         trk_hit_map.insert(std::pair<int, TrkHitSPVec>(layer.first, clustered_layer));
     }
     //std::cout << std::endl;
+
+    delete[] splits; splits = nullptr;
+
+
 }
 
 void Digitization::InsertHitMap(const TrkHitSP &trk_hit, TrkHitSPVecMap &trk_hit_map)

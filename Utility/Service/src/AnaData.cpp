@@ -131,6 +131,11 @@ void AnaData::readGeometryDetails() {
         auto *detector = dynamic_cast<TGeoNode*>(world_->GetDaughter(i));
         auto detector_name = TString(detector->GetVolume()->GetName());
 
+        if(detector_name.Contains("Target")) {
+            auto *detector_shape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
+            target_thickness_ = root_to_dss::ul*2*detector_shape->GetDZ();
+        }
+
         if(detector_name.Contains("Trk")) { // TAGTrk or RECTrk
             auto *detector_shape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
             if      (detector_name.Contains("TAG") || detector_name.Contains("Tag"))
@@ -268,6 +273,9 @@ void AnaData::readGeometryDetails() {
 
 void AnaData::printGeometryDetails() const {
     std::cerr << "[INFO] ==> Geometry details:" << std::endl;
+
+    std::cerr << "           Target:      center at       [0, 0, 0] mm" << std::endl
+              << "                        thickness       " << target_thickness_  << " mm" << std::endl;
 
     std::cerr << "           Tag tracker: center at       [" << center_x_tag_ << ", " << center_y_tag_ << ", " << center_z_tag_ << "] mm    " << std::endl
               << "                        length x        " << length_x_tag_  << " mm" << std::endl

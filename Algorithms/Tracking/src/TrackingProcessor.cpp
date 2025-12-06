@@ -82,7 +82,7 @@ void TrackingProcessor::Begin() {
 
     tag_genfit_config_.propagator = &propagator_;
     rec_genfit_config_.propagator = &propagator_;
-    tag_genfit_config_.extrapolated_surface = -0.175;
+    tag_genfit_config_.extrapolated_surface = -0.5*dAnaData->getTargetThickness();
     rec_genfit_config_.extrapolated_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
 
 //................................................................................//
@@ -369,6 +369,25 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
             if(if_raw_rec_hit_number && if_reco_rec_hits)
             {
+                TMatrixDSym target_hit_cov(2);
+                target_hit_cov(0, 0) = 0.029*0.029;
+                target_hit_cov(1, 1) = 0.029*0.029;
+
+                for (auto &track : tag_tracks_)
+                {
+                    auto hit = std::make_shared<TrkHit>();
+                    hit->SetCellIdZ(0);
+                    hit->SetX(track->GetPFlowSeedX());
+                    hit->SetY(track->GetPFlowSeedY());
+                    hit->SetZ(-0.5*dAnaData->getTargetThickness());
+                    hit->SetXYCov(target_hit_cov);
+
+//                    std::cout << *hit << std::endl;
+                    rec_hit_pool_.AddHit(std::move(hit)); 
+                }
+
+//                rec_hit_pool_.Print();
+
 //Seeding
                 SeedContainer_t seeds;
                 seed_finder_.Run(rec_seeder_config_, seeds, &rec_hit_pool_);
@@ -381,7 +400,8 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //Fit, by Genfit, Kalman filter/by Riemann fitting
                 RecTrk2_track_No = rec_tracks_.size();
           
-                for (auto &track : rec_tracks_) {
+                for (auto &track : rec_tracks_)
+                {
                     track->SetVerbose(Verbose);
                     if(if_backwards) track->Reverse();
 
