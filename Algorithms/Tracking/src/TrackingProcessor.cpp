@@ -82,7 +82,7 @@ void TrackingProcessor::Begin() {
 
     tag_genfit_config_.propagator = &propagator_;
     rec_genfit_config_.propagator = &propagator_;
-    tag_genfit_config_.extrapolated_surface = -0.5*dAnaData->getTargetThickness();
+    tag_genfit_config_.extrapolated_surface = 0.5*dAnaData->getTargetThickness();
     rec_genfit_config_.extrapolated_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
 
 //................................................................................//
@@ -249,6 +249,8 @@ void TrackingProcessor::Begin() {
 }
 
 void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
+    using namespace dunits;
+
     [[maybe_unused]] bool if_initial_steps(false);
     [[maybe_unused]] bool if_raw_tag_hits(false);
     [[maybe_unused]] bool if_raw_rec_hits(false);
@@ -369,9 +371,14 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
             if(if_raw_rec_hit_number && if_reco_rec_hits)
             {
+//Seeding
+                SeedContainer_t seeds;
+                seed_finder_.Run(rec_seeder_config_, seeds, &rec_hit_pool_);
+                RecTrk2_seed_No = seeds.size();
+
                 TMatrixDSym target_hit_cov(2);
-                target_hit_cov(0, 0) = 0.029*0.029;
-                target_hit_cov(1, 1) = 0.029*0.029;
+                target_hit_cov(0, 0) = 0.03_mm*0.03_mm;
+                target_hit_cov(1, 1) = 0.03_mm*0.03_mm;
 
                 for (auto &track : tag_tracks_)
                 {
@@ -379,7 +386,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     hit->SetCellIdZ(0);
                     hit->SetX(track->GetPFlowSeedX());
                     hit->SetY(track->GetPFlowSeedY());
-                    hit->SetZ(-0.5*dAnaData->getTargetThickness());
+                    hit->SetZ(0.5*dAnaData->getTargetThickness());
                     hit->SetXYCov(target_hit_cov);
 
 //                    std::cout << *hit << std::endl;
@@ -387,11 +394,6 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 }
 
 //                rec_hit_pool_.Print();
-
-//Seeding
-                SeedContainer_t seeds;
-                seed_finder_.Run(rec_seeder_config_, seeds, &rec_hit_pool_);
-                RecTrk2_seed_No = seeds.size();
 
 //Finding, by pre-fitting
                 rec_finder_.Run(rec_finder_config_, &rec_hit_pool_, seeds);

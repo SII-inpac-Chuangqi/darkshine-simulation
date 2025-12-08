@@ -118,10 +118,12 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
         double layer_width  = layer_widths->at((layer1.first - 1)*2 + 1);
         double layer_length = layer_lengths->at((layer1.first - 1)*2 + 1); 
 
+        double u_err_2 = layer_width*layer_width / strip_no / strip_no / 12.;
+
         auto layer2 = map2.at(layer1.first);
-        for(auto hit1 : layer1.second)
+        for(const auto &hit1 : layer1.second)
         {
-            for(auto hit2 : layer2)
+            for(const auto &hit2 : layer2)
             {
                 double smear1 = 0.;
                 double smear2 = 0.;
@@ -146,7 +148,6 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
                 v_vec[0] = cos(angle2);
                 v_vec[1] = -sin(angle2);
 
-                double u_err_2 = pow(layer_width / strip_no / sqrt(12), 2);
                 uv_cov(0, 0) = u_err_2;
                 uv_cov(1, 1) = u_err_2;
                 uv_cov(0, 1) = 0.;
@@ -164,7 +165,8 @@ void Digitization::Layering(const std::vector<TrkHit> &trk1_hits, const std::vec
 
                 hit->UpdateXY(); // Derive x and y from u and v
 
-                if (!in_rectangle(hit->GetX(), hit->GetY(), layer_width, layer_length, angle1) || !in_rectangle(hit->GetX(), hit->GetY(), layer_width, layer_length, angle2))
+                if (!in_rectangle(hit->GetX(), hit->GetY(), layer_width, layer_length, angle1) ||
+                    !in_rectangle(hit->GetX(), hit->GetY(), layer_width, layer_length, angle2))
                     continue;
 
                 pool->AddHit(std::move(hit));

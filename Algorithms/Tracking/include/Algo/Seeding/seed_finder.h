@@ -114,7 +114,8 @@ public:
 
         if(bottom_ids.size() == 0 || bottom_ids.size() > 2)
         {
-            std::cerr << "[WARNING] ==> Expect 1 or 2 bottom layers, " << bottom_ids.size() << " received" << std::endl;
+            if(config_.verbose > 0)
+                std::cerr << "[WARNING] ==> Expect 1 or 2 bottom layers, " << bottom_ids.size() << " received" << std::endl;
             return;
         }     
 

@@ -68,7 +68,6 @@ public:
         std::cout << "bottom ids: " << print_ids(bottom_ids)
                   << " middle id: "  << middle_id << " top id: " << top_id << std::endl;
 */
-
         seed_finder_->FindSeeds(*snapshot_, *pool->GetPool(), seeds, bottom_ids, middle_id, top_id);
 //        std::cout << seeds.size() << " seeds are found" << std::endl;
 
