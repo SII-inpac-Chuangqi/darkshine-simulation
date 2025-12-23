@@ -17,37 +17,58 @@ void FastSmear::RegisterParameters(const std::string &cf, bool aecal, bool ahcal
 
 void FastSmear::ReadConfigFile() {
     if (config_file.empty()) {
-        Calibration_Table ct;
-        ct.E = vector<double>({0});
-        ct.A = vector<double>({0});
-        ct.B = vector<double>({0});
-        ct.C = vector<double>({0});
-        
-        Calibration_Table ct1;
-        ct1.E = vector<double>({8000});
-        ct1.A = vector<double>({31.62e-02});
-        ct1.B = vector<double>({0});
-        ct1.C = vector<double>({0});
-    
-        Calibration_Table ct2;
-        ct2.E = vector<double>({8000});
-        ct2.A = vector<double>({211.69e-02});
-        ct2.B = vector<double>({0});
-        ct2.C = vector<double>({0.0851});
-    
-        Calibration_Table ct3;
-        ct3.E = vector<double>({8000});
-        ct3.A = vector<double>({134.56e-02});
-        ct3.B = vector<double>({0.7e-02});
-        ct3.C = vector<double>({0.0001});
-    
-        Calibration_Table ct4;
-        ct4.E = vector<double>({8000});
-        ct4.A = vector<double>({73.32e-02});
-        ct4.B = vector<double>({0.17e-02});
-        ct4.C = vector<double>({0.7051});
+        Calibration_Table ct = {
+                &TRandom::Gaus,
+                {0},
+                {0},
+                {0},
+                {0}
+        };
 
-        
+        Calibration_Table ct1 = {
+                &TRandom::Gaus,
+                {8000},
+                {31.62e-02},
+                {0},
+                {0}
+        };
+
+    
+        Calibration_Table ct2 = {
+                &TRandom::Gaus,
+                {8000},
+                {211.69e-02},
+                {0},
+                {0.0851}
+        };
+
+    
+        Calibration_Table ct3 = {
+                &TRandom::Gaus,
+                {8000},
+                {134.56e-02},
+                {0.7e-02},
+                {0.0001},
+        };
+
+    
+        Calibration_Table ct4 = {
+                &TRandom::Gaus,
+                {8000},
+                {73.32e-02},
+                {0.17e-02},
+                {0.7051},
+        };
+
+        Calibration_Table hct1 = {
+                &TRandom::Gaus,
+                {4000}, // E
+                {0.12}, // A
+                {0}, // B
+                {0} // C
+        };
+
+
         cal_info.at(ECAL_Name).push_back(ct);
         cal_info.at(ECAL_Name).push_back(ct1);
         cal_info.at(ECAL_Name).push_back(ct2);
@@ -55,7 +76,9 @@ void FastSmear::ReadConfigFile() {
         cal_info.at(ECAL_Name).push_back(ct4);
 
         cal_info.at(HCAL_Name).push_back(ct);
+        cal_info.at(HCAL_Name).push_back(hct1);
         cal_info.at(SideHCAL_Name).push_back(ct);
+        cal_info.at(SideHCAL_Name).push_back(hct1);
     }
 }
 
@@ -104,8 +127,8 @@ void FastSmear::Process(AnaEvent *evt, const string &det_name, const string &cal
                 auto new_hit = new CalorimeterHit();
 
                 double oE = hit->getE();
-
-                double new_E = rnd.Gaus(oE, CalculateSigma(oE, cal_info.at(cal_name).at(i)));
+                auto funcPtr = cal_info.at(cal_name).at(i).funcPtr;
+                double new_E = (rnd.*funcPtr)(oE, CalculateSigma(oE, cal_info.at(cal_name).at(i)));
                 new_E=std::max(0.,new_E);
 
                 new_hit->setE(new_E);
