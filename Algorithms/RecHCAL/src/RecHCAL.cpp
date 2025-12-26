@@ -12,7 +12,7 @@ RecHCAL::RecHCAL(string name, shared_ptr<EventStoreAndWriter> evtwrt) : AnaProce
     RegisterIntParameter("ParticleStore", "Particles' info in HCAL", &particle_store, 0);
     RegisterIntParameter("HitStore", "Hits' info in HCAL", &hit_store, 0);
     RegisterIntParameter("BDTVarStore", "BDT variables", &bdt_var_store, 0);
-    RegisterStringParameter("HCollectionToUse", "Calorimeter (HCAL) Collection to Use", &hcal_col_use, "FS0");
+    RegisterStringParameter("HCollectionToUse", "Calorimeter (HCAL) Collection to Use", &hcal_col_use, "FS0, FS1");
 }
 
 void RecHCAL::Begin() {
@@ -155,12 +155,12 @@ void RecHCAL::ProcessEvt(AnaEvent *evt) {
 
                 if (bdt_var_store) {
                     iLayer = hit->getCellIdZ() / 2 + 1;
-                    iCell = hit->getCellIdX(); 
+                    iCell = hit->getCellIdX();
 
-                    if (iLayer == 1) {HCAL_layer1_E.emplace_back(hit->getE());} 
+                    if (iLayer == 1) {HCAL_layer1_E.emplace_back(hit->getE());}
                     if (hit->getCellIdY() == 1) {E_cell_1[iLayer - 1][iCell - 1] = hit->getE();}
                     else {E_cell_2[iLayer - 1][iCell - 1] = hit->getE();}
-                   
+
                     if (E_min > hit->getE()) {E_min = hit->getE();}
 
                     if (iLayer %2 == 1) {
@@ -231,7 +231,7 @@ void RecHCAL::ProcessEvt(AnaEvent *evt) {
                 HCAL_total_lighted_layer.emplace_back(layer_n.size());
                 HCAL_lighted_cells_per_lighted_layer.emplace_back(n_cell / layer_n.size());
             }
-        
+
             E_HCAL = HCAL_E;
         }
     }

@@ -6,12 +6,13 @@
 #define DSIMU_FASTSMEAR_H
 
 #include "Event/EventStoreAndWriter.h"
-#include "memory"
+#include <memory>
 #include <string>
-#include "map"
+#include <map>
 #include <vector>
 #include <cfloat>
-#include "TRandom3.h"
+#include <TRandom3.h>
+#include <TF1.h>
 
 
 using std::string;
@@ -21,6 +22,7 @@ using std::vector;
 using std::pair;
 
 struct Calibration_Table {
+    Double_t (TRandom::*funcPtr)(Double_t, Double_t); // Performance much better than TF1.GetRandom()
     // Energy Unit: MeV
     vector<double> E;
     vector<double> A;
