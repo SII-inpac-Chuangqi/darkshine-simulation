@@ -390,7 +390,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     hit->SetXYCov(target_hit_cov);
 
 //                    std::cout << *hit << std::endl;
-                    rec_hit_pool_.AddHit(std::move(hit)); 
+//                    rec_hit_pool_.AddHit(std::move(hit)); 
                 }
 
 //                rec_hit_pool_.Print();

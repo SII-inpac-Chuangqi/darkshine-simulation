@@ -81,7 +81,7 @@ inline void KasaFit(double x[], double y[], size_t n, double &A, double &B, doub
         s += (R - zi)*(R - zi);
     }
 
-    chi2 = 1 - sqrt(s/(n*R*R));
+    chi2 = 1 - std::sqrt(s/(n*R*R));
 }
 
 inline double PointToLineDistance(double A, double B, double C, double x, double y)
