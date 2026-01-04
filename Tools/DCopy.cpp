@@ -79,9 +79,10 @@ int main(int argc, char **argv) {
     std::string out_name = "copied_simu.root";
 
     arg_parser::Parser parser;
-    parser.Add("f,file", file_name, "dp_simu.root", "name of the file to dump");
+    parser.Add("f,file", file_name, "dp_simu.root", "name of the file to copy");
     parser.Add("t,tree", tree_name, "Dark_Photon", "name of the tree storing DEvents");
     parser.Add("x,txt", txt_name, "events.txt", "name of the txt file containing event ids");
+    parser.Add("o,output", out_name, "copied_simu.root", "name of the file copied");
 
     parser.Parse(argc, argv);
 
