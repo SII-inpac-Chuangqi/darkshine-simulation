@@ -79,6 +79,10 @@ void TrackingProcessor::Begin() {
     seed_finder_.Connect(&TrkHit::GetX, &TrkHit::GetZ, &TrkHit::GetY);
     tag_finder_config_.verbose = Verbose;
     rec_finder_config_.verbose = Verbose;
+    rec_finder_config_.min_R_scale = {{6, 1.},
+                                      {5, 0.5},
+                                      {4, 0.3}
+                                     };
 
     tag_genfit_config_.propagator = &propagator_;
     rec_genfit_config_.propagator = &propagator_;
@@ -313,8 +317,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Tag tracker
-
-//    std::cout << "\n--------------------------------------------------\ntagging" << std::endl;
+/*
     if (IsValidHitSize(raw_tagtrk2_hits) && IsValidHitSize(raw_tagtrk1_hits))
     {
         if_raw_tag_hit_number = true;
@@ -353,10 +356,9 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             }
         }
     }
-
+*/
 //................................................................................//
 //Recoil tracker
-//    std::cout << "\nrecoil" << std::endl;
     if (IsValidHitSize(raw_rectrk2_hits) && IsValidHitSize(raw_rectrk1_hits))
     {
         if_raw_rec_hit_number = true;
@@ -375,7 +377,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 SeedContainer_t seeds;
                 seed_finder_.Run(rec_seeder_config_, seeds, &rec_hit_pool_);
                 RecTrk2_seed_No = seeds.size();
-
+/*
                 TMatrixDSym target_hit_cov(2);
                 target_hit_cov(0, 0) = 0.03_mm*0.03_mm;
                 target_hit_cov(1, 1) = 0.03_mm*0.03_mm;
@@ -394,7 +396,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 }
 
 //                rec_hit_pool_.Print();
-
+*/
 //Finding, by pre-fitting
                 rec_finder_.Run(rec_finder_config_, &rec_hit_pool_, seeds);
                 rec_tracks_ = rec_finder_.GetTracks();

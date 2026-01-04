@@ -87,6 +87,10 @@ void GreedyFinder::ShrinkPool(hit_map_t &pool)
 void GreedyFinder::FindTracks(pool_t *pool, GreedyFinderSnapshot *snapshot, const std::vector<seed_t> &seeds)
 {
     circle_No_ = 0;
+    int pool_depth = (*pool)->rbegin()->first;
+    min_R_scale_ = config_.min_R_scale.count(pool_depth) == 1 ? config_.min_R_scale.at(pool_depth) : 1.;
+
+    std::cout << "pool depth: " << pool_depth << ", min R scale: " << min_R_scale_ << std::endl;
 
     snapshot_ = snapshot;
 
@@ -173,7 +177,7 @@ void GreedyFinder::RejectTrack()
             std::cout << *hit << std::endl;
         std::cout << "best chi2: " << manager_.best_chi2 << std::endl;
         std::cout << "best r2:   " << manager_.best_r2 << std::endl;
-        std::cout << "min R:     " << config_.min_R << std::endl;
+        std::cout << "min R:     " << config_.min_R*min_R_scale_ << std::endl;
         std::cout << "chi2: " << manager_.current_chi2 << std::endl;
         std::cout << "r2:   " << manager_.current_r2 << std::endl;
         std::cout << "R:    " << manager_.current_R << std::endl;
@@ -181,7 +185,7 @@ void GreedyFinder::RejectTrack()
     }
 
     if(manager_.current_chi2 > manager_.best_chi2 && manager_.current_r2 > manager_.best_r2 &&
-       manager_.current_R > config_.min_R && manager_.current_R < config_.max_R)
+       manager_.current_R > config_.min_R*min_R_scale_ && manager_.current_R < config_.max_R)
     {
         manager_.best_chi2 = manager_.current_chi2;
         if(config_.verbose > 2)

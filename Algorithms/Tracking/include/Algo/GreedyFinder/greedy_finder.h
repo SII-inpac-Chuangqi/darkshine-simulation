@@ -28,6 +28,7 @@ public:
         double kasa_chi2 = 0.9995;
         double linear_r2 = 0.9;
         int verbose = 0;
+        std::map<int, double> min_R_scale;
     };
 
     struct GreedyFinderSnapshot
@@ -147,6 +148,7 @@ private:
     ProtoTrackManager manager_;
 
     int circle_No_{0};
+    double min_R_scale_{1.};
 };
 
 #include "proto_track.ipp"
