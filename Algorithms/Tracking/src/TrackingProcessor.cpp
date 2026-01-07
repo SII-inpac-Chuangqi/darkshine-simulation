@@ -79,9 +79,8 @@ void TrackingProcessor::Begin() {
     seed_finder_.Connect(&TrkHit::GetX, &TrkHit::GetZ, &TrkHit::GetY);
     tag_finder_config_.verbose = Verbose;
     rec_finder_config_.verbose = Verbose;
-    rec_finder_config_.min_R_scale = {{6, 1.},
-                                      {5, 0.5},
-                                      {4, 0.3}
+    rec_finder_config_.min_R_scale = {
+                                      {5, 0.4},
                                      };
 
     tag_genfit_config_.propagator = &propagator_;
@@ -317,7 +316,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Tag tracker
-/*
+
     if (IsValidHitSize(raw_tagtrk2_hits) && IsValidHitSize(raw_tagtrk1_hits))
     {
         if_raw_tag_hit_number = true;
@@ -356,7 +355,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
             }
         }
     }
-*/
+
 //................................................................................//
 //Recoil tracker
     if (IsValidHitSize(raw_rectrk2_hits) && IsValidHitSize(raw_rectrk1_hits))

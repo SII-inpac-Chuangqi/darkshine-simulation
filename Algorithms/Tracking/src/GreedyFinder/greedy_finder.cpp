@@ -90,7 +90,7 @@ void GreedyFinder::FindTracks(pool_t *pool, GreedyFinderSnapshot *snapshot, cons
     int pool_depth = (*pool)->rbegin()->first;
     min_R_scale_ = config_.min_R_scale.count(pool_depth) == 1 ? config_.min_R_scale.at(pool_depth) : 1.;
 
-    std::cout << "pool depth: " << pool_depth << ", min R scale: " << min_R_scale_ << std::endl;
+//    std::cout << "pool depth: " << pool_depth << ", min R scale: " << min_R_scale_ << std::endl;
 
     snapshot_ = snapshot;
 
