@@ -9,6 +9,7 @@
 
 #include "TEveTrackPropagator.h"
 
+#include "Algo/Utils/Util.h"
 #include "Algo/Propagator/Propagator.h"
 
 class DPropagator final: public TEveTrackPropagator, public Propagator {
@@ -53,26 +54,27 @@ public:
     virtual bool ExtrapolateToPlanes(const vector3D &mom_in, const std::vector<vector3D> &plane_poss, const std::vector<vector3D> &plane_normals,
                                      std::vector<vector3D> &mom_outs, std::vector<vector3D> &pos_outs) override
     {
+        using namespace tracking;
+
         bool result = true;
 
         mom_outs.clear();
         pos_outs.clear();
 
-        mom_outs.reserve(plane_pos.size());
-        pos_outs.reserve(plane_pos.size());
+        mom_outs.reserve(plane_poss.size());
+        pos_outs.reserve(plane_poss.size());
 
         vector3D mom_out;
         vector3D pos_out;
         for(auto &&[plane_pos, plane_normal] : utils::make_zip(plane_poss, plane_normals))
         {
-            auto result = ExtrapolateToPlane(mom_in, plane_pos, plane_normal, mom_out, pos_out);
+            result = ExtrapolateToPlane(mom_in, plane_pos, plane_normal, mom_out, pos_out);
 
             if(!result)
             {
                 std::cerr << "[WARNING] ==> Error detected in extrapolation at ("
-                          << plane_pos.at(0) << ", " << plane_pos.at(0) << ", " << plane_pos.at(0) << ")"
+                          << plane_pos.at(0) << ", " << plane_pos.at(1) << ", " << plane_pos.at(2) << ")"
                           << std::endl;
-                result = false;
 
                 mom_outs.push_back(vector3D());
                 pos_outs.push_back(vector3D());
@@ -105,7 +107,7 @@ public:
         TEveVector4D forwV;
         TEveVectorD  forwP;
         TEveVector4D pos4(pos);
-        while (kTRUE)
+        while (true)
         {
             Update(pos4, mom);
             Step(pos4, mom, forwV , forwP);
@@ -114,18 +116,20 @@ public:
             {
                 // We are going further away ... fail intersect.
 //                Warning("HelixIntersectPlane", "going away from the plane.");
-                return kFALSE;
+                return false;
             }
             if (new_d > 0)
             {
                 delta  = forwV - pos4;
                 pos_out = pos4 + delta * ((plane_pos - pos4).Dot(n) / delta.Dot(n));
                 mom_out = forwP;
-                return kTRUE;
+                return true;
             }
             pos4 = forwV;
             mom  = forwP;
         }
+
+        return false;
     }
 };
 
