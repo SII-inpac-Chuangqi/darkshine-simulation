@@ -55,19 +55,21 @@ public:
         int min_seed_size = config.bottoms_n + 1 + 1;
 
         auto [bottom_ids, middle_id, top_id] = pool->GetIds(config.bottoms_n);
-/*
-        auto print_ids = [](const auto &ids)
-                         {
-                             TString output;
-                             int i_id = ids.size() - 1;
-                             for(const auto &id : ids)
-                                 output += TString::Format("%i%s", id, (i_id-- == 0 ? "" : ", "));
-                             return output;
-                         };
 
-        std::cout << "bottom ids: " << print_ids(bottom_ids)
-                  << " middle id: "  << middle_id << " top id: " << top_id << std::endl;
-*/
+        if(config.verbose > 0)
+        {
+            auto print_ids = [](const auto &ids)
+                             {
+                                 TString output;
+                                 int i_id = ids.size() - 1;
+                                 for(const auto &id : ids)
+                                     output += TString::Format("%i%s", id, (i_id-- == 0 ? "" : ", "));
+                                 return output;
+                             };
+
+            std::cout << "bottom ids: " << print_ids(bottom_ids)
+                      << " middle id: "  << middle_id << " top id: " << top_id << std::endl;
+        }
 
         seed_finder_->FindSeeds(*snapshot_, *pool->GetPool(), seeds, bottom_ids, middle_id, top_id);
 //        std::cout << seeds.size() << " seeds are found" << std::endl;

@@ -15,8 +15,6 @@
 
 //................................................................................//
 //Tracking
-//#include "Algo/TrkHit.h"
-//#include "Algo/HitPool.h"
 
 class TrkHit;
 

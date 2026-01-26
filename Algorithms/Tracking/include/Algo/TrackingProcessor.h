@@ -1,13 +1,10 @@
 #ifndef TRACKING_TRACKINGPROCESSOR_H
 #define TRACKING_TRACKINGPROCESSOR_H
 
-#ifndef RETURN
-#define RETURN std::nan("RETURN")
-#endif
-
 //................................................................................//
 //C++
 #include <utility>
+#include <cmath>
 
 //................................................................................//
 //FRAMEWORK
@@ -26,6 +23,11 @@
 #include "Algo/WrappedFinder.h"
 #include "Algo/GreedyFinder/greedy_finder.h"
 #include "Algo/WrappedFitter.h"
+#include "Algo/Propagator/GFPropagator.h" 
+
+#ifndef RETURN
+#define RETURN std::nan("RETURN")
+#endif
 
 namespace tracking
 {
@@ -79,6 +81,8 @@ private:
     WrappedFinder tag_finder_;
     WrappedFinder rec_finder_;
 
+    GFPropagator propagator_;
+
 //................................................................................//
 //Configs
 //................................................................................//
@@ -86,7 +90,8 @@ private:
     SeedFinder_t::SeedFinderConfig rec_seeder_config_;
     GreedyFinder::GreedyFinderConfig tag_finder_config_;
     GreedyFinder::GreedyFinderConfig rec_finder_config_;
-    KalmanFilterFitter::Config genfit_config_;
+    KalmanFilterFitter::Config tag_genfit_config_;
+    KalmanFilterFitter::Config rec_genfit_config_;
     RiemannFitter::Config riemann_config_;
 
 //................................................................................//
@@ -140,7 +145,7 @@ private:
 //Truth
 //................................................................................//
 //Number of truth hit
-    int TagTrk2_No{-1};
+    int TagTrk2_No_truth{-1};
 //Momentum entering Tag Tracker from Initial Particle Step
     double TagTrk2_pp_truth_ini{RETURN};
 //Momentum exiting Tag Tracker from Initial Particle Step
@@ -157,7 +162,7 @@ private:
 //No of truth tracks from DTruth
     int TagTrk2_track_No_truth{0};
     
-    int RecTrk2_No{-1};
+    int RecTrk2_No_truth{-1};
     double RecTrk2_pp_truth_ini{RETURN};
     double RecTrk2_pp_truth_fin{RETURN};
     std::vector<double> RecTrk2_truth_hit_x{};
@@ -196,6 +201,7 @@ private:
     int RecTrk2_seed_No{-1};
 
 //No of reconstructed tracks
+    int TagTrk2_No{-1};
     int TagTrk2_track_No{-1};
 //Reconstructed momentum perpendicular to magnet
     std::vector<double> TagTrk2_pp{};
@@ -211,6 +217,20 @@ private:
     std::vector<double> TagTrk2_track_y_sigma{};
 
 //................................................................................//
+    std::vector<double> target_seed_x_truth{};
+    std::vector<double> target_seed_y_truth{};
+    std::vector<double> target_seed_px_truth{};
+    std::vector<double> target_seed_py_truth{};
+    std::vector<double> target_seed_pz_truth{};
+
+    std::vector<double> target_seed_x{};
+    std::vector<double> target_seed_y{};
+    std::vector<double> target_seed_px{};
+    std::vector<double> target_seed_py{};
+    std::vector<double> target_seed_pz{};
+
+//................................................................................//
+    int RecTrk2_No{-1};
     int RecTrk2_track_No{-1};
     std::vector<double> RecTrk2_pp{};
 //    std::vector<double> RecTrk2_fixed_pp{};

@@ -3,12 +3,11 @@
 
 //................................................................................//
 //C++
-#include <iostream>
-#include <map>
+#include <array>
 #include <vector>
 #include <memory>
 #include <cmath>
-//#include <initializer_list>
+#include <tuple>
 
 #ifndef RETURN
 #define RETURN std::nan("RETURN")
@@ -38,6 +37,7 @@ class Fitter
 {
 protected:
     using DTrackP = std::shared_ptr<DTrack>;
+    using vector3D = std::array<double, 3>;
 
 public:
 //................................................................................//
@@ -63,20 +63,21 @@ public:
     virtual double GetPz() const {return pz_;}
     virtual double GetPp() const {return pp_;}
     virtual double GetPl() const {return pl_;}
-    virtual double GetECalSeedX() const {return ECal_seed_x_;}
-    virtual double GetECalSeedY() const {return ECal_seed_y_;}
-    virtual double GetECalDirctX() const {return ECal_seed_px_;}
-    virtual double GetECalDirctY() const {return ECal_seed_py_;}
-    virtual double GetECalQoP() const {return ECal_seed_pz_;}
+    virtual double GetECalSeedX() const {return pflow_seed_x_;}
+    virtual double GetECalSeedY() const {return pflow_seed_y_;}
+    virtual double GetECalDirctX() const {return pflow_seed_px_;}
+    virtual double GetECalDirctY() const {return pflow_seed_py_;}
+    virtual double GetECalQoP() const {return pflow_seed_pz_;}
 
     virtual double GetNdf()  const {return fndf_;}
     virtual double GetChi2() const {return fchi2_;}
+    virtual double GetTrackChi2() const {return track_chi2_;}
     virtual double GetXSigma() const {return x_sigma_;}
     virtual double GetYSigma() const {return y_sigma_;}
 
-    virtual std::vector<double> ExtrapolateTo([[maybe_unused]] const std::vector<double> &planes_z,
-                                              [[maybe_unused]] tracking::direction extrop_dir = tracking::dX)
-                                             {return {};}
+    virtual std::tuple<std::vector<vector3D>, std::vector<vector3D>> ExtrapolateToPlanes([[maybe_unused]] const std::vector<double> &planes_z)
+                                                                     {return {};}
+    virtual std::tuple<vector3D, vector3D> ExtrapolateToPlane([[maybe_unused]] const double &plane_z) {return {};}
     virtual void SetPropagator(Propagator *propagator) {propagator_ = propagator;}
     virtual Propagator* GetPropagator() {return propagator_;}
     virtual std::vector<double> GetCorrectionsX() const {return {};}
@@ -100,14 +101,15 @@ protected:
     double pz_{RETURN};
     double pp_{RETURN};
     double pl_{RETURN};
-    double ECal_seed_x_{RETURN};
-    double ECal_seed_y_{RETURN};
-    double ECal_seed_px_{RETURN};
-    double ECal_seed_py_{RETURN};
-    double ECal_seed_pz_{RETURN};
+    double pflow_seed_x_{RETURN};
+    double pflow_seed_y_{RETURN};
+    double pflow_seed_px_{RETURN};
+    double pflow_seed_py_{RETURN};
+    double pflow_seed_pz_{RETURN};
 
     double fndf_{0.};
     double fchi2_{RETURN};
+    double track_chi2_{RETURN};
     double x_sigma_{RETURN};
     double y_sigma_{RETURN};
 

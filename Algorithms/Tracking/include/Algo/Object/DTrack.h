@@ -1,10 +1,6 @@
 #ifndef DTRACK_H
 #define DTRACK_H
 
-#ifndef RETURN
-#define RETURN std::nan("RETURN")
-#endif
-
 //................................................................................//
 //C++
 #include <iostream>
@@ -21,6 +17,10 @@
 //................................................................................//
 //Tracking
 #include "Algo/TypeDef.h"
+
+#ifndef RETURN
+#define RETURN std::nan("RETURN")
+#endif
 
 class DVertex;
 
@@ -56,11 +56,11 @@ public:
     double GetPreR()  const {return preR_;}
     double GetPreXc() const {return preXc_;}
     double GetPreYc() const {return preYc_;}
-    double GetECalSeedX() const {return ECal_seed_x_;}
-    double GetECalSeedY() const {return ECal_seed_y_;}
-    double GetECalDirctX() const {return ECal_seed_px_;}
-    double GetECalDirctY() const {return ECal_seed_py_;}
-    double GetECalQoP() const {return ECal_seed_pz_;}
+    double GetPFlowSeedX() const {return pflow_seed_x_;}
+    double GetPFlowSeedY() const {return pflow_seed_y_;}
+    double GetPFlowDirctX() const {return pflow_seed_px_;}
+    double GetPFlowDirctY() const {return pflow_seed_py_;}
+    double GetPFlowQoP() const {return pflow_seed_pz_;}
     int GetInitCellIdZ() const;
 
     int Size() const {return hits_.size();}
@@ -70,13 +70,16 @@ public:
     double GetQuality() const {return quality_;}
 
     double GetNdf() const {return ndf_;}
-    double GetChi2();
+    double GetChi2() const {return chi2_;};
     double GetChi2Algo() const {return chi2_algo_/ndf_;}
     double GetXSigma() const {return xSigma_;}
     double GetYSigma() const {return ySigma_;}
     double GetDeltaR(const DTrack *another) const;
     std::vector<double> GetExtrapolated(tracking::direction extrop_dir = tracking::dX);
-    std::vector<double> GetCorrectionsX() const {return corrections_x_;}
+    std::vector<double> GetCorrectionsX() const {return corrections_xs_;}
+
+    static double GetResolutionX() {return x_resolution_;}
+    static double GetResolutionY() {return y_resolution_;}
 
     Fitter* GetFitter() {return fitter_;}
 
@@ -85,7 +88,6 @@ public:
 //................................................................................//
 //Set
 //................................................................................//
-//    void ExceptionHandler(const std::vector<double> &magnet);
     void LinkFitter(Fitter *fitter) {fitter_ = fitter;}
     void SetVerbose(int verbose) {verbose_ = verbose;}
     void SetPDG(int newPDG) {pdg_ = newPDG;}
@@ -98,11 +100,11 @@ public:
     void SetNdf(double newNdf) {ndf_ = newNdf;}
     void SetXSigma(double newXSigma) {xSigma_ = newXSigma;}
     void SetYSigma(double newYSigma) {ySigma_ = newYSigma;}
-    void SetECalSeedX(double newECalSeedX) {ECal_seed_x_ = newECalSeedX;}
-    void SetECalSeedY(double newECalSeedY) {ECal_seed_y_ = newECalSeedY;}
-    void SetECalDirctX(double newECalDirctX) {ECal_seed_px_ = newECalDirctX;}
-    void SetECalDirctY(double newECalDirctY) {ECal_seed_py_ = newECalDirctY;}
-    void SetECalQoP(double newECalQoP) {ECal_seed_pz_ = newECalQoP;}
+    void SetPFlowSeedX(double newPFlowSeedX) {pflow_seed_x_ = newPFlowSeedX;}
+    void SetPFlowSeedY(double newPFlowSeedY) {pflow_seed_y_ = newPFlowSeedY;}
+    void SetPFlowDirctX(double newPFlowDirctX) {pflow_seed_px_ = newPFlowDirctX;}
+    void SetPFlowDirctY(double newPFlowDirctY) {pflow_seed_py_ = newPFlowDirctY;}
+    void SetPFlowQoP(double newPFlowQoP) {pflow_seed_pz_ = newPFlowQoP;}
     void SetChi2(double newChi2) {chi2_ = newChi2;}
     void SetChi2Algo(double newChi2) {chi2_algo_ = newChi2;}
     void Remove(int i);
@@ -136,11 +138,11 @@ private:
     double pz_{RETURN};
     double pp_{RETURN};
     double pl_{RETURN};
-    double ECal_seed_x_{RETURN};
-    double ECal_seed_y_{RETURN};
-    double ECal_seed_px_{RETURN};
-    double ECal_seed_py_{RETURN};
-    double ECal_seed_pz_{RETURN};
+    double pflow_seed_x_{RETURN};
+    double pflow_seed_y_{RETURN};
+    double pflow_seed_px_{RETURN};
+    double pflow_seed_py_{RETURN};
+    double pflow_seed_pz_{RETURN};
 
 //................................................................................//
 //Track properties
@@ -158,9 +160,9 @@ private:
     double xSigma_{RETURN};
     double ySigma_{RETURN};
     bool   if_extrapolated_{false};
-    std::vector<double> extrapolated_x_;
-    std::vector<double> extrapolated_y_;
-    std::vector<double> corrections_x_;
+    std::vector<double> extrapolated_xs_;
+    std::vector<double> extrapolated_ys_;
+    std::vector<double> corrections_xs_;
 
 //................................................................................//
 //Finding properties

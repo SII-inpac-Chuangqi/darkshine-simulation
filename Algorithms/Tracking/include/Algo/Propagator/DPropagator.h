@@ -5,16 +5,13 @@
 #ifndef TRACKING_ACTS_DPROPAGATOR_H
 #define TRACKING_ACTS_DPROPAGATOR_H
 
-#include <array>
+#include <iostream>
 
 #include "TEveTrackPropagator.h"
 
 #include "Algo/Propagator/Propagator.h"
 
 class DPropagator final: public TEveTrackPropagator, public Propagator {
-private:
-    using vector3D = std::array<double, 3>;
-
 public:
     DPropagator(): TEveTrackPropagator() {};
     virtual ~DPropagator() override = default;
@@ -35,8 +32,56 @@ public:
                                           {plane_normal.at(0), plane_normal.at(1), plane_normal.at(2)},
                                           mom_itsect, pos_itsect);
 
+        if(!result)
+        {
+            std::cerr << "[WARNING] ==> Error detected in extrapolation at ("
+                          << plane_pos.at(0) << ", " << plane_pos.at(0) << ", " << plane_pos.at(0) << ")"
+                          << std::endl;
+
+            mom_out = vector3D();
+            pos_out = vector3D();
+
+            return false;
+        }
+
         mom_out = {mom_itsect[0], mom_itsect[1], mom_itsect[2]};
         pos_out = {pos_itsect[0], pos_itsect[1], pos_itsect[2]};
+
+        return result;
+    }
+
+    virtual bool ExtrapolateToPlanes(const vector3D &mom_in, const std::vector<vector3D> &plane_poss, const std::vector<vector3D> &plane_normals,
+                                     std::vector<vector3D> &mom_outs, std::vector<vector3D> &pos_outs) override
+    {
+        bool result = true;
+
+        mom_outs.clear();
+        pos_outs.clear();
+
+        mom_outs.reserve(plane_pos.size());
+        pos_outs.reserve(plane_pos.size());
+
+        vector3D mom_out;
+        vector3D pos_out;
+        for(auto &&[plane_pos, plane_normal] : utils::make_zip(plane_poss, plane_normals))
+        {
+            auto result = ExtrapolateToPlane(mom_in, plane_pos, plane_normal, mom_out, pos_out);
+
+            if(!result)
+            {
+                std::cerr << "[WARNING] ==> Error detected in extrapolation at ("
+                          << plane_pos.at(0) << ", " << plane_pos.at(0) << ", " << plane_pos.at(0) << ")"
+                          << std::endl;
+                result = false;
+
+                mom_outs.push_back(vector3D());
+                pos_outs.push_back(vector3D());
+                continue;
+            }
+
+            mom_outs.push_back(mom_out);
+            pos_outs.push_back(pos_out);
+        }
 
         return result;
     }

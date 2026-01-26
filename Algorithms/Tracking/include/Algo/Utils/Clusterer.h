@@ -1,10 +1,6 @@
 #ifndef CLUSTERER_H
 #define CLUSTERER_H
 
-#ifndef RETURN
-#define RETURN std::nan("RETURN")
-#endif
-
 //................................................................................//
 //C++
 #include <cmath>
@@ -15,6 +11,10 @@
 //................................................................................//
 //ROOT
 #include "TString.h"
+
+#ifndef RETURN
+#define RETURN std::nan("RETURN")
+#endif
 
 template <class T>
 class Clusterer

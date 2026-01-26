@@ -1,14 +1,11 @@
 #ifndef TRACKING_DIGITIZATION_H
 #define TRACKING_DIGITIZATION_H
 
-#ifndef RETURN
-#define RETURN std::nan("RETURN")
-#endif
-
 //................................................................................//
 //C++
 #include <map>
 #include <vector>
+#include <cmath>
 
 //................................................................................//
 //ROOT
@@ -24,6 +21,10 @@
 #include "Algo/TypeDef.h"
 #include "Algo/Object/TrkHit.h"
 #include "Algo/Object/HitPool.h"
+
+#ifndef RETURN
+#define RETURN std::nan("RETURN")
+#endif
 
 class Digitization
 {

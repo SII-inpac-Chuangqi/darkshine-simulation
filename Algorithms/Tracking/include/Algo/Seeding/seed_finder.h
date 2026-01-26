@@ -21,7 +21,7 @@ public:
         int bottoms_n = 2;
         double kasa_chi2 = 0.97;
         double linear_r2 = 0.03;
-        double min_R = 250.;
+        double min_R = 300.;
         double sigma_z = 1.;
         int max_seed = 10;
         int verbose = 0;
@@ -114,7 +114,8 @@ public:
 
         if(bottom_ids.size() == 0 || bottom_ids.size() > 2)
         {
-            std::cerr << "[WARNING] ==> Expect 1 or 2 bottom layers, " << bottom_ids.size() << " received" << std::endl;
+            if(config_.verbose > 0)
+                std::cerr << "[WARNING] ==> Expect 1 or 2 bottom layers, " << bottom_ids.size() << " received" << std::endl;
             return;
         }     
 
@@ -257,7 +258,7 @@ private:
                     seed_helper::KasaFit(x, y, 3, A, B, R, chi2);
 //                    std::cout << "R: " << R << std::endl;
 
-                    if(R < config_.min_R*1.2)
+                    if(R < config_.min_R)
                     {
                         if(config_.verbose > 0)
                         {
@@ -298,6 +299,7 @@ private:
                                  std::hypot(s2.GetQ1(), s2.GetQ2(), s2.GetR0()/Rmax);
                       }
                      );
+
             auto max_seed = (config_.max_seed < seed_n_i) ? config_.max_seed : seed_n_i;
             seeds.insert(seeds.end(),
                          snapshot.candidates.begin() + seed_n,
