@@ -58,7 +58,7 @@ public:
 
 //................................................................................//
 //Get Corrections from inhomogeneous magnet
-    std::vector<double> GetCorrectionsX() const override {return corrections_x_;}
+    virtual std::vector<double> GetCorrectionsX() const override {return corrections_x_;}
 
 private:
 //................................................................................//

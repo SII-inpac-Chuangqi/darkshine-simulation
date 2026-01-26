@@ -62,6 +62,9 @@ public:
     void readGeometryDetails();
     void printGeometryDetails() const;
 
+//Target
+    double getTargetThickness() const {return target_thickness_;}
+
 //Tag tracker
     const std::vector<double> getLayerWidthTag()  const {return layer_width_tag;}
     const std::vector<double> getLayerLengthTag() const {return layer_length_tag;}
@@ -127,7 +130,8 @@ public:
     void PrintTruthInfo() const;
     bool hasDTruth(){return truth_!=nullptr;};
 
-    std::vector<std::pair<const DTruthState*,int>> getTruthStatesAtECalFront() const; // for tracker
+    std::vector<std::pair<DTruthState*, std::pair<int, int>>> getTruthStatesAtTarget() const; // for tracker
+    std::vector<std::pair<const DTruthState*, int>> getTruthStatesAtECalFront() const; // for tracker
     std::vector<std::pair<const DTruthParticle*, const DTruthState*>> getTruthsAtECalFront() const; // for ECAL
 
     unsigned int getNTruthTracks(DTruth::DTruthDetPV DetPV, double min_energy = 50., int min_hits = 4) const;
@@ -150,6 +154,8 @@ protected:
     vector<double>   const_mag_field_vec;
 
     TGeoNode* world_{nullptr};
+
+    double target_thickness_{0.35};
 
     std::vector<double> layer_width_tag;
     std::vector<double> layer_length_tag;

@@ -79,6 +79,14 @@ void TrackingProcessor::Begin() {
     seed_finder_.Connect(&TrkHit::GetX, &TrkHit::GetZ, &TrkHit::GetY);
     tag_finder_config_.verbose = Verbose;
     rec_finder_config_.verbose = Verbose;
+    rec_finder_config_.min_R_scale = {
+                                      {5, 0.4},
+                                     };
+
+    tag_genfit_config_.propagator = &propagator_;
+    rec_genfit_config_.propagator = &propagator_;
+    tag_genfit_config_.extrapolated_surface = 0.5*dAnaData->getTargetThickness();
+    rec_genfit_config_.extrapolated_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
 
 //................................................................................//
 //Load fitter info
@@ -122,7 +130,7 @@ void TrackingProcessor::Begin() {
 //Truth
 //................................................................................//
     if (!clean) {
-        EvtWrt->RegisterIntVariable("TagTrk2_No", &TagTrk2_No, "TagTrk2_No/I");
+        EvtWrt->RegisterIntVariable("TagTrk2_No_truth", &TagTrk2_No_truth, "TagTrk2_No_truth/I");
         EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_ini", &TagTrk2_pp_truth_ini, "TagTrk2_pp_truth_ini/D");
         EvtWrt->RegisterDoubleVariable("TagTrk2_pp_truth_fin", &TagTrk2_pp_truth_fin, "TagTrk2_pp_truth_fin/D");
         EvtWrt->RegisterOutVariable("TagTrk2_truth_hit_x", &TagTrk2_truth_hit_x);
@@ -134,7 +142,7 @@ void TrackingProcessor::Begin() {
         EvtWrt->RegisterOutVariable("TagTrk2_truth_state_y", &TagTrk2_truth_state_y);
         EvtWrt->RegisterOutVariable("TagTrk2_truth_state_z", &TagTrk2_truth_state_z);
 
-        EvtWrt->RegisterIntVariable("RecTrk2_No", &RecTrk2_No, "RecTrk2_No/I");
+        EvtWrt->RegisterIntVariable("RecTrk2_No_truth", &RecTrk2_No_truth, "RecTrk2_No_truth/I");
         EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_ini", &RecTrk2_pp_truth_ini, "RecTrk2_pp_truth_ini/D");
         EvtWrt->RegisterDoubleVariable("RecTrk2_pp_truth_fin", &RecTrk2_pp_truth_fin, "RecTrk2_pp_truth_fin/D");
         EvtWrt->RegisterOutVariable("RecTrk2_truth_hit_x", &RecTrk2_truth_hit_x);
@@ -166,10 +174,24 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("TagTrk2_track_chi2_algo", &TagTrk2_track_chi2_algo);
 
     if (!clean) {
+        EvtWrt->RegisterIntVariable("TagTrk2_No", &TagTrk2_No, "TagTrk2_No/I");
+
         EvtWrt->RegisterIntVariable("TagTrk2_seed_No", &TagTrk2_seed_No, "TagTrk2_seed_No/I");
 //        EvtWrt->RegisterOutVariable("TagTrk2_track_quality", &TagTrk2_track_quality);
         EvtWrt->RegisterOutVariable("TagTrk2_track_x_sigma", &TagTrk2_track_x_sigma);
         EvtWrt->RegisterOutVariable("TagTrk2_track_y_sigma", &TagTrk2_track_y_sigma);
+
+        EvtWrt->RegisterOutVariable("target_seed_x_truth",  &target_seed_x_truth);
+        EvtWrt->RegisterOutVariable("target_seed_y_truth",  &target_seed_y_truth);
+        EvtWrt->RegisterOutVariable("target_seed_px_truth", &target_seed_px_truth);
+        EvtWrt->RegisterOutVariable("target_seed_py_truth", &target_seed_py_truth);
+        EvtWrt->RegisterOutVariable("target_seed_pz_truth", &target_seed_pz_truth);
+
+        EvtWrt->RegisterOutVariable("target_seed_x",  &target_seed_x);
+        EvtWrt->RegisterOutVariable("target_seed_y",  &target_seed_y);
+        EvtWrt->RegisterOutVariable("target_seed_px", &target_seed_px);
+        EvtWrt->RegisterOutVariable("target_seed_py", &target_seed_py);
+        EvtWrt->RegisterOutVariable("target_seed_pz", &target_seed_pz);
     }
 
 //................................................................................//
@@ -180,6 +202,8 @@ void TrackingProcessor::Begin() {
     EvtWrt->RegisterOutVariable("RecTrk2_track_chi2_algo", &RecTrk2_track_chi2_algo);
 
     if (!clean) {
+        EvtWrt->RegisterIntVariable("RecTrk2_No", &RecTrk2_No, "RecTrk2_No/I");
+
         EvtWrt->RegisterIntVariable("RecTrk2_seed_No", &RecTrk2_seed_No, "RecTrk2_seed_No/I");
 
 //        EvtWrt->RegisterOutVariable("RecTrk2_track_quality", &RecTrk2_track_quality);
@@ -228,6 +252,8 @@ void TrackingProcessor::Begin() {
 }
 
 void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
+    using namespace dunits;
+
     [[maybe_unused]] bool if_initial_steps(false);
     [[maybe_unused]] bool if_raw_tag_hits(false);
     [[maybe_unused]] bool if_raw_rec_hits(false);
@@ -297,6 +323,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //Digitization
         digitizer_.Layering(raw_tagtrk1_hits, raw_tagtrk2_hits, &tag_hit_pool_, tracking::dTag);
+        TagTrk2_No = tag_hit_pool_.size();
 
         if(tag_hit_pool_.size())
         {
@@ -322,7 +349,7 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                     if(if_backwards) track->Reverse();
 
                     WrappedFitter fitter;
-                    if      (Tag_fit_method == tracking::dKalman)  fitter.Run(genfit_config_, track);
+                    if      (Tag_fit_method == tracking::dKalman)  fitter.Run(tag_genfit_config_, track);
                     else if (Tag_fit_method == tracking::dRiemann) fitter.Run(riemann_config_, track);
                 }
             }
@@ -331,12 +358,13 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 
 //................................................................................//
 //Recoil tracker
-    if (IsValidHitSize(raw_rectrk2_hits))
+    if (IsValidHitSize(raw_rectrk2_hits) && IsValidHitSize(raw_rectrk1_hits))
     {
         if_raw_rec_hit_number = true;
 
 //Digitization
         digitizer_.Layering(raw_rectrk1_hits, raw_rectrk2_hits, &rec_hit_pool_, tracking::dRec);
+        RecTrk2_No = rec_hit_pool_.size();
 
         if(rec_hit_pool_.size())
         {
@@ -348,7 +376,26 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
                 SeedContainer_t seeds;
                 seed_finder_.Run(rec_seeder_config_, seeds, &rec_hit_pool_);
                 RecTrk2_seed_No = seeds.size();
+/*
+                TMatrixDSym target_hit_cov(2);
+                target_hit_cov(0, 0) = 0.03_mm*0.03_mm;
+                target_hit_cov(1, 1) = 0.03_mm*0.03_mm;
 
+                for (auto &track : tag_tracks_)
+                {
+                    auto hit = std::make_shared<TrkHit>();
+                    hit->SetCellIdZ(0);
+                    hit->SetX(track->GetPFlowSeedX());
+                    hit->SetY(track->GetPFlowSeedY());
+                    hit->SetZ(0.5*dAnaData->getTargetThickness());
+                    hit->SetXYCov(target_hit_cov);
+
+//                    std::cout << *hit << std::endl;
+//                    rec_hit_pool_.AddHit(std::move(hit)); 
+                }
+
+//                rec_hit_pool_.Print();
+*/
 //Finding, by pre-fitting
                 rec_finder_.Run(rec_finder_config_, &rec_hit_pool_, seeds);
                 rec_tracks_ = rec_finder_.GetTracks();
@@ -356,12 +403,13 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
 //Fit, by Genfit, Kalman filter/by Riemann fitting
                 RecTrk2_track_No = rec_tracks_.size();
           
-                for (auto &track : rec_tracks_) {
+                for (auto &track : rec_tracks_)
+                {
                     track->SetVerbose(Verbose);
                     if(if_backwards) track->Reverse();
 
                     WrappedFitter fitter;
-                    if      (Rec_fit_method == tracking::dKalman)  fitter.Run(genfit_config_, track);
+                    if      (Rec_fit_method == tracking::dKalman)  fitter.Run(rec_genfit_config_, track);
                     else if (Rec_fit_method == tracking::dRiemann) fitter.Run(riemann_config_, track);
                 }
             }
@@ -404,10 +452,17 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
     
         if (!clean)
         {
+            TagTrk2_track_chi2.push_back(track->GetChi2());
             TagTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
 //            TagTrk2_track_quality.push_back(track->GetQuality());
             TagTrk2_track_x_sigma.push_back(track->GetXSigma());
             TagTrk2_track_y_sigma.push_back(track->GetYSigma());
+
+            target_seed_x.push_back(track->GetPFlowSeedX());
+            target_seed_y.push_back(track->GetPFlowSeedY());
+            target_seed_px.push_back(track->GetPFlowDirctX());
+            target_seed_py.push_back(track->GetPFlowDirctY());
+            target_seed_pz.push_back(track->GetPFlowQoP());
         }
     }
 
@@ -416,13 +471,14 @@ void TrackingProcessor::ProcessEvt(AnaEvent *evt) {
         RecTrk2_pp.push_back(track->GetPp());
 //            RecTrk2_track_chi2.push_back(track->GetChi2());
 
-        ECal_seed_x.push_back(track->GetECalSeedX());
-        ECal_seed_y.push_back(track->GetECalSeedY());
-        ECal_seed_px.push_back(track->GetECalDirctX());
-        ECal_seed_py.push_back(track->GetECalDirctY());
-        ECal_seed_pz.push_back(track->GetECalQoP());
+        ECal_seed_x.push_back(track->GetPFlowSeedX());
+        ECal_seed_y.push_back(track->GetPFlowSeedY());
+        ECal_seed_px.push_back(track->GetPFlowDirctX());
+        ECal_seed_py.push_back(track->GetPFlowDirctY());
+        ECal_seed_pz.push_back(track->GetPFlowQoP());
 
         if (!clean) {
+            RecTrk2_track_chi2.push_back(track->GetChi2());
             RecTrk2_track_chi2_algo.push_back(track->GetChi2Algo());
 //            RecTrk2_track_quality.push_back(track->GetQuality());
             RecTrk2_track_x_sigma.push_back(track->GetXSigma());

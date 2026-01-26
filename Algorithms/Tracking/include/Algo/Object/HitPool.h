@@ -83,7 +83,8 @@ public:
 
         if(std::abs(shift) + n_bottom_id + n_middle_id + n_top_id > static_cast<int>(structured_->size()))
         {
-            std::cerr << "[WARNING] ==> Required total ids exceeds pool size" << std::endl;
+            if(verbose_ > 0)
+                std::cerr << "[WARNING] ==> Required total ids exceeds pool size" << std::endl;
             return std::make_tuple(id_container_t(), 0, 0);
         }
 
@@ -139,6 +140,8 @@ public:
     }
 
 private:
+    int verbose_{0};
+
     id_container_t bottom_ids_;
     size_t middle_id_{0};
     size_t top_id_{0};

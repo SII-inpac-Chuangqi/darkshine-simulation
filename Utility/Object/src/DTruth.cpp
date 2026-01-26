@@ -217,7 +217,8 @@ map <pair<int, int>, vector<DTruthState *>> DTruth::getTracksInRegion(DTruthDetP
                 auto t = vector<DTruthState *>();
                 // Loop all states in one track to retrieve states in required region
                 for (auto itr = track.second.begin(); itr != track.second.end(); ++itr) {
-                    if ((*itr)->vertex[2] > DetPV_Z.at(DetPV).first && (*itr)->vertex[2] < DetPV_Z.at(DetPV).second) {
+                    if ((*itr)->vertex[2] > DetPV_Z.at(DetPV).first && (*itr)->vertex[2] < DetPV_Z.at(DetPV).second)
+                    {
                         // insert the initial state before entering the region
                         if ((itr != track.second.begin()) && t.empty()) t.push_back(*(itr - 1));
                         // insert the current state if satisfied z range

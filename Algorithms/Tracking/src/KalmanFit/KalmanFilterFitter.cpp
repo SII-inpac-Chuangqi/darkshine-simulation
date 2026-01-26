@@ -1,7 +1,8 @@
+#include "Algo/KalmanFit/KalmanFilterFitter.h"
+
 //................................................................................//
 //C++
 #include <iostream>
-#include <map>
 #include <vector>
 #include <algorithm>
 
@@ -13,7 +14,6 @@
 
 //................................................................................//
 //Framework
-#include "Object/SimulatedHit.h"
 #include "Core/AnaData.h"
 #include "Utility/Units.h"
 
@@ -26,8 +26,9 @@
 //Tracking
 #include "Algo/Object/TrkHit.h"
 #include "Algo/Object/DTrack.h"
-#include "Algo/KalmanFit/KalmanFilterFitter.h"
 #include "Algo/Calibrator/NullCalibrator.h"
+#include "Algo/Propagator/Propagator.h"
+#include "Algo/Propagator/GFPropagator.h"
 
 //................................................................................//
 //Constructor
@@ -35,6 +36,8 @@ KalmanFilterFitter::KalmanFilterFitter(Config config, DTrackP track, int verbose
 {
     track_   = track;
     verbose_ = verbose;
+
+    propagator_ = config.propagator;
 
     track_->LinkFitter(this);
 
@@ -67,6 +70,15 @@ KalmanFilterFitter::KalmanFilterFitter(Config config, DTrackP track, int verbose
     }
 }
 
+KalmanFilterFitter::~KalmanFilterFitter()
+{
+    track_->LinkFitter(nullptr);
+
+    //delete measurement; measurement = nullptr;
+    delete fit_track_; fit_track_ = nullptr;
+    //delete fitter; fitter = nullptr;
+}
+
 //................................................................................//
 //Processor
 //................................................................................//
@@ -88,10 +100,10 @@ void KalmanFilterFitter::Init(const TrkHitSPVec &hits)
     //genfit::MaterialEffects::getInstance()->init(new genfit::TGeoMaterialInterface());
     //genfit::FieldManager::getInstance()->init(new genfit::ConstField(0., B*10., 0.)); //Magnet, T->kGs
 
-    rep = new genfit::RKTrackRep(pdg);
+    rep_ = new genfit::RKTrackRep(pdg);
     //fitter = new genfit::KalmanFitterRefTrack();
     fitter = std::make_unique<genfit::KalmanFitterRefTrack>();
-    fitTrack = new genfit::Track(rep, pos, mom);
+    fit_track_ = new genfit::Track(rep_, pos, mom);
 }
 
 //................................................................................//
@@ -128,13 +140,13 @@ void KalmanFilterFitter::Fit(const TrkHitSPVec &hits)
                                                                           TVector3(1, 0, 0),   //spanning vector u
                                                                           TVector3(0, 1, 0))), //spanning vector v
                                                                           ++planeId);
-        fitTrack->insertPoint(new genfit::TrackPoint(measurement, fitTrack));
+        fit_track_->insertPoint(new genfit::TrackPoint(measurement, fit_track_));
     }
 
     //check
-    fitTrack->checkConsistency();
+    fit_track_->checkConsistency();
     //fit
-    fitter->processTrack(fitTrack);
+    fitter->processTrack(fit_track_);
  
 }
 
@@ -144,7 +156,7 @@ void KalmanFilterFitter::Fill(const TrkHitSPVec &hits)
 {
     using namespace dunits;
 
-    fitTrack->getFittedState().getPosMomCov(pos, mom, hitCov);
+    fit_track_->getFittedState().getPosMomCov(pos, mom, hitCov);
 
     px_ = -mom.Px() * genfit_to_dss::GeV;
     py_ = mom.Py() * genfit_to_dss::GeV;
@@ -156,50 +168,24 @@ void KalmanFilterFitter::Fill(const TrkHitSPVec &hits)
 
     double bchi2;
     double bndf;
-    fitter->getChiSquNdf(fitTrack, rep, bchi2, fchi2_, bndf, fndf_);
+    fitter->getChiSquNdf(fit_track_, rep_, bchi2, fchi2_, bndf, fndf_);
 
+    auto [ending_mom, ending_pos] = this->ExtrapolateToPlane(hits.at(0)->GetZ());
+    x_sigma_ = ending_pos[0] - hits.at(0)->GetX();
+    y_sigma_ = ending_pos[1] - hits.at(0)->GetY();
+
+    double extrapolated_surface = config_.extrapolated_surface;
+    if(std::isnormal(extrapolated_surface) || extrapolated_surface == 0.)
     {
-        genfit::TrackPoint *tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
-        genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo *>(tp->getFitterInfo(rep))->getBackwardUpdate()));
-        genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
-                                                                   0.,
-                                                                   (*hits.at(0)).GetZ() * dss_to_genfit::mm),
-                                                          TVector3(1, 0, 0),
-                                                          TVector3(0, 1, 0)));
-        rep->extrapolateToPlane(kfsop, plane);
-        const TVectorD& state = kfsop.getState();
-        //std::cout << "dimension of state: " << state.GetNoElements() << std::endl;
-        //std::cout << "momemtum error: " << 1/abs(state[0])*1000 - sqrt(pp*pp + pl*pl) << std::endl;
-        x_sigma_ = state[3] * genfit_to_dss::cm - (*hits.at(0)).GetX();
-        //std::cout << "position error: " << xSigma << std::endl;
-        y_sigma_ = state[4] * genfit_to_dss::cm - (*hits.at(0)).GetY();
-    }
+        auto [pflow_mom, pflow_pos] = this->ExtrapolateToPlane(extrapolated_surface);
 
-    double ECal_front_surface = dAnaData->getECalCenterZ() - 0.5*dAnaData->getECalLengthZ();
-    if(std::isnormal(ECal_front_surface) || ECal_front_surface == 0.)
-    {
+        pflow_seed_x_ = pflow_pos[0];
+        pflow_seed_y_ = pflow_pos[1];
+        //std::cout << pflow_seed_y_ << std::endl;
 
-        genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
-        genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
-        genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
-                                                                   0.,
-                                                                   ECal_front_surface * dss_to_genfit::mm),
-                                                          TVector3(1, 0, 0),
-                                                          TVector3(0, 1, 0)));
-        rep->extrapolateToPlane(kfsop, plane);
-        const TVectorD& state = kfsop.getState();
-        //ECal_qop_ = 1./state[0]*1000.;
-        //ECal_dirct_x_ = state[1];
-        //ECal_dirct_y_ = state[2];
-        ECal_seed_x_ = state[3] * genfit_to_dss::cm;
-        ECal_seed_y_ = state[4] * genfit_to_dss::cm;
-        //std::cout << ECal_seed_pz_ << std::endl;
-        //std::cout << ECal_seed_y_ << std::endl;
-
-        auto mom_on_ECal = kfsop.getMom();
-        ECal_seed_px_ = -mom_on_ECal[0] * genfit_to_dss::GeV; //fix direction
-        ECal_seed_py_ =  mom_on_ECal[1] * genfit_to_dss::GeV; //
-        ECal_seed_pz_ = -mom_on_ECal[2] * genfit_to_dss::GeV; //
+        pflow_seed_px_ = pflow_mom[0];
+        pflow_seed_py_ = pflow_mom[1];
+        pflow_seed_pz_ = pflow_mom[2];
     }
 
     track_->SetPx(px_);
@@ -207,90 +193,115 @@ void KalmanFilterFitter::Fill(const TrkHitSPVec &hits)
     track_->SetPz(pz_);
     track_->SetPp(pp_);
     track_->SetNdf(fndf_);
+    track_->SetChi2(this->CalcTrackChi2(hits));
     track_->SetChi2Algo(fchi2_);
     track_->SetXSigma(x_sigma_);
     track_->SetYSigma(y_sigma_);
-    track_->SetECalSeedX(ECal_seed_x_);
-    track_->SetECalSeedY(ECal_seed_y_);
-    track_->SetECalDirctX(ECal_seed_px_);
-    track_->SetECalDirctY(ECal_seed_py_);
-    track_->SetECalQoP(ECal_seed_pz_);
+    track_->SetPFlowSeedX(pflow_seed_x_);
+    track_->SetPFlowSeedY(pflow_seed_y_);
+    track_->SetPFlowDirctX(pflow_seed_px_);
+    track_->SetPFlowDirctY(pflow_seed_py_);
+    track_->SetPFlowQoP(pflow_seed_pz_);
 }
 
 //................................................................................//
 //Get
 //................................................................................//
-//Calculate sign of charge of input hits
-/*
-int KalmanFilterFitter::GetSign(const TrkHitSPVec &hits)
+std::tuple<std::vector<Fitter::vector3D>, std::vector<Fitter::vector3D>> KalmanFilterFitter::ExtrapolateToPlanes(const std::vector<double> &planes_z)
 {
-    double xl  = hits.at(hits.size() - 1)->GetU();
-    double xlr = hits.at(hits.size() - 2)->GetU();
-    double xr  = hits.at(0)->GetU();
-    double xrl = hits.at(1)->GetU();
-
-    double zl  = hits.at(hits.size() - 1)->GetZ();
-    double zlr = hits.at(hits.size() - 2)->GetZ();
-    double zr  = hits.at(0)->GetZ();
-    double zrl = hits.at(1)->GetZ();
-
-    if(zr < zl)
+    if(!propagator_)
     {
-        std::swap(xl,  xr );
-        std::swap(xlr, xrl);
-        std::swap(zl,  zr );
-        std::swap(zlr, zrl);
-    }
-
-    int s = 0;
-    s = (xr - xrl)/sqrt((xr - xrl)*(xr - xrl) + (zr - zrl)*(zr - zrl)) >
-        (xlr - xl)/sqrt((xl - xlr)*(xl - xlr) + (zl - zlr)*(zl - zlr)) ? 1 : -1;
-    return s;
-}
-*/
-
-std::vector<double> KalmanFilterFitter::ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir)
-{
-    using namespace dunits;
-
-    if(!rep || !fitTrack)
-    {
-        if(verbose_ > 0)
-            std::cerr << "[WARNING] ==> No hits to extrapolate" << std::endl;
-
+        std::cerr << "[WARNING] ==> No fitter in KalmanFilterFitter" << std::endl;
         return {};
     }
 
-    std::vector<double> extrapolated;
-    for(const auto &plane_z : planes_z)
+    if(dynamic_cast<GFPropagator*>(propagator_) == nullptr)
     {
-        genfit::TrackPoint* tp = fitTrack->getPointWithMeasurementAndFitterInfo(0, rep);
-        genfit::KalmanFittedStateOnPlane kfsop(*(static_cast<genfit::KalmanFitterInfo*>(tp->getFitterInfo(rep))->getBackwardUpdate()));
-        genfit::SharedPlanePtr plane(new genfit::DetPlane(TVector3(0.,
-                                                                   0.,
-                                                                   plane_z * dss_to_genfit::mm),
-                                                          TVector3(1, 0, 0),
-                                                          TVector3(0, 1, 0)));
-
-        try
-        {
-            rep->extrapolateToPlane(kfsop, plane);
-            const TVectorD& state = kfsop.getState();
-            if     (extrop_dir == tracking::dX) extrapolated.push_back(state[3]*10);
-            else if(extrop_dir == tracking::dY) extrapolated.push_back(state[4]*10);
-        }
-        catch(genfit::Exception& e)
-        {
-            if(verbose_ > 1)
-            {
-                std::cerr << "[WARNING] ==> When extrapolating hits at z=" << plane_z << "mm:" << std::endl;
-                std::cerr << "              " << e.what();
-            }
-
-            if     (extrop_dir == tracking::dX) extrapolated.push_back(RETURN);
-            else if(extrop_dir == tracking::dY) extrapolated.push_back(RETURN);
-        }
+        std::cerr << "[WARNING] ==> Currently only GFPropagator supported in KalmanFilterFitter." << std::endl;
+        return {};
     }
 
-    return extrapolated;
+    std::vector<vector3D> mom_outs;
+    std::vector<vector3D> pos_outs;
+
+    mom_outs.reserve(planes_z.size());
+    pos_outs.reserve(planes_z.size());
+
+    auto gf_propagator = dynamic_cast<GFPropagator*>(propagator_);
+
+    gf_propagator->ExtroplateToPlanesWithExistingRep(planes_z, fit_track_, rep_, mom_outs, pos_outs);
+    
+    return {mom_outs, pos_outs};
+}
+
+std::tuple<Fitter::vector3D, Fitter::vector3D> KalmanFilterFitter::ExtrapolateToPlane(const double &plane_z)
+{
+    if(!propagator_)
+    {
+        std::cerr << "[WARNING] ==> No fitter in KalmanFilterFitter" << std::endl;
+        return {};
+    }
+
+    if(dynamic_cast<GFPropagator*>(propagator_) == nullptr)
+    {
+        std::cerr << "[WARNING] ==> Currently only GFPropagator supported in KalmanFilterFitter." << std::endl;
+        return {};
+    }
+
+    std::vector<vector3D> mom_outs;
+    std::vector<vector3D> pos_outs;
+
+    auto gf_propagator = dynamic_cast<GFPropagator*>(propagator_);
+
+    gf_propagator->ExtroplateToPlanesWithExistingRep({plane_z}, fit_track_, rep_, mom_outs, pos_outs);
+
+    return {mom_outs.at(0), pos_outs.at(0)};
+}
+
+double KalmanFilterFitter::CalcTrackChi2(const TrkHitSPVec &hits)
+{
+    if(hits.size() < 4)
+    {
+    }
+
+    double mean_x = 0.;
+    double mean_y = 0.;
+    std::vector<double> track_xs;
+    std::vector<double> track_ys;
+    std::vector<double> track_zs;
+    for(const auto &hit : hits)
+    {
+        track_xs.push_back(hit->GetX());
+        track_ys.push_back(hit->GetY());
+        track_zs.push_back(hit->GetZ());
+
+        mean_x += hit->GetX();
+        mean_y += hit->GetY();
+    }
+    mean_x /= track_xs.size();
+    mean_y /= track_xs.size();
+
+    std::vector<double> extrapolated_xs;
+    std::vector<double> extrapolated_ys;
+    auto [extrapolated_moms, extrapolated_poss] = this->ExtrapolateToPlanes(track_zs);
+    for(const auto &extrapolated_pos : extrapolated_poss)
+    {
+        extrapolated_xs.push_back(extrapolated_pos[0]);
+        extrapolated_ys.push_back(extrapolated_pos[1]);
+    }
+
+    if(extrapolated_xs.size()*extrapolated_ys.size() == 0)
+    {
+        track_chi2_ = RETURN;
+        return track_chi2_;
+    }
+
+    double variance  = DTrack::GetResolutionX()*DTrack::GetResolutionX() + DTrack::GetResolutionY()*DTrack::GetResolutionY();
+    double deviation = 0.;
+    for(size_t i = 0; i < track_xs.size(); i++)
+        deviation += (track_xs.at(i) - extrapolated_xs.at(i))*(track_xs.at(i) - extrapolated_xs.at(i)) +
+                     (track_ys.at(i) - extrapolated_ys.at(i))*(track_ys.at(i) - extrapolated_ys.at(i));
+    track_chi2_ = deviation/variance*track_xs.size()/fndf_;
+
+    return track_chi2_;
 }

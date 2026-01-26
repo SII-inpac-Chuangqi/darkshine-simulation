@@ -9,7 +9,7 @@
 AnaData *dAnaData = nullptr;
 
 // Get Instance Class
-AnaData *AnaData::CreateInstance() {
+AnaData* AnaData::CreateInstance() {
     if (dAnaData == nullptr)
         dAnaData = new AnaData();
     return dAnaData;
@@ -130,6 +130,11 @@ void AnaData::readGeometryDetails() {
     for (int i = 0; i < world_->GetNdaughters(); ++i) {
         auto *detector = dynamic_cast<TGeoNode*>(world_->GetDaughter(i));
         auto detector_name = TString(detector->GetVolume()->GetName());
+
+        if(detector_name.Contains("Target")) {
+            auto *detector_shape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
+            target_thickness_ = root_to_dss::ul*2*detector_shape->GetDZ();
+        }
 
         if(detector_name.Contains("Trk")) { // TAGTrk or RECTrk
             auto *detector_shape = dynamic_cast<TGeoBBox*>(detector->GetVolume()->GetShape());
@@ -269,6 +274,9 @@ void AnaData::readGeometryDetails() {
 void AnaData::printGeometryDetails() const {
     std::cerr << "[INFO] ==> Geometry details:" << std::endl;
 
+    std::cerr << "           Target:      center at       [0, 0, 0] mm" << std::endl
+              << "                        thickness       " << target_thickness_  << " mm" << std::endl;
+
     std::cerr << "           Tag tracker: center at       [" << center_x_tag_ << ", " << center_y_tag_ << ", " << center_z_tag_ << "] mm    " << std::endl
               << "                        length x        " << length_x_tag_  << " mm" << std::endl
               << "                        length y        " << length_y_tag_  << " mm" << std::endl
@@ -400,10 +408,24 @@ std::vector<std::pair<const DTruthState*, int>> AnaData::getTruthStatesAtECalFro
     {
         auto if_in_ECal = ECal_states.find(key);
         if(if_in_ECal != ECal_states.end())
-            truth_tracks_at_ECal_front.push_back(std::make_pair(if_in_ECal->second.first,(int)key.second));
+            truth_tracks_at_ECal_front.push_back(std::make_pair(if_in_ECal->second.first, static_cast<int>(key.second)));
     }
 
     return truth_tracks_at_ECal_front;
+}
+
+std::vector<std::pair<DTruthState*, std::pair<int, int>>> AnaData::getTruthStatesAtTarget() const
+{
+    auto tracks_at_target = truth_->getTracksInRegion(DTruth::DTruthDetPV::Target);
+
+    std::vector<std::pair<DTruthState*, std::pair<int, int>>> truth_states_at_target;
+    for(const auto &[state_info, states] : tracks_at_target)
+    {
+        if(states.size() == 0) continue;
+        truth_states_at_target.push_back(std::make_pair(states.at(0), state_info));
+    }
+    
+    return truth_states_at_target;
 }
 
 std::vector<std::pair<const DTruthParticle*, const DTruthState*>> AnaData::getTruthsAtECalFront() const {
@@ -451,7 +473,6 @@ const DTruth* AnaData::getInitialElectron() const
 {
     return nullptr;
 }
-
 
 bool AnaData::makeCenterIdNeighborIdsMap_staggered() {
     std::vector<int> neighbors;

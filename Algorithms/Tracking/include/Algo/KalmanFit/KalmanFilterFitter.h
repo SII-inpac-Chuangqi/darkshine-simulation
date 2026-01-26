@@ -34,6 +34,7 @@ public:
     struct Config
     {
         double const_B = -1.5;
+        double extrapolated_surface = 0.;
         Propagator *propagator = nullptr;
     };
 
@@ -42,12 +43,7 @@ public:
 //Constructor
     KalmanFilterFitter() {}
     KalmanFilterFitter(Config config, DTrackP track, int verbose = 0);
-    ~KalmanFilterFitter()
-    {
-        //delete measurement; measurement = nullptr;
-        delete fitTrack; fitTrack = nullptr;
-        //delete fitter; fitter = nullptr;
-    };
+    ~KalmanFilterFitter();
 
     KalmanFilterFitter(const KalmanFilterFitter&) = delete;
     KalmanFilterFitter& operator =(const KalmanFilterFitter&) = delete;
@@ -60,18 +56,19 @@ public:
 
 //................................................................................//
 //Get
-    //int GetSign(const TrkHitSPVec &track);
-    virtual std::vector<double> ExtrapolateTo(const std::vector<double> &planes_z, tracking::direction extrop_dir = tracking::dX);
+    double CalcTrackChi2(const TrkHitSPVec &);
+
+    virtual std::tuple<std::vector<vector3D>, std::vector<vector3D>> ExtrapolateToPlanes(const std::vector<double> &planes_z);
+    virtual std::tuple<vector3D, vector3D> ExtrapolateToPlane(const double &plane_z);
 
 private:
     Config config_;
 
 //................................................................................//
 //Method specific
-    genfit::AbsTrackRep *rep = nullptr;
-    //genfit::AbsKalmanFitter *fitter = nullptr;
+    genfit::AbsTrackRep *rep_ = nullptr;
     std::unique_ptr<genfit::KalmanFitterRefTrack> fitter = std::make_unique<genfit::KalmanFitterRefTrack>();
-    genfit::Track *fitTrack = nullptr;
+    genfit::Track *fit_track_ = nullptr;
 
     genfit::PlanarMeasurement *measurement = nullptr;
 
