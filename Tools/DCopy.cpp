@@ -6,6 +6,7 @@
 #include <map>
 #include <set>
 #include <algorithm>
+#include <charconv>
 
 #include "TDirectory.h"
 #include "TKey.h"
@@ -24,12 +25,20 @@ std::vector<int> GetEventIds(const std::string &txt_name)
 
     std::string line;
     std::string token;
+
+    int number;
     while (std::getline(file, line))
     {
         std::stringstream ss(line);
         
         while (std::getline(ss, token, ','))
-            numbers.push_back(std::stoi(token));
+        {
+            auto [ptr, ec] = std::from_chars(token.data(), 
+                                             token.data() + token.size(), 
+                                             number);
+            if (ec == std::errc() && ptr == token.data() + token.size())
+                numbers.push_back(number);
+        }
     }
     
     file.close();
