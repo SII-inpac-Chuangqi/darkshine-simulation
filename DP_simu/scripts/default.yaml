@@ -64,7 +64,7 @@ dp_epsilon: 1e-3
 # Magnetic field
 ###########################################
 MagField:
-  mag_field_input: "mag_default.root"
+  mag_field_input: "magnet_0.75_20240521.root"
   uniform_mag_field: false # false - use mag_field_input; true - use the following setup
   tag_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
   rec_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
