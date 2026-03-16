@@ -253,3 +253,15 @@ endif()
 #            COPYONLY
 #    )
 #endforeach ()
+
+#----------------------------------------------------------------------------
+# Generate setup.sh script
+#
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/setup.sh.in
+    ${CMAKE_BINARY_DIR}/setup.sh
+    @ONLY
+)
+
+install(FILES ${CMAKE_BINARY_DIR}/setup.sh
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
