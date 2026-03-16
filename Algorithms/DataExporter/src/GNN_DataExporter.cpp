@@ -39,7 +39,10 @@ void GNN_DataExporter::Begin() {
     }
 
 
-    f = new TFile("Tracker_GNN.root", "RECREATE");
+    std::string fname = "Tracker_GNN";
+    if (suffix != "" ) fname += "_" + suffix;
+    fname += ".root";
+    f = new TFile(fname.data(), "RECREATE");
     t = new TTree("dp", "dp");
 
     collections = split(arg_collections, ',');
@@ -63,6 +66,8 @@ void GNN_DataExporter::Begin() {
         t->Branch((col + "_weight").data(), &weight.at(col));
 
     }
+
+    t->Branch("truth_N_track", &truth_N_track, "truth_N_track/I");
 
     t->Branch("run_num", &run_num, "run_num/L");
     t->Branch("evt_num", &evt_num, "evt_num/L");
@@ -102,137 +107,148 @@ GNN_DataExporter::sort_by_key(std::map<std::string, std::vector<double>> &hits, 
 
 void GNN_DataExporter::export_track(const std::string &CollectionName, const SimulatedHitMap &TrackerCollection,
                                     long long evtNum) {
-    if (TrackerCollection.count(CollectionName) != 0) {
-        auto col = TrackerCollection.at(CollectionName);
-
-        if (col->empty()) {
-            if (verbose > 1) {
-                cerr << "[ " << evtNum << " ]Collection: " << CollectionName << " is empty" << endl;
-
-                weight.at(CollectionName) = 0.0;
-            }
-            return;
-        }
-
-        // Step 1: Record hits information (x,y,z)
-        // Create index of hits
-        std::vector<size_t> indices(col->size());
-        std::iota(indices.begin(), indices.end(), 0);
-        for (auto itr: *col) {
-            node[CollectionName]["x"].push_back(itr->getX());
-            node[CollectionName]["y"].push_back(itr->getY());
-            node[CollectionName]["z"].push_back(itr->getZ());
-
-            auto BFieldAtPoint = dAnaData->getMagnetFieldAt({itr->getX(), itr->getY(), itr->getZ()});
-
-            node[CollectionName]["Bx"].push_back(BFieldAtPoint[0]);
-            node[CollectionName]["By"].push_back(BFieldAtPoint[1]);
-            node[CollectionName]["Bz"].push_back(BFieldAtPoint[2]);
-        }
-        auto sorted_indices = sort_by_key(node[CollectionName], "z");
-
-
-        // Step 2: Link nodes (only link the neighbour layers)
-
-        // --> First to split hits into different layers
-        double prev_z = -9999999;
-        size_t idx = -1;
-        std::vector<std::vector<size_t>> split_indices;
-        for (size_t i: indices) {
-            auto cur_z = node[CollectionName]["z"][i];
-            if (fabs(cur_z - prev_z) < eps)
-                split_indices[idx].push_back(i);
-            else if (cur_z > prev_z) {
-                split_indices.push_back({i});
-                idx++;
-                prev_z = cur_z;
-            } else {
-                cerr << i << " error state." << endl;
-            }
-        }
-
-        // --> Second fill indices in bi-direction
-        size_t split_indices_size = split_indices.size();
-        for (size_t i = 1; i < split_indices_size; ++i) {
-            for (size_t j: split_indices[i - 1]) {
-                for (size_t k: split_indices[i]) {
-                    // bi-direction but only record forward here
-                    // forward
-                    edge[CollectionName]["start"].push_back(j);
-                    edge[CollectionName]["end"].push_back(k);
-                }
-            }
-        }
-
-        // Step 3: Record Truth Edge Relation
-        std::map<int, std::vector<std::tuple<size_t, float>>> truth_edge;
-
-        size_t sorted_indices_size = sorted_indices.size();
-        for (size_t i = 0; i < sorted_indices_size; ++i) {
-            for (const auto &mc: col->at(sorted_indices[i])->getPContribution()) {
-                if (truth_edge.find(mc.getId()) != truth_edge.end()) {
-                    truth_edge[mc.getId()].emplace_back(std::make_tuple(i, mc.getEnergy()));
-                } else {
-                    truth_edge.insert({mc.getId(), {std::make_tuple(i, mc.getEnergy())}});
-                }
-            }
-        }
-
-        // --> For each edge, find if it's in the truth_edge
-        // map<mc_id, vector<node_id>>
-        std::map<int, std::vector<size_t> > edge_remove_mc;
-        size_t edge_start_size = edge[CollectionName]["start"].size();
-        unsigned long truth_count = 0;
-        for (size_t i = 0; i < edge_start_size; ++i) {
-            auto vs = edge[CollectionName]["start"][i];
-            auto ve = edge[CollectionName]["end"][i];
-            edge[CollectionName]["truth"].push_back(0);
-            edge[CollectionName]["p"].push_back(0);
-            for (const auto &trk: truth_edge) {
-                size_t trk_second_size = trk.second.size();
-                for (unsigned j = 1; j < trk_second_size; ++j) {
-                    if (
-                            (vs == std::get<0>(trk.second[j - 1]) && ve == std::get<0>(trk.second[j])) ||
-                            (ve == std::get<0>(trk.second[j - 1]) && vs == std::get<0>(trk.second[j]))
-                            ) {
-                        edge[CollectionName]["truth"][i] = 1;
-                        edge[CollectionName]["p"][i] =
-                                static_cast<size_t>(std::get<1>(trk.second[j - 1]));
-                        truth_count++;
-
-                        edge_remove_mc[trk.first].push_back(i);
-                        break;
-                    }
-                }
-            }
-        }
-        // Remove MC particles if they only contributes to less than three hits (< 2 edges)
-        for (const auto &trk: edge_remove_mc) {
-            if (trk.second.size() == 1) {
-                if (verbose > 1)
-                    cout << "MC " << trk.first << " only contributes to one edge, remove it." << endl;
-                edge[CollectionName]["truth"][trk.second.front()] = 0;
-                truth_count--;
-            }
-        }
-
-        weight.at(CollectionName) = static_cast<double >(truth_count) /
-                                    static_cast<double >(edge.at(CollectionName).at("start").size());
-
-        if (verbose > 3) {
-            cout << "[ " << evtNum << " ]Collection: " << CollectionName << endl;
-            cout << "  -- Truth Edge Count: " << truth_count << endl;
-            cout << "  -- Total Edge Count: " << edge.at(CollectionName).at("start").size() << endl;
-            cout << "  -- Weight: " << weight.at(CollectionName) << endl;
-
-            if (std::isnan(weight.at(CollectionName))) {
-                cerr << "Weight is nan" << endl;
-                exit(1);
-            }
-        }
-
-    } else {
+    if (TrackerCollection.count(CollectionName) == 0) {
         cerr << CollectionName << " not found" << endl;
+        return;
+    }
+
+    auto col = TrackerCollection.at(CollectionName);
+
+    if (col->empty()) {
+        if (verbose > 1) {
+            cerr << "[ " << evtNum << " ]Collection: " << CollectionName << " is empty" << endl;
+
+            weight.at(CollectionName) = 0.0;
+        }
+        return;
+    }
+
+    // Step 1: Record hits information (x,y,z)
+    // Create index of hits
+    std::vector<size_t> indices(col->size());
+    std::iota(indices.begin(), indices.end(), 0);
+    for (auto itr: *col) {
+        node[CollectionName]["x"].push_back(itr->getX());
+        node[CollectionName]["y"].push_back(itr->getY());
+        node[CollectionName]["z"].push_back(itr->getZ());
+
+        auto BFieldAtPoint = dAnaData->getMagnetFieldAt({itr->getX(), itr->getY(), itr->getZ()});
+
+        node[CollectionName]["Bx"].push_back(BFieldAtPoint[0]);
+        node[CollectionName]["By"].push_back(BFieldAtPoint[1]);
+        node[CollectionName]["Bz"].push_back(BFieldAtPoint[2]);
+    }
+    auto sorted_indices = sort_by_key(node[CollectionName], "z");
+
+
+    // Step 2: Link nodes (only link the neighbour layers)
+
+    // --> First to split hits into different layers
+    double prev_z = -9999999;
+    size_t idx = -1;
+    std::vector<std::vector<size_t>> split_indices;
+    for (size_t i: indices) {
+        auto cur_z = node[CollectionName]["z"][i];
+        if (fabs(cur_z - prev_z) < eps)
+            split_indices[idx].push_back(i);
+        else if (cur_z > prev_z) {
+            split_indices.push_back({i});
+            idx++;
+            prev_z = cur_z;
+        } else {
+            cerr << i << " error state." << endl;
+        }
+    }
+
+    // --> Second fill indices in bi-direction
+    size_t split_indices_size = split_indices.size();
+    for (size_t i = 1; i < split_indices_size; ++i) {
+        for (size_t j: split_indices[i - 1]) {
+            for (size_t k: split_indices[i]) {
+                // bi-direction but only record forward here
+                // forward
+                edge[CollectionName]["start"].push_back(j);
+                edge[CollectionName]["end"].push_back(k);
+            }
+        }
+    }
+
+    // Step 3: Record Truth Edge Relation
+    std::map<int, std::vector<std::tuple<size_t, float>>> truth_edge;
+
+    size_t sorted_indices_size = sorted_indices.size();
+    for (size_t i = 0; i < sorted_indices_size; ++i) {
+        for (const auto &mc: col->at(sorted_indices[i])->getPContribution()) {
+            if (truth_edge.find(mc.getId()) != truth_edge.end()) {
+                truth_edge[mc.getId()].emplace_back(std::make_tuple(i, mc.getEnergy()));
+            } else {
+                truth_edge.insert({mc.getId(), {std::make_tuple(i, mc.getEnergy())}});
+            }
+        }
+    }
+
+    // --> For each edge, find if it's in the truth_edge
+    // map<mc_id, vector<node_id>>
+    std::map<int, std::vector<size_t> > edge_remove_mc;
+    size_t edge_start_size = edge[CollectionName]["start"].size();
+    unsigned long truth_count = 0;
+    for (size_t i = 0; i < edge_start_size; ++i) {
+        auto vs = edge[CollectionName]["start"][i];
+        auto ve = edge[CollectionName]["end"][i];
+        edge[CollectionName]["truth"].push_back(0);
+        edge[CollectionName]["p"].push_back(0);
+        for (const auto &trk: truth_edge) {
+            size_t trk_second_size = trk.second.size();
+            for (unsigned j = 1; j < trk_second_size; ++j) {
+                if (
+                        (vs == std::get<0>(trk.second[j - 1]) && ve == std::get<0>(trk.second[j])) ||
+                        (ve == std::get<0>(trk.second[j - 1]) && vs == std::get<0>(trk.second[j]))
+                        ) {
+                    edge[CollectionName]["truth"][i] = 1;
+                    edge[CollectionName]["p"][i] =
+                            static_cast<size_t>(std::get<1>(trk.second[j - 1]));
+                    truth_count++;
+
+                    edge_remove_mc[trk.first].push_back(i);
+                    break;
+                }
+            }
+        }
+    }
+    // Remove MC particles if they only contributes to less than three hits (< 2 edges)
+    for (const auto &trk: edge_remove_mc) {
+        if (trk.second.size() == 1) {
+            if (verbose > 1)
+                cout << "MC " << trk.first << " only contributes to one edge, remove it." << endl;
+            edge[CollectionName]["truth"][trk.second.front()] = 0;
+            truth_count--;
+        }
+    }
+
+    weight.at(CollectionName) = static_cast<double >(truth_count) /
+                                static_cast<double >(edge.at(CollectionName).at("start").size());
+
+    auto find_truth_N_MC = [](const std::map<int, std::vector<std::tuple<size_t, float>>> &truth_particles)
+                           {
+                               int truth_N_MC = 0;
+                               for (const auto &[id, edges] : truth_particles) {
+                                   if (edges.size() != 0) ++truth_N_MC;
+                               }
+                               return truth_N_MC;
+                           };
+
+    truth_N_track = find_truth_N_MC(truth_edge);
+
+    if (verbose > 3) {
+        cout << "[ " << evtNum << " ]Collection: " << CollectionName << endl;
+        cout << "  -- Truth Edge Count: " << truth_count << endl;
+        cout << "  -- Total Edge Count: " << edge.at(CollectionName).at("start").size() << endl;
+        cout << "  -- Weight: " << weight.at(CollectionName) << endl;
+
+        if (std::isnan(weight.at(CollectionName))) {
+            cerr << "Weight is nan" << endl;
+            exit(1);
+        }
     }
 }
 
@@ -324,6 +340,8 @@ void GNN_DataExporter::ProcessEvt(AnaEvent *evt) {
         }
     };
 
+    truth_N_track = 0;
+
     clean_collection("AllTrk");
     clean_collection("TagTrk");
     clean_collection("RecTrk");
@@ -371,6 +389,7 @@ GNN_DataExporter::GNN_DataExporter(string name, shared_ptr<EventStoreAndWriter> 
     // Register the minimum energy for truth mc particles to be considered
     RegisterDoubleParameter("MinEnergy", "Minimum energy [MeV] for truth mc particles to be considered",
                             &MinEnergy, 50.0);
+    RegisterStringParameter("Suffix", "File name suffix", &suffix, "");
     RegisterStringParameter(
             "Collections",
             "Select from [DigitizedTagTrk, DigitizedRecTrk, TagTrk, RecTrk, AllTrk, AllDigitizedTrk], split with comma and no space",
