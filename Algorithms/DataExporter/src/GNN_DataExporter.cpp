@@ -54,6 +54,7 @@ void GNN_DataExporter::Begin() {
     for (const auto &col: collections) {
         node.insert({col, std::map<std::string, std::vector<double>>()});
         edge.insert({col, std::map<std::string, std::vector<size_t>>()});
+        energy.insert({col, std::vector<double>()});
         weight.insert({col, 0.0});
         for (const auto &p: gnn_node) {
             node.at(col).insert({p, std::vector<double>()});
@@ -63,11 +64,13 @@ void GNN_DataExporter::Begin() {
             edge.at(col).insert({p, std::vector<size_t>()});
             t->Branch((col + "_" + p).data(), &edge.at(col).at(p));
         }
-        t->Branch((col + "_weight").data(), &weight.at(col));
 
+        t->Branch((col + "_energy").data(), &energy.at(col));
+        t->Branch((col + "_weight").data(), &weight.at(col));
     }
 
-    t->Branch("truth_N_track", &truth_N_track, "truth_N_track/I");
+    t->Branch("truth_N_track_tag", &truth_N_track_tag, "truth_N_track_tag/I");
+    t->Branch("truth_N_track_rec", &truth_N_track_rec, "truth_N_track_rec/I");
 
     t->Branch("run_num", &run_num, "run_num/L");
     t->Branch("evt_num", &evt_num, "evt_num/L");
@@ -131,6 +134,8 @@ void GNN_DataExporter::export_track(const std::string &CollectionName, const Sim
         node[CollectionName]["x"].push_back(itr->getX());
         node[CollectionName]["y"].push_back(itr->getY());
         node[CollectionName]["z"].push_back(itr->getZ());
+
+        energy[CollectionName].push_back(itr->getE());
 
         auto BFieldAtPoint = dAnaData->getMagnetFieldAt({itr->getX(), itr->getY(), itr->getZ()});
 
@@ -237,7 +242,15 @@ void GNN_DataExporter::export_track(const std::string &CollectionName, const Sim
                                return truth_N_MC;
                            };
 
-    truth_N_track = find_truth_N_MC(truth_edge);
+    if      (CollectionName.find("Tag") != std::string::npos)
+        truth_N_track_tag = find_truth_N_MC(truth_edge);
+    else if (CollectionName.find("Rec") != std::string::npos)
+        truth_N_track_rec = find_truth_N_MC(truth_edge);
+
+//    std::cout << "CollectionName: " << CollectionName
+//              << ", found tag: " << (CollectionName.find("Tag") != std::string::npos)
+//              << ", found rec: " << (CollectionName.find("Rec") != std::string::npos)
+//              << ", tag N: " << truth_N_track_tag << ", rec N: " << truth_N_track_rec << std::endl;
 
     if (verbose > 3) {
         cout << "[ " << evtNum << " ]Collection: " << CollectionName << endl;
@@ -340,7 +353,8 @@ void GNN_DataExporter::ProcessEvt(AnaEvent *evt) {
         }
     };
 
-    truth_N_track = 0;
+    truth_N_track_tag = 0;
+    truth_N_track_rec = 0;
 
     clean_collection("AllTrk");
     clean_collection("TagTrk");
@@ -360,6 +374,8 @@ void GNN_DataExporter::ProcessEvt(AnaEvent *evt) {
             j.second.clear();
         }
     }
+
+    for (auto &i: energy) i.second.clear();
 }
 
 void GNN_DataExporter::CheckEvt(AnaEvent * /*evt*/) {

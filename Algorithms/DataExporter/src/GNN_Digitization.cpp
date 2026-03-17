@@ -93,6 +93,7 @@ GNN_Digitization::Run(
                     hit->setY(static_cast<float>(y));
                     hit->setZ(static_cast<float>(0.5 * (hit1->getZ() + hit2->getZ())));
                     hit->setCellIdZ(hit1->getCellIdZ());
+                    hit->setE(hit1->getE() + hit2->getE());
 
                     /*
                      * Merge the MC contribution
@@ -276,8 +277,11 @@ SimulatedHitVec GNN_Digitization::cluster(const vector<Point3D> &points, float t
         hit->setZ(center.z);
         hit->setCellIdZ(cluster.second.front().hit->getCellIdZ());
 
+        double hit_energy = 0.;
         std::vector<McParticle> mcps;
         for (const auto &point: cluster.second) {
+            hit_energy += point.hit->getE();
+
             // record the mc particles that contributed to this hit
             std::copy(
                     point.hit->getPContribution().begin(),
@@ -285,6 +289,8 @@ SimulatedHitVec GNN_Digitization::cluster(const vector<Point3D> &points, float t
                     std::back_inserter(mcps)
             );
         }
+
+        hit->setE(hit_energy);
 
         // Remove duplicate particles with same id, only keep the smallest Energy
         std::sort(mcps.begin(), mcps.end(), [](const McParticle &a, const McParticle &b) {
