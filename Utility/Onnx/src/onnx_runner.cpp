@@ -26,7 +26,7 @@ std::tuple<std::vector<std::string>, std::vector<std::vector<std::int64_t>>> Onn
     std::cout << "[INFO] ==> Input node name/shape:" << std::endl;
     for (size_t i = 0; i < session_->GetInputCount(); i++)
     {
-        input_names.emplace_back(session_->GetInputName(i, *allocator_));
+        input_names.emplace_back(session_->GetInputNameAllocated(i, *allocator_).get());
         input_shapes.emplace_back(session_->GetInputTypeInfo(i).GetTensorTypeAndShapeInfo().GetShape());
         std::cout << "            " << input_names.at(i) << " : " << PrintShape(input_shapes.at(i)) << std::endl;
     }
@@ -54,7 +54,7 @@ std::tuple<std::vector<std::string>, std::vector<std::vector<std::int64_t>>> Onn
     std::cout << "[INFO] ==> Output node name/shape:" << std::endl;
     for (size_t i = 0; i < session_->GetOutputCount(); i++)
     {
-        output_names.emplace_back(session_->GetOutputName(i, *allocator_));
+        output_names.emplace_back(session_->GetOutputNameAllocated(i, *allocator_).get());
         output_shapes.emplace_back(session_->GetOutputTypeInfo(i).GetTensorTypeAndShapeInfo().GetShape());
         std::cout << "            " << output_names.at(i) << " : " << PrintShape(output_shapes.at(i)) << std::endl;
     }

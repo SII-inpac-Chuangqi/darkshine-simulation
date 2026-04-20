@@ -32,8 +32,6 @@ general_particle_source:
     ang/rot2: "1 0 0"
     ene/type: "Gauss"
     ene/mono: "8 GeV"
-    #direction: "0 0 1"
-    #position: "0 0 -61 cm"
   beam_on: 10
 
 ###########################################
@@ -55,7 +53,7 @@ signal_mass: [ 500, "MeV" ]
 # If to use signal LUT
 signal_use_LUT: false
 # signal LUT place
-signal_lookup_table: "/lustre/collider/chenxiang/Dark_Photon/generator/dp_lookup_table_20220515.root"
+signal_lookup_table: "dp_E8_W_LUT_20220515.root"
 # setups for visble decay (Currently visible decay mode only supports signal_mass < 500 MeV --Xiang Chen on 6/7/2022)
 visible_decay: false
 # decay channel: [ee or mumu]
@@ -66,8 +64,8 @@ dp_epsilon: 1e-3
 # Magnetic field
 ###########################################
 MagField:
-  mag_field_input: "mag_default.root"
-  uniform_mag_field: true # false - use mag_field_input; true - use the following setup
+  mag_field_input: "magnet_1.5.root"
+  uniform_mag_field: false # false - use mag_field_input; true - use the following setup
   tag_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
   rec_Tracker_MagField: [ 0, "tesla", -1.5 , "tesla", 0, "tesla" ]
   mag_verbose: 0
@@ -93,7 +91,7 @@ OutCollection:
   # save the initial particle step
   save_initial_particle_step: true
   # save snapshot of particle passing through surface of ECAL Region
-  save_mcp_helper: false
+  save_mcp_helper: true
 
   RawMCCollection_Name: "RawMCParticle"
   InitialParticleStepCollection_Name: "Initial_Particle_Step"
@@ -203,12 +201,13 @@ Geometry:
   # Size is the total length, not the half
   Target:
     Target_Mat: "G4_W"
-    Target_Size: [ 10 , "cm", 20 , "cm", 350 , "um" ]
+    Target_Size: [ 20 , "cm", 10 , "cm", 350 , "um" ]
     Target_Pos: [ 0 , "cm", 0 , "cm", 0 , "cm" ]
   MagnetShield:
     MagnetShield_Thickness: [ 50, "cm" ]
   Tracker:
-    build_silicon_micro_strip: false # false - only build one silicon micro strip in one tracker volume
+    build_silicon_micro_strip: true # false - only build one silicon micro strip in one tracker volume
+    build_silicon_pixel: false
     Trk_Tar_Dis: [ 7.5, "mm" ]
     Tracker_Mat: "G4_Si"
     TrackerRegion_Mat: "vacuum"
@@ -216,13 +215,13 @@ Geometry:
     Tracker2_Color: [ 0. , 0.5, 0.5 ] # RGB
     # Tagging Tracker
     tag_Size_Tracker:
-      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 1
-      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 2
-      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 3
-      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 4
-      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 5
-      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 6
-      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 7
+      - [ 20.1 , "cm", 10 , "cm", 0.15 , "mm" ] # Layer 1
+      - [ 20.1 , "cm", 10 , "cm", 0.15 , "mm" ] # Layer 2
+      - [ 20.1 , "cm", 10 , "cm", 0.15 , "mm" ] # Layer 3
+      - [ 20.1 , "cm", 10 , "cm", 0.15 , "mm" ] # Layer 4
+      - [ 20.1 , "cm", 10 , "cm", 0.15 , "mm" ] # Layer 5
+      - [ 20.1 , "cm", 10 , "cm", 0.15 , "mm" ] # Layer 6
+      - [ 20.1 , "cm", 10 , "cm", 0.15 , "mm" ] # Layer 7
     tag_Pos_Tracker:
       - [ 0 , "cm", 0 , "cm", -30 , "cm" ] # Layer 1
       - [ 0 , "cm", 0 , "cm", -20 , "cm" ] # Layer 2
@@ -239,16 +238,17 @@ Geometry:
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 5
       - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 6
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 7
-    tag_Tracker_Strip_N: [ 1000 , 1000 , 1000 , 1000 , 1000 , 1000 , 1000 ]
+    tag_Tracker_Strip_N: [ 6700 , 6700 , 6700 , 6700 , 6700 , 6700 , 6700 ]
+    tag_Tracker_Pixel_N: [ 10 , 10 , 10 , 10 , 10 , 10 , 10 ]
     tag_Tracker_Strip_Block_N: 100 # Strip number per block. This number must be a common divisor of tag_Tracker_Strip_N !
     # Recoil Tracker
     rec_Size_Tracker:
-      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 1
-      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 2
-      - [ 10 , "cm", 20 , "cm", 0.1 , "mm" ] # Layer 3
-      - [ 12 , "cm", 23 , "cm", 0.1 , "mm" ] # Layer 4
-      - [ 18 , "cm", 28 , "cm", 0.1 , "mm" ] # Layer 5
-      - [ 25 , "cm", 40 , "cm", 0.1 , "mm" ] # Layer 6
+      - [ 20.1 , "cm", 10  , "cm", 0.15 , "mm" ] # Layer 1
+      - [ 20.1 , "cm", 10  , "cm", 0.15 , "mm" ] # Layer 2
+      - [ 20.1 , "cm", 10  , "cm", 0.15 , "mm" ] # Layer 3
+      - [ 24   , "cm", 11.5, "cm", 0.15 , "mm" ] # Layer 4
+      - [ 36   , "cm", 14  , "cm", 0.15 , "mm" ] # Layer 5
+      - [ 50.1 , "cm", 20  , "cm", 0.15 , "mm" ] # Layer 6
     rec_Pos_Tracker:
       - [ 0 , "cm", 0 , "cm", -86.25 , "mm" ] # Layer 1
       - [ 0 , "cm", 0 , "cm", -71.25 , "mm" ] # Layer 2
@@ -263,7 +263,8 @@ Geometry:
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 4
       - [ 0, "radian" , -0.05 , "radian" , 0 , "um" ] #Layer 5
       - [ 0, "radian" ,  0.05 , "radian" , 0 , "um" ] #Layer 6
-    rec_Tracker_Strip_N: [ 2000, 2000 , 2000 , 2000 , 2000 , 2000 ]
+    rec_Tracker_Strip_N: [ 6700, 6700, 6700, 8000 , 12000 , 16700 ]
+    rec_Tracker_Pixel_N: [ 10 , 10 , 10 , 10 , 10 , 10 ]
     rec_Tracker_Strip_Block_N: 100 # Strip number per Block. This number must be a common divisor of rec_Tracker_Strip_N !
   ECAL:
     ECAL_Name: "ECAL"

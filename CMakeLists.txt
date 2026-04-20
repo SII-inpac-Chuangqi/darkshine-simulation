@@ -141,8 +141,12 @@ find_package(nlohmann_json 3.2.0 REQUIRED)
 # Onnx
 #
 if (BUILD_ONNX)
-    set(ONNXRUNTIME_INCLUDE_DIRS "/lustre/collider/zhuyifan/Software/onnxruntime/onnxruntime-linux-x64-1.11.1/include")
+    if (NOT ONNX_ROOT_DIR)
+        set(ONNX_ROOT_DIR "/opt/onnxruntime")
+    endif()
+    set(ONNXRUNTIME_INCLUDE_DIRS "${ONNX_ROOT_DIR}/include")
     include_directories(${ONNXRUNTIME_INCLUDE_DIRS})
+    link_directories("${ONNX_ROOT_DIR}/lib")
 endif ()
 
 #----------------------------------------------------------------------------
