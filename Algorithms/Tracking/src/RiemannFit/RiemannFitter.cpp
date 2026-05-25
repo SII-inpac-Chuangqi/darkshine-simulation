@@ -32,6 +32,7 @@ RiemannFitter::RiemannFitter(Config config, DTrackP track, int verbose) : config
     {
         this->Init(hits);
         this->Fit (hits);
+        this->Fit3D(hits);      // 3D helix extension
         this->Fill(hits);
     }
     catch(...)
@@ -68,34 +69,20 @@ void RiemannFitter::Fit(const TrkHitSPVec &hits)
     {
         corrections_x_ = this->GetDeltax(hits);
         TMatrixD cart_coo(GetCartCoo(hits));
-        //cart_coo.Print();
         TMatrixD polar_coo(GetPolarCoo(hits));
-        //polar_coo.Print();
         
         TMatrixD v_cart0(GetVcart0());
-        //v_cart0.Print();
         TMatrixD v_cartx(GetVcartx(hits));
-        //v_cartx.Print();
         TMatrixD j1(GetJ1(hits));
-        //j1.Print();
         TMatrixD j2(GetJ2(hits));
-        //j2.Print();
         TMatrixD v_rad0(GetVrad0(v_cart0, j1, j2));
-        //v_rad0.Print();
         TMatrixD v_radms(GetVradms(polar_coo));
-        //v_radms.Print();
         TMatrixD v_radx(GetVradx(v_cartx, j1, j2));
-        //v_radx.Print();
         TMatrixD g(GetG(v_rad0, v_radms, v_radx));
-        //g.Print();
         TMatrixD w(GetW(g));
-        //w.Print();
         TMatrixD x_c(GetXc(cart_coo, w));
-        //x_c.Print();
         TMatrixD x_g(GetXg(cart_coo, x_c));
-        //x_g.Print();
         TMatrixD normal_vecs(GetNormalVecs(g, x_g));
-        //normal_vecs.Print();
 
         const double *get_x_c = x_c.GetMatrixArray();
         const double *get_normal_vec = normal_vecs.GetMatrixArray();
@@ -110,11 +97,6 @@ void RiemannFitter::Fit(const TrkHitSPVec &hits)
         double curr_Xc = -0.5*n1_/n3_;
         double curr_Yc = -0.5*n2_/n3_;
 
-//        std::cout << i << ": " << std::endl;
-//        std::cout << " -- " << pre_Xc_ << ", \t" << curr_Xc << ", \t" << std::abs(curr_Xc/(pre_Xc_ + curr_Xc)) << std::endl;
-//        std::cout << " -- " << pre_Yc_ << ", \t" << curr_Yc << ", \t" << std::abs(curr_Yc/(pre_Yc_ + curr_Yc)) << std::endl;
-//        std::cout << " -- " << pre_R_  << ", \t" << curr_R  << ", \t" << std::abs((curr_R - pre_R_)/pre_R_) << std::endl;
-
         if(std::abs(curr_Xc/(pre_Xc_ + curr_Xc)) < 1e-4 &&
            std::abs(curr_Yc/(pre_Yc_ + curr_Yc)) < 1e-4 &&
            std::abs((curr_R - pre_R_)/pre_R_) < 1e-4)
@@ -126,8 +108,110 @@ void RiemannFitter::Fit(const TrkHitSPVec &hits)
             pre_Yc_ += curr_Yc;
         }
     }
+}
 
-    //std::cout << 0.3*abs(RiemannFitHelper::GetMagnetAtOrigin(tracking::dY)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_) << " MeV" << std::endl;
+//................................................................................//
+// 3D Helix Extension
+// Compute arc lengths along the fitted circle for each hit
+std::vector<double> RiemannFitter::ComputeArcLengths(const TrkHitSPVec &hits, int sign) const
+{
+    std::vector<double> arc_lengths;
+    arc_lengths.reserve(hits.size());
+
+    if(hits.size() < 2 || pre_R_ <= 0.)
+    {
+        // Return zero arc lengths — linear fit will be degenerate
+        arc_lengths.assign(hits.size(), 0.);
+        return arc_lengths;
+    }
+
+    // Reference: first hit
+    double x_ref = hits.at(0)->GetX() - pre_Xc_;
+    double z_ref = hits.at(0)->GetZ() - pre_Yc_;
+    double phi_ref = std::atan2(z_ref, x_ref);
+
+    arc_lengths.push_back(0.);  // s_0 = 0
+
+    for(size_t i = 1; i < hits.size(); i++)
+    {
+        double xi = hits.at(i)->GetX() - pre_Xc_;
+        double zi = hits.at(i)->GetZ() - pre_Yc_;
+        double phi_i = std::atan2(zi, xi);
+
+        // Compute signed angular difference
+        double dphi = phi_i - phi_ref;
+        // Unwrap to shortest path consistent with sign
+        // For a circle, hits should be ordered monotonically in phi
+        if(sign > 0 && dphi < 0.) dphi += 2.*TMath::Pi();
+        if(sign < 0 && dphi > 0.) dphi -= 2.*TMath::Pi();
+
+        arc_lengths.push_back(pre_R_ * dphi);
+    }
+
+    return arc_lengths;
+}
+
+// Linear fit of y-coordinate vs arc length
+std::array<double, 3> RiemannFitter::FitYvsArcLength(
+    const std::vector<double> &arc_lengths,
+    const TrkHitSPVec &hits) const
+{
+    // Returns {y0, tan_lambda, r_squared}
+    size_t n = arc_lengths.size();
+    if(n < 2)
+        return {hits.at(0)->GetY(), 0., 0.};
+
+    double sum_s = 0., sum_y = 0., sum_ss = 0., sum_sy = 0.;
+    for(size_t i = 0; i < n; i++)
+    {
+        double s = arc_lengths[i];
+        double y = hits.at(i)->GetY();
+        sum_s  += s;
+        sum_y  += y;
+        sum_ss += s * s;
+        sum_sy += s * y;
+    }
+
+    double denom = n * sum_ss - sum_s * sum_s;
+    double tan_lambda = 0.;
+    double y0 = 0.;
+
+    if(std::abs(denom) > 1e-12)
+    {
+        tan_lambda = (n * sum_sy - sum_s * sum_y) / denom;
+        y0 = (sum_y - tan_lambda * sum_s) / n;
+    }
+    else
+    {
+        // Degenerate: all arc lengths equal (single point or zero R)
+        y0 = sum_y / n;
+        tan_lambda = 0.;
+    }
+
+    // Compute R² quality metric
+    double y_mean = sum_y / n;
+    double ss_res = 0., ss_tot = 0.;
+    for(size_t i = 0; i < n; i++)
+    {
+        double y_pred = y0 + tan_lambda * arc_lengths[i];
+        ss_res += (hits.at(i)->GetY() - y_pred) * (hits.at(i)->GetY() - y_pred);
+        ss_tot += (hits.at(i)->GetY() - y_mean) * (hits.at(i)->GetY() - y_mean);
+    }
+    double r_squared = (ss_tot > 1e-12) ? 1. - ss_res / ss_tot : 0.;
+
+    return {y0, tan_lambda, r_squared};
+}
+
+void RiemannFitter::Fit3D(const TrkHitSPVec &hits)
+{
+    auto s = GetSign(hits);
+
+    std::vector<double> arc_lengths = ComputeArcLengths(hits, s);
+    auto [y0, tan_lambda, r_squared] = FitYvsArcLength(arc_lengths, hits);
+
+    y0_ = y0;
+    tan_lambda_ = tan_lambda;
+    y_chi2_ = r_squared;  // higher = better linear fit
 }
 
 void RiemannFitter::Fill(const TrkHitSPVec& hits)
@@ -138,20 +222,35 @@ void RiemannFitter::Fill(const TrkHitSPVec& hits)
     double x = -s*sqrt(pre_R_*pre_R_ - (z - pre_Yc_)*(z - pre_Yc_)) + pre_Xc_;
     pp_ = 0.3*abs(RiemannFitHelper::GetMagnetY(x, y, z)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
 
+    // Compute transverse momentum vector at first hit from circle tangent
     double h0x = hits.at(0)->GetX();
     double h0z = hits.at(0)->GetZ();
     double dx = h0x - pre_Xc_;
     double dz = h0z - pre_Yc_;
     double norm = std::hypot(dx, dz);
-    px_ = (norm > 0) ? s * (-dz / norm) * pp_ : pp_;
-    py_ = 0.;
-    pz_ = (norm > 0) ? s * (dx / norm) * pp_ : 0.;
 
-    track_->SetPp(pp_);
+    // Transverse momentum components (xz-plane)
+    double pT_x = (norm > 0) ? s * (-dz / norm) * pp_ : pp_;
+    double pT_z = (norm > 0) ? s * (dx / norm) * pp_ : 0.;
+
+    // 3D: use dip angle from helix fit to get full momentum
+    double cos_lambda = 1. / std::sqrt(1. + tan_lambda_ * tan_lambda_);
+    double sin_lambda = tan_lambda_ * cos_lambda;
+
+    double p_total = pp_ / cos_lambda;  // total momentum
+    pl_ = p_total * sin_lambda;         // longitudinal (py)
+
+    px_ = pT_x * cos_lambda;  // scale transverse components to total momentum
+    py_ = pl_;
+    pz_ = pT_z * cos_lambda;
+
+    track_->SetPp(p_total);
     track_->SetPx(px_);
     track_->SetPy(py_);
     track_->SetPz(pz_);
+    track_->SetPl(pl_);
 
+    // Extrapolate using propagator if available
     if(propagator_)
     {
         auto [ending_mom, ending_pos] = this->ExtrapolateToPlane(hits.at(0)->GetZ());
@@ -186,7 +285,6 @@ TMatrixD RiemannFitter::GetCartCoo(const TrkHitSPVec &hits)
     for (int i = 0; i < dim_; i++)
     {
         double u = hits.at(i)->GetX() - pre_Xc_ + std::abs(corrections_x_[i])*s;
-        //double u = hits.at(i)->GetX() - pre_Xc_;
         double v = hits.at(i)->GetZ() - pre_Yc_;
         data[i] = u;
         data[i + dim_] = v;
@@ -233,7 +331,6 @@ TMatrixD RiemannFitter::GetVradms(const TMatrixD &polar_coo)
             data[j + i*dim_] = GetVradmsIJ(polar_coo,
                                            i, // i
                                            j, // j
-
                                            ms_error_func,
                                            0.3*magnet_at_origin_*pre_R_ // momentum, MeV
                                           );
@@ -257,9 +354,9 @@ TMatrixD RiemannFitter::GetVcart0()
         {
             if(i == j)
             {
-                data[j + 2*i*dim_] = RiemannFitHelper::GetMeasurementError(tracking::dX)*                 //variance of x, mm*mm
+                data[j + 2*i*dim_] = RiemannFitHelper::GetMeasurementError(tracking::dX)*
                                      RiemannFitHelper::GetMeasurementError(tracking::dX);
-                data[j + dim_ + 2*(i + dim_)*dim_] = RiemannFitHelper::GetMeasurementError(tracking::dZ)* //variance of z, mm
+                data[j + dim_ + 2*(i + dim_)*dim_] = RiemannFitHelper::GetMeasurementError(tracking::dZ)*
                                                      RiemannFitHelper::GetMeasurementError(tracking::dZ);
             }
         }
@@ -293,7 +390,6 @@ std::vector<double> RiemannFitter::GetDeltax(const TrkHitSPVec &hits)
         if(i == 0)
             Ak[i] = 0.0;
         else
-//            Ak[i]=(Bk[i-1] - Bk[0]) * (Zk[i] - Zk[i-1]) + 0.5 * (Bk[i] - Bk[i-1]) * (Zk[i] + Zk[i-1]) - (Bk[i] - Bk[i-1]) * Zk[i-1];
             Ak[i] = 0.5 * (Bk[i] + Bk[i-1] - 2 * Bk[0]) * (Zk[i] - Zk[i-1]);
 
         double temp = 0.0;
@@ -306,12 +402,6 @@ std::vector<double> RiemannFitter::GetDeltax(const TrkHitSPVec &hits)
         else
             deltaXk[i] = (Zk[i] - Zk[i - 1])*(deltaSinak[i] + deltaSinak[i - 1])*0.5;
     }
-
-//    TArrayD data(dim_);
-//    for (int i = 0; i<dim_; i++)
-//    {
-//        data[i]=deltaXk[i];
-//    }
 
     return deltaXk;
 }
@@ -428,8 +518,6 @@ TMatrixD RiemannFitter::GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, co
 TMatrixD RiemannFitter::GetG(const TMatrixD &v_rad0, const TMatrixD &v_radms, [[maybe_unused]] const TMatrixD &v_radx)
 {
     TMatrixD g(v_rad0, TMatrixD::kPlus, v_radms);
-    //f.Invert();
-    //TMatrixD g(f, TMatrixD::kPlus, v_radx);
     if (g.Determinant() != 0)
         g.Invert();
 

@@ -3,6 +3,7 @@
 
 //................................................................................//
 //C++
+#include <array>
 #include <map>
 #include <vector>
 #include <memory>
@@ -49,6 +50,7 @@ public:
 //Processor
     virtual void Init(const TrkHitSPVec &track) override;
     virtual void Fit (const TrkHitSPVec &track) override;
+    virtual void Fit3D(const TrkHitSPVec &track);   // 3D helix extension
     virtual void Fill(const TrkHitSPVec &track) override;
 
 //................................................................................//
@@ -217,6 +219,15 @@ private:
 //Get covariance matrix of delta x in RΦ-R coordinate
     TMatrixD GetVradx(const TMatrixD &v_cartx, const TMatrixD &j1, const TMatrixD &j2);
 
+//................................................................................//
+// 3D Helix Extension
+// Compute arc lengths along the fitted circle for each hit
+    std::vector<double> ComputeArcLengths(const TrkHitSPVec &hits, int sign) const;
+
+// Linear fit of y-coordinate vs arc length (returns {y0, tan_lambda, r_squared})
+    std::array<double, 3> FitYvsArcLength(const std::vector<double> &arc_lengths,
+                                           const TrkHitSPVec &hits) const;
+
 private:
     Config config_;
 
@@ -243,6 +254,12 @@ private:
 //................................................................................//
 //Corrections from inhomogeneous magnet    
     std::vector<double> corrections_x_;
+
+//................................................................................//
+// 3D Helix fit results
+    double y0_{0.};           // y-offset at reference hit (along beam axis)
+    double tan_lambda_{0.};   // dip angle tangent = py / pT
+    double y_chi2_{RETURN};   // chi2-like quality of y-vs-arc-length linear fit
 };
 
 #endif
