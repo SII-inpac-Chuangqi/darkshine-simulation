@@ -43,27 +43,24 @@ GreedyFinder::hit_map_t GreedyFinder::GetFurnishedPool(pool_t *pool)
 
     if(furnished_pool.size() <= 2) return furnished_pool;
 
-    int *layers = new int[furnished_pool.size() - 2];
+    std::vector<int> layers;
+    layers.reserve(furnished_pool.size() - 2);
 
-    size_t i = 0;
     for(const auto &layer : furnished_pool)
      {
         if(layer.first != furnished_pool.begin() ->first &&
            layer.first != furnished_pool.rbegin()->first)
         {
-            layers[i] = layer.first;
-            i++;
+            layers.push_back(layer.first);
         }
      }
 
-     for(i = 0; i < furnished_pool.size() - 2; i++)
+     for(auto key : layers)
      {
-         auto layer = furnished_pool.extract(layers[i]);
+         auto layer = furnished_pool.extract(key);
          layer.key() = -layer.key();
          furnished_pool.insert(std::move(layer));
      }
-
-    delete [] layers;
 
     return furnished_pool;
 }
