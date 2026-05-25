@@ -148,13 +148,14 @@ public:
                                               << hit3 << std::endl << hit4 << std::endl;
                                 };
 
-        snapshot.candidates.reserve(top_layer.size()*middle_layer.size()*bottom0_layer.size()*bottom1_layer.size());
+        auto n_bottom1 = bottom1_layer.size() > 0 ? bottom1_layer.size() : 1u;
+        snapshot.candidates.reserve(top_layer.size()*middle_layer.size()*bottom0_layer.size()*n_bottom1);
         for(auto &middle_hit : middle_layer)
         {
             if(config_.verbose > 0) std::cout << "\nmiddle: " << *middle_hit << "\n" << std::endl;
 
             std::vector<Triplet> triplet_candidates;
-            triplet_candidates.reserve(top_layer.size()*bottom0_layer.size()*bottom1_layer.size());
+            triplet_candidates.reserve(top_layer.size()*bottom0_layer.size()*n_bottom1);
 
             SelectTripletCandidate(triplet_candidates, bottom0_layer, bottom1_layer, top_layer);
 
@@ -241,22 +242,34 @@ private:
 
         for(auto &bottom_hit : bottom_layer)
         {
-//            std::cout << *bottom_hit << "\n" << std::endl;
+            double bx = get_x_(*bottom_hit);
+            double by = get_y_(*bottom_hit);
             for(auto &middle_hit : middle_layer)
             {
-//                std::cout << *middle_hit << "\n" << std::endl;
+                double mx = get_x_(*middle_hit);
+                double my = get_y_(*middle_hit);
+                // Pre-filter: chord between bottom and middle must allow R > min_R/2
+                double chord_bm = std::hypot(mx - bx, my - by);
+                if(chord_bm < 1e-6) continue;
+                if(0.5 * chord_bm < config_.min_R * 0.3) continue;
+
                 for(auto &top_hit : top_layer)
                 {
-//                    std::cout << *top_hit << "\n" << std::endl;
-                    double x[] = {get_x_(*top_hit), get_x_(*middle_hit), get_x_(*bottom_hit)};
-                    double y[] = {get_y_(*top_hit), get_y_(*middle_hit), get_y_(*bottom_hit)};
+                    double tx = get_x_(*top_hit);
+                    double ty = get_y_(*top_hit);
+                    // Quick pre-filter: chord between extremes gives lower bound on R
+                    double chord_bt = std::hypot(tx - bx, ty - by);
+                    if(chord_bt < 1e-6) continue;
+                    if(0.5 * chord_bt < config_.min_R * 0.3) continue;
+
+                    double x[] = {tx, mx, bx};
+                    double y[] = {ty, my, by};
 
                     double A;
                     double B;
                     double R;
                     double chi2;
                     seed_helper::KasaFit(x, y, 3, A, B, R, chi2);
-//                    std::cout << "R: " << R << std::endl;
 
                     if(R < config_.min_R)
                     {
@@ -271,7 +284,6 @@ private:
                     }
 
                     candidates.emplace_back(bottom_hit, middle_hit, top_hit, A, B, R);
-//                    std::cout << *top_hit << ", \tchi2: " << chi2 << ", R: " << R << std::endl;
                 }
             }
         }

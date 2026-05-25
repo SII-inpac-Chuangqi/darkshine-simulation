@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <set>
+#include <unordered_set>
 
 #include "Algo/Seeding/seed_helper.h"
 
@@ -19,7 +20,7 @@ void GreedyFinder::ColinearFit()
     auto n_hit = manager_.current_track->candidate.size();
     if(n_hit < 3) return;
 
-    auto r = manager_.current_track->x;
+    std::vector<double> r(n_hit);
     auto x0 = manager_.current_track->x.at(0);
     auto y0 = manager_.current_track->y.at(0);
     std::transform(manager_.current_track->x.begin(), manager_.current_track->x.end(), manager_.current_track->y.begin(), r.begin(),
@@ -43,27 +44,24 @@ GreedyFinder::hit_map_t GreedyFinder::GetFurnishedPool(pool_t *pool)
 
     if(furnished_pool.size() <= 2) return furnished_pool;
 
-    int *layers = new int[furnished_pool.size() - 2];
+    std::vector<int> layers;
+    layers.reserve(furnished_pool.size() - 2);
 
-    size_t i = 0;
     for(const auto &layer : furnished_pool)
      {
         if(layer.first != furnished_pool.begin() ->first &&
            layer.first != furnished_pool.rbegin()->first)
         {
-            layers[i] = layer.first;
-            i++;
+            layers.push_back(layer.first);
         }
      }
 
-     for(i = 0; i < furnished_pool.size() - 2; i++)
+     for(auto key : layers)
      {
-         auto layer = furnished_pool.extract(layers[i]);
+         auto layer = furnished_pool.extract(key);
          layer.key() = -layer.key();
          furnished_pool.insert(std::move(layer));
      }
-
-    delete [] layers;
 
     return furnished_pool;
 }
@@ -205,6 +203,8 @@ void GreedyFinder::MergeTrack()
     for(size_t i = 0; i < output_tracks.size(); i++)
     {
         const std::vector<hit_p_t> &track_i = output_tracks.at(i)->candidate;
+        // Build unordered_set for O(1) hit lookup instead of O(n) std::find
+        std::unordered_set<hit_p_t> hits_i(track_i.begin(), track_i.end());
         for(size_t j = i + 1; j < output_tracks.size(); j++)
         {
             double err_A = manager_.output_As.at(i) - manager_.output_As.at(j);
@@ -214,9 +214,9 @@ void GreedyFinder::MergeTrack()
 //                std::cout << "track i-j = A: " << err_A << " B: " << err_B << " R: " << err_R << std::endl;
 
             const std::vector<hit_p_t> &track_j = manager_.output_tracks.at(j)->candidate;
-            auto c = std::count_if(track_i.begin(), track_i.end(),
-                                   [=](const hit_p_t &hit)
-                                   { return std::find(track_j.begin(), track_j.end(), hit) != track_j.end(); });
+            size_t c = 0;
+            for(const auto &hit : track_j)
+                if(hits_i.count(hit)) c++;
             if(c >= 3 ||
                (c == 2 && std::abs(std::hypot(err_A, err_B))/manager_.output_Rs.at(i) < 0.01 && std::abs(err_R) < 0.01))
             {
@@ -295,6 +295,21 @@ bool GreedyFinder::GreedyLooping(hit_map_t &pool, hit_map_t::iterator layer, con
     for(size_t hit_no = 0; hit_no < layer_hits.size(); hit_no++)
     {
         manager_.current_track->push_back(layer_hits.at(hit_no));
+
+        // Prune: if >= 3 hits, quick KasaFit check before recursing deeper
+        auto n_hit = manager_.current_track->candidate.size();
+        if(n_hit >= 3)
+        {
+            double _A, _B, _R, _chi2;
+            seed_helper::KasaFit(manager_.current_track->x.data(),
+                                 manager_.current_track->y.data(), n_hit,
+                                 _A, _B, _R, _chi2);
+            if(_R < config_.min_R * min_R_scale_ * 0.3 || _R > config_.max_R * 2.)
+            {
+                manager_.current_track->pop_back();
+                continue;
+            }
+        }
 
         if(!GreedyLooping(pool, layer, seed))
         {

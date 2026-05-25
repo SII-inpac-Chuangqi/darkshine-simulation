@@ -23,10 +23,10 @@
 
 void TrackingProcessor::InitEvt() {
 //We clear vertices first, then tracks, finally pools which hold the hits' memory
-    rec_vertexes_.clear(); rec_vertexes_.shrink_to_fit();
+    rec_vertexes_.clear();
 
-    tag_tracks_.clear(); tag_tracks_.shrink_to_fit();
-    rec_tracks_.clear(); rec_tracks_.shrink_to_fit();
+    tag_tracks_.clear();
+    rec_tracks_.clear();
 
     tag_hit_pool_.Clear();
     rec_hit_pool_.Clear();

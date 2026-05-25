@@ -202,6 +202,9 @@ private:
     double pre_Yc_{0.};
     double pre_theta_{0.};
 
+    // Cached magnet field at origin (Tesla) — computed once, reused in GetDeltax and GetVradms
+    double magnet_at_origin_{0.};
+
 //................................................................................//
 //Fit results
     double c_{0.};
