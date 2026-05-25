@@ -11,7 +11,9 @@ void GreedyFinder::KasaFit()
     auto n_hit = manager_.current_track->candidate.size();
     if(n_hit < 3) return;
 
-    seed_helper::KasaFit(manager_.current_track->x.data(), manager_.current_track->z.data(), n_hit,
+    std::vector<double> _x(n_hit), _y_kasa(n_hit);
+    for(size_t _i = 0; _i < n_hit; _i++) { _x[_i] = manager_.current_track->points[_i].x; _y_kasa[_i] = manager_.current_track->points[_i].z; }
+    seed_helper::KasaFit(_x.data(), _y_kasa.data(), n_hit,
                          manager_.current_A, manager_.current_B, manager_.current_R, manager_.current_chi2);
 }
 
@@ -21,13 +23,16 @@ void GreedyFinder::ColinearFit()
     if(n_hit < 3) return;
 
     std::vector<double> r(n_hit);
-    auto x0 = manager_.current_track->x.at(0);
-    auto y0 = manager_.current_track->y.at(0);
-    std::transform(manager_.current_track->x.begin(), manager_.current_track->x.end(), manager_.current_track->y.begin(), r.begin(),
-                   [=](double xi, double yi) { return std::hypot(xi - x0, yi - y0); });
+    auto x0 = manager_.current_track->points[0].x;
+    auto y0 = manager_.current_track->points[0].y;
+    for(size_t _i = 0; _i < n_hit; _i++)
+        r[_i] = std::hypot(manager_.current_track->points[_i].x - x0,
+                           manager_.current_track->points[_i].y - y0);
 
+    std::vector<double> _z_col(n_hit);
+    for(size_t _i = 0; _i < n_hit; _i++) _z_col[_i] = manager_.current_track->points[_i].z;
     double abr[3];
-    seed_helper::LinearFit(manager_.current_track->z.data(), r.data(), n_hit, abr);
+    seed_helper::LinearFit(_z_col.data(), r.data(), n_hit, abr);
     manager_.current_r2 = abr[2];
 }
 
@@ -301,8 +306,10 @@ bool GreedyFinder::GreedyLooping(hit_map_t &pool, hit_map_t::iterator layer, con
         if(n_hit >= 3)
         {
             double _A, _B, _R, _chi2;
-            seed_helper::KasaFit(manager_.current_track->x.data(),
-                                 manager_.current_track->y.data(), n_hit,
+            std::vector<double> _px(n_hit), _py(n_hit);
+            for(size_t _i = 0; _i < n_hit; _i++) { _px[_i] = manager_.current_track->points[_i].x; _py[_i] = manager_.current_track->points[_i].y; }
+            seed_helper::KasaFit(_px.data(),
+                                 _py.data(), n_hit,
                                  _A, _B, _R, _chi2);
             if(_R < config_.min_R * min_R_scale_ * 0.3 || _R > config_.max_R * 2.)
             {
