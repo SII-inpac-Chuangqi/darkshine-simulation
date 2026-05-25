@@ -102,7 +102,7 @@ RecHCAL.Verbose = 0  # Verbosity Variable
 RecHCAL.HCollectionToUse = FS0, FS1  # Calorimeter (HCAL) Collection to Use
 RecHCAL.ParticleStore = 0  # Particles' info in HCAL
 RecHCAL.HitStore = 0  # Hits' info in HCAL
-RecHCAL.BDTVarStore = 1  # BDT variables
+RecHCAL.BDTVarStore = 0  # BDT variables
 
 Tracking.Rec_fit_method = 2  # Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting
 Tracking.Tag_fit_method = 2  # Specify fitting method: 0, no fine fitting; 1, Kalman fitting; 2, Riemann fitting

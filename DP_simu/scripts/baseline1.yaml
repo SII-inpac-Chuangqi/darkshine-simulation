@@ -60,7 +60,7 @@ signal_lookup_table: "/lustre/collider/chenxiang/Dark_Photon/generator/dp_lookup
 visible_decay: false
 # decay channel: [ee or mumu]
 dp_decay_channel: "ee"
-dp_eplsion: 1e-3
+dp_epsilon: 1e-3
 
 ###########################################
 # Magnetic field
