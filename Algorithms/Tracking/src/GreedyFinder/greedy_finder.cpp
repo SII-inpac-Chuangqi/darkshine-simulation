@@ -19,7 +19,7 @@ void GreedyFinder::ColinearFit()
     auto n_hit = manager_.current_track->candidate.size();
     if(n_hit < 3) return;
 
-    auto r = manager_.current_track->x;
+    std::vector<double> r(n_hit);
     auto x0 = manager_.current_track->x.at(0);
     auto y0 = manager_.current_track->y.at(0);
     std::transform(manager_.current_track->x.begin(), manager_.current_track->x.end(), manager_.current_track->y.begin(), r.begin(),
