@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <set>
+#include <unordered_set>
 
 #include "Algo/Seeding/seed_helper.h"
 
@@ -202,6 +203,8 @@ void GreedyFinder::MergeTrack()
     for(size_t i = 0; i < output_tracks.size(); i++)
     {
         const std::vector<hit_p_t> &track_i = output_tracks.at(i)->candidate;
+        // Build unordered_set for O(1) hit lookup instead of O(n) std::find
+        std::unordered_set<hit_p_t> hits_i(track_i.begin(), track_i.end());
         for(size_t j = i + 1; j < output_tracks.size(); j++)
         {
             double err_A = manager_.output_As.at(i) - manager_.output_As.at(j);
@@ -211,9 +214,9 @@ void GreedyFinder::MergeTrack()
 //                std::cout << "track i-j = A: " << err_A << " B: " << err_B << " R: " << err_R << std::endl;
 
             const std::vector<hit_p_t> &track_j = manager_.output_tracks.at(j)->candidate;
-            auto c = std::count_if(track_i.begin(), track_i.end(),
-                                   [=](const hit_p_t &hit)
-                                   { return std::find(track_j.begin(), track_j.end(), hit) != track_j.end(); });
+            size_t c = 0;
+            for(const auto &hit : track_j)
+                if(hits_i.count(hit)) c++;
             if(c >= 3 ||
                (c == 2 && std::abs(std::hypot(err_A, err_B))/manager_.output_Rs.at(i) < 0.01 && std::abs(err_R) < 0.01))
             {
