@@ -23,6 +23,7 @@
 #include "Algo/TypeDef.h"
 #include "Algo/Object/TrkHit.h"
 #include "Algo/Fitter.h"
+#include "Algo/Propagator/Propagator.h"
 
 class RiemannFitter final : public Fitter
 {
@@ -39,7 +40,7 @@ public:
 //Constructor
     RiemannFitter() {}
     RiemannFitter(Config config, DTrackP track, int verbose = 0);
-    ~RiemannFitter() {};
+    ~RiemannFitter();
 
     RiemannFitter(const RiemannFitter&) = delete;
     RiemannFitter& operator =(const RiemannFitter&) = delete;
@@ -59,6 +60,33 @@ public:
 //................................................................................//
 //Get Corrections from inhomogeneous magnet
     virtual std::vector<double> GetCorrectionsX() const override {return corrections_x_;}
+
+//................................................................................//
+//Extrapolate momentum to planes using propagator
+    std::tuple<std::vector<vector3D>, std::vector<vector3D>> ExtrapolateToPlanes(const std::vector<double> &planes_z) override
+    {
+        if(!propagator_) return {};
+        vector3D mom_in = {px_, py_, pz_};
+        std::vector<vector3D> mom_outs, pos_outs, plane_poss, plane_normals;
+        mom_outs.reserve(planes_z.size()); pos_outs.reserve(planes_z.size());
+        for(const auto &z : planes_z)
+        {
+            plane_poss.push_back({0., 0., z});
+            plane_normals.push_back({0., 0., 1.});
+        }
+        propagator_->ExtrapolateToPlanes(mom_in, plane_poss, plane_normals, mom_outs, pos_outs);
+        return {mom_outs, pos_outs};
+    }
+    std::tuple<vector3D, vector3D> ExtrapolateToPlane(const double &plane_z) override
+    {
+        if(!propagator_) return {};
+        vector3D mom_in = {px_, py_, pz_};
+        vector3D plane_pos = {0., 0., plane_z};
+        vector3D plane_normal = {0., 0., 1.};
+        vector3D mom_out, pos_out;
+        propagator_->ExtrapolateToPlane(mom_in, plane_pos, plane_normal, mom_out, pos_out);
+        return {mom_out, pos_out};
+    }
 
 private:
 //................................................................................//

@@ -10,6 +10,7 @@
 //Tracking
 #include "Algo/RiemannFit/RiemannFitHelper.h"
 #include "Algo/Object/DTrack.h"
+#include "Algo/Propagator/Propagator.h"
 
 //................................................................................//
 //Constructor
@@ -17,6 +18,9 @@ RiemannFitter::RiemannFitter(Config config, DTrackP track, int verbose) : config
 {
     track_   = track;
     verbose_ = verbose;
+
+    propagator_ = config.propagator;
+    track_->LinkFitter(this);
 
     pre_Xc_ = track_->GetPreXc();
     pre_Yc_ = track_->GetPreYc();
@@ -36,6 +40,11 @@ RiemannFitter::RiemannFitter(Config config, DTrackP track, int verbose) : config
         pp_ = 0.3*std::abs(config_.const_B)*track_->GetPreR();
         return;
     }
+}
+
+RiemannFitter::~RiemannFitter()
+{
+    track_->LinkFitter(nullptr);
 }
 
 //................................................................................//
@@ -127,13 +136,30 @@ void RiemannFitter::Fill(const TrkHitSPVec& hits)
     double y = 0.5*(hits.at(0)->GetY() + hits.at(dim_ - 1)->GetY());
     double z = 0.5*(hits.at(0)->GetZ() + hits.at(dim_ - 1)->GetZ());
     double x = -s*sqrt(pre_R_*pre_R_ - (z - pre_Yc_)*(z - pre_Yc_)) + pre_Xc_;
-    //double y = hits.at(0)->GetY();
-    //double z = hits.at(0)->GetZ();
-    //double x = hits.at(0)->GetX();
-    //std::cout << 0.5*(hits.at(0)->GetX() + hits.at(dim_ - 1)->GetX()) << "\t" << x << std::endl;
     pp_ = 0.3*abs(RiemannFitHelper::GetMagnetY(x, y, z)*sqrt(1 - n3_*n3_*n3_*n3_ - 4*c_*n3_)*0.5/n3_);
 
+    double h0x = hits.at(0)->GetX();
+    double h0z = hits.at(0)->GetZ();
+    double dx = h0x - pre_Xc_;
+    double dz = h0z - pre_Yc_;
+    double norm = std::hypot(dx, dz);
+    px_ = (norm > 0) ? s * (-dz / norm) * pp_ : pp_;
+    py_ = 0.;
+    pz_ = (norm > 0) ? s * (dx / norm) * pp_ : 0.;
+
     track_->SetPp(pp_);
+    track_->SetPx(px_);
+    track_->SetPy(py_);
+    track_->SetPz(pz_);
+
+    if(propagator_)
+    {
+        auto [ending_mom, ending_pos] = this->ExtrapolateToPlane(hits.at(0)->GetZ());
+        x_sigma_ = ending_pos[0] - hits.at(0)->GetX();
+        y_sigma_ = ending_pos[1] - hits.at(0)->GetY();
+        track_->SetXSigma(x_sigma_);
+        track_->SetYSigma(y_sigma_);
+    }
 }
 
 //................................................................................//
