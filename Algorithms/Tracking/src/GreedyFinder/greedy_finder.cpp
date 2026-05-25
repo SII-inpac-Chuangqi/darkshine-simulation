@@ -296,6 +296,21 @@ bool GreedyFinder::GreedyLooping(hit_map_t &pool, hit_map_t::iterator layer, con
     {
         manager_.current_track->push_back(layer_hits.at(hit_no));
 
+        // Prune: if >= 3 hits, quick KasaFit check before recursing deeper
+        auto n_hit = manager_.current_track->candidate.size();
+        if(n_hit >= 3)
+        {
+            double _A, _B, _R, _chi2;
+            seed_helper::KasaFit(manager_.current_track->x.data(),
+                                 manager_.current_track->y.data(), n_hit,
+                                 _A, _B, _R, _chi2);
+            if(_R < config_.min_R * min_R_scale_ * 0.3 || _R > config_.max_R * 2.)
+            {
+                manager_.current_track->pop_back();
+                continue;
+            }
+        }
+
         if(!GreedyLooping(pool, layer, seed))
         {
             manager_.current_track->pop_back();
