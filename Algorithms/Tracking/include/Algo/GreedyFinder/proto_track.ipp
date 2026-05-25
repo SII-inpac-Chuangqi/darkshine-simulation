@@ -3,7 +3,9 @@
 inline void GreedyFinder::ProtoTrack::clear()
 {
     candidate.clear();
-    points.clear();
+    x.clear();
+    y.clear();
+    z.clear();
 
     seed_ids.clear();
 }
@@ -11,13 +13,17 @@ inline void GreedyFinder::ProtoTrack::clear()
 inline void GreedyFinder::ProtoTrack::push_back(const hit_p_t &hit)
 {
     candidate.push_back(hit);
-    points.emplace_back(hit->GetX(), hit->GetY(), hit->GetZ());
+    x.push_back(hit->GetX());
+    y.push_back(hit->GetY());
+    z.push_back(hit->GetZ());
 }
 
 inline void GreedyFinder::ProtoTrack::pop_back()
 {
     candidate.pop_back();
-    points.pop_back();
+    x.pop_back();
+    y.pop_back();
+    z.pop_back();
 }
 
 inline GreedyFinder::ProtoTrack& GreedyFinder::ProtoTrack::operator =(const seed_t &seed)

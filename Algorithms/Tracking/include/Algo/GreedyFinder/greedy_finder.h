@@ -47,17 +47,12 @@ public:
     };
 
 private:
-    struct HitPoint
-    {
-        double x{0.}, y{0.}, z{0.};
-        HitPoint() = default;
-        HitPoint(double xi, double yi, double zi) : x(xi), y(yi), z(zi) {}
-    };
-
     struct ProtoTrack
     {
         std::vector<hit_p_t> candidate;
-        std::vector<HitPoint> points;
+        std::vector<double>  x;
+        std::vector<double>  y;
+        std::vector<double>  z;
 
         std::vector<int> seed_ids;
 
