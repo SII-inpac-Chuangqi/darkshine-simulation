@@ -148,13 +148,14 @@ public:
                                               << hit3 << std::endl << hit4 << std::endl;
                                 };
 
-        snapshot.candidates.reserve(top_layer.size()*middle_layer.size()*bottom0_layer.size()*bottom1_layer.size());
+        auto n_bottom1 = bottom1_layer.size() > 0 ? bottom1_layer.size() : 1u;
+        snapshot.candidates.reserve(top_layer.size()*middle_layer.size()*bottom0_layer.size()*n_bottom1);
         for(auto &middle_hit : middle_layer)
         {
             if(config_.verbose > 0) std::cout << "\nmiddle: " << *middle_hit << "\n" << std::endl;
 
             std::vector<Triplet> triplet_candidates;
-            triplet_candidates.reserve(top_layer.size()*bottom0_layer.size()*bottom1_layer.size());
+            triplet_candidates.reserve(top_layer.size()*bottom0_layer.size()*n_bottom1);
 
             SelectTripletCandidate(triplet_candidates, bottom0_layer, bottom1_layer, top_layer);
 
