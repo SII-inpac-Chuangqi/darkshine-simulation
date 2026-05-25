@@ -43,6 +43,7 @@ RiemannFitter::RiemannFitter(Config config, DTrackP track, int verbose) : config
 void RiemannFitter::Init(const TrkHitSPVec &hits)
 {
     dim_ = hits.size();
+    magnet_at_origin_ = RiemannFitHelper::GetMagnetAtOrigin(tracking::dY);
     corrections_x_ = this->GetDeltax(hits);
     this->GetTheta(hits);
 }
@@ -56,6 +57,7 @@ void RiemannFitter::Fit(const TrkHitSPVec &hits)
 
     for(int i = 0; i < config_.max_trial; i++)
     {
+        corrections_x_ = this->GetDeltax(hits);
         TMatrixD cart_coo(GetCartCoo(hits));
         //cart_coo.Print();
         TMatrixD polar_coo(GetPolarCoo(hits));
@@ -157,7 +159,7 @@ TMatrixD RiemannFitter::GetCartCoo(const TrkHitSPVec &hits)
     TArrayD data(3*dim_);
     for (int i = 0; i < dim_; i++)
     {
-        double u = hits.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(hits)[i])*s;
+        double u = hits.at(i)->GetX() - pre_Xc_ + std::abs(corrections_x_[i])*s;
         //double u = hits.at(i)->GetX() - pre_Xc_;
         double v = hits.at(i)->GetZ() - pre_Yc_;
         data[i] = u;
@@ -179,7 +181,7 @@ TMatrixD RiemannFitter::GetPolarCoo(const TrkHitSPVec &hits)
     TArrayD data(2*dim_);
     for (int i = 0; i < dim_; i++)
     {
-        double u = hits.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(hits)[i])*s;
+        double u = hits.at(i)->GetX() - pre_Xc_ + std::abs(corrections_x_[i])*s;
         double v = hits.at(i)->GetZ() - pre_Yc_;
         data[i] = sqrt(u*u + v*v);
         data[i + dim_] = TMath::ATan2(v, u);
@@ -207,7 +209,7 @@ TMatrixD RiemannFitter::GetVradms(const TMatrixD &polar_coo)
                                            j, // j
 
                                            ms_error_func,
-                                           0.3*RiemannFitHelper::GetMagnetAtOrigin(tracking::dY)*pre_R_ // momentum, MeV
+                                           0.3*magnet_at_origin_*pre_R_ // momentum, MeV
                                           );
         }
     }
@@ -246,7 +248,7 @@ TMatrixD RiemannFitter::GetVcart0()
 //Get delta x
 std::vector<double> RiemannFitter::GetDeltax(const TrkHitSPVec &hits)    
 {
-    double pT = 0.3 * RiemannFitHelper::GetMagnetAtOrigin(tracking::dY) * pre_R_; // momentum, MeV
+    double pT = 0.3 * magnet_at_origin_ * pre_R_; // momentum, MeV
 
     std::vector<double> Xk(dim_, 0.0);
     std::vector<double> Yk(dim_, 0.0);
@@ -293,7 +295,7 @@ std::vector<double> RiemannFitter::GetDeltax(const TrkHitSPVec &hits)
 TMatrixD RiemannFitter::GetVcartx(const TrkHitSPVec &hits)
 {
     TArrayD data(4*dim_*dim_);
-    auto D = GetDeltax(hits);
+    const auto &D = corrections_x_;
     for(int i = 0; i < dim_; i++)
     {
         for(int j = 0; j < dim_; j++)
@@ -318,7 +320,7 @@ TMatrixD RiemannFitter::GetJ1(const TrkHitSPVec &hits)
     TArrayD data(4*dim_*dim_);
     for (int i = 0; i < dim_; i++)
     {
-        double u = hits.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(hits)[i])*s;
+        double u = hits.at(i)->GetX() - pre_Xc_ + std::abs(corrections_x_[i])*s;
         double v = hits.at(i)->GetZ() - pre_Yc_;
         double h = sqrt(u*u + v*v);
 
@@ -355,7 +357,7 @@ TMatrixD RiemannFitter::GetJ2(const TrkHitSPVec &hits)
     TArrayD data(2*dim_*dim_);
     for (int i = 0; i < dim_; i++)
     {
-        double u = hits.at(i)->GetX() - pre_Xc_ + std::abs(GetDeltax(hits)[i])*s;
+        double u = hits.at(i)->GetX() - pre_Xc_ + std::abs(corrections_x_[i])*s;
         double v = hits.at(i)->GetZ() - pre_Yc_;
 
         for(Int_t j = 0; j < dim_; j++)
