@@ -141,12 +141,9 @@ find_package(nlohmann_json 3.2.0 REQUIRED)
 # Onnx
 #
 if (BUILD_ONNX)
-    if (NOT ONNX_ROOT_DIR)
-        set(ONNX_ROOT_DIR "/opt/onnxruntime")
-    endif()
-    set(ONNXRUNTIME_INCLUDE_DIRS "${ONNX_ROOT_DIR}/include")
+    find_package(ONNXRUNTIME REQUIRED)
     include_directories(${ONNXRUNTIME_INCLUDE_DIRS})
-    link_directories("${ONNX_ROOT_DIR}/lib")
+    link_directories(${ONNXRUNTIME_LIBRARY_DIR})
 endif ()
 
 #----------------------------------------------------------------------------
