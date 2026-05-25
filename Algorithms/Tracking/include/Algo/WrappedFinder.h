@@ -7,6 +7,7 @@
 #include "Algo/TypeDef.h"
 #include "Algo/Object/seed.h"
 
+#include <memory>
 #include "Algo/GreedyFinder/greedy_finder.h"
 
 class WrappedFinder
@@ -22,33 +23,26 @@ private:
 
 public:
     WrappedFinder() { Init(); }
-    ~WrappedFinder()
-    {
-        delete snapshot_;    snapshot_ = nullptr;
-        delete track_finder_; track_finder_ = nullptr;
-    }
+    ~WrappedFinder() = default;
 
     void Init()
     {
-        delete snapshot_;
-        snapshot_ = new Snapshot();
-
-        delete track_finder_;
-        track_finder_ = new Finder();
+        snapshot_ = std::make_unique<Snapshot>();
+        track_finder_ = std::make_unique<Finder>();
     }
 
     void Run(Config config, Pool_t *hit_pool, const SeedContainer_t &seeds)
     {
         track_finder_->Config(config);
         snapshot_->clear();
-        track_finder_->FindTracks(hit_pool, snapshot_, seeds);
+        track_finder_->FindTracks(hit_pool, snapshot_.get(), seeds);
     }
 
     TrackContainer_t GetTracks() { return track_finder_->GetTracks<DTrack>(); }
 
 private:
-    Snapshot* snapshot_{nullptr};
-    Finder *track_finder_{nullptr};
+    std::unique_ptr<Snapshot> snapshot_;
+    std::unique_ptr<Finder> track_finder_;
 };
 
 #endif // TRACKING_FINDER_H
