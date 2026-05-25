@@ -6,6 +6,7 @@
 #include "Algo/TypeDef.h"
 #include "Algo/Object/seed.h"
 #include "Algo/Object/HitPool.h"
+#include <memory>
 #include "Algo/Seeding/seed_finder.h"
 
 class WrappedSeedFinder
@@ -24,19 +25,12 @@ public:
 
 public:
     WrappedSeedFinder() { Init(); };
-    ~WrappedSeedFinder()
-    {
-        delete snapshot_;    snapshot_ = nullptr;
-        delete seed_finder_; seed_finder_ = nullptr;
-    }
+    ~WrappedSeedFinder() = default;
 
     void Init()
     {
-        delete snapshot_;
-        snapshot_ = new Snapshot();
-
-        delete seed_finder_;
-        seed_finder_ = new Finder();
+        snapshot_ = std::make_unique<Snapshot>();
+        seed_finder_ = std::make_unique<Finder>();
     }
 
     void Connect(CoordinateGetter_t_t get_x, CoordinateGetter_t_t get_y, CoordinateGetter_t_t get_z)
@@ -90,8 +84,8 @@ public:
     }
 
 private:
-    Snapshot *snapshot_{nullptr};
-    Finder *seed_finder_{nullptr};
+    std::unique_ptr<Snapshot> snapshot_;
+    std::unique_ptr<Finder> seed_finder_;
 };
 
 #endif // TRACKING_SEED_FINDER_H

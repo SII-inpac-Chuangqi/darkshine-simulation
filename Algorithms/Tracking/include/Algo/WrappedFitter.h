@@ -3,6 +3,7 @@
 
 // Tracking
 #include "Algo/TypeDef.h"
+#include <memory>
 #include "Algo/KalmanFit/KalmanFilterFitter.h"
 #include "Algo/RiemannFit/RiemannFitter.h"
 #include "Algo/Propagator/GFPropagator.h"
@@ -11,35 +12,31 @@ class WrappedFitter
 {
 public:
     WrappedFitter() = default;
-    ~WrappedFitter() {delete fitter_; fitter_ = nullptr;};
+    ~WrappedFitter() = default;
 
     template <class ... Args_t>
     void Run(KalmanFilterFitter::Config config, Args_t&& ... args)
     {
-        if (fitter_) delete fitter_;
-
         method = tracking::dKalman;
-        fitter_ = new KalmanFilterFitter(config, std::forward<Args_t>(args) ...);
+        fitter_ = std::make_unique<KalmanFilterFitter>(config, std::forward<Args_t>(args) ...);
     }
 
     template <class ... Args_t>
     void Run(RiemannFitter::Config config, Args_t&& ... args)
     {
-        if (fitter_) delete fitter_;
-
         method = tracking::dRiemann;
-        fitter_ = new RiemannFitter(config, std::forward<Args_t>(args) ...);
+        fitter_ = std::make_unique<RiemannFitter>(config, std::forward<Args_t>(args) ...);
     }
 
     Fitter* Retrieve()
     {
-        return fitter_;
+        return fitter_.get();
     }
 
 private:
     tracking::FitMethods method;
 
-    Fitter *fitter_{nullptr};
+    std::unique_ptr<Fitter> fitter_;
 };
 
 #endif // TRACKING_WRAPPEDFITTER_H
