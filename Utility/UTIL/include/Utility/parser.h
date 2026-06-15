@@ -52,6 +52,10 @@ template<typename T> T Convert(const std::string&);
 template<> std::string Convert(const std::string &value) { return value; }
 template<> int Convert(const std::string &value) { return std::stoi(value); }
 template<> long Convert(const std::string &value) { return std::stol(value); }
+template<> long long Convert(const std::string &value) { return std::stoll(value); }
+template<> unsigned int Convert(const std::string &value) { return static_cast<unsigned int>(std::stoul(value)); }
+template<> unsigned long Convert(const std::string &value) { return std::stoul(value); }
+template<> unsigned long long Convert(const std::string &value) { return std::stoull(value); }
 template<> bool Convert(const std::string &value) {
     auto lower = StrTolower(value);
     if (lower == "false" || lower == "0") return false;
@@ -237,21 +241,39 @@ public:
         for(int i = 1; i < argc; i++)
         {
             std::string input_token(argv[i]);
+            std::string value_from_eq;
+            auto eq_pos = input_token.find('=');
+            if(eq_pos != std::string::npos)
+            {
+                value_from_eq = input_token.substr(eq_pos + 1);
+                input_token = input_token.substr(0, eq_pos);
+            }
             input_token = arg_parser_helper::StrTolower(input_token);
 
             auto it = token_index_.find(input_token);
             if(it != token_index_.end())
             {
                 auto param = it->second;
-                if(param->IfNoArg()) param->Convert(std::to_string(!param->GetDefault<bool>()));
+                if(param->IfNoArg())
+                {
+                    if(!value_from_eq.empty())
+                        param->Convert(value_from_eq);
+                    else
+                        param->Convert(std::to_string(!param->GetDefault<bool>()));
+                }
                 else
                 {
-                    if(i + 1 >= argc)
+                    if(!value_from_eq.empty())
+                        param->Convert(value_from_eq);
+                    else
                     {
-                        std::cerr << "[Error] ==> Key \033[31m" << input_token << "\033[0m expects a value" << std::endl;
-                        exit(-1);
+                        if(i + 1 >= argc)
+                        {
+                            std::cerr << "[Error] ==> Key [31m" << input_token << "[0m expects a value" << std::endl;
+                            exit(-1);
+                        }
+                        param->Convert(argv[i + 1]);
                     }
-                    param->Convert(argv[i + 1]);
                 }
                 param->InCommandLine(true);
             }
@@ -262,7 +284,7 @@ public:
 #else
                 if(input_token.rfind("--", 0) == 0)
 #endif
-                    std::cerr << "[WARNING] ==> Unkown key \033[31m" << input_token.substr(2) << "\033[0m" << std::endl;
+                    std::cerr << "[WARNING] ==> Unkown key [31m" << input_token.substr(2) << "[0m" << std::endl;
             }
         }
     }
@@ -325,46 +347,46 @@ private:
     std::tuple<std::string, std::string> GetKeyAndShort(const std::string &keys_str)
     {
         auto keys = arg_parser_helper::Split(keys_str);
-        if( keys.size() != 1 && keys.size() != 2 )
+        if( keys.size() < 1 || keys.size() > 2 )
         {
-            std::cerr << "[Error] ==> Failed to resolve keys from \033[31m" << keys_str << "\033[0m" << std::endl;
+            std::cerr << "[Error] ==> Failed to resolve keys from [31m" << keys_str << "[0m" << std::endl;
             exit(-1);
         }
 
         std::string key;
         std::string short_key;
 
-        if( keys.size() == 2 &&
-            ( ( keys.at(0).size() == 1 && keys.at(1).size() == 1 ) ||
-              ( keys.at(0).size() >  1 && keys.at(1).size() >  1 )
-            )
-          )
-        {
-            std::cerr << "[Error] ==> Keys \033[31m" << keys.at(0) << "\033[0m and \033[31m" << keys.at(1) << "\033[0m are both short keys or long keys" << std::endl;
-            exit(-1);
-        }
-
         if( keys.size() == 1 )
         {
-            if(keys.at(0).size() == 1) short_key = keys.at(0);
-            else                             key = keys.at(0);
+            if( keys[0].size() == 1 ) short_key = keys[0];
+            else                      key       = keys[0];
         }
-
-        if( keys.size() == 2 )
+        else
         {
-            if(keys.at(0).size() == 1) { short_key = keys.at(0);       key = keys.at(1); }
-            else                       {       key = keys.at(0); short_key = keys.at(1); }
+            bool first_is_short  = ( keys[0].size() == 1 );
+            bool second_is_short = ( keys[1].size() == 1 );
+
+            if( first_is_short == second_is_short )
+            {
+                std::cerr << "[Error] ==> Keys [31m" << keys[0] << "[0m and [31m" << keys[1]
+                          << "[0m are both " << ( first_is_short ? "short" : "long" ) << " keys" << std::endl;
+                exit(-1);
+            }
+
+            if( first_is_short ) { short_key = keys[0]; key = keys[1]; }
+            else                 { key = keys[0]; short_key = keys[1]; }
         }
 
-        if( !key.size() ) key = short_key;
+        if( key.empty() ) key = short_key;
 
         if( arg_parser_helper::StrTolower(key) == "help" || arg_parser_helper::StrTolower(short_key) == "h" )
         {
-            std::cerr << "[Error] ==> No rational person would use \033[31mhelp\033[0m or \033[31mh\033[0m as user-defined key" << std::endl;
+            std::cerr << "[Error] ==> No rational person would use [31mhelp[0m or [31mh[0m as user-defined key" << std::endl;
             exit(-1);
         }
 
         return std::make_tuple(key, short_key);
     }
+
 };
 }
