@@ -1,6 +1,15 @@
 // Simplified from https://github.com/morrisfranken/argparse/tree/master
 
+#ifdef __has_include
+#if __has_include("TString.h")
 #include "TString.h"
+#define HAS_TSTRING
+#endif
+#else
+// Pre-C++17: always include in DarkShine (ROOT always linked)
+#include "TString.h"
+#define HAS_TSTRING
+#endif
 
 #include <type_traits>
 #include <cctype>
@@ -11,7 +20,7 @@
 //#include <any>
 #include <string>
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <tuple>
 
 namespace arg_parser_helper
@@ -44,12 +53,17 @@ template<> std::string Convert(const std::string &value) { return value; }
 template<> int Convert(const std::string &value) { return std::stoi(value); }
 template<> long Convert(const std::string &value) { return std::stol(value); }
 template<> bool Convert(const std::string &value) {
-    if (StrTolower(value) == "false") return false;
-    return StrTolower(value) == "true" || std::stoi(value) != 0;
+    auto lower = StrTolower(value);
+    if (lower == "false" || lower == "0") return false;
+    if (lower == "true") return true;
+    try { return std::stoi(value) != 0; }
+    catch (...) { return false; }
 }
-template<> double Convert(const std::string &value) { return std::stof(value); }
+template<> double Convert(const std::string &value) { return std::stod(value); }
 template<> float Convert(const std::string &value) { return std::stof(value); }
+#ifdef HAS_TSTRING
 template<> TString Convert(const std::string &value) { return value.data(); }
+#endif
 
 }
 
@@ -69,19 +83,8 @@ template<typename T> struct ParserType : public ParserBaseType
 public:
     ParserType() : ParserBaseType() {}
 
-    explicit ParserType(T &t) : ParserBaseType(), if_new_(false), t_(&t) {}
-    explicit ParserType(const T &t, bool) : ParserBaseType(), if_new_(true)
-    {
-        t_ = new T(t);
-    }
-
-    ~ParserType() override
-    {
-        if( if_new_ )
-        {
-            delete t_; t_ = nullptr;
-        }
-    }
+    explicit ParserType(T &t) : ParserBaseType(), t_(&t) {}
+    explicit ParserType(const T &t, bool) : ParserBaseType(), owned_(new T(t)), t_(owned_.get()) {}
 
     virtual void Convert(const std::string &value) override
     {
@@ -91,18 +94,18 @@ public:
     T Get() const {return *t_;}
 
 private:
-    const bool if_new_;
+    std::unique_ptr<T> owned_;
     T *t_ = nullptr;
 
     T* GetP() const {return t_;}
 
-    friend class Entry;
+    friend struct Entry;
 };
 
 struct Entry
 {
 public:
-    ~Entry() { delete data_; data_ = nullptr; delete default_data_; default_data_ = nullptr; }
+    ~Entry() = default;
 
     template <typename T> Entry(const std::string &key, const std::string &short_key, T &data, bool if_no_arg, const std::string &help) :
         if_no_arg_(if_no_arg),
@@ -110,8 +113,8 @@ public:
         short_key_(short_key),
         help_(help)
     {
-        data_ = new ParserType<T>(data);
-        default_data_ = new ParserType<T>(data, true);
+        data_ = std::make_unique<ParserType<T>>(data);
+        default_data_ = std::make_unique<ParserType<T>>(data, true);
     }
 
     template <typename T> Entry(const std::string &key, const std::string &short_key, T &data, const T &default_data, bool if_no_arg, const std::string &help) :
@@ -120,16 +123,16 @@ public:
         short_key_(short_key),
         help_(help)
     {
-        data_ = new ParserType<T>(data);
-        default_data_ = new ParserType<T>(default_data, true);
+        data_ = std::make_unique<ParserType<T>>(data);
+        default_data_ = std::make_unique<ParserType<T>>(default_data, true);
 
-        *(dynamic_cast<ParserType<T>*>(data_)->GetP()) = default_data;
+        *(dynamic_cast<ParserType<T>*>(data_.get())->GetP()) = default_data;
     }
 
     void Convert(const std::string &value) { data_->Convert(value); }
 
-    template <typename T> T Get() const { return dynamic_cast<ParserType<T>*>(data_)->Get(); }
-    template <typename T> T GetDefault() const { return dynamic_cast<ParserType<T>*>(default_data_)->Get(); }
+    template <typename T> T Get() const { return dynamic_cast<ParserType<T>*>(data_.get())->Get(); }
+    template <typename T> T GetDefault() const { return dynamic_cast<ParserType<T>*>(default_data_.get())->Get(); }
 
     bool IfNoArg() const {return if_no_arg_;}
     void InCommandLine(bool if_set_from_arg) {if_in_command_line_ = if_set_from_arg;}
@@ -146,8 +149,8 @@ private:
     const std::string key_;
     const std::string short_key_;
     const std::string help_;
-    ParserBaseType *data_ = nullptr;
-    ParserBaseType *default_data_ = nullptr;
+    std::unique_ptr<ParserBaseType> data_;
+    std::unique_ptr<ParserBaseType> default_data_;
 };
 
 class Parser
@@ -229,31 +232,38 @@ public:
             }
         }
 
+        BuildTokenIndex();
+
         for(int i = 1; i < argc; i++)
         {
             std::string input_token(argv[i]);
-            bool if_valid_token = false;
+            input_token = arg_parser_helper::StrTolower(input_token);
 
-            for(const auto &[key, param] : params_)
+            auto it = token_index_.find(input_token);
+            if(it != token_index_.end())
             {
-                std::string key_token = "--" + param->GetKey();
-                std::string short_key_token = "-" + param->GetShortKey();
-                if(input_token == key_token || input_token == short_key_token)
+                auto param = it->second;
+                if(param->IfNoArg()) param->Convert(std::to_string(!param->GetDefault<bool>()));
+                else
                 {
-                    if(param->IfNoArg()) param->Convert(std::to_string(!param->GetDefault<bool>()));
-                    else                 param->Convert(argv[i + 1]);
-                    param->InCommandLine(true);
-
-                    if_valid_token = true;
+                    if(i + 1 >= argc)
+                    {
+                        std::cerr << "[Error] ==> Key \033[31m" << input_token << "\033[0m expects a value" << std::endl;
+                        exit(-1);
+                    }
+                    param->Convert(argv[i + 1]);
                 }
+                param->InCommandLine(true);
             }
-
+            else
+            {
 #if __cplusplus >= 202002L
-            if(!if_valid_token && input_token.starts_with("--"))
+                if(input_token.starts_with("--"))
 #else
-            if(!if_valid_token && input_token.rfind("--", 0) == 0)
+                if(input_token.rfind("--", 0) == 0)
 #endif
-                std::cerr << "[WARNING] ==> Unkown key \033[31m" << input_token.substr(2) << "\033[0m" << std::endl;
+                    std::cerr << "[WARNING] ==> Unkown key \033[31m" << input_token.substr(2) << "\033[0m" << std::endl;
+            }
         }
     }
 
@@ -285,7 +295,7 @@ public:
             std::cout << "\033[36m" << GetKeyTokenStr(param->GetKey(), param->GetShortKey(), "/") << "\033[0m"
                       << ( param->IfNoArg() ? "  " : "  <argument>  ");
         }
-        std::cout << "\033[36m?/-h/--help\033" << std::endl;
+        std::cout << "\033[36m?/-h/--help\033[0m" << std::endl;
                                  
         for(const auto &[key, param] : params_)
         {
@@ -296,7 +306,21 @@ public:
     }
 
 private:
-    std::map<std::string, std::shared_ptr<Entry>> params_;
+    std::unordered_map<std::string, std::shared_ptr<Entry>> params_;
+    std::unordered_map<std::string, Entry*> token_index_;
+    bool token_index_built_ = false;
+
+    void BuildTokenIndex()
+    {
+        if(token_index_built_) return;
+        for(const auto &[key, param] : params_)
+        {
+            token_index_[arg_parser_helper::StrTolower("--" + param->GetKey())] = param.get();
+            if(!param->GetShortKey().empty())
+                token_index_[arg_parser_helper::StrTolower("-" + param->GetShortKey())] = param.get();
+        }
+        token_index_built_ = true;
+    }
 
     std::tuple<std::string, std::string> GetKeyAndShort(const std::string &keys_str)
     {
