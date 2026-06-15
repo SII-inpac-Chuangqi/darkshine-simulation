@@ -269,7 +269,7 @@ public:
                     {
                         if(i + 1 >= argc)
                         {
-                            std::cerr << "[Error] ==> Key [31m" << input_token << "[0m expects a value" << std::endl;
+                            std::cerr << "[Error] ==> Key \033[31m" << input_token << "\033[0m expects a value" << std::endl;
                             exit(-1);
                         }
                         param->Convert(argv[i + 1]);
@@ -284,7 +284,7 @@ public:
 #else
                 if(input_token.rfind("--", 0) == 0)
 #endif
-                    std::cerr << "[WARNING] ==> Unkown key [31m" << input_token.substr(2) << "[0m" << std::endl;
+                    std::cerr << "[WARNING] ==> Unkown key \033[31m" << input_token.substr(2) << "\033[0m" << std::endl;
             }
         }
     }
@@ -349,7 +349,7 @@ private:
         auto keys = arg_parser_helper::Split(keys_str);
         if( keys.size() < 1 || keys.size() > 2 )
         {
-            std::cerr << "[Error] ==> Failed to resolve keys from [31m" << keys_str << "[0m" << std::endl;
+            std::cerr << "[Error] ==> Failed to resolve keys from \033[31m" << keys_str << "\033[0m" << std::endl;
             exit(-1);
         }
 
@@ -368,8 +368,8 @@ private:
 
             if( first_is_short == second_is_short )
             {
-                std::cerr << "[Error] ==> Keys [31m" << keys[0] << "[0m and [31m" << keys[1]
-                          << "[0m are both " << ( first_is_short ? "short" : "long" ) << " keys" << std::endl;
+                std::cerr << "[Error] ==> Keys \033[31m" << keys[0] << "\033[0m and \033[31m" << keys[1]
+                          << "\033[0m are both " << ( first_is_short ? "short" : "long" ) << " keys" << std::endl;
                 exit(-1);
             }
 
@@ -381,7 +381,7 @@ private:
 
         if( arg_parser_helper::StrTolower(key) == "help" || arg_parser_helper::StrTolower(short_key) == "h" )
         {
-            std::cerr << "[Error] ==> No rational person would use [31mhelp[0m or [31mh[0m as user-defined key" << std::endl;
+            std::cerr << "[Error] ==> No rational person would use \033[31mhelp\033[0m or \033[31mh\033[0m as user-defined key" << std::endl;
             exit(-1);
         }
 
