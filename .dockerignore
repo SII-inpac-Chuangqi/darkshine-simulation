@@ -1,0 +1,26 @@
+# DarkSHINE build artifacts
+build/
+install/
+*.o
+*.so
+*.a
+
+# IDE
+.vscode/
+.idea/
+.cache/
+*.swp
+*~
+
+# Compiled output
+*.root
+!DP_simu/scripts/magnet_*.root
+!DP_simu/scripts/dp_*_LUT_*.root
+
+# Git
+.git/
+.gitattributes
+
+# Docker
+Dockerfile
+.dockerignore
